@@ -17,6 +17,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.NotImplementedException;
+import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.AbstractQueryService;
 import org.intermine.webservice.server.query.QueryRequestParser;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
@@ -42,9 +44,21 @@ public class SequenceService extends JSONService {
         super(im);
     }
 
+    /**
+     * Why is the results key "features", pray? and not something more sensible, like,
+     * "results", say. Well, this it just seemed sensible to make this service
+     * directly consumable by <em>jbrowse</em>, which is obviously the whole point of this
+     * service. <em>Sigh</em>.
+     */
     @Override
-    protected String getResultsKey() {
-        return "results";
+    protected Map<String, Object> getHeaderAttributes() {
+        final Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.putAll(super.getHeaderAttributes());
+        if (formatIsJSON()) {
+            attributes.put(JSONFormatter.KEY_INTRO, "\"features\":[");
+            attributes.put(JSONFormatter.KEY_OUTRO, "]");
+        }
+        return attributes;
     }
 
     @Override
@@ -52,38 +66,53 @@ public class SequenceService extends JSONService {
         Integer start = getIntParameter("start", 0);
         Integer end = getIntParameter("end", null);
         PathQuery pq = getQuery();
-        CharSequence chars = getSequence(pq);
 
-        serveSubSequence(chars, start, end);
+        Iterator<CharSequence> sequences = getSequences(pq);
+        while(sequences.hasNext()) {
+            CharSequence chars = sequences.next();
+            addResultItem(makeFeature(chars, start, end), sequences.hasNext());
+        }
     }
 
-    private CharSequence getSequence(PathQuery pq) {
+    private Iterator<CharSequence> getSequences(final PathQuery pq) {
         validateQuery(pq);
-        Query q;
+        final Query q;
         try {
             q = MainHelper.makeQuery(pq, getListManager().getListMap(), new HashMap(), null, new HashMap());
         } catch (ObjectStoreException e) {
             throw new InternalErrorException(e);
         }
 
-        Iterator<Object> results = im.getObjectStore().executeSingleton(q).iterator();
+        final Iterator<Object> results = im.getObjectStore().executeSingleton(q).iterator();
 
-        FastPathObject obj = (FastPathObject) results.next();
+        return new Iterator<CharSequence>() {
 
-        if (obj == null || results.hasNext()) {
-            String msg = (obj == null) ? "empty" : "not unique";
-            throw new BadRequestException("Results are " + msg);
-        }
+            @Override
+            public boolean hasNext() {
+                return results.hasNext();
+            }
 
-        CharSequence chars;
-        try {
-            chars = (CharSequence) obj.getFieldValue(pq.makePath(pq.getView().get(0)).getEndFieldDescriptor().getName());
-        } catch (IllegalAccessException e) {
-            throw new InternalErrorException(e);
-        } catch (PathException e) {
-            throw new InternalErrorException(e);
-        }
-        return chars;
+            @Override
+            public CharSequence next() {
+                FastPathObject obj = (FastPathObject) results.next();
+
+                CharSequence chars;
+                try {
+                    chars = (CharSequence) obj.getFieldValue(pq.makePath(pq.getView().get(0)).getEndFieldDescriptor().getName());
+                } catch (IllegalAccessException e) {
+                    throw new InternalErrorException(e);
+                } catch (PathException e) {
+                    throw new InternalErrorException(e);
+                }
+                return chars;
+            }
+
+            @Override
+            public void remove() {
+                throw new NotImplementedException("remove is not a valid operation for this iterator.");
+            }
+        };
+
     }
 
     private void validateQuery(PathQuery pq) {
@@ -102,7 +131,7 @@ public class SequenceService extends JSONService {
         }
     }
 
-    private void serveSubSequence(CharSequence chars, Integer start, Integer end) {
+    private Map<String, Object> makeFeature(CharSequence chars, Integer start, Integer end) {
         CharSequence subSequence;
         try {
             if (end == null) {
@@ -113,7 +142,12 @@ public class SequenceService extends JSONService {
         } catch (IndexOutOfBoundsException e) {
             throw new BadRequestException("Illegal start/end values: " + e.getMessage());
         }
-        addResultValue(subSequence, false);
+        Map<String, Object> feat = new HashMap<String, Object>();
+        feat.put("start", start);
+        feat.put("end", subSequence.length() + start);
+        feat.put("seq", subSequence);
+
+        return feat;
     }
 
     private PathQuery getQuery() {
