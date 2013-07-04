@@ -76,4 +76,22 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         //System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, writer.getItems());
     }
+
+    public void testFlyRegHandlerNewFormat() throws Exception {
+        String gff =
+            "2L\tREDfly\tregulatory_region\t12092691\t12095792\t.\t.\t.\tID=prd_A8_repressor; Dbxref=\"FB:FBgn0003145,PMID:7873402,REDfly:391\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00005427\",\"FBbt:00005414\"" + ENDL
+            + "2L\tREDfly\tregulatory_region\t12087891\t12088492\t.\t.\t.\tID=prd_P1_enhancer; Dbxref=\"FB:FBgn0003145,PMID:7873402,REDfly:392\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00005304\",\"FBbt:00000111\"" + ENDL
+            + "3R\tREDfly\tregulatory_region\t2667896\t2676484\t.\t.\t.\tID=Scr_BSR; Dbxref=\"FB:FBgn0003339,PMID:7713432,REDfly:576\"; Evidence=\"reporter construct (in vivo)\"; Ontology_term=\"FBbt:00000090\"";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        converter.parse(srcReader);
+        converter.storeAll();
+
+        // uncomment to write a new tgt items file
+        // writeItemsFile(writer.getItems(), "redfly-tgt-items-newformat.xml");
+
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("RedFlyGFF3RecordHandlerNewFormatTest.xml"));
+        //System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
+        assertEquals(expected, writer.getItems());
+    }
 }
