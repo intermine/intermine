@@ -189,6 +189,12 @@ public class PathQueryUnmarshalTest extends  TestCase
         assertEquals(pqlist.size(), 2);
     }
 
+    public void testInterMineObjectQuery() {
+        PathQuery query = createQuery("IMObj.xml");
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+        assertEquals("InterMineObject.id", query.getView().get(0));
+    }
+
     public void testMultipleQueriesWithSameName() {
         String path = "PathQueryBindingUnmarshal/MultipleQueriesSameName.xml";
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
