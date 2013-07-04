@@ -145,7 +145,7 @@ public class SequenceService extends JSONService {
         Map<String, Object> feat = new HashMap<String, Object>();
         feat.put("start", start);
         feat.put("end", subSequence.length() + start);
-        feat.put("seq", subSequence);
+        feat.put("seq", String.valueOf(subSequence)); // Have to do this, otherwise json.org goes insane.
 
         return feat;
     }
