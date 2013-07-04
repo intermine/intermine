@@ -86,6 +86,9 @@
       <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic" />
       <property name="src.data.includes" value="**/gene_association*" />
     </source>
+    <source name="hpo" type="hpo">
+      <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
+    </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606 10090" />
