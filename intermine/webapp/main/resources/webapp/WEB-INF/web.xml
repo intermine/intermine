@@ -1699,6 +1699,10 @@
 	        <param-name>GET</param-name>
 	        <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
 	    </init-param>
+	    <init-param>
+            <param-name>POST</param-name>
+            <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
+        </init-param>
 	</servlet>
 	
 	<servlet-mapping>
@@ -1707,7 +1711,7 @@
 	   <metadata>
         <name>Sequence Access</name>
         <minVersion>13</minVersion>
-        <method authenticationRequired="false" type="GET" >
+        <method authenticationRequired="false" type="GET" also="POST">
             <summary>Get a portion of a sequence-like object</summary>
             <description>
                 Get either the entire sequence of a character-sequence like thing, or
