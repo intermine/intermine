@@ -12,8 +12,10 @@ package org.intermine.webservice.server.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
@@ -70,6 +72,14 @@ public class ListManager
             }
         }
         return bagManager.getBags(profile).values();
+    }
+
+    /**
+     * Returns the lists available to the current user in a Map.
+     * @return An unmodifiable map from list name to list.
+     */
+    public Map<String, InterMineBag> getListMap() {
+        return Collections.unmodifiableMap(bagManager.getBags(profile));
     }
 
     /**
