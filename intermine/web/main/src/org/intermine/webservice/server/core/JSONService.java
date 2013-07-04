@@ -94,7 +94,7 @@ public abstract class JSONService extends WebService
         addResultItemInternal(jo, hasMore);
     }
 
-    protected void addResultValue(String str, boolean hasMore) {
+    protected void addResultValue(CharSequence str, boolean hasMore) {
         addResultItemInternal("\"" + String.valueOf(str) + "\"", hasMore);
     }
 
