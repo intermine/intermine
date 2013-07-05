@@ -54,19 +54,18 @@ public class QueryBuilderViewAction extends InterMineAction
         //    resultsForm.reset(mapping, request);
         //}
 
-        PathQuery pathQuery = SessionMethods.getQuery(session).clone();
-        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
+//        PathQuery pathQuery = SessionMethods.getQuery(session).clone();
+//        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
+//
+//        Thread.sleep(200); // slight pause in the hope of avoiding holding page
+//
+//        //track the query execution
+//        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+//        Profile profile = SessionMethods.getProfile(session);
+//        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, session.getId());
 
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-
-        //track the query execution
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = SessionMethods.getProfile(session);
-        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, session.getId());
-
-        return new ForwardParameters(mapping.findForward("waiting"))
+        return new ForwardParameters(mapping.findForward("results"))
                             .addParameter("trail", "|query")
-                            .addParameter("qid", qid)
                             .addParameter("queryBuilder", "true").forward();
     }
 }
