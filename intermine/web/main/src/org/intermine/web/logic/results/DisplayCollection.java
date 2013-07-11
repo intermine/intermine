@@ -66,7 +66,7 @@ public class DisplayCollection extends DisplayField
      *
      * @return Collection for JSP instead of dealing with InlineResultsTable
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public Collection getCollection() {
         return this.collection;
     }
