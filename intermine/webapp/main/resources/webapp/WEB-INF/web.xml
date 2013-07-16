@@ -1689,6 +1689,47 @@
         </method>
     </metadata>
   </servlet-mapping>
+  
+  <!-- NEW IN VERSION 13 -->
+
+    <servlet>
+	    <servlet-name>ws-sequence</servlet-name>
+	    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+	    <init-param>
+	        <param-name>GET</param-name>
+	        <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
+	    </init-param>
+	    <init-param>
+            <param-name>POST</param-name>
+            <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
+        </init-param>
+	</servlet>
+	
+	<servlet-mapping>
+	   <servlet-name>ws-sequence</servlet-name>
+	   <url-pattern>/service/sequence/*</url-pattern>
+	   <metadata>
+        <name>Sequence Access</name>
+        <minVersion>13</minVersion>
+        <method authenticationRequired="false" type="GET" also="POST">
+            <summary>Get a portion of a sequence-like object</summary>
+            <description>
+                Get either the entire sequence of a character-sequence like thing, or
+                fetch an indexed sub-sequence of it.
+                
+                This service expects a query with a single output column that resolves
+                tp a sub-sequenceable object.
+            </description>
+            <param type="Integer" required="false" default="0" description="The start index">start</param>
+            <param type="Integer" required="false" description="The end index">end</param>
+            <param type="String" required="true" description="The xml of the query to run.">query</param>
+            <returns>
+                <format key="results">json</format>
+            </returns>
+        </method>
+    </metadata>
+	</servlet-mapping>
+    
    
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
