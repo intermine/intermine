@@ -11,6 +11,7 @@
 1.2.2
 
 #390 - A tiny gap in the header of report pages
+#405 - Fix browser detection not working with jQuery >= 1.9.1
 
 1.2.1 (fixes for C. elegans meeting)
 
