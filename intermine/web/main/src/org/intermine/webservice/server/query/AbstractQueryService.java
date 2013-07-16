@@ -15,6 +15,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.webservice.server.Format;
@@ -46,6 +48,14 @@ public abstract class AbstractQueryService extends WebService
      * @return The XML Schema url.
      */
     protected String getXMLSchemaUrl() {
+        return AbstractQueryService.getSchemaLocation(request);
+    }
+
+    /**
+     * @param request A request for a mine, so we can work out where the schema probably is.
+     * @return The XML Schema url.
+     */
+    public static String getSchemaLocation(HttpServletRequest request) {
         try {
             String relPath = request.getContextPath() + "/"
                     + XML_SCHEMA_LOCATION;

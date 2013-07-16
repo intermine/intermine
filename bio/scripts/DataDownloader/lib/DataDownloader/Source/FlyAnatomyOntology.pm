@@ -10,7 +10,7 @@ use constant {
     SOURCE_DIR => 'ontologies/fly-anatomy',
     SOURCES => [{
         FILE   => 'fly_anatomy.obo',
-        SERVER => 'http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly',
+        SERVER => 'http://purl.obolibrary.org/obo/fbbt',
     }],
 };
 

@@ -272,4 +272,7 @@ public class EnsemblHgncConverter extends BioFileConverter
         }
 
         public String toString() {
-            return ensem
+            return ensembl + ", " + symbol;
+        }
+    }
+}

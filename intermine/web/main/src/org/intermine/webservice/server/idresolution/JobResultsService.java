@@ -36,10 +36,12 @@ public class JobResultsService extends JSONService
 {
     private static final Logger LOG = Logger.getLogger(JobResultsService.class);
     private final String jobId;
+    private BagResultFormatter formatter;
 
     public JobResultsService(InterMineAPI im, String jobId) {
         super(im);
         this.jobId = jobId;
+        this.formatter = new BagResultFormatter(im);
     }
 
     @Override
@@ -57,126 +59,11 @@ public class JobResultsService extends JSONService
                 se.setHttpErrorCode(204); // No Content.
                 throw se; 
             }
-            Map<String, Object> ret = new HashMap<String, Object>();
-            
-            doMatches(ret, job.getResult());
-            doDuplicates(ret, job.getResult(), BagQueryResult.DUPLICATE);
-            doDuplicates(ret, job.getResult(), BagQueryResult.WILDCARD);
-            doDuplicates(ret, job.getResult(), BagQueryResult.OTHER);
-            doDuplicates(ret, job.getResult(), BagQueryResult.TYPE_CONVERTED);
 
-            addResultItem(ret, false);
+            addResultItem(formatter.format(job.getResult()), false);
         } else {
             throw new ResourceNotFoundException("No such job");
         }
-    }
-
-    private void doDuplicates(Map<String, Object> ret, BagQueryResult bqr, String key) {
-        
-        Map<String, Map<String, List>> issues = bqr.getIssues().get(key);
-        if (issues == null) {
-            return;
-        }
-        for (Map<String, List> issueSet: issues.values()) {
-            for (Entry<String, List> identToObjects: issueSet.entrySet()) {
-                String ident = identToObjects.getKey();
-                for (Object o: identToObjects.getValue()) {
-                    InterMineObject imo;
-                    Map<String, Object> resultItem;
-                    if (o instanceof Integer) {
-                        try {
-                            imo = im.getObjectStore().getObjectById((Integer) o);
-                        } catch (ObjectStoreException e) {
-                            throw new IllegalStateException("Could not retrieve object reported as match", e);
-                        }
-                    } else if (o instanceof ConvertedObjectPair) {
-                        imo = ((ConvertedObjectPair) o).getNewObject();
-                    } else {
-                        try {
-                            imo = (InterMineObject) o;
-                        } catch (ClassCastException cce) {
-                            throw new InternalErrorException("When processing " + key, cce);
-                        }
-                    }
-                    String idKey = String.valueOf(imo.getId());
-                    if (ret.containsKey(idKey)) {
-                        resultItem = (Map<String, Object>) ret.get(idKey);
-                    } else {
-                        resultItem = new HashMap<String, Object>();
-                        resultItem.put("identifiers", new HashMap<String, Object>());
-                    }
-                    if (!resultItem.containsKey("summary")) {
-                        resultItem.put("summary", getObjectDetails(imo));
-                    }
-                    Map<String, Object> identifiers = (Map<String, Object>) resultItem.get("identifiers");
-                    
-                    if (!identifiers.containsKey(ident)) {
-                        identifiers.put(ident, new HashSet<String>());
-                    }
-                    Set<String> categories = (Set<String>) identifiers.get(ident);
-                    categories.add(key);
-                    String className = DynamicUtil.getSimpleClassName(imo.getClass());
-                    resultItem.put("type", className.replaceAll("^.*\\.", ""));
-                    ret.put(idKey, resultItem);
-                }
-            }
-        }
-    }
-    
-    private void doMatches(Map<String, Object> ret, BagQueryResult bqr) {
-        
-        for (Entry<Integer, List> pair: bqr.getMatches().entrySet()) {
-            Map<String, Object> resultItem;
-            InterMineObject imo;
-            try {
-                imo = im.getObjectStore().getObjectById(pair.getKey());
-            } catch (ObjectStoreException e) {
-                throw new IllegalStateException("Could not retrieve object reported as match", e);
-            }
-            String idKey = String.valueOf(imo.getId());
-            if (ret.containsKey(idKey)) {
-                resultItem = (Map<String, Object>) ret.get(idKey);
-            } else {
-                resultItem = new HashMap<String, Object>();
-                resultItem.put("identifiers", new HashMap<String, Object>());
-            }
-            if (!resultItem.containsKey("summary")) {
-                resultItem.put("summary", getObjectDetails(imo));
-            }
-            Map<String, Object> identifiers = (Map<String, Object>) resultItem.get("identifiers");
-            for (Object o: pair.getValue()) {
-                String ident = (String) o;
-                if (!identifiers.containsKey(ident)) {
-                    identifiers.put(ident, new HashSet<String>());
-                }
-                Set<String> categories = (Set<String>) identifiers.get(ident);
-                categories.add("MATCH");
-            }
-            String className = DynamicUtil.getSimpleClassName(imo.getClass());
-            resultItem.put("type", className.replaceAll("^.*\\.", ""));
-            ret.put(idKey, resultItem);
-        }
-    }
-    
-    private Map<String, Object> getObjectDetails(InterMineObject imo) {
-        WebConfig webConfig = InterMineContext.getWebConfig();
-        Model m = im.getModel();
-        Map<String, Object> objectDetails = new HashMap<String, Object>();
-        String className = DynamicUtil.getSimpleClassName(imo.getClass());
-        ClassDescriptor cd = m.getClassDescriptorByName(className);
-        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
-            try {
-                Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
-                if (p.endIsAttribute() && fc.getShowInSummary()) {
-                    objectDetails.put(
-                            p.getNoConstraintsString().replaceAll("^[^.]*\\.", ""),
-                            PathUtil.resolvePath(p, imo));
-                }
-            } catch (PathException e) {
-                LOG.error(e);
-            }
-        }
-        return objectDetails;
     }
 
     @Override

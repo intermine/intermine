@@ -198,8 +198,9 @@ public final class Constants
      * or deletion of features.
      * 
      * 12 - Added ability to filter lists from AvailableListsService
+     * 13 - Added ability to serve characterish subsequences
      */
-    public static final int WEB_SERVICE_VERSION = 13;
+    public static final int WEB_SERVICE_VERSION = 14;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

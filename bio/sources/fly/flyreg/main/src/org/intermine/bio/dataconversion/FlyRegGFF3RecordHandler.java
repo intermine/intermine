@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.intermine.bio.dataconversion.IdResolver;
 import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -84,7 +87,22 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String pmid = null;
 
         for (String dbxref: dbxrefs) {
-            if (dbxref.startsWith("PMID:")) {
+            // NB: format changed, the individual refs in DBxref used to be quoted, now they just
+            // have quotes around the whole lot.
+            if (dbxref.contains(",")) {
+                List<String> refList = new ArrayList<String>(
+                        Arrays.asList(StringUtil.split(dbxref, ",")));
+                for (String ref : refList) {
+                    ref = ref.trim();
+                    if (ref.startsWith("PMID:")) {
+                        pmid = ref.substring(5);
+                    } else {
+                        if (ref.startsWith("REDfly:")) {
+                            redflyID = ref.substring(7);
+                        }
+                    }
+                }
+            } else if (dbxref.startsWith("PMID:")) {
                 pmid = dbxref.substring(5);
             } else {
                 if (dbxref.startsWith("REDfly:")) {
@@ -114,7 +132,9 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         addPublication(pubmedItem);
 
-        String factorGeneName = record.getAttributes().get("Factor").get(0);
+        String factorGeneName = record.getAttributes().get("Factor") == null ? record
+                .getAttributes().get("factor").get(0)
+                : record.getAttributes().get("Factor").get(0);
         if (!("unknown").equals(factorGeneName.toLowerCase())
                     && !("unspecified").equals(factorGeneName.toLowerCase())) {
             Item gene = getGene(factorGeneName);
@@ -123,7 +143,9 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
-        String targetGeneName = record.getAttributes().get("Target").get(0);
+        String targetGeneName = record.getAttributes().get("Target") == null ? record
+                .getAttributes().get("target").get(0)
+                : record.getAttributes().get("Target").get(0);
 
         if (!("unknown").equals(targetGeneName.toLowerCase())
                 && !("unspecified").equals(targetGeneName.toLowerCase())) {

@@ -51,7 +51,7 @@ public class ChromosomeLocationHelper implements RangeHelper
         }
         
         QueryField leftA = new QueryField((QueryClass) n, "start");
-        QueryField leftB = new QueryField((QueryClass) n, "start");
+        QueryField leftB = new QueryField((QueryClass) n, "end");
         QueryObjectReference qor = new QueryObjectReference((QueryClass) n, "feature");
         QueryObjectReference chrOR = new QueryObjectReference((QueryClass) n, "locatedOn");
         OverlapRange left = new OverlapRange(leftA, leftB, qor);
