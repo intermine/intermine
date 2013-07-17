@@ -50,13 +50,14 @@ public class WormExpressionScoreConverter extends BioFileConverter
 
     private static Map<String, String> devStages = null;
 
-    private Map<String, String> geneItems = new HashMap<String, String>();
+//    private Map<String, String> geneItems = new HashMap<String, String>();
     private Map<String, String> mRNAItems = new HashMap<String, String>();
 
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
+     * @throws ObjectStoreException
      */
     public WormExpressionScoreConverter(ItemWriter writer, Model model)
         throws ObjectStoreException {
@@ -78,7 +79,7 @@ public class WormExpressionScoreConverter extends BioFileConverter
         } else {
             LOG.info("WWSS skipping file: " + currentFile.getName());
             //            throw new IllegalArgumentException("Unexpected file: "
-//          + currentFile.getName());
+            //          + currentFile.getName());
         }
     }
 
@@ -93,6 +94,7 @@ public class WormExpressionScoreConverter extends BioFileConverter
      *
      *       from the README file:
      *
+
 The dcpm is calculated
 
 s/c/1000000/n
@@ -110,7 +112,7 @@ column 3: N2_EE_50-0
 column 4: N2_EE_50-30
 column 5: N2_EE_50-60
 
-     *   note: transript is mRNA in ws220, = gene.symbol
+     *   note: transript is mRNA in ws220 (~ gene.symbol)
      *   note: dev stages given as short names, not official names.
      *         we need look up table (from nlw)
      *
@@ -127,6 +129,7 @@ column 5: N2_EE_50-60
         }
 
         String [] headers = null;
+
         int lineNumber = 0;
 
         devStages = new HashMap<String, String>();
@@ -171,8 +174,8 @@ column 5: N2_EE_50-60
                     Item developmentalStage = createDevelopmentalStage(col);
                     devStages.put(col, developmentalStage.getIdentifier());
                 }
-                //                    Item score = createGeneExpressionScore(line[i]);
-                //                    score.setReference("gene", geneItems.get(primaryId));
+                // Item score = createGeneExpressionScore(line[i]);
+                // score.setReference("gene", geneItems.get(primaryId));
                 Item score = createMRNAExpressionScore(line[i]);
                 score.setReference("mRNA", mRNAItems.get(primaryId));
                 score.setReference("developmentalStage", devStages.get(col));
@@ -201,12 +204,23 @@ column 5: N2_EE_50-60
         }
 
         if (type.equals(DEVELOPMENTAL_STAGE)) {
+
+            String newName = DEVSTAGES_NAME_MAP.get(name);
+
+            if (newName == null) {
+                LOG.warn("NOT FOUND in DEVSTAGES_NAME_MAP: " + name);
+            } else {
+                name = newName;
+            }
+
             name = name.replace("_", " ");
 
             if (name.matches("^emb.*\\d-\\dh$")) {
                 name = name.replaceFirst("emb", "Embryo");
                 name = name.replaceFirst("h", " h");
             }
+
+            // TODO : rm?
             // Assume string like "L3_larvae_dark_blue" has the official name
             // "L3 stage larvae dark blue"
             if (name.matches("^L\\d.*larvae.*$")) {
@@ -229,20 +243,6 @@ column 5: N2_EE_50-60
         return name;
     }
 
-
-    /** NOT USED REMOVE
-     * Create and store a WormExpressionScore item on the first time called.
-     *
-     * @param score the expression score
-     * @return an Item representing the WormExpressionScore
-     */
-    @SuppressWarnings("unused")
-    private Item createWormExpressionScore(String score) throws ObjectStoreException {
-        Item wormexpressionscore = createItem("WormExpressionScore");
-        wormexpressionscore.setAttribute("score", score);
-
-        return wormexpressionscore;
-    }
 
     /**
      * Create and store a MRNAExpressionScore item on the first time called.
@@ -270,24 +270,12 @@ column 5: N2_EE_50-60
         return expressionscore;
     }
 
-    /**
-     * Create and store a ExonExpressionScore item on the first time called.
-     *
-     * @param score the expression score
-     * @return an Item representing the ExonExpressionScore
-     */
-    private Item createExonExpressionScore(String score) throws ObjectStoreException {
-        Item expressionscore = createItem("ExonExpressionScore");
-        expressionscore.setAttribute("score", score);
-
-        return expressionscore;
-    }
 
     /**
      * Create and store a BioEntity item on the first time called.
      *
      * @param primaryId the primaryIdentifier
-     * @param type gene or exon
+     * @param type mRNA or exon, at the moment only mRNA
      * @throws ObjectStoreException
      */
     private void createBioEntity(String primaryId, String type) throws ObjectStoreException {
@@ -302,7 +290,7 @@ column 5: N2_EE_50-60
             }
         }
 
-        //      if ("Gene".equals(type)) {
+        //if ("Gene".equals(type)) {
         //if (!geneItems.containsKey(primaryId)) {
         //bioentity = createItem("Gene");
         //bioentity.setAttribute("symbol", primaryId);
@@ -310,15 +298,6 @@ column 5: N2_EE_50-60
         //geneItems.put(primaryId, bioentity.getIdentifier());
         //}
         //}
-
-      //    else if ("Exon".equals(type)) {
-        //        if (!exonItems.containsKey(primaryId)) {
-        //            bioentity = createItem("Exon");
-        //            bioentity.setAttribute("primaryIdentifier", primaryId);
-        //            store(bioentity);
-        //            exonItems.put(primaryId, bioentity.getIdentifier());
-        //        }
-        //    }
     }
 
 
@@ -375,5 +354,123 @@ column 5: N2_EE_50-60
 
         return developmentalstage;
     }
+
+
+    /**
+     * maps from dev stages names in the file to modENCODE names.
+     *
+     *
+     * a check is performed and fields unaccounted for are logged.
+     */
+    private static final Map<String, String> DEVSTAGES_NAME_MAP =
+            new HashMap<String, String>();
+    private static final String NOT_TO_BE_LOADED = "this is ; illegal - anyway";
+
+    static {
+        // the translation is provided by marc.
+        // TODO: there are duplicates values.
+
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-0", "N2 EE 50-0");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-30", "N2 EE 50-30");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-60", "N2 EE 50-60");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-90", "N2 EE 50-90");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-120", "N2 EE 50-120");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-150", "N2 EE 50-150");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-180", "N2 EE 50-180");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-210", "N2 EE 50-210");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-240", "N2 EE 50-240");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-300", "N2 EE 50-300");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-330", "N2 EE 50-330");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-360", "N2 EE 50-360");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-390", "N2 EE 50-390");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-420", "N2 EE 50-420");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-450", "N2 EE 50-450");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-480", "N2 EE 50-480");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-510", "N2_EE_50-510");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-540", "N2 EE 50-540");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-570", "N2 EE 50-570");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-600", "N2 EE 50-600");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-630", "N2 EE 50-630");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-660", "N2 EE 50-660");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-690", "N2 EE 50-690");
+        DEVSTAGES_NAME_MAP.put("N2_EE_50-720", "N2 EE 50-720");
+        DEVSTAGES_NAME_MAP.put("EmMalesHIM8_EmMalesHIM8-2", "Embryo him-8(e1489) 20dC");
+        DEVSTAGES_NAME_MAP.put("N2_4cell_EE_RZ-56", "4 cell stage embryo");
+        DEVSTAGES_NAME_MAP.put("N2_E2-E8_sorted", "E2-E8 cells");
+        DEVSTAGES_NAME_MAP.put("N2_EE_DSN-51", "D1 early Embryo");
+        DEVSTAGES_NAME_MAP.put("EE", "early Embryo");
+        DEVSTAGES_NAME_MAP.put("N2_EE-2", "early Embryo EE-2");
+        DEVSTAGES_NAME_MAP.put("EE_N2_EE-2", "D1 early Embryo EE-2");
+        DEVSTAGES_NAME_MAP.put("N2_EE_RZ-54", "D2 early Embryo");
+        DEVSTAGES_NAME_MAP.put("LE", "late Embryo 20dC 4.5 hours post-early embryo");
+        DEVSTAGES_NAME_MAP.put("N2_LE-1", "D1 late Embryo 20dC 4.5 hours post-early embryo");
+        DEVSTAGES_NAME_MAP.put("LE_N2_LE-1", "D2 late Embryo 20dC 4.5 hours post-early embryo");
+        DEVSTAGES_NAME_MAP.put("L1", "mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("N2_L1-1", "D1 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L1_N2_L1-1", "D2 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("N2_L2_RZ-53", "mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("LIN35", "D3 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L2", "D1 mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("N2_L2-4", "D2 mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L2_N2_L2-4", "D3 mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L3", "mid-L3 20dC 25hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("N2_L3-1", "D1 mid-L3 20dC 25hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L3_N2_L3-1", "D2 mid-L3 20dC 25hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerEntryDAF2", "dauer entry daf-2(el370) 25dC 48 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerEntryDAF2-2", "D1 dauer entry daf-2(el370) 25dC 48 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerEntryDAF2-1-1", "D2 dauer entry daf-2(el370) 25dC 48 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerEntryDAF2-4-1", "D3 dauer entry daf-2(el370) 25dC 48 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerEntryDAF2_DauerEntryDAF2-2_DauerEntryDAF2-1-1_DauerEntryDAF2-4-1", "D4 dauer entry daf-2(el370) 25dC 48 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerDAF2", "D5 dauer daf-2(el370) 25dC 91hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerDAF2-2", "D6 dauer daf-2(el370) 25dC 91hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerDAF2-2-1", "D7 dauer daf-2(el370) 25dC 91hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerDAF2-5-1", "D8 dauer daf-2(el370) 25dC 91hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerDAF2_DauerDAF2-2_DauerDAF2-2-1_DauerDAF2-5-1", "D9 dauer daf-2(el370) 25dC 91hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DauerExitDAF2-2", "dauer exit daf-2(e1370) 25dC 91hrs 15dC 12hrs");
+        DEVSTAGES_NAME_MAP.put("DauerExitDAF2-3-1", "D1 dauer exit daf-2(e1370) 25dC 91hrs 15dC 12hrs");
+        DEVSTAGES_NAME_MAP.put("DauerExitDAF2-6-1", "D2 dauer exit daf-2(e1370) 25dC 91hrs 15dC 12hrs");
+        DEVSTAGES_NAME_MAP.put("DauerExitDAF2-2_DauerExitDAF2-3-1_DauerExitDAF2-6-1", "D3 dauer exit daf-2(e1370) 25dC 91hrs 15dC 12hrs");
+        DEVSTAGES_NAME_MAP.put("L4", "mid-L4 20dC 36hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L4b", "D1 mid-L4 20dC 36hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L4_L4b", "D2 mid-L4 20dC 36hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L4JK1107soma", "L4 soma JK1107 no DNaseI");
+        DEVSTAGES_NAME_MAP.put("L4JK1107soma-2", "D1 L4 soma JK1107 no DNaseI");
+        DEVSTAGES_NAME_MAP.put("L4JK1107soma_L4JK1107soma-2", "D2 L4 soma JK1107 no DNaseI");
+        DEVSTAGES_NAME_MAP.put("L4MALE", "Male larva mid-L4 25dC 30 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L4MALE5", "D1 Male larva mid-L4 25dC 30 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("L4MALE_L4MALE5", "D2 Male larva mid-L4 25dC 30 hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("YA", "Young Adult 20dC 42 hr post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("N2_Yad-1", "D1 Young Adult 20dC 42 hr post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("YA_N2_Yad-1", "D2 Young Adult 20dC 42 hr post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("N2_YA_RZ-1", "D1 Young Adult 20dC 42 hr post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("AdultSPE9", "Adult spe-9(hc88) 23dC 8 days post-L4 molt");
+        DEVSTAGES_NAME_MAP.put("PharyngealMuscle", "late Embryo 20dC 4.5 hours post-early embryo");
+        DEVSTAGES_NAME_MAP.put("DC-1-5", "Young Adult");
+        DEVSTAGES_NAME_MAP.put("DC-2-12", "D1 Young Adult");
+        DEVSTAGES_NAME_MAP.put("OPDC-2-12", "D2 Young Adult");
+        DEVSTAGES_NAME_MAP.put("EF-1-24", "D3 Young Adult");
+        DEVSTAGES_NAME_MAP.put("PL-2-24", "D4 Young Adult");
+        DEVSTAGES_NAME_MAP.put("Hsph", "D5 Young Adult");
+        DEVSTAGES_NAME_MAP.put("HsphEcoliCntl", "D6 Young Adult");
+        DEVSTAGES_NAME_MAP.put("SmacDb10", "D7 Young Adult");
+        DEVSTAGES_NAME_MAP.put("SmacDb10EcoliCntl", "D8 Young Adult");
+        DEVSTAGES_NAME_MAP.put("Harpo", "D9 Young Adult");
+        DEVSTAGES_NAME_MAP.put("HarpoEcoliCntl", "D10 Young Adult");
+        DEVSTAGES_NAME_MAP.put("DMM386-NSML_NSMR-nrn_L1", "mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM401_N2all_L1", "D1 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM402_N2all_L1", "D2 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM408_Amot_nrn_L2", "mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM414_Amot_nrn_L2", "D1 mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM415_Amot_nrn_L2", "D2 mid-L2 20dC 14hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DSN-Negative-Positive", "4 cell stage embryo");
+        DEVSTAGES_NAME_MAP.put("DMM387-NSML_NSMR-nrn_L1-V", "mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM383-all-nrn_L1-V", "D1 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM391-all-nrn_L1-V", "D2 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM401-N2all_L1-V", "D3 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("DMM402-N2all_L1-V", "D4 mid-L1 20dC 4hrs post-L1 stage larvae");
+        DEVSTAGES_NAME_MAP.put("AG1201", "Mixed Larval Stages Grown for 4-5 Days");
+    }
+
+
 
 }
