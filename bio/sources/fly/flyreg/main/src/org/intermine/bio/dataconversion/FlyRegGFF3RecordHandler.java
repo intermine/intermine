@@ -94,19 +94,25 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                         Arrays.asList(StringUtil.split(dbxref, ",")));
                 for (String ref : refList) {
                     ref = ref.trim();
+                    
+                    int colonIndex = ref.indexOf(":");
+                    if (colonIndex == -1) {
+                        throw new RuntimeException("external reference not understood: " + ref);
+                    }
+  
                     if (ref.startsWith("PMID:")) {
-                        pmid = ref.substring(5);
+                        pmid = ref.substring(colonIndex + 1);
                     } else {
                         if (ref.startsWith("REDfly:")) {
-                            redflyID = ref.substring(7);
+                            redflyID = ref.substring(colonIndex + 1);
                         }
                     }
                 }
             } else if (dbxref.startsWith("PMID:")) {
-                pmid = dbxref.substring(5);
+                pmid = dbxref.substring(dbxref.indexOf(":") + 1);
             } else {
                 if (dbxref.startsWith("REDfly:")) {
-                    redflyID = dbxref.substring(7);
+                    redflyID = dbxref.substring(dbxref.indexOf(":") + 1);
                 }
             }
         }
@@ -135,6 +141,11 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String factorGeneName = record.getAttributes().get("Factor") == null ? record
                 .getAttributes().get("factor").get(0)
                 : record.getAttributes().get("Factor").get(0);
+        if (factorGeneName.contains(":")) {
+            int colonIndex = factorGeneName.lastIndexOf(":");
+            factorGeneName = factorGeneName.substring(colonIndex + 1);
+        }
+
         if (!("unknown").equals(factorGeneName.toLowerCase())
                     && !("unspecified").equals(factorGeneName.toLowerCase())) {
             Item gene = getGene(factorGeneName);
@@ -146,6 +157,10 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String targetGeneName = record.getAttributes().get("Target") == null ? record
                 .getAttributes().get("target").get(0)
                 : record.getAttributes().get("Target").get(0);
+        if (targetGeneName.contains(":")) {
+            int colonIndex = targetGeneName.lastIndexOf(":");
+            targetGeneName = targetGeneName.substring(colonIndex + 1);
+        }
 
         if (!("unknown").equals(targetGeneName.toLowerCase())
                 && !("unspecified").equals(targetGeneName.toLowerCase())) {
