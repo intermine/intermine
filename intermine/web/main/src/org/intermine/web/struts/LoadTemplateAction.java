@@ -106,8 +106,8 @@ public class LoadTemplateAction extends DispatchAction
         SessionMethods.loadQuery(template, session, response);
         String qid = SessionMethods.startQueryWithTimeout(request, false, template);
         Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        return new ForwardParameters(mapping.findForward("waiting"))
-            .addParameter("qid", qid).forward();
+        return new ForwardParameters(mapping.findForward("results"))
+            .forward();
     }
 
     /**

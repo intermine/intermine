@@ -64,7 +64,7 @@ public class QueryBuilderViewAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, session.getId());
 
-        return new ForwardParameters(mapping.findForward("waiting"))
+        return new ForwardParameters(mapping.findForward("results"))
                             .addParameter("trail", "|query")
                             .addParameter("qid", qid)
                             .addParameter("queryBuilder", "true").forward();

@@ -158,9 +158,8 @@ public class ModifyBagDetailsAction extends InterMineAction
             String qid = SessionMethods.startQueryWithTimeout(request, false, q);
             Thread.sleep(200); // slight pause in the hope of avoiding holding page
             final String trail = "|bag." + imBag.getName();
-            return new ForwardParameters(mapping.findForward("waiting"))
-                               .addParameter("trail", trail)
-                               .addParameter("qid", qid).forward();
+            return new ForwardParameters(mapping.findForward("results"))
+                               .addParameter("trail", trail).forward();
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();
