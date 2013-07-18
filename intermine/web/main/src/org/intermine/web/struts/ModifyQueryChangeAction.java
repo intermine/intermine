@@ -121,7 +121,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         im.getTrackerDelegate().trackQuery(sq.getPathQuery().getRootClass(), profile,
                                            session.getId());
 
-        return new ForwardParameters(mapping.findForward("waiting"))
+        return new ForwardParameters(mapping.findForward("results"))
                     .addParameter("trail", trail)
                     .addParameter("qid", qid).forward();
     }

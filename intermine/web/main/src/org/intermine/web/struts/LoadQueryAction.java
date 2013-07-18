@@ -83,9 +83,8 @@ public class LoadQueryAction extends InterMineDispatchAction
             } else {
                 String qid = SessionMethods.startQueryWithTimeout(request, false, query);
                 Thread.sleep(200); // slight pause in the hope of avoiding holding page
-                return new ForwardParameters(mapping.findForward("waiting"))
-                                   .addParameter("trail", trail)
-                                   .addParameter("qid", qid).forward();
+                return new ForwardParameters(mapping.findForward("results"))
+                                   .addParameter("trail", trail).forward();
             }
         } else {
             PagedTable pt = null;
