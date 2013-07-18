@@ -6,6 +6,13 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
+
+    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
+      <property name="source.db.name" value="ensembl.9606.variation" />
+      <property name="organism" value="9606" />
+      <property name="sources" value="dbSNP" />
+    </source>
+
     <source name="ncbi-gene" type="ncbi-gene">
       <property name="src.data.dir" location="/micklem/data/ncbi/current/" />
       <property name="organisms" value="9606" />
@@ -26,6 +33,7 @@
       <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
 
+<!--
     <source name="arrayexpress-atlas-E-MEXP-2559" type="arrayexpress-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MEXP-2559/" />
     </source>
@@ -33,6 +41,8 @@
     <source name="arrayexpress-atlas" type="arrayexpress-atlas" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/" />
     </source>
+-->
+
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
@@ -132,11 +142,6 @@
       <property name="src.data.dir" location="/micklem/data/ensembl-compara/current" />
       <property name="ensemblcompara.organisms" value="9606 10090 10116" />
     </source>
-    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-      <property name="source.db.name" value="ensembl.9606.variation" />
-      <property name="organism" value="9606" />
-      <property name="sources" value="dbSNP" />
-    </source>
 
 <!--
     <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
@@ -155,7 +160,7 @@
       <property name="biopax.datasetname" value="Reactome data set" />
       <property name="biopax.curated" value="false" />
     </source>
-    <source name="huge-gwas" type="huge-gwas">
+    <source name="huge-gwas" type="huge-gwas" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
     <source name="update-publications" type="update-publications">
