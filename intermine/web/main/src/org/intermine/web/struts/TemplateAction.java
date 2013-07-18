@@ -261,9 +261,6 @@ public class TemplateAction extends InterMineAction
         }
         form.reset(mapping, request);
 
-        String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
-        Thread.sleep(200);
-
         //tracks the template execution
         im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(), profile,
                                               session.getId());
@@ -280,8 +277,8 @@ public class TemplateAction extends InterMineAction
             // session.removeAttribute(Constants.QUERY);
         }
 
-        return new ForwardParameters(mapping.findForward("waiting"))
-                .addParameter("qid", qid).addParameter("trail", trail)
+        return new ForwardParameters(mapping.findForward("results"))
+                .addParameter("trail", trail)
                 .forward();
     }
 

@@ -58,9 +58,7 @@ public class ColumnSummaryAction extends InterMineAction
         q.addView(summaryPath);
 
         SessionMethods.loadQuery(q, session, response);
-        String qid = SessionMethods.startQueryWithTimeout(request, false, q);
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        return new ForwardParameters(mapping.findForward("waiting"))
-            .addParameter("qid", qid).forward();
+        return new ForwardParameters(mapping.findForward("results"))
+            .forward();
     }
 }
