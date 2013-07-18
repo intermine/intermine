@@ -113,17 +113,9 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         }
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
-        String qid = SessionMethods.startQueryWithTimeout(request, false, sq.getPathQuery());
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-
-        //track the query execution
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        im.getTrackerDelegate().trackQuery(sq.getPathQuery().getRootClass(), profile,
-                                           session.getId());
-
-        return new ForwardParameters(mapping.findForward("waiting"))
+        return new ForwardParameters(mapping.findForward("results"))
                     .addParameter("trail", trail)
-                    .addParameter("qid", qid).forward();
+                    .forward();
     }
 
     /**
