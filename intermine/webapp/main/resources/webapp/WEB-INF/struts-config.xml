@@ -141,17 +141,17 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
-      <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="template" redirect="true" path="/template.do"/>
     </action>
     <action path="/loadQuery" type="org.intermine.web.struts.LoadQueryAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
-      <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="errors" redirect="true" path="/customQuery.do"/>
     </action>
     <action path="/loadTemplate" type="org.intermine.web.struts.LoadTemplateAction" parameter="method">
       <forward name="template" path="/template.do"/>
-      <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
     <action path="/begin" type="org.intermine.web.struts.BeginAction">
@@ -195,6 +195,7 @@
       <forward name="reportCollectionTable" path="/reportCollectionTable.jsp"/>
       <forward name="reportTemplateTable" path="/reportTemplateTable.jsp"/>
       <forward name="reportDisplayer" redirect="false" path="/reportDisplayer.jsp"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
     </action>
     <action path="/editTemplate" type="org.intermine.web.struts.EditTemplateAction">
       <forward name="query" redirect="true" path="/query.do"/>
@@ -211,8 +212,44 @@
     <action path="/addToBagAction" type="org.intermine.web.struts.AddToBagAction">
       <forward name="report" redirect="true" path="/report.do"/>
     </action>
+    <action path="/pollQuery" type="org.intermine.web.struts.PollQueryAction">
+      <!-- some kind of error in the action to do with session state or the request -->
+      <forward name="error" path="error.page"/>
+      <!-- problem running query -->
+      <forward name="failure" redirect="true" path="/query.do"/>
+      <!-- implicitly cancelled by user -->
+      <forward name="cancelled" redirect="true" path="/query.do"/>
+      <!-- forward to results page -->
+      <forward name="results" path="/results.do"/>
+      <!-- continue waiting -->
+      <forward name="waiting" path="waiting.page"/>
+    </action>
+    <action path="/pollTemplateQuery" type="org.intermine.web.struts.PollQueryAction">
+      <!-- some kind of error in the action to do with session state or the request -->
+      <forward name="error" path="error.page"/>
+      <!-- problem running query -->
+      <forward name="failure" path="error.page"/>
+      <!-- implicitly cancelled by user -->
+      <forward name="cancelled" path="error.page"/>
+      <!-- forward to results page -->
+      <forward name="results" redirect="true" path="/results.do"/>
+      <!-- continue waiting -->
+      <forward name="waiting" path="waiting.page"/>
+    </action>
+    <action path="/pollBrowseQuery" type="org.intermine.web.struts.PollQueryAction" parameter="followSingleResult">
+      <!-- some kind of error in the action to do with session state or the request -->
+      <forward name="error" path="error.page"/>
+      <!-- problem running query -->
+      <forward name="failure" path="error.page"/>
+      <!-- implicitly cancelled by user -->
+      <forward name="cancelled" path="error.page"/>
+      <!-- forward to results page -->
+      <forward name="results" redirect="true" path="/results.do"/>
+      <!-- continue waiting -->
+      <forward name="waiting" path="waiting.page"/>
+    </action>
     <action path="/queryBuilderViewAction" name="emptyForm" type="org.intermine.web.struts.QueryBuilderViewAction">
-            <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="false" path="/pollQuery.do"/>
     </action>
     <action path="/createTemplate" name="templateSettingsForm" type="org.intermine.web.struts.CreateTemplateAction" validate="false">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
@@ -226,7 +263,7 @@
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/templateAction" name="templateForm" type="org.intermine.web.struts.TemplateAction" input="template" parameter="action">
-            <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
       <forward name="query" path="query.page"/>
       <forward name="template" path="template.page"/>
       <forward name="serviceLink" path="/serviceLink.do" redirect="false"/>
@@ -246,7 +283,7 @@
       <forward name="contact" path="contact.page"/>
     </action>
     <action path="/widgetAction" name="widgetForm" type="org.intermine.web.struts.WidgetAction">
-            <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
     <action path="/modifyQuery" name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryAction" scope="request" input="history" parameter="action">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
@@ -329,6 +366,7 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="errors" redirect="true" path="/bag.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
     </action>
     <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
@@ -348,6 +386,7 @@
     </action>
     <action path="/columnSummary" type="org.intermine.web.struts.ColumnSummaryAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/bagResultsTable" type="org.intermine.web.struts.BagDetailsAction">
@@ -357,6 +396,7 @@
       <forward name="failure" path="error.page"/>
       <forward name="report" path="/report.do"/>
       <forward name="bagDetails" path="/bagDetails.do"/>
+      <forward name="waiting" redirect="true" path="/pollBrowseQuery.do"/>
       <forward name="results" path="/results.do"/>
       <forward name="noResults" path="/noResults.do"/>
     </action>
