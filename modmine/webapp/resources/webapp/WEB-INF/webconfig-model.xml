@@ -724,7 +724,6 @@
                      types="Gene,Protein"/>
 
 	<reportdisplayer
-<!--		javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer" -->
 		javaClass="org.intermine.bio.web.displayer.DrosophilaHomologueDisplayer"
 		jspName="model/drosophilaHomologueDisplayer.jsp" replacesFields=""
 		placement="Genomics"
