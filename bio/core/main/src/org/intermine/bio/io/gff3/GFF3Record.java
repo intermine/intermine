@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A class that represents one line of a GFF3 file.  Some of this code is
@@ -146,8 +147,9 @@ public class GFF3Record
 
     private void parseAttribute(String argAttributeString, String line) throws IOException {
         String attributeString = argAttributeString;
-        attributeString = XmlUtil.fixEntityNames(
-                URLDecoder.decode(attributeString, "UTF-8")).trim();
+        attributeString = StringUtils.replaceEach(attributeString,
+                new String[] { "&amp;", "&quot;", "&lt;", "&gt;" },
+                new String[] { "&", "\"", "<", ">" });
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
         while (sTok.hasMoreTokens()) {
