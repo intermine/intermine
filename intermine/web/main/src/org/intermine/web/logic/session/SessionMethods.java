@@ -473,6 +473,7 @@ public final class SessionMethods
      * @param pathQuery query to start
      * @return the new query id created
      */
+    @Deprecated
     public static String startQueryWithTimeout(
             final HttpServletRequest request,
             final boolean saveQuery,
@@ -496,6 +497,7 @@ public final class SessionMethods
      * @param pathQuery query to start
      * @return the new query id created
      */
+    @Deprecated
     public static String startQuery(final QueryMonitor monitor,
                                     final HttpSession session,
                                     final MessageResources messages,
@@ -563,6 +565,22 @@ public final class SessionMethods
     }
 
     /**
+     * Before running a query via web services, add to query history
+     * and add a track
+     * @param session User's session
+     */
+    public static void logQuery(final HttpSession session) throws PathException {
+        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        PathQuery pathQuery = SessionMethods.getQuery(session).clone();
+        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, 
+        		session.getId());
+        String queryName = NameUtil.findNewQueryName(
+        		profile.getHistory().keySet());
+        SessionMethods.saveQueryToHistory(session, queryName, pathQuery);
+    }
+    
+    /**
      * Start a query running in the background that will return the row count of the collection.
      * A new query id will be created and added to the RUNNING_QUERIES session attribute.
      * That attribute is a Map from query id to QueryMonitor.  A Thread will be created to
@@ -573,6 +591,7 @@ public final class SessionMethods
      * @param messages messages resources (for messages and errors)
      * @return the new query id
      */
+    @Deprecated
     public static String startPagedTableCount(final PageTableQueryMonitor monitor,
                                               final HttpSession session,
                                               final MessageResources messages) {
@@ -645,6 +664,7 @@ public final class SessionMethods
      * @param messages messages resources (for messages and errors)
      * @return the new query id created
      */
+    @Deprecated
     public static String startQueryCount(final QueryCountQueryMonitor monitor,
                                          final HttpSession session,
                                          final MessageResources messages) {
@@ -702,6 +722,7 @@ public final class SessionMethods
      * @param session the users session
      * @return QueryMonitor registered to the query id
      */
+    @Deprecated
     public static QueryMonitor getRunningQueryController(String qid, HttpSession session) {
         synchronized (session) {
             Map<String, QueryMonitor> queries = getRunningQueries(session);
@@ -717,6 +738,7 @@ public final class SessionMethods
      * @param identifier table identifier
      * @return PagedTable identified by identifier
      */
+    @Deprecated
     public static PagedTable getResultsTable(HttpSession session, String identifier) {
         Map<?, ?> tables = (Map<?, ?>) session.getAttribute(Constants.TABLE_MAP);
         if (tables != null) {
