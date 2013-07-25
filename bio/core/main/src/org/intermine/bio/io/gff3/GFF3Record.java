@@ -146,6 +146,8 @@ public class GFF3Record
 
     private void parseAttribute(String argAttributeString, String line) throws IOException {
         String attributeString = argAttributeString;
+        attributeString = XmlUtil.fixEntityNames(
+                URLDecoder.decode(attributeString, "UTF-8")).trim();
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
         while (sTok.hasMoreTokens()) {
