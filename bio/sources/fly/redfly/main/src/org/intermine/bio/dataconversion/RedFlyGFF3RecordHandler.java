@@ -75,15 +75,17 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             feature.setAttribute("evidenceMethod", elementEvidence);
         }
 
-        List<String> ontologyTermIds = record.getAttributes().get("Ontology_term");
-
-        if (ontologyTermIds != null) {
-            Iterator<String> ontologyTermIdsIter = ontologyTermIds.iterator();
+        // unlikely to be more than one but I am leaving this
+        List<String> ontologyTerm = record.getAttributes().get("Ontology_term");
+        if (ontologyTerm != null) {
             List<String> anatomyItems = new ArrayList<String>();
-
-            while (ontologyTermIdsIter.hasNext()) {
-                String ontologyTermId = ontologyTermIdsIter.next();
-                anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
+            // string is a quoted list
+            for (String commaListOfIds : ontologyTerm) {
+            	List<String> ontologyTermIds = new ArrayList<String>(
+            			Arrays.asList(StringUtil.split(commaListOfIds, ",")));
+                for (String ontologyTermId : ontologyTermIds) {
+                	anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
+                }
             }
 
             feature.setCollection("anatomyOntology", anatomyItems);
@@ -100,53 +102,33 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             Iterator<String> dbxrefsIter = dbxrefs.iterator();
 
             while (dbxrefsIter.hasNext()) {
-                String dbxref = dbxrefsIter.next();
-                if (dbxref.contains(",")) {
-                    List<String> refList = new ArrayList<String>(
-                            Arrays.asList(StringUtil.split(dbxref, ",")));
-                    for (String ref : refList) {
-                        ref = ref.trim();
-                        int colonIndex = ref.indexOf(":");
-                        if (colonIndex == -1) {
-                            throw new RuntimeException("external reference not understood: " + ref);
-                        }
+            	String dbxref = dbxrefsIter.next();
 
-                        if (ref.startsWith("FB:")) {
-                            geneName = ref.substring(colonIndex + 1);
-                        } else {
-                            if (ref.startsWith("PMID:")) {
-                                pubmedId = ref.substring(colonIndex + 1);
-                            } else {
-                                if (ref.startsWith(REDFLY_PREFIX)) {
-                                    redflyID = ref.substring(colonIndex + 1);
-                                } else {
-                                    throw new RuntimeException("unknown external reference type: "
-                                            + ref);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    int colonIndex = dbxref.indexOf(":");
-                    if (colonIndex == -1) {
-                        throw new RuntimeException("external reference not understood: " + dbxref);
-                    }
+            	List<String> refList = new ArrayList<String>(
+            			Arrays.asList(StringUtil.split(dbxref, ",")));
+            	for (String ref : refList) {
+            		ref = ref.trim();
+            		int colonIndex = ref.indexOf(":");
+            		if (colonIndex == -1) {
+            			throw new RuntimeException("external reference not understood: " + ref);
+            		}
 
-                    if (dbxref.startsWith("Flybase:")) {
-                        geneName = dbxref.substring(colonIndex + 1);
-                    } else {
-                        if (dbxref.startsWith("PMID:")) {
-                            pubmedId = dbxref.substring(colonIndex + 1);
-                        } else {
-                            if (dbxref.startsWith(REDFLY_PREFIX)) {
-                                redflyID = dbxref.substring(colonIndex + 1);
-                            } else {
-                                throw new RuntimeException("unknown external reference type: "
-                                        + dbxref);
-                            }
-                        }
-                    }
-                }
+            		if (ref.startsWith("FB:")) {
+            			geneName = ref.substring(colonIndex + 1);
+            		} else {
+            			if (ref.startsWith("PMID:")) {
+            				pubmedId = ref.substring(colonIndex + 1);
+            			} else {
+            				if (ref.startsWith(REDFLY_PREFIX)) {
+            					redflyID = ref.substring(colonIndex + 1);
+            				} else {
+            					throw new RuntimeException("unknown external reference type: "
+            							+ ref);
+            				}
+            			}
+            		}
+            	}
+
             }
         }
 
