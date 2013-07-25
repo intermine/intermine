@@ -64,6 +64,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
+@Deprecated
 public class PagedTable
 {
     private static final int FIRST_SELECTED_FIELDS_COUNT = 25;

@@ -104,6 +104,7 @@ public class LoadTemplateAction extends DispatchAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TemplateQuery template = parseTemplate(request, im);
         SessionMethods.loadQuery(template, session, response);
+        SessionMethods.logQuery(request.getSession());
         return new ForwardParameters(mapping.findForward("results"))
             .forward();
     }
