@@ -81,6 +81,7 @@ public class LoadQueryAction extends InterMineDispatchAction
             if (!skipBuilder.booleanValue()) {
                 return mapping.findForward("query");
             } else {
+                SessionMethods.logQuery(request.getSession());
                 return new ForwardParameters(mapping.findForward("results"))
                                    .addParameter("trail", trail)
                                    .forward();

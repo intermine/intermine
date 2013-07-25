@@ -49,6 +49,7 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.util.NameUtil;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
 import org.intermine.util.StringUtil;
@@ -277,6 +278,11 @@ public class TemplateAction extends InterMineAction
             // session.removeAttribute(Constants.QUERY);
         }
 
+        String queryName = NameUtil.findNewQueryName(
+        		profile.getHistory().keySet());
+        SessionMethods.saveQueryToHistory(session, queryName, 
+        		populatedTemplate.getQueryToExecute());
+        
         return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("trail", trail)
                 .forward();
