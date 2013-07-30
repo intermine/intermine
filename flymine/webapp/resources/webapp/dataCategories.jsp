@@ -90,6 +90,7 @@
     </td>
      <td>Orthologue and paralogue relationships between these 8 organisms</td>
     <td><a href="http://www.pantherdb.org" target="_new" class="extlink">Panther</a> - 10 Jul 2013</td>
+    <td>Mi et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/23193289 " target="_new" class="extlink">PubMed: 23193289</a></td>
     <td> &nbsp; </td>
     <td> &nbsp; </td>
   </tr>
@@ -106,7 +107,7 @@
         <p><i>S. cerevisiae</i></p>
     </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2013_04</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2013_07</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new" class="extlink">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
