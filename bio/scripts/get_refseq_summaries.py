@@ -53,7 +53,7 @@ def fetch_summaries(all_gene_ids, output, batch_size):
 	
 	for gene_ids in [all_gene_ids[offset:offset + batch_size] for offset in range(0, len(all_gene_ids), batch_size)]:
                 # NCBI requires no more than three requests per second
-		time.sleep(0.5)
+		time.sleep(1)
 		fetch_summary(gene_ids, parser, output)
 	
 
