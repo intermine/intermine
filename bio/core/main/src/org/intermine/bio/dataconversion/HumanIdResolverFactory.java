@@ -36,7 +36,7 @@ public class HumanIdResolverFactory extends IdResolverFactory
     private final String taxonId = "9606";
 
     private static final String HGNC_PREFIX = "HGNC:";
-    private static final String ENSEMBL_GENE_PREFIX = "ENSG";
+    private static final String OMIM_PREFIX = "OMIM:";
 
     /**
      * Construct without SO term of the feature type.
@@ -91,29 +91,28 @@ public class HumanIdResolverFactory extends IdResolverFactory
     }
 
     protected void createFromFile(File f) throws IOException {
-        // Ensembl Id | NCBI Id | HGNC Id | HGNC symbol
+        // Approved Symbol\tHGNC ID\tEntrez Gene ID\tEnsembl ID\tOMIM ID
         Iterator<?> lineIter = FormattedTextParser
                 .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
-            String ensembl = line[0];
-            String entrez = line[1];
-            String hgnc = line[2];
-            String symbol = line[3];
+            String symbol = line[0];
+            String hgnc = line[1];
+            String entrez = line[2];
+            String ensembl = line[3];
+            String omim = line[4];
 
-            if (ensembl.startsWith(ENSEMBL_GENE_PREFIX)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
-                if (!StringUtils.isEmpty(entrez)) {
-                    resolver.addMainIds(taxonId, ensembl, Collections.singleton(entrez));
-                }
-                if (!StringUtils.isEmpty(hgnc)) {
-                    resolver.addMainIds(taxonId, ensembl,
-                            Collections.singleton(HGNC_PREFIX + hgnc));
-                }
-                if (!StringUtils.isEmpty(symbol)) {
-                    resolver.addMainIds(taxonId, ensembl, Collections.singleton(symbol));
-                }
+            resolver.addMainIds(taxonId, symbol, Collections.singleton(symbol));
+            resolver.addMainIds(taxonId, symbol, Collections.singleton(HGNC_PREFIX + hgnc));
+            if (!StringUtils.isEmpty(entrez)) {
+                resolver.addMainIds(taxonId, symbol, Collections.singleton(entrez));
+            }
+            if (!StringUtils.isEmpty(ensembl)) {
+                resolver.addMainIds(taxonId, symbol, Collections.singleton(ensembl));
+            }
+            if (!StringUtils.isEmpty(omim)) {
+                resolver.addMainIds(taxonId, symbol, Collections.singleton(OMIM_PREFIX + omim));
             }
         }
     }
