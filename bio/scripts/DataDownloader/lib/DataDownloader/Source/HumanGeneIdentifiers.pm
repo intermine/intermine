@@ -28,6 +28,12 @@ use constant BIOMART_QUERY => q{<?xml version="1.0" encoding="UTF-8"?>
         <Attribute name = "md_eg_id" />
         <Attribute name = "md_ensembl_id" />
         <Attribute name = "md_mim_id" />
+        <Attribute name = "gd_app_name" />
+        <Attribute name = "gd_prev_sym" />
+        <Attribute name = "gd_prev_name" />
+        <Attribute name = "gd_name_aliases" />
+        <Attribute name = "gd_aliases" />
+        <Attribute name = "gd_pub_chrom_map" />
     </Dataset>
 </Query>
 };
