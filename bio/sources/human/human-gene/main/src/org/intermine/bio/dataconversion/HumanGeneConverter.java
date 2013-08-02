@@ -82,6 +82,14 @@ public class HumanGeneConverter extends BioFileConverter
                 gene.setAttribute("primaryIdentifier", hgncid);
             }
 
+            // HACK: in HGNC, MIR3150A and MIR3150B are mapped to the same gene in Ensembl
+            // ENSG00000265256, but in Ensembl, MIR3150A is resolved as MIR3150B
+            if ("MIR3150A".equals(symbol)) {
+                gene.setAttribute("primaryIdentifier", hgncid);
+                createCrossReference(gene.getIdentifier(), ensemblid, "Ensembl", true);
+            }
+            // END of Hack
+
             gene.setAttribute("symbol", symbol);
 
             if (!name.isEmpty()) {
