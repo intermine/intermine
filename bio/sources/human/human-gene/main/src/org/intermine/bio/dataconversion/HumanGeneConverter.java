@@ -11,7 +11,9 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -34,6 +36,8 @@ public class HumanGeneConverter extends BioFileConverter
     private static final String NCBI_PREFIX = "Entrez Gene:";
 
     protected static final Logger LOG = Logger.getLogger(HumanGeneConverter.class);
+
+    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1");
 
     /**
      * Constructor
@@ -83,8 +87,8 @@ public class HumanGeneConverter extends BioFileConverter
             }
 
             // HACK: in HGNC, MIR3150A and MIR3150B are mapped to the same gene in Ensembl
-            // ENSG00000265256, but in Ensembl, MIR3150A is resolved as MIR3150B
-            if ("MIR3150A".equals(symbol)) {
+            // ENSG00000265256, but in Ensembl, MIR3150A is resolved as MIR3150B. And there are more
+            if (symboldupEnsemblIdList.contains(symbol)) {
                 gene.setAttribute("primaryIdentifier", hgncid);
                 createCrossReference(gene.getIdentifier(), ensemblid, "Ensembl", true);
             }
