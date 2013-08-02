@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="SequenceFeature" is-interface="true">
+    <attribute name="cytoLocation" type="java.lang.String"/>
+  </class>
+</classes>
