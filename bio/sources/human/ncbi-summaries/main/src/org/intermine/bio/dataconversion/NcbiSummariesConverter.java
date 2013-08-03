@@ -64,7 +64,13 @@ public class NcbiSummariesConverter extends BioFileConverter
                 LOG.error("description " + count++ + " " + description);
                 if (!StringUtils.isBlank(description)) {
                     Item gene = createItem("Gene");
-                    gene.setAttribute("symbol", resolveGene(entrez));
+                    if (resolveGene(entrez) == null) {
+                        LOG.warn("Unresolved Entrez gene: " + entrez);
+                        continue;
+                    } else {
+                        gene.setAttribute("symbol", resolveGene(entrez));
+                    }
+
                     gene.setAttribute("description", description);
                     gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
                     store(gene);
