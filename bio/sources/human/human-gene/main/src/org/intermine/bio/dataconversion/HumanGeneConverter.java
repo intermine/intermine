@@ -37,7 +37,12 @@ public class HumanGeneConverter extends BioFileConverter
 
     protected static final Logger LOG = Logger.getLogger(HumanGeneConverter.class);
 
-    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1");
+    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1", 
+        "MIR4679-1", "MIR3190", "MIR3119-1", "MIR3116-2", "MIR3065", "MIR3199-1", 
+        "ZNF559-ZNF177", "MIR548AA2", "MIR548AA1", "KIR2DL2", "RNA18S5", "MIR3158-2",
+        "MIR3130-1", "MIR4662A", "MIR3688-1", "MIR3913-2", "MIR4520A", "MIR4773-1",
+        "MIR3160-1", "MIR3622B", "MIR4524A", "MIR4477B", "MIR4659A", "MIR3926-1",
+        "MIR3910-1");
 
     /**
      * Constructor
