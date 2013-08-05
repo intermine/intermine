@@ -3,5 +3,5 @@
   <class name="OntologyTerm" is-interface="true">
     <collection name="crossReferences" referenced-type="OntologyTerm" />
   </class>
-  <class name="PhenotypeTerm" extends="OntologyTerm" is-interface="true"></class>
+  <class name="HPOTerm" extends="OntologyTerm" is-interface="true"></class>
 </classes>
