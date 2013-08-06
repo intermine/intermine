@@ -11,7 +11,7 @@
       <property name="src.data.dir.includes" value="9606.xml" />
     </source>
     <source name="human-gene" type="human-gene">
-      <property name="src.data.dir" location="/micklem/data/human/identifiers/current/" />
+      <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
     </source>
     <source name="ncbi-summaries" type="ncbi-summaries">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
@@ -63,8 +63,15 @@
       <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic" />
       <property name="src.data.includes" value="**/gene_association*" />
     </source>
+    <source name="omim" type="omim">
+      <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
+    </source>
     <source name="hpo" type="hpo">
       <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
+    </source>
+    <source name="hpo-annotation" type="hpo-annotation">
+      <property name="ontologyfile" location="/micklem/data/hpo/hp.obo" />
+      <property name="src.data.dir" location="/micklem/data/hpo" />
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
@@ -79,9 +86,6 @@
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />
       <property name="src.data.dir.includes" value="gene2pubmed" />
-    </source>
-    <source name="omim" type="omim">
-      <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
     </source>
     <source name="ensembl-mouse" type="ensembl-core" dump="true">
       <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core" />
