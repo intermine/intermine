@@ -70,7 +70,6 @@
       <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
     </source>
     <source name="hpo-annotation" type="hpo-annotation">
-      <property name="ontologyfile" location="/micklem/data/hpo/hp.obo" />
       <property name="src.data.dir" location="/micklem/data/hpo" />
     </source>
     <source name="psi-intact" type="psi" dump="true">
