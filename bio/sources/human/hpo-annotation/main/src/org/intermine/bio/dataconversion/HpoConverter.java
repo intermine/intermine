@@ -186,7 +186,7 @@ public class HpoConverter extends BioDirectoryConverter
         if (hpoTermMap.get(hpoTerm) == null) {
             Item item = createItem("HPOTerm");
             item.setAttribute("identifier", hpoTerm);
-            item.setReference("", ontologyItemId);
+            item.setReference("ontology", ontologyItemId);
             hpoTermMap.put(hpoTerm, item.getIdentifier());
             store(item);
         }
