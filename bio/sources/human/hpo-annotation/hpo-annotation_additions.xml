@@ -1,9 +1,15 @@
 <?xml version="1.0"?>
 <classes>
+    <class name="Ontology" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="url" type="java.lang.String"/>
+    </class>
     <class name="HPOAnnotation" extends="OntologyAnnotation" is-interface="true">
       <collection name="evidence" referenced-type="HPOEvidence"/>
     </class>
-    <class name="HPOTerm" extends="OntologyTerm" is-interface="true"/>
+    <class name="HPOTerm" extends="OntologyTerm" is-interface="true">
+        <reference name="ontology" referenced-type="Ontology"/>
+    </class>
     <class name="Disease" is-interface="true">
       <attribute name="identifier" type="java.lang.String"/>
       <collection name="hpoAnnotation" referenced-type="HPOAnnotation"/>
