@@ -155,7 +155,7 @@ public class HpoConverter extends BioDirectoryConverter
                 if (!infoBits[0].isEmpty()) {
                     annoItem.setAttribute("qualifier", infoBits[0]);
                 }
-                annoItem.setReference("HPOTerm", hpoTermMap.get(infoBits[1]));
+                annoItem.setReference("hpoTerm", hpoTermMap.get(infoBits[1]));
                 annoItem.setCollection("evidence", Arrays.asList(eviItem.getIdentifier()));
                 annoRefIds.add(annoItem.getIdentifier());
                 store(annoItem);
