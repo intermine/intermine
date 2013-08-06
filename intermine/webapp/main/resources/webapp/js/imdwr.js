@@ -791,6 +791,7 @@ function validateBagName(formName) {
 
     AjaxServices.validateBagName(bagName, function(errMsg) {
         if (errMsg != '') {
+            jQuery('#bigGreen').removeClass('clicked');
             var newError = jQuery('<div class="error-message">' + errMsg + "</div>");
             var errorContainer = jQuery('#error_msg');
             errorContainer.fadeOut('fast', function() {
