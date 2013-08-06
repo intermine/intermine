@@ -32,7 +32,7 @@ import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to parse a HPO annotation file into Items.
- * *
+ *
  * @author Fengyuan Hu
  */
 public class HpoConverter extends BioDirectoryConverter
@@ -53,6 +53,7 @@ public class HpoConverter extends BioDirectoryConverter
     private Map<String, String> hpoTermMap = new HashMap<String, String>();
     private Map<String, String> diseaseMap = new HashMap<String, String>();
     private Map<String, String> publicationMap = new HashMap<String, String>();
+    private String ontologyItemId = null;
 
     /**
      * Constructor
@@ -80,6 +81,7 @@ public class HpoConverter extends BioDirectoryConverter
                     + dataDir.getAbsolutePath() + ", was missing " + missingFiles);
         }
 
+        ontologyItemId = storeOntology();
         processAnnoFile(new FileReader(files.get(HPOTEAM_FILE)));
         processAnnoFile(new FileReader(files.get(NEG_FILE)));
     }
@@ -92,7 +94,7 @@ public class HpoConverter extends BioDirectoryConverter
         return files;
     }
 
-    private void processAnnoFile(Reader reader) throws IOException, ObjectStoreException {
+    protected void processAnnoFile(Reader reader) throws IOException, ObjectStoreException {
 
 //        initialiseMapsForFile();
 
@@ -150,7 +152,9 @@ public class HpoConverter extends BioDirectoryConverter
 
                 // Create HPOAnnotation item
                 Item annoItem = createItem("HPOAnnotation");
-                annoItem.setAttribute("qualifier", infoBits[0]);
+                if (!infoBits[0].isEmpty()) {
+                    annoItem.setAttribute("qualifier", infoBits[0]);
+                }
                 annoItem.setReference("HPOTerm", hpoTermMap.get(infoBits[1]));
                 annoItem.setCollection("evidence", Arrays.asList(eviItem.getIdentifier()));
                 annoRefIds.add(annoItem.getIdentifier());
@@ -158,6 +162,14 @@ public class HpoConverter extends BioDirectoryConverter
             }
             storeDisease(dbId, annoRefIds);
         }
+    }
+
+    private String storeOntology() throws ObjectStoreException {
+        Item item = createItem("Ontology");
+        item.setAttribute("name", "Human Phenotype Ontology");
+        item.setAttribute("url", "http://www.human-phenotype-ontology.org");
+        store(item);
+        return item.getIdentifier();
     }
 
     private void storeDisease(String dbId, List<String> annoRefIds) throws ObjectStoreException {
@@ -174,6 +186,7 @@ public class HpoConverter extends BioDirectoryConverter
         if (hpoTermMap.get(hpoTerm) == null) {
             Item item = createItem("HPOTerm");
             item.setAttribute("identifier", hpoTerm);
+            item.setReference("", ontologyItemId);
             hpoTermMap.put(hpoTerm, item.getIdentifier());
             store(item);
         }
