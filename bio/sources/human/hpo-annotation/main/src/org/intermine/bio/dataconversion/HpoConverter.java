@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -142,12 +143,16 @@ public class HpoConverter extends BioDirectoryConverter
             for (String[] infoBits : diseaseToAnnoMap.get(dbId)) {
                 // Create Evidence item
                 Item eviItem = createItem("HPOEvidence");
-                eviItem.setAttribute("source", infoBits[2]);
-                eviItem.setReference("code", eviMap.get(infoBits[3]));
-                if (infoBits[2].toUpperCase().startsWith("PMID")) {
-                    eviItem.setCollection("publications",
-                            Arrays.asList(storePublication(infoBits[2])));
+                if (infoBits[2].isEmpty()) {
+                    // DB reference field is empty as assigned by HPO:curators
+                    eviItem.setAttribute("source", "HPO:curators");
+                } else {
+                    eviItem.setAttribute("source", infoBits[2]);
+                    if (infoBits[2].toUpperCase().startsWith("PMID")) {
+                        eviItem.setCollection("publications", storePublication(infoBits[2]));
+                    }
                 }
+                eviItem.setReference("code", eviMap.get(infoBits[3]));
                 store(eviItem);
 
                 // Create HPOAnnotation item
@@ -201,20 +206,23 @@ public class HpoConverter extends BioDirectoryConverter
         }
     }
 
-    private String storePublication(String ref) throws ObjectStoreException {
-        String pubItemId = null;
-        Item item = null;
-        String pubMedId = ref.substring(5);
-        if (StringUtil.allDigits(pubMedId)) {
-            pubItemId = publicationMap.get(pubMedId);
-            if (pubItemId == null) {
-                item = createItem("Publication");
-                item.setAttribute("pubMedId", pubMedId);
-                pubItemId = item.getIdentifier();
-                publicationMap.put(pubMedId, pubItemId);
-                store(item);
+    private List<String> storePublication(String ref) throws ObjectStoreException {
+        List<String> pubItemIdList = new ArrayList<String>();
+        String[] pubs = StringUtils.split(ref, ";");
+        for (String pub : pubs) {
+            String pubMedId = pub.trim().substring(5);
+            if (StringUtil.allDigits(pubMedId)) {
+                String pubItemId = publicationMap.get(pubMedId);
+                if (pubItemId == null) {
+                    Item item = createItem("Publication");
+                    item.setAttribute("pubMedId", pubMedId);
+                    pubItemId = item.getIdentifier();
+                    publicationMap.put(pubMedId, pubItemId);
+                    store(item);
+                }
+                pubItemIdList.add(pubItemId);
             }
         }
-        return pubItemId;
+        return pubItemIdList;
     }
 }
