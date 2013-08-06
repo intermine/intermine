@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<classes>
+    <class name="HPOAnnotation" extends="OntologyAnnotation" is-interface="true">
+      <collection name="evidence" referenced-type="HPOEvidence"/>
+    </class>
+    <class name="HPOTerm" extends="OntologyTerm" is-interface="true"/>
+    <class name="Disease" is-interface="true">
+      <attribute name="identifier" type="java.lang.String"/>
+      <collection name="hpoAnnotation" referenced-type="HPOAnnotation"/>
+    </class>
+    <class name="HPOEvidenceCode" is-interface="true">
+      <attribute name="code" type="java.lang.String" />
+    </class>
+    <class name="HPOEvidence" is-interface="true">
+      <attribute name="source" type="java.lang.String"/>
+      <reference name="code" referenced-type="GOEvidenceCode"/>
+      <collection name="publications" referenced-type="Publication"/>
+      <collection name="with" referenced-type="BioEntity"/>
+    </class>
+</classes>
