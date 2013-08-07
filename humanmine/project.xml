@@ -21,6 +21,9 @@
       <property name="organism" value="9606" />
       <property name="sources" value="dbSNP" />
     </source>
+    <source name="huge-gwas" type="huge-gwas">
+      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
+    </source>
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
@@ -119,12 +122,9 @@
       <property name="biopax.datasetname" value="Reactome data set" />
       <property name="biopax.curated" value="false" />
     </source>
-    <source name="panther" type="panther">
+    <source name="panther" type="panther" dump="true">
           <property name="src.data.dir" location="/micklem/data/panther/current"/>
           <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
-    </source>
-    <source name="huge-gwas" type="huge-gwas" dump="true">
-      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml" />
