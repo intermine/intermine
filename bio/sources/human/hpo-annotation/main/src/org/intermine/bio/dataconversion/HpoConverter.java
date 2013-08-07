@@ -49,10 +49,11 @@ public class HpoConverter extends BioDirectoryConverter
     private static final String HPOTEAM_FILE = "phenotype_annotation_hpoteam.tab";
     private static final String NEG_FILE = "negative_phenotype_annotation.tab";
 
-    private Map<Item, List<String[]>> diseaseToAnnoMap = new HashMap<Item, List<String[]>>();
+    private Map<String, List<String[]>> diseaseToAnnoMap = new HashMap<String, List<String[]>>();
     private Map<String, String> eviMap = new HashMap<String, String>();
     private Map<String, String> hpoTermMap = new HashMap<String, String>();
-    private Map<String, Item> diseaseMap = new HashMap<String, Item>();
+    private Map<String, String> diseaseMap = new HashMap<String, String>();
+    private Map<String, String> diseaseIdNameMap = new HashMap<String, String>();
     private Map<String, String> publicationMap = new HashMap<String, String>();
     private String ontologyItemId = null;
 
@@ -120,29 +121,35 @@ public class HpoConverter extends BioDirectoryConverter
 
             String dbId = db + ":" + array[1];
             String dbName = array[2];
+            if (!dbName.isEmpty()) {
+                if (dbName.startsWith("#")) {
+                    dbName = dbName.substring(dbName.indexOf(" "));
+                    diseaseIdNameMap.put(dbId, dbName);
+                }
+            }
+
             String qualifier = array[3];
             String hpoId = array[4];
             String dbRef = array[5];
             String strEvidence = array[6];
 
-            Item diseaseItem = createDisease(dbId, dbName);
             storeHpoTerm(hpoId);
             storeEvidenceCode(strEvidence);
 
             String[] annoInfo = {qualifier, hpoId, dbRef, strEvidence};
 
-            if (diseaseToAnnoMap.get(diseaseItem) == null) {
+            if (diseaseToAnnoMap.get(dbId) == null) {
                 List<String[]> annoInfoList = new ArrayList<String[]>();
                 annoInfoList.add(annoInfo);
-                diseaseToAnnoMap.put(diseaseItem, annoInfoList);
+                diseaseToAnnoMap.put(dbId, annoInfoList);
             } else {
-                diseaseToAnnoMap.get(diseaseItem).add(annoInfo);
+                diseaseToAnnoMap.get(dbId).add(annoInfo);
             }
         }
 
-        for (Item diseaseItem : diseaseToAnnoMap.keySet()) {
+        for (String dbId : diseaseToAnnoMap.keySet()) {
             List<String> annoRefIds = new ArrayList<String>();
-            for (String[] infoBits : diseaseToAnnoMap.get(diseaseItem)) {
+            for (String[] infoBits : diseaseToAnnoMap.get(dbId)) {
                 // Create Evidence item
                 Item eviItem = createItem("HPOEvidence");
                 if (infoBits[2].isEmpty()) {
@@ -167,8 +174,7 @@ public class HpoConverter extends BioDirectoryConverter
                 annoRefIds.add(annoItem.getIdentifier());
                 store(annoItem);
             }
-            diseaseItem.setCollection("hpoAnnotation", annoRefIds);
-            store(diseaseItem);
+            storeDisease(dbId, annoRefIds);
         }
     }
 
@@ -180,20 +186,17 @@ public class HpoConverter extends BioDirectoryConverter
         return item.getIdentifier();
     }
 
-    private Item createDisease(String dbId, String dbName) {
-        Item item = diseaseMap.get(dbId);
-        if (item == null) {
-            item = createItem("Disease");
+    private void storeDisease(String dbId, List<String> annoRefIds) throws ObjectStoreException {
+        if (diseaseMap.get(dbId) == null) {
+            Item item = createItem("Disease");
             item.setAttribute("identifier", dbId);
-            if (!dbName.isEmpty()) {
-                if (dbName.startsWith("#")) {
-                    dbName = dbName.substring(dbName.indexOf(" "));
-                }
-                item.setAttribute("name", dbName);
+            if (diseaseIdNameMap.get(dbId) != null) {
+                item.setAttribute("name", diseaseIdNameMap.get(dbId));
             }
-            diseaseMap.put(dbId, item);
+            item.setCollection("hpoAnnotation", annoRefIds);
+            diseaseMap.put(dbId, item.getIdentifier());
+            store(item);
         }
-        return item;
     }
 
     private void storeHpoTerm(String hpoTerm) throws ObjectStoreException {
