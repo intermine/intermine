@@ -1,0 +1,659 @@
+<items>
+<item id="6_78" class="ProteinAtlasExpression">
+<attribute name="cellType" value="squamous epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="vagina"/>
+</item>
+<item id="6_47" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="rectum"/>
+</item>
+<item id="6_40" class="ProteinAtlasExpression">
+<attribute name="cellType" value="ovarian stroma cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="ovary"/>
+</item>
+<item id="6_60" class="ProteinAtlasExpression">
+<attribute name="cellType" value="adipocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="soft tissue 2"/>
+</item>
+<item id="6_4" class="ProteinAtlasExpression">
+<attribute name="cellType" value="hematopoietic cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="bone marrow"/>
+</item>
+<item id="6_33" class="ProteinAtlasExpression">
+<attribute name="cellType" value="hepatocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="liver"/>
+</item>
+<item id="6_70" class="ProteinAtlasExpression">
+<attribute name="cellType" value="germinal center cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="tonsil"/>
+</item>
+<item id="6_58" class="ProteinAtlasExpression">
+<attribute name="cellType" value="fibroblasts"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="soft tissue 1"/>
+</item>
+<item id="6_67" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in seminiferus ducts"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="weak"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="testis"/>
+</item>
+<item id="6_6" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="breast"/>
+</item>
+<item id="6_23" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="fallopian tube"/>
+</item>
+<item id="6_26" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="hippocampus"/>
+</item>
+<item id="6_12" class="ProteinAtlasExpression">
+<attribute name="cellType" value="endothelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cerebral cortex"/>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="ENSG00000000003"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Protein Atlas"/>
+</item>
+<item id="6_9" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in granular layer"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cerebellum"/>
+</item>
+<item id="6_17" class="ProteinAtlasExpression">
+<attribute name="cellType" value="endothelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="colon"/>
+</item>
+<item id="6_63" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in red pulp"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="spleen"/>
+</item>
+<item id="6_37" class="ProteinAtlasExpression">
+<attribute name="cellType" value="non-germinal center cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="lymph node"/>
+</item>
+<item id="6_27" class="ProteinAtlasExpression">
+<attribute name="cellType" value="neuronal cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="hippocampus"/>
+</item>
+<item id="6_14" class="ProteinAtlasExpression">
+<attribute name="cellType" value="neuronal cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cerebral cortex"/>
+</item>
+<item id="6_61" class="ProteinAtlasExpression">
+<attribute name="cellType" value="fibroblasts"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="soft tissue 2"/>
+</item>
+<item id="6_54" class="ProteinAtlasExpression">
+<attribute name="cellType" value="melanocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="skin"/>
+</item>
+<item id="6_73" class="ProteinAtlasExpression">
+<attribute name="cellType" value="urothelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="urinary bladder"/>
+</item>
+<item id="6_2" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="appendix"/>
+</item>
+<item id="6_56" class="ProteinAtlasExpression">
+<attribute name="cellType" value="smooth muscle cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="smooth muscle"/>
+</item>
+<item id="6_10" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in molecular layer"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cerebellum"/>
+</item>
+<item id="6_38" class="ProteinAtlasExpression">
+<attribute name="cellType" value="respiratory epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="nasopharynx"/>
+</item>
+<item id="6_29" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in tubules"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="kidney"/>
+</item>
+<item id="6_39" class="ProteinAtlasExpression">
+<attribute name="cellType" value="squamous epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="oral mucosa"/>
+</item>
+<item id="6_8" class="ProteinAtlasExpression">
+<attribute name="cellType" value="respiratory epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="bronchus"/>
+</item>
+<item id="6_71" class="ProteinAtlasExpression">
+<attribute name="cellType" value="non-germinal center cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="tonsil"/>
+</item>
+<item id="6_30" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="lateral ventricle"/>
+</item>
+<item id="6_21" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="epididymis"/>
+</item>
+<item id="6_57" class="ProteinAtlasExpression">
+<attribute name="cellType" value="adipocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="soft tissue 1"/>
+</item>
+<item id="6_36" class="ProteinAtlasExpression">
+<attribute name="cellType" value="germinal center cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="lymph node"/>
+</item>
+<item id="6_52" class="ProteinAtlasExpression">
+<attribute name="cellType" value="keratinocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="skin"/>
+</item>
+<item id="6_7" class="ProteinAtlasExpression">
+<attribute name="cellType" value="myoepithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="breast"/>
+</item>
+<item id="6_55" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="small intestine"/>
+</item>
+<item id="6_24" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="gallbladder"/>
+</item>
+<item id="6_16" class="ProteinAtlasExpression">
+<attribute name="cellType" value="squamous epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cervix, uterine"/>
+</item>
+<item id="6_72" class="ProteinAtlasExpression">
+<attribute name="cellType" value="squamous epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="tonsil"/>
+</item>
+<item id="6_20" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="weak"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="duodenum"/>
+</item>
+<item id="6_34" class="ProteinAtlasExpression">
+<attribute name="cellType" value="macrophages"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="lung"/>
+</item>
+<item id="6_66" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="stomach, upper"/>
+</item>
+<item id="6_13" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cerebral cortex"/>
+</item>
+<item id="6_28" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in glomeruli"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="kidney"/>
+</item>
+<item id="6_32" class="ProteinAtlasExpression">
+<attribute name="cellType" value="bile duct cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="liver"/>
+</item>
+<item id="6_19" class="ProteinAtlasExpression">
+<attribute name="cellType" value="peripheral nerve/ganglion"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="colon"/>
+</item>
+<item id="6_44" class="ProteinAtlasExpression">
+<attribute name="cellType" value="decidual cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="weak"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="placenta"/>
+</item>
+<item id="6_65" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="stomach, lower"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="6_74" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in endometrial stroma"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="uterus, post-menopause"/>
+</item>
+<item id="6_41" class="ProteinAtlasExpression">
+<attribute name="cellType" value="exocrine glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="pancreas"/>
+</item>
+<item id="6_68" class="ProteinAtlasExpression">
+<attribute name="cellType" value="Leydig cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="weak"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="testis"/>
+</item>
+<item id="6_50" class="ProteinAtlasExpression">
+<attribute name="cellType" value="myocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="skeletal muscle"/>
+</item>
+<item id="6_64" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in white pulp"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="spleen"/>
+</item>
+<item id="6_35" class="ProteinAtlasExpression">
+<attribute name="cellType" value="pneumocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="weak"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="lung"/>
+</item>
+<item id="6_1" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="adrenal gland"/>
+</item>
+<item id="6_31" class="ProteinAtlasExpression">
+<attribute name="cellType" value="neuronal cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="lateral ventricle"/>
+</item>
+<item id="6_22" class="ProteinAtlasExpression">
+<attribute name="cellType" value="squamous epithelial cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="esophagus"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Protein Atlas expression"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="6_59" class="ProteinAtlasExpression">
+<attribute name="cellType" value="peripheral nerve"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="soft tissue 1"/>
+</item>
+<item id="6_49" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="seminal vesicle"/>
+</item>
+<item id="6_77" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="uterus, pre-menopause"/>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_69" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="thyroid gland"/>
+</item>
+<item id="6_11" class="ProteinAtlasExpression">
+<attribute name="cellType" value="Purkinje cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cerebellum"/>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="6_18" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="colon"/>
+</item>
+<item id="6_15" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="cervix, uterine"/>
+</item>
+<item id="6_62" class="ProteinAtlasExpression">
+<attribute name="cellType" value="peripheral nerve"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="soft tissue 2"/>
+</item>
+<item id="6_79" class="ProteinAtlasExpression">
+<attribute name="cellType" value="epidermal cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="vulva/anal skin"/>
+</item>
+<item id="6_5" class="ProteinAtlasExpression">
+<attribute name="cellType" value="adipocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="breast"/>
+</item>
+<item id="6_45" class="ProteinAtlasExpression">
+<attribute name="cellType" value="trophoblastic cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="placenta"/>
+</item>
+<item id="6_53" class="ProteinAtlasExpression">
+<attribute name="cellType" value="Langerhans"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="skin"/>
+</item>
+<item id="6_48" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="salivary gland"/>
+</item>
+<item id="6_42" class="ProteinAtlasExpression">
+<attribute name="cellType" value="islets of Langerhans"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="weak"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="pancreas"/>
+</item>
+<item id="6_46" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="prostate"/>
+</item>
+<item id="6_43" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="moderate"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="parathyroid gland"/>
+</item>
+<item id="6_3" class="ProteinAtlasExpression">
+<attribute name="cellType" value="lymphoid tissue"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="appendix"/>
+</item>
+<item id="6_51" class="ProteinAtlasExpression">
+<attribute name="cellType" value="fibroblasts"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="skin"/>
+</item>
+<item id="6_76" class="ProteinAtlasExpression">
+<attribute name="cellType" value="cells in endometrial stroma"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="uterus, pre-menopause"/>
+</item>
+<item id="6_25" class="ProteinAtlasExpression">
+<attribute name="cellType" value="myocytes"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="negative"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="heart muscle"/>
+</item>
+<item id="6_75" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="strong"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="uterus, post-menopause"/>
+</item>
+</items>

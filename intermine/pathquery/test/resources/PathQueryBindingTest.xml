@@ -1,33 +1,31 @@
 <query-list>
   <query name="allCompanies" model="testmodel" view="Company.name">
   </query>
-  <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
+  <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age" longDescription="">
     <pathDescription pathString="Employee.department" description="Department of the Employee"/>
     <constraint path="Employee.department.manager.age" op=">" value="10"/>
   </query>
-  <query name="companyInBag" model="testmodel" view="Company">
+  <query name="companyInBag" model="testmodel" view="Company" longDescription="">
     <constraint path="Company" op="IN" value="bag1"/>
   </query>
   <query name="queryWithConstraint" model="testmodel"
-           view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
+           view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title" longDescription="">
     <constraint path="Company.departments.employees" type="CEO"/>
   </query>
-  <query name="valuesNeedEscaping" model="testmodel" view="Employee.name">
+  <query name="valuesNeedEscaping" model="testmodel" view="Employee.name" longDescription="">
     <constraint path="Employee.name" op="ONE OF">
       <value>Look, a double quote "</value>
       <value>Look, a single quote '</value>
     </constraint>
     <constraint path="Employee" op="LOOKUP" value="tom, dick, harry" extraValue="&quot;blokes&quot;"/>
   </query>
-  <query name="hasJoins" model="testmodel" view="Employee.name Employee.department.name Employee.address.address">
+  <query name="hasJoins" model="testmodel" view="Employee.name Employee.department.name Employee.address.address" longDescription="">
     <join path="Employee.department" style="OUTER"/>
       <join path="Employee.address" style="INNER"/>
   </query>
-  <query name="hasOrder" model="testmodel" view="Employee.name Employee.department.name Employee.address.address"
-           sortOrder="Employee.department.name asc Employee.address.address desc"
-  />
-  <query name="viewOnly" model="testmodel" view="Company.name Company.vatNumber"/>
-  <query name="rangeQueries" model="testmodel" view="Employee.name">
+  <query name="hasOrder" model="testmodel" view="Employee.name Employee.department.name Employee.address.address" longDescription="" sortOrder="Employee.department.name asc Employee.address.address desc"/>
+  <query name="viewOnly" model="testmodel" view="Company.name Company.vatNumber" longDescription=""/>
+  <query name="rangeQueries" model="testmodel" view="Employee.name" longDescription="">
       <constraint path="Employee.age" op="WITHIN">
           <value>40 .. 50</value>
           <value>55 .. 60</value>
@@ -36,13 +34,13 @@
           <value>01-01-2012</value>
       </constraint>
   </query>
-  <query name="multitype" model="testmodel" view="Employable.name">
+  <query name="multitype" model="testmodel" view="Employable.name" longDescription="">
       <constraint path="Employable" op="ISA">
           <value>Contractor</value>
           <value>Manager</value>
       </constraint>
   </query>
-  <query name="idBagConstraints" model="testmodel" view="Company.name Company.vatNumber">
+  <query name="idBagConstraints" model="testmodel" view="Company.name Company.vatNumber" longDescription="">
     <constraint path="Company" op="IN" ids="1,5,7"/>
   </query>
 

@@ -51,7 +51,7 @@ public class NcbiGeneConverterTest extends ItemsTestCase
      */
     public void testSimpleFiles() throws Exception {
         process("gene_info");
-        assertEquals(79, itemWriter.getItems().size());
+        assertEquals(75, itemWriter.getItems().size());
     }
 
 
@@ -70,7 +70,7 @@ public class NcbiGeneConverterTest extends ItemsTestCase
      */
     public void testNcRNACount() throws Exception {
         process("gene_info");
-        assertEquals(1, getNcRNAs().size());
+        assertEquals(0, getNcRNAs().size());
     }
 
     private void process(String infoFile) throws Exception {

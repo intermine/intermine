@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.util.NameUtil;
@@ -113,17 +113,12 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
         }
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
-        String qid = SessionMethods.startQueryWithTimeout(request, false, sq.getPathQuery());
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-
-        //track the query execution
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        im.getTrackerDelegate().trackQuery(sq.getPathQuery().getRootClass(), profile,
-                                           session.getId());
-
-        return new ForwardParameters(mapping.findForward("waiting"))
+        if (StringUtils.isEmpty(trail)) {
+        	trail = "|query|results";
+        }
+        return new ForwardParameters(mapping.findForward("results"))
                     .addParameter("trail", trail)
-                    .addParameter("qid", qid).forward();
+                    .forward();
     }
 
     /**

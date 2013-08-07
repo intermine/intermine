@@ -21,7 +21,7 @@
      <reference name="SNP" referenced-type="SNP" reverse-reference="GWASResults"/>
      <collection name="associatedGenes" referenced-type="Gene"/>
    </class>
-   <class name="SNP" is-interface="true">
+   <class name="SNP" extends="SequenceFeature" is-interface="true">
      <collection name="GWASResults" referenced-type="GWASResult" reverse-reference="SNP"/>
    </class>
   <class name="Source" is-interface="true">

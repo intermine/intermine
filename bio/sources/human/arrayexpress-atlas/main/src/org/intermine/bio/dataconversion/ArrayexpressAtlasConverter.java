@@ -133,7 +133,12 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
                             continue;
                         }
                         Double pValue = stat.getDouble("pvalue");
+                        if (pValue > 1) {
+                            continue;
+                        }
+
                         Double tStatistic = stat.getDouble("tstat");
+                        tStatistic = round(tStatistic, 1); // round double to 1 digit
 
                         expressionItem.setAttribute("type", type);
                         expressionItem.setAttribute("condition", condition);
@@ -162,5 +167,14 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
             genes.put(primaryIdentifier, geneId);
         }
         return geneId;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 }

@@ -80,6 +80,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<String, String> strains = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final String SPOKE_MODEL = "prey";
+    private static final String BLANK_EXPERIMENT_NAME = "NAME NOT AVAILABLE";
 
     protected IdResolver rslv;
     private static final String FLY = "7227";
@@ -729,7 +730,12 @@ public class BioGridConverter extends BioFileConverter
                 if (eh.description != null && !eh.description.equals("")) {
                     exp.setAttribute("description", eh.description);
                 }
-                exp.setAttribute("name", name);
+                if (name != null && !name.equals("")) {
+                    exp.setAttribute("name", name);
+                } else {
+                    exp.setAttribute("name", BLANK_EXPERIMENT_NAME);
+                }
+                
                 exp.setReference("publication", pubRefId);
                 idsToExperiments.put(key, exp);
             }
