@@ -8,13 +8,15 @@
  *
  */
 
-1.2.2
+1.2.2 (7 August 2013)
 
+#283 - Don't load MeSH terms by default when using PubMed data converter
 #372 - Add UberonTerm
-#390 - A tiny gap in the header of report pages
-#391 - Links to friendly mines fixed (yeastmine only)
+#373 - Fix query cancellation when using wild card with LOOKUP
+#390 - A tiny gap in the header of FlyMine report pages
 #405 - Fix browser detection not working with jQuery >= 1.9.1
 #409 - Remove waiting page when running queries
+#416 - Fixed screen black out when selecting 250 rows in query results
 
 1.2.1 (fixes for C. elegans meeting)
 
