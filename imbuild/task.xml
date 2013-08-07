@@ -69,9 +69,7 @@ project.properties.
           depends="-check-for-intermine-properties-file, -init-check-for-intermine-properties-dir"
           unless="have.intermine.properties.dir">
     <fail unless="temporary.webapp.project">
-Couldn't find ${user.home}/.intermine directory.  All InterMine properties files
-should now be kept in a .intermine directory under your home directory, please create this
-directory and move your properties. This includes *mine.properties
+Couldn't find ${user.home}/.intermine directory.  
     </fail>
   </target>
 

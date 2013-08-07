@@ -95,7 +95,8 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         Set<String> validChromosomes = validChromosomes();
 
         // Ensembl Id | chromosome name
-        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
+        Iterator<?> lineIter = FormattedTextParser
+                .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String ensembl = line[0];

@@ -8,6 +8,14 @@
  *
  */
 
+1.2.2
+
+#372 - Add UberonTerm
+#390 - A tiny gap in the header of report pages
+#391 - Links to friendly mines fixed (yeastmine only)
+#405 - Fix browser detection not working with jQuery >= 1.9.1
+#409 - Remove waiting page when running queries
+
 1.2.1 (fixes for C. elegans meeting)
 
 #359 - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library

@@ -43,6 +43,7 @@ import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
@@ -207,6 +208,10 @@ public abstract class WebService {
             return profile;
         }
         throw new ServiceForbiddenException("You must be logged in to use this service");
+    }
+
+    protected ListManager getListManager() {
+        return new ListManager(im, getPermission().getProfile());
     }
 
     /**

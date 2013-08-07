@@ -167,8 +167,8 @@
     </source>
 
     <source name="fly-fish" type="fly-fish">
-      <property name="src.data.dir" location="/micklem/data/flymine/flyfish"/>
-      <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/flyfish/current"/>
+      <property name="src.data.dir.includes" value="annotation_matrix.csv"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>

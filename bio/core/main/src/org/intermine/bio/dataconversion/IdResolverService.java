@@ -192,6 +192,23 @@ public class IdResolverService
     }
 
     /**
+     * Create a Human gene id resolver
+     * @return an IdResolver
+     */
+    public static IdResolver getHumanIdResolver() {
+        return new HumanIdResolverFactory().getIdResolver(false);
+    }
+
+    /**
+     * Create a Human gene resolver
+     * @param failOnError if false swallow any exceptions and return null
+     * @return an IdResolver
+     */
+    public static IdResolver getHumanIdResolver(boolean failOnError) {
+        return new HumanIdResolverFactory().getIdResolver(failOnError);
+    }
+
+    /**
      * Create a mouse id resolver
      * @return an IdResolver
      */

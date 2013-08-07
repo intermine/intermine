@@ -264,6 +264,7 @@ public class InitialiserPlugin implements PlugIn
         return os;
     }
 
+    @SuppressWarnings("unchecked")
     private void loadAspectsConfig(ServletContext servletContext) {
         InputStream xmlInputStream = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
         InputStream xmlInputStreamForValidate = servletContext
@@ -857,9 +858,10 @@ public class InitialiserPlugin implements PlugIn
      */
     private TrackerDelegate getTrackerDelegate(Properties webProperties,
             ObjectStoreWriter userprofileOSW) {
+        @SuppressWarnings("unused")
         Map<String, Tracker> trackers = new HashMap<String, Tracker>();
         String trackerList = (String) webProperties.get("webapp.trackers");
-        LOG.warn("initializeTrackers: trackerList is" + trackerList);
+        LOG.info("initializeTrackers: trackerList is" + trackerList);
         if (trackerList != null) {
             String[] trackerClassNames = trackerList.split(",");
             TrackerDelegate td = new TrackerDelegate(trackerClassNames, userprofileOSW);
@@ -868,6 +870,7 @@ public class InitialiserPlugin implements PlugIn
         return null;
     }
 
+    @SuppressWarnings("resource")
     private boolean verifyTablesExist(ObjectStore uos) {
         Connection con = null;
         Set<ClassDescriptor> classDescritpors = uos.getModel().getClassDescriptors();

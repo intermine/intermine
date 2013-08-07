@@ -44,6 +44,7 @@ def read_gene_ids(gene_info_filename):
 		
 	# entrez gene id is second column of file
 	gene_ids = [line.split()[1] for line in gene_info]
+	gene_ids = filter(lambda name: name.isdigit(), gene_ids)
 	return gene_ids
 
 def fetch_summaries(all_gene_ids, output, batch_size):
@@ -52,12 +53,12 @@ def fetch_summaries(all_gene_ids, output, batch_size):
 	
 	for gene_ids in [all_gene_ids[offset:offset + batch_size] for offset in range(0, len(all_gene_ids), batch_size)]:
                 # NCBI requires no more than three requests per second
-		time.sleep(0.35)
+		time.sleep(1)
 		fetch_summary(gene_ids, parser, output)
 	
 
 def fetch_summary(gene_ids, parser, output):
-	esummary_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=metabolicmine&email=richard@flymine.org&db=gene&id='
+	esummary_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=intermine&email=bio@flymine.org&db=gene&id='
 	id_string = ",".join(gene_ids)
 	url = esummary_url + id_string
 
