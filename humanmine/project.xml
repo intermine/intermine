@@ -13,7 +13,7 @@
     <source name="human-gene" type="human-gene">
       <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
     </source>
-    <source name="ncbi-summaries" type="ncbi-summaries">
+    <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
