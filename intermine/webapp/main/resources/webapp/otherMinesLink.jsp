@@ -49,7 +49,7 @@ function generateMineLinks(jSONObject, url, organismShortName, target) {
                  'target': '_blank'
               })
               .attr('href', function() {
-                var homologue = (organismShortName != shortName) ? '&orthologue=' + organismShortName : '';
+                var homologue = (organismShortName == shortName) ? '&orthologue=' + organismShortName : '';
                 return (url + "/portal.do?externalids=" + gene['primaryIdentifier'] + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
               })
               )
