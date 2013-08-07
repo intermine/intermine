@@ -97,9 +97,6 @@ public class HpoConverter extends BioDirectoryConverter
     }
 
     protected void processAnnoFile(Reader reader) throws IOException, ObjectStoreException {
-
-//        initialiseMapsForFile();
-
         BufferedReader br = new BufferedReader(reader);
         String line = null;
 
@@ -121,11 +118,12 @@ public class HpoConverter extends BioDirectoryConverter
 
             String dbId = db + ":" + array[1];
             String dbName = array[2];
+            // Save id and namne to map for future use
             if (!dbName.isEmpty()) {
-                if (dbName.startsWith("#")) {
+                if (dbName.matches("^(#|%|[0-9]).*$")) {
                     dbName = dbName.substring(dbName.indexOf(" "));
-                    diseaseIdNameMap.put(dbId, dbName);
                 }
+                diseaseIdNameMap.put(dbId, dbName.trim());
             }
 
             String qualifier = array[3];
