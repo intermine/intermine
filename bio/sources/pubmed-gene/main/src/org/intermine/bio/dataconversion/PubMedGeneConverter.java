@@ -225,6 +225,9 @@ public class PubMedGeneConverter extends BioFileConverter
     }
 
     private String resolveToPrimIdentifier(String taxonId, String identifier) {
+        if ("9606".equals(taxonId)) {
+            rslv = IdResolverService.getHumanIdResolver();
+        }
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             return identifier;
         }
