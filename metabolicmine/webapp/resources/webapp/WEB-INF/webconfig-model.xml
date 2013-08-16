@@ -648,6 +648,20 @@
         typeClass="Gene"
         columnTitle="Orthologues"/>-->
 
+     <bagtabledisplayer id="interactions" title="Interactions"
+                        pathStrings="Gene.interactions.gene2"
+                        description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
+                        displayFields="primaryIdentifier, name"
+                        exportField="primaryIdentifier"
+                        typeClass="Gene"
+                        columnTitle="Interactions"
+                        views="secondaryIdentifier, symbol, organism.shortName,
+                                  interactions.details.name, interactions.details.type,
+                                  interactions.details.role1, interactions.details.role2,
+                                  interactions.gene2.primaryIdentifier,
+                                  interactions.gene2.symbol,
+                                  interactions.details.experiment.name"/>        
+
       <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
                          pathStrings="SNP.consequences"
                          description="Consequence types for SNPs in this list"

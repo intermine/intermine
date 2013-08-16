@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="OntologyTerm" is-interface="true">
+    <collection name="crossReferences" referenced-type="OntologyTerm" />
+  </class>
+  <class name="HPOTerm" extends="OntologyTerm" is-interface="true"></class>
+</classes>

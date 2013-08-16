@@ -1,0 +1,150 @@
+<items>
+<item id="5_3" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="Chromosome">
+<attribute name="primaryIdentifier" value="3R"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00005304"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="2L"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_2" class="Publication">
+<attribute name="pubMedId" value="7713432"/>
+</item>
+<item id="6_2" class="CRM">
+<attribute name="curated" value="true"/>
+<attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
+<attribute name="length" value="602"/>
+<attribute name="primaryIdentifier" value="prd_P1_enhancer"/>
+<attribute name="secondaryIdentifier" value="392"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_2"/>
+<reference name="gene" ref_id="9_1"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="anatomyOntology"><reference ref_id="8_1"/><reference ref_id="8_4"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="publications"><reference ref_id="10_1"/></collection>
+</item>
+<item id="3_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="7_2" class="Location">
+<attribute name="end" value="12088492"/>
+<attribute name="start" value="12087891"/>
+<attribute name="strand" value="0"/>
+<reference name="feature" ref_id="6_2"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_1" class="Publication">
+<attribute name="pubMedId" value="7873402"/>
+</item>
+<item id="6_1" class="CRM">
+<attribute name="curated" value="true"/>
+<attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
+<attribute name="length" value="3102"/>
+<attribute name="primaryIdentifier" value="prd_A8_repressor"/>
+<attribute name="secondaryIdentifier" value="391"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_1"/>
+<reference name="gene" ref_id="9_1"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="anatomyOntology"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="publications"><reference ref_id="10_1"/></collection>
+</item>
+<item id="9_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0001"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_3" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00005414"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_3" class="CRM">
+<attribute name="curated" value="true"/>
+<attribute name="evidenceMethod" value="reporter construct (in vivo)"/>
+<attribute name="length" value="8589"/>
+<attribute name="primaryIdentifier" value="Scr_BSR"/>
+<attribute name="secondaryIdentifier" value="576"/>
+<reference name="chromosome" ref_id="4_2"/>
+<reference name="chromosomeLocation" ref_id="7_3"/>
+<reference name="gene" ref_id="9_2"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="anatomyOntology"><reference ref_id="8_5"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="publications"><reference ref_id="10_2"/></collection>
+</item>
+<item id="7_3" class="Location">
+<attribute name="end" value="2676484"/>
+<attribute name="start" value="2667896"/>
+<attribute name="strand" value="0"/>
+<reference name="feature" ref_id="6_3"/>
+<reference name="locatedOn" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="Location">
+<attribute name="end" value="12095792"/>
+<attribute name="start" value="12092691"/>
+<attribute name="strand" value="0"/>
+<reference name="feature" ref_id="6_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_4" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00000111"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0002"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="FlyReg data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_2" class="SOTerm">
+<attribute name="name" value="CRM"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_5" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00000090"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="FlyReg"/>
+</item>
+<item id="8_2" class="AnatomyTerm">
+<attribute name="identifier" value="FBbt:00005427"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Organism">
+<attribute name="taxonId" value="DM"/>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

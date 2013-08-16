@@ -193,7 +193,7 @@ public class Path
         String clsName = parts[0];
         ClassDescriptor cld = null;
         if (!("".equals(clsName))) {
-            cld = model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
+            cld = model.getClassDescriptorByName(clsName);
             if (cld == null) {
                 throw new PathException("Unable to resolve path '" + path + "': class '" + clsName
                                     + "' not found in model '" + model.getName() + "'", path);

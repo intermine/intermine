@@ -1,0 +1,4 @@
+<project name="human-gene-tasks" default="default" basedir=".">
+  <description>build human-gene tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

@@ -30,7 +30,7 @@ public class JSONListFormatter implements ListFormatter {
 
     private final boolean hasCallback = false;
     private int rowsLeft = 0;
-    private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     public Map<String, Object> bagToMap(InterMineBag list) {
     	Map<String, Object> listMap = new HashMap<String, Object>();
