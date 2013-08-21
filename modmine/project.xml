@@ -79,6 +79,7 @@
     <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/micklem/data/flybase/homology/current"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
+      <property name="drosophila-homology.organisms" value="7227 46245 7217 7230 7244 7245 7240"/>
     </source>
 
 <!--    ADDED FOR r20 -->
