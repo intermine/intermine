@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A class that represents one line of a GFF3 file.  Some of this code is
@@ -146,6 +147,9 @@ public class GFF3Record
 
     private void parseAttribute(String argAttributeString, String line) throws IOException {
         String attributeString = argAttributeString;
+        attributeString = StringUtils.replaceEach(attributeString,
+                new String[] { "&amp;", "&quot;", "&lt;", "&gt;" },
+                new String[] { "&", "\"", "<", ">" });
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
         while (sTok.hasMoreTokens()) {
@@ -317,9 +321,21 @@ public class GFF3Record
      * Return the first value of the Alias field from the attributes of this record.
      * @return the Alias from the attributes of this record or null of there isn't a value
      */
-    public String getAlias () {
+    public String getFirstAlias () {
         if (getAttributes().containsKey("Alias")) {
             return getAttributes().get("Alias").get(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return all values of the Alias field from the attributes of this record.
+     * @return the Alias from the attributes of this record or null of there isn't a value
+     */
+    public List<String> getAliases () {
+        if (getAttributes().containsKey("Alias")) {
+            return getAttributes().get("Alias");
         } else {
             return null;
         }

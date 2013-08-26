@@ -521,13 +521,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             String strainIdentifier) throws Exception {
         // One table contains SNPs and once contains bigger indels, etc.
         ResultSet res = queryGenotypesForStrainSingleBp(connection, strainId);
-        createGeneotypesForStrain(res, strainId, strainIdentifier);
+        createGenotypesForStrain(res, strainId, strainIdentifier);
 
         res = queryGenotypesForStrainMultipleBp(connection, strainId);
-        createGeneotypesForStrain(res, strainId, strainIdentifier);
+        createGenotypesForStrain(res, strainId, strainIdentifier);
     }
 
-    private void createGeneotypesForStrain(ResultSet res, Integer strainId, String strainIdentifier)
+    private void createGenotypesForStrain(ResultSet res, Integer strainId, String strainIdentifier)
         throws Exception {
         int snpReferenceCount = 0;
         int ignoredCount = 0;

@@ -1,0 +1,7 @@
+<project name="hpo-annotation" default="default" basedir=".">
+  <description>build, test, package hpo-annotation</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+  
+</project>
+

@@ -1,0 +1,5 @@
+<project name="human-gene" default="default" basedir=".">
+  <description>build, test, package human-gene</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

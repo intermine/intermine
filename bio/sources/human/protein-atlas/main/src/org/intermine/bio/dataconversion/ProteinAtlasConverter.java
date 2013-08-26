@@ -20,14 +20,25 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.ProteinAtlasEntry.Level;
+import org.intermine.bio.dataconversion.ProteinAtlasEntry.TissueExpressionData;
+import org.intermine.bio.dataconversion.ProteinAtlasEntry.TissueExpressionSummary;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Read Protein Atlas expression data.
@@ -35,12 +46,13 @@ import org.intermine.xml.full.Item;
  */
 public class ProteinAtlasConverter extends BioFileConverter
 {
-    //
+    private static final Logger LOG = Logger.getLogger(ProteinAtlasConverter.class);
     private static final String DATASET_TITLE = "Protein Atlas expression";
     private static final String DATA_SOURCE_NAME = "Protein Atlas";
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, Item> tissues = new HashMap<String, Item>();
     private Set<String> storedTissues = new HashSet<String>();
+    private int entryCount = 0;
 
     private String taxonId = "9606";
 
@@ -64,6 +76,8 @@ public class ProteinAtlasConverter extends BioFileConverter
             processNormalTissue(reader);
         } else if ("tissue_to_organ.tsv".equals(currentFile.getName())){
             processTissueToOrgan(reader);
+        } else if ("proteinatlas.xml".equals(currentFile.getName())) {
+            processAllInOneXML(currentFile);
         } else {
             throw new RuntimeException("Don't know how to process file: " + currentFile.getName());
         }
@@ -150,6 +164,80 @@ public class ProteinAtlasConverter extends BioFileConverter
         }
     }
 
+    private void processAllInOneXML(File file)
+            throws SAXException, IOException, ParserConfigurationException, ObjectStoreException {
+
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(file);
+        doc.getDocumentElement().normalize();
+
+        NodeList entryList = doc.getElementsByTagName("entry");
+
+        for (int i = 0; i < entryList.getLength(); i++) {
+            ProteinAtlasEntry e = new ProteinAtlasEntry();
+
+            Element entry = (Element) entryList.item(i);
+            e.setVersion(entry.getAttribute("version"));
+            e.setUrl(entry.getAttribute("version"));
+            e.setGeneName(entry.getElementsByTagName("name").item(0).getTextContent());
+
+            NodeList synonymList = entry.getElementsByTagName("synonym");
+            for (int si = 0; si < synonymList.getLength(); si++) {
+                e.getGeneSynonymSet().add(synonymList.item(si).getTextContent());
+            }
+
+            e.setGeneId(((Element) entry.getElementsByTagName("identifier")
+                    .item(0)).getAttribute("id"));
+
+            Element te = (Element) entry.getElementsByTagName("tissueExpression").item(0);
+            e.getTissueExpression().setType(te.getAttribute("type"));
+            e.getTissueExpression().setTechnology(te.getAttribute("technology"));
+
+            Element tes = (Element) te.getElementsByTagName("summary").item(0);
+            TissueExpressionSummary s = e.new TissueExpressionSummary();
+            s.setSummaryType(tes.getAttribute("type"));
+            s.setSummary(tes.getTextContent());
+            e.getTissueExpression().getSummarySet().add(s);
+
+            e.getTissueExpression().setVerificationType(
+                    ((Element) te.getElementsByTagName("verification").item(0))
+                            .getAttribute("type"));
+            e.getTissueExpression().setVerification(
+                    te.getElementsByTagName("verification").item(0)
+                            .getTextContent());
+
+            NodeList tedList = te.getElementsByTagName("data");
+            for (int tedi = 0; tedi < tedList.getLength(); tedi++) {
+                Element ted = (Element) tedList.item(tedi);
+
+                TissueExpressionData d = e.new TissueExpressionData();
+                d.setTissue(((Element) ted.getElementsByTagName("tissue").item(
+                        0)).getTextContent());
+                d.setTissueStatus(((Element) ted.getElementsByTagName("tissue")
+                        .item(0)).getAttribute("status"));
+
+                d.setCellType(ted.getElementsByTagName("cellType").item(0)
+                        .getTextContent());
+
+                ted.getElementsByTagName("level").item(0).getTextContent();
+
+                Level l = e.new Level();
+                l.setType(((Element) ted.getElementsByTagName("level").item(0))
+                        .getAttribute("type"));
+                l.setLevel(ted.getElementsByTagName("level").item(0)
+                        .getTextContent());
+                d.getLevelSet().add(l);
+
+                e.getTissueExpression().getDataSet().add(d);
+            }
+
+            // TODO extension to subcellularLocation, rnaExpression, antibody
+
+            processEntry(e);
+        }
+    }
+
     // store tells us we have been called with the upper case name from the tissue_to_organ file
     private Item getTissue(String tissueName) throws ObjectStoreException {
         Item tissue = tissues.get(tissueName);
@@ -210,12 +298,46 @@ public class ProteinAtlasConverter extends BioFileConverter
     }
 
     private String alterExpressionType(String expressionType) {
-        if ("APE".equals(expressionType)) {
+        if ("APE".equalsIgnoreCase(expressionType)) {
             return "APE - two or more antibodies";
-        } else if ("Staining".equals(expressionType)) {
+        } else if ("Staining".equalsIgnoreCase(expressionType)) {
             return "Staining - one antibody only";
         } else {
             return expressionType;
+        }
+    }
+
+    private void processEntry(ProteinAtlasEntry entry) throws SAXException,
+            ObjectStoreException {
+        entryCount++;
+        if (entryCount % 10000 == 0) {
+            LOG.info("Processed " + entryCount + " entries.");
+        }
+
+        processTissueExpression(entry);
+    }
+
+    private void processTissueExpression(ProteinAtlasEntry entry)
+            throws ObjectStoreException {
+        String geneRefId = getGeneId(entry.getGeneId());
+        String reliability = entry.getTissueExpression().getVerification();
+
+        for (TissueExpressionData ted : entry.getTissueExpression()
+                .getDataSet()) {
+            String expressionType = ted.getLevelSet().iterator().next()
+                    .getType();
+            reliability = alterReliability(reliability, expressionType);
+
+            Item expression = createItem("ProteinAtlasExpression");
+            expression.setAttribute("cellType", ted.getCellType());
+            expression.setAttribute("level", ted.getLevelSet().iterator()
+                    .next().getLevel());
+            expression.setAttribute("expressionType",
+                    alterExpressionType(expressionType));
+            expression.setAttribute("reliability", reliability);
+            expression.setReference("gene", geneRefId);
+            expression.setReference("tissue", ted.getTissue());
+            store(expression);
         }
     }
 }

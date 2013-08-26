@@ -14,7 +14,8 @@
   	<include name="WEB-INF/struts-config.xml"/>
         <include name="WEB-INF/tiles-defs.xml"/>
         <include name="WEB-INF/classes/InterMineWebApp.properties"/>  
- 	<include name="WEB-INF/classes/model.properties"/>  
+        <include name="WEB-INF/classes/model.properties"/>
+        <include name="WEB-INF/web.xml"/>
       </patternset>
     </unwar>
 
@@ -39,6 +40,13 @@
     <loadfile property="model.tiles.defs" srcFile="./resources/tiles-defs-model.xml"/>
 
     <replace file="${build.dir}/webapp/WEB-INF/tiles-defs.xml" value="${model.tiles.defs}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
+    </replace>
+
+    <loadfile property="model.web" srcFile="./resources/web-model.xml"/>
+
+    <replace file="${build.dir}/webapp/WEB-INF/web.xml" value="${model.web}">
       <!-- can't use normal token as xml must be parseable before this replacement -->
       <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
