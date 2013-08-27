@@ -16,10 +16,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -52,6 +56,11 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
     private static final String INTERACTION_TYPE_MIRNA_MIRNA = "miRNA-miRNA";
     private static final String TOPO_TYPE_LEVEL = "level";
     private static final String TOPO_TYPE_POSITION = "position";
+
+    private static final Set<String> FB_MISSING_SYMBOLS =
+            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                    "mir-316",
+                    "bantam")));
 
     private Map<String, Map<String, String>> tfMap = new HashMap<String, Map<String, String>>();
     private Map<String, Map<String, String>> miRNAMap = new HashMap<String, Map<String, String>>();
@@ -219,8 +228,10 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
                             // Create networkProperty for source gene
                             Item sourceNetworkProperty =
                                 createNetworkProperty(TOPO_TYPE_LEVEL, sourceLevel);
-                            sourceNetworkProperty.setReference("node",
-                                    geneItems.get(sourceGenePid));
+                            if (sourceGenePid != null) {
+                                sourceNetworkProperty.setReference("node",
+                                        geneItems.get(sourceGenePid));
+                            }
                             store(sourceNetworkProperty);
 
                             if (tfMap.containsKey(targetIdentifier)) {
@@ -238,8 +249,10 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
                                 // Create networkProperty for target gene
                                 Item targetNetworkProperty =
                                     createNetworkProperty(TOPO_TYPE_LEVEL, targetLevel);
+                                if (targetGenePid != null) {
                                 targetNetworkProperty.setReference("node",
                                         geneItems.get(targetGenePid));
+                                }
                                 store(targetNetworkProperty);
 
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
@@ -259,8 +272,10 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
                                 // Create networkProperty for target gene
                                 Item targetNetworkProperty =
                                     createNetworkProperty(TOPO_TYPE_POSITION, targetPosition);
+                                if (targetGenePid != null) {
                                 targetNetworkProperty.setReference("node",
                                         geneItems.get(targetGenePid));
+                                }
                                 store(targetNetworkProperty);
 
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
@@ -278,8 +293,10 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
                             // Create networkProperty for source gene
                             Item sourceNetworkProperty =
                                 createNetworkProperty(TOPO_TYPE_POSITION, sourcePosition);
+                            if (sourceGenePid != null) {
                             sourceNetworkProperty.setReference("node",
                                     geneItems.get(sourceGenePid));
+                            }
                             store(sourceNetworkProperty);
 
                             if (tfMap.containsKey(targetIdentifier)) {
@@ -297,8 +314,10 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
                                 // Create networkProperty for target gene
                                 Item targetNetworkProperty =
                                     createNetworkProperty(TOPO_TYPE_LEVEL, targetLevel);
+                                if (targetGenePid != null) {
                                 targetNetworkProperty.setReference("node",
                                         geneItems.get(targetGenePid));
+                                }
                                 store(targetNetworkProperty);
 
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
@@ -318,8 +337,10 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
                                 // Create networkProperty for target gene
                                 Item targetNetworkProperty =
                                     createNetworkProperty(TOPO_TYPE_POSITION, targetPosition);
+                                if (targetGenePid != null) {
                                 targetNetworkProperty.setReference("node",
                                         geneItems.get(targetGenePid));
+                                }
                                 store(targetNetworkProperty);
 
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
@@ -386,16 +407,20 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
             }
             IdResolver resolver = resolverFactory.getIdResolver();
             int resCount = resolver.countResolutions(FLY_TAXON_ID, symbol);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+
+            if (resCount != 1 && !FB_MISSING_SYMBOLS.contains(symbol)) {
+                LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                          + symbol + " count: " + resCount + " FBgn: "
                          + resolver.resolveId(FLY_TAXON_ID, symbol));
+                return null;
             }
-            // TOFIX: temp shortcut caused by an error in FB2012_04 (missing this record)
+            // manual fix of some updated symbols
             if ("mir-316".endsWith(symbol)) {
                 primaryId = "FBgn0262417";
+            } else if ("bantam".endsWith(symbol)) {
+                primaryId = "FBgn0262451";
             } else {
-            	primaryId = resolver.resolveId(FLY_TAXON_ID, symbol).iterator().next();
+                primaryId = resolver.resolveId(FLY_TAXON_ID, symbol).iterator().next();
             }
         }
 
