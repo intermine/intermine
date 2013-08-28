@@ -12,9 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -22,13 +20,14 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.FullParser;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Class to read a GFF3 source data and produce a data representation
  *
  * @author Wenyan Ji
  * @author Richard Smith
+ * @author Fengyuan Hu
  */
 
 public class GFF3ConverterTest extends ItemsTestCase {
@@ -39,15 +38,16 @@ public class GFF3ConverterTest extends ItemsTestCase {
     GFF3Converter converter;
     File f = null;
 
-    MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
     String seqClsName = "Chromosome";
-    String orgTaxonId = "7227";
+    String flyTaxonId = "7227";
+    String ratTaxonId = "10116";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
 
     public void setUp() throws Exception {
         Model tgtModel = Model.getInstanceByName("genomic");
-        converter = new GFF3Converter(writer, seqClsName, orgTaxonId, dataSourceName,
+        converter = new GFF3Converter(writer, seqClsName, flyTaxonId, dataSourceName,
                                       dataSetTitle, tgtModel,
                                       new GFF3RecordHandler(tgtModel), null);
     }
@@ -84,7 +84,7 @@ public class GFF3ConverterTest extends ItemsTestCase {
         converter.parse(srcReader);
         converter.storeAll();
 
-        Set expected = new HashSet(readItemSet("GFF3ConverterTestUnLocated.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestUnLocated.xml"));
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "gff_unlocated_item_test.xml");
@@ -100,10 +100,30 @@ public class GFF3ConverterTest extends ItemsTestCase {
         converter.parse(srcReader);
         converter.storeAll();
 
-        Set expected = new HashSet(readItemSet("GFF3ConverterTestDiscontinuous.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestDiscontinuous.xml"));
 
         // uncomment to write out a new target items file
         //writeItemsFile(writer.getItems(), "gff_unlocated_item_test.xml");
+
+        assertEquals(expected, writer.getItems());
+    }
+
+    /**
+     * Test RGD.
+     */
+    public void testRGD() throws Exception {
+        Model tgtModel = Model.getInstanceByName("genomic");
+        converter = new GFF3Converter(writer, seqClsName, ratTaxonId, dataSourceName,
+                dataSetTitle, tgtModel,
+                new GFF3RecordHandler(tgtModel), null);
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_rgd.gff")));
+        converter.parse(srcReader);
+        converter.storeAll();
+
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestRGD.xml"));
+
+        // uncomment to write out a new target items file
+        // writeItemsFile(writer.getItems(), "gff_rgd_test.xml");
 
         assertEquals(expected, writer.getItems());
     }
