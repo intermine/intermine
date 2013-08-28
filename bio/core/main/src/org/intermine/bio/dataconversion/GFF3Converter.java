@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ import org.intermine.xml.full.Reference;
  *
  * @author Wenyan Ji
  * @author Richard Smith
+ * @author Fengyuan Hu
  */
 
 public class GFF3Converter extends DataConverter
@@ -115,10 +117,13 @@ public class GFF3Converter extends DataConverter
         for (Map.Entry<Object, Object> entry : gffConfig.entrySet()) {
             if (entry.getKey().toString().contains("terms")) {
                 if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
+                    String[] termArray = ((String) entry.getValue()).trim().split(",");
+                    for (int i = 0; i < termArray.length; i++) { // Trim each string in the array
+                        termArray[i] = termArray[i].trim();
+                    }
                     config_term.put(
                             entry.getKey().toString().split("\\.")[0],
-                            new HashSet<String>(Arrays.asList(((String)
-                                    entry.getValue()).trim().split(","))));
+                            new HashSet<String>(Arrays.asList(termArray)));
                 }
             } else if (entry.getKey().toString().contains("attributes")) {
                 if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
@@ -205,8 +210,9 @@ public class GFF3Converter extends DataConverter
      * process GFF3 record and give a xml presentation
      * @param record GFF3Record
      * @throws ObjectStoreException if an error occurs storing items
+     * @throws IOException
      */
-    public void process(GFF3Record record) throws ObjectStoreException {
+    public void process(GFF3Record record) throws ObjectStoreException, IOException {
         String term = record.getType();
 
         if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
@@ -338,6 +344,29 @@ public class GFF3Converter extends DataConverter
 
         if (names != null) {
             setNames(names, symbol, synonyms, synonymsToAdd, primaryIdentifier, feature, cd);
+        }
+
+        // Other attributes
+        List<String> primeAttrList = Arrays.asList("primaryIdentifier",
+                "secondaryIdentifier", "symbol", "synonym");
+
+        if (config_attr.containsKey(this.orgTaxonId)) {
+            Map<String, String> attrMap = config_attr.get(this.orgTaxonId);
+            for (String pa : primeAttrList) {
+                attrMap.remove(pa);
+            }
+
+            for (Entry<String, String> e : attrMap.entrySet()) {
+                String siAttr = e.getValue();
+                if (record.getAttributes().get(siAttr) != null) {
+                    String attrVal = record.getAttributes().get(siAttr).get(0);
+                    if (attrVal != null) {
+                        if (feature.checkAttribute(e.getKey())) {
+                            feature.setAttribute(e.getKey(), attrVal);
+                        }
+                    }
+                }
+            }
         }
 
         List<String> parents = record.getParents();
