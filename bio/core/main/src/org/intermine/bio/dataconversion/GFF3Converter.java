@@ -63,6 +63,8 @@ public class GFF3Converter extends DataConverter
     protected Map<String, Set<String>> config_term = new HashMap<String, Set<String>>();
     protected Map<String, Map<String, String>> config_attr =
             new HashMap<String, Map<String, String>>();
+    protected Map<String, Map<String, Map<String, String>>> config_attr_with_class =
+            new HashMap<String, Map<String, Map<String, String>>>();
 
     /**
      * Constructor
@@ -212,7 +214,7 @@ public class GFF3Converter extends DataConverter
      * @throws ObjectStoreException if an error occurs storing items
      * @throws IOException
      */
-    public void process(GFF3Record record) throws ObjectStoreException, IOException {
+    public void process(GFF3Record record) throws ObjectStoreException {
         String term = record.getType();
 
         if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
@@ -322,7 +324,7 @@ public class GFF3Converter extends DataConverter
 
         List<?> names = record.getNames();
         String symbol = null;
-        List<String> synonyms = null;
+        List<String> synonyms = new ArrayList<String>();
 
         // get the attribute set for symbol
         if (config_attr.containsKey(this.orgTaxonId)) {
@@ -338,7 +340,20 @@ public class GFF3Converter extends DataConverter
         if (config_attr.containsKey(this.orgTaxonId)) {
             if (config_attr.get(this.orgTaxonId).containsKey("synonym")) {
                 String synonymAttr = config_attr.get(this.orgTaxonId).get("synonym");
-                synonyms = record.getAttributes().get(synonymAttr);
+                if (synonymAttr.contains("Dbxref")) {
+                    String synonymAttrPrefix = synonymAttr.split("\\.")[1];
+                    Set<String> synSet = new HashSet<String>();
+                    for (Iterator<?> i = record.getDbxrefs().iterator(); i.hasNext(); ) {
+                        String xref = (String) i.next();
+                        if (xref.contains(synonymAttrPrefix)) {
+                            synSet.add(xref.split(":")[1]);
+                        }
+                    }
+                    synonyms.addAll(synSet);
+                } else {
+                    synonyms = record.getAttributes().get(synonymAttr);
+                }
+                // synonyms.removeAll(Collections.singleton(null));
             }
         }
 
@@ -357,9 +372,9 @@ public class GFF3Converter extends DataConverter
             }
 
             for (Entry<String, String> e : attrMap.entrySet()) {
-                String siAttr = e.getValue();
-                if (record.getAttributes().get(siAttr) != null) {
-                    String attrVal = record.getAttributes().get(siAttr).get(0);
+                String attr = e.getValue();
+                if (record.getAttributes().get(attr) != null) {
+                    String attrVal = record.getAttributes().get(attr).get(0);
                     if (attrVal != null) {
                         if (feature.checkAttribute(e.getKey())) {
                             feature.setAttribute(e.getKey(), attrVal);
