@@ -113,12 +113,13 @@ public class GFF3ConverterTest extends ItemsTestCase {
      */
     public void testRGD() throws Exception {
         /* Add to gff_config.properties:
-                10116.terms=gene, mRNA, Exon, CDS, ThreePrimeUTR, FivePrimeUTR
-                10116.attributes.ID=primaryIdentifier
-                10116.attributes.ID=secondaryIdentifier
-                10116.attributes.Note=description
-                10116.attributes.Dbxref.EntrezGene=ncbiGeneNumber
-                10116.attributes.Dbxref.EnsemblGenes=synonym
+            10116.terms=gene, mRNA, Exon, CDS, ThreePrimeUTR, FivePrimeUTR
+            10116.attributes.ID=primaryIdentifier
+            10116.gene.attributes.ID=secondaryIdentifier
+            10116.attributes.Note=description
+            10116.mRNA.attributes.Type=scoreType
+            10116.attributes.Dbxref.EntrezGene=ncbiGeneNumber
+            10116.attributes.Dbxref.EnsemblGenes=synonym
         */
         Model tgtModel = Model.getInstanceByName("genomic");
         converter = new GFF3Converter(writer, seqClsName, ratTaxonId, dataSourceName,
