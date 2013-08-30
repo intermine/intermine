@@ -40,44 +40,4 @@
     </div>
 </div>
 
-<!-- cam logo and links -->
-<div class="body bottom-footer">
-    <a class="cambridge-logo" href="http://www.cam.ac.uk/" title="University of Cambridge" target="_blank">
-        <img src="images/icons/cambridge-footer-logo.png" alt="University of Cambridge logo">
-    </a>
-
-    <ul class="footer-links">
-        <!-- contact us form link -->
-        <li><a href="#" onclick="showContactForm();return false;">Contact Us</a></li>
-        <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
-        <!-- web properties -->
-        <c:forEach var="entry" items="${headerLinks}" varStatus="status">
-            <c:set value="header.links.${entry}" var="linkProp"/>
-            <c:choose>
-                <c:when test="${!empty WEB_PROPERTIES[linkProp]}">
-                    <li><a href="${WEB_PROPERTIES[linkProp]}">${entry}</a></li>
-                </c:when>
-                <c:otherwise>
-                    <li><a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a></li>
-                </c:otherwise>
-            </c:choose>
-        </c:forEach>
-    </ul>
-
-    <!-- mines -->
-    <ul class="footer-links">
-        <li><a href="http://www.intermine.org" target="_blank">InterMine</a></li>
-        <li><a href="http://www.flymine.org" target="_blank">FlyMine</a></li>
-        <li><a href="http://www.modmine.org" target="_blank">modMine</a></li>
-        <li><a href="http://ratmine.mcw.edu/ratmine" target="_blank">RatMine</a></li>
-        <li><a href="http://yeastmine.yeastgenome.org" target="_blank">YeastMine</a></li>
-        <li><a href="http://www.mousemine.org" target="_blank">MouseMine</a></li>
-        <li><a href="http://zmine.zfin.org" target="_blank">ZebrafishMine</a></li>
-    </ul>
-
-    <p class="footer-copy">&copy; 2002 - 2012 Department of Genetics, University of Cambridge, Downing Street,<br />
-        Cambridge CB2 3EH, United Kingdom</p>
-
-    <div style="clear:both"></div>
-</div>
 <!-- /footer.jsp -->
