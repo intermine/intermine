@@ -134,7 +134,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         for (String chrName : chrNames) {
             System. out.println("Starting to process chromosome " + chrName);
             LOG.info("Starting to process chromosome " + chrName);
-            ResultSet res = queryVariation(chrName);
+            ResultSet res = queryVariation(connection, chrName);
             process(res, chrName);
             createSynonyms(connection, chrName);
         }
@@ -811,7 +811,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return stateIdentifier;
     }
 
-    private ResultSet queryVariation(String chrName)
+    private ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
         // ensembl "variation_feature" table:
         // Doc: http://www.ensembl.org/info/docs/variation/variation_schema.html#variation_feature
@@ -876,7 +876,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         // we had a loading issue with "MT" and "Mt", a snp was created twice
 
         // Close connection after query
-        Connection connection = getDatabase().getConnection();
         String query = "SELECT *"
                 + " FROM mM_snp_tmp_ordered_chr_all"
                 + " WHERE BINARY seq_region_name = '" + chrName + "'";
@@ -885,7 +884,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
-        connection.close();
         return res;
     }
 
