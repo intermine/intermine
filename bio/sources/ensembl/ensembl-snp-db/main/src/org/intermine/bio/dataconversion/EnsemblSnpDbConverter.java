@@ -119,8 +119,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     + " set the 'organism' property in project.xml");
         }
 
-        Connection connection = getDatabase().getConnection();
-
         List<String> chrNames = new ArrayList<String>();
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
@@ -134,18 +132,21 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         for (String chrName : chrNames) {
             System. out.println("Starting to process chromosome " + chrName);
             LOG.info("Starting to process chromosome " + chrName);
+            Connection connection = getDatabase().getConnection();
             ResultSet res = queryVariation(connection, chrName);
             process(res, chrName);
             createSynonyms(connection, chrName);
+            connection.close();
         }
         storeFinalSnps();
 
         if (PLANT == this.taxonId.intValue()) {
+            Connection connection = getDatabase().getConnection();
             processGenotypes(connection);
             processPopulations(connection);
             processStrainPopulationReferences(connection);
+            connection.close();
         }
-        connection.close();
     }
 
     /**
