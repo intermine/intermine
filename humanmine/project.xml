@@ -6,7 +6,7 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
-    <source name="ensembl-human" type="ensembl-core" dump="true">
+    <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core" />
       <property name="src.data.dir.includes" value="9606.xml" />
     </source>
@@ -58,7 +58,7 @@
     <source name="mammalian-phenotype-ontology" type="mammalian-phenotype-ontology">
       <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/current/MPheno_OBO.obo" />
     </source>
-    <source name="go" type="go" dump="true">
+    <source name="go" type="go">
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo" />
     </source>
     <source name="go-annotation" type="go-annotation">
@@ -72,10 +72,10 @@
     <source name="hpo" type="hpo">
       <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
     </source>
-    <source name="hpo-annotation" type="hpo-annotation">
+    <source name="hpo-annotation" type="hpo-annotation" dump="true">
       <property name="src.data.dir" location="/micklem/data/hpo" />
     </source>
-    <source name="psi-intact" type="psi" dump="true">
+    <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606 10090" />
     </source>
@@ -84,7 +84,7 @@
       <property name="src.data.dir.includes" value="*psi25.xml" />
       <property name="biogrid.organisms" value="9606 10090" />
     </source>
-    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+    <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />
       <property name="src.data.dir.includes" value="gene2pubmed" />
