@@ -8,6 +8,8 @@
 <html:xhtml/>
 
 <!-- apiRuby.jsp -->
+<c:set var="wiki" value="${WEB_PROPERTIES['api.help']}"/>
+<c:set var="rbwiki" value="${WEB_PROPERTIES['api.help.ruby']}"/>
 
 <im:boxarea titleKey="api.ruby.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiruby">
 
@@ -27,7 +29,7 @@
     <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
     <div id="prerequisite" style="padding: 5px">
       <p>
-        You should install the <a href="http://rubygems.org/gems/intermine" target="_blank">
+        You should install the <a href="${rbwiki}" target="_blank">
         Ruby webservice client library module</a> to get started.
         You can install it directly from:
         <a href="http://rubygems.org">RubyGems</a>. This is a public
@@ -42,11 +44,11 @@
         This module is pure Ruby with only one external dependency (json).
         The client library has been tested on Linux, Windows and Mac OS X, and 
         like all our code is open-source, licensed under the LGPL.For information
-        on the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
+        on the API visit our <a href="${wiki}">wiki pages</a>.
       </p>
       <p>
         For more detailed documentation please see here: 
-        <a href="http://www.intermine.org/docs/ruby-docs">http://www.intermine.org/docs/ruby-docs</a>
+        <a href="${rbwiki}"><c:out value="${rbwiki}"/></a>
       </p>
 
     </div>
@@ -73,9 +75,11 @@
 	
 	    Feel free to edit the script - these are designed to be
 	    spring-boards to help you get where you want to get to. 
-	    For further documentation, please read the general introduction 
-	    at <a href="http://www.intermine.org/wiki/RubyClient" target="_blank">http://www.intermine.org/wiki/RubyClient</a>
-        and the detailed API documentation at <a href="http://www.intermine.org/docs/ruby-docs/" target="_blank">www.intermine.org/docs/ruby-docs/</a>
+        For further documentation, please read the detailed API documentation
+        at
+        <a href="${rbwiki}" target="_blank">
+            <c:out value="${rbwiki}"/>
+        </a>
     </p>
     <p>
 	    For a good reference to getting started in Ruby, visit

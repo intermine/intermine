@@ -8,6 +8,8 @@
 <html:xhtml/>
 
 <!-- apiPython.jsp -->
+<c:set var="pywiki" value="${WEB_PROPERTIES['api.help.python']}"/>
+<c:set var="wiki" value="${WEB_PROPERTIES['api.help']}"/>
 
 <im:boxarea titleKey="api.python.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apipython">
 
@@ -45,12 +47,13 @@
         <pre>&gt; sudo easy_install simplejson</pre>
         <br>
         The client library has been tested on Python 2.5, 2.6 &amp; 2.7, on Linux, Windows and
-    Mac OS X, and like all our code is open-source, licensed under the LGPL.For information
-  on the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
+        Mac OS X, and like all our code is open-source, licensed under the LGPL.
+        For information on the API visit our introduction to the webservices:
+        <a href="${wiki}"><c:out value="${wiki}"/></a>.
       </p>
       <p>
         For other installation options, and a general guide to usage,
-        please see here: <a href="http://www.intermine.org/wiki/PythonClient">http://www.intermine.org/wiki/PythonClient</a>
+        please see here: <a href="${pywiki}"><c:out value="${pywiki}"/></a>
       </p>
 
     </div>
@@ -63,22 +66,24 @@
     query using the web service API. Just click the link, save the generated Python script in a file and execute it.
     You can use the generated code as a starting point for your own programs.</p>
     <p style="padding-top:3px; padding-bottom:3px;">
-    You can run the downloaded script by running the following
-    command in a shell:
-    <br>
-    <pre>&gt; python path/to/downloaded/script.py</pre>
-    <br>
-    If you get an error saying <code>ImportError: no module named intermine.webservice</code> or similar,
-    then see 'Prerequisites' above.
+        You can run the downloaded script by running the following
+        command in a shell:
+        <br>
+        <pre>&gt; python path/to/downloaded/script.py</pre>
+        <br>
+        If you get an error saying <code>ImportError: no module named intermine.webservice</code>
+        or similar, then see 'Prerequisites' above.
 
-    Feel free to edit the script - these are designed to be
-    spring-boards to help you get where you want to. For further documentation, please read the
-    general introduction at <a href="http://www.intermine.org/wiki/PythonClient" target="_blank">http://www.intermine.org/wiki/PythonClient</a>
-    and the detailed API documentation at <a href="http://www.flymine.org/download/docs/python-docs/" target="_blank">www.flymine.org/download/docs/python-docs/</a>
+        Feel free to edit the script - these are designed to be
+        spring-boards to help you get where you want to. For further documentation,
+        please read the detailed API documentation at
+        <a href="${pywiki}" target="_blank"><c:out value="${pywiki}"/></a>
     </p>
     <p>
-    For a good reference to getting started in Python, visit
-    <a href="http://wiki.python.org/moin/BeginnersGuide" target="_blank">the Python Beginners Guide</a>.
+        For a good reference to getting started in Python, visit
+        <a href="http://wiki.python.org/moin/BeginnersGuide" target="_blank">
+            the Python Beginners Guide
+        </a>.
     </p>
 
     </div>
