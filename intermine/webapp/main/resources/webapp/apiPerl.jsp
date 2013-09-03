@@ -8,6 +8,8 @@
 <html:xhtml/>
 
 <!-- apiPerl.jsp -->
+<c:set var="plwiki" value="${WEB_PROPERTIES['api.help.perl']}"/>
+<c:set var="wiki" value="${WEB_PROPERTIES['api.help']}"/>
 
 <im:boxarea titleKey="api.perl.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiPerl">
 
@@ -18,7 +20,7 @@
     in a number of formats, including native Perl data structures and objects, and TSV/CSV strings.
   <br/>
   Like all our code, it is open-source, coming licensed under the LGPL. For information on our
-  API, visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
+  API, visit our <a href="${wiki}">wiki pages</a>.
   </p>
 </div>
 <br>
@@ -29,23 +31,19 @@
     <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
     <div id="prerequisite" style="padding: 5px">
       <p>
-        You should install the <a href="http://search.cpan.org/~intermine/Webservice-InterMine/lib/Webservice/InterMine.pm" target="_blank">
+        You should install the <a href="${plwiki}" target="_blank">
         Perl webservice client library module </a> to get started.
         You can install it directly from
         CPAN (the comprehensive Perl archive network). This is a public
         repository of thousands of modules. Using CPAN will ensure you
         get the latest version, and that your dependencies are
         automatically managed for you.
-     </p><p>
+     </p>
+     <p>
        To install the InterMine Perl
         client library type the following command into a shell:
      </p>
         <pre>&gt; sudo cpan Webservice::InterMine</pre>
-        <p>
-            (you may be asked to configure cpan here if you have not used it
-            before). More detailed instructions regarding the installation
-            of Perl modules can be found <a href="http://www.intermine.org/wiki/InstallingPerlModules" target="_blank">here</a>.
-      </p>
     </div>
   </li>
   <li>
