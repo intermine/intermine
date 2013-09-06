@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
 
 /**
  * Read Alleles and Genotypes with associated Mammalian Phenotype ontology terms from MGI files.
@@ -54,7 +52,6 @@ public class MgiAllelesConverter extends BioFileConverter
 
     }
 
-
     @Override
     public void close() throws Exception {
         for (Item allele : alleles.values()) {
@@ -62,7 +59,6 @@ public class MgiAllelesConverter extends BioFileConverter
         }
         super.close();
     }
-
 
     /**
      * {@inheritDoc}
@@ -89,7 +85,7 @@ public class MgiAllelesConverter extends BioFileConverter
 
         String lastGenotypeName = null;
         Item currentGenotype = null;
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String genotypeName = line[0];
@@ -153,7 +149,7 @@ public class MgiAllelesConverter extends BioFileConverter
             store(ontology);
         }
 
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String alleleIdentifier = line[0];
@@ -174,7 +170,10 @@ public class MgiAllelesConverter extends BioFileConverter
             Item allele = getAlleleItem(alleleSymbol);
             allele.setAttribute("primaryIdentifier", alleleIdentifier);
             allele.setAttribute("name", alleleName);
-            allele.setAttribute("type", alleleType);
+
+            if (!StringUtils.isBlank(alleleType)) {
+                allele.setAttribute("type", alleleType);
+            }
 
             if (!StringUtils.isBlank(pubmed)) {
                 String pubItemId = getPubItemId(pubmed);
