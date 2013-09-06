@@ -74,10 +74,10 @@
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
     </source>
-    <source name="hpo" type="hpo">
+    <source name="hpo" type="hpo"  dump="true">
       <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
     </source>
-    <source name="hpo-annotation" type="hpo-annotation" dump="true">
+    <source name="hpo-annotation" type="hpo-annotation">
       <property name="src.data.dir" location="/micklem/data/hpo" />
     </source>
     <source name="psi-intact" type="psi">
