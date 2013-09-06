@@ -8,13 +8,15 @@
         is-interface="true">
         <reference name="hpoTerm" referenced-type="HPOTerm" />
         <collection name="evidence" referenced-type="HPOEvidence" />
+        <collection name="genes" referenced-type="Gene" reverse-reference="hpoAnnotations" />
+        <collection name="diseases" referenced-type="Disease" reverse-reference="hpoAnnotations" />
     </class>
     <class name="HPOTerm" extends="OntologyTerm" is-interface="true">
         <reference name="ontology" referenced-type="Ontology" />
     </class>
     <class name="Disease" is-interface="true">
         <attribute name="identifier" type="java.lang.String" />
-        <collection name="hpoAnnotation" referenced-type="HPOAnnotation" />
+        <collection name="hpoAnnotations" referenced-type="HPOAnnotation" reverse-reference="diseases" />
     </class>
     <class name="HPOEvidenceCode" is-interface="true">
         <attribute name="code" type="java.lang.String" />
@@ -24,5 +26,8 @@
         <reference name="code" referenced-type="GOEvidenceCode" />
         <collection name="publications" referenced-type="Publication" />
         <collection name="with" referenced-type="BioEntity" />
+    </class>
+    <class name="Gene" is-interface="true">
+        <collection name="hpoAnnotations" referenced-type="HPOAnnotation" reverse-reference="genes" />
     </class>
 </classes>
