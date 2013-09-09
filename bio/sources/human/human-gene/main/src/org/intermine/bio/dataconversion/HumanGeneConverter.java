@@ -29,7 +29,7 @@ import org.intermine.xml.full.Item;
  */
 public class HumanGeneConverter extends BioFileConverter
 {
-    private static final String DATASET_TITLE = "Human gene information";
+    private static final String DATASET_TITLE = "HGNC human gene information";
     private static final String DATA_SOURCE_NAME = "HGNC";
     private static final String HUMAN_TAXONID = "9606";
     private static final String HGNC_PREFIX = "HGNC:";
@@ -37,8 +37,8 @@ public class HumanGeneConverter extends BioFileConverter
 
     protected static final Logger LOG = Logger.getLogger(HumanGeneConverter.class);
 
-    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1", 
-        "MIR4679-1", "MIR3190", "MIR3119-1", "MIR3116-2", "MIR3065", "MIR3199-1", 
+    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1",
+        "MIR4679-1", "MIR3190", "MIR3119-1", "MIR3116-2", "MIR3065", "MIR3199-1",
         "ZNF559-ZNF177", "MIR548AA2", "MIR548AA1", "KIR2DL2", "RNA18S5", "MIR3158-2",
         "MIR3130-1", "MIR4662A", "MIR3688-1", "MIR3913-2", "MIR4520A", "MIR4773-1",
         "MIR3160-1", "MIR3622B", "MIR4524A", "MIR4477B", "MIR4659A", "MIR3926-1",
