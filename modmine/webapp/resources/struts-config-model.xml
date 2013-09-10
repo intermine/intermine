@@ -61,11 +61,16 @@
 <action path="/initHeatMap"
   type="org.modmine.web.HeatMapController" />
 
+<action path="/initFeaturesOverlaps"
+  type="org.modmine.web.FeaturesOverlapsController" />
+
 <action path="/projects" forward="projects.page" />
 
 <action path="/experiment" forward="experiment.page" />
 
 <action path="/heatMap" forward="heatMap.page" />
+
+
 <action path="/projectsSummary" forward="projectsSummary.page" />
 <action path="/categorySummary" forward="categorySummary.page" />
 <action path="/chromatinStates" forward="chromatinStates.page" />
@@ -84,6 +89,12 @@
 <action path="/submissionOverlapsAction" name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsAction" input="report">
       <forward name="report" redirect="true" path="/report.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+</action>
+
+<action path="/featuresOverlapsAction" name="featuresOverlapsForm" type="org.modmine.web.FeaturesOverlapsAction" input="begin">
+      <forward name="report" redirect="true" path="/report.do"/>
+      <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
 </action>
 
 <action path="/features"

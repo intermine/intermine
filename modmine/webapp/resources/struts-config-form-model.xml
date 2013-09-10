@@ -5,5 +5,6 @@
 <form-bean name="bedExportForm" type="org.intermine.bio.web.struts.BEDExportForm"/>
 <form-bean name="galaxyExportForm" type="org.intermine.bio.web.struts.GalaxyExportForm"/>
 <form-bean name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsForm"/>
+<form-bean name="featuresOverlapsForm" type="org.modmine.web.FeaturesOverlapsForm"/>
 <form-bean name="modMineSearchForm" type="org.modmine.web.ModMineSearchForm"/>
 <form-bean name="spanUploadForm" type="org.modmine.web.SpanUploadForm"/>

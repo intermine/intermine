@@ -41,6 +41,9 @@
 <definition name="heatMap.tile" path="/model/heatMap.jsp"
         controllerUrl="/initHeatMap.do"/>
 
+<definition name="featuresOverlaps.tile" path="/model/featuresOverlaps.jsp"
+        controllerUrl="/initFeaturesOverlaps.do"/>
+
 <definition name="projectList.tile" path="/model/projectList.jsp"
         controllerUrl="/initProjectList.do"/>
 
@@ -59,6 +62,14 @@
     <put name="body" value="heatMap.tile"/>
     <put name="pageName" value="heatMap"/>
   </definition>
+
+
+  <definition name="featuresOverlaps.page" extends="layout.template">
+    <put name="body" value="featuresOverlaps.tile"/>
+    <put name="pageName" value="featuresOverlaps"/>
+  </definition>
+
+
 
   <definition name="projectsSummary.page" extends="layout.template">
     <put name="body" value="projectsSummary.tile"/>
