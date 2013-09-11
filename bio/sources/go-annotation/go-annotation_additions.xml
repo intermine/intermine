@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 <classes>
 <class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
-  <attribute name="annotationExtension" type="java.lang.String"/>
+  <collection name="evidence" referenced-type="GOEvidence"/>
+  <collection name="extensions" referenced-type="AnnotationExtension"/>
+</class>
+<class name="AnnotationExtension" is-interface="true">
+  <attribute name="extension" type="java.lang.String" />
   <collection name="evidence" referenced-type="GOEvidence"/>
 </class>
 <class name="Gene" is-interface="true">
