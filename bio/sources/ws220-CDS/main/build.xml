@@ -1,0 +1,4 @@
+<project name="ws220-CDS-tasks" default="default" basedir=".">
+  <description>build ws220-CDS tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
