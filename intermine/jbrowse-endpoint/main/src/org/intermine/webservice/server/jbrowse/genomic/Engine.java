@@ -57,7 +57,7 @@ public class Engine extends CommandRunner {
 
     private final Model model;
     private static final Map<Command, Map<String, Object>> STATS_CACHE =
-            new CacheMap("jbrowse.genomic.engine.STATS_CACHE");
+            new CacheMap<Command, Map<String, Object>>("jbrowse.genomic.engine.STATS_CACHE");
 
     public Engine(InterMineAPI api) {
         super(api);
@@ -259,6 +259,7 @@ public class Engine extends CommandRunner {
         return pathQueryToOSQ(pq);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Query pathQueryToOSQ(PathQuery pq) {
         Query q;
         try {
