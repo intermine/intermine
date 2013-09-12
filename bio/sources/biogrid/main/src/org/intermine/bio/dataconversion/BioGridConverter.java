@@ -116,7 +116,7 @@ public class BioGridConverter extends BioFileConverter
             throw new FileNotFoundException("No valid data files found.");
         }
 
-        if (taxonIds != null || !taxonIds.isEmpty()) {
+        if (taxonIds != null && !taxonIds.isEmpty()) {
             if (!isValidOrganism(file.getName())) {
                 return;
             }
