@@ -12,10 +12,13 @@ package org.intermine.webservice.server.core;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.metadata.Model;
@@ -110,6 +113,31 @@ public abstract class JSONService extends WebService
         List<String> outputStrings = new ArrayList<String>();
         outputStrings.add(val);
         if (hasMore) outputStrings.add("");
+        output.addResultItem(outputStrings);
+    }
+
+    protected void addResultEntries(
+            Collection<Map.Entry<String, Object>> entries) {
+        List<String> outputStrings = new ArrayList<String>();
+        for (Map.Entry<String, Object> entry: entries) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String valStr = null;
+            
+            if (value == null) {
+                valStr = "null";
+            } if (value instanceof Map) {
+                valStr = new JSONObject((Map) value).toString();
+            } else if (value instanceof List) {
+                valStr = new JSONArray((List) value).toString();
+            } else if (value instanceof CharSequence) {
+                valStr = String.format("\"%s\"",
+                        StringEscapeUtils.escapeJava(String.valueOf(value)));
+            } else if (value instanceof Number || value instanceof Boolean) {
+                valStr = String.valueOf(value);
+            }
+            outputStrings.add(String.format("\"%s\":%s", key, valStr));
+        }
         output.addResultItem(outputStrings);
     }
 

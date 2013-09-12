@@ -1730,6 +1730,24 @@
     </metadata>
 	</servlet-mapping>
     
+    <!--  New in version 14 -->
+    <servlet>
+     <servlet-name>ws-jbrowse</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.jbrowse.Endpoint</param-value>
+     </init-param>
+     <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.jbrowse.Endpoint</param-value>
+     </init-param>
+   </servlet>
+   
+   <servlet-mapping>
+    <servlet-name>ws-jbrowse</servlet-name>
+    <url-pattern>/service/jbrowse/*</url-pattern>
+   </servlet-mapping>
    
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
