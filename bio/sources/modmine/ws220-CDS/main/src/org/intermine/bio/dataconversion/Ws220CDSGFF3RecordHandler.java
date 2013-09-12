@@ -20,6 +20,8 @@ import org.intermine.xml.full.Item;
 
 public class Ws220CDSGFF3RecordHandler extends GFF3RecordHandler
 {
+    private static final Logger LOG = Logger.getLogger(Ws220CDSGFF3RecordHandler.class);
+    LOG.info ("INWS220 HANDLER ");
 
     /**
      * Create a new Ws220CDSGFF3RecordHandler for the given data model.
@@ -34,6 +36,20 @@ public class Ws220CDSGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
+
+        LOG.info ("WS220 HANDLER rec: " + record);
+
+    String term = record.getType();
+    if (!"CDS".equals(term)) {
+        LOG.info("SKIPPING " + term );
+        return;
+    }
+
+             Item feature = getFeature();
+             String wormpep = record.getAttributes().get("wormpep");
+             feature.setAttribute("wormpep", wormpep);
+
+
         // This method is called for every line of GFF3 file(s) being read.  Features and their
         // locations are already created but not stored so you can make changes here.  Attributes
         // are from the last column of the file are available in a map with the attribute name as
@@ -41,7 +57,7 @@ public class Ws220CDSGFF3RecordHandler extends GFF3RecordHandler
         //
         //     Item feature = getFeature();
         //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttrinte("symbol", symbol);
+        //     feature.setAttribute("symbol", symbol);
         //
         // Any new Items created can be stored by calling addItem().  For example:
         // 
