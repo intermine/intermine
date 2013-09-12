@@ -159,7 +159,7 @@ public class HpoConverter extends BioDirectoryConverter
         }
 
         for (String dbId : diseaseToAnnoMap.keySet()) {
-            List<String> annoRefIds = new ArrayList<String>();
+            String diseaseRefId = storeDisease(dbId);
             for (String[] infoBits : diseaseToAnnoMap.get(dbId)) {
                 // Create Evidence item
                 Item eviItem = createItem("HPOEvidence");
@@ -173,6 +173,7 @@ public class HpoConverter extends BioDirectoryConverter
                     }
                 }
                 eviItem.setReference("code", eviMap.get(infoBits[3]));
+                eviItem.setReference("disease", diseaseRefId);
                 store(eviItem);
 
                 // Create HPOAnnotation item
@@ -183,11 +184,9 @@ public class HpoConverter extends BioDirectoryConverter
                 String hpoTerm = hpoTermMap.get(infoBits[1]);
                 annoItem.setReference("hpoTerm", hpoTerm);
                 annoItem.setCollection("evidence", Arrays.asList(eviItem.getIdentifier()));
-                annoRefIds.add(annoItem.getIdentifier());
                 store(annoItem);
                 hpoTermToHpoAnnoItemIdMap.put(infoBits[1], annoItem.getIdentifier());
             }
-            storeDisease(dbId, annoRefIds);
         }
     }
 
@@ -238,7 +237,7 @@ public class HpoConverter extends BioDirectoryConverter
         return item.getIdentifier();
     }
 
-    private void storeDisease(String dbId, List<String> annoRefIds) throws ObjectStoreException {
+    private String storeDisease(String dbId) throws ObjectStoreException {
         if (diseaseMap.get(dbId) == null) {
             Item item = createItem("Disease");
             item.setAttribute("identifier", dbId);
@@ -261,9 +260,11 @@ public class HpoConverter extends BioDirectoryConverter
                 item.setAttribute("name", dName);
             }
 
-            item.setCollection("hpoAnnotations", annoRefIds);
             diseaseMap.put(dbId, item.getIdentifier());
             store(item);
+            return item.getIdentifier();
+        } else {
+            return diseaseMap.get(dbId);
         }
     }
 
