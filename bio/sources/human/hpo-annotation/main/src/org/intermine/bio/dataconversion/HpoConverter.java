@@ -65,6 +65,9 @@ public class HpoConverter extends BioDirectoryConverter
     private static final String HUMAN_TAXON = "9606";
     private String organism = getOrganism(HUMAN_TAXON);
 
+    private String regex = "^(\\*|\\+|#|%)*[0-9]{6,}";
+    private String toDiscard = "MOVED TO";
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -127,13 +130,14 @@ public class HpoConverter extends BioDirectoryConverter
 
             String dbId = db + ":" + array[1];
             String dbName = array[2];
-            // Save id and namne to map for future use
-            if (!dbName.isEmpty()) {
-                if (dbName.matches("^(#|%|[0-9]).*$")) {
-                    dbName = dbName.substring(dbName.indexOf(" "));
-                }
-                diseaseIdNameMap.put(dbId, dbName.trim());
+
+            if (dbName.contains(toDiscard)) {
+                continue;
             }
+
+            // Save id and namne to map for future use
+            dbName = dbName.replaceAll(regex, "").replaceAll("@", "");
+            diseaseIdNameMap.put(dbId, dbName.trim());
 
             String qualifier = array[3];
             String hpoId = array[4];
@@ -239,8 +243,24 @@ public class HpoConverter extends BioDirectoryConverter
             Item item = createItem("Disease");
             item.setAttribute("identifier", dbId);
             if (diseaseIdNameMap.get(dbId) != null) {
-                item.setAttribute("name", diseaseIdNameMap.get(dbId));
+                String rawName = diseaseIdNameMap.get(dbId);
+
+                String[] names = rawName.split(";;");
+                String dName = names[0].trim();
+
+                // parse alternative titles
+                List<String> synItemIds = new ArrayList<String>();
+                for (int i = 1; i < names.length; i++) {
+                    Item dsItem = createItem("DiseaseSynonym");
+                    dsItem.setAttribute("name", names[i].trim());
+                    synItemIds.add(dsItem.getIdentifier());
+                    store(dsItem);
+                }
+                item.setCollection("synonyms", synItemIds);
+
+                item.setAttribute("name", dName);
             }
+
             item.setCollection("hpoAnnotations", annoRefIds);
             diseaseMap.put(dbId, item.getIdentifier());
             store(item);
