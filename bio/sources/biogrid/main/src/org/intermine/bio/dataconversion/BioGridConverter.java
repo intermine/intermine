@@ -576,7 +576,7 @@ public class BioGridConverter extends BioFileConverter
                 identifier = ih.xrefs.get(db);
             }
 
-            if ((FLY.equals(taxonId) || HUMAN.equals(taxonId)) && rslv != null) {
+            if (FLY.equals(taxonId) && rslv != null) {
                 identifier = resolveGene(taxonId, identifier);
                 label = "primaryIdentifier";
             }
