@@ -1,5 +1,0 @@
-<project name="ws220-CDS" default="default" basedir=".">
-  <description>build, test, package ws220-CDS</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

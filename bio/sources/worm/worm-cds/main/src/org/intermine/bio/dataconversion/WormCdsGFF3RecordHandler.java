@@ -13,21 +13,21 @@ package org.intermine.bio.dataconversion;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
+import org.apache.log4j.Logger;
 
 /**
- * A converter/retriever for the Ws220CDS dataset via GFF files.
+ * A converter/retriever for the WormCds dataset via GFF files.
  */
 
-public class Ws220CDSGFF3RecordHandler extends GFF3RecordHandler
+public class WormCdsGFF3RecordHandler extends GFF3RecordHandler
 {
-    private static final Logger LOG = Logger.getLogger(Ws220CDSGFF3RecordHandler.class);
-    LOG.info ("INWS220 HANDLER ");
+    private static final Logger LOG = Logger.getLogger(WormCdsGFF3RecordHandler.class);
 
     /**
-     * Create a new Ws220CDSGFF3RecordHandler for the given data model.
+     * Create a new WormCdsGFF3RecordHandler for the given data model.
      * @param model the model for which items will be created
      */
-    public Ws220CDSGFF3RecordHandler (Model model) {
+    public WormCdsGFF3RecordHandler (Model model) {
         super(model);
     }
 
@@ -37,27 +37,29 @@ public class Ws220CDSGFF3RecordHandler extends GFF3RecordHandler
     @Override
     public void process(GFF3Record record) {
 
-        LOG.info ("WS220 HANDLER rec: " + record);
+         LOG.info ("worm-cds R-HANDLER rec: " + record);
+        
+        String term = record.getType();
+        if (!"CDS".equals(term)) {
+            LOG.info("SKIPPING " + term );
+            return;
+        }
+        
+        Item feature = getFeature();
+        String wormpep = record.getAttributes().get('wormpep').get(0);
+        feature.setAttribute("wormpep", wormpep);
 
-    String term = record.getType();
-    if (!"CDS".equals(term)) {
-        LOG.info("SKIPPING " + term );
-        return;
-    }
+        String status = record.getAttributes().get("status").get(0);
+        feature.setAttribute("status", status);
 
-             Item feature = getFeature();
-             String wormpep = record.getAttributes().get("wormpep");
-             feature.setAttribute("wormpep", wormpep);
-
-
-        // This method is called for every line of GFF3 file(s) being read.  Features and their
+       // This method is called for every line of GFF3 file(s) being read.  Features and their
         // locations are already created but not stored so you can make changes here.  Attributes
         // are from the last column of the file are available in a map with the attribute name as
         // the key.   For example:
         //
         //     Item feature = getFeature();
         //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttribute("symbol", symbol);
+        //     feature.setAttrinte("symbol", symbol);
         //
         // Any new Items created can be stored by calling addItem().  For example:
         // 
