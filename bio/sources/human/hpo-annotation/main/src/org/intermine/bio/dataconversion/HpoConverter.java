@@ -55,12 +55,13 @@ public class HpoConverter extends BioDirectoryConverter
 
     private Map<String, List<String[]>> diseaseToAnnoMap = new HashMap<String, List<String[]>>();
     private Map<String, String> eviMap = new HashMap<String, String>();
-    private Map<String, String> hpoTermMap = new HashMap<String, String>();
+    private Map<String, Item> hpoTermMap = new HashMap<String, Item>();
     private Map<String, String> diseaseMap = new HashMap<String, String>();
     private Map<String, String> diseaseIdNameMap = new HashMap<String, String>();
     private Map<String, String> publicationMap = new HashMap<String, String>();
     private Map<String, String> hpoTermToHpoAnnoItemIdMap = new HashMap<String, String>();
     private String ontologyItemId = null;
+    private Set<String> savedHpoTermSet = new HashSet<String>();
 
     private static final String HUMAN_TAXON = "9606";
     private String organism = getOrganism(HUMAN_TAXON);
@@ -181,8 +182,17 @@ public class HpoConverter extends BioDirectoryConverter
                 if (!infoBits[0].isEmpty()) {
                     annoItem.setAttribute("qualifier", infoBits[0]);
                 }
-                String hpoTerm = hpoTermMap.get(infoBits[1]);
-                annoItem.setReference("hpoTerm", hpoTerm);
+
+                Item hpoTermItem = hpoTermMap.get(infoBits[1]);
+                hpoTermItem.setReference("hpoAnnotation", annoItem);
+                if (savedHpoTermSet.isEmpty()
+                        || !savedHpoTermSet.contains(hpoTermItem
+                                .getIdentifier())) {
+                    savedHpoTermSet.add(hpoTermItem.getIdentifier());
+                    store(hpoTermItem);
+                }
+
+                annoItem.setReference("hpoTerm", hpoTermItem);
                 annoItem.setCollection("evidence", Arrays.asList(eviItem.getIdentifier()));
                 store(annoItem);
                 hpoTermToHpoAnnoItemIdMap.put(infoBits[1], annoItem.getIdentifier());
@@ -273,8 +283,8 @@ public class HpoConverter extends BioDirectoryConverter
             Item item = createItem("HPOTerm");
             item.setAttribute("identifier", hpoTerm);
             item.setReference("ontology", ontologyItemId);
-            hpoTermMap.put(hpoTerm, item.getIdentifier());
-            store(item);
+            hpoTermMap.put(hpoTerm, item);
+//            store(item);
         }
     }
 

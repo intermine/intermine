@@ -6,12 +6,13 @@
     </class>
     <class name="HPOAnnotation" extends="OntologyAnnotation"
         is-interface="true">
-        <reference name="hpoTerm" referenced-type="HPOTerm" />
+        <reference name="hpoTerm" referenced-type="HPOTerm" reverse-reference="hpoAnnotation" />
         <collection name="evidence" referenced-type="HPOEvidence" />
         <collection name="genes" referenced-type="Gene" reverse-reference="hpoAnnotations" />
     </class>
     <class name="HPOTerm" extends="OntologyTerm" is-interface="true">
         <reference name="ontology" referenced-type="Ontology" />
+        <reference name="hpoAnnotation" referenced-type="HPOAnnotation" reverse-reference="hpoTerm" />
     </class>
     <class name="Disease" is-interface="true">
         <attribute name="identifier" type="java.lang.String" />
