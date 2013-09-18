@@ -237,7 +237,7 @@ public class GoConverter extends BioFileConverter
             String withText = array[7];
             String extensionText = null;
             if (array.length >= 16) {
-            	extensionText = array[15];
+                extensionText = array[15];
 
             }
             if (StringUtils.isNotEmpty(strEvidence)) {
@@ -270,7 +270,7 @@ public class GoConverter extends BioFileConverter
 
                 // get evidence codes for this goterm|gene pair
                 Set<Evidence> allEvidenceForAnnotation = goTermGeneToEvidence.get(key);
-                
+
                 // new evidence
                 if (allEvidenceForAnnotation == null || !StringUtils.isEmpty(withText)) {
                     String goTermIdentifier = newGoTerm(goId, dataSource, dataSourceCode);
@@ -281,18 +281,20 @@ public class GoConverter extends BioFileConverter
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
                     Item extension = null;
                     if (extensionText != null) {
-                		Item goevidence = createItem("GOEvidence");
-                		goevidence.setReference("code", evidenceCodes.get(strEvidence));
-                		if (pubRefId != null) {
-                			goevidence.addToCollection("publications", pubRefId);
-                		}
-                		store(goevidence);
-                    	for (String s : extensionText.split("\\|")) {
-                    		extension = createItem("AnnotationExtension");
-                    		extension.setAttribute("extension", s);
-                    		extension.addToCollection("evidence", goevidence);
-                    		store(extension);
-                    	}
+                        Item goevidence = createItem("GOEvidence");
+                        goevidence.setReference("code", evidenceCodes.get(strEvidence));
+                        if (pubRefId != null) {
+                            goevidence.addToCollection("publications", pubRefId);
+                        }
+                        store(goevidence);
+                        for (String s : extensionText.split("\\|")) {
+                            extension = createItem("AnnotationExtension");
+                            if (!s.isEmpty()) {
+                                extension.setAttribute("extension", s);
+                            }
+                            extension.addToCollection("evidence", goevidence);
+                            store(extension);
+                        }
                     }
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, dataSource, dataSourceCode,
