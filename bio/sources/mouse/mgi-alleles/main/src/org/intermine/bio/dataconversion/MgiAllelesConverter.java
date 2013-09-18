@@ -221,7 +221,7 @@ public class MgiAllelesConverter extends BioFileConverter
         String geneItemId = genes.get(geneIdentifier);
         if (geneItemId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("secondaryIdentifier", geneIdentifier);
+            gene.setAttribute("primaryIdentifier", geneIdentifier);
             gene.setReference("organism", organismIdentifier);
             store(gene);
             geneItemId = gene.getIdentifier();
