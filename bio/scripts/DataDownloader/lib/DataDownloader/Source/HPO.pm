@@ -32,6 +32,10 @@ sub BUILD {
             FILE    => "phenotype_annotation.tab",
         }, 
         {
+            SERVER  => 'http://compbio.charite.de/hudson/job/hpo.annotations/lastStableBuild/artifact/misc/',
+            FILE    => "phenotype_annotation_hpoteam.tab",
+        },
+        {
             SERVER  => 'http://compbio.charite.de/hudson/job/hpo.annotations.monthly/lastStableBuild/artifact/annotation/',
             FILE    => "ALL_SOURCES_ALL_FREQUENCIES_phenotype_to_genes.txt",
         },
