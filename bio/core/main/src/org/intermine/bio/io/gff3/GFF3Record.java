@@ -252,11 +252,27 @@ public class GFF3Record
     }
 
     /**
+     * Set the start field of this record (CDS).
+     * @param start the new start value
+     */
+    public void setStart (int start) {
+        this.start = start;
+    }
+
+    /**
      * Return the end field of this record.
      * @return the end field of this record
      */
     public int getEnd () {
         return end;
+    }
+
+    /**
+     * Set the end field of this record (CDS).
+     * @param end the new end value
+     */
+    public void setEnd (int end) {
+        this.end = end;
     }
 
     /**
@@ -422,6 +438,16 @@ public class GFF3Record
         return attributes;
     }
 
+    /**
+     * Set the attributes of this record as a Map from attribute key to Lists of attribute
+     * values.
+     * @param the new attributes of this record
+     */
+    public void setAttributes (Map<String, List<String>> attributes) {
+        this.attributes = attributes;
+    }
+
+    
     /**
      * {@inheritDoc}
      */
