@@ -56,7 +56,7 @@ public class HpoConverter extends BioDirectoryConverter
     private Map<String, List<String[]>> diseaseToAnnoMap = new HashMap<String, List<String[]>>();
     private Map<String, String> eviMap = new HashMap<String, String>();
     private Map<String, Item> hpoTermMap = new HashMap<String, Item>();
-    private Map<String, String> diseaseMap = new HashMap<String, String>();
+    private Map<String, Item> diseaseMap = new HashMap<String, Item>();
     private Map<String, String> diseaseIdNameMap = new HashMap<String, String>();
     private Map<String, String> publicationMap = new HashMap<String, String>();
     private Map<String, String> hpoTermToHpoAnnoItemIdMap = new HashMap<String, String>();
@@ -98,6 +98,7 @@ public class HpoConverter extends BioDirectoryConverter
         ontologyItemId = storeOntology();
         processAnnoFile(new FileReader(files.get(HPOTEAM_FILE)));
         processAnnoFile(new FileReader(files.get(NEG_FILE)));
+        parseAnnotation();
         processGeneFile(new FileReader(files.get(GENE_FILE)));
     }
 
@@ -158,9 +159,11 @@ public class HpoConverter extends BioDirectoryConverter
                 diseaseToAnnoMap.get(dbId).add(annoInfo);
             }
         }
+    }
 
+    protected void parseAnnotation() throws ObjectStoreException {
         for (String dbId : diseaseToAnnoMap.keySet()) {
-            String diseaseRefId = storeDisease(dbId);
+            List<String> annoRefIds = new ArrayList<String>();
             for (String[] infoBits : diseaseToAnnoMap.get(dbId)) {
                 // Create Evidence item
                 Item eviItem = createItem("HPOEvidence");
@@ -174,7 +177,6 @@ public class HpoConverter extends BioDirectoryConverter
                     }
                 }
                 eviItem.setReference("code", eviMap.get(infoBits[3]));
-                eviItem.setReference("disease", diseaseRefId);
                 store(eviItem);
 
                 // Create HPOAnnotation item
@@ -192,11 +194,20 @@ public class HpoConverter extends BioDirectoryConverter
                     store(hpoTermItem);
                 }
 
+                if (diseaseMap.get(dbId) == null) {
+                    Item diseaseItem = createItem("Disease");
+                    diseaseItem.setAttribute("identifier", dbId);
+                    diseaseMap.put(dbId, diseaseItem);
+                }
+                annoItem.setReference("disease", diseaseMap.get(dbId));
+
                 annoItem.setReference("hpoTerm", hpoTermItem);
                 annoItem.setCollection("evidence", Arrays.asList(eviItem.getIdentifier()));
+                annoRefIds.add(annoItem.getIdentifier());
                 store(annoItem);
                 hpoTermToHpoAnnoItemIdMap.put(infoBits[1], annoItem.getIdentifier());
             }
+            storeDisease(dbId, annoRefIds);
         }
     }
 
@@ -247,35 +258,29 @@ public class HpoConverter extends BioDirectoryConverter
         return item.getIdentifier();
     }
 
-    private String storeDisease(String dbId) throws ObjectStoreException {
-        if (diseaseMap.get(dbId) == null) {
-            Item item = createItem("Disease");
-            item.setAttribute("identifier", dbId);
-            if (diseaseIdNameMap.get(dbId) != null) {
-                String rawName = diseaseIdNameMap.get(dbId);
+    private void storeDisease(String dbId, List<String> annoRefIds) throws ObjectStoreException {
+        Item item = diseaseMap.get(dbId);
+        if (diseaseIdNameMap.get(dbId) != null) {
+            String rawName = diseaseIdNameMap.get(dbId);
 
-                String[] names = rawName.split(";;");
-                String dName = names[0].trim();
+            String[] names = rawName.split(";;");
+            String dName = names[0].trim();
 
-                // parse alternative titles
-                List<String> synItemIds = new ArrayList<String>();
-                for (int i = 1; i < names.length; i++) {
-                    Item dsItem = createItem("DiseaseSynonym");
-                    dsItem.setAttribute("name", names[i].trim());
-                    synItemIds.add(dsItem.getIdentifier());
-                    store(dsItem);
-                }
-                item.setCollection("synonyms", synItemIds);
-
-                item.setAttribute("name", dName);
+            // parse alternative titles
+            List<String> synItemIds = new ArrayList<String>();
+            for (int i = 1; i < names.length; i++) {
+                Item dsItem = createItem("DiseaseSynonym");
+                dsItem.setAttribute("name", names[i].trim());
+                synItemIds.add(dsItem.getIdentifier());
+                store(dsItem);
             }
+            item.setCollection("synonyms", synItemIds);
 
-            diseaseMap.put(dbId, item.getIdentifier());
-            store(item);
-            return item.getIdentifier();
-        } else {
-            return diseaseMap.get(dbId);
+            item.setAttribute("name", dName);
         }
+
+        item.setCollection("hpoAnnotations", annoRefIds);
+        store(item);
     }
 
     private void storeHpoTerm(String hpoTerm) throws ObjectStoreException {
@@ -284,7 +289,6 @@ public class HpoConverter extends BioDirectoryConverter
             item.setAttribute("identifier", hpoTerm);
             item.setReference("ontology", ontologyItemId);
             hpoTermMap.put(hpoTerm, item);
-//            store(item);
         }
     }
 

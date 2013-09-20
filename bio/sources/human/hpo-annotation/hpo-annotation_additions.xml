@@ -7,6 +7,7 @@
     <class name="HPOAnnotation" extends="OntologyAnnotation"
         is-interface="true">
         <reference name="hpoTerm" referenced-type="HPOTerm" reverse-reference="hpoAnnotation" />
+        <reference name="disease" referenced-type="Disease" />
         <collection name="evidence" referenced-type="HPOEvidence" />
         <collection name="genes" referenced-type="Gene" reverse-reference="hpoAnnotations" />
     </class>
@@ -17,6 +18,7 @@
     <class name="Disease" is-interface="true">
         <attribute name="identifier" type="java.lang.String" />
         <collection name="synonyms" referenced-type="DiseaseSynonym" />
+        <collection name="hpoAnnotations" referenced-type="HPOAnnotation" />
     </class>
     <class name="DiseaseSynonym" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
@@ -27,7 +29,6 @@
     <class name="HPOEvidence" is-interface="true">
         <attribute name="source" type="java.lang.String" />
         <reference name="code" referenced-type="GOEvidenceCode" />
-        <reference name="disease" referenced-type="Disease" />
         <collection name="publications" referenced-type="Publication" />
         <collection name="with" referenced-type="BioEntity" />
     </class>
