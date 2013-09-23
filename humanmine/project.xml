@@ -10,6 +10,15 @@
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core" />
       <property name="src.data.dir.includes" value="9606.xml" />
     </source>
+    <source name="ensembl-human-chr-fasta" type="fasta">
+      <property name="fasta.taxonId" value="9606" />
+      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence" />
+      <property name="fasta.dataSourceName" value="Ensembl" />
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
+      <property name="fasta.classAttribute" value="primaryIdentifier" />
+      <property name="fasta.includes" value="*.fa" />
+      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core/fasta" />
+    </source>
     <source name="human-gene" type="human-gene">
       <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
     </source>
@@ -31,6 +40,22 @@
     </source>
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
+    </source>
+    <source name="ensembl-mouse" type="ensembl-core">
+      <property name="src.data.dir" location="/micklem/data/tmp" />
+      <property name="src.data.dir.includes" value="new_10090.xml" />
+    </source>
+    <source name="ensembl-mouse-chr-fasta" type="fasta">
+      <property name="fasta.taxonId" value="10090" />
+      <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence" />
+      <property name="fasta.dataSourceName" value="Ensembl" />
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
+      <property name="fasta.classAttribute" value="primaryIdentifier" />
+      <property name="fasta.includes" value="*.fa" />
+      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core/fasta" />
+    </source>
+    <source name="mgi-alleles" type="mgi-alleles" dump="true">
+      <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
     </source>
     <source name="rgd-identifiers" type="rgd-identifiers">
       <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current" />
@@ -57,9 +82,6 @@
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo" />
     </source>
-    <source name="mgi-alleles" type="mgi-alleles">
-      <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
-    </source>
     <source name="mammalian-phenotype-ontology" type="mammalian-phenotype-ontology">
       <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/current/MPheno_OBO.obo" />
     </source>
@@ -74,11 +96,11 @@
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
     </source>
-    <source name="hpo" type="hpo"  dump="true">
+    <source name="hpo" type="hpo">
       <property name="src.data.file" location="/micklem/data/hpo/hp.obo" />
     </source>
-    <source name="hpo-annotation" type="hpo-annotation">
-      <property name="src.data.dir" location="/micklem/data/hpo" />
+    <source name="hpo-annotation" type="hpo-annotation" dump="true">
+      <property name="src.data.dir" location="/micklem/data/hpo/current" />
     </source>
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
@@ -88,28 +110,6 @@
       <property name="src.data.dir" location="/micklem/data/biogrid/current" />
       <property name="src.data.dir.includes" value="*psi25.xml" />
       <property name="biogrid.organisms" value="9606 10090" />
-    </source>
-    <source name="ensembl-mouse" type="ensembl-core">
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core" />
-      <property name="src.data.dir.includes" value="10090.xml" />
-    </source>
-    <source name="ensembl-human-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="9606" />
-      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence" />
-      <property name="fasta.dataSourceName" value="Ensembl" />
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
-      <property name="fasta.classAttribute" value="primaryIdentifier" />
-      <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core/fasta" />
-    </source>
-    <source name="ensembl-mouse-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="10090" />
-      <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence" />
-      <property name="fasta.dataSourceName" value="Ensembl" />
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
-      <property name="fasta.classAttribute" value="primaryIdentifier" />
-      <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core/fasta" />
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current" />
@@ -122,9 +122,9 @@
       <property name="biopax.datasetname" value="Reactome data set" />
       <property name="biopax.curated" value="false" />
     </source>
-    <source name="panther" type="panther" dump="true">
-          <property name="src.data.dir" location="/micklem/data/panther/current"/>
-          <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    <source name="panther" type="panther">
+        <property name="src.data.dir" location="/micklem/data/panther/current"/>
+        <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml" />
