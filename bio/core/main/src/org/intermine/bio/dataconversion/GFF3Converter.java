@@ -64,7 +64,6 @@ public class GFF3Converter extends DataConverter
     protected Map<String, Map<String, String>> config_attr =
             new HashMap<String, Map<String, String>>();
 
-
     private Map<String, Set<GFF3Record>> recordMap = new LinkedHashMap<String, Set<GFF3Record>>();
 
     /**
@@ -162,19 +161,13 @@ public class GFF3Converter extends DataConverter
 
         opCount = 0;
         startTime = System.currentTimeMillis();
-        boolean duplicates = false;
-        Set<String> processedIds = new HashSet<String>();
-        Set<String> duplicatedIds = new HashSet<String>();
-
 
         // build map of gff3 records, to deal with duplicate lines (e.g. CDS)
         for (Iterator<?> i = GFF3Parser.parse(bReader); i.hasNext();) {
             record = (GFF3Record) i.next();
-
             if (record.getId() == null) {
                 continue;
             }
-
             if (recordMap.get(record.getId()) == null) {
                 Set<GFF3Record> rSet = new LinkedHashSet<GFF3Record>();
                 rSet.add(record);
@@ -185,50 +178,6 @@ public class GFF3Converter extends DataConverter
         }
         LOG.info("GFF3 file contains " + recordMap.size() + " distinct identifiers.");
 
-/*
-        for (Set<GFF3Record> aSet : recordMap.values()) {
-            if (aSet.size() == 1){
-                GFF3Record recorda = (GFF3Record) aSet.toArray()[0];
-//                LOG.info("gff3CDS: SINGLES " + recorda.getType() + "-" + recorda.getId());
-                // the usual
-                if ("CDS".equals(recorda.getType())) {
-                    continue;
-                }
-                process(recorda);
-                opCount++;
-                if (opCount % 1000 == 0) {
-                    now = System.currentTimeMillis();
-                    LOG.info("processed " + opCount + " lines --took " + (now - startTime) + " ms");
-                    startTime = System.currentTimeMillis();
-                }
-                continue;
-            }
-            int startLoc = -1;
-            int endLoc = -1;
-            Integer cdsLength = 0;
-            for (int i = 0; i < aSet.size(); i++) {
-                GFF3Record aRecord = (GFF3Record) aSet.toArray()[i];
-                Map<String, List<String>> attributes = aRecord.getAttributes();
-
-                LOG.debug("gff3CDS: " + aRecord.getId() + "-" + aRecord.getStart()
-                        + ":" + aRecord.getEnd());
-                cdsLength = cdsLength + aRecord.getEnd() - aRecord.getStart();
-                startLoc = min (startLoc, aRecord.getStart());
-                endLoc = max (endLoc, aRecord.getEnd());
-                if (i == aSet.size()-1) {
-                    List<String> cdsLen = Arrays.asList(cdsLength.toString());
-                    // last record of the set, process!
-                    aRecord.setStart(startLoc);
-                    aRecord.setEnd(endLoc);
-                    attributes.put("cdsLength", cdsLen);
-//                    LOG.info("gff3CDS PROCESS: " + aRecord.getId() + "-" + aRecord.getStart()
-//                            + ":"+ aRecord.getEnd() + " strand: " + aRecord.getStrand());
-                    process(aRecord);
-                }
-            }
-    }
-*/
-
         for (Set<GFF3Record> aSet : recordMap.values()) {
             int startLoc = -1;
             int endLoc = -1;
@@ -236,6 +185,7 @@ public class GFF3Converter extends DataConverter
             for (int i = 0; i < aSet.size(); i++) {
                 GFF3Record aRecord = (GFF3Record) aSet.toArray()[i];
                 if (aSet.size() == 1 && !"CDS".equals(aRecord.getType())){
+                    // this is the usual case, non discontinuous location
                     process(aRecord);
                     opCount++;
                     if (opCount % 1000 == 0) {
@@ -245,20 +195,25 @@ public class GFF3Converter extends DataConverter
                     }
                     continue;
                 }
-
+                // deal with multi line entries, do something only if CDS
                 Map<String, List<String>> attributes = aRecord.getAttributes();
-
                 LOG.debug("gff3CDS: " + aRecord.getId() + "-" + aRecord.getStart()
                         + ":" + aRecord.getEnd());
-                cdsLength = cdsLength + aRecord.getEnd() - aRecord.getStart();
+
                 startLoc = min (startLoc, aRecord.getStart());
                 endLoc = max (endLoc, aRecord.getEnd());
+                cdsLength = cdsLength + Math.abs(aRecord.getEnd() - aRecord.getStart()) + 1;
+
                 if (i == aSet.size()-1) {
-                    List<String> cdsLen = Arrays.asList(cdsLength.toString());
                     // last record of the set, process!
+                    List<String> cdsLen = Arrays.asList(cdsLength.toString());
                     aRecord.setStart(startLoc);
                     aRecord.setEnd(endLoc);
                     if ("CDS".equals(aRecord.getType())){
+                        // for the moment getting only one parent!
+                        // TODO: rm when collections (setRefS) are working
+                        attributes.put("Parent", aRecord.getParents().subList(0, 1));
+
                         attributes.put("cdsLength", cdsLen);
                     }
                     //LOG.info("gff3CDS PROCESS: " + aRecord.getId() + "-" + aRecord.getStart()
@@ -270,7 +225,9 @@ public class GFF3Converter extends DataConverter
 
 
 
-
+//        boolean duplicates = false;
+//        Set<String> processedIds = new HashSet<String>();
+//        Set<String> duplicatedIds = new HashSet<String>();
     //        for (Iterator<?> i = GFF3Parser.parse(bReader); i.hasNext();) {
     //            record = (GFF3Record) i.next();
     //
@@ -428,8 +385,7 @@ public void process(GFF3Record record) throws ObjectStoreException {
 
     if (feature == null) {
         // this feature has already been created and stored
-        // feature with discontinous location, this location wasn't valid for some reason
-        LOG.info("NULL FEATURE");
+        // feature with discontinuous location, this location wasn't valid for some reason
         return;
     }
 
@@ -479,6 +435,8 @@ public void process(GFF3Record record) throws ObjectStoreException {
     }
 
     List<String> parents = record.getParents();
+    LOG.debug("CONVERTER :" + feature.getClassName() + "-" + feature.getIdentifier()
+            + " has parents " + parents);
     if (parents != null && !parents.isEmpty()) {
         setRefsAndCollections(parents, feature);
     }

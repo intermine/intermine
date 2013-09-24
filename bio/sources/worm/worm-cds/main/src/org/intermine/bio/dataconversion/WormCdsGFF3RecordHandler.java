@@ -27,8 +27,6 @@ import org.intermine.xml.full.Item;
 public class WormCdsGFF3RecordHandler extends GFF3RecordHandler
 {
     private static final String SOME_PREFIX = "CDS:";
-    private Map<String, Item> cdsMap = new HashMap<String, Item>();
-
     private static final Logger LOG = Logger.getLogger(WormCdsGFF3RecordHandler.class);
 
     /**
@@ -37,7 +35,10 @@ public class WormCdsGFF3RecordHandler extends GFF3RecordHandler
      */
     public WormCdsGFF3RecordHandler (Model model) {
         super(model);
-        refsAndCollections.put("CDS", "transcripts");
+        //TODO
+        //transcripts should be a collection, but the setReference does not work for collections
+        //refsAndCollections.put("CDS", "transcripts");
+        refsAndCollections.put("CDS", "transcript");
         refsAndCollections.put("Transcript", "gene");
     }
 
@@ -47,54 +48,47 @@ public class WormCdsGFF3RecordHandler extends GFF3RecordHandler
     @Override
     public void process(GFF3Record record) {
 
-        LOG.debug ("WGFF rec: " + record);
-
         String term = record.getType();
-//        if (!"CDS".equals(term)) {
-////            LOG.info("SKIPPING " + term );
-//            return;
-//        }
+//        LOG.info ("REC: " + record);
 
         if ("CDS".equals(term)) {
-            LOG.info ("WGFF CDS: " + record);
+            Item feature = getFeature();
+            String wormpep = record.getAttributes().get("wormpep").get(0);
+            feature.setAttribute("wormpep", wormpep);
 
-        Item feature = getFeature();
-        String wormpep = record.getAttributes().get("wormpep").get(0);
-        feature.setAttribute("wormpep", wormpep);
+            String status = record.getAttributes().get("status").get(0);
+            feature.setAttribute("predictionStatus", status);
 
-        String status = record.getAttributes().get("status").get(0);
-        feature.setAttribute("predictionStatus", status);
+            String cdsLength = record.getAttributes().get("cdsLength").get(0);
+            feature.setAttribute("codingSequenceLength", cdsLength);
 
-        String cdsLength = record.getAttributes().get("cdsLength").get(0);
-        feature.setAttribute("codingSequenceLength", cdsLength);
+            String primaryIdentifier =
+                    feature.getAttribute("primaryIdentifier").getValue().replace(SOME_PREFIX, "");
+            feature.setAttribute("primaryIdentifier", primaryIdentifier);
 
-        String primaryIdentifier =
-                feature.getAttribute("primaryIdentifier").getValue().replace(SOME_PREFIX, "");
-        feature.setAttribute("primaryIdentifier", primaryIdentifier);
+            //if (feature.getAttribute("Note") != null) {
+            //    String note = record.getAttributes().get("Note").get(0);
+            //    feature.setAttribute("Note", note);
+            //}
 
+        }
+        if ("gene".equals(term)) {
+            Item feature = getFeature();
+            String primaryIdentifier =
+                    feature.getAttribute("primaryIdentifier").getValue().replace("Gene:", "");
+            feature.setAttribute("primaryIdentifier", primaryIdentifier);
+            feature.setAttribute("symbol", primaryIdentifier);
+            //LOG.info ("REC GGG: " + primaryIdentifier);
 
-
-        //String trimmedId = identifier.replace(SOME_PREFIX, "");
-
-//        Item cdsItem = cdsMap.get(primaryIdentifier);
-//        // if cds already there, add the exon (take the end location) and sum the length
-//        if (cdsItem != null) {
-//            LOG.info("WGFF MAP: " + primaryIdentifier + "deja vu");
-//            Item prevLoc = getLocation();
-//            LOG.info("WGFF LOC: " + prevLoc);
-//
-//
-////            addItem(cdsItem);
-//        }
-
-
-//        LOG.info("WGFF setting " + primaryIdentifier);
-//        cdsMap.put(primaryIdentifier, feature);
-
-//        LOG.info("WGFF MAP keys " + cdsMap.keySet());
-//        LOG.info("WGFF MAP " + cdsMap);
-
-       // This method is called for every line of GFF3 file(s) being read.  Features and their
+        }
+        if ("transcript".equals(term)) {
+            Item feature = getFeature();
+            String primaryIdentifier =
+                    feature.getAttribute("primaryIdentifier").getValue().replace("Transcript:", "");
+            feature.setAttribute("primaryIdentifier", primaryIdentifier);
+            //LOG.info ("REC TTT: " + primaryIdentifier);
+        }
+        // This method is called for every line of GFF3 file(s) being read.  Features and their
         // locations are already created but not stored so you can make changes here.  Attributes
         // are from the last column of the file are available in a map with the attribute name as
         // the key.   For example:
@@ -112,7 +106,7 @@ public class WormCdsGFF3RecordHandler extends GFF3RecordHandler
         //
         // You should make sure that new Items you create are unique, i.e. by storing in a map by
         // some identifier.
-        }
     }
-
 }
+
+
