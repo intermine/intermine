@@ -210,14 +210,11 @@ public class GFF3Converter extends DataConverter
                     aRecord.setStart(startLoc);
                     aRecord.setEnd(endLoc);
                     if ("CDS".equals(aRecord.getType())){
-                        // for the moment getting only one parent!
-                        // TODO: rm when collections (setRefS) are working
-                        attributes.put("Parent", aRecord.getParents().subList(0, 1));
-
+                        setDontCreateLocations(true);
+//                        attributes.put("Parent", aRecord.getParents().subList(0, 1));
+//                        attributes.put("Parents", aRecord.getParents());
                         attributes.put("cdsLength", cdsLen);
                     }
-                    //LOG.info("gff3CDS PROCESS: " + aRecord.getId() + "-" + aRecord.getStart()
-                    //  + ":"+ aRecord.getEnd() + " strand: " + aRecord.getStrand());
                     process(aRecord);
                 }
             }
@@ -435,8 +432,6 @@ public void process(GFF3Record record) throws ObjectStoreException {
     }
 
     List<String> parents = record.getParents();
-    LOG.debug("CONVERTER :" + feature.getClassName() + "-" + feature.getIdentifier()
-            + " has parents " + parents);
     if (parents != null && !parents.isEmpty()) {
         setRefsAndCollections(parents, feature);
     }
@@ -517,17 +512,10 @@ private void setRefsAndCollections(List<String> parents, Item feature) {
                         + ", " + feature.getIdentifier() + ", " + primaryIdent);
             }
         } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
-            LOG.info("COLL type: " + feature.getClassName() + ":" + feature.getIdentifier()
-                    + "->" +refName);
             List<String> refIds = new ArrayList<String>();
             while (parentIter.hasNext()) {
-                String parent = parentIter.next();
-                refIds.add(getRefId(parent));
-
-//                refIds.add(getRefId(parentIter.next()));
-                LOG.info("COLL value: " + parent);
+                refIds.add(getRefId(parentIter.next()));
             }
-            LOG.info("COLL refids: " + refIds);
             feature.setCollection(refName, refIds);
         } else if (parentIter.hasNext()) {
             throw new RuntimeException("No '" + refName + "' reference/collection found in "

@@ -38,11 +38,12 @@
   <attribute name="wormpep" type="java.lang.String" />
   <attribute name="length" type="java.lang.Integer"/>
   <attribute name="codingSequenceLength" type="java.lang.Integer"/>
-  <reference name="transcript" referenced-type="Transcript" reverse-reference="CDS"/>
+  <collection name="transcripts" referenced-type="Transcript" />
   <collection name="threePrimeUTRs" referenced-type="ThreePrimeUTR" reverse-reference="CDS"/>
 </class>
 
 <!--
+  <reference name="transcript" referenced-type="Transcript" reverse-reference="CDS"/>
   <collection name="transcripts" referenced-type="Transcript" reverse-reference="CDS"/>
   <reference name="sequence" referenced-type="Sequence"/>
   <reference name="organism" referenced-type="Organism" />
@@ -146,20 +147,8 @@
 
 <class name="Transcript" is-interface="true">
   <attribute name="transcribed" type="java.lang.String" />
-<reference name="CDS" referenced-type="CDS" reverse-reference="transcript" />
+  <reference name="CDS" referenced-type="CDS" reverse-reference="transcripts" />
 
-<!-- FAILING: let's wait for SO update
-<collection name="CDSs" referenced-type="CDS" reverse-reference="transcripts" />
-  <attribute name="primaryIdentifier" type="java.lang.Integer"/>
-  <attribute name="secondaryIdentifier" type="java.lang.Integer"/>
-  <attribute name="length" type="java.lang.Integer"/>
-  <attribute name="codingSequenceLength" type="java.lang.Integer"/>
-  <reference name="sequence" referenced-type="Sequence"/>
-<reference name="gene" referenced-type="Gene" reverse-reference="transcript" />
-  <reference name="organism" referenced-type="Organism" />
-<collection name="polyASites" referenced-type="PolyASite" reverse-reference="transcripts" />
-<collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcripts" />
--->
 </class>
 
 <class name="TranscriptRegion" extends="SequenceFeature" is-interface="true">
