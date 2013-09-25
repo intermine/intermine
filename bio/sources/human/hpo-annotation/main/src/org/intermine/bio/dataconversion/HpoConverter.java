@@ -286,12 +286,12 @@ public class HpoConverter extends BioDirectoryConverter
             // Create HPOAnnotation item
             Item annoItem = createItem("HPOAnnotation");
 
-            if (diseaseMap.get((String)mKey.getKey(0)) == null) {
-                Item diseaseItem = createItem("Disease");
-                diseaseItem.setAttribute("identifier", (String)mKey.getKey(0));
-                diseaseMap.put((String)mKey.getKey(0), diseaseItem);
-            }
-            annoItem.setReference("disease", diseaseMap.get((String)mKey.getKey(0)));
+//            if (diseaseMap.get((String)mKey.getKey(0)) == null) {
+//                Item diseaseItem = createItem("Disease");
+//                diseaseItem.setAttribute("identifier", (String)mKey.getKey(0));
+//                diseaseMap.put((String)mKey.getKey(0), diseaseItem);
+//            }
+//            annoItem.setReference("disease", diseaseMap.get((String)mKey.getKey(0)));
 
             if (diseaseToHpoAnnoItemMap.get((String)mKey.getKey(0)) == null) {
                 Set<String> annoItemSet = new HashSet<String>();
@@ -329,7 +329,7 @@ public class HpoConverter extends BioDirectoryConverter
                                 diseaseItem.setAttribute("identifier", eviInfoBits[0].trim());
                                 diseaseMap.put(eviInfoBits[0].trim(), diseaseItem);
                             }
-                            eviItem.setReference("diseaseRef",
+                            eviItem.setReference("diseaseReference",
                                     diseaseMap.get(eviInfoBits[0].trim()));
                         }
                     }

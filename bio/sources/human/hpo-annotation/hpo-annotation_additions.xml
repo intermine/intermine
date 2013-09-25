@@ -6,7 +6,7 @@
     </class>
     <class name="HPOAnnotation" extends="OntologyAnnotation" is-interface="true">
         <reference name="hpoTerm" referenced-type="HPOTerm" reverse-reference="hpoAnnotation" />
-        <reference name="disease" referenced-type="Disease" />
+        <!-- <reference name="disease" referenced-type="Disease" /> -->
         <collection name="evidences" referenced-type="HPOEvidence" />
     </class>
     <class name="HPOTerm" extends="OntologyTerm" is-interface="true">
@@ -28,7 +28,7 @@
         <attribute name="frequencyModifier" type="java.lang.String" />
         <attribute name="assignedBy" type="java.lang.String" />
         <reference name="code" referenced-type="GOEvidenceCode" />
-        <reference name="diseaseRef" referenced-type="Disease" />
+        <reference name="diseaseReference" referenced-type="Disease" />
         <collection name="publications" referenced-type="Publication" />
         <collection name="with" referenced-type="BioEntity" />
     </class>
