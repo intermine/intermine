@@ -136,4 +136,19 @@ public class GFF3ConverterTest extends ItemsTestCase {
 
         assertEquals(expected, writer.getItems());
     }
+
+    /**
+     * Test chromosome is not created twice.
+     */
+    public void testChromosome() throws Exception {
+        BufferedReader srcReader = new BufferedReader(new
+                                                      InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_worm_chr.gff")));
+        converter.parse(srcReader);
+        converter.storeAll();
+
+        // uncomment to write out a new target items file
+        // writeItemsFile(writer.getItems(), "gff_worm_chromosome_item_test.xml");
+
+        assertEquals(readItemSet("GFF3ConverterTestChromosome.xml"), writer.getItems());
+    }
 }
