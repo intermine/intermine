@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <classes>
 <class name="BindingSite" is-interface="true">
-  <attribute name="qvalue" type="java.lang.Double" />
   <attribute name="sourceFile" type="java.lang.String" />
 </class>
 
