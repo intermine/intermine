@@ -462,6 +462,39 @@
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
 	-->
+        <!-- MACALPINE -->
+        <source name="modencode-macalpine-metadata" type="chado-db" >
+            <property name="organisms" value="7227"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-macalpine-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+        <!-- OLIVER -->
+        <source name="modencode-oliver-metadata" type="chado-db"  dump="true">
+            <property name="organisms" value="7227 7230 7237 7244 7245 7217 7240"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-oliver-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
+       <!-- CELNIKERLAI -->
+        <source name="modencode-celnikerlai-metadata" type="chado-db" dump="true">
+            <property name="organisms" value="7227"/>
+            <property name="dataSourceName" value="modENCODE"/>
+            <property name="dataSetTitle" value="modENCODE submission"/>
+            <property name="source.db.name" value="modencode-celnikerlai-metadata"/>
+            <property name="processors"
+                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
+            <property name="converter.class"
+                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+        </source>
         <!-- LIEB -->
         <source name="modencode-lieb-metadata" type="chado-db" >
             <property name="organisms" value="6239"/>
@@ -473,28 +506,7 @@
             <property name="converter.class"
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
-        <!-- MACALPINE -->
-        <source name="modencode-macalpine-metadata" type="chado-db"  dump="true">
-            <property name="organisms" value="7227"/>
-            <property name="dataSourceName" value="modENCODE"/>
-            <property name="dataSetTitle" value="modENCODE submission"/>
-            <property name="source.db.name" value="modencode-macalpine-metadata"/>
-            <property name="processors"
-                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-            <property name="converter.class"
-                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-        </source>
-        <!-- OLIVER -->
-        <source name="modencode-oliver-metadata" type="chado-db">
-            <property name="organisms" value="7227 7230 7237 7244 7245 7217 7240"/>
-            <property name="dataSourceName" value="modENCODE"/>
-            <property name="dataSetTitle" value="modENCODE submission"/>
-            <property name="source.db.name" value="modencode-oliver-metadata"/>
-            <property name="processors"
-                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-            <property name="converter.class"
-                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-        </source>
+
         <!-- PIANO NOW WITH WATERSTON
         <source name="modencode-piano-metadata" type="chado-db" dump="true">
             <property name="organisms" value="6239"/>
@@ -545,17 +557,6 @@
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
             <property name="source.db.name" value="modencode-karpen-metadata"/>
-            <property name="processors"
-                                value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
-            <property name="converter.class"
-                                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-        </source>
-       <!-- CELNIKERLAI -->
-        <source name="modencode-celnikerlai-metadata" type="chado-db" dump="true">
-            <property name="organisms" value="7227"/>
-            <property name="dataSourceName" value="modENCODE"/>
-            <property name="dataSetTitle" value="modENCODE submission"/>
-            <property name="source.db.name" value="modencode-celnikerlai-metadata"/>
             <property name="processors"
                                 value="org.intermine.bio.dataconversion.ModEncodeMetaDataProcessor"/>
             <property name="converter.class"
