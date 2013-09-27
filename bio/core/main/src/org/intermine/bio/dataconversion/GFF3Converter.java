@@ -221,7 +221,7 @@ public class GFF3Converter extends DataConverter
         }
 
 
-
+// ORIGINAL parse
 //        boolean duplicates = false;
 //        Set<String> processedIds = new HashSet<String>();
 //        Set<String> duplicatedIds = new HashSet<String>();
@@ -299,6 +299,7 @@ public void storeAll() throws ObjectStoreException {
  */
 public void process(GFF3Record record) throws ObjectStoreException {
     String term = record.getType();
+    LOG.debug("CC: rec " + term + "|" + record);
 
     if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
         if (config_term.containsKey(this.orgTaxonId)) {
@@ -310,7 +311,7 @@ public void process(GFF3Record record) throws ObjectStoreException {
 
     // By default, use ID field in attributes
     String primaryIdentifier = record.getId();
-    // If pid set in gff_config.propeties, look for the attribute field, e.g. locus_tag
+    // If pid set in gff_config.properties, look for the attribute field, e.g. locus_tag
     if (config_attr.containsKey(this.orgTaxonId)) {
         if (config_attr.get(this.orgTaxonId).containsKey("primaryIdentifier")) {
             String pidAttr = config_attr.get(this.orgTaxonId).get("primaryIdentifier");
@@ -330,12 +331,9 @@ public void process(GFF3Record record) throws ObjectStoreException {
     }
 
     String refId = identifierMap.get(primaryIdentifier);
-
     // get rid of previous record Items from handler
     handler.clear();
-
     Item seq = getSeq(record.getSequenceID());
-
     String className = TypeUtil.javaiseClassName(term);
     String fullClassName = tgtModel.getPackageName() + "." + className;
 
@@ -352,23 +350,28 @@ public void process(GFF3Record record) throws ObjectStoreException {
     Item feature = null;
 
     // new feature
-    if (refId == null) {
-        feature = createItem(className);
-        refId = feature.getIdentifier();
-    }
+//    if (refId == null) {
+//        LOG.info("CC: refId NULL! " + className);
+//        feature = createItem(className);
+//        refId = feature.getIdentifier();
+//    }
 
     if (!"chromosome".equals(term) && seq != null) {
+
+        feature = createItem(className);
+        refId = feature.getIdentifier();
+
         boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
                 && handler.createLocations(record);
         if (makeLocation) {
             Item location = getLocation(record, refId, seq, cd);
-            if (feature == null) {
-                // this feature has already been created and stored
-                // we only wanted the location, we're done here.
-                store(location);
-                return;
-            }
+//            if (feature == null) {
+//                // this feature has already been created and stored
+//                // we only wanted the location, we're done here.
+//                store(location);
+//                return;
+//            }
             int length = getLength(record);
             feature.setAttribute("length", String.valueOf(length));
             handler.setLocation(location);
@@ -661,6 +664,7 @@ private Item getSeq(String id)
             seq.addReference(getOrgRef());
             store(seq);
             seqs.put(identifier, seq);
+            LOG.info("SET SEQ " + identifier + "|" + seq.getIdentifier());
         }
     }
     handler.setSequence(seq);
