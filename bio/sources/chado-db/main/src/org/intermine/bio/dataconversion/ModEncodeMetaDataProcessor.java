@@ -3414,7 +3414,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
                 if (ad.type.equalsIgnoreCase("Result Value")) {
-                    // TODO add here check for empty value (-> do not create record)
+                    // do not create record if no useful value
+                    if (ad.value.isEmpty() || ad.value.startsWith("GEO:TMPID")) {
+                        continue;
+                    }
                     for (DatabaseRecordConfig conf : configs) {
                         for (String type : conf.types) {
                             if (ad.name.equals(type)) {
