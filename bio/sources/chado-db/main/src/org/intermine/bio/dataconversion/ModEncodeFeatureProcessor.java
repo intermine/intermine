@@ -49,6 +49,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private final String title;
     private final String scoreProtocolItemId;
     private final String dataIdsTableName;
+    private final String labName;
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
     private static final String BINDING_SITE_FEATS =
@@ -93,7 +94,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     "read_count",
                     "transcribed")));
     private static final String SUB_3154_TITLE = "MXEMB_N2_RNA_EXPRESSION";
-    //    private static final String MODENCODE_SOURCE_NAME = "modENCODE";
+    private static final List<String> QVALUE_LABS = Arrays.asList("Snyder", "Gerstein");
+
 
     /**
      * Create a new ModEncodeFeatureProcessor.
@@ -108,12 +110,13 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     public ModEncodeFeatureProcessor(ChadoDBConverter chadoDBConverter,
             String dataSetIdentifier, String dataSourceIdentifier,
-            String dataIdsTableName, String title, String scoreProtocolItemId) {
+            String dataIdsTableName, String title, String scoreProtocolItemId, String labName) {
         super(chadoDBConverter);
         this.dataSetIdentifier = dataSetIdentifier;
         this.title = title;
         this.scoreProtocolItemId = scoreProtocolItemId;
         this.dataIdsTableName = dataIdsTableName;
+        this.labName = labName;
         for (String chromosomeType : getChromosomeFeatureTypes()) {
             commonFeatureInterMineTypes.add(
                     TypeUtil.javaiseClassName(fixFeatureType(chromosomeType)));
@@ -664,6 +667,11 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             Integer featureId = res.getInt("feature_id");
             Double score = res.getDouble("score");
             String program = res.getString("program");
+
+            if (QVALUE_LABS.contains(labName)){
+                program = "qvalue:" + program;
+            }
+
             if (title.equalsIgnoreCase(SUB_3154_TITLE)) {
                 if (featureMap.containsKey(featureId)) {
                     FeatureData fData = featureMap.get(featureId);

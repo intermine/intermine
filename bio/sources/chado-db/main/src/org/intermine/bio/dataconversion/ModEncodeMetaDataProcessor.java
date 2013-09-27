@@ -109,6 +109,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // for labs, the maps link the lab name with the identifiers...
     private Map<String, Integer> labIdMap = new HashMap<String, Integer>();
     private Map<String, String> labIdRefMap = new HashMap<String, String>();
+    private Map<String, String> labIdRefInverseMap = new HashMap<String, String>();
     // for experiment, the maps link the exp name (description!) with the identifiers...
     private Map<String, Integer> experimentIdMap = new HashMap<String, Integer>();
     private Map<String, String> experimentIdRefMap = new HashMap<String, String>();
@@ -406,6 +407,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String submissionItemIdentifier = submissionDetails.itemIdentifier;
             String labItemIdentifier = submissionDetails.labItemIdentifier;
             String submissionTitle = submissionDetails.title;
+            String labName = labIdRefInverseMap.get(labItemIdentifier);
 
             List<Integer> thisSubmissionDataIds = submissionDataMap.get(chadoExperimentId);
             LOG.info("DATA IDS for " + dccIdMap.get(chadoExperimentId) + ": "
@@ -419,7 +421,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ModEncodeFeatureProcessor processor =
                     new ModEncodeFeatureProcessor(getChadoDBConverter(), submissionItemIdentifier,
                             labItemIdentifier, dataIdsTempTable, submissionTitle,
-                            scoreProtocols.get(chadoExperimentId));
+                            scoreProtocols.get(chadoExperimentId), labName);
             processor.initialiseCommonFeatures(commonFeaturesMap);
             processor.process(connection);
 
@@ -3412,6 +3414,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             for (Integer dataId : submissionDataMap.get(submissionId)) {
                 AppliedData ad = appliedDataMap.get(dataId);
                 if (ad.type.equalsIgnoreCase("Result Value")) {
+                    // TODO add here check for empty value (-> do not create record)
                     for (DatabaseRecordConfig conf : configs) {
                         for (String type : conf.types) {
                             if (ad.name.equals(type)) {
@@ -4065,6 +4068,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         if ("Lab".equals(i.getClassName())) {
             labIdMap .put(labName, intermineObjectId);
             labIdRefMap .put(labName, i.getIdentifier());
+            labIdRefInverseMap .put(i.getIdentifier(), labName);
         } else {
             throw new IllegalArgumentException(
                     "Type mismatch: expecting Lab, getting "
