@@ -40,6 +40,15 @@
       <property name="converter.class"
                 value="org.intermine.bio.dataconversion.GenomeDBConverter"/>
     </source>
+
+    <source name="worm-cds" type="worm-cds">
+      <property name="gff3.taxonId" value="6239"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSetTitle" value="WormBase" />
+      <property name="src.data.dir" location="/micklem/data/wormbase/ws220/"/>
+      <property name="src.data.dir.includes" value="c_elegans.WS220.CDS.clean.gff3"/>
+    </source>
+
     <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
