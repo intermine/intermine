@@ -4,7 +4,6 @@
 #
 # This script will assist biologists to build humanMine.
 
-BASEDIR=/micklem/data
 SAN_HUMANMINE_DATA=/SAN_humanmine/data
 SAN_HUMANMINE_DUMPS=/SAN_humanmine/dumps
 
@@ -14,14 +13,14 @@ echo "Prerequisites:"
 echo "* Run project build on theleviathan with correct configurations for Postgres and MySQL databases"
 echo "* Email client is installed"
 echo "* Check parsers are up-to-date with model changes and data format changes"
-echo "* humanmine.properties in ./intermine directory"
+echo "* humanmine.properties.build.theleviathan and humanmine.properties.webapp.theleviathanin are in ~/.intermine directory"
 echo "* Keep your git repository up-to-date"
 echo "* Download and load Ensembl databases to MySQL"
 echo "* Datasets need to download manually"
 echo ""
 echo "Note:"
 echo "* Run this script from humanmine directory"
-echo "* Dump directory"
+echo "* Database dumps are at SAN dumps directory"
 echo "* Log directory"
 echo ""
 
@@ -86,9 +85,17 @@ run_a_postprocess () {
 run_template_comparison () {
     # Ref http://intermine.readthedocs.org/en/latest/database/data-integrity-checks/template-comparison/
     # sudo easy_install intermine
-    echo "Run template comparison..."
-    echo ""
-    (cd ../intermine/scripts; python compare_templates_for_releases.py www.flymine.org/humanmine www.metabolicmine.org/beta mike@intermine.org)
+
+    if [ -z "$1" ]
+        then
+            echo "Run template comparison..."
+            echo ""
+            (cd ../intermine/scripts; python compare_templates_for_releases.py www.flymine.org/humanmine www.metabolicmine.org/beta mike@intermine.org)
+    else
+        echo "Run template comparison with parameters: $1"
+        echo ""
+        (cd ../intermine/scripts; python compare_templates_for_releases.py $1)     
+    fi  
 }
 
 run_acceptance_tests () {
@@ -141,7 +148,7 @@ while true; do
         3  ) run_project_build; break;;
         4  ) echo "Please enter the sources separated by comma, e.g. omim,hpo:"; read SOURCE_NAMES; run_sources $SOURCE_NAMES; break;;
         5  ) echo "Please enter the postprocess:"; read POSTPROCESS; run_a_postprocess $POSTPROCESS; break;;
-        6  ) run_template_comparison; break;;
+        6  ) echo "Please enter the service url (e.g. www.flymine.org/query [beta.flymine.org/beta] [email@to] [email@from]) or press enter to use default setting:"; read TC_PARA; run_template_comparison $TC_PARA; break;;
         7  ) run_acceptance_tests; break;;
         8  ) run_template_comparison_and_acceptance_tests; break;;
         9  ) release_webapp; break;;
