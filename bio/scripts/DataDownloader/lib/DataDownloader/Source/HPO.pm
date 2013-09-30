@@ -37,7 +37,7 @@ sub BUILD {
         },
         {
             SERVER  => 'http://compbio.charite.de/hudson/job/hpo.annotations.monthly/lastStableBuild/artifact/annotation/',
-            FILE    => "ALL_SOURCES_ALL_FREQUENCIES_phenotype_to_genes.txt",
+            FILE    => "ALL_SOURCES_ALL_FREQUENCIES_diseases_to_genes_to_phenotypes.txt",
         },
     ]);
 }
