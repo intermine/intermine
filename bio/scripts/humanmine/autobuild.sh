@@ -139,8 +139,7 @@ run_all_in_one () {
     # TODO Can't use tee to print stdout and stderr on screen
     update_datasets 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
     run_project_build 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
-    run_template_comparison 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
-    run_acceptance_tests 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
+    run_template_comparison_and_acceptance_tests 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
     release_webapp 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
     send_email
 }
