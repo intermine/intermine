@@ -31,7 +31,7 @@ echo ""
 echo "Note:"
 echo "* Run this script from humanmine directory"
 echo "* Database dumps are in SAN dumps directory"
-echo "* Log directory"
+echo "* Logs are in SAN log directory"
 echo ""
 
 #----------------------------- Functions -----------------------------
