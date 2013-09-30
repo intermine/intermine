@@ -1,17 +1,27 @@
 #!/bin/bash
 #
-# default usage: autobuild.sh
+# default usage: IM_REPO/humanmine$ ../bio/scripts/humanmine/autobuild.sh
 #
 # This script will assist biologists to build humanMine.
 
-SAN_HUMANMINE_DATA=/SAN_humanmine/data
-SAN_HUMANMINE_DUMPS=/SAN_humanmine/dumps
+set -e # Automatic exit from bash shell script on error 
+# Ref http://stackoverflow.com/questions/2870992/automatic-exit-from-bash-shell-script-on-error
 
+DATE=`date +%d-%m-%Y`
+LOG=humamine-build.$DATE.log
+
+# SAN_HUMANMINE_DATA=/SAN_humanmine/data
+SAN_HUMANMINE_DUMPS=/SAN_humanmine/dumps
+SAN_HUMANMINE_LOGS=/SAN_humanmine/logs/humanmine
+
+echo ""
 echo "Autobuild script will help you to build humanMine in an interactive way."
+echo "Usage:" 
+echo "IM_REPO/humanmine$ ../bio/scripts/humanmine/autobuild.sh"
 echo ""
 echo "Prerequisites:"
 echo "* Run project build on theleviathan with correct configurations for Postgres and MySQL databases"
-echo "* Email client is installed"
+echo "* Email client (sudo apt-get install mailutils) is installed and properly configured"
 echo "* Check parsers are up-to-date with model changes and data format changes"
 echo "* humanmine.properties.build.theleviathan and humanmine.properties.webapp.theleviathanin are in ~/.intermine directory"
 echo "* Keep your git repository up-to-date"
@@ -20,18 +30,17 @@ echo "* Datasets need to download manually"
 echo ""
 echo "Note:"
 echo "* Run this script from humanmine directory"
-echo "* Database dumps are at SAN dumps directory"
+echo "* Database dumps are in SAN dumps directory"
 echo "* Log directory"
 echo ""
 
-#================================ Functions ================================
+#----------------------------- Functions -----------------------------
 
 update_datasets() {
     # Ref http://intermine.readthedocs.org/en/latest/database/download-scripts/?highlight=data%20download
     if [ -z "$1" ]
         then
-            echo "Update all the datasets in intermine.yml"
-            echo "Ref https://github.com/intermine/intermine/blob/dev/bio/scripts/DataDownloader/config/intermine.yml"
+            echo "Update all the datasets in intermine.yml (Ref https://github.com/intermine/intermine/blob/dev/bio/scripts/DataDownloader/config/intermine.yml)"
             echo ""
             perl ../bio/scripts/DataDownloader/bin/download_data -e intermine
     else
@@ -42,18 +51,17 @@ update_datasets() {
 }
 
 run_project_build() {
-    date = `date +%d-%m-%Y`
     echo "Build humanMine database..."
     echo ""
-    ../bio/scripts/project_build -l -v -Vbuild.theleviathan localhost $SAN_HUMANMINE_DUMPS/humanmine/theleviathan/humanmine-build-$date.final
+    ../bio/scripts/project_build -l -v -Vbuild.theleviathan localhost $SAN_HUMANMINE_DUMPS/humanmine/theleviathan/humanmine-build-$DATE.final
     
-    echo "Copy database humanmine-build to humanmine-$date"
+    echo "Copy database humanmine-build to humanmine-$DATE"
     echo ""
-    createdb -O fh293 -T humanmine-build humanmine-$date
+    createdb -O fh293 -T humanmine-build humanmine-$DATE
 
     echo "Update database name in humanmine.properties.webapp.theleviathan"
     echo ""
-    sed -i 's/^db.production.datasource.databaseName=.*/db.production.datasource.databaseName=humanmine-$date/' ~/.intermine/humanmine.properties.webapp.theleviathan
+    sed -i 's/^db.production.datasource.databaseName=.*/db.production.datasource.databaseName=humanmine-$DATE/' ~/.intermine/humanmine.properties.webapp.theleviathan
 }
 
 run_sources () {
@@ -116,16 +124,28 @@ release_webapp () {
     (cd webapp/; ant clean-all; ant default remove-webapp release-webapp -Drelease=webapp.theleviathan)
 }
 
-run_all_in_one () {
-    echo "Update datasets -> Run project build -> Run template comparison -> Run acceptance tests -> Release webapp"
-    update_datasets &&
-    run_project_build &&
-    run_template_comparison &&
-    run_acceptance_tests &&
-    release_webapp
+send_email() {
+    echo "Send notification..."
+    echo "Please check the log at $SAN_HUMANMINE_LOGS/$LOG" | mail -s "humanMine build $DATE finished" mike@intermine.org
 }
 
-#===========================================================================
+run_all_in_one () {
+    echo ""
+    echo "Update datasets -> Run project build -> Run template comparison -> Run acceptance tests -> Release webapp"
+    echo ""
+    echo "Please check the log at $SAN_HUMANMINE_LOGS/$LOG"
+
+    set -o pipefail # Ref http://stackoverflow.com/questions/6871859/piping-command-output-to-tee-but-also-save-exit-code-of-command
+    # TODO Can't use tee to print stdout and stderr on screen
+    update_datasets 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
+    run_project_build 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
+    run_template_comparison 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
+    run_acceptance_tests 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
+    release_webapp 2>&1 | ( while read line; do echo "[$(date)]: ${line}"; done ) >> $SAN_HUMANMINE_LOGS/$LOG
+    send_email
+}
+
+#---------------------------------------------------------------
 
 # Ref http://stackoverflow.com/questions/226703/how-do-i-prompt-for-input-in-a-linux-shell-script
 while true; do
@@ -157,5 +177,3 @@ while true; do
         * ) echo "Please select.";;
     esac
 done
-
-# Email devs
