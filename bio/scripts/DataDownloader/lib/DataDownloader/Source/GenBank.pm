@@ -10,18 +10,22 @@ use constant {
     DESCRIPTION => 'An annotated collection of all publicly available DNA sequences',
     SOURCE_LINK => 'http://www.ncbi.nlm.nih.gov/genbank/',
     SOURCE_DIR => 'genbank', 
-    HOST => 'ftp.ncbi.nlm.nih.gov',
-    REMOTE_DIR => 'genomes',
+
+    SOURCES => [
+        {
+            HOST => 'ftp.ncbi.nlm.nih.gov',
+            REMOTE_DIR => 'genomes/Bacteria/Bacillus_subtilis_168_uid57675',
+            FILE       => "*",
+            SUB_DIR    => ["Bacillus_subtilis_168"],
+        },
+
+        {
+            HOST => 'ftp.ncbi.nlm.nih.gov',
+            REMOTE_DIR => 'genomes/Bacteria/Escherichia_coli_K_12_substr__MG1655_uid57779',
+            FILE       => "*",
+            SUB_DIR    => ["Escherichia_coli_K_12_substr__MG1655"],
+        },
+    ],
 };
-
-sub BUILD {
-    my $self    = shift;
-
-    my $organisms = $self->get_options->{organisms} || [];
-
-    for my $org (@$organisms) {
-        ptint $org
-    }
-}
 
 1;
