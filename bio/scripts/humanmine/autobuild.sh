@@ -151,7 +151,7 @@ while true; do
     echo "Would you like to:" 
     echo "[1] Update all datasets by download script"
     echo "[2] Update any datasets"
-    echo "[3] Run project build or restart from a borken build"
+    echo "[3] Run project build or restart from a broken build"
     echo "[4] Run datasources"
     echo "[5] Run a single postprocess"
     echo "[6] Run template comparison"
