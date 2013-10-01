@@ -5,6 +5,10 @@ extends 'DataDownloader::Source::FtpBase';
 use MooseX::FollowPBP;
 use Ouch qw(:traditional);
 
+## TODO
+## 1. Download all files in the remote directory
+## 2. Read synbiomine.yml to parse Genbank config and set REMOTE_DIR and SUB_DIR 
+
 use constant {
     TITLE => 'GenBank',
     DESCRIPTION => 'An annotated collection of all publicly available DNA sequences',
