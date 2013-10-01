@@ -15,14 +15,14 @@ use constant {
         {
             HOST => 'ftp.ncbi.nlm.nih.gov',
             REMOTE_DIR => 'genomes/Bacteria/Bacillus_subtilis_168_uid57675',
-            FILE       => "*",
+            FILE       => "NC_000964.gff",
             SUB_DIR    => ["Bacillus_subtilis_168"],
         },
 
         {
             HOST => 'ftp.ncbi.nlm.nih.gov',
             REMOTE_DIR => 'genomes/Bacteria/Escherichia_coli_K_12_substr__MG1655_uid57779',
-            FILE       => "*",
+            FILE       => "NC_000913.gff",
             SUB_DIR    => ["Escherichia_coli_K_12_substr__MG1655"],
         },
     ],
