@@ -45,6 +45,6 @@ UniProt:
 GenBank:
     organisms:
         Bacteria:
-        - Bacillus_subtilis_168_uid57675
-        - Escherichia_coli_K_12_substr__MG1655_uid57779
+          - Bacillus_subtilis_168_uid57675
+          - Escherichia_coli_K_12_substr__MG1655_uid57779
 
