@@ -60,6 +60,7 @@ run_project_build() {
     echo "Update database name in synbiomine.properties.webapp.theleviathan"
     echo ""
     sed -i 's/^db.production.datasource.databaseName=.*/db.production.datasource.databaseName=synbiomine-$DATE/' ~/.intermine/synbiomine.properties.webapp.theleviathan
+    sed -i 's/^project.releaseVersion=.*/$DATE/' ~/.intermine/synbiomine.properties.webapp.theleviathan
 }
 
 run_sources () {
