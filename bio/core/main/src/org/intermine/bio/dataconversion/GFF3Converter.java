@@ -405,12 +405,18 @@ public class GFF3Converter extends DataConverter
         List<String> primeAttrList = Arrays.asList("primaryIdentifier", "symbol", "synonym");
 
         if (config_attr.containsKey(this.orgTaxonId)) {
-            Map<String, String> attrMap = config_attr.get(this.orgTaxonId);
-            for (String pa : primeAttrList) {
-                attrMap.remove(pa);
+            Map<String, String> attrMapOrg = config_attr.get(this.orgTaxonId);
+            Map<String, String> attrMapClone = new HashMap<String, String>();
+            // Deep copy of a map
+            for (Entry<String, String> e : attrMapOrg.entrySet()) {
+                attrMapClone.put(e.getKey(), e.getValue());
             }
 
-            for (Entry<String, String> e : attrMap.entrySet()) {
+            for (String pa : primeAttrList) {
+                attrMapClone.remove(pa);
+            }
+
+            for (Entry<String, String> e : attrMapClone.entrySet()) {
                 String cls = config_attr_class.get(this.orgTaxonId).get(e.getKey());
                 if ("all".equals(cls) || term.equals(cls)) {
                     String attr = e.getValue();
