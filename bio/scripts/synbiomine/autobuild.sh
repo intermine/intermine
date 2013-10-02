@@ -165,7 +165,7 @@ while true; do
     echo "Would you like to:" 
     echo "[1] Update all datasets by download script"
     # echo "[2] Update any datasets"
-    echo "[2] Run project build"
+    echo "[2] Run a fresh project build"
     echo "[3] Restart from a broken build"
     # echo "[4] Run datasources"
     # echo "[5] Run a single postprocess"
