@@ -53,7 +53,7 @@ update_datasets() {
 run_project_build() {
     echo "Build humanMine database..."
     echo ""
-    ../bio/scripts/project_build -l -v -Vbuild.theleviathan localhost $SAN_HUMANMINE_DUMPS/humanmine/theleviathan/humanmine-build-$DATE.final
+    ../bio/scripts/project_build -b -v -Vbuild.theleviathan localhost $SAN_HUMANMINE_DUMPS/humanmine/theleviathan/humanmine-build-$DATE.final
     
     echo "Copy database humanmine-build to humanmine-$DATE"
     echo ""
