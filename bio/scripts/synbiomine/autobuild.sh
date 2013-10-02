@@ -51,6 +51,21 @@ update_datasets() {
 run_project_build() {
     echo "Build synbiomine database..."
     echo ""
+    ../bio/scripts/project_build -b -v -Vbuild.theleviathan localhost $SAN_SYNBIOMINE_DUMPS/synbiomine/theleviathan/synbiomine-build-$DATE.final
+    
+    echo "Copy database synbiomine-build to synbiomine-$DATE"
+    echo ""
+    createdb -O fh293 -T synbiomine-build synbiomine-$DATE
+
+    echo "Update database name in synbiomine.properties.webapp.theleviathan"
+    echo ""
+    sed -i 's/^db.production.datasource.databaseName=.*/db.production.datasource.databaseName=synbiomine-$DATE/' ~/.intermine/synbiomine.properties.webapp.theleviathan
+    sed -i 's/^project.releaseVersion=.*/$DATE/' ~/.intermine/synbiomine.properties.webapp.theleviathan
+}
+
+restart_project_build() {
+    echo "Restart building synbiomine database from the latest dump point..."
+    echo ""
     ../bio/scripts/project_build -l -v -Vbuild.theleviathan localhost $SAN_SYNBIOMINE_DUMPS/synbiomine/theleviathan/synbiomine-build-$DATE.final
     
     echo "Copy database synbiomine-build to synbiomine-$DATE"
@@ -151,27 +166,29 @@ while true; do
     echo "[1] Update all datasets by download script"
     # echo "[2] Update any datasets"
     echo "[2] Run project build"
+    echo "[3] Restart from a broken build"
     # echo "[4] Run datasources"
     # echo "[5] Run a single postprocess"
     # echo "[6] Run template comparison"
     # echo "[7] Run acceptance tests"
-    echo "[3] Run template comparison and acceptance tests"
-    echo "[4] Release webapp"
-    echo "[5] All-in-one"
-    echo "[6] Exit"
+    echo "[4] Run template comparison and acceptance tests"
+    echo "[5] Release webapp"
+    echo "[6] All-in-one"
+    echo "[7] Exit"
     read -p "Please select one of the options: " num
     case $num in
         1  ) update_datasets; break;;
         # 2  ) echo "Please enter the dataset names separated by space:"; read DATASET_NAMES; update_datasets $DATASET_NAMES; break;;
         2  ) run_project_build; break;;
+        3  ) restart_project_build; break;;
         # 4  ) echo "Please enter the sources separated by comma, e.g. omim,hpo:"; read SOURCE_NAMES; run_sources $SOURCE_NAMES; break;;
         # 5  ) echo "Please enter the postprocess:"; read POSTPROCESS; run_a_postprocess $POSTPROCESS; break;;
         # 6  ) echo "Please enter the service url (e.g. www.flymine.org/query [beta.flymine.org/beta] [email@to] [email@from]) or press enter to use default setting:"; read TC_PARA; run_template_comparison $TC_PARA; break;;
         # 7  ) run_acceptance_tests; break;;
-        3  ) run_template_comparison_and_acceptance_tests; break;;
-        4  ) release_webapp; break;;
-        5 ) run_all_in_one; break;;
-        6 ) echo "Bye"; exit;;
+        4  ) run_template_comparison_and_acceptance_tests; break;;
+        5  ) release_webapp; break;;
+        6 ) run_all_in_one; break;;
+        7 ) echo "Bye"; exit;;
         * ) echo "Please select.";;
     esac
 done
