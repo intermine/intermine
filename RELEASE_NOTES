@@ -8,6 +8,10 @@
  *
  */
 
+1.2.3
+
+#451 - Template more results & browser autocomplete fix.
+
 1.2.2 (7 August 2013)
 
 #283 - Don't load MeSH terms by default when using PubMed data converter
