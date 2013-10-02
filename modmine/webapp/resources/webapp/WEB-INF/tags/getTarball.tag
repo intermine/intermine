@@ -20,6 +20,12 @@
 <img class="exportDiv" style="position:relative; top:3px;" border="0" src="model/images/download.png" height="16" width="16"/>
          <c:out value="Download ALL data files" /> 
          </a>
+<br>
+
+ <a href="http://data.modencode.org/cgi-bin/cloud_list.pl?accessions=${fn:substringAfter(dccId, 'modENCODE_')}&html=1"
+         title="Download submission ${dccId} data files from Amazon" class="value extlink"> 
+         <c:out value="Download data files from Amazon" /> 
+         </a>
          
          
          
