@@ -57,7 +57,8 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                         + "CDS: " + bioEntity);
             }
             InterMineObject mrna = getMRNA(mrnaIdentifier, organism, model);
-            if (mrna != null) {
+//            if (mrna != null && !bioEntity.hasCollection("transcripts")){
+            if (mrna != null && bioEntity.getFieldType("transcript") != null){
                 bioEntity.setFieldValue("transcript", mrna);
             }
             Location loc = getLocationFromHeader(header, (SequenceFeature) bioEntity,
