@@ -52,7 +52,7 @@
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
       <property name="fasta.classAttribute" value="primaryIdentifier" />
       <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current/fasta" />
+      <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/mus_musculus/current/fasta" />
     </source>
     <source name="mgi-alleles" type="mgi-alleles" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
