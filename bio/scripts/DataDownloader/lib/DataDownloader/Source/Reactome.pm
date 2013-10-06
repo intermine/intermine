@@ -25,6 +25,7 @@ use constant ORGANISMS => (
     "Mus musculus",
     "Homo sapiens",
     "Escherichia coli",
+    "Bacillus subtilis",
 );
 
 override clean_up => sub {

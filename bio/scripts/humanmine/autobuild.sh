@@ -171,7 +171,7 @@ while true; do
     echo "[6] Run a single postprocess"
     echo "[7] Run template comparison"
     echo "[8] Run acceptance tests"
-    echo "[9] Run [6]&[7]"
+    echo "[9] Run [7]&[8]"
     echo "[10] Release webapp"
     echo "[11] All-in-one"
     echo "[12] Exit"
