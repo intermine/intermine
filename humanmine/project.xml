@@ -42,7 +42,7 @@
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
     <source name="ensembl-mouse" type="ensembl-core">
-      <property name="src.data.dir" location="/SAN_humanmine/data/mus_musculus/current" />
+      <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/mus_musculus/current" />
       <property name="src.data.dir.includes" value="10090_mgi_pid.xml" />
     </source>
     <source name="ensembl-mouse-chr-fasta" type="fasta">
