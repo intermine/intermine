@@ -59,7 +59,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
-            "CDS", "intron", "exon", "EST",
+            "intron", "exon", "EST",
             "five_prime_untranslated_region",
             "five_prime_UTR", "three_prime_untranslated_region",
             "three_prime_UTR", "origin_of_replication",
