@@ -29,13 +29,6 @@ use constant {
             FILE       => "NC_000913.gff",
             SUB_DIR    => ["Escherichia_coli_K_12_substr__MG1655"],
         },
-
-        {
-            HOST => 'ftp.ncbi.nlm.nih.gov',
-            REMOTE_DIR => 'genomes/Bacteria/Geobacillus_thermoglucosidasius_C56_YS93_uid48129',
-            FILE       => "NC_015660.gff",
-            SUB_DIR    => ["Geobacillus_thermoglucosidasius_C56_YS93"],
-        },
     ],
 };
 
