@@ -239,7 +239,7 @@ public class Engine extends CommandRunner {
                 Collection<?> locFs = (Collection<?>) fpo.getFieldValue("locatedFeatures");
                 if (locFs != null) {
                     for (Object o: locFs) {
-                        subFeatures.add(makeFeatureWithoutSubFeatures((FastPathObject) o));
+                        subFeatures.add(makeFeatureWithSubFeatures((FastPathObject) o));
                     }
                 }
                 feature.put("subfeatures", subFeatures);
