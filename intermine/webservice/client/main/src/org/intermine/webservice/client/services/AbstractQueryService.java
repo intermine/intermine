@@ -276,5 +276,4 @@ public abstract class AbstractQueryService<T> extends Service
         return new JSONResult(connection);
     }
 
-
 }
