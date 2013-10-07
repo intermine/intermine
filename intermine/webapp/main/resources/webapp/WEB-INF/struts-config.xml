@@ -204,7 +204,7 @@
       <forward name="results" redirect="true" path="/results.do"/>
     </action>
     <action path="/collectionToTable" type="org.intermine.web.struts.CollectionTableAction">
-     <forward name="table" path="/table.jsp"/>
+     <forward name="table" path="/collectionResultsTable.jsp"/>
      </action>
     <action path="/queryBuilderChange" type="org.intermine.web.struts.QueryBuilderChange" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
