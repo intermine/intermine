@@ -1,5 +1,5 @@
-log_dir: "/micklem/data/download_logs"
-data_dir: "/micklem/data"
+log_dir: "/micklem/data/ecolimine/download_logs"
+data_dir: "/micklem/data/ecolimine"
 
 default_sources:
   - "BioGRID"
