@@ -21,7 +21,7 @@ UniProt:
         - 511145
         - 1423
         - 224308
-	- 634956
+        - 634956
     excluded_organisms:
         - 10091
         - 10092
@@ -48,5 +48,5 @@ GenBank:
         Bacteria:
           - Bacillus_subtilis_168_uid57675
           - Escherichia_coli_K_12_substr__MG1655_uid57779
-	  - Geobacillus_thermoglucosidasius_C56_YS93_uid48129
+          - Geobacillus_thermoglucosidasius_C56_YS93_uid48129
 
