@@ -421,8 +421,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     Arrays.asList(new SetFieldConfigAction("predictionStatus")));
             map.put(new MultiKey("prop", "CDS", "wormpep"),
                     Arrays.asList(new SetFieldConfigAction("wormpep")));
-            map.put(new MultiKey("prop", "MRNA", "cds"),
-                    Arrays.asList(new SetFieldConfigAction("CDS")));
+//            map.put(new MultiKey("prop", "MRNA", "cds"),
+//                    Arrays.asList(new SetFieldConfigAction("CDS")));
             map.put(new MultiKey("prop", "MRNA", "wormpep"),
                     Arrays.asList(new SetFieldConfigAction("wormpep")));
             map.put(new MultiKey("prop", "PolyASite", "external_evidence"),
