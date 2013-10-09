@@ -201,7 +201,7 @@ public class GoConverter extends BioFileConverter
             String qualifier = array[3];
             String strEvidence = array[6];
             String withText = array[7];
-            String annotationExtension = null;
+            String extensionText = null;
             if (array.length >= 16) {
                 extensionText = array[15];
             }
@@ -263,7 +263,7 @@ public class GoConverter extends BioFileConverter
                     }
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, dataSource, dataSourceCode,
-                            annotationExtension);
+                            extensionText);
                     evidence.setStoredAnnotationId(storedAnnotationId);
                 } else {
                     boolean seenEvidenceCode = false;
