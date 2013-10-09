@@ -1,11 +1,7 @@
 <items>
-<item id="9_13" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:1930001)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="9_22" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:2443113)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
+<item id="7_3" class="GOTerm">
+<attribute name="identifier" value="GO:0007210"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
 <item id="1_2" class="GOEvidenceCode">
 <attribute name="code" value="TAS"/>
@@ -14,221 +10,128 @@
 <attribute name="identifier" value="GO:0001586"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
-<item id="8_8" class="GOEvidence">
-<reference name="code" ref_id="1_2"/>
-<collection name="publications"><reference ref_id="11_1"/></collection>
-</item>
-<item id="10_4" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_4"/>
-<reference name="subject" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="8_6"/><reference ref_id="8_7"/><reference ref_id="8_8"/></collection>
-</item>
-<item id="11_3" class="Publication">
-<attribute name="pubMedId" value="12163486"/>
-<collection name="crossReferences"><reference ref_id="12_3"/></collection>
-</item>
-<item id="12_4" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0055969"/>
+<item id="10_2" class="DatabaseReference">
+<attribute name="identifier" value="FBrf0129744"/>
 <reference name="source" ref_id="5_1"/>
 </item>
-<item id="11_2" class="Publication">
-<attribute name="pubMedId" value="10908591"/>
-<collection name="crossReferences"><reference ref_id="12_2"/></collection>
-</item>
-<item id="9_3" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:2444417)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="9_12" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:95621)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="6_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
-</item>
-<item id="9_14" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:107557)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="9_16" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:1915166)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="7_4" class="GOTerm">
-<attribute name="identifier" value="GO:0007198"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-</item>
-<item id="5_1" class="DataSource">
-<attribute name="name" value="FlyBase"/>
-</item>
-<item id="11_1" class="Publication">
-<attribute name="pubMedId" value="11282322"/>
-<collection name="crossReferences"><reference ref_id="12_1"/></collection>
-</item>
-<item id="8_4" class="GOEvidence">
-<reference name="code" ref_id="1_2"/>
-<collection name="publications"><reference ref_id="11_1"/></collection>
-</item>
-<item id="12_3" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0152099"/>
-<reference name="source" ref_id="5_1"/>
-</item>
-<item id="8_2" class="GOEvidence">
-<reference name="code" ref_id="1_2"/>
-<collection name="publications"><reference ref_id="11_1"/></collection>
-</item>
-<item id="9_15" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:1935147)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="1_3" class="GOEvidenceCode">
-<attribute name="code" value="ISS"/>
-</item>
-<item id="10_3" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_3"/>
-<reference name="subject" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="8_5"/></collection>
-</item>
-<item id="9_8" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:2136343)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="7_3" class="GOTerm">
-<attribute name="identifier" value="GO:0007210"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-</item>
-<item id="11_4" class="Publication">
+<item id="9_4" class="Publication">
 <attribute name="pubMedId" value="1310937"/>
-<collection name="crossReferences"><reference ref_id="12_4"/></collection>
+<collection name="crossReferences"><reference ref_id="10_4"/></collection>
 </item>
-<item id="10_1" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_1"/>
-<reference name="subject" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="8_3"/></collection>
-<collection name="extensions"><reference ref_id="9_1"/></collection>
-</item>
-<item id="9_10" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:2448427)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="8_6" class="GOEvidence">
-<reference name="code" ref_id="1_4"/>
-<collection name="publications"><reference ref_id="11_4"/></collection>
-</item>
-<item id="9_1" class="AnnotationExtension">
-<attribute name="extension" value="part_of(CL:0000576)"/>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
-<item id="9_7" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:101914)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="1_1" class="GOEvidenceCode">
-<attribute name="code" value="NAS"/>
+<item id="11_5" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
 </item>
 <item id="7_1" class="GOTerm">
 <attribute name="identifier" value="GO:0005887"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
 </item>
-<item id="9_5" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:99612)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
+<item id="1_1" class="GOEvidenceCode">
+<attribute name="code" value="NAS"/>
+</item>
+<item id="11_3" class="GOEvidence">
+<reference name="code" ref_id="1_3"/>
+<collection name="publications"><reference ref_id="9_2"/><reference ref_id="9_3"/></collection>
+</item>
+<item id="8_3" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="7_3"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="11_3"/></collection>
+</item>
+<item id="11_6" class="GOEvidence">
+<reference name="code" ref_id="1_2"/>
+<collection name="publications"><reference ref_id="9_1"/></collection>
+</item>
+<item id="11_1" class="GOEvidence">
+<reference name="code" ref_id="1_1"/>
+</item>
+<item id="9_2" class="Publication">
+<attribute name="pubMedId" value="10908591"/>
+<collection name="crossReferences"><reference ref_id="10_2"/></collection>
+</item>
+<item id="11_4" class="GOEvidence">
+<reference name="code" ref_id="1_4"/>
+<collection name="publications"><reference ref_id="9_4"/></collection>
 </item>
 <item id="4_1" class="DataSet">
 <attribute name="name" value="GO Annotation from FlyBase"/>
 <reference name="dataSource" ref_id="5_1"/>
 </item>
-<item id="10_2" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="7_2"/>
-<reference name="subject" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="evidence"><reference ref_id="8_4"/></collection>
-<collection name="extensions"><reference ref_id="9_22"/></collection>
+<item id="11_2" class="GOEvidence">
+<reference name="code" ref_id="1_2"/>
+<collection name="publications"><reference ref_id="9_1"/></collection>
+</item>
+<item id="6_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="9_11" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:106676)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
+<item id="8_1" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="7_1"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="11_1"/></collection>
 </item>
-<item id="9_17" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:109562)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
+<item id="9_1" class="Publication">
+<attribute name="pubMedId" value="11282322"/>
+<collection name="crossReferences"><reference ref_id="10_1"/></collection>
 </item>
-<item id="8_5" class="GOEvidence">
-<reference name="code" ref_id="1_3"/>
-<collection name="publications"><reference ref_id="11_2"/><reference ref_id="11_3"/></collection>
+<item id="8_2" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="7_2"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="11_2"/></collection>
 </item>
-<item id="9_6" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:88355)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="8_1" class="GOEvidence">
-<reference name="code" ref_id="1_1"/>
-</item>
-<item id="9_20" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:2149955)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="8_3" class="GOEvidence">
-<reference name="code" ref_id="1_1"/>
-</item>
-<item id="8_7" class="GOEvidence">
-<reference name="code" ref_id="1_1"/>
-</item>
-<item id="9_19" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:1351655)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="12_5" class="DatabaseReference">
+<item id="10_1" class="DatabaseReference">
 <attribute name="identifier" value="FBrf0135704"/>
 <reference name="source" ref_id="5_1"/>
 </item>
-<item id="9_18" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:1351338)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="9_9" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:103067)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="12_2" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0129744"/>
+<item id="10_5" class="DatabaseReference">
+<attribute name="identifier" value="FBrf0135704"/>
 <reference name="source" ref_id="5_1"/>
 </item>
-<item id="9_2" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:97774)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
+<item id="7_4" class="GOTerm">
+<attribute name="identifier" value="GO:0007198"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+</item>
+<item id="10_3" class="DatabaseReference">
+<attribute name="identifier" value="FBrf0152099"/>
+<reference name="source" ref_id="5_1"/>
+</item>
+<item id="8_4" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="7_4"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="4_1"/></collection>
+<collection name="evidence"><reference ref_id="11_4"/><reference ref_id="11_5"/><reference ref_id="11_6"/></collection>
+</item>
+<item id="9_3" class="Publication">
+<attribute name="pubMedId" value="12163486"/>
+<collection name="crossReferences"><reference ref_id="10_3"/></collection>
+</item>
+<item id="5_1" class="DataSource">
+<attribute name="name" value="FlyBase"/>
+</item>
+<item id="1_3" class="GOEvidenceCode">
+<attribute name="code" value="ISS"/>
 </item>
 <item id="2_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
+</item>
+<item id="10_4" class="DatabaseReference">
+<attribute name="identifier" value="FBrf0055969"/>
+<reference name="source" ref_id="5_1"/>
+</item>
+<item id="1_4" class="GOEvidenceCode">
+<attribute name="code" value="IDA"/>
 </item>
 <item id="3_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0004168"/>
 <reference name="organism" ref_id="2_1"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
-<collection name="goAnnotation"><reference ref_id="10_1"/><reference ref_id="10_2"/><reference ref_id="10_3"/><reference ref_id="10_4"/></collection>
-</item>
-<item id="9_21" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:104556)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="1_4" class="GOEvidenceCode">
-<attribute name="code" value="IDA"/>
-</item>
-<item id="9_4" class="AnnotationExtension">
-<attribute name="extension" value="occurs_in(EMAP:7963),has_participant(MGI:MGI:102810)"/>
-<collection name="evidence"><reference ref_id="8_2"/></collection>
-</item>
-<item id="12_1" class="DatabaseReference">
-<attribute name="identifier" value="FBrf0135704"/>
-<reference name="source" ref_id="5_1"/>
+<collection name="goAnnotation"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/><reference ref_id="8_4"/></collection>
 </item>
 </items>
