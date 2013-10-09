@@ -71,15 +71,47 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid57779/"/>
     </source>
 
+    <source name="geobacillus-strC56-YS93-gff" type="gff">
+      <property name="gff3.taxonId" value="634956"/>
+      <property name="gff3.seqDataSourceName" value="NCBI"/>
+      <property name="gff3.dataSourceName" value="NCBI"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 genomic features"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129"/>
+      <property name="src.data.dir.includes" value="NC_015660.gff"/>
+    </source>
+
+    <source name="geobacillus-strC56-YS93-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="634956"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.dataSourceName" value="GenBank"/>
+      <property name="fasta.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 chromosome, complete genome"/>
+      <property name="fasta.includes" value="NC_015660.fna"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
+    </source>
+
+    <source name="geobacillus-strC56-YS93-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="634956"/>
+      <property name="fasta.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 fasta data set for genes"/>
+      <property name="fasta.dataSourceName" value="NCBI"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="NC_015660.frn"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
+    </source>
+
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="83333 224308"/>
+      <property name="uniprot.organisms" value="83333 224308 634956"/>
       <property name="createinterpro" value="true"/>
       <property name="creatego" value="true"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/uniprot/current"/>
     </source>
    
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="511145 224308"/>
+      <property name="fasta.taxonId" value="511145 224308 634956"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -130,7 +162,7 @@
 
     <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
-      <property name="panther.organisms" value="5111453 224308"/>
+      <property name="panther.organisms" value="5111453 224308 634956"/>
       <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
 
@@ -162,7 +194,7 @@
 
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
-      <property name="pubmed.organisms" value="511145 224308"/>
+      <property name="pubmed.organisms" value="511145 224308 634956"/>
       <property name="src.data.dir.includes" value="gene2pubmed"/>
       <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
     </source>

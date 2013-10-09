@@ -201,10 +201,9 @@ public class GoConverter extends BioFileConverter
             String qualifier = array[3];
             String strEvidence = array[6];
             String withText = array[7];
-            String extensionText = null;
+            String annotationExtension = null;
             if (array.length >= 16) {
-                extensionText = array[15];
-
+            	annotationExtension = array[15];
             }
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence);
@@ -245,28 +244,10 @@ public class GoConverter extends BioFileConverter
                     allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
                     allEvidenceForAnnotation.add(evidence);
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
-                    Item extension = null;
-                    if (extensionText != null) {
-                        Item goevidence = createItem("GOEvidence");
-                        goevidence.setReference("code", evidenceCodes.get(strEvidence));
-                        if (pubRefId != null) {
-                            goevidence.addToCollection("publications", pubRefId);
-                        }
-                        store(goevidence);
-                        for (String s : extensionText.split("\\|")) {
-                            extension = createItem("AnnotationExtension");
-                            if (!s.isEmpty()) {
-                                extension.setAttribute("extension", s);
-                            }
-                            extension.addToCollection("evidence", goevidence);
-                            store(extension);
-                        }
-                    }
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, dataSource, dataSourceCode,
-                            extension);
+                            annotationExtension);
                     evidence.setStoredAnnotationId(storedAnnotationId);
-
                 } else {
                     boolean seenEvidenceCode = false;
                     Integer storedAnnotationId = null;
@@ -346,7 +327,7 @@ public class GoConverter extends BioFileConverter
 
     private Integer createGoAnnotation(String productIdentifier, String productType,
             String termIdentifier, Item organism, String qualifier, String dataSource,
-            String dataSourceCode, Item annotationExtension) throws ObjectStoreException {
+            String dataSourceCode, String annotationExtension) throws ObjectStoreException {
         Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
         goAnnotation.setReference("ontologyTerm", termIdentifier);
@@ -354,8 +335,8 @@ public class GoConverter extends BioFileConverter
         if (!StringUtils.isEmpty(qualifier)) {
             goAnnotation.setAttribute("qualifier", qualifier);
         }
-        if (annotationExtension != null) {
-            goAnnotation.addToCollection("extensions", annotationExtension);
+        if (!StringUtils.isEmpty(annotationExtension)) {
+            goAnnotation.setAttribute("annotationExtension", annotationExtension);
         }
 
         goAnnotation.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
