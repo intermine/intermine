@@ -201,9 +201,9 @@ public class GoConverter extends BioFileConverter
             String qualifier = array[3];
             String strEvidence = array[6];
             String withText = array[7];
-            String extensionText = null;
+            String annotationExtension = null;
             if (array.length >= 16) {
-                extensionText = array[15];
+            	annotationExtension = array[15];
             }
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence);
@@ -244,26 +244,9 @@ public class GoConverter extends BioFileConverter
                     allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
                     allEvidenceForAnnotation.add(evidence);
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
-                    Item extension = null;
-                    if (extensionText != null) {
-                        Item goevidence = createItem("GOEvidence");
-                        goevidence.setReference("code", evidenceCodes.get(strEvidence));
-                        if (pubRefId != null) {
-                            goevidence.addToCollection("publications", pubRefId);
-                        }
-                        store(goevidence);
-                        for (String s : extensionText.split("\\|")) {
-                            extension = createItem("AnnotationExtension");
-                            if (!s.isEmpty()) {
-                                extension.setAttribute("extension", s);
-                            }
-                            extension.addToCollection("evidence", goevidence);
-                            store(extension);
-                        }
-                    }
                     Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
                             goTermIdentifier, organism, qualifier, dataSource, dataSourceCode,
-                            extensionText);
+                            annotationExtension);
                     evidence.setStoredAnnotationId(storedAnnotationId);
                 } else {
                     boolean seenEvidenceCode = false;
