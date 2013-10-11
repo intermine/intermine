@@ -68,6 +68,27 @@
   </tr>
 
 
+  <!-- ******************************************************* -->
+  <tr>
+    <td rowspan="2"  class="leftcol">
+    <p><h2>Expression</h2></p></td>
+    <td>
+    Expression annotations. Results from assays of endogenous gene expression in wild type and mutant mice.
+    </td>
+    <td> 
+    <a href="http://www.informatics.jax.org/expression.shtml" target="_new">GXD</a> (Gene Expression Database) @MGI
+    </td>
+  </tr>
+
+  <tr>
+    <td> 
+    EMAPX anatomy ontology. A merging of the EMAP mouse developmental anatomy ontology, developed by the Edinburgh Mouse Atlas Project, and the adult mouse anatomy ontology (MA), developed by GXD.
+    </td>
+    <td> 
+    <a href="http://www.emouseatlas.org/" target="_new">EMAP</a> (Edinburgh Mouse Atlas Project) and GXD
+    </td>
+  </tr>
+
 
   <!-- ******************************************************* -->
 
@@ -115,7 +136,7 @@
   <tr>
     <td>MEDIC disease ontology. MEDIC is a merging of OMIM disease ids onto the MeSH disease ontology. OMIM disease annotations from MGI are converted into the corresponding MEDIC annotations in MouseMine. </td>
     <td>
-    <a href="http://ctdbase.org/" target="_new">Comparative Toxicogenomics Database</a> (CTD)
+    <a href="http://ctdbase.org/" target="_new">CTD</a> (Comparative Toxicogenomics Database)
     </td>
   </tr>
 
@@ -127,6 +148,7 @@
     <td> Mouse-Human Orthologies</td>
     <td> 
     <a href="http://www.ncbi.nlm.nih.gov/homologene/" target="_new">Homologene</a> and <a href="http://www.pantherdb.org/">Panther</a>
+    </td>
   </tr>
 
   <tr>
@@ -151,6 +173,7 @@
     <a href="http://www.informatics.jax.org/" target="_new">MGI</a>
     </td>
   </tr>
+
 
 
 </table>
