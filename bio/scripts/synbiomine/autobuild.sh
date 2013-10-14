@@ -64,7 +64,7 @@ run_project_build() {
     
     echo "Copy database synbiomine-build to synbiomine-$DATE"
     echo ""
-    createdb -O fh293 -T synbiomine-build synbiomine-$DATE
+    createdb -O ml590 -T synbiomine-build synbiomine-$DATE
 
     echo "Update database name in synbiomine.properties.webapp.theleviathan"
     echo ""
@@ -95,7 +95,7 @@ restart_project_build() {
     
     echo "Copy database synbiomine-build to synbiomine-$DATE"
     echo ""
-    createdb -O fh293 -T synbiomine-build synbiomine-$DATE
+    createdb -O ml590 -T synbiomine-build synbiomine-$DATE
 
     echo "Update database name in synbiomine.properties.webapp.theleviathan"
     echo ""
