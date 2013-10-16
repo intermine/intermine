@@ -80,7 +80,7 @@ sub make_logger {
 #           file => {%common_args, %less_serious, %file_args},
 #          file => {%common_args, %serious, %file_args}
 #       );
-    }
+#   }
     return $log;
 }
 
