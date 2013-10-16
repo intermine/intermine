@@ -1,0 +1,54 @@
+log_dir: "/SAN_synbiomine/data/download_logs"
+data_dir: "/SAN_synbiomine/data"
+
+default_sources:
+  - "AffyProbes"
+  - "BioGRID"
+  - "EnsemblCompara"
+  - "FlyBaseFasta"
+  - "FlyBaseOrthologues"
+  - "FlyOntologies"
+  - "GOAnnotation"
+  - "IntAct"
+  - "IntactVocabulary"
+  - "InterPro"
+  - "InterProGO"
+  - "MGIIdentifiers"
+  - "NCBIGene"
+  - "PDB"
+  - "PubMed"
+  - "Reactome"
+  - "RedFly"
+  - "RNAiScreens"
+  - "UniProt"
+  - "WormbaseRNAi"
+  - "WormIdentifiers"
+
+UniProt:
+    organisms:
+        - 83333
+        - 511145
+        - 1423
+        - 224308
+    excluded_organisms:
+        - 10091
+        - 10092
+        - 35531
+        - 39442
+        - 46244
+        - 57486
+        - 63221
+        - 116058
+        - 180454
+        - 377270
+        - 377271
+        - 377586
+        - 377587
+        - 943925
+        - 943926
+        - 316385
+        - 1110693
+        - 527799
+        - 595496
+        
+
