@@ -42,7 +42,7 @@ public class ConverterTask extends DynamicAttributeTask
 
     /**
      * Sets the list of classes to NOT try and convert
-     * @param excludeList the suitably formatted list of classs to exclude.
+     * @param excludeList the suitably formatted list of classes to exclude.
      */
     public void setExcludeList(String excludeList) {
         this.excludeList = excludeList;
