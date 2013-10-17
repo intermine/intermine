@@ -4903,7 +4903,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_Sweden2_uid161995/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-gff" type="gff">
+    <source name="Chlamydia-trachomatis-7249-gff" type="gff">
       <property name="gff3.taxonId" value="1071755"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -4913,7 +4913,7 @@
       <property name="src.data.dir.includes" value="NC_020944.gff"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-chromosome-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-7249-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071755"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -4925,7 +4925,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Chlamydia-trachomatis-gene-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-7249-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071755"/>
       <property name="fasta.dataSetTitle" value="Chlamydia trachomatis A/7249 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -4935,7 +4935,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_uid196771/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-gff" type="gff">
+    <source name="Chlamydia-trachomatis-SotonE4-gff" type="gff">
       <property name="gff3.taxonId" value="1071760"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -4945,7 +4945,7 @@
       <property name="src.data.dir.includes" value="NC_020969.gff"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-chromosome-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-SotonE4-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071760"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -4957,7 +4957,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Chlamydia-trachomatis-gene-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-SotonE4-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071760"/>
       <property name="fasta.dataSetTitle" value="Chlamydia trachomatis E/SotonE4 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -4967,7 +4967,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_uid196776/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-gff" type="gff">
+    <source name="Chlamydia-trachomatis-SotonF3-gff" type="gff">
       <property name="gff3.taxonId" value="1071764"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -4977,7 +4977,7 @@
       <property name="src.data.dir.includes" value="NC_020964.gff"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-chromosome-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-SotonF3-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071764"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -4989,7 +4989,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Chlamydia-trachomatis-gene-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-SotonF3-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071764"/>
       <property name="fasta.dataSetTitle" value="Chlamydia trachomatis F/SotonF3 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -4999,7 +4999,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_uid196778/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-gff" type="gff">
+    <source name="Chlamydia-trachomatis-SotonIa3-gff" type="gff">
       <property name="gff3.taxonId" value="1071767"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5009,7 +5009,7 @@
       <property name="src.data.dir.includes" value="NC_020940.gff"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-chromosome-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-SotonIa3-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071767"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5021,7 +5021,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Chlamydia-trachomatis-gene-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-SotonIa3-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071767"/>
       <property name="fasta.dataSetTitle" value="Chlamydia trachomatis Ia/SotonIa3 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -5031,7 +5031,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_uid196781/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-gff" type="gff">
+    <source name="Chlamydia-trachomatis-LST-gff" type="gff">
       <property name="gff3.taxonId" value="1071775"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5041,7 +5041,7 @@
       <property name="src.data.dir.includes" value="NC_020975.gff"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-chromosome-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-LST-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071775"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5053,7 +5053,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Chlamydia-trachomatis-gene-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-LST-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1071775"/>
       <property name="fasta.dataSetTitle" value="Chlamydia trachomatis L2b/LST fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -5063,7 +5063,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_uid196789/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-gff" type="gff">
+    <source name="Chlamydia-trachomatis-1322-gff" type="gff">
       <property name="gff3.taxonId" value="1075087"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5073,7 +5073,7 @@
       <property name="src.data.dir.includes" value="NC_020972.gff"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-chromosome-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-1322-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1075087"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5085,7 +5085,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Chlamydia-trachomatis-gene-fasta" type="fasta">
+    <source name="Chlamydia-trachomatis-1322-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1075087"/>
       <property name="fasta.dataSetTitle" value="Chlamydia trachomatis L1/1322/p2 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
