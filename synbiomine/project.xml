@@ -2983,38 +2983,6 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_A2497_uid159863/"/>
     </source>
 
-    <source name="Chlamydia-trachomatis-A2497-gff" type="gff">
-      <property name="gff3.taxonId" value="580047"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Chlamydia trachomatis A2497 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_A2497_uid159993/"/>
-      <property name="src.data.dir.includes" value="NC_017437.gff"/>
-    </source>
-
-    <source name="Chlamydia-trachomatis-A2497-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="580047"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Chlamydia trachomatis A2497 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_017437.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_A2497_uid159993/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Chlamydia-trachomatis-A2497-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="580047"/>
-      <property name="fasta.dataSetTitle" value="Chlamydia trachomatis A2497 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_017437.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Chlamydia_trachomatis_A2497_uid159993/"/>
-    </source>
-
     <source name="Chlamydia-trachomatis-A-363-gff" type="gff">
       <property name="gff3.taxonId" value="1071753"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
