@@ -5703,7 +5703,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Clostridium_botulinum_H04402_065_uid162091/"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-13032-gff" type="gff">
+    <source name="Corynebacterium-glutamicum-K051-gff" type="gff">
       <property name="gff3.taxonId" value="1204414"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5713,7 +5713,7 @@
       <property name="src.data.dir.includes" value="NC_020519.gff"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-13032-chromosome-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-K051-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1204414"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5725,7 +5725,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-13032-gene-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-K051-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1204414"/>
       <property name="fasta.dataSetTitle" value="Corynebacterium glutamicum K051 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -5735,7 +5735,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Corynebacterium_glutamicum_ATCC_13032_uid193708/"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-13032-gff" type="gff">
+    <source name="Corynebacterium-glutamicum-ATCC-196627-gff" type="gff">
       <property name="gff3.taxonId" value="196627"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5745,7 +5745,7 @@
       <property name="src.data.dir.includes" value="NC_003450.gff"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-13032-chromosome-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-ATCC-196627-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="196627"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5757,7 +5757,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-13032-gene-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-ATCC-196627-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="196627"/>
       <property name="fasta.dataSetTitle" value="Corynebacterium glutamicum ATCC 13032 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
