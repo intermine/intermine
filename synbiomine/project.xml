@@ -1351,38 +1351,6 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bifidobacterium_longum_infantis_ATCC_15697_uid159865/"/>
     </source>
 
-    <source name="Bifidobacterium-longum-infantis-ATCC-15697-gff" type="gff">
-      <property name="gff3.taxonId" value="391904"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bifidobacterium_longum_infantis_ATCC_15697_uid58677/"/>
-      <property name="src.data.dir.includes" value="NC_011593.gff"/>
-    </source>
-
-    <source name="Bifidobacterium-longum-infantis-ATCC-15697-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="391904"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_011593.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bifidobacterium_longum_infantis_ATCC_15697_uid58677/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Bifidobacterium-longum-infantis-ATCC-15697-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="391904"/>
-      <property name="fasta.dataSetTitle" value="Bifidobacterium longum subsp. infantis ATCC 15697 = JCM 1222 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_011593.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bifidobacterium_longum_infantis_ATCC_15697_uid58677/"/>
-    </source>
-
     <source name="Bordetella-pertussis-CS-gff" type="gff">
       <property name="gff3.taxonId" value="1017264"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
