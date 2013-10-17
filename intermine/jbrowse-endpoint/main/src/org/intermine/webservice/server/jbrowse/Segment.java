@@ -28,6 +28,13 @@ public class Segment {
         return this.end;
     }
 
+    public Integer getWidth() {
+        if (this.end == null || this.start == null) {
+            return null;
+        }
+        return this.end - this.start;
+    }
+
     public String toRangeString() {
         if (start == null && end == null) {
             return section;
@@ -46,5 +53,13 @@ public class Segment {
     @Override
     public boolean equals(Object other) {
         return EqualsBuilder.reflectionEquals(this, other);
+    }
+
+    public Segment subsegment(int i, int j) {
+        if (start != null && i < start)
+            throw new IllegalArgumentException("i is less than start");
+        if (end != null && j > end)
+            throw new IllegalArgumentException("j is greater than end");
+        return new Segment(section, i, j);
     }
 }

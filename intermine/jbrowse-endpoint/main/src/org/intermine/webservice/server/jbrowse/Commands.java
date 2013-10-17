@@ -6,10 +6,11 @@ import org.apache.commons.lang.StringUtils;
 
 public class Commands {
 
-    public enum Action {STATS, REFERENCE, FEATURES};
+    public enum Action {STATS, REFERENCE, FEATURES, DENSITIES};
 
     // return null if not a suitable command.
     // Interprets commands such as: /7227/features/X?start=100&end=200&type=Gene
+    // as /(domain)/(action)/(section)?start=(start)&end=(end)&type=(featureType)
     // See: http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services
     public static Command getCommand(
             String pathInfo,
@@ -31,13 +32,13 @@ public class Commands {
         if ("global".equals(section)) {
             segment = Segment.GLOBAL_SEGMENT;
         } else {
-            segment = new Segment(("stats".equals(actionName) && "region".equals(section) ? realSection : section), start, end);
+            segment = new Segment(("stats".equals(actionName)) ? realSection : section, start, end);
         }
         String featureType = parameters.get("type");
         Action action = null;
 
         if ("stats".equals(actionName)) {
-            action = Action.STATS;
+            action = ("regionFeatureDensities".equals(section)) ? Action.DENSITIES : Action.STATS;
         } else if ("features".equals(actionName)) {
             if ("true".equals(parameters.get("reference"))){
                 action = Action.REFERENCE;

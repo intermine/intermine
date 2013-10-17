@@ -9,6 +9,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
@@ -119,18 +124,112 @@ public class Engine extends CommandRunner {
         return result;
     }
 
+    private static List<Segment> sliceUp(int n, Segment segment) {
+        if (n < 1)
+            throw new IllegalArgumentException("n must be greater than 0");
+        if (segment == null || segment.getWidth() == null)
+            throw new IllegalArgumentException("segment must be non null with defined width");
+        List<Segment> subsegments = new ArrayList<Segment>();
+        int sliceWidth = segment.getWidth() / n;
+        for (int i = segment.getStart(); i < segment.getEnd(); i += sliceWidth) {
+            subsegments.add(segment.subsegment(i, i + sliceWidth));
+        }
+        return subsegments;
+    }
+
+    private static final class PathQueryCounter implements Callable<Integer>
+    {
+        final PathQuery pq;
+        final ObjectStore os;
+        
+        PathQueryCounter(PathQuery pq, ObjectStore os) {
+            this.pq = pq.clone();
+            this.os = os;
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            Query q = pathQueryToOSQ(pq);
+            return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+        }
+    }
+
+    /**
+     */
+    @Override
+    public Map<String, Object> densities(Command command) {
+        final int nSlices = 10;
+        List<PathQuery> segmentQueries = getSliceQueries(command, nSlices);
+        List<Future<Integer>> pending = countInParallel(segmentQueries);
+        List<Integer> results = new ArrayList<Integer>();
+
+        int max = 0, sum = 0;
+        for (Future<Integer> future: pending) {
+            try {
+                Integer r = future.get();
+                if (r != null && r > max) max = r;
+                sum += r;
+                results.add(r);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        double mean = Double.valueOf(sum) / results.size();
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Number> binStats = new HashMap<String, Number>();
+        binStats.put("basesPerBin", command.getSegment().getWidth() / nSlices);
+        binStats.put("max", max);
+        binStats.put("mean", mean);
+
+        result.put("bins", results);
+        result.put("stats", binStats);
+        return result;
+    }
+
     //------------ PRIVATE METHODS --------------------//
+
+    private List<PathQuery> getSliceQueries(Command command, final int nSlices) {
+        List<Segment> slices = sliceUp(nSlices, command.getSegment());
+        List<PathQuery> segmentQueries = new ArrayList<PathQuery>();
+        for (Segment s: slices) {
+            segmentQueries.add(getSFPathQuery(command, s));
+        }
+        return segmentQueries;
+    }
+
+    private List<Future<Integer>> countInParallel(List<PathQuery> segmentQueries) {
+        ExecutorService executor = Executors.newFixedThreadPool(segmentQueries.size());
+        List<Future<Integer>> pending = new ArrayList<Future<Integer>>();
+        for (PathQuery pq: segmentQueries) {
+            Callable<Integer> counter = new PathQueryCounter(pq, getAPI().getObjectStore());
+            pending.add(executor.submit(counter));
+        }
+        executor.shutdown();
+        return pending;
+    }
+
+    private PathQuery getSFPathQuery(Command command) {
+        return getSFPathQuery(command, command.getSegment());
+    }
+
+    private PathQuery getSFPathQuery(Command command, Segment segment) {
+        PathQuery pq = new PathQuery(model);
+        String type = command.getType("SequenceFeature");
+        pq.addView(String.format("%s.id", type));
+        pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
+        if (segment != Segment.GLOBAL_SEGMENT)
+            pq.addConstraint(makeRangeConstraint(type, segment));
+        return pq;
+    }
 
     // A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
     private Query getStatsQuery(Command command) {
 
         // A query to get the feature-count for the current domain.
-        PathQuery pq = new PathQuery(model);
-        String type = command.getType("SequenceFeature");
-        pq.addView(String.format("%s.id", type));
-        pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
-        if (command.getSegment() != Segment.GLOBAL_SEGMENT)
-            pq.addConstraint(makeRangeConstraint(type, command.getSegment()));
+        PathQuery pq = getSFPathQuery(command);
         Query subq_1 = pathQueryToOSQ(pq);
         Query countQ = new Query();
         countQ.addFrom(subq_1);
@@ -206,13 +305,10 @@ public class Engine extends CommandRunner {
         return makeFeature(fpo, true);
     }
 
-    private Map<String, Object> makeFeatureWithoutSubFeatures(FastPathObject fpo) {
-        return makeFeature(fpo, false);
-    }
-
     private Map<String, Object> makeFeature(FastPathObject fpo, boolean includeSubfeatures) {
         try {
             Map<String, Object> feature = new HashMap<String, Object>();
+            feature.put("type", fpo.getClass().getName());
             FastPathObject sot = (FastPathObject) fpo.getFieldValue("sequenceOntologyTerm");
             if (sot != null) feature.put("type", sot.getFieldValue("name"));
             String name   = (String) fpo.getFieldValue("name");
@@ -260,7 +356,7 @@ public class Engine extends CommandRunner {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Query pathQueryToOSQ(PathQuery pq) {
+    private static Query pathQueryToOSQ(PathQuery pq) {
         Query q;
         try {
             q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());

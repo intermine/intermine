@@ -54,6 +54,8 @@ public abstract class CommandRunner {
             return reference(command);
         case FEATURES:
             return features(command);
+        case DENSITIES:
+            return densities(command);
         default:
             throw new IllegalArgumentException("Unknown action: " + command.getAction());
         }
@@ -64,4 +66,6 @@ public abstract class CommandRunner {
     public abstract Map<String, Object> reference(Command command);
 
     public abstract Map<String, Object> features(Command command);
+
+    public abstract Map<String, Object> densities(Command command);
 }
