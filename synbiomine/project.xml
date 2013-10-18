@@ -8679,6 +8679,40 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Fusobacterium_nucleatum_polymorphum_ATCC_10953_uid54419/"/>
     </source>
 
+    <source name="geobacillus-strC56-YS93-gff" type="gff">
+      <property name="gff3.taxonId" value="634956"/>
+      <property name="gff3.seqDataSourceName" value="NCBI"/>
+      <property name="gff3.dataSourceName" value="NCBI"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="gff3.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 genomic features
+"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucos
+idasius_C56_YS93_uid48129"/>
+      <property name="src.data.dir.includes" value="NC_015660.gff"/>
+    </source>
+
+    <source name="geobacillus-strC56-YS93-chromosome-fasta" type="fasta">
+      <property name="fasta.taxonId" value="634956"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.dataSourceName" value="GenBank"/>
+      <property name="fasta.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 chromosome, complete genome"/>
+      <property name="fasta.includes" value="NC_015660.fna"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
+    </source>
+
+    <source name="geobacillus-strC56-YS93-gene-fasta" type="fasta">
+      <property name="fasta.taxonId" value="634956"/>
+      <property name="fasta.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 fasta data set for genes"/>
+      <property name="fasta.dataSourceName" value="NCBI"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="NC_015660.frn"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
+    </source>
+
     <source name="Geobacter-sulfurreducens-KN400-gff" type="gff">
       <property name="gff3.taxonId" value="663917"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
