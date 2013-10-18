@@ -5703,7 +5703,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Clostridium_botulinum_H04402_065_uid162091/"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-K051-gff" type="gff">
+    <source name="Corynebacterium-glutamicum-13032-K051-gff" type="gff">
       <property name="gff3.taxonId" value="1204414"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5713,7 +5713,7 @@
       <property name="src.data.dir.includes" value="NC_020519.gff"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-K051-chromosome-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-13032-K051-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1204414"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5725,7 +5725,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Corynebacterium-glutamicum-K051-gene-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-13032-K051-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1204414"/>
       <property name="fasta.dataSetTitle" value="Corynebacterium glutamicum K051 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -5735,7 +5735,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Corynebacterium_glutamicum_ATCC_13032_uid193708/"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-196627-gff" type="gff">
+    <source name="Corynebacterium-glutamicum-ATCC-13032-gff" type="gff">
       <property name="gff3.taxonId" value="196627"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -5745,7 +5745,7 @@
       <property name="src.data.dir.includes" value="NC_003450.gff"/>
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-196627-chromosome-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-ATCC-13032-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="196627"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -5757,7 +5757,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Corynebacterium-glutamicum-ATCC-196627-gene-fasta" type="fasta">
+    <source name="Corynebacterium-glutamicum-ATCC-13032-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="196627"/>
       <property name="fasta.dataSetTitle" value="Corynebacterium glutamicum ATCC 13032 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -5765,38 +5765,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_003450.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Corynebacterium_glutamicum_ATCC_13032_uid57905/"/>
-    </source>
-
-    <source name="Corynebacterium-glutamicum-ATCC-13032-gff" type="gff">
-      <property name="gff3.taxonId" value="13032"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Corynebacterium glutamicum ATCC 13032 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Corynebacterium_glutamicum_ATCC_13032_uid61611/"/>
-      <property name="src.data.dir.includes" value="NC_006958.gff"/>
-    </source>
-
-    <source name="Corynebacterium-glutamicum-ATCC-13032-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="13032"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Corynebacterium glutamicum ATCC 13032 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_006958.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Corynebacterium_glutamicum_ATCC_13032_uid61611/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Corynebacterium-glutamicum-ATCC-13032-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="13032"/>
-      <property name="fasta.dataSetTitle" value="Corynebacterium glutamicum ATCC 13032 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_006958.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Corynebacterium_glutamicum_ATCC_13032_uid61611/"/>
     </source>
 
     <source name="Corynebacterium-glutamicum-MB001-gff" type="gff">
@@ -6765,38 +6733,6 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Escherichia coli DH1 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_DH1_uid161951/"/>
-      <property name="src.data.dir.includes" value="NC_017625.gff"/>
-    </source>
-
-    <source name="Escherichia-coli-DH1-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="536056"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Escherichia coli DH1 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_017625.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_DH1_uid161951/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Escherichia-coli-DH1-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="536056"/>
-      <property name="fasta.dataSetTitle" value="Escherichia coli DH1 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_017625.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_DH1_uid161951/"/>
-    </source>
-
-    <source name="Escherichia-coli-DH1-gff" type="gff">
-      <property name="gff3.taxonId" value="536056"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Escherichia coli DH1 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_DH1_uid162051/"/>
       <property name="src.data.dir.includes" value="NC_017638.gff"/>
     </source>
@@ -7077,38 +7013,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_017660.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_KO11FL_uid162099/"/>
-    </source>
-
-    <source name="Escherichia-coli-KO11FL-gff" type="gff">
-      <property name="gff3.taxonId" value="595495"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Escherichia coli KO11FL genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_KO11FL_uid52593/"/>
-      <property name="src.data.dir.includes" value="NC_016902.gff"/>
-    </source>
-
-    <source name="Escherichia-coli-KO11FL-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="595495"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Escherichia coli KO11FL chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_016902.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_KO11FL_uid52593/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Escherichia-coli-KO11FL-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="595495"/>
-      <property name="fasta.dataSetTitle" value="Escherichia coli KO11FL fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_016902.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_KO11FL_uid52593/"/>
     </source>
 
     <source name="Escherichia-coli-K-12-substr--DH10B-gff" type="gff">
@@ -8165,38 +8069,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_017635.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_W_uid162011/"/>
-    </source>
-
-    <source name="Escherichia-coli-W-gff" type="gff">
-      <property name="gff3.taxonId" value="566546"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Escherichia coli W genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_W_uid162101/"/>
-      <property name="src.data.dir.includes" value="NC_017664.gff"/>
-    </source>
-
-    <source name="Escherichia-coli-W-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="566546"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Escherichia coli W chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_017664.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_W_uid162101/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Escherichia-coli-W-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="566546"/>
-      <property name="fasta.dataSetTitle" value="Escherichia coli W fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_017664.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_W_uid162101/"/>
     </source>
 
     <source name="Escherichia-coli-Xuzhou21-gff" type="gff">
@@ -9285,38 +9157,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_017381.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Helicobacter_pylori_2018_uid161159/"/>
-    </source>
-
-    <source name="Helicobacter-pylori-26695-gff" type="gff">
-      <property name="gff3.taxonId" value="85962"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Helicobacter pylori 26695 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Helicobacter_pylori_26695_uid178201/"/>
-      <property name="src.data.dir.includes" value="NC_018939.gff"/>
-    </source>
-
-    <source name="Helicobacter-pylori-26695-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="85962"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Helicobacter pylori 26695 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_018939.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Helicobacter_pylori_26695_uid178201/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Helicobacter-pylori-26695-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="85962"/>
-      <property name="fasta.dataSetTitle" value="Helicobacter pylori 26695 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_018939.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Helicobacter_pylori_26695_uid178201/"/>
     </source>
 
     <source name="Helicobacter-pylori-26695-gff" type="gff">
@@ -12781,38 +12621,6 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Mycobacterium smegmatis str. MC2 155 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_smegmatis_MC2_155_uid171958/"/>
-      <property name="src.data.dir.includes" value="NC_018289.gff"/>
-    </source>
-
-    <source name="Mycobacterium-smegmatis-MC2-155-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="246196"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Mycobacterium smegmatis str. MC2 155 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_018289.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_smegmatis_MC2_155_uid171958/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Mycobacterium-smegmatis-MC2-155-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="246196"/>
-      <property name="fasta.dataSetTitle" value="Mycobacterium smegmatis str. MC2 155 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_018289.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_smegmatis_MC2_155_uid171958/"/>
-    </source>
-
-    <source name="Mycobacterium-smegmatis-MC2-155-gff" type="gff">
-      <property name="gff3.taxonId" value="246196"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Mycobacterium smegmatis str. MC2 155 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_smegmatis_MC2_155_uid57701/"/>
       <property name="src.data.dir.includes" value="NC_008596.gff"/>
     </source>
@@ -12901,38 +12709,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_021193.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_CAS_NITR204_uid202217/"/>
-    </source>
-
-    <source name="Mycobacterium-tuberculosis-CCDC5079-gff" type="gff">
-      <property name="gff3.taxonId" value="443149"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Mycobacterium tuberculosis CCDC5079 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_CCDC5079_uid161943/"/>
-      <property name="src.data.dir.includes" value="NC_017523.gff"/>
-    </source>
-
-    <source name="Mycobacterium-tuberculosis-CCDC5079-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="443149"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Mycobacterium tuberculosis CCDC5079 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_017523.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_CCDC5079_uid161943/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Mycobacterium-tuberculosis-CCDC5079-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="443149"/>
-      <property name="fasta.dataSetTitle" value="Mycobacterium tuberculosis CCDC5079 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_017523.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_CCDC5079_uid161943/"/>
     </source>
 
     <source name="Mycobacterium-tuberculosis-CCDC5079-gff" type="gff">
@@ -13253,38 +13029,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_018143.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_H37Rv_uid170532/"/>
-    </source>
-
-    <source name="Mycobacterium-tuberculosis-H37Rv-gff" type="gff">
-      <property name="gff3.taxonId" value="83332"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Mycobacterium tuberculosis H37Rv genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_H37Rv_uid57777/"/>
-      <property name="src.data.dir.includes" value="NC_000962.gff"/>
-    </source>
-
-    <source name="Mycobacterium-tuberculosis-H37Rv-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="83332"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Mycobacterium tuberculosis H37Rv chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_000962.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_H37Rv_uid57777/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Mycobacterium-tuberculosis-H37Rv-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="83332"/>
-      <property name="fasta.dataSetTitle" value="Mycobacterium tuberculosis H37Rv fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_000962.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Mycobacterium_tuberculosis_H37Rv_uid57777/"/>
     </source>
 
     <source name="Mycobacterium-tuberculosis-Haarlem3-NITR202-gff" type="gff">
@@ -14439,21 +14183,21 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Prochlorococcus_marinus_MIT_9211_uid58309/"/>
     </source>
 
-    <source name="Vibrio-cholerae-O395-gff" type="gff">
+    <source name="Vibrio-cholerae-O395-chrm2-gff" type="gff">
       <property name="gff3.taxonId" value="345073"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Vibrio cholerae O395 genomic features"/>
+      <property name="gff3.dataSetTitle" value="Vibrio cholerae O395, chromosome 2 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Vibrio_cholerae_O395_uid58425/"/>
       <property name="src.data.dir.includes" value="NC_009457.gff"/>
     </source>
 
-    <source name="Vibrio-cholerae-O395-chromosome-fasta" type="fasta">
+    <source name="Vibrio-cholerae-O395-chromosome-2-fasta" type="fasta">
       <property name="fasta.taxonId" value="345073"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395 chromosome, complete genome"/>
+      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395 chromosome 2, complete genome"/>
       <property name="fasta.includes" value="NC_009457.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Vibrio_cholerae_O395_uid58425/"/>
@@ -14461,9 +14205,9 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Vibrio-cholerae-O395-gene-fasta" type="fasta">
+    <source name="Vibrio-cholerae-O395-chrm2-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="345073"/>
-      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395 fasta data set for genes"/>
+      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395, chromosome 2 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
@@ -17159,21 +16903,21 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_VC40_uid88071/"/>
     </source>
 
-    <source name="Staphylococcus-aureus-gff" type="gff">
+    <source name="Staphylococcus-aureus-16125-gff" type="gff">
       <property name="gff3.taxonId" value="1074919"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 genomic features"/>
+      <property name="gff3.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 16125 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193758/"/>
       <property name="src.data.dir.includes" value="NC_020566.gff"/>
     </source>
 
-    <source name="Staphylococcus-aureus-chromosome-fasta" type="fasta">
+    <source name="Staphylococcus-aureus-16125-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1074919"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 chromosome, complete genome"/>
+      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 16125 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_020566.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193758/"/>
@@ -17181,9 +16925,9 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Staphylococcus-aureus-gene-fasta" type="fasta">
+    <source name="Staphylococcus-aureus-16125-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1074919"/>
-      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 fasta data set for genes"/>
+      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 16125 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
@@ -17191,21 +16935,21 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193758/"/>
     </source>
 
-    <source name="Staphylococcus-aureus-gff" type="gff">
+    <source name="Staphylococcus-aureus-18341-gff" type="gff">
       <property name="gff3.taxonId" value="1074919"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 genomic features"/>
+      <property name="gff3.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 18341 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193759/"/>
       <property name="src.data.dir.includes" value="NC_020536.gff"/>
     </source>
 
-    <source name="Staphylococcus-aureus-chromosome-fasta" type="fasta">
+    <source name="Staphylococcus-aureus-18341-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1074919"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 chromosome, complete genome"/>
+      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 18341 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_020536.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193759/"/>
@@ -17213,9 +16957,9 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Staphylococcus-aureus-gene-fasta" type="fasta">
+    <source name="Staphylococcus-aureus-18341-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1074919"/>
-      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 fasta data set for genes"/>
+      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 18341 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
@@ -17223,21 +16967,21 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193759/"/>
     </source>
 
-    <source name="Staphylococcus-aureus-gff" type="gff">
+    <source name="Staphylococcus-aureus-18583-gff" type="gff">
       <property name="gff3.taxonId" value="1074919"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 genomic features"/>
+      <property name="gff3.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 18583 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193761/"/>
       <property name="src.data.dir.includes" value="NC_020568.gff"/>
     </source>
 
-    <source name="Staphylococcus-aureus-chromosome-fasta" type="fasta">
+    <source name="Staphylococcus-aureus-18583-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1074919"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 chromosome, complete genome"/>
+      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 18583 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_020568.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Staphylococcus_aureus_uid193761/"/>
@@ -17245,9 +16989,9 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Staphylococcus-aureus-gene-fasta" type="fasta">
+    <source name="Staphylococcus-aureus-gene-18583-fasta" type="fasta">
       <property name="fasta.taxonId" value="1074919"/>
-      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228 fasta data set for genes"/>
+      <property name="fasta.dataSetTitle" value="Staphylococcus aureus subsp. aureus ST228, isolate 18583 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
@@ -18201,38 +17945,6 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Thermotoga maritima MSB8 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Thermotoga_maritima_MSB8_uid202924/"/>
-      <property name="src.data.dir.includes" value="NC_021214.gff"/>
-    </source>
-
-    <source name="Thermotoga-maritima-MSB8-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="243274"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Thermotoga maritima MSB8 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_021214.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Thermotoga_maritima_MSB8_uid202924/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Thermotoga-maritima-MSB8-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="243274"/>
-      <property name="fasta.dataSetTitle" value="Thermotoga maritima MSB8 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_021214.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Thermotoga_maritima_MSB8_uid202924/"/>
-    </source>
-
-    <source name="Thermotoga-maritima-MSB8-gff" type="gff">
-      <property name="gff3.taxonId" value="243274"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Thermotoga maritima MSB8 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Thermotoga_maritima_MSB8_uid57723/"/>
       <property name="src.data.dir.includes" value="NC_000853.gff"/>
     </source>
@@ -18579,21 +18291,21 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Vibrio_cholerae_O1_biovar_El_Tor_N16961_uid57623/"/>
     </source>
 
-    <source name="Vibrio-cholerae-O395-gff" type="gff">
+    <source name="Vibrio-cholerae-O395-chrm1-gff" type="gff">
       <property name="gff3.taxonId" value="345073"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Vibrio cholerae O395 genomic features"/>
+      <property name="gff3.dataSetTitle" value="Vibrio cholerae O395, chromosome 1 genomic features"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Vibrio_cholerae_O395_uid159869/"/>
       <property name="src.data.dir.includes" value="NC_012582.gff"/>
     </source>
 
-    <source name="Vibrio-cholerae-O395-chromosome-fasta" type="fasta">
+    <source name="Vibrio-cholerae-O395-chromosome-1-fasta" type="fasta">
       <property name="fasta.taxonId" value="345073"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395 chromosome, complete genome"/>
+      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395 chromosome 1, complete genome"/>
       <property name="fasta.includes" value="NC_012582.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Vibrio_cholerae_O395_uid159869/"/>
@@ -18603,7 +18315,7 @@
 
     <source name="Vibrio-cholerae-O395-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="345073"/>
-      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395 fasta data set for genes"/>
+      <property name="fasta.dataSetTitle" value="Vibrio cholerae O395, chromosome 1 fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
@@ -19251,7 +18963,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_substr__GT_I_uid157913/"/>
     </source>
 
-    <source name="Synechocystis-PCC-6803-substr--GT-I-gff" type="gff">
+    <source name="Synechocystis-PCC-6803-substr--PCC-N-gff" type="gff">
       <property name="gff3.taxonId" value="1080229"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -19261,7 +18973,7 @@
       <property name="src.data.dir.includes" value="NC_017052.gff"/>
     </source>
 
-    <source name="Synechocystis-PCC-6803-substr--GT-I-chromosome-fasta" type="fasta">
+    <source name="Synechocystis-PCC-6803-substr--PCC-N-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1080229"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -19273,7 +18985,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Synechocystis-PCC-6803-substr--GT-I-gene-fasta" type="fasta">
+    <source name="Synechocystis-PCC-6803-substr--PCC-N-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1080229"/>
       <property name="fasta.dataSetTitle" value="Synechocystis sp. PCC 6803 substr. PCC-N fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -19283,7 +18995,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_substr__GT_I_uid158059/"/>
     </source>
 
-    <source name="Synechocystis-PCC-6803-substr--PCC-N-gff" type="gff">
+    <source name="Synechocystis-PCC-6803-substr--PCC-P-gff" type="gff">
       <property name="gff3.taxonId" value="1080230"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -19293,7 +19005,7 @@
       <property name="src.data.dir.includes" value="NC_017039.gff"/>
     </source>
 
-    <source name="Synechocystis-PCC-6803-substr--PCC-N-chromosome-fasta" type="fasta">
+    <source name="Synechocystis-PCC-6803-substr--PCC-P-chromosome-fasta" type="fasta">
       <property name="fasta.taxonId" value="1080230"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
@@ -19305,7 +19017,7 @@
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
 
-    <source name="Synechocystis-PCC-6803-substr--PCC-N-gene-fasta" type="fasta">
+    <source name="Synechocystis-PCC-6803-substr--PCC-P-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="1080230"/>
       <property name="fasta.dataSetTitle" value="Synechocystis sp. PCC 6803 substr. PCC-P fasta data set for genes"/>
       <property name="fasta.dataSourceName" value="NCBI"/>
@@ -19345,70 +19057,6 @@
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
       <property name="fasta.includes" value="NC_017277.faa"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid159873/"/>
-    </source>
-
-    <source name="Synechocystis-PCC-6803-gff" type="gff">
-      <property name="gff3.taxonId" value="1148"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Synechocystis sp. PCC 6803 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid189748/"/>
-      <property name="src.data.dir.includes" value="NC_020286.gff"/>
-    </source>
-
-    <source name="Synechocystis-PCC-6803-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="1148"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Synechocystis sp. PCC 6803 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_020286.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid189748/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Synechocystis-PCC-6803-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="1148"/>
-      <property name="fasta.dataSetTitle" value="Synechocystis sp. PCC 6803 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_020286.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid189748/"/>
-    </source>
-
-    <source name="Synechocystis-PCC-6803-gff" type="gff">
-      <property name="gff3.taxonId" value="1148"/>
-      <property name="gff3.seqDataSourceName" value="NCBI"/>
-      <property name="gff3.dataSourceName" value="NCBI"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="Synechocystis sp. PCC 6803 genomic features"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid57659/"/>
-      <property name="src.data.dir.includes" value="NC_000911.gff"/>
-    </source>
-
-    <source name="Synechocystis-PCC-6803-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="1148"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.dataSourceName" value="GenBank"/>
-      <property name="fasta.dataSetTitle" value="Synechocystis sp. PCC 6803 chromosome, complete genome"/>
-      <property name="fasta.includes" value="NC_000911.fna"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid57659/"/>
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
-    </source>
-
-    <source name="Synechocystis-PCC-6803-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="1148"/>
-      <property name="fasta.dataSetTitle" value="Synechocystis sp. PCC 6803 fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="NCBI"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_000911.faa"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Synechocystis_PCC_6803_uid57659/"/>
     </source>
 
     <source name="uniprot" type="uniprot">
