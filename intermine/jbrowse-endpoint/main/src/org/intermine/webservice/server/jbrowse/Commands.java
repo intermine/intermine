@@ -49,7 +49,7 @@ public class Commands {
         if (action == null) {
             return null;
         } else {
-            return new Command(action, domain, featureType, segment);
+            return new Command(action, domain, featureType, segment, parameters);
         }
     }
 
