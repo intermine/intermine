@@ -158,7 +158,7 @@ public class Engine extends CommandRunner {
      */
     @Override
     public Map<String, Object> densities(Command command) {
-        final int nSlices = 10;
+        final int nSlices = getNumberOfSlices(command);
         List<PathQuery> segmentQueries = getSliceQueries(command, nSlices);
         List<Future<Integer>> pending = countInParallel(segmentQueries);
         List<Integer> results = new ArrayList<Integer>();
@@ -190,6 +190,20 @@ public class Engine extends CommandRunner {
     }
 
     //------------ PRIVATE METHODS --------------------//
+
+    private int getNumberOfSlices(Command command) {
+        int defaultNum = 10;
+        String bpb = command.getParameter("basesPerBin");
+        if (command == null
+                || bpb == null
+                || command.getSegment() == null
+                || command.getSegment().getWidth() == null) {
+            return defaultNum;
+        }
+        int width = command.getSegment().getWidth();
+        int numBPB = Integer.valueOf(bpb);
+        return width / numBPB;
+    }
 
     private List<PathQuery> getSliceQueries(Command command, final int nSlices) {
         List<Segment> slices = sliceUp(nSlices, command.getSegment());
