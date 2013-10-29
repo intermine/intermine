@@ -27,18 +27,16 @@ public class Commands {
         String actionName = parts[1];
         String section = parts[2];
         String realSection = (parts.length == 4) ? parts[3] : null;
-        Segment segment;
-        
-        if ("global".equals(section)) {
-            segment = Segment.GLOBAL_SEGMENT;
-        } else {
-            segment = new Segment(("stats".equals(actionName)) ? realSection : section, start, end);
-        }
         String featureType = parameters.get("type");
+        if ("stats".equals(actionName) && !"global".equals(section)) {
+            section = realSection;
+        }
+
+        Segment segment = Segment.makeSegment(section, start, end);
         Action action = null;
 
         if ("stats".equals(actionName)) {
-            action = ("regionFeatureDensities".equals(section)) ? Action.DENSITIES : Action.STATS;
+            action = ("regionFeatureDensities".equals(parts[2])) ? Action.DENSITIES : Action.STATS;
         } else if ("features".equals(actionName)) {
             if ("true".equals(parameters.get("reference"))){
                 action = Action.REFERENCE;

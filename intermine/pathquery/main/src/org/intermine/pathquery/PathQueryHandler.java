@@ -356,6 +356,9 @@ public class PathQueryHandler extends DefaultHandler {
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
             String lookup = attrs.get("value");
             String extraValue = attrs.get("extraValue");
+            if (StringUtils.isBlank(extraValue)) {
+                extraValue = null;
+            }
             return new PathConstraintLookup(path, lookup, extraValue);
         } else {
             throw new SAXException("Invalid operation type: " + constraintOp

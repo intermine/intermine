@@ -26,11 +26,11 @@ query.add_view(
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 # You can edit the constraint values below
-query.add_constraint("length", ">=", "1024", "A")
+query.add_constraint("length", ">=", "1024", code = "A")
 
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A")
 
 for row in query.rows():
-    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"],
+    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
         row["organism.shortName"]

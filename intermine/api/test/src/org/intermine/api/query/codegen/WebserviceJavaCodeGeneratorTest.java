@@ -408,8 +408,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
      */
     public void testPathQueryCodeGenerationWithConstraintLookup() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene\" op=\"LOOKUP\" value=\"zen\" extraValue=\"C. elegans\"/>" +
+                "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
+                "sortOrder=\"Gene.primaryIdentifier asc\">" +
+                "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"zen\" extraValue=\"C. elegans\"/>" +
+                "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"eve\"/>" +
         "</query>";
         doComparison(queryXml, "lookup-constraint");
     }

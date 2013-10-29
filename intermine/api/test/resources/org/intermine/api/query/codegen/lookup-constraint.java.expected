@@ -44,7 +44,10 @@ public class QueryClient
         query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
 
         // Filter the results with the following constraints:
-        query.addConstraint(Constraints.lookup("Gene", "zen", "C. elegans"));
+        query.addConstraint(Constraints.lookup("Gene", "zen", "C. elegans"), "A");
+        query.addConstraint(Constraints.lookup("Gene", "eve", null), "B");
+        // Specify how these constraints should be combined.
+        query.setConstraintLogic("A and B");
 
         QueryService service = factory.getQueryService();
         PrintStream out = System.out;
