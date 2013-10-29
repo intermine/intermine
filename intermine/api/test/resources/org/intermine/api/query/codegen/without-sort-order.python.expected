@@ -23,5 +23,5 @@ query.add_view(
 )
 
 for row in query.rows():
-    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"],
+    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
         row["organism.shortName"]
