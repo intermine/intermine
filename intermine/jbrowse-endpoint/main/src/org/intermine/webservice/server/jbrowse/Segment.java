@@ -3,18 +3,32 @@ package org.intermine.webservice.server.jbrowse;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class Segment {
+/**
+ * Represents an interbase segment.
+ */
+public final class Segment {
 
     public final String section;
     public final Integer start, end;
 
-    public Segment(String section, Integer start, Integer end) {
+    private Segment(String section, Integer start, Integer end) {
         this.section = section;
         this.start = start;
         this.end = end;
     }
 
+    public final static Segment NEGATIVE_SEGMENT = new Segment(null, null, null);
     public final static Segment GLOBAL_SEGMENT = new Segment(null, null, null);
+
+    public static Segment makeSegment(String ref, Integer s, Integer e) {
+        if (("global").equals(ref)) {
+            return GLOBAL_SEGMENT;
+        }
+        if (s != null && e != null && s < 0 && e < 0) {
+            return NEGATIVE_SEGMENT; // Represents all out of band segments
+        }
+        return new Segment(ref, ((s == null) ? null : Math.max(0, s)), e);
+    }
 
     public String getSection() {
         return this.section;
@@ -41,7 +55,7 @@ public class Segment {
         } else if (start == null || end == null) {
             throw new RuntimeException("Not implemented"); // TODO
         } else {
-            return String.format("%s:%d..%d", section, start, end);
+            return String.format("%s:%d..%d", section, start + 1, end + 1);
         }
     }
 
@@ -59,7 +73,8 @@ public class Segment {
         if (start != null && i < start)
             throw new IllegalArgumentException("i is less than start");
         if (end != null && j > end)
-            throw new IllegalArgumentException("j is greater than end");
+            throw new IllegalArgumentException(
+                    String.format("j (%d) is greater than end (%d)", j, end));
         return new Segment(section, i, j);
     }
 }

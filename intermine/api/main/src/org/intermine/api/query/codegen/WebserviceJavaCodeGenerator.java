@@ -66,7 +66,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String ROOT_IDENTIFIER = "private static final String ROOT = ";
     private static final String TOKEN_INIT = "private static final String TOKEN = null;";
     private static final String INTERNAL_FEATURE_MSG
-        = "This query makes use of a feature that is only for internal use";
+        = "This query makes use of a feature that is only for internal use ";
 
     private static final String OUTER_JOIN_TITLE = "Outer Joins";
     private static final String OUTER_JOIN_EXPL
@@ -617,7 +617,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             return handleConstraint((PathConstraintLookup) pc);
         } else if (pc instanceof PathConstraintIds) {
             throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG
-                + " (" + TypeUtil.unqualifiedName(pc.getClass().getName()) + ")");
+                + "(" + TypeUtil.unqualifiedName(pc.getClass().getName()) + ")");
         } else if (pc instanceof PathConstraintMultiValue) {
             return handleConstraint((PathConstraintMultiValue) pc, javaImports);
         } else if (pc instanceof PathConstraintNull) {
@@ -690,6 +690,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG + "(" + className + ")");
         } else if ("PathConstraintSubclass".equals(className)) {
             throw new UnhandledFeatureException("Type constraints cannot be used with templates.");
+        } else if ("PathConstraintLoop".equals(className)) {
+            throw new UnhandledFeatureException("Loop constraints cannot be used with templates.");
         }
 
         String path = qq(pc.getPath());
