@@ -7,7 +7,7 @@
 
   <sources>
 
-    <source name="bacillus-gff" type="gff">
+    <source name="bacillus-gff" type="synbio-gff">
       <property name="gff3.taxonId" value="224308"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -39,7 +39,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_subtilis_168_uid57675/"/>
     </source>
 
-    <source name="ecoli-gff" type="gff">
+    <source name="ecoli-gff" type="synbio-gff">
       <property name="gff3.taxonId" value="511145"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -71,7 +71,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid57779/"/>
     </source>
 
-    <source name="geobacillus-strC56-YS93-gff" type="gff">
+    <source name="geobacillus-strC56-YS93-gff" type="synbio-gff">
       <property name="gff3.taxonId" value="634956"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
@@ -103,7 +103,7 @@
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
     </source>
 
-    <source name="Bacillus-anthracis-Ames-gff" type="gff">
+    <source name="Bacillus-anthracis-Ames-gff" type="synbio-gff">
       <property name="gff3.taxonId" value="198094"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
