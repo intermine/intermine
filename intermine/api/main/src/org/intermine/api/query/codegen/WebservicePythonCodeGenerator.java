@@ -147,7 +147,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 toPrint += ",";
             }
             if (currentLine.length() + toPrint.length() > 100) {
-                sb.append(currentLine.toString() + ENDL);
+                sb.append(currentLine.toString() + " \\" + ENDL);
                 currentLine = new StringBuffer(INDENT + INDENT);
                 toPrint = toPrint.substring(1);
             }
@@ -430,8 +430,11 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         } else if ("PathConstraintLookup".equals(className)) {
             String value = ((PathConstraintLookup) pc).getValue();
             String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-            sb.append("\"" + op.toString() + "\"");
-            sb.append(", \"" + value + "\", \"" + extraValue + "\"");
+            sb.append('"').append(op.toString()).append('"');
+            sb.append(", \"").append(value).append('"');
+            if (extraValue != null) {
+                sb.append(", \"").append(extraValue).append('"');
+            }
         } else if ("PathConstraintBag".equals(className)) {
             String list = ((PathConstraintBag) pc).getBag();
             sb.append("\"" + op.toString() + "\"");
@@ -455,7 +458,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         }
 
         if (code != null) {
-            sb.append(", \"" + code + "\"");
+            sb.append(", code = \"" + code + "\""); // kwargs
         }
         sb.append(")" + ENDL);
         return sb.toString();
@@ -485,8 +488,15 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintLookup".equals(className)) {
             String value = ((PathConstraintLookup) pc).getValue();
             String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-            return start + "{\"op\": \"LOOKUP\", \"value\": \"" + value
-                + "\", \"extra_value\": \"" + extraValue + "\"}";
+            StringBuilder sb = new StringBuilder(start)
+                                    .append("{\"op\": \"LOOKUP\", \"value\": \"")
+                                    .append(value)
+                                    .append('"');
+            if (extraValue != null) {
+                sb.append(", \"extra_value\": \"").append(extraValue).append('"');
+            }
+            sb.append('}');
+            return sb.toString();
         }
 
         if ("PathConstraintBag".equals(className)) {
