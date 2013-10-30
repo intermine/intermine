@@ -131,7 +131,7 @@
       <property name="fasta.dataSourceName" value="NCBI"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="NC_003997.faa"/>
+      <property name="fasta.includes" value="NC_003997.frn"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_Ames_uid57909/"/>
     </source>
 
