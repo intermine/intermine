@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -236,12 +237,24 @@ public final class GBrowseParser
         } catch (Exception err) {
             err.printStackTrace();
         }
+
+        // this is only for counting tracks, comment if not needed
+        Integer tracksCount = countTracks(submissionsToTracks);
+        LOG.info("GB SUMMARY: " + organism + " tracks: " + tracksCount
+                + " [" + submissionsToTracks.size() + " subs]");
+
         return submissionsToTracks;
     }
 
-
-
-
+    private static Integer countTracks(
+            Map<String, List<GBrowseTrack>> submissionsToTracks) {
+        Integer tracksCount=0;
+        for( String sub : submissionsToTracks.keySet() ) {
+            List<GBrowseTrack> gbtracks = submissionsToTracks.get(sub);
+            tracksCount = tracksCount+gbtracks.size();
+        }
+        return tracksCount;
+    }
 
 //        /**
 //         * This method adds a GBrowse track to a map with
