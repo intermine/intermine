@@ -248,10 +248,10 @@ public final class GBrowseParser
 
     private static Integer countTracks(
             Map<String, List<GBrowseTrack>> submissionsToTracks) {
-        Integer tracksCount=0;
-        for( String sub : submissionsToTracks.keySet() ) {
+        Integer tracksCount = 0;
+        for (String sub : submissionsToTracks.keySet()) {
             List<GBrowseTrack> gbtracks = submissionsToTracks.get(sub);
-            tracksCount = tracksCount+gbtracks.size();
+            tracksCount = tracksCount + gbtracks.size();
         }
         return tracksCount;
     }
