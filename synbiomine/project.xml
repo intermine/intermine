@@ -132,7 +132,7 @@
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
 
-    <source name="go-annotation" type="go-annotation" dump="true">
+    <source name="go-annotation" type="synbio-go-annotation" dump="true">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/go-annotation/current/"/>
       <property name="ontologyPrefix" value="GO"/>
