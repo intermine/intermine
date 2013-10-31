@@ -130,3 +130,6 @@
   <servlet-name>genomic-region-sequence-export</servlet-name>
   <url-pattern>/service/regions/sequence</url-pattern>
 </servlet-mapping>
+
+<!--  Allow models to do further replacements -->
+<!--@MODEL_INCLUDE@-->
