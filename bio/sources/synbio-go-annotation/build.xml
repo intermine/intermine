@@ -1,0 +1,7 @@
+<project name="go-annotation" default="default" basedir=".">
+  <description>build, test, package go-annotation</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+  
+</project>
+
