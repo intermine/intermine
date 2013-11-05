@@ -88,7 +88,7 @@ public abstract class ListMakerService extends AuthenticatedListService
     @Override
     protected void execute() throws Exception {
         final Profile profile = getPermission().getProfile();
-        final ListInput input = getInput(request);
+        final ListInput input = getInput();
 
         addOutputInfo(LIST_NAME_KEY, input.getListName());
 

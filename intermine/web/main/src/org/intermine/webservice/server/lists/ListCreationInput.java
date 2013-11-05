@@ -10,6 +10,10 @@ package org.intermine.webservice.server.lists;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.bag.BagManager;
@@ -24,6 +28,8 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 public class ListCreationInput extends ListInput
 {
 
+    private ArrayList<String> addIssues;
+
     /**
      * Constructor.
      * @param request The request we are responding to.
@@ -31,6 +37,21 @@ public class ListCreationInput extends ListInput
      */
     public ListCreationInput(HttpServletRequest request, BagManager bagManager, Profile profile) {
         super(request, bagManager, profile);
+        this.addIssues = new ArrayList<String>();
+        this.populateList(this.addIssues, "add");
+    }
+
+    /** Return the set of issue types the user wants to add. **/
+    public Collection<String> getAddIssues() {
+        // Return a subclass of set that does case insensitive matching.
+        return new HashSet<String>(this.addIssues) {
+            public boolean contains(Object o) {
+                if (o instanceof String) {
+                    return super.contains(String.valueOf(o).toLowerCase());
+                }
+                return super.contains(o);
+            }
+        };
     }
 
     @Override
