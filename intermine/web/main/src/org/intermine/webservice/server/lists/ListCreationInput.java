@@ -38,7 +38,7 @@ public class ListCreationInput extends ListInput
     public ListCreationInput(HttpServletRequest request, BagManager bagManager, Profile profile) {
         super(request, bagManager, profile);
         this.addIssues = new ArrayList<String>();
-        this.populateList(this.addIssues, "add");
+        this.populateNormedList(this.addIssues, "add");
     }
 
     /** Return the set of issue types the user wants to add. **/
@@ -47,6 +47,7 @@ public class ListCreationInput extends ListInput
         return new HashSet<String>(this.addIssues) {
             public boolean contains(Object o) {
                 if (o instanceof String) {
+                    if (super.contains(":all")) return true;
                     return super.contains(String.valueOf(o).toLowerCase());
                 }
                 return super.contains(o);
