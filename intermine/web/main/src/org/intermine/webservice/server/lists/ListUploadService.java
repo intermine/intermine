@@ -294,10 +294,9 @@ public class ListUploadService extends ListMakerService
                 type, new ArrayList<String>(ids), extraFieldValue,
                 acceptableIssues.contains(BagQueryResult.WILDCARD));
         bag.addIdsToBag(result.getMatches().keySet(), type);
-        final boolean wantsAll = acceptableIssues.contains(":ALL");
 
         for (final String issueType: result.getIssues().keySet()) {
-            if (wantsAll || acceptableIssues.contains(issueType)) {
+            if (acceptableIssues.contains(issueType)) {
                 bag.addIdsToBag(result.getIssueIds(issueType), type);
             } else {
                 unmatchedIds.addAll(result.getInputIdentifiersForIssue(issueType));
