@@ -11,12 +11,14 @@ package org.intermine.api.bag;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.intermine.model.InterMineObject;
 
@@ -53,6 +55,16 @@ public class BagQueryResult
     public static final String WILDCARD = "WILDCARD";
 
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
+
+    /**
+     * A map from issueType -> Query -> Identifier -> FoundThing[]
+     * 
+     * eg:<pre>
+     *     { "DUPLICATE":      { "Q1": { "my-gene-id": [o1, o2] },
+     *                           "Q2": { "my-gene-id": [o3, o4] }},
+     *       "TYPE_CONVERTED": { "Q3": { "my-prot-id": [pair]   }}}
+     * </pre>
+     **/
     private Map<String, Map<String, Map<String, List>>> issues =
         new LinkedHashMap<String, Map<String, Map<String, List>>>();
     private Map<String, Object> unresolved = new HashMap<String, Object>();
@@ -112,17 +124,45 @@ public class BagQueryResult
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();
         ids.addAll(matches.keySet());
-        for (Map<String, Map<String, List>> issueTypes : issues.values()) {
-            for (Map<String, List> issue : issueTypes.values()) {
-                for (List objects : issue.values()) {
-                    for (Object obj : objects) {
-                        if (obj instanceof InterMineObject) {
-                            ids.add(((InterMineObject) obj).getId());
-                        } else if (obj instanceof ConvertedObjectPair) {
-                            ids.add(((ConvertedObjectPair) obj).getNewObject().getId());
-                        } else if (obj instanceof Integer) {
-                            ids.add((Integer) obj);
-                        }
+        ids.addAll(getIssueIds());
+        return ids;
+    }
+
+    /**
+     * Get ids of all InterMineObjects returned that were issues for this
+     * bag query lookup.
+     * @return the set of all ids that were issues
+     */
+    public Set<Integer> getIssueIds() {
+        Set<Integer> ids = new HashSet<Integer>();
+        for (String issueKey: issues.keySet()) {
+            ids.addAll(getIssueIds(issueKey));
+        }
+        return ids;
+    }
+
+    /**
+     * Get ids of all InterMineObjects returned that were registered as 
+     * issues of this particular type for this bag query lookup.
+     * @param issueKey The type of issue we want (eg "DUPLICATE").
+     * @return the set of all ids that were issues
+     */
+    public Set<Integer> getIssueIds(String issueKey) {
+        Set<Integer> ids = new HashSet<Integer>();
+        Map<String, Map<String, List>> issueTypes = issues.get(issueKey);
+        if (issueTypes == null) {
+            throw new IllegalArgumentException(issueKey + " is not a valid issue type");
+        }
+        for (Map<String, List> issue : issueTypes.values()) {
+            // Don't care about the input identifier itself, just the matches.
+            for (List objects : issue.values()) {
+                for (Object obj : objects) {
+                    if (obj instanceof InterMineObject) {
+                        ids.add(((InterMineObject) obj).getId());
+                    } else if (obj instanceof ConvertedObjectPair) {
+                        ids.add(((ConvertedObjectPair) obj).getNewObject().getId());
+                    } else if (obj instanceof Integer) {
+                        ids.add((Integer) obj);
                     }
                 }
             }
@@ -130,6 +170,17 @@ public class BagQueryResult
         return ids;
     }
 
+    public Set<String> getInputIdentifiersForIssue(String issueKey) {
+        Set<String> ids = new HashSet<String>();
+        Map<String, Map<String, List>> issueTypes = issues.get(issueKey);
+        if (issueTypes == null) {
+            throw new IllegalArgumentException(issueKey + " is not a valid issue type");
+        }
+        for (Map<String, List> issueSet : issueTypes.values()) {
+            ids.addAll(issueSet.keySet());
+        }
+        return ids;
+    }
 
     /**
      * Add a new match from an input string to an InterMineObject id.
