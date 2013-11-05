@@ -31,7 +31,7 @@ public class ListAppendService extends ListUploadService {
     }
 
     @Override
-    protected void makeList(ListInput input, String type, Profile profile, Set<String> rubbishbin)
+    protected void makeList(ListInput listInput, String type, Profile profile, Set<String> rubbishbin)
         throws Exception {
 
         BufferedReader r = getReader(request);
@@ -39,27 +39,15 @@ public class ListAppendService extends ListUploadService {
         Set<String> ids = new LinkedHashSet<String>();
         Set<String> unmatchedIds = new HashSet<String>();
 
+        ListCreationInput input = (ListCreationInput) listInput;
+
         InterMineBag bag = profile.getSavedBags().get(input.getListName());
-        StrMatcher matcher = getMatcher();
         if (bag == null) {
             throw new ServiceForbiddenException(
                 input.getListName() + " is not a list you have access to");
         }
-        String line;
-        while ((line = r.readLine()) != null) {
-            StrTokenizer st = new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
-            while (st.hasNext()) {
-                String token = st.nextToken();
-                ids.add(token);
-            }
-            if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
-                addIdsToList(ids, bag, bag.getType(), input.getExtraValue(), unmatchedIds);
-                ids.clear();
-            }
-        }
-        if (ids.size() > 0) {
-            addIdsToList(ids, bag, bag.getType(), input.getExtraValue(), unmatchedIds);
-        }
+
+        processIdentifiers(bag.getType(), input, ids, unmatchedIds, bag);
 
         setListSize(bag.size());
 
