@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Location;
+import org.intermine.model.bio.SequenceFeature;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -180,22 +181,21 @@ public class SubmissionOverlapsAction extends InterMineAction
         // this to allow url of the type
         // /submissionOverlapsAction.do?submissionDCCId=modENCODE_3320
         // &overlapFindType=Gene&distance=500&direction=downstream&overlapFeatureType=BindingSite
-        
+
         String submissionDCCId = submissionOverlapsForm.getSubmissionDCCId();
         Submission submission = null;
         if (submissionId != null) { // the case via webapp form
-        	submission = (Submission) im.getObjectStore().getObjectById(
-        			Integer.valueOf(submissionId));
+            submission = (Submission) im.getObjectStore().getObjectById(
+                    Integer.valueOf(submissionId));
         } else { // url
-        	submission =
-        			(Submission) DynamicUtil.createObject(Collections.singleton(Submission.class));
-        	submission.setdCCid(submissionDCCId);
+            submission =
+                    (Submission) DynamicUtil.createObject(Collections.singleton(Submission.class));
+            submission.setdCCid(submissionDCCId);
 
-        	submission = (Submission) im.getObjectStore().getObjectByExample(submission,
-        			new HashSet<String>(Arrays.asList("DCCid")));
+            submission = (Submission) im.getObjectStore().getObjectByExample(submission,
+                    new HashSet<String>(Arrays.asList("DCCid")));
         }
-        
-        
+
         int organismId = submission.getOrganism().getId();
 
         int beforeStartOfOF = getLeftMargin(direction, distance);
@@ -212,10 +212,11 @@ public class SubmissionOverlapsAction extends InterMineAction
         QueryClass qcOverlapFeature = new QueryClass(overlapFeatureCls);
         QueryClass qcGivenFeatureLoc = new QueryClass(Location.class);
         QueryClass qcOverlapFeatureLoc = new QueryClass(Location.class);
-        //        QueryField qfSequenceFeatureId = new QueryField(qcSequenceFeature, "id");
+//        QueryClass qcSequenceFeature = new QueryClass(SequenceFeature.class);
+//               QueryField qfSequenceFeatureId = new QueryField(qcSequenceFeature, "id");
         QueryField qfOFId = new QueryField(qcOverlapFeature, "id");
         query.addToSelect(qfOFId);
-        //        query.addToSelect(qfSequenceFeatureId);
+//                query.addToSelect(qfSequenceFeatureId);
 
         query.addFrom(qcGivenFeature);
         query.addFrom(qcOverlapFeature);
@@ -340,165 +341,4 @@ public class SubmissionOverlapsAction extends InterMineAction
         }
     }
 
-
-/* ---------------------------------------------------------- */
-
-    /**
-     * TO KEEP for now: it is about as fast as the single set one
-    *  if we can improve the pathquery speed...
-    *  */
-
-    private Map<String, Set<Integer>> getOverlappingGenes(
-            SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
-        throws ObjectStoreException, ClassNotFoundException {
-
-        long bT = System.currentTimeMillis();     // to monitor time spent in the process
-
-        String direction = submissionOverlapsForm.getDirection();
-        int distance = Integer.valueOf(submissionOverlapsForm.getDistance());
-        String featureType = submissionOverlapsForm.getFlankingFeatureType();
-        String submissionId = submissionOverlapsForm.getSubmissionId();
-
-        Submission submission = (Submission) im.getObjectStore().getObjectById(
-                Integer.valueOf(submissionId));
-        int organismId = submission.getOrganism().getId();
-
-        int beforeStartOfGene = getLeftMargin(direction, distance);
-        int afterEndOfGene = getRightMargin(direction, distance);
-
-        String modelPackName = im.getModel().getPackageName();
-        Class<?> featureCls = Class.forName(modelPackName + "." + featureType);
-
-        Query query = new Query();
-        query.setDistinct(true);
-
-        QueryClass qcSequenceFeature = new QueryClass(featureCls);
-        QueryClass qcGene = new QueryClass(Gene.class);
-        QueryClass qcSequenceFeatureLoc = new QueryClass(Location.class);
-        QueryClass qcGeneLoc = new QueryClass(Location.class);
-        // QueryClass qcSubmission = new QueryClass(Submission.class);
-        // QueryClass qcOrg = new QueryClass(Organism.class);
-        // QueryClass qcChr = new QueryClass(Chromosome.class);
-
-        //        QueryField qfSequenceFeatureSecondaryIdentifier = new QueryField(
-        //            qcSequenceFeature, "secondaryIdentifier");
-        QueryField qfSequenceFeatureId = new QueryField(qcSequenceFeature,
-                "id");
-        // QueryField qfGenePId = new QueryField(qcGene, "primaryIdentifier");
-        QueryField qfGeneId = new QueryField(qcGene, "id");
-        // QueryField qfSequenceFeatureClass = new QueryField(qcSequenceFeature,
-        // "class");
-        // QueryField qfSubmissionId = new QueryField(qcSubmission, "id");
-        // QueryField qfChrPId = new QueryField(qcChr, "primaryIdentifier");
-
-        // query.addToSelect(qfGenePId);
-        query.addToSelect(qfGeneId);
-        //        query.addToSelect(qfSequenceFeatureSecondaryIdentifier);
-        query.addToSelect(qfSequenceFeatureId);
-
-        query.addFrom(qcSequenceFeature);
-        query.addFrom(qcGene);
-        query.addFrom(qcSequenceFeatureLoc);
-        query.addFrom(qcGeneLoc);
-
-        // query.addToOrderBy(qfGenePId, "ascending");
-
-        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
-
-        query.setConstraint(constraints);
-
-        QueryObjectReference locGeneSubject = new QueryObjectReference(
-                qcGeneLoc, "feature");
-        ContainsConstraint ccLocGeneSubject = new ContainsConstraint(
-                locGeneSubject, ConstraintOp.CONTAINS, qcGene);
-        constraints.addConstraint(ccLocGeneSubject);
-
-        QueryObjectReference locSequenceFeatureSubject = new QueryObjectReference(
-                qcSequenceFeatureLoc, "feature");
-        ContainsConstraint ccLocSequenceFeatureSubject = new ContainsConstraint(
-                locSequenceFeatureSubject, ConstraintOp.CONTAINS,
-                qcSequenceFeature);
-        constraints.addConstraint(ccLocSequenceFeatureSubject);
-
-        // SequenceFeaure.chromosome = Gene.chromosome
-        constraints.addConstraint(new SimpleConstraint(new QueryForeignKey(
-                qcGene, "chromosome"), ConstraintOp.EQUALS,
-                new QueryForeignKey(qcSequenceFeature, "chromosome")));
-
-        // SequenceFeaure.organism = Gene.organism
-        constraints.addConstraint(new SimpleConstraint(new QueryForeignKey(
-                qcGene, "organism"), ConstraintOp.EQUALS, new QueryForeignKey(
-                        qcSequenceFeature, "organism")));
-
-        SimpleConstraint scOrg = new SimpleConstraint(new QueryForeignKey(
-                qcGene, "organism"), ConstraintOp.EQUALS, new QueryValue(
-                        organismId));
-        constraints.addConstraint(scOrg);
-
-        // SequenceFeature.submissions = Submission
-        // QueryCollectionReference submission = new
-        // QueryCollectionReference(qcSequenceFeature,
-        // "submissions");
-        // ContainsConstraint ccSubmission = new ContainsConstraint(submission,
-        // ConstraintOp.CONTAINS, qcSubmission);
-        // constraints.addConstraint(ccSubmission);
-
-        QueryCollectionReference qcrSubmission = new QueryCollectionReference(
-                submission, "features");
-        constraints.addConstraint(new ContainsConstraint(qcrSubmission,
-                ConstraintOp.CONTAINS, qcSequenceFeature));
-
-        // Submission.id = submissionId
-        // constraints.addConstraint(new SimpleConstraint(qfSubmissionId,
-        // ConstraintOp.EQUALS, new QueryValue(Integer
-        // .valueOf(submissionId))));
-
-        // Sequence feature location chromosome reference
-        QueryObjectReference sequenceFeatureLocatedOnRef = new QueryObjectReference(
-                qcSequenceFeatureLoc, "locatedOn");
-
-        // Gene location chromosome reference
-        QueryObjectReference geneLocatedOnRef = new QueryObjectReference(
-                qcGeneLoc, "locatedOn");
-
-        OverlapRange overlapInput = new OverlapRange(new QueryField(
-                qcSequenceFeatureLoc, "start"), new QueryField(
-                        qcSequenceFeatureLoc, "end"), sequenceFeatureLocatedOnRef);
-
-        OverlapRange overlapFeature = new OverlapRange(new QueryExpression(
-                new QueryField(qcGeneLoc, "start"), QueryExpression.SUBTRACT,
-                new QueryValue(beforeStartOfGene)), new QueryExpression(
-                        new QueryField(qcGeneLoc, "end"), QueryExpression.ADD,
-                        new QueryValue(afterEndOfGene)), geneLocatedOnRef);
-
-        OverlapConstraint oc = new OverlapConstraint(overlapInput,
-                ConstraintOp.OVERLAPS, overlapFeature);
-
-        constraints.addConstraint(oc);
-
-        ObjectStoreInterMineImpl ob = (ObjectStoreInterMineImpl) im
-                .getObjectStore();
-
-        LOG.info("OVERLAPGENE FULL " + ob.generateSql(query));
-
-        Results results = im.getObjectStore().execute(query);
-
-        Map<String, Set<Integer>> queryResultsMap = new HashMap<String, Set<Integer>>();
-        if (results == null || results.isEmpty()) {
-            queryResultsMap = null;
-        } else {
-            Set<Integer> geneIdSet = new HashSet<Integer>();
-            Set<Integer> sequenceFeatureIdSet = new HashSet<Integer>();
-            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-                ResultsRow<?> row = (ResultsRow<?>) iter.next();
-                geneIdSet.add((Integer) row.get(0));
-                sequenceFeatureIdSet.add((Integer) row.get(1));
-            }
-
-            queryResultsMap.put("geneIdSet", geneIdSet);
-            queryResultsMap.put("sequenceFeatureIdSet", sequenceFeatureIdSet);
-        }
-        LOG.info("OVERLAPGENE FULL TIME: " + (System.currentTimeMillis() - bT) + " ms");
-        return queryResultsMap;
-    }
 }
