@@ -200,8 +200,9 @@ public final class Constants
      * 12 - Added ability to filter lists from AvailableListsService
      * 13 - Added ability to serve characterish subsequences
      * 15 - Added jbrowse endpoint.
+     * 16 - Added lists with issues.
      */
-    public static final int WEB_SERVICE_VERSION = 15;
+    public static final int WEB_SERVICE_VERSION = 16;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
