@@ -156,24 +156,17 @@ public class BagQueryRunner
             // OR all identifiers if matchOnFirst = FALSE
             if (!unresolved.isEmpty() || !matchOnFirst) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                Query q = null;
                 try {
-                    if (matchOnFirst) {
-                        q = bq.getQuery(unresolved, extraFieldValue);
-                    } else {
-                        q = bq.getQuery(unresolvedOriginal, extraFieldValue);
-                    }
+                    Set<String> toProcess = (matchOnFirst) ? unresolved : unresolvedOriginal;
+                    Query q = bq.getQuery(toProcess, extraFieldValue);
                     Results res = os.execute(q, 10000, true, true, false);
                     for (Object rowObj : res) {
                         ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
-                            Object fieldObject = row.get(i);
+                            final Object fieldObject = row.get(i);
                             if (fieldObject != null) {
-                                if (!(fieldObject instanceof String)) {
-                                    fieldObject = fieldObject.toString();
-                                }
-                                String field = (String) fieldObject;
+                                String field = String.valueOf(fieldObject);
                                 String lowerField = field.toLowerCase();
                                 if (caseSensitive) {
                                     if (cleanInput.contains(field)) {
@@ -247,7 +240,7 @@ public class BagQueryRunner
         for (String unresolvedStr : unresolved) {
             unresolvedMap.put(unresolvedStr, null);
         }
-        bqr.getUnresolved().putAll(unresolvedMap);
+        bqr.putUnresolved(unresolvedMap);
 
         return bqr;
     }
