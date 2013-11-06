@@ -36,16 +36,21 @@ public class JobResultsService extends JSONService
 {
     private static final Logger LOG = Logger.getLogger(JobResultsService.class);
     private final String jobId;
-    private BagResultFormatter formatter;
 
     public JobResultsService(InterMineAPI im, String jobId) {
         super(im);
         this.jobId = jobId;
-        this.formatter = new BagResultFormatter(im);
+        
     }
 
     @Override
     protected void execute() throws Exception {
+        BagResultFormatter formatter;
+        if ("true".equals(getOptionalParameter("idkeys", "false"))) {
+            formatter = new BagResultOutputKeyFormatter(im);
+        } else {
+            formatter = new BagResultCategoryKeyFormatter(im);
+        }
         Job job = Job.getJobById(jobId);
         if (job != null) {
             if (job.getStatus() != JobStatus.SUCCESS) {

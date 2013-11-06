@@ -302,7 +302,7 @@ public class ListUploadService extends ListMakerService
                 unmatchedIds.addAll(result.getInputIdentifiersForIssue(issueType));
             }
         }
-        unmatchedIds.addAll(result.getUnresolved().keySet());
+        unmatchedIds.addAll(result.getUnresolvedIdentifiers());
     }
 
 }
