@@ -8,6 +8,7 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.results.ResultCell;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PortalHelper;
 import org.json.JSONObject;
 
@@ -22,14 +23,17 @@ public class TableCellFormatter
 
     private final LinkRedirectManager redirector;
     private final InterMineAPI im;
+    private Integer maxCellLength;
     
     public TableCellFormatter(InterMineAPI im) {
         this.im = im;
+        this.maxCellLength = Integer.valueOf(String.valueOf(InterMineContext.getWebProperties().getProperty(
+                "webservice.tablecellformatter.cell.length.max", "200")));
         this.redirector = im.getLinkRedirector();
     }
     
     public Map<String, Object> toMap(ResultCell cell) {
-        Map<String, Object> mapping = new HashMap<String, Object>();
+        final Map<String, Object> mapping = new HashMap<String, Object>();
         if (cell == null) {
             mapping.put(CELL_KEY_URL, null);
             mapping.put(CELL_KEY_VALUE, null);
@@ -47,11 +51,22 @@ public class TableCellFormatter
             mapping.put(CELL_KEY_CLASS, cell.getType());
             mapping.put(CELL_KEY_ID, cell.getId());
             mapping.put(CELL_KEY_COLUMN, cell.getPath().toStringNoConstraints());
-            Object raw = cell.getField();
-            
+            final Object raw = cell.getField();
+            final Object cooked; // After formatting and any transformations.
+
             // Important that CLOBs go in as strings, to prevent infinite recursions
             // by moronic JSON libraries... - place other edge cases here.
-            Object cooked = (raw != null && raw instanceof ClobAccess) ? raw.toString() : raw;
+            // Also, don't return too much data...
+            if (raw != null && raw instanceof CharSequence) {
+                final CharSequence cs = (CharSequence) raw;
+                if (cs.length() <= maxCellLength) {
+                    cooked = cs.toString();
+                } else {
+                    cooked = cs.subSequence(0, maxCellLength) + "...";
+                }
+            } else {
+                cooked = raw;
+            }
             mapping.put(CELL_KEY_VALUE, cooked);
         }
         return mapping;
