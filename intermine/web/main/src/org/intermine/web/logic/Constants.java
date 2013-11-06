@@ -200,7 +200,8 @@ public final class Constants
      * 12 - Added ability to filter lists from AvailableListsService
      * 13 - Added ability to serve characterish subsequences
      * 15 - Added jbrowse endpoint.
-     * 16 - Added lists with issues.
+     * 16 - Added lists with issues, also changed the default output of the id resolution service
+     *      which is now category based by default.
      */
     public static final int WEB_SERVICE_VERSION = 16;
 
