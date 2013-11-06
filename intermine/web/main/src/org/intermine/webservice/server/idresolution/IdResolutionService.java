@@ -70,7 +70,7 @@ public class IdResolutionService extends JSONService
             }
             type = requestDetails.getString("type");
             caseSensitive = requestDetails.optBoolean("caseSensitive", false);
-            wildCards = requestDetails.optBoolean("wildCards", true);
+            wildCards = requestDetails.optBoolean("wildCards", false);
             extraValue = requestDetails.optString("extra", null);
         }
 
