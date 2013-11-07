@@ -26,6 +26,7 @@ import java.util.Vector;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -367,9 +368,8 @@ public class OrthodbConverter extends BioFileConverter
         if (od == null) {
             // Not throw BuildException
             // TODO add more taxons to organism_config.properties?
-            LOG.warn("No data for `" + name + "`.  Please add to repository.");
-            return null;
-//            throw new BuildException("No data for `" + name + "`.  Please add to repository.");
+            LOG.warn("No data for `" + name + "`.  Please add to repository.");            
+            throw new BuildException("No data for `" + name + "`.  Please add to repository.");
         }
 
         int taxonId = od.getTaxonId();
