@@ -155,7 +155,7 @@ public class OrthodbConverter extends BioFileConverter
             }
 
             // Level is an integer, ignore the title line
-            if (!bits[0].matches("^\\d*$")) {
+            if (bits[0] != null && bits[0].startsWith("OD")) {
                 continue;
             }
 
