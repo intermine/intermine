@@ -6,15 +6,86 @@
         <attribute name="url" value="http://www.flymine.org"/>
     </item>
 
-    <item id="11" class="" implements="DataSet">
+    <item id="20" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="23161681"/> 
+    </item> 
+
+ <item id="21" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="22135296"/> 
+    </item>
+
+ <item id="22" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="12351791"/> 
+    </item>
+
+ <item id="23" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="17563388"/> 
+    </item>
+
+ <item id="24" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="16303794"/> 
+    </item>
+
+ <item id="25" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="17991681"/> 
+    </item>
+
+ <item id="26" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="17923096"/> 
+    </item>
+
+ <item id="27" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="22080510"/> 
+    </item>
+
+ <item id="28" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="23193259"/> 
+    </item>
+
+ <item id="29" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="21067998"/> 
+    </item>
+
+ <item id="30" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="17534367"/> 
+    </item>
+
+ <item id="31" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="2323238"/> 
+    </item>
+
+ <item id="32" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="23203989"/> 
+    </item>
+
+ <item id="33" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="15572468"/> 
+    </item>
+
+ <item id="34" class="" implements="Publication"> 
+        <attribute name="pubMedId" value="18056084"/> 
+    </item>
+
+   <item id="13" class="" implements="DataSource">
+        <attribute name="name" value="Uniprot Protein Knowledgebase"/>
+        <attribute name="description" value="Uniprot Protein Knowledgebase"/>
+        <attribute name="url" value="http://www.uniprot.org/"/>
+    </item>
+
+   <item id="11" class="" implements="DataSet">
         <attribute name="name" value="Swiss-Prot data set"/>
-        <attribute name="description" value="The Swiss-Prot protein knowledge base"/>
-        <attribute name="url" value="http://ca.expasy.org/sprot"/>
+        <attribute name="description" value="high-quality, manually annotated, non-redundant protein sequence database"/>
+        <attribute name="url" value="http://www.uniprot.org/"/>
+        <reference name="dataSource" ref_id="13"/>
+        <reference name="publication" ref_id="20"/> 
+        
     </item>
     <item id="12" class="" implements="DataSet">
         <attribute name="name" value="TrEMBL data set"/>
-        <attribute name="description" value="Translated CDSs from the EMBL database"/>
-        <attribute name="url" value="http://www.ebi.ac.uk/trembl/"/>
+        <attribute name="description" value="Computationally analysed records, enriched with automatic annotation"/>
+        <attribute name="url" value="http://www.uniprot.org/"/>
+        <reference name="dataSource" ref_id="13"/>
+        <reference name="publication" ref_id="20"/> 
     </item>
 
     <item id="91" class="" implements="DataSet">
@@ -22,12 +93,16 @@
         <attribute name="description" value="The VectorBase Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/index.php"/>
+        <reference name="publication" ref_id="21"/> 
+        
     </item>
     <item id="351" class="" implements="DataSet">
         <attribute name="name" value="VectorBase AnoEST clusters"/>
         <attribute name="description" value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/SequenceData/EST"/>
+        <reference name="publication" ref_id="21"/> 
+        
     </item>
 
     <item id="100" class="" implements="DataSource">
@@ -35,6 +110,7 @@
         <attribute name="description" value="International Drosophila Array Consortium"/>
         <attribute name="url" value="http://www.indac.net/"/>
     </item>
+    
     <item id="101" class="" implements="DataSet">
         <attribute name="name" value="INDAC long oligo data set"/>
         <attribute name="description"
@@ -49,6 +125,7 @@
         <attribute name="description" value="Department of Genetics, University of Cambridge"/>
         <attribute name="url" value="http://www.gen.cam.ac.uk/"/>
     </item>
+    
     <item id="111" class="" implements="DataSet">
         <attribute name="name" value="Department of Genetics tiling path"/>
         <attribute name="description" value="Primers and amplimers tiling the Drosophila melanogaster genome"/>
@@ -61,12 +138,14 @@
         <attribute name="name" value="Anoph-Expr data set"/>
         <attribute name="description" value="Anopheles gambiae life cycle exression data"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/#ae-browse/q=E-TABM-186"/>
+        <reference name="publication" ref_id="23"/> 
     </item>
 
     <item id="162" class="" implements="DataSet">
         <attribute name="name" value="E-FLYC-6"/>
         <attribute name="description" value="Transcription profiling of Drosophila developmental time course"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/ae/browse.html?keywords=E-FLYC-6"/>
+        <reference name="publication" ref_id="22"/> 
     </item>
 
     <item id="211" class="" implements="DataSet">
@@ -94,19 +173,19 @@
         <attribute name="url" value="http://www.sanger.ac.uk"/>
     </item>
 
-
-
     <item id="450" class="" implements="DataSource">
         <attribute name="name" value="REDfly"/>
         <attribute name="description" value="Regulatory element database for Drosophila"/>
         <attribute name="url" value="http://redfly.ccr.buffalo.edu/"/>
-    </item>
+          </item>
+    
     <item id="451" class="" implements="DataSet">
         <attribute name="name" value="REDfly Drosophila transcriptional cis-regulatory modules"/>
         <attribute name="description" value="Regulatory element database for Drosophila"/>
         <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
         <reference name="dataSource" ref_id="450"/>
+        <reference name="publication" ref_id="24"/> 
     </item>
 
     <item id="452" class="" implements="DataSet">
@@ -115,6 +194,7 @@
         <attribute name="version" value="2.0"/>
         <attribute name="url" value="http://redfly.ccr.buffalo.edu/?content=/search.php"/>
         <reference name="dataSource" ref_id="450"/>
+        <reference name="publication" ref_id="24"/> 
     </item>
 
     <item id="471" class="" implements="DataSet">
@@ -122,6 +202,7 @@
         <attribute name="description" value="Identification of potential microRNA targets by using the miRanda software (Computational Biology Center of Memorial Sloan-Kettering Cancer Center)"/>
         <attribute name="version" value="5.0"/>
         <attribute name="url" value="http://microrna.sanger.ac.uk/targets/v5/"/>
+        <reference name="publication" ref_id="25"/>
     </item>
 
     <item id="480" class="" implements="DataSource">
@@ -129,11 +210,14 @@
         <attribute name="description" value="A database of Drosophila embryo mRNA localization patterns"/>
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
     </item>
+    
+    
     <item id="481" class="" implements="DataSet">
         <attribute name="name" value="fly-Fish data set"/>
         <attribute name="description" value="fly-Fish data set of Drosophila embryo mRNA localization patterns"/>
         <attribute name="url" value="http://fly-fish.ccbr.utoronto.ca"/>
         <reference name="dataSource" ref_id="480"/>
+        <reference name="publication" ref_id="26"/>
     </item>
 
     <item id="490" class="" implements="DataSource">
@@ -141,17 +225,20 @@
         <attribute name="description" value="Network of database and computational services for genome research and related research areas in biomedical sciences, operated by the Kyoto University Bioinformatics Center. "/>
         <attribute name="url" value="http://www.genome.jp/en/"/>
     </item>
+    
     <item id="491" class="" implements="DataSet">
         <attribute name="name" value="KEGG pathways data set"/>
         <attribute name="description" value="Manually drawn pathway maps representing our knowledge on the molecular interaction and reaction networks for Drosophila"/>
         <attribute name="url" value="http://www.genome.jp/kegg/pathway.html"/>
         <reference name="dataSource" ref_id="490"/>
+        <reference name="publication" ref_id="27"/>
     </item>
 
     <item id="521" class="" implements="DataSet">
         <attribute name="name" value="PDB dmel data set"/>
         <attribute name="description" value="PDB data for Drosophila melanogaster"/>
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
+        <reference name="publication" ref_id="28"/>
     </item>
 
     <item id="540" class="" implements="DataSource">
@@ -165,6 +252,7 @@
         <attribute name="name" value="FlyReactome data set"/>
         <attribute name="description" value="Curated Reactome data"/>
         <attribute name="url" value="http://fly.reactome.org"/>
+        <reference name="publication" ref_id="29"/>
     </item>
 
 
@@ -190,11 +278,13 @@
         <attribute name="name" value="University of Glasgow"/>
         <attribute name="url" value="http://www.gla.ac.uk/"/>
     </item>
+    
     <item id="601" class="" implements="DataSet">
         <attribute name="name" value="FlyAtlas"/>
         <attribute name="description" value="Drosophila adult gene expression atlas"/>
         <attribute name="url" value="http://www.flyatlas.org/"/>
         <reference name="dataSource" ref_id="600"/>
+        <reference name="publication" ref_id="30"/>
     </item>
 
     <item id="610" class="" implements="DataSource">
@@ -202,16 +292,20 @@
         <attribute name="description" value="Berkeley Drosophila Genome Project"/>
         <attribute name="url" value="http://www.fruitfly.org/"/>
     </item>
+    
     <item id="611" class="" implements="DataSet">
         <attribute name="name" value="BDGP in situ data set"/>
         <attribute name="description" value="Patterns of gene expression in Drosophila embryogenesis by RNA in situ"/>
         <attribute name="url" value="http://www.fruitfly.org/cgi-bin/ex/insitu.pl"/>
         <reference name="dataSource" ref_id="610"/>
+        <reference name="publication" ref_id="31"/>
     </item>
+    
     <item id="612" class="" implements="DataSet">
         <attribute name="name" value="BDGP cDNA clone data set"/>
         <attribute name="url" value="http://www.fruitfly.org/DGC/index.html"/>
         <reference name="dataSource" ref_id="610"/>
+        <reference name="publication" ref_id="31"/>
     </item>
 
     <item id="630" class="" implements="DataSource">
@@ -219,10 +313,12 @@
         <attribute name="description" value="General repository for interaction datasets"/>
         <attribute name="url" value="http://www.thebiogrid.org/"/>
     </item>
+    
     <item id="631" class="" implements="DataSet">
         <attribute name="name" value="BioGRID interaction data set"/>
         <attribute name="url" value="http://www.thebiogrid.org/downloads.php"/>
         <reference name="dataSource" ref_id="630"/>
+        <reference name="publication" ref_id="32"/>
     </item>
 
     <item id="640" class="" implements="DataSource">
@@ -230,6 +326,7 @@
         <attribute name="description" value="National Center for Biotechnology Information"/>
         <attribute name="url" value="http://www.ncbi.nlm.nih.gov/"/>
     </item>
+    
     <item id="641" class="" implements="DataSet">
         <attribute name="name" value="PubMed to gene mapping"/>
         <attribute name="url" value="ftp://ftp.ncbi.nlm.nih.gov/gene/DATA/"/>
@@ -240,21 +337,26 @@
         <attribute name="name" value="FlyReg"/>
         <attribute name="description" value="Drosophila DNase I Footprint Database (v2.0)"/>
         <attribute name="url" value="http://www.flyreg.org"/>
-    </item>
+          </item>
+          
+          
     <item id="661" class="" implements="DataSet">
         <attribute name="name" value="FlyReg data set"/>
         <attribute name="url" value="http://www.flyreg.org"/>
         <reference name="dataSource" ref_id="660"/>
+        <reference name="publication" ref_id="33"/>
     </item>
 
      <item id="670" class="" implements="DataSource">
         <attribute name="name" value="TreeFam"/>
         <attribute name="url" value="http://www.treefam.org"/>
     </item>
+    
     <item id="671" class="" implements="DataSet">
         <attribute name="name" value="TreeFam data set"/>
         <attribute name="url" value="http://www.treefam.org/cgi-bin/misc_page.pl?download"/>
         <reference name="dataSource" ref_id="670"/>
+        <reference name="publication" ref_id="34"/>
     </item>
 
      <item id="680" class="" implements="DataSource">
