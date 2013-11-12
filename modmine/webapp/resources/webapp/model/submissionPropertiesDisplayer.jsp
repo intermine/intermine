@@ -170,7 +170,7 @@
 
 
 <script type="text/javascript">
-
+/*
      var submissionPropertyJSON;
      if ('${submissionPropertyJSON}' != "" || '${submissionPropertyJSON}' != "[]") {
          submissionPropertyJSON = jQuery.parseJSON('${submissionPropertyJSON}');
@@ -265,7 +265,7 @@
 
         jQuery("#" + tdid).html(html);
      }
-
+*/
 </script>
 
 <!-- /submissionPropertiesDisplayer.jsp -->
