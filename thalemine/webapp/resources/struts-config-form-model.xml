@@ -1,0 +1,16 @@
+<!-- this comment is here to prevent ant from setting model.struts.form.config to null -->
+
+<form-bean name="sequenceExportForm" type="org.intermine.bio.web.struts.SequenceExportForm"/>
+<form-bean name="gff3ExportForm" type="org.intermine.bio.web.struts.GFF3ExportForm"/>
+<form-bean name="bedExportForm" type="org.intermine.bio.web.struts.BEDExportForm"/>
+<form-bean name="galaxyExportForm" type="org.intermine.bio.web.struts.GalaxyExportForm"/>
+
+<form-bean name="genomicRegionSearchForm" type="org.intermine.bio.web.struts.GenomicRegionSearchForm">
+  <form-property name="organism" type="java.lang.String"/>
+  <form-property name="featureTypes" type="java.lang.String[]"/>
+  <form-property name="pasteInput" type="java.lang.String"/>
+  <form-property name="fileInput" type="org.apache.struts.upload.FormFile"/>
+  <form-property name="whichInput" type="java.lang.String"/>
+  <form-property name="dataFormat" type="java.lang.String" initial="isNotInterBaseCoordinate"/>
+  <form-property name="extendedRegionSize" type="java.lang.String"/>
+</form-bean>
