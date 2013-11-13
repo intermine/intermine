@@ -76,8 +76,8 @@ public class IdResolver
     protected void checkTaxonId(String taxonId, String clsName) {
         if (!orgIdMaps.containsKey(new MultiKey(taxonId, clsName))) {
             throw new IllegalArgumentException(clsName + " IdResolver has "
-                                               + "no data for taxonId: "
-                                               + taxonId + ".");
+                                               + "no data for taxonId: '"
+                                               + taxonId + "'.");
         }
     }
 
