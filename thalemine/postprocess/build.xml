@@ -1,0 +1,7 @@
+<project name="thalemine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for thalemine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>
