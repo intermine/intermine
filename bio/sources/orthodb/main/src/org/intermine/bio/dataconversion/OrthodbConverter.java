@@ -161,7 +161,6 @@ public class OrthodbConverter extends BioFileConverter
 
             String groupId = bits[1];
             currentGroup = groupId;
-            System.out.println(currentGroup);
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !currentGroup.equals(previousGroup)) {
                 if (homologueList.size() >= 2) {
@@ -173,9 +172,7 @@ public class OrthodbConverter extends BioFileConverter
 
             String taxonId = getTaxon(bits[4]); // bits[4] is the long string of taxon Ids
             organismNameVisitedMap.put(bits[4], taxonId);
-            
-            System.out.println(taxonId);
-            
+
             if (!isValid(taxonId) || taxonId == null) {
                 // not an organism of interest, skip
                 previousGroup = groupId;
@@ -377,8 +374,7 @@ public class OrthodbConverter extends BioFileConverter
         
         String[] firstSplit = speciesString.split(":");
         String[] secondSplit = firstSplit[1].split(";");
-        System.out.println(secondSplit[0]);
-        
+        //System.out.println(secondSplit[0]);
         taxonId = secondSplit[0];
         return taxonId;
     }
