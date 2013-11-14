@@ -76,13 +76,13 @@ public class GoConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         Reader reader = new InputStreamReader(
-                getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
+                getClass().getClassLoader().getResourceAsStream("synbio_test"));
         converter.process(reader);
         //System.out.println("productWrapperMap: " + converter.productMap.keySet());
         converter.close();
 
         // uncomment to write a new target items file
-        // writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
