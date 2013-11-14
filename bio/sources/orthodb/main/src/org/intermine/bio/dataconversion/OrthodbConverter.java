@@ -161,7 +161,7 @@ public class OrthodbConverter extends BioFileConverter
 
             String groupId = bits[1];
             currentGroup = groupId;
-
+            System.out.println(currentGroup);
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !currentGroup.equals(previousGroup)) {
                 if (homologueList.size() >= 2) {
@@ -170,8 +170,12 @@ public class OrthodbConverter extends BioFileConverter
                 homologueList = new ArrayList<List<String>>(); // reset the list
             }
 
-            String taxonId = getTaxon(bits[5]); // bits[5] is UniProt name
-            organismNameVisitedMap.put(bits[5], taxonId);
+
+            String taxonId = getTaxon(bits[4]); // bits[4] is the long string of taxon Ids
+            organismNameVisitedMap.put(bits[4], taxonId);
+            
+            System.out.println(taxonId);
+            
             if (!isValid(taxonId) || taxonId == null) {
                 // not an organism of interest, skip
                 previousGroup = groupId;
@@ -188,6 +192,11 @@ public class OrthodbConverter extends BioFileConverter
 
             previousGroup = groupId;
         }
+        // parse the last group of the file
+        if (homologueList.size() >= 2) {
+        	processHomologues(homologueList, previousGroup);
+        }
+        homologueList = new ArrayList<List<String>>(); // reset the list
     }
 
     private void readConfig() {
@@ -360,21 +369,18 @@ public class OrthodbConverter extends BioFileConverter
         return refId;
     }
 
-    private String getTaxon(String name) {
-        if (!organismNameVisitedMap.isEmpty() && organismNameVisitedMap.keySet().contains(name)) {
-            return organismNameVisitedMap.get(name);
+    private String getTaxon(String speciesString) {
+        if (!organismNameVisitedMap.isEmpty() && organismNameVisitedMap.keySet().contains(speciesString)) {
+            return organismNameVisitedMap.get(speciesString);
         }
-        OrganismData od = or.getOrganismDataByUniprot(name);
-        if (od == null) {
-            // Not throw BuildException
-            // TODO add more taxons to organism_config.properties?
-            LOG.warn("No data for `" + name + "`.  Please add to repository.");            
-            throw new BuildException("No data for `" + name + "`.  Please add to repository.");
-        }
-
-        int taxonId = od.getTaxonId();
-        String taxonIdString = String.valueOf(taxonId);
-        return taxonIdString;
+        String taxonId = null;
+        
+        String[] firstSplit = speciesString.split(":");
+        String[] secondSplit = firstSplit[1].split(";");
+        System.out.println(secondSplit[0]);
+        
+        taxonId = secondSplit[0];
+        return taxonId;
     }
 
     private String getEvidence() throws ObjectStoreException {
