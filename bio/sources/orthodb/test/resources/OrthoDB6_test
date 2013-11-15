@@ -1,6 +1,0 @@
-ODB6_Level	ODB6_OG_ID	Protein_ID	Gene_ID	Organism	UniProt_Species	UniProt_ACC	UniProt_Description	InterPro_domains
-95	EOG6MPPP2	sp|P34761|WHI3_YEAST	WHI3	Saccharomyces cerevisiae strain ATCC 204508	YEAST	P34761	Protein WHI3	IPR000504
-95	EOG6MPPP2	sp|Q07655|WHI4_YEAST	WHI4	Saccharomyces cerevisiae strain ATCC 204508	YEAST	Q07655	Protein WHI4	IPR000504
-102	EOG67HBXQ	sp|P34761|WHI3_YEAST	WHI3	Saccharomyces cerevisiae strain ATCC 204508	YEAST	P34761	Protein WHI3	IPR000504
-102	EOG67HBXQ	sp|Q07655|WHI4_YEAST	WHI4	Saccharomyces cerevisiae strain ATCC 204508	YEAST	Q07655	Protein WHI4	IPR000504
-
