@@ -1,0 +1,5 @@
+ODB6_Level	ODB6_OG_ID	Protein_ID	Gene_ID	Organism	UniProt_Species	UniProt_ACC	UniProt_Description	InterPro_domains
+Firmicutes-Bacilli	EOG600VNV	BA_2196	30262211	Bacillus anthracis str. Ames species:198094;genus:1386:Bacillus;family:186817:Bacillaceae;order:1385:Bacillales;class:91061:Bacilli;phylum:1239:Firmicutes	BACAN	Q81R62	Putative uncharacterized protein	NULL
+Firmicutes-Bacilli	EOG600VNV	GBAA2196	47527489	Bacillus anthracis str. 'Ames Ancestor' species:261594;genus:1386:Bacillus;family:186817:Bacillaceae;order:1385:Bacillales;class:91061:Bacilli;phylum:1239:Firmicutes	BACAN	NULL	NULL	NULL
+Firmicutes-Bacilli	EOG600VNV	BAMEG_2400	227814989	Bacillus anthracis str. CDC 684 species:568206;genus:1386:Bacillus;family:186817:Bacillaceae;order:1385:Bacillales;class:91061:Bacilli;phylum:1239:Firmicutes	BACAC	C3LKB2	Putative uncharacterized protein	NULL
+Firmicutes-Bacilli	EOG600VNV	BAS2041	49185052	Bacillus anthracis str. Sterne species:260799;genus:1386:Bacillus;family:186817:Bacillaceae;order:1385:Bacillales;class:91061:Bacilli;phylum:1239:Firmicutes	BACAN	Q6HZD4	Putative uncharacterized protein	NULL
