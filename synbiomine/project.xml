@@ -13,7 +13,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Bacillus subtilis subsp. subtilis str. 168 genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_subtilis_168_uid57675"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_subtilis_168_uid57675"/>
       <property name="src.data.dir.includes" value="NC_000964.gff"/>
     </source>
 
@@ -24,7 +24,7 @@
       <property name="fasta.dataSetTitle" value="Bacillus subtilis subsp. subtilis str. 168 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_000964.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_subtilis_168_uid57675/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_subtilis_168_uid57675/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -35,7 +35,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Escherichia coli str. K-12 substr MG1655 genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid57779"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid57779"/>
       <property name="src.data.dir.includes" value="NC_000913.gff"/>
     </source>
 
@@ -46,7 +46,7 @@
       <property name="fasta.dataSetTitle" value="Escherichia coli str. K-12 substr MG1655, complete genome"/>
       <property name="fasta.includes" value="NC_000913.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid57779/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid57779/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -57,7 +57,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129"/>
       <property name="src.data.dir.includes" value="NC_015660.gff"/>
     </source>
 
@@ -68,7 +68,7 @@
       <property name="fasta.dataSetTitle" value="Geobacillus thermoglucosidasius str. C56-YS93 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_015660.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Geobacillus_thermoglucosidasius_C56_YS93_uid48129/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -79,7 +79,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Bacillus anthracis str. Ames genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_anthracis_Ames_uid57909"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_Ames_uid57909"/>
       <property name="src.data.dir.includes" value="NC_003997.gff"/>
     </source>
 
@@ -90,7 +90,7 @@
       <property name="fasta.dataSetTitle" value="Bacillus anthracis str. Ames chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_003997.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_anthracis_Ames_uid57909/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_Ames_uid57909/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -101,7 +101,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Bacillus anthracis str. A0248 genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_anthracis_A0248_uid59385/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_A0248_uid59385/"/>
       <property name="src.data.dir.includes" value="NC_012659.gff"/>
     </source>
 
@@ -112,7 +112,7 @@
       <property name="fasta.dataSetTitle" value="Bacillus anthracis str. A0248 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_012659.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_anthracis_A0248_uid59385/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_A0248_uid59385/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -123,7 +123,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Bacillus anthracis str. CDC 684 genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_anthracis_CDC_684_uid59303/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_CDC_684_uid59303/"/>
       <property name="src.data.dir.includes" value="NC_012581.gff"/>
     </source>
 
@@ -134,7 +134,7 @@
       <property name="fasta.dataSetTitle" value="Bacillus anthracis str. CDC 684 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_012581.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_anthracis_CDC_684_uid59303/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_anthracis_CDC_684_uid59303/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -145,7 +145,7 @@
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.dataSetTitle" value="Bacillus cereus ATCC 14579 genomic features"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_cereus_ATCC_14579_uid57975/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_cereus_ATCC_14579_uid57975/"/>
       <property name="src.data.dir.includes" value="NC_004722.gff"/>
     </source>
 
@@ -156,7 +156,7 @@
       <property name="fasta.dataSetTitle" value="Bacillus cereus ATCC 14579 chromosome, complete genome"/>
       <property name="fasta.includes" value="NC_004722.fna"/>
       <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/genbank/current/Bacillus_cereus_ATCC_14579_uid57975/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Bacillus_cereus_ATCC_14579_uid57975/"/>
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.NCBIFastaLoaderTask"/>   
     </source>
@@ -165,7 +165,7 @@
       <property name="uniprot.organisms" value="224308 511145 634956 198094 83333 592021 198094 568206 14579"/>
       <property name="createinterpro" value="true"/>
       <property name="creatego" value="true"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/uniprot/current"/>
     </source>
    
     <source name="uniprot-fasta" type="fasta" dump="true">
@@ -174,7 +174,7 @@
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
       <property name="fasta.dataSourceName" value="UniProt"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/uniprot/current"/>
       <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
@@ -182,7 +182,7 @@
     </source>
 
     <source name="uniprot-keywords" type="uniprot-keywords" dump="true">
-      <property name="src.data.dir" location="/SAN_synbiomine/data/uniprot/current"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
 
@@ -200,7 +200,7 @@
 
     <source name="go-annotation" type="go-annotation" dump="true">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/SAN_synbiomine/data/go-annotation/current/"/>
+      <property name="src.data.dir" location="/micklem/data/ecolimine/go-annotation/current/"/>
       <property name="ontologyPrefix" value="GO"/>
     </source>
 
