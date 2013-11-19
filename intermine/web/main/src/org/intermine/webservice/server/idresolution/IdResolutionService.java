@@ -10,6 +10,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;
 import org.intermine.api.idresolution.JobInput;
 import org.intermine.webservice.server.core.JSONService;
@@ -44,11 +45,9 @@ public class IdResolutionService extends JSONService
 
         final BagQueryRunner runner = im.getBagQueryRunner();
 
-        Job job = new Job(runner, in);
+        Job job = IDResolver.getInstance().submit(runner, in);
 
         addResultValue(job.getUid(), false);
-
-        new Thread(job).run(); // Run job in the background.
     }
 
     @Override

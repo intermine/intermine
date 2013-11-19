@@ -22,9 +22,11 @@ import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.bag.BagQueryUpgrade;
+import org.intermine.api.idresolution.IDResolver;
+import org.intermine.api.idresolution.Job;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.bag.BagQueryUpgrade;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -36,6 +38,8 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class BagUpgradeAction extends InterMineAction
 {
+    private static final String JOB_ID_PREFIX = "idresolutionjobid_";
+
     /**
      * Action for creating BagQueryResult for a specific bag not yet current
      *
@@ -52,17 +56,16 @@ public class BagUpgradeAction extends InterMineAction
             HttpServletResponse response) throws Exception {
         String bagName = (String) request.getParameter("bagName");
         HttpSession session = request.getSession();
-        BagQueryResult bagQueryResult;
-        bagQueryResult = (BagQueryResult) session.getAttribute("bagQueryResult_" + bagName);
+        String jobId = (String) session.getAttribute(JOB_ID_PREFIX + bagName);
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         InterMineBag savedBag = profile.getSavedBags().get(bagName);
-        if (bagQueryResult == null) {
+        if (jobId == null) {
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagRunner, savedBag);
-            bagQueryResult = bagQueryUpgrade.getBagQueryResult();
-            session.setAttribute("bagQueryResult_" + bagName, bagQueryResult);
+            Job job = IDResolver.getInstance().submit(bagQueryUpgrade);
+            session.setAttribute(JOB_ID_PREFIX + bagName, job.getUid());
         }
         request.setAttribute("newBagName", bagName);
         request.setAttribute("bagType", savedBag.getType());

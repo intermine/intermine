@@ -2,6 +2,7 @@ package org.intermine.webservice.server.idresolution;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -26,11 +27,11 @@ public class JobResultsService extends JSONService
         } else {
             formatter = new BagResultCategoryKeyFormatter(im);
         }
-        Job job = Job.getJobById(jobId);
+        Job job = IDResolver.getInstance().getJobById(jobId);
         if (job != null) {
-            if (job.getStatus() != org.intermine.api.idresolution.Job.JobStatus.SUCCESS) {
+            if (job.getStatus() != Job.JobStatus.SUCCESS) {
                 ServiceException se;
-                if (job.getStatus() == org.intermine.api.idresolution.Job.JobStatus.ERROR) {
+                if (job.getStatus() == Job.JobStatus.ERROR) {
                     se = new ServiceException("Job failed: " +  job.getError().getMessage());
                     this.addOutputInfo("message", job.getError().getMessage());
                 } else {

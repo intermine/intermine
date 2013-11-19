@@ -46,7 +46,7 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
     @Override
     public Map<String, Object> format(Job job) {
         final BagQueryResult bqr = job.getResult();
-        final String type = job.getInput().getType();
+        final String type = job.getType();
         final Map<String, Object> ret = new HashMap<String, Object>();
 
         ret.put("matches", getMatchInfo(bqr));

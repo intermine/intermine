@@ -33,6 +33,7 @@ import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.Constants;
@@ -175,8 +176,7 @@ public class BuildBagAction extends InterMineAction
             }
         }
         WebJobInput input = new WebJobInput(type, list, buildBagForm);
-        Job job = new Job(bagRunner, input);
-        new Thread(job).run();
+        Job job = IDResolver.getInstance().submit(bagRunner, input);
 
         session.setAttribute("idresolutionjobid", job.getUid());
         request.setAttribute("bagType", type);
