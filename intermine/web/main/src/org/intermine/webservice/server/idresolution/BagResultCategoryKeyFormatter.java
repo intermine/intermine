@@ -15,6 +15,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryResult.IssueResult;
 import org.intermine.api.bag.ConvertedObjectPair;
+import org.intermine.api.idresolution.Job;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;

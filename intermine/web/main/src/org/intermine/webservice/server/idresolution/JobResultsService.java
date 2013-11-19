@@ -1,36 +1,11 @@
 package org.intermine.webservice.server.idresolution;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryResult;
-import org.intermine.api.bag.ConvertedObjectPair;
-import org.intermine.api.util.PathUtil;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
-import org.intermine.web.context.InterMineContext;
-import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.FieldConfigHelper;
-import org.intermine.web.logic.config.WebConfig;
+import org.intermine.api.idresolution.Job;
 import org.intermine.webservice.server.core.JSONService;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
-import org.intermine.webservice.server.idresolution.Job.JobStatus;
-import org.intermine.webservice.server.output.JSONFormatter;
-import org.json.JSONObject;
 
 public class JobResultsService extends JSONService
 {
@@ -53,9 +28,9 @@ public class JobResultsService extends JSONService
         }
         Job job = Job.getJobById(jobId);
         if (job != null) {
-            if (job.getStatus() != JobStatus.SUCCESS) {
+            if (job.getStatus() != org.intermine.api.idresolution.Job.JobStatus.SUCCESS) {
                 ServiceException se;
-                if (job.getStatus() == JobStatus.ERROR) {
+                if (job.getStatus() == org.intermine.api.idresolution.Job.JobStatus.ERROR) {
                     se = new ServiceException("Job failed: " +  job.getError().getMessage());
                     this.addOutputInfo("message", job.getError().getMessage());
                 } else {
