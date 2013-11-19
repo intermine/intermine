@@ -65,7 +65,7 @@ public class JobResultsService extends JSONService
                 throw se; 
             }
 
-            addResultItem(formatter.format(job.getResult()), false);
+            addResultItem(formatter.format(job), false);
         } else {
             throw new ResourceNotFoundException("No such job");
         }

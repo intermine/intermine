@@ -43,12 +43,15 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
     }
 
     @Override
-    public Map<String, Object> format(BagQueryResult bqr) {
+    public Map<String, Object> format(Job job) {
+        final BagQueryResult bqr = job.getResult();
+        final String type = job.getInput().getType();
         final Map<String, Object> ret = new HashMap<String, Object>();
 
         ret.put("matches", getMatchInfo(bqr));
         ret.put("unresolved", bqr.getUnresolvedIdentifiers());
         ret.put("stats", getStats(bqr));
+        ret.put("type", type);
 
         return ret;
     }
@@ -64,8 +67,10 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Map<String, Object> getStats(BagQueryResult bqr) {
-        Map<String, Object> stats = new HashMap<String, Object>();
+    private Map<String, Map<String, Integer>> getStats(BagQueryResult bqr) {
+        Map<String, Map<String, Integer>> stats = new HashMap<String, Map<String, Integer>>();
+        Map<String, Integer> objectStats = new HashMap<String, Integer>();
+        Map<String, Integer> termStats = new HashMap<String, Integer>();
         Set<String> goodMatchTerms = new HashSet<String>();
         Set<String> issueMatchTerms = new HashSet<String>();
         Set<Integer> matchedObjects = bqr.getMatches().keySet();
@@ -81,18 +86,20 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
             }
         }
 
-        // Add calculated values to the result.
-        stats.put("notFound", bqr.getUnresolvedIdentifiers().size());
-
-        stats.put("goodMatches", goodMatchTerms.size());
-        stats.put("issueMatchTerms", issueMatchTerms.size());
+        int notFound = bqr.getUnresolvedIdentifiers().size();
+        termStats.put("matches", goodMatchTerms.size());
+        termStats.put("issues", issueMatchTerms.size());
         goodMatchTerms.addAll(issueMatchTerms); // Mutation - beware!!
-        stats.put("allMatchTerms", goodMatchTerms.size());
+        termStats.put("all", notFound + goodMatchTerms.size());
+        termStats.put("notFound", notFound);
 
-        stats.put("matchedObjects", matchedObjects.size());
-        stats.put("allMatchedObjects", allMatchedObjects.size());
+        objectStats.put("matches", matchedObjects.size());
+        objectStats.put("all", allMatchedObjects.size());
         allMatchedObjects.removeAll(matchedObjects);  // Mutation - beware!!
-        stats.put("issueObjects", allMatchedObjects.size());
+        objectStats.put("issues", allMatchedObjects.size());
+
+        stats.put("objects", objectStats);
+        stats.put("identifiers", termStats);
 
         return stats;
     }
