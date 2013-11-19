@@ -94,6 +94,10 @@ public class Job implements Runnable
     public BagQueryResult getResult() {
         return result;
     }
+
+    public Input getInput() {
+        return input;
+    }
     
     public boolean wasSuccessful() {
         return error == null;
