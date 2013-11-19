@@ -1,6 +1,7 @@
 package org.intermine.webservice.server.idresolution;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;
 import org.intermine.api.idresolution.Job.JobStatus;
 import org.intermine.webservice.server.core.JSONService;
@@ -18,7 +19,7 @@ public class JobStatusService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        Job job = Job.getJobById(jobId);
+        Job job = IDResolver.getInstance().getJobById(jobId);
         if (job != null) {
             if (job.getStatus() == JobStatus.ERROR) {
                 this.addOutputInfo("message", job.getError().getMessage());

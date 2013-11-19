@@ -20,12 +20,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.bag.BagQueryUpgrade;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.bag.BagQueryUpgrade;
 
 /**
  * Runnable object providing upgrading osbag_int table.
