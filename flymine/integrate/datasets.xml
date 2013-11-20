@@ -88,19 +88,31 @@
         <reference name="publication" ref_id="20"/> 
     </item>
 
+
+
+      <item id="118" class="" implements="DataSource">
+        <attribute name="name" value="VectorBase"/>
+        <attribute name="description" value="Bioinformatics Resource for Invertebrate Vectors of Human Pathogens"/>
+        <attribute name="url" value="https://www.vectorbase.org/"/>
+    </item>
+
+
     <item id="91" class="" implements="DataSet">
         <attribute name="name" value="VectorBase Anopheles"/>
         <attribute name="description" value="The VectorBase Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/index.php"/>
+        <reference name="dataSource" ref_id="118"/>
         <reference name="publication" ref_id="21"/> 
-        
-    </item>
+   </item>
+    
+  
     <item id="351" class="" implements="DataSet">
         <attribute name="name" value="VectorBase AnoEST clusters"/>
         <attribute name="description" value="Annotated EST clusters for Anopheles gambiae"/>
         <attribute name="version" value="8"/>
         <attribute name="url" value="http://agambiae.vectorbase.org/SequenceData/EST"/>
+        <reference name="dataSource" ref_id="118"/>
         <reference name="publication" ref_id="21"/> 
         
     </item>
@@ -134,10 +146,17 @@
         <reference name="dataSource" ref_id="110"/>
     </item>
 
+    <item id="112" class="" implements="DataSource">
+        <attribute name="name" value="Array Express"/>
+        <attribute name="description" value="Array Express - functional genomics data"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/arrayexpress/"/>
+    </item>
+
     <item id="161" class="" implements="DataSet">
         <attribute name="name" value="Anoph-Expr data set"/>
         <attribute name="description" value="Anopheles gambiae life cycle exression data"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/aer/#ae-browse/q=E-TABM-186"/>
+        <reference name="dataSource" ref_id="112"/>
         <reference name="publication" ref_id="23"/> 
     </item>
 
@@ -145,7 +164,15 @@
         <attribute name="name" value="E-FLYC-6"/>
         <attribute name="description" value="Transcription profiling of Drosophila developmental time course"/>
         <attribute name="url" value="http://www.ebi.ac.uk/microarray-as/ae/browse.html?keywords=E-FLYC-6"/>
+        <reference name="dataSource" ref_id="112"/>
         <reference name="publication" ref_id="22"/> 
+    </item>
+
+
+     <item id="113" class="" implements="DataSource">
+        <attribute name="name" value="Ensembl metazoa"/>
+        <attribute name="description" value="Ensembl metazoa"/>
+        <attribute name="url" value="http://metazoa.ensembl.org/Anopheles_gambiae/Info/Index"/>
     </item>
 
     <item id="211" class="" implements="DataSet">
@@ -153,18 +180,27 @@
         <attribute name="description" value="The Ensembl Anopheles gambiae genome annotation"/>
         <attribute name="version" value="AgamP3"/>
         <attribute name="url" value="http://metazoa.ensembl.org/Anopheles_gambiae/Info/Index"/>
+        <reference name="dataSource" ref_id="113"/>
     </item>
 
+    <item id="114" class="" implements="DataSource">
+        <attribute name="name" value="Affymetrix"/>
+        <attribute name="description" value="Affymetrix"/>
+        <attribute name="url" value="http://www.affymetrix.com"/>
+    </item>
 
     <item id="621" class="" implements="DataSet">
-        <attribute name="name" value="Affymetrix array: DrosGenome1"/>
+        <attribute name="name" value="Affymetrix array: GeneChip Drosophila Genome 2.0 Array"/>
         <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
         <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly.affx"/>
+        <reference name="dataSource" ref_id="114"/>
     </item>
+    
     <item id="622" class="" implements="DataSet">
-        <attribute name="name" value="Affymetrix array: Drosophila_2"/>
+        <attribute name="name" value="Affymetrix array: GeneChip Drosophila Genome Array"/>
         <attribute name="description" value="The GeneChip® Drosophila Genome Array is a microarray tool for studying expression of Drosophila melanogaster transcripts."/>
         <attribute name="url" value="http://www.affymetrix.com/products/arrays/specific/fly_2.affx"/>
+        <reference name="dataSource" ref_id="114"/>
     </item>
 
     <item id="340" class="" implements="DataSource">
@@ -197,11 +233,19 @@
         <reference name="publication" ref_id="24"/> 
     </item>
 
+   <item id="115" class="" implements="DataSource">
+        <attribute name="name" value="MicroCosm Targets"/>
+        <attribute name="description" value="Microcosm Targets"/>
+        <attribute name="url" value="http://www.ebi.ac.uk/enright-srv/microcosm/htdocs/targets/v5/"/>
+    </item>
+
+
     <item id="471" class="" implements="DataSet">
         <attribute name="name" value="miRBase Targets"/>
         <attribute name="description" value="Identification of potential microRNA targets by using the miRanda software (Computational Biology Center of Memorial Sloan-Kettering Cancer Center)"/>
         <attribute name="version" value="5.0"/>
-        <attribute name="url" value="http://microrna.sanger.ac.uk/targets/v5/"/>
+        <attribute name="url" value="http://www.mirbase.org/"/>
+        <reference name="dataSource" ref_id="115"/>
         <reference name="publication" ref_id="25"/>
     </item>
 
@@ -234,10 +278,18 @@
         <reference name="publication" ref_id="27"/>
     </item>
 
+    <item id="116" class="" implements="DataSource">
+        <attribute name="name" value="RCSB Protein Data Bank"/>
+        <attribute name="description" value="Biological Macromolecular Resource"/>
+        <attribute name="url" value="http://www.rcsb.org"/>
+    </item>
+
+
     <item id="521" class="" implements="DataSet">
         <attribute name="name" value="PDB dmel data set"/>
         <attribute name="description" value="PDB data for Drosophila melanogaster"/>
         <attribute name="url" value="http://www.rcsb.org/pdb/"/>
+        <reference name="dataSource" ref_id="116"/>
         <reference name="publication" ref_id="28"/>
     </item>
 
@@ -248,10 +300,18 @@
     </item>
 
 
+    <item id="117" class="" implements="DataSource">
+        <attribute name="name" value="Reactome"/>
+        <attribute name="description" value="Reactome: a curated pathway database"/>
+        <attribute name="url" value="http://www.reactome.org/"/>
+    </item>
+
+
     <item id="552" class="" implements="DataSet">
         <attribute name="name" value="FlyReactome data set"/>
         <attribute name="description" value="Curated Reactome data"/>
         <attribute name="url" value="http://fly.reactome.org"/>
+        <reference name="dataSource" ref_id="117"/>
         <reference name="publication" ref_id="29"/>
     </item>
 
