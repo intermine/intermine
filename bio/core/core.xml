@@ -14,6 +14,7 @@
     <attribute name="secondaryIdentifier" type="java.lang.String"/>
     <attribute name="symbol" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="version" type="java.lang.String"/>
     <reference name="organism" referenced-type="Organism"/>
     <collection name="locatedFeatures" referenced-type="Location" reverse-reference="locatedOn"/>
     <collection name="locations" referenced-type="Location" reverse-reference="feature" />
@@ -166,6 +167,7 @@
     <attribute name="score" type="java.lang.Double"/>
     <attribute name="scoreType" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
+    <attribute name="version" type="java.lang.String"/>
     <reference name="sequence" referenced-type="Sequence"/>
     <reference name="chromosome" referenced-type="Chromosome" />
     <reference name="chromosomeLocation" referenced-type="Location" />
