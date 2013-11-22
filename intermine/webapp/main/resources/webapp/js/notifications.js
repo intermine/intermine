@@ -13,6 +13,9 @@
         events: {
             'click a.closer': 'close'
         },
+        initialize: function (options) {
+          this.options = (options || {});
+        },
         title: 'Success:',
         close: function() {
             var self = this;
@@ -52,6 +55,7 @@
         new Notification({message: message}).render();
     }
 
+    var lastError = 0;
     /**
      * Static factory method for handling errors.
      * In addition to showing the user a notification, the message
@@ -62,12 +66,17 @@
         if (console) {
             (console.error || console.log).apply(console, arguments);
         }
+        if (error && error.status === 0) return; // Aborted.
+        var now = new Date().getTime();
+        var sinceLast = now - lastError;
+        lastError = now;
+        if (sinceLast < 1000) return; // Too many
         if (error == null) {
             error = "Unknown error";
         }
-        new FailureNotification({message: error}).render();
+        new FailureNotification({message: error, autoRemove: true}).render();
     };
-	
+
 	this.Notification = Notification;
 	this.FailureNotification = FailureNotification;
 	
