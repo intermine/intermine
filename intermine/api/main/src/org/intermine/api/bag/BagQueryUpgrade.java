@@ -1,5 +1,4 @@
-package org.intermine.web.logic.bag;
-
+package org.intermine.api.bag;
 /*
  * Copyright (C) 2002-2010 FlyMine
  *
@@ -29,6 +28,10 @@ public class BagQueryUpgrade
     public BagQueryUpgrade(BagQueryRunner bagQueryRunner, InterMineBag bag) {
         this.bagQueryRunner = bagQueryRunner;
         this.bag = bag;
+    }
+
+    public String getType() {
+        return bag.getType();
     }
 
     public BagQueryResult getBagQueryResult() {
@@ -69,7 +72,7 @@ public class BagQueryUpgrade
             LOG.warn("The type " + bag.getType() + "isn't in the model."
                      + "Impossible upgrade the bag list " + bag.getTitle(), cnfe);
         } catch (InterMineException ie) {
-            LOG.warn("Impossible upgrade the bags list " + bag.getTitle(), ie);
+            LOG.warn("Cannot upgrade the list " + bag.getTitle(), ie);
         }
         LOG.warn("before returning bagQueryResult: " + bag.getName()); 
         return bagQueryResult;

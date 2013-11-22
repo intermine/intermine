@@ -55,13 +55,4 @@ public class ListCreationInput extends ListInput
         };
     }
 
-    @Override
-    protected void validateRequiredParams() {
-        if (getType() == null) {
-            throw new BadRequestException("Required parameter '" + TYPE_PARAMETER
-                + "' is missing");
-        }
-        super.validateRequiredParams();
-    }
-
 }

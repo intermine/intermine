@@ -61,7 +61,6 @@ public class NcbiSummariesConverter extends BioFileConverter
             try {
                 String entrez = line[0];
                 String description = line[1];
-                LOG.error("description " + count++ + " " + description);
                 if (!StringUtils.isBlank(description)) {
                     Item gene = createItem("Gene");
                     if (resolveGene(entrez) == null) {

@@ -149,12 +149,16 @@ public class ListUploadService extends ListMakerService
     }
 
     @Override
-    protected void makeList(final ListInput listInput, final String type, final Profile profile,
-        final Set<String> temporaryBagNamesAccumulator) throws Exception {
+    protected void makeList(
+            final ListInput listInput,
+            final String type,
+            final Profile profile,
+            final Set<String> temporaryBagNamesAccumulator) throws Exception {
 
         if (StringUtils.isBlank(type)) {
             throw new BadRequestException("No list type provided");
         }
+
         ListCreationInput input = (ListCreationInput) listInput;
 
         if (input.doReplace()) {
