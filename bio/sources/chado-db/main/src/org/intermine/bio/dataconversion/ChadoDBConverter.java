@@ -44,6 +44,8 @@ public class ChadoDBConverter extends BioDBConverter
     private String processors = "";
 
     private final Set<OrganismData> organismsToProcess = new HashSet<OrganismData>();
+    private String sequenceFeatureVersion;
+    private String dbxrefId;
 
     private final OrganismRepository organismRepository;
 
@@ -96,6 +98,18 @@ public class ChadoDBConverter extends BioDBConverter
         }
     }
 
+    public void setVersion(String version) {
+      sequenceFeatureVersion = version;
+  }
+    public String getVersion() {
+      return sequenceFeatureVersion;
+    }
+    public void setDbxrefId(String dbxref) {
+      dbxrefId = dbxref;
+  }
+    public String getDbxrefId() {
+      return dbxrefId;
+    }
     /**
      * Set the class names of the ChadoProcessors to run.
      * @param processors a space separated list of the fully-qualified class names of module
