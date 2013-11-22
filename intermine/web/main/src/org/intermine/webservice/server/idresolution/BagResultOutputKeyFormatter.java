@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.ConvertedObjectPair;
+import org.intermine.api.idresolution.Job;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -40,7 +41,8 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter {
      * @see org.intermine.webservice.server.idresolution.BagResultFormatter#format(org.intermine.api.bag.BagQueryResult)
      */
     @Override
-    public Map<String, Object> format(BagQueryResult bqr) {
+    public Map<String, Object> format(Job job) {
+        final BagQueryResult bqr = job.getResult();
         final Map<String, Object> ret = new HashMap<String, Object>();
         
         doMatches(ret, bqr);

@@ -1,16 +1,21 @@
 package org.intermine.webservice.server.idresolution;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryResult.IssueResult;
 import org.intermine.api.bag.ConvertedObjectPair;
+import org.intermine.api.idresolution.Job;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -39,16 +44,65 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
     }
 
     @Override
-    public Map<String, Object> format(BagQueryResult bqr) {
+    public Map<String, Object> format(Job job) {
+        final BagQueryResult bqr = job.getResult();
+        final String type = job.getType();
         final Map<String, Object> ret = new HashMap<String, Object>();
 
+        ret.put("matches", getMatchInfo(bqr));
+        ret.put("unresolved", bqr.getUnresolvedIdentifiers());
+        ret.put("stats", getStats(bqr));
+        ret.put("type", type);
+
+        return ret;
+    }
+
+
+    private Map<String, Object> getMatchInfo(BagQueryResult bqr) {
+        final Map<String, Object> ret = new HashMap<String, Object>();
         ret.put("MATCH", getMatches(bqr));
         for (String issue: ISSUES) {
             ret.put(issue, getIssues(issue, bqr));
         }
-        ret.put("UNRESOLVED", new ArrayList<String>(bqr.getUnresolvedIdentifiers()));
-
         return ret;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Map<String, Map<String, Integer>> getStats(BagQueryResult bqr) {
+        Map<String, Map<String, Integer>> stats = new HashMap<String, Map<String, Integer>>();
+        Map<String, Integer> objectStats = new HashMap<String, Integer>();
+        Map<String, Integer> termStats = new HashMap<String, Integer>();
+        Set<String> goodMatchTerms = new HashSet<String>();
+        Set<String> issueMatchTerms = new HashSet<String>();
+        Set<Integer> matchedObjects = bqr.getMatches().keySet();
+        Set<Integer> allMatchedObjects = bqr.getMatchAndIssueIds();
+
+        // Do any processing that needs doing here.
+        for (List inputTerms: bqr.getMatches().values()) {
+            goodMatchTerms.addAll((Collection<? extends String>) inputTerms);
+        }
+        for (String issue: ISSUES) {
+            for (IssueResult ir: bqr.getIssueResults(issue)) {
+                issueMatchTerms.add(ir.inputIdent);
+            }
+        }
+
+        int notFound = bqr.getUnresolvedIdentifiers().size();
+        termStats.put("matches", goodMatchTerms.size());
+        termStats.put("issues", issueMatchTerms.size());
+        goodMatchTerms.addAll(issueMatchTerms); // Mutation - beware!!
+        termStats.put("all", notFound + goodMatchTerms.size());
+        termStats.put("notFound", notFound);
+
+        objectStats.put("matches", matchedObjects.size());
+        objectStats.put("all", allMatchedObjects.size());
+        allMatchedObjects.removeAll(matchedObjects);  // Mutation - beware!!
+        objectStats.put("issues", allMatchedObjects.size());
+
+        stats.put("objects", objectStats);
+        stats.put("identifiers", termStats);
+
+        return stats;
     }
 
     private List<Map<String, Object>> getIssues(String issueType, BagQueryResult bqr) {

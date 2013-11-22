@@ -11,6 +11,7 @@ package org.intermine.api.bag;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -106,7 +107,7 @@ public class BagQueryRunner
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws InterMineException if there is any other exception
      */
-    public BagQueryResult search(String type, List<String> input, String extraFieldValue,
+    public BagQueryResult search(String type, Collection<String> input, String extraFieldValue,
             boolean doWildcards, boolean caseSensitive)
         throws ClassNotFoundException, InterMineException {
 

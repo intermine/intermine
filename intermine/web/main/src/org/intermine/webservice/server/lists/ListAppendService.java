@@ -31,8 +31,11 @@ public class ListAppendService extends ListUploadService {
     }
 
     @Override
-    protected void makeList(ListInput listInput, String type, Profile profile, Set<String> rubbishbin)
-        throws Exception {
+    protected void makeList(
+            ListInput listInput,
+            String type,
+            Profile profile,
+            Set<String> rubbishbin) throws Exception {
 
         BufferedReader r = getReader(request);
 
