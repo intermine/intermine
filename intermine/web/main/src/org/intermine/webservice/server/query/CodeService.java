@@ -88,7 +88,7 @@ public class CodeService extends AbstractQueryService
         } else if ("python".equals(lang) || "py".equals(lang)) {
             return ".py" + extension;
         } else if ("javascript".equals(lang) || "js".equals(lang)) {
-            return ".js" + extension;
+            return ".html" + extension;
         } else if ("ruby".equals(lang) || "rb".equals(lang)) {
             return ".rb" + extension;
         } else {
@@ -99,15 +99,16 @@ public class CodeService extends AbstractQueryService
     private WebserviceCodeGenerator getCodeGenerator(String lang) {
         lang = StringUtils.lowerCase(lang);
 
-        if ("perl".equals(lang) || "pl".equals(lang)) {
-            return new WebservicePerlCodeGenerator();
+        // Ordered by expected popularity.
+        if ("js".equals(lang) || "javascript".equals(lang)) {
+            return new WebserviceJavaScriptCodeGenerator();
+        } else if ("py".equals(lang) || "python".equals(lang)) {
+            return new WebservicePythonCodeGenerator();
         } else if ("java".equals(lang)) {
             return new WebserviceJavaCodeGenerator();
-        } else if ("python".equals(lang) || "py".equals(lang)) {
-            return new WebservicePythonCodeGenerator();
-        } else if ("javascript".equals(lang) || "js".equals(lang)) {
-            return new WebserviceJavaScriptCodeGenerator();
-        } else if ("ruby".equals(lang) || "rb".equals(lang)) {
+        } else if ("pl".equals(lang) || "perl".equals(lang)) {
+            return new WebservicePerlCodeGenerator();
+        } else if ("rb".equals(lang) || "ruby".equals(lang)) {
             return new WebserviceRubyCodeGenerator();
         } else {
             throw new BadRequestException("Unknown code generation language: " + lang);
@@ -118,7 +119,6 @@ public class CodeService extends AbstractQueryService
     protected void execute() {
 
         Profile profile = getPermission().getProfile();
-        response.setHeader("Content-Disposition", "attachment");
 
         // Ref to OrthologueLinkController and OrthologueLinkManager
         String serviceBaseURL = new URLGenerator(request).getPermanentBaseURL();
@@ -129,6 +129,10 @@ public class CodeService extends AbstractQueryService
 
         String lang = request.getParameter("lang");
         PathQuery pq = getPathQuery();
+        String name = pq.getTitle() != null ? pq.getTitle() : "query";
+        String fileName = name.replaceAll("[^a-zA-Z0-9_,.()-]", "_") + getExtension();
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
         WebserviceCodeGenInfo info = new WebserviceCodeGenInfo(
                         pq,
@@ -136,7 +140,7 @@ public class CodeService extends AbstractQueryService
                         projectTitle,
                         perlWSModuleVer,
                         pathQueryIsPublic(pq, im, profile),
-                        profile.getUsername());
+                        profile);
         info.readWebProperties(webProperties);
         WebserviceCodeGenerator codeGen = getCodeGenerator(lang);
         String sc = codeGen.generate(info);

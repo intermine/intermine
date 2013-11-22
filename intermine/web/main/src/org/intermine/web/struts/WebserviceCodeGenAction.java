@@ -101,7 +101,7 @@ public class WebserviceCodeGenAction extends InterMineAction
                         projectTitle,
                         perlWSModuleVer,
                         templateIsPublic(template, im, profile),
-                        profile.getUsername());
+                        profile);
 
             } else if ("pathQuery".equals(source)) {
                 PathQuery pq = getPathQuery(session);
@@ -111,7 +111,7 @@ public class WebserviceCodeGenAction extends InterMineAction
                         projectTitle,
                         perlWSModuleVer,
                         pathQueryIsPublic(pq, im, profile),
-                        profile.getUsername());
+                        profile);
             }
             WebserviceCodeGenerator codeGen = getCodeGenerator(method);
             String sc = codeGen.generate(info);
@@ -219,7 +219,7 @@ public class WebserviceCodeGenAction extends InterMineAction
      */
     private WebserviceCodeGenInfo getWebserviceCodeGenInfo(PathQuery query,
             String serviceRootURL, String projectTitle, String perlWSModuleVer,
-            boolean isPublic, String user) {
+            boolean isPublic, Profile user) {
 
         WebserviceCodeGenInfo wsCodeGenInfo = new WebserviceCodeGenInfo(query,
                 serviceRootURL, projectTitle, perlWSModuleVer, isPublic, user);
