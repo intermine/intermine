@@ -20,6 +20,7 @@ use constant ORGANISMS => (
     "Saccharomyces_cerevisiae",
     "Bacillus_subtilis_168",
     "Escherichia_coli",
+    "Arabidopsis_thaliana",
 );
 
 sub BUILD {
