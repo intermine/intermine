@@ -43,17 +43,15 @@ p.hl { background:#FFF3D3; font-weight:bold; padding:0 6px; line-height:20px; fl
 div.formik { float:left; }
 div.formik input[type="text"] { background:#FFF3D3; padding:6px; width:360px; }
 
-#chooseName { border:1px solid #E3E3E3; padding:10px; margin-top:20px; }
+#chooseName { padding:10px; margin-top:20px; }
 #chooseName h2 { margin:0 0 10px 0; }
 #chooseName div.formik span { margin-left:10px; }
 
-#additionalMatches.body { border:1px solid #E3E3E3; margin:0 1%; width:98%; margin-top:10px; }
+#additionalMatches.body { margin:0; width:100%; margin-top:10px; }
 #additionalMatches.body h2, #additionalMatches.body p { padding:0 10px; margin:0; }
 
 #additionalMatches div.oneline { margin-top:10px; }
 #additionalMatches div.oneline p { line-height:27px; }
-
-#bagUploadConfirmForm div.body { float:left; }
 
 #sidebar { float:right; width:400px; margin:16px 12px 0 0; }
     #sidebar div.wrap { ; }

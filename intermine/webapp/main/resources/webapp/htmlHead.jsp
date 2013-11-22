@@ -48,8 +48,8 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     jQuery.noConflict();
   </script>
 
-  <%-- this has to live after jQuery.  do not move --%>
-  <c:if test="${pageName != 'report' && pageName != 'mymine' && pageName != 'bagDetails' && pageName != 'results'}">
+  <%-- this (crap, utter crap) has to live after jQuery.  do not move --%>
+  <c:if test="${pageName != 'report' && pageName != 'mymine' && pageName != 'bagDetails' && pageName != 'results' && pageName != 'bagUploadConfirm'}">
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>
