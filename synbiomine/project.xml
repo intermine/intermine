@@ -140,7 +140,7 @@
     </source>
 
     <source name="Bacillus-cereus-ATCC-14579-gff" type="synbio-gff">
-      <property name="gff3.taxonId" value="14579"/>
+      <property name="gff3.taxonId" value="226900"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
       <property name="gff3.dataSourceName" value="NCBI"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
@@ -150,7 +150,7 @@
     </source>
 
     <source name="Bacillus-cereus-ATCC-14579-chromosome-fasta" type="fasta">
-      <property name="fasta.taxonId" value="14579"/>
+      <property name="fasta.taxonId" value="226900"/>
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
       <property name="fasta.dataSourceName" value="GenBank"/>
       <property name="fasta.dataSetTitle" value="Bacillus cereus ATCC 14579 chromosome, complete genome"/>
@@ -162,14 +162,14 @@
     </source>
 
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="224308 511145 634956 198094 83333 592021 198094 568206 14579"/>
+      <property name="uniprot.organisms" value="224308 511145 634956 198094 83333 592021 198094 568206 14579 226900"/>
       <property name="createinterpro" value="true"/>
       <property name="creatego" value="true"/>
       <property name="src.data.dir" location="/micklem/data/ecolimine/uniprot/current"/>
     </source>
    
     <source name="uniprot-fasta" type="fasta" dump="true">
-      <property name="fasta.taxonId" value="224308 511145 634956 198094 83333 592021 198094 568206 14579"/>
+      <property name="fasta.taxonId" value="224308 511145 634956 198094 83333 592021 198094 568206 14579 226900"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
