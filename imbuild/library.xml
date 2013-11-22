@@ -37,7 +37,7 @@
     <property name="javac.debug" value="on"/>
     <property name="javac.debuglevel" value="lines,vars,source"/>
     <property name="build.classes.excludes" value="**/*.java"/>
-    <property name="javac.compilerargs" value=""/>
+    <property name="javac.compilerargs" value="-encoding UTF8"/>
     <property name="generating.code" value="false"/>
     <!-- Packaging settings -->
     <property name="dist.jar" location="${dist.dir}/${ant.project.name}.jar"/>
