@@ -39,6 +39,7 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import java.util.regex.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1042,7 +1043,7 @@ public final class KeywordSearch
                                         || "on".equals(value.toLowerCase());
                     }
 
-                    tempDirectory = properties.getProperty("index.temp.directory", "");
+                    tempDirectory = resolveEnvironmentVariable(properties.getProperty("index.temp.directory", ""));
                 }
             } catch (IOException e) {
                 LOG.error("keyword_search.properties: errow while loading file '" + configFileName
@@ -1911,5 +1912,15 @@ public final class KeywordSearch
 
             index = null;
         }
+    }
+    private static String resolveEnvironmentVariable(String inString) {
+      String outString= new String(inString);
+      Pattern environmentPattern = Pattern.compile("\\$\\{(\\W+)\\}");
+      Matcher m = environmentPattern.matcher(inString);
+      while(m.find()) {
+        String value = System.getenv(m.group(1));
+        outString.replace(m.group(0), value);
+      }
+      return outString;
     }
 }
