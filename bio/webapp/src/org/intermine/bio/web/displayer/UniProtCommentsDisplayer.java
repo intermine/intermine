@@ -28,6 +28,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Protein;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -84,7 +85,12 @@ public class UniProtCommentsDisplayer extends ReportDisplayer
 
             Profile profile = SessionMethods.getProfile(session);
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-            ExportResultsIterator values = executor.execute(query);
+            ExportResultsIterator values;
+            try {
+                values = executor.execute(query);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
 
             result.put("gene", geneComments2(values));
 
@@ -97,7 +103,12 @@ public class UniProtCommentsDisplayer extends ReportDisplayer
 
             Profile profile = SessionMethods.getProfile(session);
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-            ExportResultsIterator values = executor.execute(query);
+            ExportResultsIterator values;
+            try {
+                values = executor.execute(query);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
 
             result.put("protein", proteinComments2(values));
 

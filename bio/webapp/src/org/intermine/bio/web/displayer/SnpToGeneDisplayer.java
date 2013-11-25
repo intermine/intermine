@@ -25,6 +25,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.SequenceFeature;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -63,7 +64,12 @@ public class SnpToGeneDisplayer extends ReportDisplayer
 
         Profile profile = SessionMethods.getProfile(session);
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
 
         ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
         int size = 0; String lastID = "";

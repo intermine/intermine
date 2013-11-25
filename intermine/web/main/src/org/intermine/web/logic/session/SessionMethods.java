@@ -521,7 +521,11 @@ public final class SessionMethods
                         Action action = new Action() {
                             @Override
                             public void process() {
-                                pqe.execute(pathQuery);
+                                try {
+                                    pqe.execute(pathQuery);
+                                } catch (ObjectStoreException e) {
+                                    throw new RuntimeException("Error running query.", e);
+                                }
                             }
                         };
                         CompletionCallBack completionCallBack = new CompletionCallBack() {

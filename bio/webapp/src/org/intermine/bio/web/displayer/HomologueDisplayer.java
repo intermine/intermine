@@ -28,6 +28,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
@@ -87,7 +88,12 @@ public class HomologueDisplayer extends ReportDisplayer
         PathQuery q = getQuery(im, gene.getId(), dataSets);
         Profile profile = SessionMethods.getProfile(request.getSession());
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator it = executor.execute(q);
+        ExportResultsIterator it;
+        try {
+            it = executor.execute(q);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             Organism organism = (Organism) row.get(0).getObject();
