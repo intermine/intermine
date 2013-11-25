@@ -32,6 +32,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.Gene;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -140,7 +141,12 @@ public class MinePathwaysDisplayer extends ReportDisplayer
         if (!q.isValid()) {
             return Collections.emptyMap();
         }
-        ExportResultsIterator it = executor.execute(q);
+        ExportResultsIterator it;
+        try {
+            it = executor.execute(q);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String identifier = (String) row.get(0).getField();

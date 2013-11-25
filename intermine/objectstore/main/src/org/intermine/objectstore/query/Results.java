@@ -229,7 +229,6 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
             e2.initCause(e);
             throw e2;
         } catch (ObjectStoreException e) {
-            //LOG.debug("get - " + e);
             throw new RuntimeException("ObjectStore error has occurred (in get)", e);
         }
         return resultList.get(0);
