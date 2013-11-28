@@ -36,6 +36,21 @@ public final class Constraints
     }
 
     /**
+     * Creates a constraint for a path to be exactly equal to a value.
+     *
+     * This does not provide any benefit for numbers, but strings are always lower-cased for
+     * equality comparison - this operator means that the user wants to perform strict equals
+     * comparison.
+     *
+     * @param path the path to apply the constraint to
+     * @param value the value to constrain to
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute equalsExactly(String path, String value) {
+        return new PathConstraintAttribute(path, ConstraintOp.EXACT_MATCH, value);
+    }
+
+    /**
      * Creates a constraint for a path to be not equal to a value.
      *
      * @param path the path to apply the constraint to
