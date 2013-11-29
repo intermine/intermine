@@ -45,7 +45,7 @@ public final class FriendlyMineQueryRunner
     private static final String RELEASE_VERSION_URL = "/version/release";
     private static final boolean DEBUG = false;
     private static final int CONNECT_TIMEOUT = 20000; // 20 seconds
-    
+
     private FriendlyMineQueryRunner() {
         // don't
     }
@@ -124,7 +124,7 @@ public final class FriendlyMineQueryRunner
             BufferedReader reader = runWebServiceQuery(url);
             final String msg = "Unable to retrieve release version for " + mine.getName();
             String newReleaseVersion = null;
-            
+
             if (reader != null) {
                 try {
                     newReleaseVersion = IOUtils.toString(reader);
@@ -188,7 +188,8 @@ public final class FriendlyMineQueryRunner
                 wr.write(queryString);
                 wr.flush();
                 reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                LOG.info("FriendlyMine URL (POST) " + urlString);
+                LOG.info("FriendlyMine URL (POST) " +
+                urlString.substring(0, Math.min(urlString.length()-1, 500)));
             }
             return reader;
         } catch (Exception e) {
