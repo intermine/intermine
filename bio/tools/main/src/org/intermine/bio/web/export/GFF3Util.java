@@ -102,7 +102,7 @@ public final class GFF3Util
                         break;
                     } else {
                         type = className;
-                        LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
+                        LOG.debug("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
                                  + className);
                     }
 
