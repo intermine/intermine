@@ -84,8 +84,8 @@ iframe { border:0; width: 100%; }
             "<!doctype html>",
             "<html>",
             "<head>",
-              "<link  href='" + cdn + "/js/intermine/apps-c/component-400/0.4.0/app.bundle.css' medial='all' rel='stylesheet' type='text/css'/>",
-              "<script src='" + cdn + "/js/intermine/apps-c/component-400/0.4.0/app.bundle.js'><\/script>",
+              "<link  href='" + cdn + "/js/intermine/apps-c/component-400/0.4.3/app.bundle.css' medial='all' rel='stylesheet' type='text/css'/>",
+              "<script src='" + cdn + "/js/intermine/apps-c/component-400/0.4.3/app.bundle.js'><\/script>",
               "<script src='" + cdn + "/js/intermine/pomme.js/0.2.5/app.js'><\/script>",
             "</head>",
             "<body>",
@@ -126,7 +126,8 @@ iframe { border:0; width: 100%; }
     (new intermine.IDResolutionJob("${jobUid}", new intermine.Service({
       "root": root,
       "token": "${PROFILE.dayToken}",
-      "help": "${WEB_PROPERTIES['feedback.destination']}"
+      "help": "${WEB_PROPERTIES['feedback.destination']}",
+      "errorHandler": onError
     }))).poll().then(function(results) {
       // No results?
       if (!results.stats.objects.all) {
@@ -138,6 +139,8 @@ iframe { border:0; width: 100%; }
         jQuery('#list-progress div:last-child span').css('text-decoration', 'line-through');
         return;
       }
+
+      // console.log(JSON.stringify(results, null, 4));
 
       // Show the title.
       jQuery('h1.title').text('Before we show you the results ...');
