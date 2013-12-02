@@ -123,6 +123,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final MethodNameMap methodNames = new MethodNameMap() {
         private static final long serialVersionUID = -2113407677691787960L;
         {
+            put(ConstraintOp.EXACT_MATCH, "equalsExactly");
             put(ConstraintOp.EQUALS, "eq");
             put(ConstraintOp.NOT_EQUALS, "neq");
             put(ConstraintOp.MATCHES, "like");

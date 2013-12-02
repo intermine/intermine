@@ -1802,7 +1802,11 @@
       </init-param>
       <init-param>
         <param-name>Access-Control-Allow-Headers</param-name>
-        <param-value>Origin, X-Requested-With, Content-Type, Accept, Authorization</param-value>
+        <param-value>Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, Content-Range</param-value>
+    </init-param>
+      <init-param>
+        <param-name>Access-Control-Expose-Headers</param-name>
+        <param-value>Content-Type, Content-Length, Content-Range</param-value>
     </init-param>
     <init-param>
         <param-name>Access-Control-Allow-Methods</param-name>
