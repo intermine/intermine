@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
@@ -44,16 +45,20 @@ import org.json.JSONObject;
 public class NewUserService extends JSONService
 {
 
-    private static final Logger LOG = Logger.getLogger(NewUserService.class);
+
+	private static final Logger LOG = Logger.getLogger(NewUserService.class);
     private int maxNewUsersPerAddressPerHour = 1000;
+	private ArrayBlockingQueue<MailAction> mailQueue;
     private static RateLimitHistory requestHistory = null;
 
     /**
      * Constructor.
      * @param im The InterMine API object.
+     * @param mailQueue 
      */
-    public NewUserService(InterMineAPI im) {
+    public NewUserService(InterMineAPI im, ArrayBlockingQueue<MailAction> mailQueue) {
         super(im);
+        this.mailQueue = mailQueue;
         if (requestHistory == null) {
             Properties webProperties = InterMineContext.getWebProperties();
             String rateLimit = webProperties.getProperty("webservice.newuser.ratelimit");
@@ -67,6 +72,7 @@ public class NewUserService extends JSONService
             }
             requestHistory = new RateLimitHistory((60 * 60), maxNewUsersPerAddressPerHour);
         }
+        
     }
 
     @Override
@@ -90,19 +96,22 @@ public class NewUserService extends JSONService
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
         
-        Emailer emailer = InterMineContext.getEmailer();
-
-        try {
-            emailer.welcome(input.getUsername());
-            String mailingList = null;
-            if (input.subscribeToList()) {
-            	mailingList = emailer.subscribeToList(input.getUsername());
-            }
-            user.put("subscribedToList", mailingList != null);
-            user.put("mailingList", mailingList);
-        } catch (Exception e) {
-            LOG.error("Failed to send confirmation email", e);
+        MailAction welcomeMessage = new MailAction(MailAction.Message.WELCOME, input.getUsername());
+        if (!mailQueue.offer(welcomeMessage)) {
+        	LOG.error("Mail queue capacity exceeded. Not sending welcome message");
         }
+
+        String mailingList = null;
+        if (input.subscribeToList()) {
+        	mailingList = getProperty("mail.mailing-list");
+        	MailAction subscribe = new MailAction(MailAction.Message.SUBSCRIBE, input.getUsername());
+        	if (!mailQueue.offer(subscribe)) {
+            	LOG.error("Mail queue capacity exceeded. Not sending subscription message");
+            }
+        }
+        user.put("subscribedToList", mailingList != null);
+        user.put("mailingList", mailingList);
+        
         Profile p = pm.getProfile(input.getUsername());
         if (p == null) {
             throw new InternalErrorException("Creating profile failed");

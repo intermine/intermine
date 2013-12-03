@@ -10,6 +10,13 @@ package org.intermine.webservice.server.user;
  *
  */
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
+import javax.servlet.ServletConfig;
+
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
@@ -24,11 +31,47 @@ public class NewUserServlet extends WebServiceServlet
 
     private static final long serialVersionUID = 2247791931782821682L;
 
+    private ExecutorService mailService = null;
+	private ArrayBlockingQueue<MailAction> mailQueue = null;
+
+    @Override
+	public void init(ServletConfig config) {
+    	mailQueue = new java.util.concurrent.ArrayBlockingQueue<MailAction>(10000);
+    	mailService = Executors.newCachedThreadPool(new DaemonThreadFactory());
+    	startMailerThreads();
+    }
+
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case POST: return new NewUserService(api);
+            case POST: return new NewUserService(api, mailQueue);
             default: throw new NoServiceException();
         }
     }
+    
+    @Override
+    public void destroy() {
+    	int leftToSend = mailQueue.size();
+    	for (int i = 0; i < leftToSend; i++) {
+    		Runnable r = new MailDaemon(mailQueue);
+    		mailService.submit(r);
+    	}
+    	mailService.shutdown();
+    }
+    
+    private void startMailerThreads() {    	
+    	for (int i = 0; i < 10; i++) {
+    		Runnable r = new MailDaemon(mailQueue);
+    		mailService.submit(r);
+    	}
+    }
+    
+    class DaemonThreadFactory implements ThreadFactory {
+	  public Thread newThread(Runnable r) {
+	    Thread t = new Thread(r);
+	    t.setDaemon(true);
+	    return t;
+	  }
+    }
+
 }
