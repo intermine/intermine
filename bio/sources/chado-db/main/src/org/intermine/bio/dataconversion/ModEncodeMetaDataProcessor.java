@@ -1460,7 +1460,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 if (!res.isFirst()) {
                     submissionEFMap.put(prevSub, ef);
                     LOG.info("EF MAP: " + dccIdMap.get(prevSub) + "|" + ef.efNames);
-                    LOG.info("EF MAP types: " + rank + "|" + ef.efTypes);
+                    LOG.debug("EF MAP types: " + rank + "|" + ef.efTypes);
                 }
                 ef = new ExperimentalFactor();
             }
@@ -2338,7 +2338,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             SubmissionReference subRef =
                     new SubmissionReference(referencedSubId, wikiPageUrl);
             Util.addToListMap(submissionRefs, submissionId, subRef);
-            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
+            LOG.debug("Submission " + dccId + " (" + submissionId + ") has reference to "
                     + attValue + " (" + referencedSubId + ")");
         } else {
             LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
@@ -2610,7 +2610,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private String checkWikiType (String type, String wikiLink, Integer subId) {
         // for devstages and strain check the type on the wikilink and use it if different
         // from the declared one.
-        LOG.info("WIKILINK: " + wikiLink + " -- type: " + type);
+        LOG.debug("WIKILINK: " + wikiLink + " -- type: " + type);
         if (wikiLink != null && wikiLink.contains(":")) {
             String wikiType = wikiLink.substring(0, wikiLink.indexOf(':'));
             if (type.equals(STRAIN) || type.equals(DEVSTAGE)) {
@@ -3886,7 +3886,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer thisSubmissionId = subs.next();
             List<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
 
-            LOG.info("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
+            LOG.info("EF REFS subId " + thisSubmissionId + ": " + eFactors);
             Iterator<String> ef = eFactors.iterator();
             ReferenceList collection = new ReferenceList();
             collection.setName("experimentalFactors");
@@ -3896,7 +3896,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.debug("EF REFS: ->" + currentEF + " ref: " + eFactorIdRefMap.get(currentEF));
             }
             if (!collection.equals(null)) {
-                LOG.info("EF REFS: ->" + thisSubmissionId + "|"
+                LOG.debug("EF REFS: ->" + thisSubmissionId + "|"
                         + submissionMap.get(thisSubmissionId).interMineObjectId);
                 getChadoDBConverter().store(collection,
                         submissionMap.get(thisSubmissionId).interMineObjectId);
