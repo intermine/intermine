@@ -7,6 +7,10 @@
 
   <sources>
 
+    <source name="ensembl" type="ensembl-core">
+      <property name="src.data.dir" location="/micklem/data/ecolimine/ensembl/current"/>
+    </source>
+
     <source name="bacillus-gff" type="synbio-gff">
       <property name="gff3.taxonId" value="224308"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
@@ -244,6 +248,8 @@
   <post-processing>
     <post-process name="create-references"/>
     <post-process name="transfer-sequences" dump="true"/>
+    <post-process name="create-intergenic-region-features"/>
+    <post-process name="create-gene-flanking-features"/>
     <post-process name="do-sources"/>
     <post-process name="summarise-objectstore"/>
     <post-process name="create-autocomplete-index"/>
