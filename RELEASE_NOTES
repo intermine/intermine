@@ -11,6 +11,8 @@
 1.2.3
 
 #451 - Template more results & browser autocomplete fix.
+#355 - Being able to hide fields from QueryBuilder.
+#400 - Better UI for list upload resolve identifiers step.
 
 1.2.2 (7 August 2013)
 
