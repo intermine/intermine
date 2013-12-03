@@ -6,11 +6,11 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
 
   <sources>
-
+<!--
     <source name="ensembl" type="ensembl-core">
       <property name="src.data.dir" location="/micklem/data/ecolimine/ensembl/current"/>
     </source>
-
+-->
     <source name="bacillus-gff" type="synbio-gff">
       <property name="gff3.taxonId" value="224308"/>
       <property name="gff3.seqDataSourceName" value="NCBI"/>
