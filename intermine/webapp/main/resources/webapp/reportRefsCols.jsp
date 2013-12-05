@@ -76,24 +76,26 @@
           </c:choose>
           <script type="text/javascript">
             trimTable('#coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner');
-            $(function(){
-                if(${useLocalStorage} && typeof(Storage)!=="undefined"){
-                 if(localStorage.${innerDivName}==undefined || localStorage.${innerDivName} == "hide"){
-                   $('#${innerDivName}').hide();
-                   localStorage.${innerDivName}="hide";
-                 }
-              }
-              $('#${divName}_h3').click(function(e){
-               $('#${innerDivName}').slideToggle('fast');
-               if(${useLocalStorage} && typeof(Storage)!=="undefined"){
-                 if(localStorage.${innerDivName}=="hide"){
-                     localStorage.${innerDivName}="show";
-                 }else{
+            (function($) {
+              $(function(){
+                  if(${useLocalStorage} && typeof(Storage)!=="undefined"){
+                   if(localStorage.${innerDivName}==undefined || localStorage.${innerDivName} == "hide"){
+                     $('#${innerDivName}').hide();
                      localStorage.${innerDivName}="hide";
+                   }
+                }
+                $('#${divName}_h3').click(function(e){
+                 $('#${innerDivName}').slideToggle('fast');
+                 if(${useLocalStorage} && typeof(Storage)!=="undefined"){
+                   if(localStorage.${innerDivName}=="hide"){
+                       localStorage.${innerDivName}="show";
+                   }else{
+                       localStorage.${innerDivName}="hide";
+                   }
                  }
-               }
-               });
-            });
+                 });
+              });
+            })(window.jQuery);
           </script>
           </div>
           <c:choose>
