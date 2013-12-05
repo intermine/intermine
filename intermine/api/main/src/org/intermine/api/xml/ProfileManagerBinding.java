@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.api.xml;
 
 /*
  * Copyright (C) 2002-2013 FlyMine
