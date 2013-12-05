@@ -1749,6 +1749,35 @@
     <url-pattern>/service/jbrowse/*</url-pattern>
    </servlet-mapping>
    
+   <!--  New in version 16 -->
+   
+   <servlet>
+     <servlet-name>ws-deregistration-token</servlet-name>
+     <servlet-class>org.intermine.webservice.server.user.DeregistrationTokenServlet</servlet-class>
+   </servlet>
+   
+   <servlet-mapping>
+    <servlet-name>ws-deregistration-token</servlet-name>
+    <url-pattern>/service/user/deregistration/*</url-pattern>
+   </servlet-mapping>
+
+   <servlet>
+     <servlet-name>ws-user</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.user.WhoAmIService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>DELETE</param-name>
+         <param-value>org.intermine.webservice.server.user.DeregistrationService</param-value>
+     </init-param>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-user</servlet-name>
+     <url-pattern>/service/user</url-pattern>
+   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>

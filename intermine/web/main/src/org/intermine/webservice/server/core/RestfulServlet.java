@@ -64,5 +64,4 @@ public class RestfulServlet extends WebServiceServlet {
         }
         throw new NoServiceException();
     }
-
 }
