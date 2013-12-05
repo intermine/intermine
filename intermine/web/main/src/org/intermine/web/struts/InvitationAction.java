@@ -20,6 +20,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.UserAlreadyShareBagException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.context.MailAction;
 import org.intermine.web.logic.session.SessionMethods;
 
 public class InvitationAction extends InterMineAction {
@@ -36,7 +37,6 @@ public class InvitationAction extends InterMineAction {
         ProfileManager pm = api.getProfileManager();
         Profile p = SessionMethods.getProfile(request.getSession());
         Properties props = SessionMethods.getWebProperties(request);
-        Emailer emailer = InterMineContext.getEmailer();
 
         if (!p.isLoggedIn()) {
             ActionMessage message = new ActionMessage("invitation-errors.mustlogin");
@@ -51,14 +51,9 @@ public class InvitationAction extends InterMineAction {
         try {
             invite = SharingInvite.getByToken(api, inviteForm.getInvite());
             sbm.acceptInvitation(invite, p);
-            emailer.email(
-                pm.getProfileUserName(invite.getBag().getProfileId()), "was-accepted",
-                invite.getCreatedAt(), invite.getInvitee(), invite.getBag().getName(), p.getUsername(),
-                props.getProperty("project.title"));
-            return forwardToBagDetails(mapping, invite);
-        } catch (MessagingException e) {
-            LOG.warn("Failed to email the owner of the list", e); // The logged in user doesn't need to know.
-            return forwardToBagDetails(mapping, invite);
+            notifyInvitee(pm, invite, p, props);
+
+            return forwardToBagDetails(mapping, invite); 
         } catch (UserAlreadyShareBagException e) {
             sendErrorMsg(request, e, "invitation-errors.alreadyshared", new Object[]{});
             return forwardToBagDetails(mapping, invite);
@@ -68,6 +63,28 @@ public class InvitationAction extends InterMineAction {
             sendErrorMsg(request, e, "invitation-errors.couldntretrieve", new Object[]{});
         }
         return mapping.findForward("mymine");
+    }
+
+    private void notifyInvitee(
+            final ProfileManager pm, final SharingInvite invite,
+            final Profile accepter, final Properties props) {
+        MailAction action = new MailAction() {
+            @Override
+            public void act(Emailer emailer) throws Exception {
+                emailer.email(
+                        pm.getProfileUserName(invite.getBag().getProfileId()),
+                        "was-accepted",
+                        invite.getCreatedAt(),
+                        invite.getInvitee(),
+                        invite.getBag().getName(),
+                        accepter.getUsername(),
+                        props.getProperty("project.title"));
+            }
+        };
+        boolean queued = InterMineContext.queueMessage(action);
+        if (!queued) {
+            LOG.warn("Mail queue is full - could not send message");
+        }
     }
 
     private ActionForward forwardToBagDetails(ActionMapping mapping,

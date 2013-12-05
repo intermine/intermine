@@ -25,11 +25,11 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Exports templates to XML.
