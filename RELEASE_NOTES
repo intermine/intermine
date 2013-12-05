@@ -10,6 +10,8 @@
 
 1.2.3
 
+#483 - window.jQuery != $
+#479 - Moved new build of list widgets to InterMine.
 #451 - Template more results & browser autocomplete fix.
 #355 - Being able to hide fields from QueryBuilder.
 #400 - Better UI for list upload resolve identifiers step.
