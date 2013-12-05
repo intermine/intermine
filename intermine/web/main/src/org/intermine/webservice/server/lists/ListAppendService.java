@@ -37,8 +37,6 @@ public class ListAppendService extends ListUploadService {
             Profile profile,
             Set<String> rubbishbin) throws Exception {
 
-        BufferedReader r = getReader(request);
-
         Set<String> ids = new LinkedHashSet<String>();
         Set<String> unmatchedIds = new HashSet<String>();
 
