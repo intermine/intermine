@@ -12,13 +12,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.MockHttpRequest;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
-import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
+import org.intermine.web.logic.template.Templates.TemplateValueParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -111,7 +112,7 @@ public class TemplateHelperTest {
     public void parseSingleConstraintTemplateParameters() throws TemplateValueParseException {
 
         HttpServletRequest one = new MockHttpRequest("GET", emptyHeaders, oneConstraint);
-        Map<String, List<ConstraintInput>> ret = TemplateHelper.parseConstraints(one);
+        Map<String, List<ConstraintInput>> ret = Templates.parseConstraints(one);
         assertEquals("I expect just one pair from this map", 1, ret.size());
         assertEquals("The key should be the value of constraint1",
                 Collections.singleton(oneConstraint.get("constraint1")[0]),
@@ -124,7 +125,7 @@ public class TemplateHelperTest {
     @Test
     public void parseMultipleConstraintTemplateParameters() throws TemplateValueParseException {
         HttpServletRequest many = new MockHttpRequest("GET", emptyHeaders, severalConstraints);
-        Map<String, List<ConstraintInput>> ret = TemplateHelper.parseConstraints(many);
+        Map<String, List<ConstraintInput>> ret = Templates.parseConstraints(many);
         assertEquals("I expect two pairs from this map", 2, ret.size());
         assertEquals("The key should be the two paths",
                 new HashSet<String>(Arrays.asList("Employee.name", "Employee.department.name")),
@@ -144,7 +145,7 @@ public class TemplateHelperTest {
     public void parseTooManyTemplateParameters() {
         HttpServletRequest toomany = new MockHttpRequest("GET", emptyHeaders, parametersWithTooManyConstraints);
         try {
-            TemplateHelper.parseConstraints(toomany);
+            Templates.parseConstraints(toomany);
         } catch (TemplateValueParseException e) {
             assertTrue("The error message should be informative", e.getMessage().contains("Maximum number"));
         }
@@ -153,7 +154,7 @@ public class TemplateHelperTest {
     @Test
     public void parseMaximumNumberOfConstraints() throws TemplateValueParseException {
         HttpServletRequest lots = new MockHttpRequest("GET", emptyHeaders, parametersWithLotsOfConstraints);
-        Map<String, List<ConstraintInput>> ret = TemplateHelper.parseConstraints(lots);
+        Map<String, List<ConstraintInput>> ret = Templates.parseConstraints(lots);
         assertEquals("There is only one pair", 1, ret.size());
         assertEquals("That pair has all the constraint inputs", PathQuery.MAX_CONSTRAINTS, ret.get("Employee.name").size());
     }
@@ -162,7 +163,7 @@ public class TemplateHelperTest {
     public void parseIncompleteParameters() {
         HttpServletRequest missingparts = new MockHttpRequest("GET", emptyHeaders, incompleteParameters);
         try {
-            TemplateHelper.parseConstraints(missingparts);
+            Templates.parseConstraints(missingparts);
         } catch (TemplateValueParseException e) {
             assertTrue("The error message should be informative", e.getMessage().contains("no path was provided"));
         }

@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.api.xml;
 
 /*
  * Copyright (C) 2002-2013 FlyMine
@@ -29,14 +29,11 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagHandler;
-import org.intermine.api.xml.InterMineBagHandler;
-import org.intermine.api.xml.SavedQueryHandler;
-import org.intermine.api.xml.SharedBagHandler;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryHandler;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

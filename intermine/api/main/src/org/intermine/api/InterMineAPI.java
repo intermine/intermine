@@ -63,6 +63,7 @@ public class InterMineAPI
         new IdentityHashMap<Profile, WebResultsExecutor>();
     private final Map<Profile, PathQueryExecutor> pqeCache =
         new IdentityHashMap<Profile, PathQueryExecutor>();
+    private ObjectStoreWriter userProfile;
 
     /**
      * Protected no-argument constructor only used for building test implementations of this class.
@@ -87,6 +88,7 @@ public class InterMineAPI
             ObjectStoreSummary oss, TrackerDelegate trackerDelegate, LinkRedirectManager
             linkRedirector) {
         this.objectStore = objectStore;
+        this.userProfile = userProfileWriter;
         this.model = objectStore.getModel();
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
@@ -110,6 +112,14 @@ public class InterMineAPI
      */
     public ObjectStore getObjectStore() {
         return objectStore;
+    }
+
+    /**
+     * @return 
+     * @return The ObjectStore that represents a connection to the userprofile store.
+     */
+    public ObjectStoreWriter getUserProfile() {
+        return userProfile;
     }
 
     /**

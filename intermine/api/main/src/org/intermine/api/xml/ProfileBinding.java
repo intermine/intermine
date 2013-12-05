@@ -1,4 +1,4 @@
-package org.intermine.web;
+package org.intermine.api.xml;
 
 /*
  * Copyright (C) 2002-2013 FlyMine
@@ -31,10 +31,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
-import org.intermine.api.xml.InterMineBagBinding;
-import org.intermine.api.xml.SavedQueryBinding;
-import org.intermine.api.xml.SharedBagBinding;
-import org.intermine.api.xml.TagBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;

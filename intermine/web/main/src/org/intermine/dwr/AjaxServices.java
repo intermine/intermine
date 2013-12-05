@@ -94,6 +94,7 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.context.MailAction;
 import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
@@ -1447,11 +1448,10 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         final Profile profile = SessionMethods.getProfile(session);
         final BagManager bagManager = im.getBagManager();
-        final Emailer emailer = InterMineContext.getEmailer();
         final ProfileManager pm = profile.getProfileManager();
 
-        InterMineBag bag = profile.getSavedBags().get(bagName);
-        Profile invitee = pm.getProfile(userName);
+        final InterMineBag bag = profile.getSavedBags().get(bagName);
+        final Profile invitee = pm.getProfile(userName);
         if (bag == null) {
             return "This is not one of your lists";
         }
@@ -1469,12 +1469,14 @@ public class AjaxServices
             return "The user already shares the bag.";
         }
 
-        try {
-            if (!invitee.getPreferences().containsKey(Constants.NO_SPAM)) {
+        boolean queuedMessage = InterMineContext.queueMessage(new MailAction() {
+            @Override
+            public void act(Emailer emailer) throws Exception {
                 emailer.informUserOfNewSharedBag(invitee.getEmailAddress(), profile, bag);
             }
-        } catch (Exception ex) {
-            LOG.warn("Problems sending sharing list mail.", ex);
+        });
+        if (!queuedMessage) {
+            LOG.warn("Message queue full.");
         }
         return "ok";
     }

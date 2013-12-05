@@ -26,9 +26,11 @@ import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
@@ -40,6 +42,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -302,6 +305,55 @@ public class ProfileManager
         Map<String, List<FieldDescriptor>>  classKeys =
             ClassKeyHelper.readKeys(model, classKeyProps);
         return classKeys;
+    }
+
+    /**
+     * Completely remove a profile and all of its associated data from the data-store.
+     * Use with extreme caution.
+     * @param profile The profile to remove.
+     * @throws ObjectStoreException If it cannot be removed.
+     */
+    public void deleteProfile(Profile profile) throws ObjectStoreException {
+        Integer userId = profile.getUserId();
+        removeTokensForProfile(profile);
+        evictFromCache(profile);
+        try {
+            uosw.beginTransaction();
+            UserProfile userProfile = getUserProfile(userId);
+            if (userProfile == null) {
+                throw new ObjectStoreException("User is not in the data store.");
+            }
+            for (org.intermine.model.userprofile.SavedQuery sq : userProfile.getSavedQuerys()) {
+                uosw.delete(sq);
+            }
+
+            for (SavedTemplateQuery st : userProfile.getSavedTemplateQuerys()) {
+                uosw.delete(st);
+            }
+
+            for (SavedBag sb : userProfile.getSavedBags()) {
+                uosw.delete(sb);
+            }
+
+            TagManager tagManager = getTagManager();
+            for (Tag tag : tagManager.getUserTags(userProfile.getUsername())) {
+                tagManager.deleteTag(tag);
+            }
+            SharedBagManager sbm = SharedBagManager.getInstance(this);
+            sbm.removeAllSharesInvolving(userId);
+            sbm.removeAllInvitesBy(userId);
+
+            uosw.delete(userProfile);
+            uosw.commitTransaction();
+        } catch (ObjectStoreException e) {
+            uosw.abortTransaction();
+            throw e;
+        } finally {
+            // Should not happen.
+            if (uosw.isInTransaction()) {
+                uosw.abortTransaction();
+            }
+        }
     }
 
     /**
@@ -602,6 +654,23 @@ public class ProfileManager
         return key;
     }
 
+    public void removeTokensForProfile(Profile profile) {
+        if (profile == null) {
+            throw new NullPointerException("profile should not be null.");
+        }
+        synchronized (limitedAccessTokens) {
+            Set<String> tokens = limitedAccessTokens.keySet();
+            Iterator<String> itr = tokens.iterator();
+            while (itr.hasNext()) {
+                String key = itr.next();
+                LimitedAccessToken token = limitedAccessTokens.get(key);
+                if (profile.equals(token.getProfile())) {
+                    itr.remove();
+                }
+            }
+        }
+    }
+
     /**
      * Return whether the token given in input is suitable for using in the future.
      * @param token the token to verify
@@ -631,7 +700,7 @@ public class ProfileManager
      * @return A token granting read-only access to resources.
      */
     public String generateReadOnlyAccessToken(Profile profile) {
-        return null;
+        throw new NotImplementedException("TODO");
     }
 
     /**
@@ -845,6 +914,10 @@ public class ProfileManager
         public boolean isValid() {
             return System.currentTimeMillis() < expiry.getTime();
         }
+    }
+
+    public void evictFromCache(Profile profile) {
+        profileCache.remove(profile.getUsername());
     }
 
     /**

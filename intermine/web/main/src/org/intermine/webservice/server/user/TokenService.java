@@ -26,6 +26,8 @@ public class TokenService extends JSONService {
         String token = null;
         if ("day".equals(tokenType)) {
             token = pm.generate24hrKey(profile);
+        } else if ("api".equals(token)) {
+            token = pm.generateApiKey(profile);
         } else if ("perma".equals(tokenType)) {
             token = pm.generateReadOnlyAccessToken(profile);
         } else {
