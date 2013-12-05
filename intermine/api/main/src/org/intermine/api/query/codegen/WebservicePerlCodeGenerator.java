@@ -91,9 +91,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         + "#" + ENDL
         + "# For help using these modules, please see these resources:" + ENDL
         + "#" + ENDL
-        + "#  * http://search.cpan.org/perldoc?Webservice::InterMine" + ENDL
+        + "#  * https://metacpan.org/pod/Webservice::InterMine" + ENDL
         + "#       - API reference" + ENDL
-        + "#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook" + ENDL
+        + "#  * https://metacpan.org/pod/Webservice::InterMine::Cookbook" + ENDL
         + "#       - A How-To manual" + ENDL
         + "#  * http://www.intermine.org/wiki/PerlWebServiceAPI" + ENDL
         + "#       - General Usage" + ENDL
@@ -143,16 +143,18 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                                   .append(NO_WARNINGS_UNDEF)
                                   .append(ENDL);
 
+        sb.append("# This code makes use of the Webservice::InterMine library."
+                + ENDL);
         sb.append("# The following import statement sets " + projectTitle + " as your default"
                 + ENDL);
         if (wsCodeGenInfo.isPublic()) {
-            sb.append("use Webservice::InterMine " 
-                    + perlWSModuleVer 
+            sb.append("use Webservice::InterMine" 
+                    + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer)
                     + " '" + serviceBaseURL + "';" + ENDL);
         } else {
             sb.append("# You must also supply your login details here to access this query" + ENDL);
-            sb.append("use Webservice::InterMine " 
-                    + perlWSModuleVer 
+            sb.append("use Webservice::InterMine"
+                    + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer) 
                     + " '" + serviceBaseURL + "', "
                     + "'YOUR-API-TOKEN';" + ENDL);
         }
