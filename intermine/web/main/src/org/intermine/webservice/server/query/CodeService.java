@@ -10,6 +10,12 @@ package org.intermine.webservice.server.query;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +37,14 @@ import org.intermine.api.query.codegen.WebserviceRubyCodeGenerator;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
+import org.json.JSONObject;
 
 /**
  * A service for generating code based on a query.
@@ -46,6 +54,8 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
 public class CodeService extends AbstractQueryService
 {
     protected static final Logger LOG = Logger.getLogger(CodeService.class);
+    private String perlModuleVersion;
+    private static final String PERL_MODULE_URI = "http://api.metacpan.org/v0/module/Webservice::InterMine";
 
     /**
      * Constructor.
@@ -125,8 +135,7 @@ public class CodeService extends AbstractQueryService
         // set in project properties
         String projectTitle = webProperties.getProperty("project.title");
         // set in global.web.properties
-        String perlWSModuleVer = webProperties.getProperty("perl.wsModuleVer");
-
+        String perlWSModuleVer = getPerlModuleVersion();
         String lang = request.getParameter("lang");
         PathQuery pq = getPathQuery();
         String name = pq.getTitle() != null ? pq.getTitle() : "query";
@@ -162,6 +171,43 @@ public class CodeService extends AbstractQueryService
             sc = "\"" + StringEscapeUtils.escapeJava(sc) + "\"";
         }
         output.addResultItem(Arrays.asList(sc));
+    }
+
+    private String getPerlModuleVersion() {
+        if (perlModuleVersion == null) {
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(PERL_MODULE_URI);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("User-Agent", "InterMine-" + Constants.WEB_SERVICE_VERSION);
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode != 200) {
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                StringBuffer body = new StringBuffer();
+                while ((line = reader.readLine()) != null) {
+                    body.append(line);
+                }
+                String json = body.toString();
+                JSONObject data = new JSONObject(json);
+                perlModuleVersion = data.getString("version");
+            } catch (Exception e) {
+                return null;
+            } finally { 
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        // Ignore.
+                    }
+                }
+            }
+        }
+        return perlModuleVersion;
     }
 
     /**
