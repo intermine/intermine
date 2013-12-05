@@ -180,6 +180,7 @@ public class CodeService extends AbstractQueryService
                 URL url = new URL(PERL_MODULE_URI);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
                 conn.setRequestProperty("User-Agent", "InterMine-" + Constants.WEB_SERVICE_VERSION);
 
                 int responseCode = conn.getResponseCode();
