@@ -5,7 +5,6 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
@@ -565,9 +564,13 @@
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
      </source>
-    <source name="panther" type="panther">
-          <property name="src.data.dir" location="/micklem/data/panther/current"/>
-          <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    <source name="homologene" type="homologene">
+          <property name="src.data.dir" location="/micklem/data/homologene/current"/>
+          <property name="homologene.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>
+   <source name="orthodb" type="orthodb" dump="true">
+      <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
+      <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
