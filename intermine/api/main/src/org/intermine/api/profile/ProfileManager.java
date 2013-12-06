@@ -124,6 +124,7 @@ public class ProfileManager
 
     private int loadVersion() {
         int v = 0;
+        int currentVersion = PathQuery.USERPROFILE_VERSION;
         try {
             String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) uosw)
                 .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
@@ -137,10 +138,10 @@ public class ProfileManager
                     throw new IllegalStateException(message);
                 }
             }
-            if ((v < 0) || (v > PathQuery.USERPROFILE_VERSION)) {
+            if ((v < 0) || (v > currentVersion)) {
                 throw new IllegalStateException(message);
             }
-            if (version == 0) {
+            if (v < currentVersion) {
                 // We can upgrade if there is no data that might need updating.
                 Query q = new Query();
                 QueryClass savedQueries = new QueryClass(SavedQuery.class);
@@ -154,8 +155,8 @@ public class ProfileManager
                     // We can safely upgrade the database!
                     MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
                             MetadataManager.PROFILE_FORMAT_VERSION,
-                            "" + PathQuery.USERPROFILE_VERSION);
-                    v = PathQuery.USERPROFILE_VERSION;
+                            "" + currentVersion);
+                    v = currentVersion;
                 }
             }
         } catch (ObjectStoreException e) {
