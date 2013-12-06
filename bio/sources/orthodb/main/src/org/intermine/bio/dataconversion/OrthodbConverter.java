@@ -152,11 +152,16 @@ public class OrthodbConverter extends BioFileConverter
             	String identifier = proteinId;	// protein is default
             	if (config.get(taxonId) != null) {
             		identifier = geneId;            		
-            	}            	
-            	GeneHolder gene = identifierToGene.get(identifier);
+            	}          
+            	String resolvedIdentifier = resolveGene(identifier, taxonId);
+            	if (resolvedIdentifier == null) {
+            		// bad gene, keep going
+            		continue;
+            	}
+            	GeneHolder gene = identifierToGene.get(resolvedIdentifier);
             	if (gene == null) {
-            		gene = new GeneHolder(identifier, taxonId);
-            		identifierToGene.put(identifier, gene);
+            		gene = new GeneHolder(resolvedIdentifier, taxonId);
+            		identifierToGene.put(resolvedIdentifier, gene);
             	}
             	homologues.add(gene);
             }
@@ -291,16 +296,12 @@ public class OrthodbConverter extends BioFileConverter
     	String refId = holder.getRefId();
         if (refId == null) {
         	String taxonId = holder.getTaxonId();
-        	String identifier = resolveGene(holder.getIdentifier(), taxonId);
-        	if (identifier == null) {
-        		return null;
-        	}
         	String identiferType = config.get(taxonId);
         	if (StringUtils.isEmpty(identiferType)) {
         		identiferType = DEFAULT_IDENTIFIER_TYPE;
         	}
             Item gene = createItem("Gene");
-            gene.setAttribute(identiferType, identifier);
+            gene.setAttribute(identiferType, holder.getIdentifier());
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
             holder.setRefId(refId);
