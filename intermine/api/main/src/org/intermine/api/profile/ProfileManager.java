@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.RandomStringUtils;
@@ -44,6 +45,7 @@ import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -88,6 +90,10 @@ public class ProfileManager
 
     private final Map<String, LimitedAccessToken> limitedAccessTokens
         = new HashMap<String, LimitedAccessToken>();
+
+    private final Map<UUID, PermanentToken> permanentTokens
+        = new HashMap<UUID, PermanentToken>();
+
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
@@ -111,39 +117,45 @@ public class ProfileManager
             throw new RuntimeException("Unable to load super user profile", e);
         }
 
+        version = loadVersion();
+
+        permanentTokens.putAll(loadPermanentTokens());
+    }
+
+    private int loadVersion() {
+        int v = 0;
         try {
             String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) uosw)
                 .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
+            String message = "Could not recognise userprofile format version "
+                    + versionString + ", maybe you need to update InterMine";
             LOG.info("Database has userprofile version \"" + versionString + "\"");
-            if (versionString == null) {
-                version = 0;
-            } else {
-                version = Integer.parseInt(versionString);
+            if (versionString != null) {
+                try {
+                    v = Integer.parseInt(versionString);
+                } catch (NumberFormatException e) {
+                    throw new IllegalStateException(message);
+                }
             }
-            if ((version < 0) || (version > PathQuery.USERPROFILE_VERSION)) {
-                throw new IllegalStateException("Could not recognise userprofile format version "
-                        + version + ", maybe you need to update InterMine");
+            if ((v < 0) || (v > PathQuery.USERPROFILE_VERSION)) {
+                throw new IllegalStateException(message);
             }
             if (version == 0) {
-                // Check to see if we can upgrade
+                // We can upgrade if there is no data that might need updating.
                 Query q = new Query();
-                QueryClass qc = new QueryClass(SavedQuery.class);
-                q.addFrom(qc);
-                q.addToSelect(qc);
+                QueryClass savedQueries = new QueryClass(SavedQuery.class);
+                QueryClass templateQueries = new QueryClass(SavedTemplateQuery.class);
+                q.addFrom(savedQueries);
+                q.addFrom(templateQueries);
+                q.addToSelect(savedQueries);
+                q.addToSelect(templateQueries);
                 List<?> results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
-                    q = new Query();
-                    qc = new QueryClass(SavedTemplateQuery.class);
-                    q.addFrom(qc);
-                    q.addToSelect(qc);
-                    results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
-                    if (results.isEmpty()) {
-                        // We can safely upgrade the database
-                        MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
-                                MetadataManager.PROFILE_FORMAT_VERSION, ""
-                                + PathQuery.USERPROFILE_VERSION);
-                        version = PathQuery.USERPROFILE_VERSION;
-                    }
+                    // We can safely upgrade the database!
+                    MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                            MetadataManager.PROFILE_FORMAT_VERSION,
+                            "" + PathQuery.USERPROFILE_VERSION);
+                    v = PathQuery.USERPROFILE_VERSION;
                 }
             }
         } catch (ObjectStoreException e) {
@@ -151,6 +163,38 @@ public class ProfileManager
         } catch (SQLException e) {
             throw new IllegalStateException("Error reading version number from database", e);
         }
+        return v;
+    }
+
+    private Map<UUID, PermanentToken> loadPermanentTokens() {
+        Map<UUID, PermanentToken> map = new HashMap<UUID, PermanentToken>();
+        try {
+            // Get the current set of permanent tokens from the database.
+            Query q = new Query();
+            QueryClass tokens = new QueryClass(PermanentToken.class);
+            q.addFrom(tokens);
+            q.addToSelect(tokens);
+    
+            List<?> results = uosw.executeSingleton(q);
+            Set<PermanentToken> badTokens = new HashSet<PermanentToken>();
+            for (Object o: results) {
+                PermanentToken token = (PermanentToken) o;
+                try {
+                    UUID key = UUID.fromString(token.getToken());
+                    map.put(key, token);
+                } catch (IllegalArgumentException e) {
+                    badTokens.add(token);
+                }
+            }
+            for (PermanentToken t: badTokens) {
+                LOG.info("Removing bad token: " + t);
+                uosw.delete(t);
+            }
+        } catch (Exception e) {
+            LOG.error("Could not load permanent tokens", e);
+            throw new IllegalStateException("Error loading permanent tokens", e);
+        }
+        return map;
     }
 
     /**
@@ -685,22 +729,38 @@ public class ProfileManager
                 limitedAccessTokens.remove(token);
             }
         }
+        try {
+            UUID key = UUID.fromString(token);
+            if (permanentTokens.containsKey(key)) {
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            // Suppress.
+        }
         return false;
     }
 
     /**
-     * TODO: actually make this return a token!!
-     * This will need storing in a permanent data-store!
-     * 
-     * In fact, scratch that; we need a system for reducing webservice
-     * queries down to tokens themselves, so I can share a result set, and
-     * know that the user cannot just run any query they like...
+     * Return a permanent user access token, with ReadOnly permission.
      * 
      * @param profile
      * @return A token granting read-only access to resources.
+     * @throws ObjectStoreException 
      */
-    public String generateReadOnlyAccessToken(Profile profile) {
-        throw new NotImplementedException("TODO");
+    public String generateReadOnlyAccessToken(Profile profile) throws ObjectStoreException {
+        UserProfile up;
+        if (profile.getUserId() == null) {
+            throw new IllegalArgumentException("This profile does not have an associated user-profile");
+        }
+        up = (UserProfile) uosw.getObjectById(profile.getUserId());
+        PermanentToken token = new PermanentToken();
+        UUID uuid = UUID.randomUUID();
+        token.setToken(uuid.toString());
+        token.setLevel("RO");
+        token.setUserProfile(up);
+        uosw.store(token);
+        permanentTokens.put(uuid, token);
+        return token.getToken();
     }
 
     /**
@@ -1031,7 +1091,8 @@ public class ProfileManager
     public static final class ApiPermission implements Principal
     {
         /**
-         * The possible permission levels.
+         * The possible 
+ission levels.
          */
         public enum Level { RO, RW };
 
@@ -1134,6 +1195,14 @@ public class ProfileManager
             }
             permission = new ApiPermission(p, t.getAuthenticationLevel());
         } else {
+            try {
+                UUID key = UUID.fromString(token);
+                if (permanentTokens.containsKey(key)) {
+                    return getPermission(permanentTokens.get(key), classKeys);
+                }
+            } catch (IllegalArgumentException e) {
+                // Suppress, continue.
+            }
             Profile p = getProfileByApiKey(token, classKeys);
             if (p == null) {
                 throw new AuthenticationException(
@@ -1145,6 +1214,37 @@ public class ProfileManager
             }
         }
         return permission;
+    }
+
+    public ApiPermission getPermission(PermanentToken token, Map<String, List<FieldDescriptor>> classKeys) {
+        if (token.getUserProfile() == null) {
+            // Remove it, as it is clearly invalid.
+            removePermanentToken(token);
+            throw new IllegalStateException("All permanent tokens should have users");
+        }
+        Profile profile = getProfile(token.getUserProfile().getUsername(), classKeys);
+        if (profile == null) {
+            removePermanentToken(token);
+            throw new AuthenticationException("This token is not a valid access key: " + token);
+        }
+        ApiPermission.Level level;
+        try {
+            level = ApiPermission.Level.valueOf(token.getLevel());
+        } catch (IllegalArgumentException e) {
+            String badLevel = token.getLevel();
+            removePermanentToken(token);
+            throw new IllegalStateException("Token has illegal level: " + badLevel);
+        }
+        return new ApiPermission(profile, level);
+    }
+
+    private void removePermanentToken(PermanentToken token) {
+        permanentTokens.remove(UUID.fromString(token.getToken()));
+        try {
+            uosw.delete(token);
+        } catch (ObjectStoreException e) {
+            LOG.warn("Error removing permanent token", e);
+        }
     }
 
     /**

@@ -526,19 +526,36 @@ public abstract class WebService {
     private void logError(Throwable t, String msg, int code) {
 
         // Stack traces for all!
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(b);
-        t.printStackTrace(ps);
-        ps.flush();
+        String truncatedStackTrace = getTruncatedStackTrace(t);
 
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
             LOG.error("Service failed by internal error. Request parameters: \n"
-                    + requestParametersToString() + b.toString());
+                    + requestParametersToString() + t + "\n" + truncatedStackTrace);
         } else {
             LOG.debug("Service didn't succeed. It's not an internal error. "
                     + "Reason: " + getErrorDescription(msg, code) + "\n"
-                    + b.toString());
+                    + truncatedStackTrace);
         }
+    }
+
+    private String getTruncatedStackTrace(Throwable t) {
+        StackTraceElement[] stack = t.getStackTrace();
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(b);
+        boolean tooDeep = false;
+
+        for (int i = 0; !tooDeep && i < stack.length; i++) {
+            StackTraceElement element = stack[i];
+            if (element.getClassName().contains("catalina")) {
+                // We have descended as far as is useful. stop here.
+                tooDeep = true;
+            } else {
+                ps.print("\n  at ");
+                ps.print(element);
+            }
+        }
+        ps.flush();
+        return b.toString();
     }
 
     private String requestParametersToString() {
