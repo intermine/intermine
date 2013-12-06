@@ -91,7 +91,7 @@ public final class ModelMerger
         newClasses = removeRedundancy(newClasses);
         try {
             Model newModel = new Model(original.getName(), original.getPackageName(),
-                    new HashSet<ClassDescriptor>(newClasses.values()));
+                    original.getVersion(), new HashSet<ClassDescriptor>(newClasses.values()));
             if (newModel.hasProblems()) {
                 throw new ModelMergerException("There were problems merging the model: "
                         + newModel.getProblems());

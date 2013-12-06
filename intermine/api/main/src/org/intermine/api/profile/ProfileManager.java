@@ -97,7 +97,7 @@ public class ProfileManager
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
-     * @param userProfileOS the object store that hold user profile information
+     * @param userProfileOS the object store that holds user profile information
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
