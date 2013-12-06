@@ -1779,6 +1779,20 @@
      <url-pattern>/service/user</url-pattern>
    </servlet-mapping>
 
+   <servlet>
+     <servlet-name>ws-perma-tokens</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.user.TokensService</param-value>
+     </init-param>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-perma-tokens</servlet-name>
+     <url-pattern>/service/user/tokens</url-pattern>
+   </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
