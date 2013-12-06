@@ -42,6 +42,8 @@
   <class name="PermanentToken" is-interface="false">
     <attribute name="token" type="java.lang.String"/> <!--  Ideally this should be a UUID. -->
     <attribute name="level" type="java.lang.String"/>
+    <attribute name="message" type="java.lang.String"/>
+    <attribute name="dateCreated" type="java.util.Date"/>
     <reference name="userProfile" referenced-type="UserProfile" reverse-reference="permanentTokens"/>
   </class>
 </model>

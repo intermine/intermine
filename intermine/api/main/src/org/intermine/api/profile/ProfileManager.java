@@ -747,7 +747,7 @@ public class ProfileManager
      * @return A token granting read-only access to resources.
      * @throws ObjectStoreException 
      */
-    public String generateReadOnlyAccessToken(Profile profile) throws ObjectStoreException {
+    public String generateReadOnlyAccessToken(Profile profile, String message) throws ObjectStoreException {
         UserProfile up;
         if (profile.getUserId() == null) {
             throw new IllegalArgumentException("This profile does not have an associated user-profile");
@@ -758,6 +758,10 @@ public class ProfileManager
         token.setToken(uuid.toString());
         token.setLevel("RO");
         token.setUserProfile(up);
+        token.setDateCreated(new Date());
+        if (message != null) {
+            token.setMessage(message);
+        }
         uosw.store(token);
         permanentTokens.put(uuid, token);
         return token.getToken();

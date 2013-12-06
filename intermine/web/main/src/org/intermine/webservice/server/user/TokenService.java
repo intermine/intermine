@@ -23,6 +23,7 @@ public class TokenService extends JSONService {
         final ProfileManager pm = im.getProfileManager();
         Profile profile = getPermission().getProfile();
         String tokenType = getOptionalParameter("type", "day").toLowerCase();
+        String message = getOptionalParameter("message");
         String token = null;
         if ("day".equals(tokenType)) {
             token = pm.generate24hrKey(profile);
@@ -31,7 +32,7 @@ public class TokenService extends JSONService {
         } else if ("api".equals(token)) {
             token = pm.generateApiKey(profile);
         } else if ("perm".equals(tokenType)) {
-            token = pm.generateReadOnlyAccessToken(profile);
+            token = pm.generateReadOnlyAccessToken(profile, message);
         } else {
             throw new BadRequestException("Unknown token type: " + tokenType);
         }
