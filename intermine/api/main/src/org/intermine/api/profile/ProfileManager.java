@@ -86,7 +86,7 @@ public class ProfileManager
     protected CacheMap<String, Profile> profileCache = new CacheMap<String, Profile>();
     private String superuser = null;
     /** Number determining format of queries in the database */
-    protected int version;
+    protected int pathQueryFormat;
 
     private final Map<String, LimitedAccessToken> limitedAccessTokens
         = new HashMap<String, LimitedAccessToken>();
@@ -117,12 +117,12 @@ public class ProfileManager
             throw new RuntimeException("Unable to load super user profile", e);
         }
 
-        version = loadVersion();
+        pathQueryFormat = loadPathQueryFormatVersion();
 
         permanentTokens.putAll(loadPermanentTokens());
     }
 
-    private int loadVersion() {
+    private int loadPathQueryFormatVersion() {
         int v = 0;
         int currentVersion = PathQuery.USERPROFILE_VERSION;
         try {
@@ -220,7 +220,7 @@ public class ProfileManager
      * @return an int
      */
     public int getVersion() {
-        return version;
+        return pathQueryFormat;
     }
 
     /**
@@ -491,11 +491,11 @@ public class ProfileManager
             try {
                 Map queries = SavedQueryBinding.unmarshal(
                             new StringReader(query.getQuery()), savedBags,
-                            version);
+                            pathQueryFormat);
                 if (queries.size() == 0) {
                     queries = PathQueryBinding.unmarshalPathQueries(
                             new StringReader(query.getQuery()),
-                            version);
+                            pathQueryFormat);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -517,7 +517,7 @@ public class ProfileManager
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
                 Map<String, TemplateQuery> templateMap =
-                        TemplateQueryBinding.unmarshalTemplates(sr, version);
+                        TemplateQueryBinding.unmarshalTemplates(sr, pathQueryFormat);
                 String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = templateMap.get(templateName);
                 ApiTemplate apiTemplate = new ApiTemplate(templateQuery);
@@ -586,7 +586,7 @@ public class ProfileManager
                     Map.Entry entry = (Map.Entry) i.next();
                     query = (org.intermine.api.profile.SavedQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(SavedQueryBinding.marshal(query, version));
+                    savedQuery.setQuery(SavedQueryBinding.marshal(query, pathQueryFormat));
                     savedQuery.setUserProfile(userProfile);
                     uosw.store(savedQuery);
                 } catch (Exception e) {
@@ -602,7 +602,7 @@ public class ProfileManager
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();
                     }
-                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template, version));
+                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template, pathQueryFormat));
                     savedTemplate.setUserProfile(userProfile);
                     uosw.store(savedTemplate);
                     template.setSavedTemplateQuery(savedTemplate);
