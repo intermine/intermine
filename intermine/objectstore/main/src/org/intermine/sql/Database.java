@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.sql.DataSource;
@@ -368,6 +369,7 @@ public class Database implements Shutdownable
         POSTGRESQL_TYPE_STRING_MAP.put(BigDecimal.class, "numeric");
         POSTGRESQL_TYPE_STRING_MAP.put(Date.class, "bigint");
         POSTGRESQL_TYPE_STRING_MAP.put(String.class, "text");
+        POSTGRESQL_TYPE_STRING_MAP.put(UUID.class, "uuid");
     }
 
     /**
