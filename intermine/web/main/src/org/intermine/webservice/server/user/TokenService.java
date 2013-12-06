@@ -26,9 +26,11 @@ public class TokenService extends JSONService {
         String token = null;
         if ("day".equals(tokenType)) {
             token = pm.generate24hrKey(profile);
+        } else if ("once".equals(tokenType)) {
+            token = pm.generateSingleUseKey(profile);
         } else if ("api".equals(token)) {
             token = pm.generateApiKey(profile);
-        } else if ("perma".equals(tokenType)) {
+        } else if ("perm".equals(tokenType)) {
             token = pm.generateReadOnlyAccessToken(profile);
         } else {
             throw new BadRequestException("Unknown token type: " + tokenType);
