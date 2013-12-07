@@ -262,6 +262,9 @@ public class InitialiserPlugin implements PlugIn
         String tableDef = DatabaseUtil.getTableDefinition(db, cd);
         LOG.info("Adding table for " + cd.getName());
         LOG.debug(tableDef);
+        // It might be worthwhile at some point adding an index, but
+        // a) the data set is expected to be reasonably small, and
+        // b) the profile manager manages an in memory index of its own.
         Statement s = con.createStatement();
         s.execute(tableDef);
     }
