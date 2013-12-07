@@ -9,6 +9,7 @@ package org.intermine.webservice.server.core;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 import java.util.Arrays;
 
 import org.intermine.webservice.server.output.Output;
