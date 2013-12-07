@@ -1,18 +1,12 @@
 package org.intermine.webservice.server.user;
 
-import java.util.Arrays;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.core.ReadWriteJSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class TokenService extends JSONService {
-
-
-    private static final String DENIAL_MSG = "All token requests must be authenticated.";
+public class TokenService extends ReadWriteJSONService {
 
     public TokenService(InterMineAPI im) {
         super(im);
@@ -37,13 +31,6 @@ public class TokenService extends JSONService {
             throw new BadRequestException("Unknown token type: " + tokenType);
         }
         addResultValue(token, false);
-    }
-
-    @Override
-    protected void validateState() {
-        if (!isAuthenticated()) {
-            throw new ServiceForbiddenException(DENIAL_MSG);
-        }
     }
 
     @Override
