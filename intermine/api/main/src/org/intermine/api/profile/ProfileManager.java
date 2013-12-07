@@ -368,16 +368,20 @@ public class ProfileManager
             if (userProfile == null) {
                 throw new ObjectStoreException("User is not in the data store.");
             }
-            for (org.intermine.model.userprofile.SavedQuery sq : userProfile.getSavedQuerys()) {
+            for (org.intermine.model.userprofile.SavedQuery sq: userProfile.getSavedQuerys()) {
                 uosw.delete(sq);
             }
 
-            for (SavedTemplateQuery st : userProfile.getSavedTemplateQuerys()) {
+            for (SavedTemplateQuery st: userProfile.getSavedTemplateQuerys()) {
                 uosw.delete(st);
             }
 
-            for (SavedBag sb : userProfile.getSavedBags()) {
+            for (SavedBag sb: userProfile.getSavedBags()) {
                 uosw.delete(sb);
+            }
+            
+            for (PermanentToken token: userProfile.getPermanentTokens()) {
+            	removePermanentToken(token);
             }
 
             TagManager tagManager = getTagManager();
@@ -1243,12 +1247,16 @@ ission levels.
         return new ApiPermission(profile, level);
     }
 
-    private void removePermanentToken(PermanentToken token) {
-        permanentTokens.remove(UUID.fromString(token.getToken()));
+    public void removePermanentToken(PermanentToken token) {
+        try {
+        	permanentTokens.remove(UUID.fromString(token.getToken()));
+        } catch (Exception e) {
+        	// Ignore.
+        }
         try {
             uosw.delete(token);
         } catch (ObjectStoreException e) {
-            LOG.warn("Error removing permanent token", e);
+            throw new RuntimeException("Error removing permanent token", e);
         }
     }
 
