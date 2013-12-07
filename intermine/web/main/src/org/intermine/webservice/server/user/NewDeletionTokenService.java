@@ -1,31 +1,20 @@
 package org.intermine.webservice.server.user;
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.webservice.server.core.JSONService;
-import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.core.ISO8601DateFormat;
+import org.intermine.webservice.server.core.ReadWriteJSONService;
 
-public class NewDeletionTokenService extends JSONService {
+public class NewDeletionTokenService extends ReadWriteJSONService {
 
-    private static final String DENIAL_MSG
-        = "All requests for account deletion tokens must be authenticated";
     protected final DeletionTokens tokenFactory;
-    private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
     public NewDeletionTokenService(InterMineAPI im) {
         super(im);
         this.tokenFactory = DeletionTokens.getInstance();
-    }
-
-    @Override
-    protected void validateState() {
-        if (!isAuthenticated()) {
-            throw new ServiceForbiddenException(DENIAL_MSG);
-        }
     }
 
     @Override
@@ -45,7 +34,7 @@ public class NewDeletionTokenService extends JSONService {
         Map<String, Object> info = new HashMap<String, Object>();
 
         info.put("uuid", token.getUUID().toString());
-        info.put("expiry", iso8601.format(token.getExpiry()));
+        info.put("expiry", ISO8601DateFormat.getFormatter().format(token.getExpiry()));
         info.put("secondsRemaining", (token.getExpiry().getTime() - System.currentTimeMillis()) / 1000);
 
         this.addResultItem(info, false);

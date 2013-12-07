@@ -47,6 +47,13 @@ public class DeregistrationService extends WebService {
     }
 
     @Override
+    protected void validateState() {
+        if (!isAuthenticated() || getPermission().isRO()) {
+            throw new ServiceForbiddenException("Access denied");
+        }
+    }
+
+    @Override
     protected Format getDefaultFormat() {
         return Format.XML;
     }
