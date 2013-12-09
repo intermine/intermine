@@ -388,6 +388,7 @@ public abstract class WebService {
     private void setHeaders() {
         Properties headerProps = PropertiesUtil.getPropertiesStartingWith(
                 WS_HEADERS_PREFIX, webProperties);
+
         for (Object o : headerProps.values()) {
             String h = o.toString();
             String[] parts = StringUtils.split(h, ":", 2);
@@ -396,6 +397,11 @@ public abstract class WebService {
             } else {
                 response.setHeader(parts[0].trim(), parts[1].trim());
             }
+        }
+
+        String origin = request.getHeader("Origin");
+        if (StringUtils.isNotBlank(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", origin);
         }
     }
 
