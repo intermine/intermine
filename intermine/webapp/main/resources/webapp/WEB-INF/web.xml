@@ -1787,6 +1787,10 @@
          <param-value>org.intermine.webservice.server.user.TokensService</param-value>
      </init-param>
      <init-param>
+         <param-name>POST</param-name>
+         <param-value>org.intermine.webservice.server.user.TokenService</param-value>
+     </init-param>
+     <init-param>
          <param-name>DELETE</param-name>
          <param-value>org.intermine.webservice.server.user.DeleteTokensService</param-value>
      </init-param>
