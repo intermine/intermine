@@ -213,7 +213,7 @@ public class OrthodbConverter extends BioFileConverter
     	final String refId1 = getGene(gene);
     	final String refId2 = getGene(homologue);
 
-        if (refId1 == null || refId2 == null) {
+        if (refId1 == null || refId2 == null || refId1.equals(refId2)) {
         	// will happen if ID resolver fails to find a match
             return;
         }
