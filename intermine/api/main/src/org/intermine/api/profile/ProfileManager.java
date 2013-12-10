@@ -726,21 +726,23 @@ public class ProfileManager
      * @return true if is suitable for using in the future.
      */
     public synchronized boolean tokenHasMoreUses(String token) {
-        if (token != null && limitedAccessTokens.containsKey(token)) {
-            LimitedAccessToken lat = limitedAccessTokens.get(token);
-            if (lat.isValid()) {
-                return lat.hasMoreUses();
-            } else {
-                limitedAccessTokens.remove(token);
+        if (token != null) {
+            if (limitedAccessTokens.containsKey(token)) {
+                LimitedAccessToken lat = limitedAccessTokens.get(token);
+                if (lat.isValid()) {
+                    return lat.hasMoreUses();
+                } else {
+                    limitedAccessTokens.remove(token);
+                }
             }
-        }
-        try {
-            UUID key = UUID.fromString(token);
-            if (permanentTokens.containsKey(key)) {
-                return true;
+            try {
+                UUID key = UUID.fromString(token);
+                if (permanentTokens.containsKey(key)) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                // Suppress.
             }
-        } catch (IllegalArgumentException e) {
-            // Suppress.
         }
         return false;
     }
