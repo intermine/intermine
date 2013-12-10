@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +64,7 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -128,6 +130,8 @@ public class InitialiserPlugin implements PlugIn
         // NOTE throwing exceptions other than a ServletException from this class causes the
         // webapp to fail to deploy with no error message.
 
+        final long start = System.currentTimeMillis();
+
         final ServletContext servletContext = servlet.getServletContext();
         initBlockingErrors(servletContext);
 
@@ -165,6 +169,7 @@ public class InitialiserPlugin implements PlugIn
             }
             //verify if we the webapp needs to upgrade the lists
             verifyListUpgrade(userprofileOSW);
+
         }
 
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
@@ -192,6 +197,7 @@ public class InitialiserPlugin implements PlugIn
 
                 // need a global reference to ProfileManager so it can be closed cleanly on destroy
                 profileManager = im.getProfileManager();
+                LOG.debug("LOADED PROFILE MANAGER");
 
                 //verify superuser setted in the db matches with the user in the properties file
                 final Profile superProfile = profileManager.getSuperuserProfile();
@@ -200,6 +206,7 @@ public class InitialiserPlugin implements PlugIn
                     .trim())) {
                     blockingErrorKeys.put("errors.init.superuser", null);
                 }
+                LOG.debug("CHECKED SUPER PROFILE");
 
                 // index global webSearchables
                 SearchRepository searchRepository = new GlobalRepository(superProfile);
@@ -208,10 +215,12 @@ public class InitialiserPlugin implements PlugIn
                     new GlobalRepository(profileManager.getProfile(su));
                 }
                 SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
+                LOG.debug("LOADED SEARCH REPOSITORY");
 
                 servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
 
                 loadAutoCompleter(servletContext, os);
+                LOG.debug("LOADED AUTO COMPLETER");
 
                 cleanTags(im.getTagManager());
 
@@ -241,6 +250,23 @@ public class InitialiserPlugin implements PlugIn
                 doRegistration(webProperties);
             }
         }
+        LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    private void createPermaTokenTable(ObjectStore os, Connection con) throws SQLException, ObjectStoreException, ClassNotFoundException {
+        ClassDescriptor cd = os.getModel().getClassDescriptorByName("PermanentToken");
+        Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+        if (cd == null) {
+            throw new IllegalStateException("Expected model to containt PermanentToken");
+        }
+        String tableDef = DatabaseUtil.getTableDefinition(db, cd);
+        LOG.info("Adding table for " + cd.getName());
+        LOG.debug(tableDef);
+        // It might be worthwhile at some point adding an index, but
+        // a) the data set is expected to be reasonably small, and
+        // b) the profile manager manages an in memory index of its own.
+        Statement s = con.createStatement();
+        s.execute(tableDef);
     }
 
     private void initBlockingErrors(ServletContext servletContext) {
@@ -306,24 +332,6 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private boolean validateXML(String xml, String schemaUrl, String errorCode) {
-/*        Source xmlFile = new StreamSource(xmlInputStream);
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try {
-            Schema schema = schemaFactory.newSchema(new StreamSource(xsdInputStream));
-            Validator validator = schema.newValidator();
-            try {
-                validator.validate(xmlFile);
-                return true;
-            } catch (SAXException se) {
-                LOG.error(xmlFile.getSystemId() + " is NOT valid");
-                blockingErrorKeys.put(errorCode, se.getMessage());
-            } catch (IOException ioe) {
-                LOG.error("Problems find file ", ioe);
-            }
-        } catch (SAXException se) {
-            LOG.error("Problems parsing xsd file", se);
-        }
-        return false;*/
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
@@ -534,7 +542,7 @@ public class InitialiserPlugin implements PlugIn
 
         Collection<String> otherResources = finder.findResourcesMatching(pattern);
         for (String resource : otherResources) {
-            LOG.info("Loading extra resources from " + resource);
+            LOG.debug("Loading extra resources from " + resource);
             InputStream otherResourceStream =
                 servletContext.getResourceAsStream(resource);
             try {
@@ -584,7 +592,7 @@ public class InitialiserPlugin implements PlugIn
         InputStream is = getClass().getClassLoader()
             .getResourceAsStream("openid-providers.properties");
         if (is == null) {
-            LOG.info("couldn't find openid providers, using system class-loader");
+            LOG.debug("couldn't find openid providers, using system class-loader");
             is = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream("openid-properties.properties");
         }
@@ -606,7 +614,7 @@ public class InitialiserPlugin implements PlugIn
             String keyString = (String) key;
             if (!keyString.endsWith(".alias")) {
                 providers.add(keyString);
-                LOG.info("Added " + keyString);
+                LOG.debug("Added " + keyString);
             }
         }
 
@@ -730,9 +738,23 @@ public class InitialiserPlugin implements PlugIn
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
             }
+
+            // Create the permatoken table, if it does not exist
+            ClassDescriptor ptCld = osw.getModel().getClassDescriptorByName("PermanentToken");
+            if (!DatabaseUtil.tableExists(con, DatabaseUtil.getTableName(ptCld))) {
+                createPermaTokenTable(osw, con);
+            }
+
+            LOG.debug("SUCCESSFULLY APPLIED ALL UPGRADES");
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
             blockingErrorKeys.put("errors.init.userprofileconnection", sqle.getMessage());
+        } catch (ObjectStoreException e) {
+            LOG.error("Problem upgrading database", e);
+            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
+        } catch (ClassNotFoundException e) {
+            LOG.error("Problem upgrading database", e);
+            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
         }
@@ -767,9 +789,11 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Destroy method called at Servlet destroy. Close connection pool
+     * Destroy method called at Servlet destroy. Close connection pools
+     * and the mail queue thread pool.
      */
     public void destroy() {
+        InterMineContext.shutdown();
         if (profileManager != null) {
             ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
                 .getDatabase().shutdown();
@@ -873,12 +897,12 @@ public class InitialiserPlugin implements PlugIn
     @SuppressWarnings("resource")
     private boolean verifyTablesExist(ObjectStore uos) {
         Connection con = null;
-        Set<ClassDescriptor> classDescritpors = uos.getModel().getClassDescriptors();
+        Set<ClassDescriptor> classDescriptors = uos.getModel().getClassDescriptors();
         try {
             con = ((ObjectStoreInterMineImpl) uos).getConnection();
-            for (ClassDescriptor cd : classDescritpors) {
+            for (ClassDescriptor cd : classDescriptors) {
                 if (!cd.isInterface()) {
-                    String tableNameToVerify = cd.getSimpleName().toLowerCase();
+                    String tableNameToVerify = DatabaseUtil.getTableName(cd);
                     if (!DatabaseUtil.tableExists(con, tableNameToVerify)) {
                         LOG.error("In the userprofile database, the table " + tableNameToVerify
                             + " doesn't exist.");
@@ -888,7 +912,7 @@ public class InitialiserPlugin implements PlugIn
                 }
             }
         } catch (SQLException sqle) {
-            LOG.error("Probelm retrieving connection", sqle);
+            LOG.error("Problem retrieving connection", sqle);
         } finally {
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }

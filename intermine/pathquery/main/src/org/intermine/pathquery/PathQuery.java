@@ -48,7 +48,17 @@ public class PathQuery implements Cloneable
 {
     /** A Pattern that finds spaces in a String. */
     protected static final Pattern SPACE_SPLITTER = Pattern.compile(" ", Pattern.LITERAL);
-    /** Version number for the userprofile and PathQuery XML format. */
+    /**
+     * Version number for the userprofile and PathQuery XML format.
+     * This should be incremented each time the PathQuery serialisation
+     * format changes.
+     * <dl>
+     *   <dt>2</dt>
+     *   <dd>Changed PathQuery format.</dd>
+     *   <dt>1</dt>
+     *   <dd>Original format.</dd>
+     * </dl>
+     **/
     public static final int USERPROFILE_VERSION = 2;
 
     /** The lowest code value a constraint may be assigned. **/

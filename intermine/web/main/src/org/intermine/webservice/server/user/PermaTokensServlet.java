@@ -21,22 +21,19 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
 
-public class DeregistrationTokenServlet  extends WebServiceServlet
-{
-    /**
-     * Generated serial ID.
-     */
-    private static final long serialVersionUID = -3933431561522570728L;
+public class PermaTokensServlet extends WebServiceServlet {
 
-    @Override
+	private static final long serialVersionUID = -2568785122873900456L;
+
+	@Override
     protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String uid = getUid(request);
         WebService service = null;
         if (Method.GET == method && uid != null) {
-            service = getGetter(uid);
+            service = new PermaTokenInfoService(api, uid);
         } else if (Method.DELETE == method && uid != null) {
-            service = getDeleter(uid);
+            service = new PermaTokenDeletionService(api, uid);
         }
         if (service != null) {
             service.service(request, response);
@@ -53,20 +50,9 @@ public class DeregistrationTokenServlet  extends WebServiceServlet
         return null;
     }
 
-    private WebService getGetter(String uid) {
-        return new DeletionTokenInfoService(api, uid);
-    }
+	@Override
+	protected WebService getService(Method method) throws NoServiceException {
+		throw new NoServiceException();
+	}
 
-    private WebService getDeleter(String uid) {
-        return new DeletionTokenCancellationService(api, uid);
-    }
-
-    @Override
-    protected WebService getService(Method method) throws NoServiceException {
-        switch (method) {
-            case POST: return new NewDeletionTokenService(api);
-            default: throw new NoServiceException();
-        }
-    }
-    
 }
