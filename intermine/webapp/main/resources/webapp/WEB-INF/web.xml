@@ -1825,7 +1825,31 @@
      <url-pattern>/service/branding</url-pattern>
   </servlet-mapping>
 
-  
+  <servlet>
+    <servlet-name>ws-saved-queries</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.query.SavedQueryRetrievalService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>POST</param-name>
+         <param-value>org.intermine.webservice.server.query.QueryUploadService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>PUT</param-name>
+         <param-value>org.intermine.webservice.server.query.QueryUpdateService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>DELETE</param-name>
+         <param-value>org.intermine.webservice.server.query.QueryRemovalService</param-value>
+     </init-param>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-saved-queries</servlet-name>
+     <url-pattern>/service/user/queries</url-pattern>
+  </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
