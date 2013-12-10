@@ -1779,6 +1779,54 @@
      <url-pattern>/service/user</url-pattern>
    </servlet-mapping>
 
+   <servlet>
+     <servlet-name>ws-perma-tokens</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.user.TokensService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>POST</param-name>
+         <param-value>org.intermine.webservice.server.user.TokenService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>DELETE</param-name>
+         <param-value>org.intermine.webservice.server.user.DeleteTokensService</param-value>
+     </init-param>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-perma-tokens</servlet-name>
+     <url-pattern>/service/user/tokens</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+     <servlet-name>ws-perma-token</servlet-name>
+     <servlet-class>org.intermine.webservice.server.user.PermaTokensServlet</servlet-class>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-perma-token</servlet-name>
+     <url-pattern>/service/user/tokens/*</url-pattern>
+   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-branding</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.branding.BrandingService</param-value>
+     </init-param>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-branding</servlet-name>
+     <url-pattern>/service/branding</url-pattern>
+  </servlet-mapping>
+
+  
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>

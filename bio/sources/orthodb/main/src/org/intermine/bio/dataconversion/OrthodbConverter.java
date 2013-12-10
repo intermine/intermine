@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
@@ -62,7 +63,7 @@ public class OrthodbConverter extends BioFileConverter
 
     private Map<GeneHolder, Set<GeneHolder>> geneToHomologues = new HashMap<GeneHolder, 
     		Set<GeneHolder>>();
-    private Map<String, GeneHolder> identifierToGene = new HashMap<String, GeneHolder>();
+    private Map<MultiKey, GeneHolder> identifierToGene = new HashMap<MultiKey, GeneHolder>();
     protected IdResolver rslv;
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     
@@ -158,10 +159,11 @@ public class OrthodbConverter extends BioFileConverter
             		// bad gene, keep going
             		continue;
             	}
-            	GeneHolder gene = identifierToGene.get(resolvedIdentifier);
+            	MultiKey key = new MultiKey(resolvedIdentifier, taxonId);
+            	GeneHolder gene = identifierToGene.get(key);
             	if (gene == null) {
             		gene = new GeneHolder(resolvedIdentifier, taxonId);
-            		identifierToGene.put(resolvedIdentifier, gene);
+            		identifierToGene.put(key, gene);
             	}
             	homologues.add(gene);
             }
@@ -211,7 +213,7 @@ public class OrthodbConverter extends BioFileConverter
     	final String refId1 = getGene(gene);
     	final String refId2 = getGene(homologue);
 
-        if (refId1 == null || refId2 == null) {
+        if (refId1 == null || refId2 == null || refId1.equals(refId2)) {
         	// will happen if ID resolver fails to find a match
             return;
         }

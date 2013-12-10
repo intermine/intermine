@@ -802,7 +802,7 @@ public class Profile
      * @return A token for web-service use.
      */
     public String getDayToken() {
-        if (!manager.tokenHasMoreUses(dayToken)) {
+        if (dayToken == null || !manager.tokenHasMoreUses(dayToken)) {
             dayToken = getProfileManager().generate24hrKey(this);
         }
         return dayToken;

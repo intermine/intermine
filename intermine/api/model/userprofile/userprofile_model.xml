@@ -9,6 +9,7 @@
     <collection name="savedQuerys" referenced-type="SavedQuery" reverse-reference="userProfile"/>
     <collection name="savedTemplateQuerys" referenced-type="SavedTemplateQuery" reverse-reference="userProfile"/>
     <collection name="tags" referenced-type="Tag" reverse-reference="userProfile"/>
+    <collection name="permanentTokens" referenced-type="PermanentToken" reverse-reference="userProfile"/>
   </class>
   <class name="SavedBag" is-interface="false">
     <attribute name="name" type="java.lang.String"/>
@@ -37,5 +38,12 @@
   <class name="TemplateSummary" is-interface="false">
     <attribute name="summary" type="java.lang.String"/>
     <reference name="template" referenced-type="SavedTemplateQuery" reverse-reference="summaries"/>
+  </class>
+  <class name="PermanentToken" is-interface="false">
+    <attribute name="token" type="java.lang.String"/> <!--  Ideally this should be a UUID. -->
+    <attribute name="level" type="java.lang.String"/>
+    <attribute name="message" type="java.lang.String"/>
+    <attribute name="dateCreated" type="java.util.Date"/>
+    <reference name="userProfile" referenced-type="UserProfile" reverse-reference="permanentTokens"/>
   </class>
 </model>

@@ -10,11 +10,9 @@ package org.intermine.webservice.server.core;
  *
  */
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +25,6 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 /**
  * A Service that has specialisations for supplying JSON.
