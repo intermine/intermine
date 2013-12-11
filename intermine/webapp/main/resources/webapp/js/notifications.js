@@ -1,4 +1,5 @@
 (function($, Backbone) {
+    'use strict';
 	
     if (typeof this.console === 'undefined') {
         this.console = {log: function() {}};
@@ -10,19 +11,21 @@
 	var Notification = Backbone.View.extend( {
         tagName: 'div',
         className: 'im-event-notification topBar messages',
+        title: 'Success:',
         events: {
             'click a.closer': 'close'
         },
         initialize: function (options) {
           this.options = (options || {});
+          _.bindAll(this);
         },
-        title: 'Success:',
         close: function() {
             var self = this;
             this.$el.hide('slow', function() {self.remove()});
         },
         render: function() {
-            var self = this, remAfter = self.options.autoRemove;
+            var self = this
+              , remAfter = self.options.autoRemove;
             this.$el.append('<a class="closer" href="#">Hide</a>');
             this.$el.append('<p><span><b>' + this.title + '</b></span></p>');
             
@@ -36,9 +39,6 @@
         },
         appendContent: function() {
         	 this.$el.append(this.options.message);
-        },
-        initialize: function() {
-            _.bindAll(this);
         }
     } );
 	
