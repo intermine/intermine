@@ -61,7 +61,14 @@ jQuery(function() {
         events: LIST_EVENTS,
         properties: { pageSize: ${pageSize} }
     };
-    jQuery('#${tableContainerId}').imWidget(opts);
+    var widget = jQuery('#${tableContainerId}').imWidget(opts);
+    var url = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
+    widget.states.on('revert add', function () {
+        var query = widget.states.currentQuery;
+        var xml = query.toXML();
+        var $trail = jQuery('.objectTrailLinkResults');
+        $trail.attr({href: url + '?method=xml&query=' + escape(xml)});
+    });
 });
 </script>
 

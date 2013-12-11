@@ -1,23 +1,22 @@
 package org.intermine.webservice.server.user;
 
-import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+/*
+ * Copyright (C) 2002-2013 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
-import javax.servlet.ServletConfig;
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.api.bag.SharedBagManager;
-import org.intermine.api.profile.TagManager;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.model.userprofile.UserProfile;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;

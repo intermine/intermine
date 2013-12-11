@@ -95,8 +95,8 @@
             <c:if test="${!empty loc.strand}">
               <span class="smallnote">
                 <c:choose>
-                  <c:when test="${loc.strand == 1}">forward strand</c:when>
-                  <c:when test="${loc.strand == -1}">reverse strand</c:when>
+                  <c:when test="${loc.strand == '+1'}">forward strand</c:when>
+                  <c:when test="${loc.strand == '-1'}">reverse strand</c:when>
                 </c:choose>
               </span>
             </c:if>
@@ -112,8 +112,8 @@
                     <c:if test="${!empty loc.strand}">
                       <span class="smallnote">
                         <c:choose>
-                          <c:when test="${loc.strand == 1}">forward strand</c:when>
-                          <c:when test="${loc.strand == -1}">reverse strand</c:when>
+                          <c:when test="${loc.strand == '+1'}">forward strand</c:when>
+                          <c:when test="${loc.strand == '-1'}">reverse strand</c:when>
                         </c:choose>
                       </span>
                     </c:if>

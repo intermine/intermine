@@ -84,9 +84,9 @@ iframe { border:0; width: 100%; }
             "<!doctype html>",
             "<html>",
             "<head>",
-              "<link  href='" + cdn + "/js/intermine/apps-c/component-400/0.4.6/app.bundle.css' medial='all' rel='stylesheet' type='text/css'/>",
-              "<script src='" + cdn + "/js/intermine/apps-c/component-400/0.4.6/app.bundle.js'><\/script>",
-              "<script src='" + cdn + "/js/intermine/pomme.js/0.2.5/app.js'><\/script>",
+              "<link  href='" + cdn + "/js/intermine/apps-c/component-400/0.4.9/app.bundle.css' medial='all' rel='stylesheet' type='text/css'/>",
+              "<script src='" + cdn + "/js/intermine/apps-c/component-400/0.4.9/app.bundle.js'><\/script>",
+              "<script src='" + cdn + "/js/intermine/pomme.js/0.2.6/app.js'><\/script>",
             "</head>",
             "<body>",
               "<div id='target'></div>",
@@ -100,8 +100,12 @@ iframe { border:0; width: 100%; }
                   // Do not send our element, leads to circular references.
                   "var orig = opts.portal;",
                   "opts.portal = function(object) { orig(object) };",
-                  // Launch the app.
-                  "component(opts);",
+                  // Launch the app keeping the handle for getting the currently selected items.
+                  "var selected = component(opts);",
+                  "channel.on('select', function(cb) {",
+                    // Call back with currently selected items.
+                    "cb(selected());",
+                  "});",
                   // Say we are ready.
                   "ready();",
                 "});",
@@ -145,19 +149,19 @@ iframe { border:0; width: 100%; }
       // Show the title.
       jQuery('h1.title').text('Before we show you the results ...');
 
-      // Show the blocks.
-      jQuery('#chooseName, #additionalMatches').show();
+      // When we or the iframe calls.
+      var onSubmit = function(selected) {
+        // Inject.
+        jQuery('#matchIDs').val(selected.join(' '));
+        // Confirm.
+        validateBagName('bagUploadConfirmForm');
+      };
 
       // Opts for the component-400.
       var opts = {
         'data': results,
         // When the user asked to save this list.
-        cb: function(err, selected) {
-          // Throws.
-          if (err) onError(err);
-          jQuery('#matchIDs').val(selected.join(' '));
-          validateBagName('bagUploadConfirmForm');
-        },
+        cb: onSubmit,
         // Visit the portal in our mine (need to not be passing the second param!).
         portal: function(object) {
           // Point straight to the db identifier.
@@ -170,6 +174,21 @@ iframe { border:0; width: 100%; }
       pomme.trigger('load', opts, function() {
         // Hide loader msg.
         loading.hide();
+
+        // Show the blocks.
+        jQuery('#chooseName, #additionalMatches').show();
+
+        // Focus on the input field and listen for Enter presses.
+        jQuery('#newBagName').focus().keypress(function(evt) {
+          if (evt.which == 13) {
+            // Call iframe submitting on callback.
+            pomme.trigger('select', onSubmit);
+            // Just to make sure...
+            evt.preventDefault();
+            return false;
+          }
+        });
+
         // Keep readjusting the iframe based on its content height.
         var body = pomme.iframe.el.document.body;
         setInterval(function() {
