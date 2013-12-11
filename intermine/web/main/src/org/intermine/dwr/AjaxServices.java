@@ -1370,7 +1370,9 @@ public class AjaxServices
             String[] shortList = ac.getFastList(suffix, field, 31);
             return shortList;
         } else if (suffix.length() > 2 && wholeList) {
-            String[] longList = ac.getList(suffix, field);
+            // String[] longList = ac.getList(suffix, field);
+            // #451 I don't know what I am doing...
+            String[] longList = ac.getFastList(suffix, field, 500);
             return longList;
         }
         String[] defaultList = {""};
