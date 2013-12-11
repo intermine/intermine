@@ -57,7 +57,7 @@
           'jQuery': {
             'path': paths.js.jQuery,
             'test': function(){
-              if (+($.fn.jquery.split(".")[0]) < 3) {
+              if (+($.fn.jquery.split(".")[0]) < 2) {
                 throw "Version error.";
               }
             }
