@@ -7,7 +7,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 <%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
-<link rel="stylesheet" type="text/css" href="http://cdn.intermine.org/js/intermine/apps-c/pathways-displayer/0.0.1/pathway-displayer.css">
+
 
 
 <!-- minePathwaysDisplayer.jsp -->
@@ -18,7 +18,7 @@
 
     <div class="header">
       <h3>New Pathways Displayer</h3>
-      <p>This will display pathway data from other mines.</p>
+      <p>Pathway data from other Mines for homologues of this gene.</p>
     </div>
 
     <div id="pathwaysappcontainer"></div>
@@ -30,65 +30,92 @@
 
 
 <script>
-console.log("STARTED");
-paths = {js: {}, css: {}};
 
-<c:set var="section" value="pathways-displayer"/>
+(function(){
 
-<c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">
-  
-    paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
-</c:forEach>
+  var $ = jQuery;
 
-console.log(JSON.stringify(paths, null, 2));
+  console.log("STARTED");
+  var paths = {js: {}, css: {}};
+
+  <c:set var="section" value="pathways-displayer"/>
+
+  <c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">
+    
+      paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
+  </c:forEach>
+
+  console.log(JSON.stringify(paths, null, 2));
 
 
-intermine.load({
-  'js': {
-      'Q': {
-        'path': paths.js.Q
+  var imload = function(){
+    intermine.load({
+      'js': {
+          'Q': {
+            'path': paths.js.Q
+          },
+          'jQuery': {
+            'path': paths.js.jQuery,
+            'test': function(){
+              if (+($.fn.jquery.split(".")[0]) < 3) {
+                throw "Version error.";
+              }
+            }
+          },
+          'Backbone': {
+            'path': paths.js.Backbone,
+            'depends': ['_', 'jQuery']
+          },
+          '_': {
+            'path': paths.js._
+          },
+          'MyFirstCommonJSApp': {
+            'path': paths.js.MyFirstCommonJSApp,
+            'depends': ['Q', 'Backbone']
+          }
       },
-      'jQuery': {
-        'path': paths.js.jQuery
-      },
-      'Backbone': {
-        'path': paths.js.Backbone,
-        'depends': ['_', 'jQuery']
-      },
-      '_': {
-        'path': paths.js._
-      },
-      'MyFirstCommonJSApp': {
-        'path': paths.js.MyFirstCommonJSApp,
-        'depends': ['Q', 'Backbone']
+      'css': {
+        'pathwaysDisplayerCSS': {
+          'path': paths.css.pathwaysDisplayerCSS
+        }
       }
-  },
-  'css': {
-    'pathwaysDisplayerCSS': {
-      'path': paths.css.pathwaysDisplayerCSS
-    }
+    }, function(err) {
+
+      if (err) throw err;
+
+      friendlyMines = {};
+
+      <c:forEach items="${minesForPathways}" var="entry">
+        friendlyMines["${entry.key.name}"] = "${entry.key.url}";
+        </c:forEach>
+
+        friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
+
+        require('MyFirstCommonJSApp')(
+      {
+             
+              friendlyMines: friendlyMines,                        
+              gene: "${gene.primaryIdentifier}",
+              target: "#pathwaysappcontainer"
+      });
+
+    });
+  };
+
+  try {
+
+    imload();
+
+  } catch (error) {
+    $('#pathwaysappcontainer').html(
+      $('<div/>', {'text': 'This app requires jQuery 2.x.x', 'style': 'padding-left: 14px; font-weight: bold'})
+    );
+
+    $('#mine-pathway-displayer').addClass("warning");
   }
-}, function(err) {
+})();
 
-  if (err) throw err;
 
-  friendlyMines = {};
-
-  <c:forEach items="${minesForPathways}" var="entry">
-    friendlyMines["${entry.key.name}"] = "${entry.key.url}";
-    </c:forEach>
-
-    friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
-
-    require('MyFirstCommonJSApp')(
-  {
-         
-          friendlyMines: friendlyMines,                        
-          gene: "${gene.primaryIdentifier}",
-          target: "#pathwaysappcontainer"
-  });
-
-});
 
 
 
