@@ -756,16 +756,20 @@
 
   <servlet>
     <servlet-name>ws-template</servlet-name>
-    <servlet-class>org.intermine.webservice.server.template.AvailableTemplatesServlet</servlet-class>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
     <init-param>
-       <param-name>debug</param-name>
-       <param-value>true</param-value>
+       <param-name>GET</param-name>
+       <param-value>org.intermine.webservice.server.template.AvailableTemplatesService</param-value>
+    </init-param>
+    <init-param>
+       <param-name>POST</param-name>
+       <param-value>org.intermine.webservice.server.template.TemplateUploadService</param-value>
     </init-param>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>ws-template</servlet-name>
-    <url-pattern>/service/templates/*</url-pattern>
+    <url-pattern>/service/templates</url-pattern>
     <metadata>
         <name>Templates</name>
         <method type="GET" authenticationRequired="false">
@@ -782,6 +786,17 @@
             <returns>
                 <format>xml</format>
                 <format key="templates">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Upload one or more templates.</summary>
+            <description>
+                Upload a set of templates to the current user profile.
+            </description>
+            <param required="false" type="boolean" default="false" description="The xml to load, if using form parameters.">includeBroken</param>
+            <returns>
+                <format>xml</format>
+                <format>json</format>
             </returns>
         </method>
     </metadata>
@@ -1849,6 +1864,24 @@
   <servlet-mapping>
      <servlet-name>ws-saved-queries</servlet-name>
      <url-pattern>/service/user/queries</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-saved-template</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.template.SingleTemplateService</param-value>
+     </init-param>
+     <init-param>
+         <param-name>DELETE</param-name>
+         <param-value>org.intermine.webservice.server.template.TemplateRemovalService</param-value>
+     </init-param>
+  </servlet>
+  
+  <servlet-mapping>
+     <servlet-name>ws-saved-template</servlet-name>
+     <url-pattern>/service/templates/*</url-pattern>
   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
