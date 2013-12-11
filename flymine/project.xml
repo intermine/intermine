@@ -567,10 +567,15 @@
     <source name="homologene" type="homologene">
           <property name="src.data.dir" location="/micklem/data/homologene/current"/>
           <property name="homologene.organisms" value="7227 6239 9606 10090 10116 7955"/>
-    </source>
+    </source>    
    <source name="orthodb" type="orthodb" dump="true">
       <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
       <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>
+
+   <source name="panther" type="orthodb" dump="true">
+      <property name="src.data.dir" location="/micklem/data/panther/current"/>
+      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
