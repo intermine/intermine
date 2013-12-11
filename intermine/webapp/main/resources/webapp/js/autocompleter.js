@@ -68,8 +68,7 @@
         (function() {
 
           var suffix = document.getElementById(INPUT).value;
-          // See #451
-          var wholeList = false;//getWholeList();
+          var wholeList = getWholeList();
           var field = FIELD;
           var className = CLASS_NAME;
 
