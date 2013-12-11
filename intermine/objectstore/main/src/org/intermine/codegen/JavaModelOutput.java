@@ -706,6 +706,8 @@ public class JavaModelOutput
                         .getType())) {
                     sb.append(fieldName + " = org.intermine.objectstore.query.ClobAccess"
                             + ".decodeDbDescription(os, notXml[i]);\n");
+                } else if ("java.util.UUID".equals(attribute.getType())) {
+                    sb.append(fieldName + " = java.util.UUID.fromString(notXml[i]);\n");
                 } else if ("java.lang.String".equals(attribute.getType())) {
                     sb.append("StringBuilder string = null;\n")
                         .append(INDENT + INDENT + INDENT + INDENT)

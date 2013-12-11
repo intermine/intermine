@@ -15,16 +15,19 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -37,6 +40,7 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
  * A service to enable queries to be uploaded programmatically.
@@ -50,12 +54,11 @@ public class QueryUploadService extends WebService
     public static final String QUERIES_PARAMETER = "xml";
     /** The key for the version parameter **/
     public static final String VERSION_PARAMETER = "version";
+    private static final Logger LOG = Logger.getLogger(QueryUploadService.class);
     private Map<String, InterMineBag> lists;
-    private Set<String> knownBags;
-    private Map<String, PathQuery> toSave;
-    private List<String> problems;
-    private Profile profile;
-    private Set<String> saved;
+    private final Set<String> knownBags = new HashSet<String>();
+    private final List<String> problems = new ArrayList<String>();
+    protected Profile profile;
 
     /**
      * Constructor.
@@ -72,14 +75,10 @@ public class QueryUploadService extends WebService
 
     @Override
     protected boolean canServe(Format f) {
-        return f == Format.JSON || f == Format.TEXT;
-    }
-
-    @Override
-    protected void initState() {
-        toSave = new HashMap<String, PathQuery>();
-        problems = new ArrayList<String>();
-        saved = new HashSet<String>();
+        return f == Format.JSON ||
+                f == Format.TEXT ||
+                f == Format.TSV  ||
+                f == Format.CSV;
     }
 
     @Override
@@ -87,13 +86,24 @@ public class QueryUploadService extends WebService
         profile = getPermission().getProfile();
         BagManager bagManager = im.getBagManager();
         lists = bagManager.getBags(profile);
-        knownBags = lists.keySet();
+        knownBags.addAll(lists.keySet());
+        output.setHeaderAttributes(getHeaderAttributes());
+    }
+
+    private Map<String, Object> getHeaderAttributes() {
+        Map<String, Object> headerAttributes = new HashMap<String, Object>();
+        switch (getFormat()) {
+        case JSON:
+            headerAttributes.put(JSONFormatter.KEY_INTRO, "\"queries\":{");
+            headerAttributes.put(JSONFormatter.KEY_OUTRO, "}");
+        }
+        return headerAttributes;
     }
 
     @Override
     protected void validateState() {
-        if (!isAuthenticated() || getPermission().getLevel() == Level.RO) {
-            throw new ServiceForbiddenException("Not authenticated");
+        if (getPermission().getLevel() == Level.RO) {
+            throw new ServiceForbiddenException("Access denied.");
         }
     }
 
@@ -101,6 +111,7 @@ public class QueryUploadService extends WebService
     protected void execute() throws Exception {
 
         String queriesXML = getXML();
+        Map<String, PathQuery> toSave = new HashMap<String, PathQuery>();
         int version = getVersion();
 
         Reader r = new StringReader(queriesXML);
@@ -129,18 +140,49 @@ public class QueryUploadService extends WebService
         }
 
         try {
-            profile.saveQueries(toSave, saved);
-        } catch (Exception e) {
-            for (String name: saved) {
-                profile.deleteQuery(name);
+            Map<String, String> saved = saveQueries(toSave);
+            Iterator<Entry<String, String>> it = saved.entrySet().iterator();
+            while (it.hasNext()) {
+                Entry<String, String> pair = it.next();
+                addResultItem(pair, it.hasNext());
             }
+        } catch (Exception e) {
             throw new ServiceException("Failed to save queries", e);
+        }
+    }
+
+    protected Map<String, String> saveQueries(Map<String, PathQuery> toSave) {
+        return profile.saveQueries(toSave);
+    }
+
+    private void addResultItem(Entry<String, String> mapping, boolean hasMore) {
+        switch (getFormat()) {
+            case JSON:
+                List<String> line = Arrays.asList(
+                        String.format("\"%s\":\"%s\"",
+                                StringEscapeUtils.escapeJava(mapping.getKey()),
+                                StringEscapeUtils.escapeJava(mapping.getValue())));
+                if (hasMore) {
+                    line.add("");
+                }
+                output.addResultItem(line);
+                break;
+            case TEXT:
+                output.addResultItem(Arrays.asList(String.format("%s successfully saved as %s", mapping.getKey(), mapping.getValue())));
+                break;
+            default:
+                output.addResultItem(Arrays.asList(mapping.getKey(), mapping.getValue()));
         }
     }
 
     protected String getXML() throws IOException {
         String contentType = StringUtils.defaultString(request.getContentType(), "").trim();
+        if (contentType.contains(";")) {
+            String[] parts = contentType.split(";", 2);
+            contentType = parts[0].trim();
+        }
 
+        LOG.debug("Reading queries from " + contentType + " data");
         String queriesXML;
         if ("application/xml".equals(contentType) || "text/xml".equals(contentType)) {
             InputStream in = request.getInputStream();

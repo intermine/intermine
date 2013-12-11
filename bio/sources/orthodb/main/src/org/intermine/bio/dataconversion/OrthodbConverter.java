@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
@@ -62,7 +63,7 @@ public class OrthodbConverter extends BioFileConverter
 
     private Map<GeneHolder, Set<GeneHolder>> geneToHomologues = new HashMap<GeneHolder, 
     		Set<GeneHolder>>();
-    private Map<String, GeneHolder> identifierToGene = new HashMap<String, GeneHolder>();
+    private Map<MultiKey, GeneHolder> identifierToGene = new HashMap<MultiKey, GeneHolder>();
     protected IdResolver rslv;
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     
@@ -152,11 +153,17 @@ public class OrthodbConverter extends BioFileConverter
             	String identifier = proteinId;	// protein is default
             	if (config.get(taxonId) != null) {
             		identifier = geneId;            		
-            	}            	
-            	GeneHolder gene = identifierToGene.get(identifier);
+            	}          
+            	String resolvedIdentifier = resolveGene(identifier, taxonId);
+            	if (resolvedIdentifier == null) {
+            		// bad gene, keep going
+            		continue;
+            	}
+            	MultiKey key = new MultiKey(resolvedIdentifier, taxonId);
+            	GeneHolder gene = identifierToGene.get(key);
             	if (gene == null) {
-            		gene = new GeneHolder(identifier, taxonId);
-            		identifierToGene.put(identifier, gene);
+            		gene = new GeneHolder(resolvedIdentifier, taxonId);
+            		identifierToGene.put(key, gene);
             	}
             	homologues.add(gene);
             }
@@ -206,7 +213,7 @@ public class OrthodbConverter extends BioFileConverter
     	final String refId1 = getGene(gene);
     	final String refId2 = getGene(homologue);
 
-        if (refId1 == null || refId2 == null) {
+        if (refId1 == null || refId2 == null || refId1.equals(refId2)) {
         	// will happen if ID resolver fails to find a match
             return;
         }
@@ -291,16 +298,12 @@ public class OrthodbConverter extends BioFileConverter
     	String refId = holder.getRefId();
         if (refId == null) {
         	String taxonId = holder.getTaxonId();
-        	String identifier = resolveGene(holder.getIdentifier(), taxonId);
-        	if (identifier == null) {
-        		return null;
-        	}
         	String identiferType = config.get(taxonId);
         	if (StringUtils.isEmpty(identiferType)) {
         		identiferType = DEFAULT_IDENTIFIER_TYPE;
         	}
             Item gene = createItem("Gene");
-            gene.setAttribute(identiferType, identifier);
+            gene.setAttribute(identiferType, holder.getIdentifier());
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
             holder.setRefId(refId);
