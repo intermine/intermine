@@ -189,8 +189,12 @@ public class HeatMapController extends TilesAction
         PathQuery query = new PathQuery(model);
         query = queryExpressionScore(bag, conditionType, query);
 
-
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving data.", e);
+        }
         LOG.debug("GGS QUERY: -->" + query + "<--");
 
         List<String> conditions = getConditionsList(conditionType);
