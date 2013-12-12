@@ -109,6 +109,7 @@ public class BagUploadConfirmAction extends InterMineAction
             session.removeAttribute("bagQueryResult_" + bagName);
         }
         confirmForm.reset(mapping, request);
+        
         ForwardParameters forwardParameters = new ForwardParameters(
                 mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);

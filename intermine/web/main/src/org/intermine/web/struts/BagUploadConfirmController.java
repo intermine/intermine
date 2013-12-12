@@ -38,9 +38,11 @@ public class BagUploadConfirmController extends TilesAction
         throws Exception {
 
         HttpSession session = request.getSession();
-        
-        // Get list name?
+
         String bagName = (String) request.getAttribute("newBagName");
+        if (bagName != null) {
+            request.setAttribute("bagName", bagName);
+        }
 
         // Get the id of the job.
         request.setAttribute("jobUid", session.getAttribute(WS_JOB_ID_KEY));
