@@ -55,7 +55,14 @@ public class IDResolver {
     }
 
     public Job removeJob(String uid) {
-        return JOBS.remove(UUID.fromString(uid));
+        if (uid == null) {
+            return null;
+        }
+        try {
+            return JOBS.remove(UUID.fromString(uid));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
 }
