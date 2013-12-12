@@ -103,6 +103,8 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     @Override
     public String generate(WebserviceCodeGenInfo info) {
 
+        endl = info.getLineBreak();
+
         PathQuery query = info.getQuery();
 
         // query is null
