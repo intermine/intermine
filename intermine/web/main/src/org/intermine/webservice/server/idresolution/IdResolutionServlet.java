@@ -12,6 +12,7 @@ package org.intermine.webservice.server.idresolution;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,15 @@ import org.intermine.webservice.server.core.WebServiceServlet;
 public class IdResolutionServlet extends WebServiceServlet
 {
     private static final long serialVersionUID = -3364780354450369691L;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        Runnable procedure = new JobJanitor();
+        Thread t = new Thread(procedure);
+        t.setDaemon(true);
+        t.run();
+    }
 
     @Override
     protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
