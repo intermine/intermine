@@ -46,11 +46,17 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     protected static final String NULL_QUERY    = "Invalid query. Query can not be null.";
     protected static final String INDENT        = "    ";
     protected static final String SPACE         = " ";
-    protected static final String ENDL          = System.getProperty("line.separator");
 
-    protected static final String INVALID_QUERY
-        = "# Invalid query.\n# =============\n"
-        + "# This query cannot be run because of the following problems:" + ENDL;
+    private String endl          = System.getProperty("line.separator");
+
+    protected String getInvalidQuery() {
+        StringBuffer message = new StringBuffer()
+            .append("# Invalid query.").append(endl)
+            .append("# =============").append(endl)
+            .append("# This query cannot be run because of the following problems:").append(endl);
+        return message.toString();
+    }
+
     private static final String DEFAULT_SO_MSG
         = "Uncomment and edit the line below (the default) to select a custom sort order:";
     private static final String CUSTOM_SO_MSG
@@ -65,18 +71,20 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     protected static final String LOOP_CONSTRAINT         = "Loop path constraint is not supported "
                                                               + "at the moment...";
 
-    private static final String BOILERPLATE =
-            "#!/usr/bin/env python" + ENDL + ENDL
-            + "# This is an automatically generated script to run your query" + ENDL
-            + "# to use it you will require the intermine python client." + ENDL
-            + "# To install the client, run the following command from a terminal:" + ENDL
-            + "#" + ENDL
-            + "#     sudo easy_install intermine" + ENDL
-            + "#" + ENDL
-            + "# For further documentation you can visit:" + ENDL
-            + "#     http://www.intermine.org/wiki/PythonClient" + ENDL + ENDL
-            + "# The following two lines will be needed in every python script:" + ENDL
-            + "from intermine.webservice import Service" + ENDL;
+    private String getBoilerPlate() {
+        String boilerplate = "#!/usr/bin/env python" + endl + endl
+            + "# This is an automatically generated script to run your query" + endl
+            + "# to use it you will require the intermine python client." + endl
+            + "# To install the client, run the following command from a terminal:" + endl
+            + "#" + endl
+            + "#     sudo easy_install intermine" + endl
+            + "#" + endl
+            + "# For further documentation you can visit:" + endl
+            + "#     http://www.intermine.org/wiki/PythonClient" + endl + endl
+            + "# The following two lines will be needed in every python script:" + endl
+            + "from intermine.webservice import Service" + endl;
+        return boilerplate;
+    }
 
     private static final String OUTER_JOINS_TITLE = "Outer Joins";
     private static final String[] OUTER_JOINS_EXPLANATION = new String[] {
@@ -104,17 +112,17 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
         List<String> problems = query.verifyQuery();
         if (!problems.isEmpty()) {
-            return INVALID_QUERY + formatProblems(problems);
+            return getInvalidQuery() + formatProblems(problems);
         }
 
-        StringBuffer sb = new StringBuffer(BOILERPLATE);
+        StringBuffer sb = new StringBuffer(getBoilerPlate());
 
         if (info.isPublic()) {
             sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")"
-                    + ENDL + ENDL);
+                    + endl + endl);
         } else {
             sb.append("service = Service(\"" + info.getServiceBaseURL() + "\", \"YOUR-API-KEY\")"
-                    +  ENDL + ENDL);
+                    +  endl + endl);
         }
 
         List<String> rootLessViews = new ArrayList<String>();
@@ -147,13 +155,13 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 toPrint += ",";
             }
             if (currentLine.length() + toPrint.length() > 100) {
-                sb.append(currentLine.toString() + " \\" + ENDL);
+                sb.append(currentLine.toString() + " \\" + endl);
                 currentLine = new StringBuffer(INDENT + INDENT);
                 toPrint = toPrint.substring(1);
             }
             currentLine.append(toPrint);
         }
-        sb.append(currentLine.toString() + ENDL);
+        sb.append(currentLine.toString() + endl);
 
         return sb.toString();
     }
@@ -165,19 +173,19 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     private String handlePathQuery(StringBuffer sb, PathQuery query, List<String> rootLessViews) {
 
         if (StringUtils.isNotBlank(query.getDescription())) {
-            sb.append("# query description - " + query.getDescription() + ENDL + ENDL);
+            sb.append("# query description - " + query.getDescription() + endl + endl);
         }
 
-        sb.append("# Get a new query on the class (table) you will be querying:"  + ENDL);
+        sb.append("# Get a new query on the class (table) you will be querying:"  + endl);
 
         try {
-            sb.append("query = service.new_query(\"" + query.getRootClass() + "\")" + ENDL);
+            sb.append("query = service.new_query(\"" + query.getRootClass() + "\")" + endl);
         } catch (PathException e) {
             // Should have been caught above...
-            return INVALID_QUERY + formatProblems(query.verifyQuery());
+            return getInvalidQuery() + formatProblems(query.verifyQuery());
         }
 
-        sb.append(ENDL);
+        sb.append(endl);
 
         int codedQueries = 0;
         List<String> uncodedQueryTexts = new ArrayList<String>();
@@ -202,20 +210,20 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             }
         }
         if (!constraintProblems.isEmpty()) {
-            return INVALID_QUERY + formatProblems(constraintProblems);
+            return getInvalidQuery() + formatProblems(constraintProblems);
         }
 
         if (!uncodedQueryTexts.isEmpty()) {
             // Subclass constraints must come first or the query will break
             sb.append("# Type constraints should come early - before all mentions ");
-            sb.append("of the paths they constrain" + ENDL);
+            sb.append("of the paths they constrain" + endl);
             for (String text: uncodedQueryTexts) {
                 sb.append(text);
             }
-            sb.append(ENDL);
+            sb.append(endl);
         }
 
-        sb.append("# The view specifies the output columns" + ENDL);
+        sb.append("# The view specifies the output columns" + endl);
         sb.append("query.add_view(");
         StringBuffer viewLine = new StringBuffer();
 
@@ -223,10 +231,10 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         if (viewLine.toString().length() <= 74) {
             sb.append(viewLine.toString());
         } else {
-            sb.append(ENDL);
+            sb.append(endl);
             printLine(sb, INDENT, viewLine.toString());
         }
-        sb.append(")" + ENDL + ENDL);
+        sb.append(")" + endl + endl);
 
         // Add orderBy
         if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
@@ -234,55 +242,55 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 query.getOrderBy().size() == 1
                     && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
                     && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
-                sb.append("# " + DEFAULT_SO_MSG + ENDL + "# ");
+                sb.append("# " + DEFAULT_SO_MSG + endl + "# ");
             } else {
-                sb.append("# " + CUSTOM_SO_MSG + ENDL);
+                sb.append("# " + CUSTOM_SO_MSG + endl);
             }
             for (OrderElement oe : query.getOrderBy()) {
                 sb.append("query.add_sort_order(");
                 sb.append("\"" + oe.getOrderPath() + "\", \"" + oe.getDirection() + "\"");
-                sb.append(")" + ENDL);
+                sb.append(")" + endl);
             }
-            sb.append(ENDL);
+            sb.append(endl);
         }
 
         // Add constraints
         if (!codedQueryTexts.isEmpty()) {
             // Add comments for constraints
-            sb.append("# You can edit the constraint values below" + ENDL);
+            sb.append("# You can edit the constraint values below" + endl);
 
             for (String text: codedQueryTexts) {
                 sb.append(text);
             }
-            sb.append(ENDL);
+            sb.append(endl);
 
             // Add constraintLogic
             if (query.getConstraintLogic() != null
                 && !"".equals(query.getConstraintLogic())) {
                 String logic = query.getConstraintLogic();
                 if (codedQueries <= 1 || logic.indexOf("or") == -1) {
-                    sb.append("# " + DEFAULT_LOGIC_MSG + ENDL + "# ");
+                    sb.append("# " + DEFAULT_LOGIC_MSG + endl + "# ");
                 } else {
-                    sb.append("# " + CUSTOM_LOGIC_MSG + ENDL);
+                    sb.append("# " + CUSTOM_LOGIC_MSG + endl);
                 }
-                sb.append("query.set_logic(\"" + logic + "\")" + ENDL + ENDL);
+                sb.append("query.set_logic(\"" + logic + "\")" + endl + endl);
             }
         }
 
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
             List<String> outerjoinSection = generateOuterJoinSection(query.getOuterJoinStatus());
             if (!outerjoinSection.isEmpty()) {
-                sb.append("# " + OUTER_JOINS_TITLE + ENDL);
+                sb.append("# " + OUTER_JOINS_TITLE + endl);
                 for (String line : OUTER_JOINS_EXPLANATION) {
-                    sb.append("# " + line + ENDL);
+                    sb.append("# " + line + endl);
                 }
                 for (String line : outerjoinSection) {
-                    sb.append(line + ENDL);
+                    sb.append(line + endl);
                 }
-                sb.append(ENDL);
+                sb.append(endl);
             }
         }
-        sb.append("for row in query.rows():" + ENDL);
+        sb.append("for row in query.rows():" + endl);
 
         return null;
     }
@@ -308,13 +316,13 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         List<PathConstraint> editableConstraints = ((TemplateQuery) query)
             .getEditableConstraints();
         if (editableConstraints == null || editableConstraints.isEmpty()) {
-            return INVALID_QUERY + formatProblems(Arrays.asList(
+            return getInvalidQuery() + formatProblems(Arrays.asList(
                     "This template has no editable constraints."));
         }
         StringBuffer constraints = new StringBuffer();
         StringBuffer constraintComments = new StringBuffer();
 
-        constraintComments.append("# You can edit the constraint values below" + ENDL);
+        constraintComments.append("# You can edit the constraint values below" + endl);
 
         Iterator<PathConstraint> conIter = editableConstraints.iterator();
         List<String> constraintProblems = new LinkedList<String>();
@@ -327,9 +335,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             constraintComments.append("# " + opCode + INDENT + path);
             String constraintDes = ((TemplateQuery) query).getConstraintDescription(pc);
             if (constraintDes == null || "".equals(constraintDes)) {
-                constraintComments.append(ENDL);
+                constraintComments.append(endl);
             } else {
-                constraintComments.append(INDENT + constraintDes + ENDL);
+                constraintComments.append(INDENT + constraintDes + endl);
             }
             try {
                 constraints.append(templateConstraintUtil(pc, opCode));
@@ -339,22 +347,22 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             if (conIter.hasNext()) {
                 constraints.append(",");
             }
-            constraints.append(ENDL);
+            constraints.append(endl);
 
         }
         if (!constraintProblems.isEmpty()) {
-            return INVALID_QUERY + formatProblems(constraintProblems);
+            return getInvalidQuery() + formatProblems(constraintProblems);
         }
 
         if (description != null && !"".equals(description)) {
             printLine(sb, "# ", description);
-            sb.append(ENDL);
+            sb.append(endl);
         }
-        sb.append("template = service.get_template('" + templateName + "')" + ENDL + ENDL);
-        sb.append(constraintComments.toString() + ENDL);
-        sb.append("rows = template.rows(" + ENDL);
-        sb.append(constraints.toString() + ")" + ENDL);
-        sb.append("for row in rows:" + ENDL);
+        sb.append("template = service.get_template('" + templateName + "')" + endl + endl);
+        sb.append(constraintComments.toString() + endl);
+        sb.append("rows = template.rows(" + endl);
+        sb.append(constraints.toString() + ")" + endl);
+        sb.append("for row in rows:" + endl);
 
         return null;
     }
@@ -374,7 +382,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         for (String issue: problems) {
             buf.append("#  * ");
             buf.append(issue);
-            buf.append(ENDL);
+            buf.append(endl);
         }
         return buf.toString();
     }
@@ -392,11 +400,11 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         if (lineToPrint.length() > 80 && lineToPrint.lastIndexOf(' ', 80) != -1) {
             int lastCutPoint = lineToPrint.lastIndexOf(' ', 80);
             String frontPart = lineToPrint.substring(0, lastCutPoint);
-            sb.append(frontPart + ENDL);
+            sb.append(frontPart + endl);
             String nextLine = lineToPrint.substring(lastCutPoint + 1);
             printLine(sb, prefix, nextLine);
         } else {
-            sb.append(lineToPrint + ENDL);
+            sb.append(lineToPrint + endl);
         }
     }
 
@@ -460,7 +468,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         if (code != null) {
             sb.append(", code = \"" + code + "\""); // kwargs
         }
-        sb.append(")" + ENDL);
+        sb.append(")" + endl);
         return sb.toString();
     }
 
