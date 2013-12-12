@@ -27,6 +27,7 @@ public class UpgradeJob implements Job {
         this.startedAt = new Date();
         try {
             this.result = upgrade.getBagQueryResult();
+            this.status = JobStatus.SUCCESS;
         } catch (Exception e) {
             error = e;
             this.status = JobStatus.ERROR;
