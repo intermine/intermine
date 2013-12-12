@@ -907,7 +907,7 @@
                                  typeClass="Protein"
                                  views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
                                        proteinDomains.name"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+                                 externalLink="http://www.ebi.ac.uk/interpro/entry/"/>
 
 
       <enrichmentwidgetdisplayer id="bdgp_enrichment"
