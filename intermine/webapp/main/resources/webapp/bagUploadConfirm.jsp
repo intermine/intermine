@@ -18,6 +18,7 @@
     <h1 class="title">Verifying identifiers</h1>
 
     <!-- progress -->
+    <!--
     <div id="list-progress">
         <div class="gray"><strong>1</strong> <span>Upload list of identifiers</span></div
         ><div class="gray-to-white">&nbsp;</div
@@ -27,10 +28,11 @@
         </div>
     </div>
     <div class="clear">&nbsp;</div>
+    -->
     
     <!-- choose name -->
     <div id="chooseName" style="display:none">
-      <h2>a) Choose a name for the list</h2>
+      <h2>Choose a name for the list</h2>
       <div style="clear:both;"></div>
       <div class="formik">
         <input id="newBagName" type="text" name="newBagName" value="${bagName}">
@@ -47,7 +49,7 @@
     <!-- additional matches -->
     <div id="additionalMatches" class="body" style="display:none">
       <div class="oneline">
-        <h2>b) Add additional matches</h2>
+        <h2>Add additional matches</h2>
         <div id="iframe"></div>
       </div>
       <div style="clear:both;"></div>
@@ -62,6 +64,10 @@ iframe { border:0; width: 100%; }
 
 <script type="text/javascript">
 (function($) {
+    // Are we upgrading a list?
+    var upgrading = false;
+    <c:if test="${empty buildNewBag}">upgrading = true;</c:if>
+
     // Show loading sign.
     var loading = $('#ctxHelpDiv');
     loading.show().find('#ctxHelpTxt').html('Please wait &hellip;');
@@ -182,7 +188,11 @@ iframe { border:0; width: 100%; }
         // Inject.
         $('#matchIDs').val(selected.join(' '));
         // Confirm.
-        validateBagName('bagUploadConfirmForm');
+        if (upgrading) { // do not check list name
+          $('#bagUploadConfirmForm').submit();
+        } else {
+          validateBagName('bagUploadConfirmForm');
+        }
       };
 
       // Opts for the component-400.
@@ -204,7 +214,11 @@ iframe { border:0; width: 100%; }
         loading.hide();
 
         // Show the blocks.
-        $('#chooseName, #additionalMatches').show();
+        if (upgrading) { // do not show new list name
+          $('#additionalMatches').show();
+        } else {
+          $('#chooseName, #additionalMatches').show();
+        }
 
         // Focus on the input field and listen for Enter presses.
         $('#newBagName').focus().keypress(function(evt) {
