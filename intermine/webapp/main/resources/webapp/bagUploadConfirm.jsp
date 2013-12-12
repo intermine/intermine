@@ -123,7 +123,19 @@ iframe { border:0; width: 100%; }
         }
       });
 
+    var job, cleanup;
+    // Cleanup a job on success or error.
+    cleanup = function() {
+      if (typeof job !== "undefined" && job !== null) {
+        if (typeof job.del === "function") {
+          job.del();
+        }
+      }
+    };
+
     var onError = function(err) {
+      // Try to cleanup.
+      cleanup();
       // Hide loader.
       loading.hide();
       // Show error message.
@@ -139,12 +151,16 @@ iframe { border:0; width: 100%; }
     var root = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}";
 
     // Poll & retrieve the results of the job.
-    (new intermine.IDResolutionJob("${jobUid}", new intermine.Service({
+    job = new intermine.IDResolutionJob("${jobUid}", new intermine.Service({
       "root": root,
       "token": "${PROFILE.dayToken}",
       "help": "${WEB_PROPERTIES['feedback.destination']}",
       "errorHandler": onError
-    }))).poll().then(function(results) {
+    }));
+    job.poll().then(function(results) {
+      // Clean the mess up.
+      cleanup();
+
       // No results?
       if (!results.stats.objects.all) {
         // Hide loader msg.
