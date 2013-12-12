@@ -230,7 +230,7 @@
   <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
-      <fieldconfig fieldExpr="organism.name" name="Organism"/>
+      <fieldconfig fieldExpr="organism.name" name="Organism" label="Organism Name"/>
     </fields>
   </class>
 
