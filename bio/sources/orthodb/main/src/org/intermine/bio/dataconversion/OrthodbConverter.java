@@ -236,7 +236,12 @@ public class OrthodbConverter extends BioFileConverter
     // dupes
     private void processHomologueGroup(Set<GeneHolder> homologueList) throws ObjectStoreException {
     	for (GeneHolder geneHolder : homologueList) {
-    		geneToHomologues.put(geneHolder, homologueList);
+    		Set<GeneHolder> homologues = new HashSet(homologueList);
+    		Set<GeneHolder> previousHomologues = geneToHomologues.get(geneHolder);
+    		if (previousHomologues != null && previousHomologues.size() > 0) {
+    			homologues.addAll(previousHomologues);
+    		}
+    		geneToHomologues.put(geneHolder, homologues);
     	}
     }
 
