@@ -3,6 +3,7 @@ package org.intermine.api.idresolution;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,9 +13,7 @@ import org.intermine.api.bag.BagQueryUpgrade;
 
 public class IDResolver {
 
-    @SuppressWarnings("unchecked")
-    public final Map<UUID, Job> JOBS =
-        MapUtils.synchronizedMap(new HashMap<UUID, Job>());
+    public final Map<UUID, Job> JOBS = new ConcurrentHashMap<UUID, Job>();
 
     private static IDResolver instance = new IDResolver();
 
