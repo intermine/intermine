@@ -17,7 +17,7 @@
   <div id="mine-pathway-displayer" class="collection-table column-border">
 
     <div class="header">
-      <h3>New Pathways Displayer</h3>
+      <h3>Pathways from Other Mines</h3>
       <p>Pathway data from other Mines for homologues of this gene.</p>
     </div>
 
