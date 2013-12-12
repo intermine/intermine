@@ -81,8 +81,6 @@ iframe { border:0; width: 100%; }
         paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
     </c:forEach>
 
-    console.log(paths);
-
     // Apple lives here.
     var Pomme = require('pomme'),
       pomme = new Pomme({
@@ -126,10 +124,15 @@ iframe { border:0; width: 100%; }
       });
 
     var onError = function(err) {
+      // Hide loader.
+      loading.hide();
+      // Show error message.
       $('#error_msg').show().text('Fatal error, cannot continue, sorry');
+      // Stop execution.
       throw err;
     };
 
+    // Listen to thrown errors from iframe.
     pomme.on('error', onError);
 
     // Point here.
