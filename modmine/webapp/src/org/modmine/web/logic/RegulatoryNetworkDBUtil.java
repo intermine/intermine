@@ -23,6 +23,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
 import org.intermine.bio.web.model.CytoscapeNetworkNodeData;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.modmine.web.model.RegulatoryNetworkEdgeData;
@@ -110,7 +111,12 @@ public final class RegulatoryNetworkDBUtil
         query.addConstraint(Constraints.eq(
                 "NetworkProperty.node.primaryIdentifier", "FBgn*"));
 
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving results.", e);
+        }
 
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
@@ -166,7 +172,12 @@ public final class RegulatoryNetworkDBUtil
 
         query.setConstraintLogic("A and B");
 
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving results.", e);
+        }
 
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
@@ -316,7 +327,12 @@ public final class RegulatoryNetworkDBUtil
         query.addConstraint(Constraints.eq(
                 "NetworkProperty.node.organism.shortName", "C. elegans"));
 
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving results.", e);
+        }
 
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
@@ -377,7 +393,12 @@ public final class RegulatoryNetworkDBUtil
 
         query.addConstraint(Constraints.eq("Regulation.source.organism.shortName", "C. elegans"));
 
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving results.", e);
+        }
 
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
