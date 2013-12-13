@@ -132,11 +132,13 @@ iframe { border:0; width: 100%; }
     var job, cleanup;
     // Cleanup a job on success or error.
     cleanup = function() {
-      if (typeof job !== "undefined" && job !== null) {
-        if (typeof job.del === "function") {
-          job.del();
+      try {
+        if (typeof job !== "undefined" && job !== null) {
+          if (typeof job.del === "function") {
+            job.del();
+          }
         }
-      }
+      } catch (e) {}
     };
 
     var onError = function(err) {
