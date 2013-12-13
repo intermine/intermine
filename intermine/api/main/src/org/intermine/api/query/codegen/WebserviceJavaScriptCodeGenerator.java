@@ -65,6 +65,6 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
           .append(JSStrings.getString("PLACEHOLDER"))
           .append(JSStrings.getString("SCRIPT", url, token, json));
 
-        return sb.toString();
+        return sb.toString().replaceAll("\n", wsCodeGenInfo.getLineBreak());
     }
 }

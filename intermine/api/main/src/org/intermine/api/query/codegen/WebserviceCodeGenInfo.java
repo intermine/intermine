@@ -32,6 +32,7 @@ public class WebserviceCodeGenInfo
     private Profile user;
     private String resultTablesLib = null;
     private String baseUrl = null;
+    private String lineBreak;
 
     /**
      * Constructor.
@@ -52,6 +53,19 @@ public class WebserviceCodeGenInfo
         this.perlWSModuleVer = perlWSModuleVer;
         this.isPublic = isPubliclyAccessible;
         this.user = user;
+        this.lineBreak = System.getProperty("line.separator");
+    }
+
+    public WebserviceCodeGenInfo(PathQuery pq, String serviceBaseURL,
+            String projectTitle, String perlWSModuleVer,
+            boolean pathQueryIsPublic, Profile profile, String lineBreak) {
+        this.query = pq;
+        this.serviceBaseURL = serviceBaseURL;
+        this.projectTitle = projectTitle;
+        this.perlWSModuleVer = perlWSModuleVer;
+        this.isPublic = pathQueryIsPublic;
+        this.user = profile;
+        this.lineBreak = lineBreak;
     }
 
     public void readWebProperties(Properties properties) {
@@ -123,6 +137,10 @@ public class WebserviceCodeGenInfo
      */
     public String getUserName() {
         return user.getUsername();
+    }
+
+    public String getLineBreak() {
+        return lineBreak;
     }
 
     /**
