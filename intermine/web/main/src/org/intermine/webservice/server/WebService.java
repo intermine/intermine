@@ -688,6 +688,8 @@ public abstract class WebService {
     }
 
     private PrintWriter out = null;
+
+    private String lineBreak = null;
  
     /**
      * Get access to the underlying print-writer.
@@ -700,12 +702,8 @@ public abstract class WebService {
     }
 
     private void initOutput() {
-        final String separator;
-        if (RequestUtil.isWindowsClient(request)) {
-            separator = Exporter.WINDOWS_SEPARATOR;
-        } else {
-            separator = Exporter.UNIX_SEPARATOR;
-        }
+        final String separator = getLineBreak();
+        
         Format format = getFormat();
 
         OutputStream os;
@@ -801,6 +799,17 @@ public abstract class WebService {
                 }
             }
         }
+    }
+
+    public String getLineBreak() {
+        if (lineBreak == null && request != null) {
+            if (RequestUtil.isWindowsClient(request)) {
+                lineBreak = Exporter.WINDOWS_SEPARATOR;
+            } else {
+                lineBreak = Exporter.UNIX_SEPARATOR;
+            }
+        }
+        return lineBreak;
     }
 
     /**

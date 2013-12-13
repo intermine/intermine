@@ -149,7 +149,8 @@ public class CodeService extends AbstractQueryService
                         projectTitle,
                         perlWSModuleVer,
                         pathQueryIsPublic(pq, im, profile),
-                        profile);
+                        profile,
+                        getLineBreak());
         info.readWebProperties(webProperties);
         WebserviceCodeGenerator codeGen = getCodeGenerator(lang);
         String sc = codeGen.generate(info);
@@ -170,6 +171,7 @@ public class CodeService extends AbstractQueryService
             // This is due to syntax errors thrown by escaped single quotes.
             sc = "\"" + StringEscapeUtils.escapeJava(sc) + "\"";
         }
+
         output.addResultItem(Arrays.asList(sc));
     }
 

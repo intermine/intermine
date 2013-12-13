@@ -1940,7 +1940,7 @@
     </init-param>
       <init-param>
         <param-name>Access-Control-Expose-Headers</param-name>
-        <param-value>Content-Type, Content-Length, Content-Range</param-value>
+        <param-value>Content-Encoding, Content-Type, Content-Length, Content-Range</param-value>
     </init-param>
     <init-param>
         <param-name>Access-Control-Allow-Methods</param-name>
