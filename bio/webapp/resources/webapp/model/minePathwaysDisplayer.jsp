@@ -35,7 +35,7 @@
 
   var $ = jQuery;
 
-  console.log("STARTED");
+
   var paths = {js: {}, css: {}};
 
   <c:set var="section" value="pathways-displayer"/>
@@ -45,7 +45,7 @@
       paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
   </c:forEach>
 
-  console.log(JSON.stringify(paths, null, 2));
+
 
 
   var imload = function(){
