@@ -10,6 +10,7 @@
 
 1.2.3
 
+#??? - Fixed checkboxes not working with jQuery 2.0.x
 #??? - Dropped support for MyID which is no longer active.
 #511 - Doubleclicking an option on QueryBuilder type selector now works in IE.
 #483 - window.jQuery != $

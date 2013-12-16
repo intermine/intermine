@@ -46,7 +46,7 @@ function initConstraint(selectedConstraint) {
                     var multiValue = jQuery('#multiValue');
                     if (multiValue.exists()) {
                         multiValue.css('display', 'inline');
-                        multiValue.attr('selectedIndex', -1);
+                        multiValue.prop('selectedIndex', -1);
                     }
 
                     break;
