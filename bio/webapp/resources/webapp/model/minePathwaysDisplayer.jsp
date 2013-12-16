@@ -69,8 +69,8 @@
           '_': {
             'path': paths.js._
           },
-          'MyFirstCommonJSApp': {
-            'path': paths.js.MyFirstCommonJSApp,
+          'PathwaysDisplayer': {
+            'path': paths.js.PathwaysDisplayer,
             'depends': ['Q', 'Backbone']
           }
       },
@@ -91,7 +91,7 @@
 
         friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
 
-        require('MyFirstCommonJSApp')(
+        require('PathwaysDisplayer')(
       {
              
               friendlyMines: friendlyMines,                        
