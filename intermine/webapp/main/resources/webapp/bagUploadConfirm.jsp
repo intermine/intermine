@@ -69,8 +69,8 @@ iframe { border:0; width: 100%; }
     <c:if test="${empty buildNewBag}">upgrading = true;</c:if>
 
     // Show loading sign.
-    var loading = $('#ctxHelpDiv');
-    loading.show().find('#ctxHelpTxt').html('Please wait &hellip;');
+    var notify = $('#error_msg');
+    notify.addClass('loading').show().append($('<div/>', { 'html': 'Please wait &hellip;' }));
 
     // if we do not have a name of the list generate one from user's time
     if ($('input#newBagName').val().length == 0) {
@@ -129,25 +129,27 @@ iframe { border:0; width: 100%; }
         }
       });
 
-    var job, cleanup;
+    var job, cleanup, cleaned = false;
     // Cleanup a job on success or error.
     cleanup = function() {
+      if (cleaned) return;
       try {
         if (typeof job !== "undefined" && job !== null) {
           if (typeof job.del === "function") {
             job.del();
           }
         }
-      } catch (e) {}
+      } catch (e) {};
+      cleaned = true;
     };
 
     var onError = function(err) {
       // Try to cleanup.
       cleanup();
-      // Hide loader.
-      loading.hide();
       // Show error message.
-      $('#error_msg').show().text('Fatal error, cannot continue, sorry');
+      notify.removeClass('loading').show().text('Fatal error, cannot continue, sorry');
+      // Hide the title.
+      $('h1.title').remove();
       // Stop execution.
       throw err;
     };
@@ -172,7 +174,7 @@ iframe { border:0; width: 100%; }
       // No results?
       if (!results.stats.objects.all) {
         // Hide loader msg.
-        loading.hide();
+        notify.removeClass('loading').hide();
         // Show the title.
         $('h1.title').text('There are no matches');
         // Strike through the last step.
@@ -213,7 +215,7 @@ iframe { border:0; width: 100%; }
       // Done/selected callback.
       pomme.trigger('load', opts, function() {
         // Hide loader msg.
-        loading.hide();
+        notify.removeClass('loading').hide();
 
         // Show the blocks.
         if (upgrading) { // do not show new list name
