@@ -35,7 +35,6 @@
 
   var $ = jQuery;
 
-
   var paths = {js: {}, css: {}};
 
   <c:set var="section" value="pathways-displayer"/>
@@ -44,7 +43,6 @@
     
       paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
   </c:forEach>
-
 
 
 
@@ -89,14 +87,16 @@
         friendlyMines["${entry.key.name}"] = "${entry.key.url}";
         </c:forEach>
 
-        friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
+        //friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
+        friendlyMines['${localMine.name}'] = "${localMine.url}";
 
         require('PathwaysDisplayer')(
       {
              
               friendlyMines: friendlyMines,                        
               gene: "${gene.primaryIdentifier}",
-              target: "#pathwaysappcontainer"
+              target: "#pathwaysappcontainer",
+              themeColor: "${localMine.bgcolor}"
       });
 
     });
