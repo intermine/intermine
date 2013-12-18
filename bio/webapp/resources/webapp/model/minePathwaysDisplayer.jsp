@@ -35,7 +35,6 @@
 
   var $ = jQuery;
 
-  console.log("STARTED");
   var paths = {js: {}, css: {}};
 
   <c:set var="section" value="pathways-displayer"/>
@@ -45,7 +44,6 @@
       paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
   </c:forEach>
 
-  console.log(JSON.stringify(paths, null, 2));
 
 
   var imload = function(){
@@ -69,8 +67,8 @@
           '_': {
             'path': paths.js._
           },
-          'MyFirstCommonJSApp': {
-            'path': paths.js.MyFirstCommonJSApp,
+          'PathwaysDisplayer': {
+            'path': paths.js.PathwaysDisplayer,
             'depends': ['Q', 'Backbone']
           }
       },
@@ -89,14 +87,16 @@
         friendlyMines["${entry.key.name}"] = "${entry.key.url}";
         </c:forEach>
 
-        friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
+        //friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
+        friendlyMines['${localMine.name}'] = "${localMine.url}";
 
-        require('MyFirstCommonJSApp')(
+        require('PathwaysDisplayer')(
       {
              
               friendlyMines: friendlyMines,                        
               gene: "${gene.primaryIdentifier}",
-              target: "#pathwaysappcontainer"
+              target: "#pathwaysappcontainer",
+              themeColor: "${localMine.bgcolor}"
       });
 
     });

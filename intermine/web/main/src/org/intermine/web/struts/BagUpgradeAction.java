@@ -38,7 +38,8 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class BagUpgradeAction extends InterMineAction
 {
-    private static final String JOB_ID_PREFIX = "idresolutionjobid_";
+
+    private static final String WS_JOB_ID_KEY = "idresolutionjobid";
 
     /**
      * Action for creating BagQueryResult for a specific bag not yet current
@@ -56,17 +57,16 @@ public class BagUpgradeAction extends InterMineAction
             HttpServletResponse response) throws Exception {
         String bagName = (String) request.getParameter("bagName");
         HttpSession session = request.getSession();
-        String jobId = (String) session.getAttribute(JOB_ID_PREFIX + bagName);
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         InterMineBag savedBag = profile.getSavedBags().get(bagName);
-        if (jobId == null) {
-            BagQueryRunner bagRunner = im.getBagQueryRunner();
-            BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagRunner, savedBag);
-            Job job = IDResolver.getInstance().submit(bagQueryUpgrade);
-            session.setAttribute(JOB_ID_PREFIX + bagName, job.getUid());
-        }
+        
+        BagQueryRunner bagRunner = im.getBagQueryRunner();
+        BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagRunner, savedBag);
+        Job job = IDResolver.getInstance().submit(bagQueryUpgrade);
+        session.setAttribute(WS_JOB_ID_KEY, job.getUid());
+        
         request.setAttribute("newBagName", bagName);
         request.setAttribute("bagType", savedBag.getType());
         return mapping.findForward("bagUploadConfirm");

@@ -46,7 +46,7 @@
                 switchInputs('paste','file'); // set whichInput default value 'paste', if not, an error will be caused when a user paste in the regions without fire the switchInputs function
                 if ('${galaxyIntervalData}') {
                     jQuery("#pasteInput").val('${galaxyIntervalData}');
-                    jQuery('#isInterBaseCoordinate').attr('checked', true);
+                    jQuery('#isInterBaseCoordinate').prop('checked', true);
                     // Add galaxy imported data information on top
                     jQuery('#grs-options-body').before('<div id="grs-options-info" class="topBar info" style="padding-left:34px;"><a href="#" onclick="javascript:jQuery(\'#grs-options-info\').hide(\'slow\');return false">Hide</a>${galaxyFetchDataSuccess}<br></div>');
                 } else {
