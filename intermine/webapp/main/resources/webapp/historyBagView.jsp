@@ -354,7 +354,7 @@ if (!im.bagWorks) {
 
   <%-- attach handler to select all in a table --%>
   jQuery('table.bag-table th input[type="checkbox"]').click(function() {
-    jQuery(this).closest('table').find('tr td input[type="checkbox"]').attr('checked', jQuery(this).is(':checked'));
+    jQuery(this).closest('table').find('tr td input[type="checkbox"]').prop('checked', jQuery(this).is(':checked'));
   });
 
   <%-- poll for lists that are "current" or "to upgrade" --%>

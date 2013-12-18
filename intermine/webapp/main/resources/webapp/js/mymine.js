@@ -1,4 +1,5 @@
 
+
    function selectColumnCheckbox(form, type) {
            var deleteButton = document.getElementById('delete_button');
            var removeButton = document.getElementById('remove_button');
@@ -124,7 +125,7 @@
       $('form.editable-user-preference input[type="checkbox"]').change(function(evt) {
           evt.preventDefault();
           evt.stopImmediatePropagation();
-          var $box = $(this), newState = !$box.attr('checked'), name = $box.attr('name'),
+          var $box = $(this), newState = !$box.prop('checked'), name = $box.attr('name'),
               method = (newState ? 'POST' : 'DELETE'),
               data = (newState ? [[name, 'true']] : {key: name});
           $SERVICE.manageUserPreferences(method, data).fail(fail);

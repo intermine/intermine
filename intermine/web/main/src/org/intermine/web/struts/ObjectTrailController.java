@@ -154,10 +154,6 @@ public class ObjectTrailController extends TilesAction
                 elements.add(new TrailElement(label, elementTrail, o.getId().intValue()));
             }
         }
-        //remove the last element corresponding to the current page
-        if (elements.size() > 0) {
-            elements.remove(elements.size() - 1);
-        }
         request.setAttribute("trailElements", elements);
 
         if (queryBuilder != null) {
