@@ -365,7 +365,11 @@
     <td rowspan="2" class="leftcol"><p><h2>Publications</h2></p></td>
     <td> <i>Drosophila</i> </td>
     <td> Gene versus publications</td>
+<<<<<<< HEAD
+    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2013_02</td>
+=======
     <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2013_04</td>
+>>>>>>> dev
     <td> McQuilton et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/22127867" target="_new" class="extlink">PubMed: 22127867</a></td>
     <td> &nbsp;</td>
   </tr>
