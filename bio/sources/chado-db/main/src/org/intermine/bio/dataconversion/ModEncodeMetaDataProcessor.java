@@ -168,6 +168,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
     Map<Integer, List<SubmissionReference>> submissionRefs = null;
+    Map<String, String> referringReferred;
+
+    Map<Integer, List<String>> submissionsReferring;
+
+
     protected IdResolver rslv;
     private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
 
@@ -2043,8 +2048,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             this.referencedSubmissionId = referencedSubmissionId;
             this.dataValue = dataValue;
         }
+        public SubmissionReference(Integer referencedSubmissionId, String dataValue,
+                String referringDccId) {
+            this.referencedSubmissionId = referencedSubmissionId;
+            this.dataValue = dataValue;
+            this.referringDccId = referringDccId;
+        }
+
+
         private Integer referencedSubmissionId;
         private String dataValue;
+        private String referringDccId;
+
     }
 
     // process new query
@@ -2070,6 +2085,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 new HashMap<Integer, Map<String, List<SubmissionProperty>>>();
 
         submissionRefs = new HashMap<Integer, List<SubmissionReference>>();
+        submissionsReferring = new HashMap<Integer, List<String>>();
+        referringReferred = new HashMap<String, String>();
 
         while (res.next()) {
             Integer dataId = new Integer(res.getInt("data_id"));
@@ -2099,8 +2116,23 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // Currently using attValue for referenced submission DCC id, should be dbUrl but seems
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
-                attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
+
+//            	List<String> ex = new ArrayList<String>();
+                List<String> ex = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
+
+                attValue= ex.get(0);
+                wikiPageUrl = ex.get(1);
+//                LOG.info("LL dccId: " + dccId + " attvalue: "
+//                        + attValue + "  wikiPageUrl: " + wikiPageUrl);
+//            	attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
             }
+
+//            if (attValue != null && attValue.startsWith("Celniker/RNA")
+//                    && attHeading.equalsIgnoreCase("Comment")) {
+//                LOG.info("REF SUBS: " + attValue + "-" + wikiPageUrl + " :: " + dccId);
+//                String decoy = "3207";
+//                attValue = checkRefSub(attValue, decoy, submissionId, dccId);
+//            }
 
             // we are starting a new data row
             if (dataId.intValue() != lastDataId.intValue()) {
@@ -2111,6 +2143,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     buildSubProperty =
                             new SubmissionProperty(getPreferredSynonym(dataName), wikiPageUrl);
                     props.put(wikiPageUrl, buildSubProperty);
+                    // submissionId -> [type -> SubmissionProperty]
+                    addToSubToTypes(subToTypes, submissionId, props.get(wikiPageUrl));
                 }
                 // submissionId -> [type -> SubmissionProperty]
                 addToSubToTypes(subToTypes, submissionId, props.get(wikiPageUrl));
@@ -2327,7 +2361,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @param dccId
      * @return
      */
-    private String checkRefSub(String wikiPageUrl, String attValue,
+    private String checkRefSubOR(String wikiPageUrl, String attValue,
             Integer submissionId, String dccId) {
         if (attValue.indexOf(":") > 0) {
             attValue = attValue.substring(0, attValue.indexOf(":"));
@@ -2345,6 +2379,104 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return attValue;
     }
+
+
+    private List<String> checkRefSub(String wikiPageUrl, String attValue,
+            Integer submissionId, String dccId) {
+        if (attValue.indexOf(":") > 0) {
+            attValue = attValue.substring(0, attValue.indexOf(":"));
+        }
+        attValue = DCC_PREFIX + attValue;
+        Integer referencedSubId = getSubmissionIdFromDccId(attValue);
+
+        // keep track of referencing subs
+        referringReferred.put(dccId, attValue);
+
+        List<String> toAdd = Arrays.asList(attValue, wikiPageUrl);
+        submissionsReferring.put(submissionId, toAdd);
+
+        // We have a reference: first set current reference
+        if (referencedSubId != null ) {
+            SubmissionReference subRef =
+                    new SubmissionReference(referencedSubId, wikiPageUrl);
+            Util.addToListMap(submissionRefs, submissionId, subRef);
+            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
+                    + attValue + " (" + referencedSubId + ") via " +
+                    wikiPageUrl);
+
+            // if the referenced submission was already referencing another sub,
+            // use the latter for the reference..
+            if (referringReferred.get(attValue) != null) {
+                SubmissionReference subRefBis = submissionRefs.get(referencedSubId).get(0);
+                Util.addToListMap(submissionRefs, submissionId, subRefBis);
+
+                LOG.info("Using reference to submission " +
+                submissionsReferring.get(referencedSubId) + " by referred " + attValue);
+                return submissionsReferring.get(referencedSubId);
+            }
+
+//            List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
+//            return toReturn;
+
+            return Arrays.asList(attValue, wikiPageUrl);
+        }
+
+        LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
+        return Arrays.asList(attValue, wikiPageUrl);
+
+
+//        List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
+//        return toReturn;
+    }
+
+
+    private List<String> checkRefSubOK(String wikiPageUrl, String attValue,
+            Integer submissionId, String dccId) {
+        if (attValue.indexOf(":") > 0) {
+            attValue = attValue.substring(0, attValue.indexOf(":"));
+        }
+        attValue = DCC_PREFIX + attValue;
+        Integer referencedSubId = getSubmissionIdFromDccId(attValue);
+
+        // keep track of referencing subs
+        referringReferred.put(dccId, attValue);
+
+        List<String> toAdd = Arrays.asList(attValue, wikiPageUrl);
+        submissionsReferring.put(submissionId, toAdd);
+        LOG.info("LL adding " + dccId  + " referring to " + attValue);
+
+        // if the referenced submission was already referencing another sub,
+        // use the latter for the reference..
+        if (referencedSubId != null && referringReferred.get(attValue) != null) {
+            SubmissionReference subRef = submissionRefs.get(referencedSubId).get(0);
+            Util.addToListMap(submissionRefs, submissionId, subRef);
+            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
+                    + attValue + " (" + referencedSubId + ")");
+
+            LOG.info("LL returning " + submissionsReferring.get(referencedSubId) + " instead of " +
+            attValue );
+            return submissionsReferring.get(referencedSubId);
+
+
+        }
+
+        // ..otherwise use the current reference
+        if (referencedSubId != null ) {
+            SubmissionReference subRef =
+                    new SubmissionReference(referencedSubId, wikiPageUrl);
+            Util.addToListMap(submissionRefs, submissionId, subRef);
+            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
+                    + attValue + " (" + referencedSubId + ")");
+
+            List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
+            return toReturn;
+        }
+
+        LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
+        List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
+        return toReturn;
+    }
+
 
     /**
      * @param comma
@@ -2666,12 +2798,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 for (AppliedData aData : refAppliedData) {
                     String possibleWikiUrl = aData.actualValue;
                     if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
-                        //LOG.debug("EEFF possible wikiurl: " + possibleWikiUrl);
+                        // TODO: mv to debug
+                        LOG.info("EEFF possible wikiurl: " + possibleWikiUrl);
                         SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
                         if (propFromReferencedSub != null) {
                             addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
-                            LOG.debug("EEFF from referenced sub: " + propFromReferencedSub.type
-                                    + ": " + propFromReferencedSub.details);
                         }
                     }
                 }
