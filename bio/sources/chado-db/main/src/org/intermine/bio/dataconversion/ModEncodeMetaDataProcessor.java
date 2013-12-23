@@ -2048,18 +2048,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             this.referencedSubmissionId = referencedSubmissionId;
             this.dataValue = dataValue;
         }
-        public SubmissionReference(Integer referencedSubmissionId, String dataValue,
-                String referringDccId) {
-            this.referencedSubmissionId = referencedSubmissionId;
-            this.dataValue = dataValue;
-            this.referringDccId = referringDccId;
-        }
-
-
         private Integer referencedSubmissionId;
         private String dataValue;
-        private String referringDccId;
-
     }
 
     // process new query
@@ -2117,22 +2107,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
 
-//            	List<String> ex = new ArrayList<String>();
-                List<String> ex = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
+                List<String> refItems = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
 
-                attValue= ex.get(0);
-                wikiPageUrl = ex.get(1);
-//                LOG.info("LL dccId: " + dccId + " attvalue: "
-//                        + attValue + "  wikiPageUrl: " + wikiPageUrl);
+                attValue= refItems.get(0);
+                wikiPageUrl = refItems.get(1);
 //            	attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
             }
-
-//            if (attValue != null && attValue.startsWith("Celniker/RNA")
-//                    && attHeading.equalsIgnoreCase("Comment")) {
-//                LOG.info("REF SUBS: " + attValue + "-" + wikiPageUrl + " :: " + dccId);
-//                String decoy = "3207";
-//                attValue = checkRefSub(attValue, decoy, submissionId, dccId);
-//            }
 
             // we are starting a new data row
             if (dataId.intValue() != lastDataId.intValue()) {
@@ -2391,11 +2371,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // keep track of referencing subs
         referringReferred.put(dccId, attValue);
-
         List<String> toAdd = Arrays.asList(attValue, wikiPageUrl);
         submissionsReferring.put(submissionId, toAdd);
 
         // We have a reference: first set current reference
+        // so that the relation is stored
         if (referencedSubId != null ) {
             SubmissionReference subRef =
                     new SubmissionReference(referencedSubId, wikiPageUrl);
@@ -2405,7 +2385,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     wikiPageUrl);
 
             // if the referenced submission was already referencing another sub,
-            // use the latter for the reference..
+            // use the latter for the reference and to populate the properties.
+            // Note: the previous reference will not populate them in the case
+            // of 'cascading reference' (un-matched wikiPageUrls)
             if (referringReferred.get(attValue) != null) {
                 SubmissionReference subRefBis = submissionRefs.get(referencedSubId).get(0);
                 Util.addToListMap(submissionRefs, submissionId, subRefBis);
@@ -2414,67 +2396,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 submissionsReferring.get(referencedSubId) + " by referred " + attValue);
                 return submissionsReferring.get(referencedSubId);
             }
-
-//            List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
-//            return toReturn;
-
             return Arrays.asList(attValue, wikiPageUrl);
         }
-
         LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
         return Arrays.asList(attValue, wikiPageUrl);
-
-
-//        List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
-//        return toReturn;
-    }
-
-
-    private List<String> checkRefSubOK(String wikiPageUrl, String attValue,
-            Integer submissionId, String dccId) {
-        if (attValue.indexOf(":") > 0) {
-            attValue = attValue.substring(0, attValue.indexOf(":"));
-        }
-        attValue = DCC_PREFIX + attValue;
-        Integer referencedSubId = getSubmissionIdFromDccId(attValue);
-
-        // keep track of referencing subs
-        referringReferred.put(dccId, attValue);
-
-        List<String> toAdd = Arrays.asList(attValue, wikiPageUrl);
-        submissionsReferring.put(submissionId, toAdd);
-        LOG.info("LL adding " + dccId  + " referring to " + attValue);
-
-        // if the referenced submission was already referencing another sub,
-        // use the latter for the reference..
-        if (referencedSubId != null && referringReferred.get(attValue) != null) {
-            SubmissionReference subRef = submissionRefs.get(referencedSubId).get(0);
-            Util.addToListMap(submissionRefs, submissionId, subRef);
-            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
-                    + attValue + " (" + referencedSubId + ")");
-
-            LOG.info("LL returning " + submissionsReferring.get(referencedSubId) + " instead of " +
-            attValue );
-            return submissionsReferring.get(referencedSubId);
-
-
-        }
-
-        // ..otherwise use the current reference
-        if (referencedSubId != null ) {
-            SubmissionReference subRef =
-                    new SubmissionReference(referencedSubId, wikiPageUrl);
-            Util.addToListMap(submissionRefs, submissionId, subRef);
-            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
-                    + attValue + " (" + referencedSubId + ")");
-
-            List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
-            return toReturn;
-        }
-
-        LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
-        List<String> toReturn = Arrays.asList(attValue, wikiPageUrl);
-        return toReturn;
     }
 
 
