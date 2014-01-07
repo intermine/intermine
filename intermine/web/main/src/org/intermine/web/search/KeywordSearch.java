@@ -539,6 +539,14 @@ class InterMineObjectFetcher extends Thread
                             while (resultsContainer.getIterator().hasNext()) {
                                 ResultsRow next = resultsContainer.getIterator().next();
 
+                                // It is possible that the inner loop iterator "lags behind" the
+                                // current object's id. See:
+                                // https://github.com/intermine/intermine/issues/473
+                                while(resultsContainer.getIterator().hasNext() && 
+                                		((Integer) next.get(0)).compareTo(object.getId()) == -1) {
+                                	next = resultsContainer.getIterator().next();
+                                }
+                                                                
                                 //reference is not for the current object?
                                 if (!next.get(0).equals(object.getId())) {
                                     // go back one step
