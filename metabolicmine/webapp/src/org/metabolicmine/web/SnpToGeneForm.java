@@ -1,7 +1,7 @@
 package org.metabolicmine.web;
 
 /*
- * Copyright (C) 2002-2013 metabolicMine
+ * Copyright (C) 2002-2014 metabolicMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
