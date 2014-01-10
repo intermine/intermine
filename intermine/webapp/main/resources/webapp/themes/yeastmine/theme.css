@@ -451,6 +451,6 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .popover-content .table td { padding:2px; }
 .bootstrap ul.dropdown-menu a:hover { color:#FFF !important; }
 
-//.intermine .im-column-th .dropdown-menu:after {
-// border-bottom-color: #000;
-//}
+/*.intermine .im-column-th .dropdown-menu:after {
+ border-bottom-color: #000;
+}*/
