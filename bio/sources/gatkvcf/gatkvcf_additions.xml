@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+   <class name="SNP" is-interface="true">
+     <attribute name="name" type="java.lang.String"/>
+     <attribute name="alternate" type="java.lang.String"/>
+     <attribute name="quality" type="java.lang.Double"/>
+     <attribute name="filter" type="java.lang.String"/>
+     <attribute name="info" type="java.lang.String"/>
+     <attribute name="sampleCount" type="java.lang.Integer" />
+     <collection name="consequences" referenced-type="Consequence" reverse-reference="snps" />
+     <collection name="snpDiversitySamples" referenced-type="SNPDiversitySample" reverse-reference="snp" />
+     <reference name="snpLocation" referenced-type="SNPLocation" />
+   </class>
+   <class name="SNPDiversitySample" is-interface="true">
+     <reference name="snp" referenced-type="SNP" reverse-reference="snpDiversitySamples" />
+     <reference name="diversitySample" referenced-type="DiversitySample"/>
+     <attribute name="genotype" type="java.lang.String"/>
+   </class>
+   <class name="SNPLocation" extends="Location" is-interface="true">
+     <attribute name="name" type="java.lang.String" />
+     <attribute name="reference" type="java.lang.String" />
+     <reference name="organism" referenced-type="Organism" />
+     <collection name="snps" referenced-type="SNP" reverse-reference="snpLocation" />
+   </class>
+   <class name="Consequence" is-interface="true">
+     <reference name="gene" referenced-type="Gene"/>
+     <reference name="transcript" referenced-type="Transcript"/>
+     <attribute name="substitution" type="java.lang.String"/>
+     <collection name="snps" referenced-type="SNP" reverse-reference="consequences" />
+     <reference name="type" referenced-type="ConsequenceType"/>
+   </class>
+   <class name="ConsequenceType" is-interface="true">
+     <attribute name="type" type="java.lang.String"/>
+   </class>
+  <class name="DiversitySample" is-interface="true">
+     <attribute name="name" type="java.lang.String"/>
+     <attribute name="description" type="java.lang.String"/>
+     <attribute name="collection" type="java.lang.String"/>
+     <attribute name="longitude" type="java.lang.Double"/>
+     <attribute name="latitude" type="java.lang.Double"/>
+     <attribute name="elevation" type="java.lang.Double"/>
+     <reference name="organism" referenced-type="Organism" />
+   </class>
+</classes>
