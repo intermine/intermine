@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+  <class name="BioEntity" is-interface="true">
+    <collection name="cufflinksscores" referenced-type="CufflinksScore" reverse-reference="bioentity" />
+  </class>
+
+  <class name="Experiment" is_interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <attribute name="description" type="java.lang.String" />
+    <attribute name="url" type="java.lang.String" />
+    <reference name="organism" referenced-type="Organism" />
+  </class>
+
+  <class name="CufflinksScore" is_interface="true">
+    <attribute name="fpkm" type="java.lang.Float" />
+    <attribute name="conflo" type="java.lang.Float" />
+    <attribute name="confhi" type="java.lang.Float" />
+    <attribute name="count" type="java.lang.Float" />
+    <attribute name="countvariance" type="java.lang.Float" />
+    <attribute name="countuncertaintyvar" type="java.lang.Float" />
+    <attribute name="countdispersionvar" type="java.lang.Float" />
+    <attribure name="status" type="java.lang.String" />
+    <reference name="bioentity" referenced-type="BioEntity" />
+    <reference name="experiment" referenced-type="Experiment" />
+  </class>
+</classes>
