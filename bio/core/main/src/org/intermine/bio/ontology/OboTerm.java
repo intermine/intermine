@@ -175,7 +175,7 @@ public class OboTerm
      *
      * @return the tagValues
      */
-    protected Map<?, ?> getTagValues() {
+    public Map<?, ?> getTagValues() {
         return tagValues;
     }
 }
