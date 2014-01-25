@@ -11,3 +11,5 @@ Copyright (C) 2002-2014 FlyMine
 See [LICENSE](LICENSE) file for licensing information.
 
 This product includes software developed by the [Apache Software Foundation](http://www.apache.org/).
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/intermine/intermine/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
