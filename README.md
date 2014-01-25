@@ -9,3 +9,5 @@ Apache Software Foundation (http://www.apache.org/).
 * project it would be appreciated if groups that use InterMine or parts *
 * of InterMine would let us know (email info[at]flymine.org).           *
 *************************************************************************
+
+[InterMine Documentation](http://intermine.readthedocs.org/en/latest/)
