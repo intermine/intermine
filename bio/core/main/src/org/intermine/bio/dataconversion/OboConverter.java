@@ -37,8 +37,7 @@ import org.intermine.xml.full.Reference;
  * @author Thomas Riley
  * @see DagConverter
  */
-public class OboConverter extends DataConverter
-{
+public class OboConverter extends DataConverter implements OboConverterInterface{
     private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
     protected String dagFilename;
@@ -192,16 +191,7 @@ public class OboConverter extends DataConverter
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
-        // this is very spcific hard coded EMAPA stuff not really an ideal approach
-        if(  term.getId()!= null && term.getId().indexOf("EMAPA") != -1){
-           try{
-             String starts_at =(String) ((List)term.getTagValues().get("starts_at")).get(0);
-             String ends_at =(String) ((List)term.getTagValues().get("ends_at")).get(0);
-             item.addAttribute(new Attribute("startsAt", starts_at));
-             item.addAttribute(new Attribute("endsAt", ends_at));
-           }catch(Exception e){}
 
-        }
 
         for (OboTermSynonym syn : term.getSynonyms()) {
             Item synItem = synToItem.get(syn);
