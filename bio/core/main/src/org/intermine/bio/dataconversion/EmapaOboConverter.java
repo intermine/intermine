@@ -33,9 +33,17 @@ import org.intermine.xml.full.Reference;
 
 /**
  * Convert tree of OboTerms into Items.
- *
- * @author Thomas Riley
- * @see DagConverter
+ * Sets EMAPA attributes starts_at and ends_at
+ * Requires the EMAPA.obo file to be modified
+ * "relationship: starts_at TS01"
+ * would need to become
+ * "starts_at: TS01"
+ * this allows the starts_at value to be parsed as tagValue
+ * These two sed commands will do this
+ * sed -i 's/relationship: ends_at/ends_at:/g' EMAPA.obo
+ * sed -i 's/relationship: starts_at/starts_at:/g' EMAPA.obo
+ * @author Steve Neuhauser
+ * @see OboConverter
  */
 public class EmapaOboConverter extends OboConverter implements OboConverterInterface {
 
