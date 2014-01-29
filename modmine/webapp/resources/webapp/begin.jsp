@@ -61,8 +61,8 @@ modENCODE labs submit data to the Data Coordination Center (DCC) where we organi
 and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong>
 results and access the GBrowse <strong>genome browser</strong>. Explore some of the
 <a href="#" onclick="switchBochs(2);return false;">tools</a> provided below and
-check out our <b><a href="http://www.modencode.org/quickstart/">quick start guide</a></b>!
-
+check out our <b><a href="http://www.modencode.org/quickstart/">quick start guide</a></b>
+</p><p>Please <b><a href="http://nar.oxfordjournals.org/citmgr?gca=nar;40/D1/D1082">cite modMine</a></b> if it helped your research! 
 </p>
 <br />
 <p><strong>modMine</strong> release <strong>${WEB_PROPERTIES['project.releaseVersion']}</strong>
