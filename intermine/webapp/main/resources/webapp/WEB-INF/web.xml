@@ -1727,9 +1727,9 @@
         <name>Sequence Access</name>
         <minVersion>13</minVersion>
         <method authenticationRequired="false" type="GET" also="POST">
-            <summary>Get a portion of a sequence-like object</summary>
+            <summary>Get a portion of a sequence-like object.</summary>
             <description>
-                Get either the entire sequence of a character-sequence like thing, or
+                Get either the entire sequence of an object, or
                 fetch an indexed sub-sequence of it.
                 
                 This service expects a query with a single output column that resolves
