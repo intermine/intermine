@@ -37,8 +37,7 @@ import org.intermine.xml.full.Reference;
  * @author Thomas Riley
  * @see DagConverter
  */
-public class OboConverter extends DataConverter
-{
+public class OboConverter extends DataConverter implements OboConverterInterface{
     private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
     protected String dagFilename;
@@ -192,6 +191,8 @@ public class OboConverter extends DataConverter
         if (term.getId() != null) {
             item.addAttribute(new Attribute("identifier", term.getId()));
         }
+
+
         for (OboTermSynonym syn : term.getSynonyms()) {
             Item synItem = synToItem.get(syn);
             if (synItem == null) {

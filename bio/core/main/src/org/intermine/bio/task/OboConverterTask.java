@@ -10,8 +10,11 @@ package org.intermine.bio.task;
  *
  */
 
+import java.lang.reflect.Constructor;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.dataconversion.OboConverter;
+import org.intermine.bio.dataconversion.EmapaOboConverter;
+import org.intermine.bio.dataconversion.OboConverterInterface;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.dataconversion.ObjectStoreItemWriter;
 import org.intermine.metadata.Model;
@@ -30,7 +33,7 @@ public class OboConverterTask extends ConverterTask
 {
 //    protected static final Logger LOG = Logger.getLogger(OboConverterTask.class);
 
-    private String file, ontologyName, osName, url, termClass;
+    private String file, ontologyName, osName, url, termClass, converterClass;
 
     /**
      * Set the input file name
@@ -76,6 +79,16 @@ public class OboConverterTask extends ConverterTask
     }
 
     /**
+     * Set the converterClass
+     *
+     * @param converterClass the nave of the OBO converter class to use
+     * Default class is OboConverter
+     */
+    public void setConverter(String className){
+        this.converterClass = className;
+    }
+
+    /**
      * Run the task
      * @throws BuildException if a problem occurs
      */
@@ -101,9 +114,16 @@ public class OboConverterTask extends ConverterTask
             writer = new ObjectStoreItemWriter(osw);
             Model model = Model.getInstanceByName(getModelName());
 
-            OboConverter converter;
+            OboConverterInterface converter;
             if (file.endsWith(".obo")) {
-                converter = new OboConverter(writer, model, file, ontologyName, url, termClass);
+                if(converterClass == null || converterClass.indexOf("$")!= -1){
+                    converter = new OboConverter(writer, model, file, ontologyName, url, termClass);
+                }else{
+                    Class<?> c = Class.forName(converterClass);
+                    Constructor<?> con = c.getConstructor(ItemWriter.class,Model.class,String.class,String.class,String.class,String.class);
+                    converter = (OboConverterInterface) con.newInstance(writer,model,file,ontologyName,url,termClass);
+                     
+                }
             } else {
                 throw new IllegalArgumentException("Don't know how to deal with file " + file);
             }
