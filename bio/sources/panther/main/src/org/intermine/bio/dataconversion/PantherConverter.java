@@ -52,6 +52,7 @@ public class PantherConverter extends BioFileConverter
     private static String evidenceRefId = null;
     private static final Map<String, String> TYPES = new HashMap<String, String>();
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
+    private static final String DEFAULT_HOMOLOGUE_TYPE = "homologue";
     private OrganismRepository or;
     private Set<String> databasesNamesToPrepend = new HashSet<String>();
     private Map<String, Map<String, String>> geneIdPolymorphism =
@@ -290,7 +291,11 @@ public class PantherConverter extends BioFileConverter
             homologue.setReference("gene", gene1);
             homologue.setReference("homologue", gene2);
             homologue.addToCollection("evidence", getEvidence());
-            homologue.setAttribute("type", TYPES.get(type));
+            if (StringUtils.isEmpty(type)) {
+            	homologue.setAttribute("type", DEFAULT_HOMOLOGUE_TYPE);            	
+            } else {
+            	homologue.setAttribute("type", TYPES.get(type));
+            }
             homologue.addToCollection("crossReferences",
                 createCrossReference(homologue.getIdentifier(), pantherId,
                         DATA_SOURCE_NAME, true));
