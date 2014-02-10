@@ -275,7 +275,16 @@
         <tr>
         <td class="constraint_${index}">
           <c:if test="${!empty dec.bags && !dec.nullSelected}">
-            <html:checkbox property="useBagConstraint(${index})" styleId="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />&nbsp;<fmt:message
+            <input
+              type="checkbox"
+              name="useBagConstraint(${index})"
+              id="useBagConstraint(${index})"
+              onclick="clickUseBag(${index})"
+              autocomplete="off"
+              <c:if test="${!empty dec.bags}">
+                checkbox="checked"
+              </c:if>
+            />&nbsp;<fmt:message
             key="template.constraintobe"/>&nbsp;<html:select
             property="bagOp(${index})" styleId="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">
