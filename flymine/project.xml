@@ -573,7 +573,7 @@
       <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
 
-   <source name="panther" type="orthodb" dump="true">
+   <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
