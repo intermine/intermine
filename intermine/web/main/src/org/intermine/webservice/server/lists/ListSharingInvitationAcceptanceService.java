@@ -22,6 +22,7 @@ import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.context.MailAction;
 import org.intermine.webservice.client.exceptions.InternalErrorException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -119,6 +120,12 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
         } catch (UserAlreadyShareBagException e) {    
             LOG.warn("User accepted an invitation to a list they already have access to", e);
         }
+
+
+        if (input.notify) {
+            notifyOwner(input.invite);
+        }
+
         // Send back information about the new list, if they accepted.
         if (input.accepted) {
             JSONListFormatter formatter = new JSONListFormatter(im, input.accepter, false);
@@ -126,25 +133,25 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
         } else {
             addResultItem((Map) Collections.emptyMap(), false);
         }
-
-        if (input.notify) {
-            notifyOwner(input.invite);
-        }
     }
     
-    private void notifyOwner(SharingInvite invite) {
-        Emailer emailer = InterMineContext.getEmailer();
-        ProfileManager pm = im.getProfileManager();
-        Profile receiver = getPermission().getProfile();
-        Profile owner = pm.getProfile(invite.getBag().getProfileId());
+    private void notifyOwner(final SharingInvite invite) {
+        final ProfileManager pm = im.getProfileManager();
+        final Profile receiver = getPermission().getProfile();
+        final Profile owner = pm.getProfile(invite.getBag().getProfileId());
 
-        try {
-        emailer.email(
-                owner.getEmailAddress(), "was-accepted",
-                invite.getCreatedAt(), invite.getInvitee(), invite.getBag(),
-                receiver.getUsername(), webProperties.getProperty("project.title"));
-        } catch (MessagingException e) {
-            LOG.error("Could not notify owner", e);
+        boolean queued = InterMineContext.queueMessage(new MailAction() {
+            @Override
+            public void act(Emailer emailer) throws Exception {
+                emailer.email(
+                        owner.getEmailAddress(), "was-accepted",
+                        invite.getCreatedAt(), invite.getInvitee(), invite.getBag(),
+                        receiver.getUsername(), webProperties.getProperty("project.title"));
+            }
+        });
+
+        if (!queued) {
+            LOG.error("Mail queue full, could not send message");
         }
     }
 

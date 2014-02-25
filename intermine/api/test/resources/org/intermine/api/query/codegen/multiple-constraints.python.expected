@@ -20,9 +20,9 @@ query = service.new_query("Employee")
 query.add_view("name", "department.name")
 
 # You can edit the constraint values below
-query.add_constraint("department.manager", "IS NOT", "department.company.CEO", "A")
-query.add_constraint("Employee", "LOOKUP", "M*", "", "B")
-query.add_constraint("department.name", "ONE OF", ["Sales", "Warehouse"], "C")
+query.add_constraint("department.manager", "IS NOT", "department.company.CEO", code = "A")
+query.add_constraint("Employee", "LOOKUP", "M*", code = "B")
+query.add_constraint("department.name", "ONE OF", ["Sales", "Warehouse"], code = "C")
 
 # Your custom constraint logic is specified with the code below:
 query.set_logic("(A or C) and B")

@@ -163,7 +163,12 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             }
         }
 
-        ExportResultsIterator qResults = executor.execute((PathQuery) q);
+        ExportResultsIterator qResults;
+        try {
+            qResults = executor.execute((PathQuery) q);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
         // traverse so we get a nice map from homologue symbol to a map of allele term names (and
         //  some extras)
         HashMap<String, HashMap<String, Object>> counts = new HashMap<String, HashMap<String,

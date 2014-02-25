@@ -1,0 +1,81 @@
+<items>
+<item id="5_3" class="SOTerm">
+<attribute name="name" value="mRNA"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="Location">
+<attribute name="end" value="4817340"/>
+<attribute name="start" value="4816612"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="6_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Gene">
+<attribute name="description" value="ENCODES a protein that exhibits zinc ion binding AND  INVOLVED IN acrosome reaction (ortholog) AND  binding of sperm to zona pellucida (ortholog) AND  penetration of zona pellucida (ortholog) AND  FOUND IN nucleus AND  INTERACTS WITH 17alpha-ethynylestradiol AND  ammonium chloride AND  cadmium dichloride"/>
+<attribute name="length" value="729"/>
+<attribute name="primaryIdentifier" value="RGD:3885"/>
+<attribute name="secondaryIdentifier" value="RGD:3885"/>
+<attribute name="symbol" value="Tnp2"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_1"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_2" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_1" class="MRNA">
+<attribute name="length" value="3999273"/>
+<attribute name="primaryIdentifier" value="mRNARGD2752358_t00"/>
+<attribute name="scoreType" value="AAA"/>
+<attribute name="symbol" value="NM_017057"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_2"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="Synonym">
+<attribute name="value" value="ENSRNOG00000002566"/>
+<reference name="subject" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="7_2" class="Location">
+<attribute name="end" value="4816612"/>
+<attribute name="start" value="817340"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="9_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="UCSC"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="UCSC data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="4_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="10"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Organism">
+<attribute name="taxonId" value="10116"/>
+</item>
+</items>

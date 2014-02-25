@@ -76,7 +76,8 @@
           </c:choose>
           <script type="text/javascript">
             trimTable('#coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner');
-            jQuery(function(){
+            (function($) {
+              $(function(){
                 if(${useLocalStorage} && typeof(Storage)!=="undefined"){
                  if(localStorage.${innerDivName}==undefined || localStorage.${innerDivName} == "hide"){
                    jQuery('#${innerDivName}').hide();
@@ -94,6 +95,7 @@
                }
                });
             });
+            })(window.jQuery);
           </script>
           </div>
           <c:choose>

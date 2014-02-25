@@ -27,8 +27,9 @@
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
       <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
-      <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true" showInQB="false"/>
       <fieldconfig fieldExpr="fullTime" showInSummary="false" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="address" showInQB="false"/>
       <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
       <fieldconfig fieldExpr="seniority" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <!-- the doNotTruncate flag, when set to true, stops the object details
@@ -135,13 +136,23 @@
               domainLabel="Age"
               rangeLabel="Number of Employees"
               graphType="Histogram"/>
-         --><enrichmentwidgetdisplayer id="contractor_enrichment"
+         -->
+         <enrichmentwidgetdisplayer id="contractor_enrichment"
                  title="Contractor Enrichment"
                  label="Contractor"
                  description="The relationship between contractors and employees"
                  startClass="Employee"
                  startClassDisplay="name"
                  enrich="department.company.contractors.name"
+                 typeClass="Employee"
+                 views="name, age, department.name"/>
+         <enrichmentwidgetdisplayer id="colleague_enrichment"
+                 title="Colleague Enrichment"
+                 label="Colleague"
+                 description="The relationship between employees and their colleagues"
+                 startClass="Employee"
+                 startClassDisplay="name"
+                 enrich="department.employees.name"
                  typeClass="Employee"
                  views="name, age, department.name"/>
      </widgets>

@@ -37,13 +37,13 @@
 
 <c:choose>
     <c:when test="${reportObject != null}">
-        <c:set var="query" value="${imf:populateTemplateWithObject(templateQuery, reportObject.object)}"/>
+        <c:set scope="request" var="tquery" value="${imf:populateTemplateWithObject(templateQuery, reportObject.object)}"/>
     </c:when>
     <c:when test="${interMineIdBag != null}">
-        <c:set var="query" value="${imf:populateTemplateWithBag(templateQuery, interMineIdBag)}"/>
+        <c:set scope="request" var="tquery" value="${imf:populateTemplateWithBag(templateQuery, interMineIdBag)}"/>
 	</c:when>
 	<c:otherwise>
-		<c:set var="tmlType" value="aspect"/>
+		<c:set scope="request" var="tmlType" value="aspect"/>
 	</c:otherwise>
 </c:choose>
 
@@ -60,7 +60,7 @@
   <script type="text/javascript">
     (function($) {
         intermine.css.headerIcon = "fm-header-icon";
-        var query = ${query.json};
+        var query = ${tquery.json};
         var disableTemplate = function() {
             $('#${elemId} h3').addClass('no-results').unbind('click');
             $('#${tableContainerId}').remove();

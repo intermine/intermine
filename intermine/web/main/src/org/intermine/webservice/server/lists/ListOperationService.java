@@ -48,7 +48,7 @@ public abstract class ListOperationService extends ListMakerService
     }
 
     @Override
-    protected ListInput getInput(HttpServletRequest request) {
+    protected ListInput getInput() {
         return new CommutativeOperationInput(request, bagManager, getPermission().getProfile());
     }
 

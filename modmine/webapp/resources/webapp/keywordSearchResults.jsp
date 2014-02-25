@@ -56,7 +56,7 @@ input.submit {
      // (un)Check all ids checkboxes
      function checkAll()
      {
-         jQuery(".item").attr('checked', jQuery('#allItems').is(':checked'));
+         jQuery(".item").prop('checked', jQuery('#allItems').is(':checked'));
          jQuery('#allItems').css("opacity", 1);
      }
 
@@ -113,7 +113,7 @@ input.submit {
            jQuery("#allItems").removeAttr('checked');
             jQuery("#allItems").css("opacity", 1);}
          else {
-           jQuery("#allItems").attr('checked', true);
+           jQuery("#allItems").prop('checked', true);
            jQuery("#allItems").css("opacity", 1);}
          }
      }

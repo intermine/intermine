@@ -26,6 +26,14 @@ public class XMLFormatter extends Formatter
 
     private final Stack<String> openElements = new Stack<String>();
 
+    protected void pushTag(String tag) {
+        openElements.push(tag);
+    }
+
+    protected String popTag() {
+        return openElements.pop();
+    }
+
     protected String getRootElement() {
         return "ResultSet";
     }
