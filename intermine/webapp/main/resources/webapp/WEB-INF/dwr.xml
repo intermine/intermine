@@ -5,11 +5,11 @@
     <create creator="new" javascript="JDate">
       <param name="class" value="java.util.Date"/>
     </create>
-    <create creator="new"  javascript="AjaxServices" class="org.intermine.dwr.AjaxServices">
-      <!--<include method="getName"/>-->
+    <create creator="new"  javascript="AjaxServices">
+      <param name="class" value="org.intermine.dwr.AjaxServices"/>
     </create>
-    <create creator="new"  javascript="TrackAjaxServices" class="org.intermine.dwr.TrackAjaxServices">
-      <!--<include method="getName"/>-->
+    <create creator="new"  javascript="TrackAjaxServices">
+      <param name="class" value="org.intermine.dwr.TrackAjaxServices"/>
     </create>
     <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
     <convert converter="bean" match="org.intermine.web.logic.results.*"/>
