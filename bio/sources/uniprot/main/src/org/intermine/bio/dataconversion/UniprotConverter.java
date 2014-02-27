@@ -810,14 +810,19 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private void processFeatures(Item protein, UniprotEntry uniprotEntry)
             throws SAXException {
-            for (Item feature : uniprotEntry.getFeatures()) {
-                feature.setReference("protein", protein);
-                try {
-                    store(feature);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
-                }
-            }
+        	List<String> featureTypes = CONFIG.getFeatureTypes();
+        	for (Item feature : uniprotEntry.getFeatures()) {
+        		// only store the features of interest
+        		if (featureTypes.isEmpty() || 
+        				featureTypes.contains(feature.getAttribute("type").getValue())) {        			
+        			feature.setReference("protein", protein);
+        			try {
+        				store(feature);
+        			} catch (ObjectStoreException e) {
+        				throw new SAXException(e);
+        			}
+        		}
+        	}
         }
 
         private void processSynonyms(String proteinRefId, UniprotEntry uniprotEntry)
@@ -1278,8 +1283,8 @@ public class UniprotConverter extends BioDirectoryConverter
 
     private Item getFeature(String type, String description, String status)
         throws SAXException {
-        List<String> featureTypes = CONFIG.getFeatureTypes();
-        if (featureTypes.isEmpty() || featureTypes.contains(type)) {
+//        List<String> featureTypes = CONFIG.getFeatureTypes();
+//        if (featureTypes.isEmpty() || featureTypes.contains(type)) {
             Item feature = createItem("UniProtFeature");
             feature.setAttribute("type", type);
             String keywordRefId = getKeyword(type);
@@ -1293,8 +1298,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 feature.setAttribute("description", featureDescription);
             }
             return feature;
-        }
-        return null;
+//        }
+//        return null;
     }
 
     /**
