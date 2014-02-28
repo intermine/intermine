@@ -12,6 +12,7 @@
 
 #506 - Do not remember checkbox state on template forms
 #540 - Fix normalise by length UI in list widgets
+#545 - Lists not being upgraded throw error on homepage
 
 1.3
 
