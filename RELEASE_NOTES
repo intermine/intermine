@@ -8,6 +8,14 @@
  *
  */
 
+1.3.1
+
+#506 - Do not remember checkbox state on template forms
+#540 - Fix normalise by length UI in list widgets
+#545 - Lists not being upgraded throw error on homepage
+#529 - Add path formatter to keyword search facets, as per @hkmoon
+#548 - Initial HumanMine theme
+
 1.3
 
 #7 - Keyword search - organism facet should be on parent class

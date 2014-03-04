@@ -148,6 +148,10 @@ public class BagManager
         for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
             // gimme the bag
             InterMineBag bag = entry.getValue();
+            // is this bag useable (current)?
+            if (!bag.isCurrent()) {
+                continue;
+            }
             // bag's tags
             List<Tag> bagTags = getTagsForBag(bag, profile);
             // do we have a winner?
