@@ -1580,7 +1580,7 @@ public final class KeywordSearch
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
         // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
         final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
-            "]", "^", "\"", "~", "?", ":", "\\"};
+            "]", "^", "~", "?", ":", "\\"};
         for (String s : specialCharacters) {
             if (queryString.contains(s)) {
                 queryString = queryString.replace(s, "*");
