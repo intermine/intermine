@@ -8,16 +8,71 @@
  *
  */
 
-1.2.3
+1.3.1
 
-#??? - Fixed checkboxes not working with jQuery 2.0.x
-#??? - Dropped support for MyID which is no longer active.
-#511 - Doubleclicking an option on QueryBuilder type selector now works in IE.
-#483 - window.jQuery != $
-#479 - Moved new build of list widgets to InterMine.
-#451 - Template more results & browser autocomplete fix (+ #66).
-#355 - Being able to hide fields from QueryBuilder.
-#400 - Better UI for list upload resolve identifiers step (+ #489, #494, #497, #505)
+#506 - Do not remember checkbox state on template forms
+#540 - Fix normalise by length UI in list widgets
+#545 - Lists not being upgraded throw error on homepage
+#529 - Add path formatter to keyword search facets, as per @hkmoon
+#548 - Initial HumanMine theme
+
+1.3
+
+#7 - Keyword search - organism facet should be on parent class
+#64 - Jumpy display: new table controls on report pages
+#66 - Autocomplete displays underneath autocomplete suggested by browser
+#70 - Result Table popups extend beyond visible area
+#151 - Use "list" instead of "bag". 
+#155 - beta - missing error msg "Your query would take too long"
+#157 - UTF characters in imjs
+#158 - im-tables css has rules for svg elements that are too broad
+#163 - Column headers not displayed
+#165 - Autocomplete broken in "Add new filter" dialog
+#166 - Sort order drag-n-drop bug.
+#184 - Error messages on results tables when user clicks before page loads.
+#194 - Webapp: Oops! - Server Error
+#197 - Results Table Gene Link open in a new window
+#207 - Save button not working following Get XML code
+#214 - Uploading lists - type issue
+#215 - Query results: fixed width columns hide data
+#218 - Export collection attributes to GFF/FASTA
+#223 - UniProt Parser Suggestion
+#224 - Results tables not appearing on IE 8
+#228 - Query too long to run warning
+#239 - Update the JS code generator
+#285 - Export is failing when removing columns
+#314 - Add "getting started" tutorial for webapp config
+#355 - [ WormMine beta release ] Enable hiding specific fields from querybuilder
+#381 - Templates on home page are owned by the superuser only
+#382 - LOOKUP for protein ignores organism name
+#383 - Warning messages keep popping up when navigating between lists
+#392 - ConcurrentModificationException when adding to a list.
+#399 - YeastMine - external link icon is wrong
+#424 - Removing particular columns from templates results in Oops!
+#431 - Show templates in summary section of report page
+#438 - GFF3 Download fails on non sequence features - should be disabled
+#442 - Download dialogue - suggestions
+#444 - Query results - need dropdowns when adding filters
+#445 - Code generation - don't use ID. never ever!
+#449 - Quick search results only retrieving first 100 rows
+#450 - Report page - results tables are being added to the query history
+#451 - Autocomplete not scrolling all the way
+#453 - ID Resolution WS update
+#454 - Update sequence feature displayer
+#461 - 500 error code response with empty query constraints.
+#469 - Homologene - correct identifiers
+#471 - Dead link to Reactome inference details on Reports Page
+#472 - OrthoDB - add option to use protein ID field
+#479 - move new list widgets to InterMine
+#483 - $ not exported on window
+#494 - List upload - download summary requires Blobs
+#496 - InitialiserPlugin should start the upgrade procedure for the super users lists
+#497 - bagName not populating when upgrading a list, results in NullPointerException
+#500 - Code generation needs platform specific line endings
+#507 - Make sure perl client is up to speed with current webservicery
+#509 - Add data set to publication
+#510 - "Download" window UI is malformed when invoked inside Report Displayer
+#511 - doubleclicking an option on QueryBuilder type selector not worky under IE9
 
 1.2.2 (7 August 2013)
 
