@@ -69,7 +69,8 @@ public class PopulateChildFeatures
         Results res = osw.getObjectStore().execute(q, 1000, true, true, true);
         Iterator<Object> resIter = res.iterator();
         osw.beginTransaction();
-        int count = 0;
+        int parentCount = 0;
+        int childCount = 0;
        
         while (resIter.hasNext()) {
         	ResultsRow<InterMineObject> rr = (ResultsRow<InterMineObject>) resIter.next();
@@ -80,9 +81,12 @@ public class PopulateChildFeatures
         	if (newCollection != null && !newCollection.isEmpty()) {
         		o.setFieldValue(TARGET_COLLECTION, newCollection);
         		osw.store(o);
+        		parentCount++;
+        		childCount += newCollection.size();
         	}
         }
         osw.commitTransaction();
+        LOG.info("Stored " + childCount + " child features for " + parentCount + " parent features");
     }
 
 	// for each collection in this class (e.g. Gene), test if it's a child feature

@@ -165,6 +165,7 @@ public class UniprotKeywordConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void characters(char[] ch, int start, int length) {
             int st = start;
             int l = length;
