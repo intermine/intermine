@@ -22,6 +22,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
+import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
@@ -73,18 +74,12 @@ public abstract class AbstractQueryService extends WebService
      * @return A builder for this query.
      */
     protected PathQueryBuilder getQueryBuilder(String xml) {
-        ListManager listManager = new ListManager(im, getPermission().getProfile());
-
-        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
-        for (InterMineBag bag: listManager.getLists()) {
-            savedBags.put(bag.getName(), bag);
-        }
+        final ListManager listManager = new ListManager(im, getPermission().getProfile());
 
         if (formatIsJsonObj()) {
-            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(),
-                    savedBags);
+            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(), listManager);
         } else {
-            return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
+            return new PathQueryBuilder(xml, getXMLSchemaUrl(), listManager);
         }
     }
 
