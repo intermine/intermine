@@ -208,7 +208,11 @@ iframe { border:0; width: 100%; }
         portal: function(object) {
           // Point straight to the db identifier.
           var path = root + '/report.do?id=' + object.id;
-          (window.open(path, '')).focus();
+          var popup = window.open(path, '');
+          // Was it not blocked?
+          if (popup) {
+            popup.focus();
+          }
         }
       };
 
