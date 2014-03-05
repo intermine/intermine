@@ -26,7 +26,7 @@ import org.intermine.api.profile.Profile;
  * Manager of public lists used by web service.
  * @author Jakub Kulaviak
  **/
-public class ListManager
+public class ListManager implements Producer<Map<String, InterMineBag>>
 {
     private static final long MAX_WAIT = 0;
     private final BagManager bagManager;
@@ -98,5 +98,11 @@ public class ListManager
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {
         return bagManager.getCurrentBagsContainingId(profile, objectId);
+    }
+
+
+    @Override
+    public Map<String, InterMineBag> produce() {
+        return getListMap();
     }
 }
