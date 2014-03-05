@@ -555,10 +555,14 @@ public abstract class WebService {
             if (element.getClassName().contains("catalina")) {
                 // We have descended as far as is useful. stop here.
                 tooDeep = true;
+                ps.print("\n ...");
             } else {
                 ps.print("\n  at ");
                 ps.print(element);
             }
+        }
+        if (t.getCause() != null) {
+            ps.print("\n caused by: " + t.getCause() + "\n" + getTruncatedStackTrace(t.getCause()));
         }
         ps.flush();
         return b.toString();
