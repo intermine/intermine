@@ -47,7 +47,12 @@ public class MinimalJsonIterator implements Iterator<JSONArray>
                 // In the case of flattened outerjoins.
                 jsonRow.add(null);
             } else {
-                jsonRow.add(re.getField());
+                Object field = re.getField();
+                // Stringify all char-sequences, (ie. force Clob evaluation)
+                if (field instanceof CharSequence) {
+                    field = field.toString();
+                }
+                jsonRow.add(field);
             }
         }
         JSONArray next = new JSONArray(jsonRow);
