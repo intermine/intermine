@@ -65,8 +65,8 @@ public class PopulateChildFeatures
      */
     public void populateCollection() throws Exception {
         Map<String, SOTerm> soTerms = populateSOTermMap(osw);
-        Query q = getQuery();
-        Results res = osw.getObjectStore().execute(q, 1000, true, true, true);
+        Query q = getAllParents();
+        Results res = osw.getObjectStore().execute(q);
         Iterator<Object> resIter = res.iterator();
         osw.beginTransaction();
         int parentCount = 0;
@@ -170,7 +170,7 @@ public class PopulateChildFeatures
         q.addFrom(qcSOTerm);
         q.addToOrderBy(qcSOTerm);
 
-        Results res = os.execute(q, 1000, true, true, true);
+        Results res = os.execute(q);
 
         Iterator it = res.iterator();
         
@@ -182,7 +182,7 @@ public class PopulateChildFeatures
         return soTerms;
     }
     
-    protected Query getQuery() {
+    protected Query getAllParents() {
         Query q = new Query();
         q.setDistinct(false);
         
