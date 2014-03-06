@@ -200,7 +200,7 @@ public class PathQueryHandler extends DefaultHandler {
             // class that has
             // attributes on the view list before adding it. We ignore invalid
             // descriptions to
-            // cope with legacy bad validation of qyery XML.
+            // cope with legacy bad validation of query XML.
             if (pathString.endsWith(".")) {
                 throw new SAXException("Invalid path '" + pathString
                         + "' for description: " + description);
