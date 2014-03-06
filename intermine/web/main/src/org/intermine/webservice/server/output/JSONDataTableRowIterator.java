@@ -56,6 +56,10 @@ public class JSONDataTableRowIterator implements Iterator<JSONArray>
             if (re == null || re.getId() == null) {
                 jsonRow.add(null);
             } else {
+                Object field = re.getField();
+                if (field instanceof CharSequence) {
+                    field = field.toString();
+                }
                 jsonRow.add(re.getField());
             }
         }
