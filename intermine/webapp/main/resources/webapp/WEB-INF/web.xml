@@ -1245,9 +1245,10 @@
                 facetting information to restrict the search results.
             </description>
             <param type="String" required="false" description="The query string to search with. If absent, or blank, all results will be returned">q</param>
-            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, all results will be returned." default="10">size</param>
+            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, up to 100 results will be returned." default="10">size</param>
             <param type="int" required="false" description="The index of the first result to return." default="0">start</param>
             <param type="String" required="false" description="A list to search within.">list</param>
+            <param type="String[]" required="false" description="A facet parameter, eg facet_Organism=D.melanogaster">facet_?</param>
             <returns>
               <format key="results">json</format>
             </returns>
