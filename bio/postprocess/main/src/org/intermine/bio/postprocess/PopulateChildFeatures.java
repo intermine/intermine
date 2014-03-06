@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.OntologyTerm;
@@ -125,7 +126,12 @@ public class PopulateChildFeatures
         
     private void populateParentChildMap(Map<String, SOTerm> soTerms, String parentSOTermName) {
     	String parentClsName = TypeUtil.javaiseClassName(parentSOTermName);
-    	Class<?> parentClass = model.getClassDescriptorByName(parentClsName).getType();
+    	ClassDescriptor cd = model.getClassDescriptorByName(parentClsName);
+    	if (cd == null) {
+    		LOG.error("couldn't find class in model:" + parentClsName);
+    		return;
+    	}
+    	Class<?> parentClass = cd.getType();
     	
     	// all collections for gene
     	Map<String, Class<?>> childCollections = model.getCollectionsForClass(parentClass);
