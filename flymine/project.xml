@@ -607,8 +607,8 @@
   </sources>
 
   <post-processing>
-
     <post-process name="create-utr-references"/>
+    <post-process name="populate-located-features"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
 
