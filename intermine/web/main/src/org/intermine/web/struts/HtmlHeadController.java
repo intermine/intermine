@@ -121,7 +121,7 @@ public class HtmlHeadController extends TilesAction
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
-                LOG.warn("Could not correctly set the page title for object ID - " + objectId);
+                LOG.warn("Could not correctly set the page title for object ID - " + objectId, e);
             }
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
