@@ -271,22 +271,26 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         } else {
             newValue = cell.getField();
         }
+        if (newValue instanceof CharSequence) {
+            newValue = newValue.toString();
+        }
 
         if (objectMap.containsKey(key)) {
-            if (objectMap.get(key) == null) {
+            Object current = objectMap.get(key);
+            if (current == null) {
                 if (newValue != null) {
                     throw new JSONFormattingException(
-                            "Trying to set key " + key + " as " + cell.getField()
+                            "Trying to set key " + key + " as " + newValue
                             + " in " + objectMap + " but it already has the value "
-                            + objectMap.get(key)
+                            + current
                     );
                 }
             } else {
-                if (!objectMap.get(key).equals(newValue)) {
+                if (!current.equals(newValue)) {
                     throw new JSONFormattingException(
-                            "Trying to set key " + key + " as " + cell.getField()
+                            "Trying to set key " + key + " as " + newValue
                             + " in " + objectMap + " but it already has the value "
-                            + objectMap.get(key));
+                            + current);
                 }
             }
         } else {
