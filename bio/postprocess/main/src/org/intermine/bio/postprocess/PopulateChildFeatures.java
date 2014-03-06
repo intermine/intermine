@@ -201,6 +201,9 @@ public class PopulateChildFeatures
         QueryObjectReference ref1 = new QueryObjectReference(qcFeature, "sequenceOntologyTerm");
         cs.addConstraint(new ContainsConstraint(ref1, ConstraintOp.CONTAINS, qcSOTerm));
 
+        // Set the constraint of the query
+        q.setConstraint(cs);
+        
         return q;
     }
     
