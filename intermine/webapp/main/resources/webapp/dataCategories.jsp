@@ -82,7 +82,7 @@
 
   <tr>
     <td> 
-    EMAPX anatomy ontology. A merging of the EMAP mouse developmental anatomy ontology, developed by the Edinburgh Mouse Atlas Project, and the adult mouse anatomy ontology (MA), developed by GXD.
+    EMAPA anatomy ontology. EMAPA is the abstract (stage-aggregated) mouse developmental anatomy ontology, developed by the Edinburgh Mouse Atlas Project.
     </td>
     <td> 
     <a href="http://www.emouseatlas.org/" target="_new">EMAP</a> (Edinburgh Mouse Atlas Project) and GXD
