@@ -98,10 +98,19 @@ public class PubMedGeneConverter extends BioFileConverter
 
         // init resolver
         if (rslv == null) {
-            IdResolverService.getWormIdResolver();
-            taxonIds.remove("6239");
-            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
-            taxonIds.add("6239");
+            if (taxonIds.contains("6239")) {
+                IdResolverService.getWormIdResolver();
+                taxonIds.remove("6239");
+                rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+                taxonIds.add("6239");
+            } else if (taxonIds.contains("9606")) {
+                IdResolverService.getHumanIdResolver();
+                taxonIds.remove("9606");
+                rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+                taxonIds.add("9606");
+            } else {
+                rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+            }
         }
 
         try {
@@ -218,7 +227,12 @@ public class PubMedGeneConverter extends BioFileConverter
             }
         }
 
-        gene.setAttribute("primaryIdentifier", pid);
+        if ("9606".equals(taxonId)) {
+            gene.setAttribute("symbol", pid);
+        } else {
+            gene.setAttribute("primaryIdentifier", pid);
+        }
+
         gene.setReference("organism", organismRefId);
         gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
         return gene;

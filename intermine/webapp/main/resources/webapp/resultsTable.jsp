@@ -35,8 +35,10 @@
 <c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
 
 <c:if test="${! empty query.title}">
-    <c:set var="templateQuery" value="${query}"/>
-    <tiles:insert template="templateTitle.jsp"/>
+    <tiles:insert template="templateTitle.jsp">
+        <tiles:put name="templateQuery" beanName="query"/>
+        <tiles:put name="clickable" value="true"/>
+    </tiles:insert>
 </c:if>
 
 <c:choose>
@@ -61,7 +63,14 @@ jQuery(function() {
         events: LIST_EVENTS,
         properties: { pageSize: ${pageSize} }
     };
-    jQuery('#${tableContainerId}').imWidget(opts);
+    var widget = jQuery('#${tableContainerId}').imWidget(opts);
+    var url = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
+    widget.states.on('revert add', function () {
+        var query = widget.states.currentQuery;
+        var xml = query.toXML();
+        var $trail = jQuery('.objectTrailLinkResults');
+        $trail.attr({href: url + '?method=xml&query=' + escape(xml)});
+    });
 });
 </script>
 

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<classes>
+    <class name="InteractionExperiment" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="description" type="java.lang.String"/>
+        <attribute name="hostOrganism" type="java.lang.String" />
+        <reference name="publication" referenced-type="Publication"/>
+        <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
+        <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
+        <collection name="comments" referenced-type="Comment"/>
+        <collection name="interactions" referenced-type="InteractionDetail" reverse-reference="experiment"/>
+    </class>
+
+    <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
+
+    <class name="Interaction" is-interface="true">
+        <reference name="protein1" referenced-type="Protein" reverse-reference="interactions" />
+        <reference name="protein2" referenced-type="Protein" />
+        <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
+    </class>
+
+    <class name="InteractionDetail" is-interface="true">
+        <attribute name="role1" type="java.lang.String"/>
+        <attribute name="role2" type="java.lang.String"/>
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="confidence" type="java.lang.Double"/>
+        <attribute name="confidenceText" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <reference name="relationshipType" referenced-type="InteractionTerm"/>
+        <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
+        <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
+        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
+        <collection name="dataSets" referenced-type="DataSet"/>
+        <collection name="allInteractors" referenced-type="Protein"/>
+    </class>
+
+    <class name="Protein" is-interface="true">
+        <collection name="interactions" referenced-type="Interaction" reverse-reference="protein1"/>
+    </class>
+
+</classes>
+

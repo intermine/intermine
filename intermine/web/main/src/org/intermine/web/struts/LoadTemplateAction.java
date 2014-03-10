@@ -24,6 +24,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,9 +38,9 @@ import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.intermine.web.logic.template.TemplateResultInput;
+import org.intermine.web.logic.template.Templates;
+import org.intermine.web.logic.template.Templates.TemplateValueParseException;
 
 /**
  * Implementation of <strong>Action</strong> that runs a template
@@ -56,7 +57,7 @@ public class LoadTemplateAction extends DispatchAction
         TemplateResultInput input = new TemplateResultInput();
         // parse constraints from request
         try {
-            input.setConstraints(TemplateHelper.parseConstraints(request));
+            input.setConstraints(Templates.parseConstraints(request));
         } catch (TemplateValueParseException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -70,7 +71,7 @@ public class LoadTemplateAction extends DispatchAction
 
         Map<String, List<TemplateValue>> templateValues;
         try {
-            templateValues = TemplateHelper.getValuesFromInput(template, input);
+            templateValues = Templates.getValuesFromInput(template, input);
         } catch (TemplateValueParseException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

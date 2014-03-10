@@ -198,6 +198,7 @@
                       onKeyUp="readInput(event, '${dec.path.lastClassName}', '${dec.path.fieldName}');"
                       onMouseOver="setMouseOver(${index});"
                       onMouseOut="setMouseOver(0);"
+                      autocomplete="off"
                       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }" />
                     <iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame"
                       marginheight="0" marginwidth="0" frameborder="0" style="position: absolute;"> </iframe>

@@ -119,9 +119,7 @@ public class KeggPathwayConverter extends BioFileConverter
 
         // init resolver
         if (rslv == null) {
-            // No need to resolve human gene as Kegg uses NCBI id
             Set<String> taxons = new HashSet<String>(taxonIds);
-            taxons.remove(HUMAN);
             rslv = IdResolverService.getIdResolverByOrganism(taxons);
         }
 

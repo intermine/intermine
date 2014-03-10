@@ -20,6 +20,7 @@ import org.intermine.api.profile.UserPreferences;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.context.MailAction;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -90,7 +91,6 @@ public class ListShareCreationService extends JSONService {
     @Override
     protected void execute() throws Exception {
          UserInput input = new UserInput();
-         Emailer emailer = InterMineContext.getEmailer();
 
          try {
              sbm.shareBagWithUser(input.bag, input.recipient.getUsername());
@@ -101,15 +101,34 @@ public class ListShareCreationService extends JSONService {
          Map<String, Object> data = new HashMap<String, Object>();
          data.put(input.bag.getName(), sbm.getUsersWithAccessToBag(input.bag));
 
-         addResultItem(data, false);
-
          if (input.notify && !input.recipient.prefers(Constants.NO_SPAM)) {
-             try {
-                 emailer.informUserOfNewSharedBag(input.recipient.getEmailAddress(), input.owner, input.bag);
-             } catch (Exception e) {
-                 LOG.warn("Could not email recipient: " + input.recipient, e);
+             MailAction action = new InformUserOfNewShare(input.recipient.getEmailAddress(), input.owner, input.bag);
+             if (!InterMineContext.queueMessage(action)) {
+                 LOG.error("Could not send email message");
              }
          }
+
+         addResultItem(data, false);
+
+    }
+
+    private class InformUserOfNewShare implements MailAction {
+
+        private final String to;
+        private final Profile owner;
+        private final InterMineBag bag;
+
+        InformUserOfNewShare(String to, Profile owner, InterMineBag bag) {
+            this.to = to;
+            this.owner = owner;
+            this.bag = bag;
+        }
+
+        @Override
+        public void act(Emailer emailer) throws Exception {
+            emailer.informUserOfNewSharedBag(to, owner, bag);
+        }
+        
     }
 
 }

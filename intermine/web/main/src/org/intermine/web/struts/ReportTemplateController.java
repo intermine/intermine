@@ -25,6 +25,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.model.InterMineObject;
 import org.intermine.template.TemplatePopulatorException;
@@ -32,7 +33,6 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Controller for an inline table created by running a template on a report page.

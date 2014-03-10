@@ -29,7 +29,7 @@ import org.intermine.xml.full.Item;
  */
 public class HumanGeneConverter extends BioFileConverter
 {
-    private static final String DATASET_TITLE = "Human gene information";
+    private static final String DATASET_TITLE = "HGNC human gene information";
     private static final String DATA_SOURCE_NAME = "HGNC";
     private static final String HUMAN_TAXONID = "9606";
     private static final String HGNC_PREFIX = "HGNC:";
@@ -37,12 +37,45 @@ public class HumanGeneConverter extends BioFileConverter
 
     protected static final Logger LOG = Logger.getLogger(HumanGeneConverter.class);
 
-    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1", 
-        "MIR4679-1", "MIR3190", "MIR3119-1", "MIR3116-2", "MIR3065", "MIR3199-1", 
+    private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1",
+        "MIR4679-1", "MIR3190", "MIR3119-1", "MIR3116-2", "MIR3065", "MIR3199-1",
         "ZNF559-ZNF177", "MIR548AA2", "MIR548AA1", "KIR2DL2", "RNA18S5", "MIR3158-2",
         "MIR3130-1", "MIR4662A", "MIR3688-1", "MIR3913-2", "MIR4520A", "MIR4773-1",
         "MIR3160-1", "MIR3622B", "MIR4524A", "MIR4477B", "MIR4659A", "MIR3926-1",
-        "MIR3910-1");
+        "MIR3910-1", "MIR451A", "MIR451B", "MIR144", "SNORD116-20", "MIR133A1");
+
+    /**
+     * There are about 30 Ensembl ids have more than one symbol
+        ENSG00000188629
+        ENSG00000207688
+        ENSG00000207704
+        ENSG00000211563
+        ENSG00000215764
+        ENSG00000245080
+        ENSG00000261069
+        ENSG00000263390
+        ENSG00000263436
+        ENSG00000263468
+        ENSG00000263735
+        ENSG00000263908
+        ENSG00000264066
+        ENSG00000264073
+        ENSG00000264105
+        ENSG00000264405
+        ENSG00000264468
+        ENSG00000264684
+        ENSG00000265014
+        ENSG00000265075
+        ENSG00000265134
+        ENSG00000265142
+        ENSG00000265331
+        ENSG00000265375
+        ENSG00000266017
+        ENSG00000266038
+        ENSG00000266206
+        ENSG00000266354
+        ENSG00000266855
+     */
 
     /**
      * Constructor
@@ -93,6 +126,8 @@ public class HumanGeneConverter extends BioFileConverter
 
             // HACK: in HGNC, MIR3150A and MIR3150B are mapped to the same gene in Ensembl
             // ENSG00000265256, but in Ensembl, MIR3150A is resolved as MIR3150B. And there are more
+            // Find all Ensembl ids: cut -f 4 humangeneidentifiers.tsv | sort | uniq -d
+            // Need manual curation before each build, better solution?
             if (symboldupEnsemblIdList.contains(symbol)) {
                 gene.setAttribute("primaryIdentifier", hgncid);
                 createCrossReference(gene.getIdentifier(), ensemblid, "Ensembl", true);

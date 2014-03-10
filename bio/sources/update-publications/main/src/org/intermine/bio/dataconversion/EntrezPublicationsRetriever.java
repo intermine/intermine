@@ -170,12 +170,14 @@ public class EntrezPublicationsRetriever
 
             LOG.info("Starting EntrezPublicationsRetriever");
 
-            Writer writer = new FileWriter(outputFile);
+            Writer writer = new FileWriter(outputFile); // write to cache file
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
 
             Set<Integer> idsToFetch = new HashSet<Integer>();
             itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + ENDL);
+
+            // Get publications from objectstore by IQL
             for (Iterator<Publication> iter = getPublications(os).iterator(); iter.hasNext();) {
                 String pubMedId = iter.next().getPubMedId();
                 Integer pubMedIdInteger;
@@ -192,6 +194,8 @@ public class EntrezPublicationsRetriever
                 DatabaseEntry data = new DatabaseEntry();
                 if (db.get(txn, key, data, null).equals(OperationStatus.SUCCESS)) {
                     try {
+                        // Try to find this publication object in berkeleydb and write item xml to
+                        // cache file
                         ByteArrayInputStream mapInputStream =
                             new ByteArrayInputStream(data.getData());
                         ObjectInputStream deserializer = new ObjectInputStream(mapInputStream);
@@ -204,6 +208,8 @@ public class EntrezPublicationsRetriever
                                             + pubMedIdInteger);
                     }
                 } else {
+                    // berkeleydb cached pubs will be written to cache file, the rest will be
+                    // fetched from NCBI
                     idsToFetch.add(pubMedIdInteger);
                 }
             }
@@ -254,8 +260,10 @@ public class EntrezPublicationsRetriever
                             }
 
                             for (String id: fromServerMap.keySet()) {
+                                // write fetched pubs to cache file
                                 writeItems(writer, mapToItems(itemFactory, fromServerMap.get(id)));
                             }
+                            // Added fetched pubs to berkeleydb
                             addToDb(txn, db, fromServerMap);
                             break;
                         }

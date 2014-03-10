@@ -44,9 +44,29 @@
       jQuery('#submitClassSelect').attr('disabled', true);
       
       <!-- dbl click to submit the form as well -->
-      jQuery('select#queryClassSelector option').dblclick(function() {
-    	  jQuery('form#queryClassSelectForm').submit();
-      });
+
+      (function($) {
+        // Previously clicked option.
+        var option = null,
+          timeout = null;
+        // If you'd like to replace this with `dblclick` then think again.
+        $('select#queryClassSelector option').on('click', function(evt) {
+          // Clear any timeouts.
+          clearTimeout(timeout);
+          // This value.
+          var value = $(evt.target).val();
+          // You made it, go kiss the princess...
+          if (value == option) {
+            $('form#queryClassSelectForm').submit();
+          } else {
+            option = value;
+            // Back to square 1.
+            timeout = setTimeout(function() {
+              option = null;
+            }, 500);
+          }
+        });
+      })(window.jQuery)
   }
 -->
 </script>

@@ -1,6 +1,5 @@
 package org.intermine.webservice.server.user;
 
-
 /*
  * Copyright (C) 2002-2013 FlyMine
  *

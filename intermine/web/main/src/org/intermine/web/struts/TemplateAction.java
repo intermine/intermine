@@ -187,7 +187,7 @@ public class TemplateAction extends InterMineAction
                     webProperties.getProperty("project.title"),
                     webProperties.getProperty("perl.wsModuleVer"),
                     WebserviceCodeGenAction.templateIsPublic(template, im, profile),
-                    profile.getUsername());
+                    profile);
             WebserviceCodeGenerator codeGen = new WebserviceJavaScriptCodeGenerator();
             String code = codeGen.generate(info);
             session.setAttribute("realCode", code);

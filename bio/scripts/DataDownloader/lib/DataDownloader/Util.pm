@@ -67,20 +67,20 @@ sub make_logger {
         screen => {%common_args, %serious, log_to => 'STDERR'},
     );
 
-    if ( $directory ) {
-        my $log_dir = dir('', $directory);
-        $log_dir->mkpath() unless (-d $directory);
-        my $log_file = file('', $log_dir, get_ymd() . '.log' );
-        my %file_args = (
-            filename => "$log_file", 
-            mode => 'append', 
-            newline  => 1,
-        );
-        $log->add(
-            file => {%common_args, %less_serious, %file_args},
-            file => {%common_args, %serious, %file_args}
-        );
-    }
+#    if ( $directory ) {
+#        my $log_dir = dir('', $directory);
+#        $log_dir->mkpath() unless (-d $directory);
+#        my $log_file = file('', $log_dir, get_ymd() . '.log' );
+#        my %file_args = (
+#            filename => "$log_file", 
+#            mode => 'append', 
+#            newline  => 1,
+#        );
+#       $log->add(
+#           file => {%common_args, %less_serious, %file_args},
+#          file => {%common_args, %serious, %file_args}
+#       );
+#   }
     return $log;
 }
 

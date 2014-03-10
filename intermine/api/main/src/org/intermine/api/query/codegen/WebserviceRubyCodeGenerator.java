@@ -35,7 +35,8 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
     protected static final String SPACE                   = " ";
     protected static final String LEFT_BRACE              = "{";
     protected static final String RIGHT_BRACE             = "}";
-    protected static final String ENDL                    = System.getProperty("line.separator");
+
+    private String endl = System.getProperty("line.separator");
 
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
                                                               + "constraint, which is currently not supported.";
@@ -43,29 +44,31 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
 
     private void appendBoilerPlate(StringBuffer sb, WebserviceCodeGenInfo info) {
 
-        sb.append("#!/usr/bin/env ruby" + ENDL + ENDL);
-        sb.append("# This is an automatically generated script to run your query" + ENDL);
-        sb.append("# to use it you will require the intermine ruby client." + ENDL);
-        sb.append("# To install the client, run the following command from a terminal:" + ENDL);
-        sb.append("#" + ENDL);
-        sb.append("#     sudo gem install intermine" + ENDL);
-        sb.append("#" + ENDL);
-        sb.append("# For further documentation you can visit:" + ENDL);
-        sb.append("#          http://intermine.org/docs/ruby-docs/" + ENDL);
-        sb.append("#     and: http://intermine.org/docs/ruby-bio-docs/" + ENDL);
-        sb.append("#" + ENDL);
-        sb.append("# The following two lines will be needed in every script:" + ENDL);
-        sb.append("require \"rubygems\"" + ENDL);
-        sb.append("require \"intermine/service\"" + ENDL);
+        sb.append("#!/usr/bin/env ruby" + endl + endl);
+        sb.append("# This is an automatically generated script to run your query" + endl);
+        sb.append("# to use it you will require the intermine ruby client." + endl);
+        sb.append("# To install the client, run the following command from a terminal:" + endl);
+        sb.append("#" + endl);
+        sb.append("#     sudo gem install intermine" + endl);
+        sb.append("#" + endl);
+        sb.append("# For further documentation you can visit:" + endl);
+        sb.append("#          http://intermine.org/docs/ruby-docs/" + endl);
+        sb.append("#     and: http://intermine.org/docs/ruby-bio-docs/" + endl);
+        sb.append("#" + endl);
+        sb.append("# The following two lines will be needed in every script:" + endl);
+        sb.append("require \"rubygems\"" + endl);
+        sb.append("require \"intermine/service\"" + endl);
         sb.append("service = Service.new(\"" + info.getServiceBaseURL() + "\"");
         if (!info.isPublic()) {
             sb.append(", \"YOUR-API-KEY\"");
         }
-        sb.append(")" +  ENDL + ENDL);
+        sb.append(")" +  endl + endl);
     }
 
     @Override
     public String generate(WebserviceCodeGenInfo wsCodeGeninfo) {
+
+        endl = wsCodeGeninfo.getLineBreak();
 
         PathQuery query = wsCodeGeninfo.getQuery();
 
@@ -212,12 +215,12 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
 
     private void appendPathQuery(StringBuffer sb, PathQuery query)  throws InvalidQueryException {
         if (query.getDescription() != null && !"".equals(query.getDescription())) {
-            sb.append("# query description - " + query.getDescription() + ENDL + ENDL);
+            sb.append("# query description - " + query.getDescription() + endl + endl);
         }
 
-        sb.append("# Get a new query from the service you will be querying:"  + ENDL);
+        sb.append("# Get a new query from the service you will be querying:"  + endl);
         try {
-            sb.append("service.new_query(\"" + query.getRootClass() + "\")." + ENDL );
+            sb.append("service.new_query(\"" + query.getRootClass() + "\")." + endl );
         } catch (PathException e1) {
             throw new InvalidQueryException(e1.getMessage());
         }
@@ -226,7 +229,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
         // Put on subclasses first.
         try {
             for (Entry<String, String> entry: query.getSubclasses().entrySet()) {
-                sb.append(INDENT + new RubyWhereClause(entry.getKey(), entry.getValue()) + "." + ENDL);
+                sb.append(INDENT + new RubyWhereClause(entry.getKey(), entry.getValue()) + "." + endl);
             }
         } catch (PathException e) {
             throw new InvalidQueryException(e.getMessage());
@@ -237,12 +240,12 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
         }
         sb.append(INDENT + "select(");
         sb.append(new PresentedList<String>(deheadify(query.getView())));
-        sb.append(")." + ENDL);
+        sb.append(")." + endl);
 
         // Add constraints
         if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
             // Add comments for constraints
-            sb.append(INDENT + "# You can edit the constraint values below" + ENDL);
+            sb.append(INDENT + "# You can edit the constraint values below" + endl);
 
             int coded_cons = 0;
             for (PathConstraint pc : query.getConstraints().keySet()) {
@@ -250,7 +253,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
                     continue;
                 }
                 coded_cons++;
-                sb.append(INDENT  + new RubyWhereClause(pc) + "." + ENDL);
+                sb.append(INDENT  + new RubyWhereClause(pc) + "." + endl);
             }
 
             // Add constraintLogic
@@ -259,7 +262,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
                 && (logic != null)
                 && (!"".equals(logic))
                 && (logic.indexOf("or") != -1)) {
-                sb.append(INDENT + "set_logic(\"" + logic + "\")." + ENDL);
+                sb.append(INDENT + "set_logic(\"" + logic + "\")." + endl);
             }
         }
 
@@ -274,7 +277,7 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
                 for (OrderElement oe : query.getOrderBy()) {
                     sb.append(INDENT + "order_by(");
                     sb.append("\"" + decapitate(oe.getOrderPath()) + "\", \"" + oe.getDirection() + "\"");
-                    sb.append(")." + ENDL);
+                    sb.append(")." + endl);
                 }
             }
         }
@@ -282,11 +285,11 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
 
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
             for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                sb.append(INDENT + "join(\"" + entry.getKey() + "\", \"" + entry.getValue() + "\")." + ENDL);
+                sb.append(INDENT + "join(\"" + entry.getKey() + "\", \"" + entry.getValue() + "\")." + endl);
             }
         }
-        sb.append(INDENT + "limit(10)." + ENDL);
-        sb.append(INDENT + "each_row { |r| puts r}" + ENDL);
+        sb.append(INDENT + "limit(10)." + endl);
+        sb.append(INDENT + "each_row { |r| puts r}" + endl);
     }
 
     private class TemplateComment {
@@ -392,21 +395,21 @@ public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
         }
 
         if (!StringUtils.isBlank(description)) {
-            sb.append("# " + description + ENDL);
+            sb.append("# " + description + endl);
         }
 
         for (TemplateComment tc : templateComments) {
-            sb.append(tc.toString() + ENDL);
+            sb.append(tc.toString() + endl);
         }
-        sb.append("params = {" + ENDL);
+        sb.append("params = {" + endl);
         for (Iterator<RubyTemplateConstraint> i = templateConstraints.iterator(); i.hasNext();) {
             sb.append(INDENT + i.next());
             if (i.hasNext())
                 sb.append(",");
-            sb.append(ENDL);
+            sb.append(endl);
         }
-        sb.append("}" + ENDL);
-        sb.append("service.template('" + templateName + "').limit(10).each_row(params) { |r| puts r }" + ENDL);
+        sb.append("}" + endl);
+        sb.append("service.template('" + templateName + "').limit(10).each_row(params) { |r| puts r }" + endl);
     }
 
 }

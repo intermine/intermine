@@ -1,0 +1,8 @@
+
+<project name="intermine-jbrowse-endpoint" default="default" basedir=".">
+  
+  <description>build, test, package intermine-web</description>
+  <import file="../../../imbuild/library.xml"/>
+    
+</project>
+

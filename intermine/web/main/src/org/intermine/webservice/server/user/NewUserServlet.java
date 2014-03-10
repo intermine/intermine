@@ -10,6 +10,12 @@ package org.intermine.webservice.server.user;
  *
  */
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.servlet.ServletConfig;
+
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
@@ -21,7 +27,6 @@ import org.intermine.webservice.server.core.WebServiceServlet;
  */
 public class NewUserServlet extends WebServiceServlet
 {
-
     private static final long serialVersionUID = 2247791931782821682L;
 
     @Override
@@ -31,4 +36,5 @@ public class NewUserServlet extends WebServiceServlet
             default: throw new NoServiceException();
         }
     }
+
 }

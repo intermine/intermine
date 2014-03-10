@@ -9,6 +9,7 @@
 <html:xhtml/>
 
 <!-- apiJava.jsp -->
+<c:set var="wiki" value="${WEB_PROPERTIES['api.help']}"/>
 
 <im:boxarea titleKey="api.java.titleKey" stylename="gradientbox" fixedWidth="90%" htmlId="apiJava">
   <form id="apiJavaForm" action="fileDownload.do" method="post">
@@ -23,7 +24,10 @@
   in as either tables of values, or JSON data structures (see <a href="http://json.org">json.org</a>).
   <br/>
   Like all our code, these client libraries are open-source, licensed under the LGPL. For information
-  on the API visit our <a href="http://www.intermine.org/wiki/WebService">wiki pages</a>.
+  on the API visit our <a href="${wiki}">wiki pages</a>, and for Javadoc please visit the
+  <a href="http://intermine.github.io/intermine/">API documentation</a> (paying special
+  attention to the classes in the <code>org.intermine.pathquery</code> and
+  <code>org.intermine.webservice.client</code> packages).
 </div>
 <br>
 <div>

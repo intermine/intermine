@@ -65,7 +65,7 @@ public class UserRepository extends SearchRepository
     protected void populateSearchItems() {
         searchItems.addAll(getProfile().getSavedBags().values());
         searchItems.addAll(getProfile().getSavedTemplates().values());
-        LOG.info("Populated repository with " + searchItems.size() + " items");
+        LOG.debug("Populated repository with " + searchItems.size() + " items");
     }
 
     @Override

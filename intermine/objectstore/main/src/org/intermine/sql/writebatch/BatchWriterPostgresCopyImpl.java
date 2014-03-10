@@ -109,6 +109,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         return 0;
     }
 
+    // TODO: Add support for UUID.
     private static void writeObject(PostgresDataOutputStream dos, Object o) throws IOException {
         if (o == null) {
             dos.writeInt(-1);

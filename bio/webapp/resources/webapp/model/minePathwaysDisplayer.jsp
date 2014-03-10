@@ -6,209 +6,123 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
+
+
 
 <!-- minePathwaysDisplayer.jsp -->
-<div id="mine-pathway-displayer" class="collection-table column-border">
 
-<c:choose>
-<c:when test="${gene != null && !empty(gene)}">
+<div id="minepathwaysdisplayer-wrapper" class="wrapper" style="display: block;">
 
-  <style>
-    #mine-pathway-displayer div.wrapper { height:300px; overflow-y:auto; overflow-x:hidden }
-  <c:forEach items="${minesForPathways}" var="entry">
-    /* might fail, does not use JS slugify! */
-    #mine-pathway-displayer table th.<c:out value="${fn:toLowerCase(entry.key.name)}"/> span { padding:1px 4px; border-radius:2px;
-      background:${entry.key.bgcolor}; color:${entry.key.frontcolor} !important }
-  </c:forEach>
-  </style>
+  <div id="mine-pathway-displayer" class="collection-table column-border">
 
-  <script type="text/javascript" charset="utf-8">
-  (function() {
-    function getFriendlyMinePathways(mine, orthologues, callback) {
-      AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
-        callback(pathways);
-      });
-    }
+    <div class="header">
+      <h3>Pathways from Other Mines</h3>
+      <p>Pathway data from other Mines for homologues of this gene.</p>
+    </div>
 
-    var Grid,
-    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    <div id="pathwaysappcontainer"></div>
 
-    Grid = (function() {
 
-      Grid.prototype.columns = [];
-
-      Grid.prototype.rows = [];
-
-      Grid.prototype.grid = {};
-
-      function Grid(el, head) {
-        var column, columnS, row, _i, _len;
-        jQuery(el).append(this.body = jQuery('<tbody/>'));
-        row = jQuery('<tr/>');
-        row.append(jQuery('<th/>'));
-        for (_i = 0, _len = head.length; _i < _len; _i++) {
-          column = head[_i];
-          this.columns.push(columnS = this.slugify(column));
-          row.append(jQuery('<th/>', {
-            'html': jQuery('<span/>', { 'text': column }),
-            'class': columnS + ' loading'
-          }));
-        }
-        row.appendTo(jQuery('<thead/>').appendTo(jQuery(el)));
-      }
-
-      Grid.prototype.add = function(row, column, data) {
-        var columnS, rowEl, rowS,
-          _this = this;
-        rowS = this.slugify(row);
-        columnS = this.slugify(column);
-        if (__indexOf.call(this.rows, rowS) < 0) {
-          rowEl = jQuery("<tr/>", {
-            'class': rowS
-          }).append(jQuery("<td/>", {
-            'text': row
-          }));
-          if (!this.rows.length) {
-            this.body.append(rowEl);
-            this.rows = [rowS];
-          } else {
-            (function() {
-              var index, row, _ref;
-              _ref = _this.rows;
-              for (index in _ref) {
-                row = _ref[index];
-                if (rowS.localeCompare(row) < 0) {
-                  _this.rows.splice(index, 0, rowS);
-                  _this.grid[row]['el'].before(rowEl);
-                  return;
-                }
-              }
-              _this.rows.push(rowS);
-              return _this.body.append(rowEl);
-            })();
-          }
-          (function() {
-            var columnS, _i, _len, _ref, _results;
-            _this.grid[rowS] = {
-              'el': rowEl,
-              'columns': {}
-            };
-            _ref = _this.columns;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              columnS = _ref[_i];
-              _results.push(_this.grid[rowS]['columns'][columnS] = (function() {
-                var el;
-                rowEl.append(el = jQuery('<td/>', {
-                  'class': columnS
-                }));
-                return el;
-              })());
-            }
-            return _results;
-          })();
-        }
-        return this.grid[rowS]['columns'][columnS].html(data);
-      };
-
-      Grid.prototype.slugify = function(text) {
-        return text.replace(/[^-a-zA-Z0-9,&\s]+/ig, '').replace(/-/gi, "_").replace(/\s/gi, "-").toLowerCase();
-      };
-
-      return Grid;
-
-    })();
-
-    // Say that we have no results.
-    function showIsEmpty() {
-      jQuery('#mine-pathway-displayer div.header').after(jQuery('<p/>', { 'text': 'No pathways found' }));
-    }
-
-    // Who?
-    var thisMine = '${WEB_PROPERTIES["project.title"]}';
-
-    // Create the listing of all the mines we will have.
-    var mines = [];
-    // This mine.
-    mines.push(thisMine);
-    // All the other mines.
-    <c:forEach items="${minesForPathways}" var="entry">
-      mines.push('${entry.key.name}');
-    </c:forEach>
-
-    // Create a new Grid.
-    var target = '#mine-pathway-displayer table';
-    var grid = new Grid(target, mines);
-
-    // Are we empty?
-    var isEmpty = true;
-
-    // Stop the loading sign and add all pathways for this mine.
-    jQuery(target).find('thead th.' + grid.slugify(thisMine)).removeClass('loading');
-
-    <c:forEach items="${gene.pathways}" var="pathway">
-      // Add the results to the grid.
-      grid.add('${pathway.name}', thisMine, function() {
-        return jQuery('<a/>', {
-          'text':  'Yes',
-          'href':  "report.do?id=${pathway.id}"
-        });
-      });
-      isEmpty = false;
-    </c:forEach>
-
-    // If we have just us, do we have any pathways?
-    if (isEmpty && mines.length === 1) showIsEmpty();
-
-    // Fetch pathways for other mines.
-    <c:forEach items="${minesForPathways}" var="entry" varStatus="status">
-      getFriendlyMinePathways('${entry.key.name}', '${entry.value}', function(data) {
-        // Stop the loading sign.
-        jQuery(target).find('thead th.' + grid.slugify('${entry.key.name}')).removeClass('loading');
-
-        if (data !== null) {
-          var results = jQuery.parseJSON(data)['results'];
-
-          // Add the results to the grid.
-          jQuery.each(results, function(index, pathway) {
-            grid.add(pathway['name'], '${entry.key.name}', function() {
-              return jQuery('<a/>', {
-                'class':  'external',
-                'text':   'Yes',
-                'target': '_blank',
-                'href':   '${entry.key.url}' + '/report.do?id=' + pathway['id']
-              });
-            });
-            isEmpty = false;
-          });
-        }
-
-        // Are we showing something?
-        if (isEmpty && mines.length === (${status.index} + 2)) showIsEmpty();
-      });
-    </c:forEach>
-  }).call(this);
-  </script>
-
-  <div class="header">
-    <h3>Pathways from Other Mines</h3>
-    <p>
-      <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
-      Pathway data from other Mines for homologues of this gene.
-    </p>
   </div>
-
-  <!-- target for Grid -->
-  <div class="wrapper">
-    <table></table>
-  </div>
-</c:when>
-<c:otherwise>
-  <div class="header">
-    <h3>Pathways from Other Mines</h3>
-  </div>
-  <p>No pathways found.</p>
-</c:otherwise>
-</c:choose>
 </div>
+
+
+
+<script>
+
+(function(){
+
+  var $ = jQuery;
+
+  var paths = {js: {}, css: {}};
+
+  <c:set var="section" value="pathways-displayer"/>
+
+  <c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">
+    
+      paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
+  </c:forEach>
+
+
+
+  var imload = function(){
+    intermine.load({
+      'js': {
+          'Q': {
+            'path': paths.js.Q
+          },
+          'jQuery': {
+            'path': paths.js.jQuery,
+            'test': function(){
+              if (+($.fn.jquery.split(".")[0]) < 2) {
+                throw "Version error.";
+              }
+            }
+          },
+          'Backbone': {
+            'path': paths.js.Backbone,
+            'depends': ['_', 'jQuery']
+          },
+          '_': {
+            'path': paths.js._
+          },
+          'PathwaysDisplayer': {
+            'path': paths.js.PathwaysDisplayer,
+            'depends': ['Q', 'Backbone']
+          }
+      },
+      'css': {
+        'pathwaysDisplayerCSS': {
+          'path': paths.css.pathwaysDisplayerCSS
+        }
+      }
+    }, function(err) {
+
+      if (err) throw err;
+
+      friendlyMines = {};
+
+      <c:forEach items="${minesForPathways}" var="entry">
+        friendlyMines["${entry.key.name}"] = "${entry.key.url}";
+        </c:forEach>
+
+        //friendlyMines['${WEB_PROPERTIES["project.title"]}'] = $SERVICE.root;
+        friendlyMines['${localMine.name}'] = "${localMine.url}";
+
+        require('PathwaysDisplayer')(
+      {
+             
+              friendlyMines: friendlyMines,                        
+              gene: "${gene.primaryIdentifier}",
+              target: "#pathwaysappcontainer",
+              themeColor: "${localMine.bgcolor}"
+      });
+
+    });
+  };
+
+  try {
+
+    imload();
+
+  } catch (error) {
+    $('#pathwaysappcontainer').html(
+      $('<div/>', {'text': 'This app requires jQuery 2.x.x', 'style': 'padding-left: 14px; font-weight: bold'})
+    );
+
+    $('#mine-pathway-displayer').addClass("warning");
+  }
+})();
+
+
+
+
+
+</script>
+
+    
+
+
+
 <!-- /minePathwaysDisplayer.jsp -->

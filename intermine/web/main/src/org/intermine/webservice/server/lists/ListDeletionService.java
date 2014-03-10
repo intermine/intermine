@@ -43,7 +43,7 @@ public class ListDeletionService extends AuthenticatedListService
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        ListInput input = getInput(request);
+        ListInput input = getInput();
         addOutputInfo(LIST_NAME_KEY, input.getListName());
         ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
     }

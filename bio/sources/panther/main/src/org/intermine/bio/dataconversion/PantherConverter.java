@@ -54,7 +54,7 @@ public class PantherConverter extends BioFileConverter
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
     private OrganismRepository or;
     private Set<String> databasesNamesToPrepend = new HashSet<String>();
-    private Map<String, Map<String, String>> geneIdPolymorphism = 
+    private Map<String, Map<String, String>> geneIdPolymorphism =
             new HashMap<String, Map<String, String>>();
 
     private static final String EVIDENCE_CODE_ABBR = "AA";
@@ -135,7 +135,7 @@ public class PantherConverter extends BioFileConverter
                 }
                 continue;
             }
-            
+
             if (key.contains("geneid.polymorphism")) {
                 String[] attributes = key.split("\\.");
                 if (attributes.length == 4) {
@@ -150,7 +150,7 @@ public class PantherConverter extends BioFileConverter
                 }
                 continue;
             }
-            
+
             String[] attributes = key.split("\\.");
             if (attributes.length == 0) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
@@ -178,7 +178,7 @@ public class PantherConverter extends BioFileConverter
         if (refId == null) {
             Item gene = createItem("Gene");
             gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            
+
             if (geneIdPolymorphism.containsKey(taxonId)) {
                 Map<String, String> patternMap = geneIdPolymorphism.get(taxonId);
                 for (String key : patternMap.keySet()) {
@@ -206,7 +206,7 @@ public class PantherConverter extends BioFileConverter
                     }
                 }
             }
-            
+
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
             identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
@@ -383,6 +383,10 @@ public class PantherConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
+        // Human - Ensembl as pid
+        if ("9606".equals(taxonId)) {
+            return identifier;
+        }
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;

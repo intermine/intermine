@@ -80,5 +80,17 @@ public class Emailer {
 
         MailUtils.email(to, subject, body, properties);
     }
+
+    public void sendFareWell(String address, String xml) throws MessagingException {
+        String appName = properties.getProperty("project.title");
+        String subjectFmt = properties.getProperty(PREFIX + "farewell.subject");
+        String subject = String.format(subjectFmt, appName);
+
+        String bodyFmt = properties.getProperty(PREFIX + "farewell.body");
+
+        String body = String.format(bodyFmt, appName, address, xml);
+
+        MailUtils.email(address, subject, body, properties);
+    }
     
 }

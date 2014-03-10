@@ -39,7 +39,7 @@ public class QueryClient
 
         // Filter the results with the following constraints:
         query.addConstraint(Constraints.notEqualToLoop("Employee.department.manager", "Employee.department.company.CEO"), "A");
-        query.addConstraint(Constraints.lookup("Employee", "M*", ""), "B");
+        query.addConstraint(Constraints.lookup("Employee", "M*", null), "B");
         query.addConstraint(Constraints.oneOfValues("Employee.department.name", Arrays.asList("Sales", "Warehouse"));, "C");
         // Specify how these constraints should be combined.
         query.setConstraintLogic("(A or C) and B");

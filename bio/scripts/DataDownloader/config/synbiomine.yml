@@ -1,28 +1,19 @@
 log_dir: "/micklem/data/download_logs"
-data_dir: "/micklem/data/ecolimine"
+data_dir: "/micklem/data"
 
 default_sources:
-  - "AffyProbes"
   - "BioGRID"
-  - "EnsemblCompara"
-  - "FlyBaseFasta"
-  - "FlyBaseOrthologues"
-  - "FlyOntologies"
   - "GOAnnotation"
   - "IntAct"
   - "IntactVocabulary"
   - "InterPro"
   - "InterProGO"
-  - "MGIIdentifiers"
   - "NCBIGene"
   - "PDB"
   - "PubMed"
   - "Reactome"
-  - "RedFly"
-  - "RNAiScreens"
   - "UniProt"
-  - "WormbaseRNAi"
-  - "WormIdentifiers"
+  - "GenBank"
 
 UniProt:
     organisms:
@@ -50,5 +41,10 @@ UniProt:
         - 1110693
         - 527799
         - 595496
-        
+
+GenBank:
+    organisms:
+        Bacteria:
+          - Bacillus_subtilis_168_uid57675
+          - Escherichia_coli_K_12_substr__MG1655_uid57779
 

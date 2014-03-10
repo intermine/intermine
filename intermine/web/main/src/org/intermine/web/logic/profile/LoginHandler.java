@@ -171,16 +171,16 @@ public abstract class LoginHandler extends InterMineAction
         final ProfileManager pm = api.getProfileManager();
         final Profile profile = permission.getProfile();
         final String userName = profile.getUsername();
-        if (userName != null && userName.equals(pm.getSuperuser())) {
+        if (profile.isSuperuser() || (userName != null && userName.equals(pm.getSuperuser()))) {
             permission.addRole("SUPERUSER");
         }
         if (!api.getBagManager().isAnyBagInState(profile, BagState.UPGRADING)) {
-            Runnable upgrade = new UpgradeBagList(profile, api.getBagQueryRunner());
+            UpgradeBagList upgrade = new UpgradeBagList(profile, api.getBagQueryRunner());
             runBagUpgrade(upgrade, api, profile);
         }
     }
 
-    private static void runBagUpgrade(Runnable procedure, InterMineAPI api,
+    public static void runBagUpgrade(UpgradeBagList procedure, InterMineAPI api,
             Profile profile) {
         Connection con = null;
         try {
@@ -217,7 +217,7 @@ public abstract class LoginHandler extends InterMineAction
         if (profile.isSuperuser()) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
-        Runnable upgrade = new UpgradeBagList(profile, im.getBagQueryRunner());
+        UpgradeBagList upgrade = new UpgradeBagList(profile, im.getBagQueryRunner());
         runBagUpgrade(upgrade, im, profile);
         return profile;
     }

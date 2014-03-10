@@ -92,8 +92,8 @@
     <reference name="employee" referenced-type="Employee" reverse-reference="simpleObjects"/>
 </class>
 <class name="EmploymentPeriod" is-interface="false">
-    <attribute name="startPeriod" type="java.util.Date"/>
-    <attribute name="endPeriod" type="java.util.Date"/>
+    <attribute name="startDate" type="java.util.Date"/>
+    <attribute name="endDate" type="java.util.Date"/>
 </class>
 <class name="Range" is-interface="false">
     <attribute name="rangeStart" type="int"/>

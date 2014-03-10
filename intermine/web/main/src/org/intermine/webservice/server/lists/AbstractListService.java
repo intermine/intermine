@@ -32,7 +32,7 @@ public abstract class AbstractListService extends JSONService {
         return classes;
     }
 
-    protected ListInput getInput(HttpServletRequest request) {
+    protected ListInput getInput() {
         return new ListInput(request, bagManager, getPermission().getProfile());
     }
 
