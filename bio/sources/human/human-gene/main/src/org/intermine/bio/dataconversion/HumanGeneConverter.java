@@ -37,7 +37,6 @@ public class HumanGeneConverter extends BioFileConverter
 
     protected static final Logger LOG = Logger.getLogger(HumanGeneConverter.class);
 
-    // TODO what is this??!
     private List<String> symboldupEnsemblIdList = Arrays.asList("MIR3150A", "MIR4776-1",
         "MIR4679-1", "MIR3190", "MIR3119-1", "MIR3116-2", "MIR3065", "MIR3199-1",
         "ZNF559-ZNF177", "MIR548AA2", "MIR548AA1", "KIR2DL2", "RNA18S5", "MIR3158-2",
@@ -114,8 +113,10 @@ public class HumanGeneConverter extends BioFileConverter
             Item gene = createItem("Gene");
             gene.setReference("organism", getOrganism(HUMAN_TAXONID));
             createCrossReference(gene.getIdentifier(), hgncid, "HGNC", true);
+            createCrossReference(gene.getIdentifier(), line[1], "HGNC", true);
 
             if (!entrezid.isEmpty()) {
+                createCrossReference(gene.getIdentifier(), NCBI_PREFIX + entrezid, "NCBI", true);
                 createCrossReference(gene.getIdentifier(), entrezid, "NCBI", true);
             }
 
