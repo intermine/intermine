@@ -203,11 +203,15 @@ public class FlybaseExpressionConverter extends BioFileConverter
                 LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
                 continue;
             }
+            String source = line[0];	// modENCODE or FlyAtlas
+            if ("modENCODE".equals(source)) {
 
-            String identifier = line[1];	// 09
-            String name = line[3];	// No expression
-
-            terms.put(identifier, name);
+            	String identifier = line[1];	// 09
+            	String name = line[3];	// No expression
+            	
+            	// only put the digit
+            	terms.put(identifier.substring(1), name);
+            }
         }
     }
 
