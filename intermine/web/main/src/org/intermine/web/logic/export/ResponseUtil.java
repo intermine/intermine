@@ -200,7 +200,7 @@ public final class ResponseUtil
      * @param response response
      */
     public static void setXMLContentType(HttpServletResponse  response) {
-        response.setContentType("text/xml");
+        response.setContentType("application/xml");
         response.setCharacterEncoding("UTF-8");
     }
 
