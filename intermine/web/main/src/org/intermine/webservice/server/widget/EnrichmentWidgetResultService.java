@@ -32,6 +32,7 @@ import org.intermine.web.logic.widget.CorrectionCoefficient;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
@@ -67,6 +68,16 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     public EnrichmentWidgetResultService(InterMineAPI im) {
         super(im);
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        if (   format == Format.JSON
+            || format == Format.XML
+            || Format.FLAT_FILES.contains(format)) {
+            return true;
+        }
+        return false;
     }
 
     /**
