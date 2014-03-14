@@ -395,7 +395,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
-      <fieldconfig fieldExpr="organism.name" outerInSummary="true"/>
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 

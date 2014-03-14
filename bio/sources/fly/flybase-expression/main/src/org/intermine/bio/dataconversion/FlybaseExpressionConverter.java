@@ -114,9 +114,9 @@ public class FlybaseExpressionConverter extends BioFileConverter
                 continue;
             }
 
-            final String fbgn = line[0];	// FBgn0000003
-            final String source = line[2]; //modENCODE_mRNA-Seq_U
-            final String stage = line[3];	// embryo_02-04hr
+            final String fbgn = line[1];	// FBgn0000003
+            final String source = line[4]; //modENCODE_mRNA-Seq_U
+            final String stage = line[6];	// embryo_02-04hr
 
             if (!source.startsWith("modENCODE")) {
                 continue;
@@ -124,8 +124,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
             Item result = createItem("RNASeqResult");
             result.setAttribute("stage", replaceStage(stage));
 
-            if (line.length > 4) {
-                String rpkm = line[4];	// 6825 - OPTIONAL
+            if (line.length > 7) {
+                String rpkm = line[7];	// 6825 - OPTIONAL
                 if (StringUtils.isNotEmpty(rpkm)) {
                     try {
                         Integer.valueOf(rpkm);
@@ -135,8 +135,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
                     }
                 }
             }
-            if (line.length > 5) {
-                String levelIdentifier = line[5];	// ME_07 - OPTIONAL
+            if (line.length > 8) {
+                String levelIdentifier = line[8];	// ME_07 - OPTIONAL
                 String levelName = terms.get(levelIdentifier);
                 if (StringUtils.isNotEmpty(levelName)) {
                     result.setAttribute("expressionLevel", levelName);
@@ -203,11 +203,15 @@ public class FlybaseExpressionConverter extends BioFileConverter
                 LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
                 continue;
             }
+            String source = line[0];	// modENCODE or FlyAtlas
+            if ("modENCODE".equals(source)) {
 
-            String identifier = line[1];	// 09
-            String name = line[3];	// No expression
-
-            terms.put(identifier, name);
+            	String identifier = line[1];	// 09
+            	String name = line[3];	// No expression
+            	
+            	// only put the digit
+            	terms.put(identifier.substring(1), name);
+            }
         }
     }
 
