@@ -342,7 +342,7 @@ input.submit {
                                          </c:forEach>
                                         </c:url>"
                       title="Click to only show '<c:out value="${facetItem.value}" />'">
-                    <c:out value="${facetItem.value}" />: <c:out
+                    <c:out value="${imf:formatPathStr(facetItem.value, INTERMINE_API, WEBCONFIG)}" />: <c:out
                       value="${facetItem.facetValueHitCount}"></c:out> </a></li>
                   </c:forEach>
                 </ul>

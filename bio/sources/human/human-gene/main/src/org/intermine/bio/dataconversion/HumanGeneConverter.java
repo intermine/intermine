@@ -113,9 +113,11 @@ public class HumanGeneConverter extends BioFileConverter
             Item gene = createItem("Gene");
             gene.setReference("organism", getOrganism(HUMAN_TAXONID));
             createCrossReference(gene.getIdentifier(), hgncid, "HGNC", true);
+            createCrossReference(gene.getIdentifier(), line[1], "HGNC", true);
 
             if (!entrezid.isEmpty()) {
                 createCrossReference(gene.getIdentifier(), NCBI_PREFIX + entrezid, "NCBI", true);
+                createCrossReference(gene.getIdentifier(), entrezid, "NCBI", true);
             }
 
             if (!ensemblid.isEmpty()) {

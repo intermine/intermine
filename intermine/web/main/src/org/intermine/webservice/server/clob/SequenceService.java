@@ -155,8 +155,7 @@ public class SequenceService extends JSONService {
     private PathQuery getQuery() {
         String xml                     = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
         String schemaUrl               = AbstractQueryService.getSchemaLocation(request);
-        Map<String, InterMineBag> bags = getListManager().getListMap();
-        PathQueryBuilder builder       = new PathQueryBuilder(xml, schemaUrl, bags);
+        PathQueryBuilder builder       = new PathQueryBuilder(xml, schemaUrl, getListManager());
 
         return builder.getQuery();
     }

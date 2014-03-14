@@ -1,13 +1,32 @@
 <items>
-<item id="3_1" class="OntologyTermSynonym">
-<attribute name="name" value="LFS"/>
+<item id="4_4" class="OntologyTerm">
+<attribute name="description" value="Protein involved in the synthesis of lignin, a polymer of phenylpropanoid subunits found in the walls of plant cells such as xylem and sclerenchyma fibres. Lignin imparts strength to the wall and protects against degradation by microorganisms."/>
+<attribute name="name" value="Lignin biosynthesis"/>
+<reference name="ontology" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+</item>
+<item id="3_3" class="OntologyTermSynonym">
+<attribute name="name" value="SBLA syndrome"/>
+</item>
+<item id="4_3" class="OntologyTerm">
+<attribute name="description" value="Proteins which form part of the antenna complex, a light-harvesting system found in photosynthetic bacteria which absorb light radiation and transfer the excitation energy to the reaction centres."/>
+<attribute name="name" value="Light-harvesting polypeptide"/>
+<reference name="ontology" ref_id="2_1"/>
+<collection name="dataSets"><reference ref_id="1_1"/></collection>
+<collection name="synonyms"><reference ref_id="3_4"/></collection>
 </item>
 <item id="1_1" class="DataSet">
 <attribute name="name" value="UniProt keywords data set"/>
 <reference name="dataSource" ref_id="0_1"/>
 </item>
+<item id="3_2" class="OntologyTermSynonym">
+<attribute name="name" value="Sarcoma family syndrome of Li and Fraumeni"/>
+</item>
+<item id="0_1" class="DataSource">
+<attribute name="name" value="UniProt"/>
+</item>
 <item id="4_1" class="OntologyTerm">
-<attribute name="description" value="Protein which, if defective, causes Li-Fraumeni syndrome (LFS), anautosomal dominant familial cancer predisposition syndrome associatedwith soft-tissue sarcoma, breast cancer, leukemia, osteosarcoma,melanoma, and cancer of the colon, pancreas, adrenal cortex and brain.Individuals with LFS are at increased risk for developing multipleprimary cancers."/>
+<attribute name="description" value="Protein which, if defective, causes Li-Fraumeni syndrome (LFS), an autosomal dominant familial cancer predisposition syndrome associated with soft-tissue sarcoma, breast cancer, leukemia, osteosarcoma, melanoma, and cancer of the colon, pancreas, adrenal cortex and brain. Individuals with LFS are at increased risk for developing multiple primary cancers."/>
 <attribute name="name" value="Li-Fraumeni syndrome"/>
 <reference name="ontology" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
@@ -16,35 +35,16 @@
 <item id="2_1" class="Ontology">
 <attribute name="name" value="UniProtKeyword"/>
 </item>
-<item id="4_2" class="OntologyTerm">
-<attribute name="description" value="Enzyme that catalyzes the joining of two molecules coupled with thebreakdown of a pyrophosphate bond in ATP or a similar triphosphate.Sometimes the terms &quot;synthase&quot;, &quot;synthetase&quot;or &quot;carboxylase&quot;are alsoused for this class of enzymes."/>
-<attribute name="name" value="Ligase"/>
-<reference name="ontology" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
 <item id="3_4" class="OntologyTermSynonym">
 <attribute name="name" value="Light-harvesting complex"/>
 </item>
-<item id="3_3" class="OntologyTermSynonym">
-<attribute name="name" value="SBLA syndrome"/>
+<item id="3_1" class="OntologyTermSynonym">
+<attribute name="name" value="LFS"/>
 </item>
-<item id="3_2" class="OntologyTermSynonym">
-<attribute name="name" value="Sarcoma family syndrome of Li and Fraumeni"/>
-</item>
-<item id="0_1" class="DataSource">
-<attribute name="name" value="UniProt"/>
-</item>
-<item id="4_4" class="OntologyTerm">
-<attribute name="description" value="Protein involved in the synthesis of lignin, a polymer ofphenylpropanoid subunits found in the walls of plant cells such asxylem and sclerenchyma fibres. Lignin imparts strength to the wall andprotects against degradation by microorganisms."/>
-<attribute name="name" value="Lignin biosynthesis"/>
+<item id="4_2" class="OntologyTerm">
+<attribute name="description" value="Enzyme that catalyzes the joining of two molecules coupled with the breakdown of a pyrophosphate bond in ATP or a similar triphosphate. Sometimes the terms &quot;synthase&quot;, &quot;synthetase&quot; or &quot;carboxylase&quot; are also used for this class of enzymes."/>
+<attribute name="name" value="Ligase"/>
 <reference name="ontology" ref_id="2_1"/>
 <collection name="dataSets"><reference ref_id="1_1"/></collection>
-</item>
-<item id="4_3" class="OntologyTerm">
-<attribute name="description" value="Proteins which form part of the antenna complex, a light-harvestingsystem found in photosynthetic bacteria which absorb light radiation andtransfer the excitation energy to the reaction centres."/>
-<attribute name="name" value="Light-harvesting polypeptide"/>
-<reference name="ontology" ref_id="2_1"/>
-<collection name="dataSets"><reference ref_id="1_1"/></collection>
-<collection name="synonyms"><reference ref_id="3_4"/></collection>
 </item>
 </items>

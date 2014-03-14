@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -121,7 +121,7 @@ public class HtmlHeadController extends TilesAction
                 htmlPageTitle = reportObject.getHtmlHeadTitle();
 
             } catch (Exception e) {
-                LOG.warn("Could not correctly set the page title for object ID - " + objectId);
+                LOG.warn("Could not correctly set the page title for object ID - " + objectId, e);
             }
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);

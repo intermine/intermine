@@ -531,6 +531,18 @@
                     <format accept="application/tsv">tab</format>
                 </returns>
         </method>
+        <method type="DELETE" authenticationRequired="true">
+            <summary>Delete an existing list</summary>
+            <description>
+                This service allows users to delete
+                lists that belong to them.
+            </description>
+            <param required="true" type="String" description="The name of the list to delete">name</param>
+	        <returns>
+	          <format accept="application/json">json</format>
+	          <format accept="text/plain">text</format>
+	        </returns>
+        </method>
         <method type="POST" authenticationRequired="true">
 	        <summary>Create a new list</summary>
 	          <description>
@@ -1206,33 +1218,6 @@
     </metadata>
   </servlet-mapping>
 
-  <servlet>
-    <servlet-name>ws-report-widget</servlet-name>
-    <servlet-class>org.intermine.webservice.server.widget.ReportWidgetsServlet</servlet-class>
-    <init-param>
-       <param-name>debug</param-name>
-       <param-value>true</param-value>
-    </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ws-report-widget</servlet-name>
-    <url-pattern>/service/widget/report/*</url-pattern>
-    <metadata>
-        <name>Report Widgets</name>
-        <minVersion>8</minVersion>
-        <method authenticationRequired="false" type="GET">
-            <description>get the Report Widget JavaScript package</description>
-            <param type="String" required="true" description="The name of the widget to use">id</param>
-            <param type="String" required="true" description="The callback to use in the widget">callback</param>
-            <returns>
-              <format key="results">json</format>
-              <format>js</format>
-            </returns>
-        </method>
-    </metadata>
-  </servlet-mapping>
-
    <!-- NEW IN VERSION 9 -->
 
   <servlet>
@@ -1260,9 +1245,10 @@
                 facetting information to restrict the search results.
             </description>
             <param type="String" required="false" description="The query string to search with. If absent, or blank, all results will be returned">q</param>
-            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, all results will be returned." default="10">size</param>
+            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, up to 100 results will be returned." default="10">size</param>
             <param type="int" required="false" description="The index of the first result to return." default="0">start</param>
             <param type="String" required="false" description="A list to search within.">list</param>
+            <param type="String[]" required="false" description="A facet parameter, eg facet_Organism=D.melanogaster">facet_?</param>
             <returns>
               <format key="results">json</format>
             </returns>
@@ -1727,9 +1713,9 @@
         <name>Sequence Access</name>
         <minVersion>13</minVersion>
         <method authenticationRequired="false" type="GET" also="POST">
-            <summary>Get a portion of a sequence-like object</summary>
+            <summary>Get a portion of a sequence-like object.</summary>
             <description>
-                Get either the entire sequence of a character-sequence like thing, or
+                Get either the entire sequence of an object, or
                 fetch an indexed sub-sequence of it.
                 
                 This service expects a query with a single output column that resolves

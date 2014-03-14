@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -56,6 +56,10 @@ public class JSONDataTableRowIterator implements Iterator<JSONArray>
             if (re == null || re.getId() == null) {
                 jsonRow.add(null);
             } else {
+                Object field = re.getField();
+                if (field instanceof CharSequence) {
+                    field = field.toString();
+                }
                 jsonRow.add(re.getField());
             }
         }

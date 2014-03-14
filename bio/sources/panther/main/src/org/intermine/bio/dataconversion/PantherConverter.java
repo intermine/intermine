@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -90,6 +90,8 @@ public class PantherConverter extends BioFileConverter
         TYPES.put("LDO", "least diverged orthologue");
         TYPES.put("O", "orthologue");
         TYPES.put("P", "paralogue");
+        TYPES.put("X", "homologue");
+        TYPES.put("LDX", "least diverged homologue");
     }
 
     /**
@@ -271,6 +273,11 @@ public class PantherConverter extends BioFileConverter
                 continue;
             }
             String type = bits[2];
+            if (TYPES.get(type)== null) {
+            	LOG.warn("Type " + type + " is not recognised, record not loaded.");
+            	continue;
+            }
+
             String pantherId = bits[4];
 
             String gene1 = getGene(gene1IdentifierString[1], taxonId1);
@@ -290,7 +297,11 @@ public class PantherConverter extends BioFileConverter
             homologue.setReference("gene", gene1);
             homologue.setReference("homologue", gene2);
             homologue.addToCollection("evidence", getEvidence());
-            homologue.setAttribute("type", TYPES.get(type));
+            if (StringUtils.isEmpty(TYPES.get(type))) {
+            	homologue.setAttribute("type", type);            	
+            } else {
+            	homologue.setAttribute("type", TYPES.get(type));
+            }
             homologue.addToCollection("crossReferences",
                 createCrossReference(homologue.getIdentifier(), pantherId,
                         DATA_SOURCE_NAME, true));

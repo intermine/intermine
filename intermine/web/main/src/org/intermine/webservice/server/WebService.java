@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -555,10 +555,14 @@ public abstract class WebService {
             if (element.getClassName().contains("catalina")) {
                 // We have descended as far as is useful. stop here.
                 tooDeep = true;
+                ps.print("\n ...");
             } else {
                 ps.print("\n  at ");
                 ps.print(element);
             }
+        }
+        if (t.getCause() != null) {
+            ps.print("\n caused by: " + t.getCause() + "\n" + getTruncatedStackTrace(t.getCause()));
         }
         ps.flush();
         return b.toString();
