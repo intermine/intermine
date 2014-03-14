@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.OntologyTerm;
@@ -65,8 +66,8 @@ public class PopulateChildFeatures
      */
     public void populateCollection() throws Exception {
         Map<String, SOTerm> soTerms = populateSOTermMap(osw);
-        Query q = getQuery();
-        Results res = osw.getObjectStore().execute(q, 1000, true, true, true);
+        Query q = getAllParents();
+        Results res = osw.getObjectStore().execute(q);
         Iterator<Object> resIter = res.iterator();
         osw.beginTransaction();
         int parentCount = 0;
@@ -125,7 +126,12 @@ public class PopulateChildFeatures
         
     private void populateParentChildMap(Map<String, SOTerm> soTerms, String parentSOTermName) {
     	String parentClsName = TypeUtil.javaiseClassName(parentSOTermName);
-    	Class<?> parentClass = model.getClassDescriptorByName(parentClsName).getType();
+    	ClassDescriptor cd = model.getClassDescriptorByName(parentClsName);
+    	if (cd == null) {
+    		LOG.error("couldn't find class in model:" + parentClsName);
+    		return;
+    	}
+    	Class<?> parentClass = cd.getType();
     	
     	// all collections for gene
     	Map<String, Class<?>> childCollections = model.getCollectionsForClass(parentClass);
@@ -170,7 +176,7 @@ public class PopulateChildFeatures
         q.addFrom(qcSOTerm);
         q.addToOrderBy(qcSOTerm);
 
-        Results res = os.execute(q, 1000, true, true, true);
+        Results res = os.execute(q);
 
         Iterator it = res.iterator();
         
@@ -182,7 +188,7 @@ public class PopulateChildFeatures
         return soTerms;
     }
     
-    protected Query getQuery() {
+    protected Query getAllParents() {
         Query q = new Query();
         q.setDistinct(false);
         
