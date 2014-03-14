@@ -17,12 +17,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 /**
  * Results representation as a List of ResultRows.
@@ -416,5 +419,36 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
      */
     public ResultsBatches getResultsBatches() {
         return resultsBatches;
+    }
+
+    // Results equality is object equality. Hashcodes can be totally random.
+    private final int hashCode = new Random().nextInt();
+
+    @Override
+    public int hashCode() {
+        // hashCode must not hit the DB.
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other;
+    }
+
+    @Override
+    public String toString() {
+        // Stringification must not hit the DB. Only read previously fetched results.
+        if (lastGet < 0) {
+            return "Results([UNEVALUATED DB RESULTS])";
+        }
+        StringBuffer sb = new StringBuffer("Results([");
+        for (int i = 0; i <= lastGet; i++) {
+            sb.append(String.valueOf(get(i)));
+            if (i < lastGet) {
+                sb.append(",");
+            }
+        }
+        sb.append(", ...])");
+        return sb.toString();
     }
 }
