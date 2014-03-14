@@ -58,15 +58,19 @@ public class XMLFormatter extends Formatter
         return "cause";
     }
 
+    protected String getProcessingInstruction() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+    }
+
     /** {@inheritDoc}} **/
     @SuppressWarnings("rawtypes")
     @Override
     public String formatHeader(Map<String, Object> attributes) {
         StringBuilder sb = new  StringBuilder();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append(getProcessingInstruction());
         String elem = getRootElement();
         openElements.push(elem);
-        sb.append("<" + elem + " ");
+        sb.append("\n<" + elem + " ");
         handleHeaderAttributes(attributes, sb);
         return sb.toString();
     }
