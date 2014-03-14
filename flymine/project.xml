@@ -568,12 +568,13 @@
           <property name="src.data.dir" location="/micklem/data/homologene/current"/>
           <property name="homologene.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>    
+<!--
    <source name="orthodb" type="orthodb" dump="true">
       <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
       <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
-
-   <source name="panther" type="orthodb" dump="true">
+-->
+   <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
@@ -608,11 +609,14 @@
 
   <post-processing>
     <post-process name="create-utr-references"/>
+    <post-process name="populate-located-features"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
+
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
+    <post-process name="populate-located-features"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources" />
     <post-process name="create-intron-features">

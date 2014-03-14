@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -228,7 +228,7 @@ public class OmimConverter extends BioDirectoryConverter
             // String symbolFromFile = symbols[0].trim();
 
             String mimId = bits[2];
-            String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
+            String geneSymbol = resolveGene(mimId);
             if (geneSymbol != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);

@@ -172,6 +172,7 @@
     <reference name="chromosomeLocation" referenced-type="Location" />
     <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
     <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
+    <collection name="childFeatures" referenced-type="SequenceFeature" />
   </class>
 
   <class name="Synonym" is-interface="true">

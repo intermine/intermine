@@ -208,7 +208,10 @@ span.widget_tool_bar_button:hover, span.widget_tool_bar_button:visited:hover { b
 .widget {
     max-height:400px;width: 450px;padding:15px;
     text-align: center; background-color: #D2CEBF;}
-
+    
+.widget p {
+  font-size:10px; }
+  
 .widget_slide {
   margin-top:10px; max-height:350px;
     overflow-x:none;overflow-y:auto;overflow: auto;}
@@ -436,9 +439,9 @@ h3.goog { background:#EBEBEB !important; border-top-color:#000; color:#000; text
 #pagecontentcontainer.bagDetails-page h3.goog { background:#FFF; } /* due to RM theme, apply white background instead on list analysis */
 
 /* embeddable widgets */
-div.bagDetails-page div.widget { border-color:#000; } /* div.basic-table a.link */
-div.bagDetails-page div.widget h3 { color:#000; } /* div.basic-table a.link */
-div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#F0F0F0; } /* div.collection-of-collections div.collection-table h3 */
+div.bagDetails-page div.widget { border-color:#000; background:url('gray_grad.png') repeat-x top left !important; } /* div.basic-table a.link */
+div.bagDetails-page div.widget h3 { color:#000; background-color:#D9E2F8; } /* div.basic-table a.link */
+div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#CCC; } /* div.collection-of-collections div.collection-table h3 */
 div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#EFEFEF; } /* div.collection-table table tbody tr.odd td */
 div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
 
@@ -448,6 +451,6 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .popover-content .table td { padding:2px; }
 .bootstrap ul.dropdown-menu a:hover { color:#FFF !important; }
 
-.intermine .im-column-th .dropdown-menu:after {
-  border-bottom-color: #000;
-}
+/*.intermine .im-column-th .dropdown-menu:after {
+ border-bottom-color: #000;
+}*/

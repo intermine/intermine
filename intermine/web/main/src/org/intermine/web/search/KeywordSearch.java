@@ -1,7 +1,7 @@
 package org.intermine.web.search;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1580,7 +1580,7 @@ public final class KeywordSearch
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
         // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
         final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
-            "]", "^", "\"", "~", "?", ":", "\\"};
+            "]", "^", "~", "?", ":", "\\"};
         for (String s : specialCharacters) {
             if (queryString.contains(s)) {
                 queryString = queryString.replace(s, "*");

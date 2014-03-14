@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ import org.intermine.pathquery.PathLengthComparator;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OrderDirection;
+import org.intermine.webservice.server.core.Producer;
 
 /**
  * @author Alexis Kalderimis
@@ -46,7 +47,7 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
      * @param savedBags A map of bags this query may contain.
      */
     public PathQueryBuilderForJSONObj(String xml, String schemaUrl,
-            Map<String, InterMineBag> savedBags) {
+            Producer<Map<String, InterMineBag>> savedBags) {
         super(xml, schemaUrl, savedBags);
     }
 
