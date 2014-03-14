@@ -848,8 +848,13 @@ public abstract class WebService {
     public boolean wantsColumnHeaders() {
         String wantsCols = request
                 .getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
-        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0"
-                .equals(wantsCols));
+                      // Assume none wanted if empty
+        boolean no = (wantsCols == null || wantsCols.isEmpty()
+                      // interpret standard falsy values as false
+                || "0".equals(wantsCols) || "false".equalsIgnoreCase(wantsCols)
+                      // but none is what we really expect.
+                || "none".equalsIgnoreCase(wantsCols));
+        // All other values, including "true", "True", 1, and foo-bar are yes
         return !no;
     }
 
