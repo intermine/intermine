@@ -114,11 +114,18 @@
         <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format used">version</param>
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
         <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <param type="enumerated"
+               values="none,path,friendly" 
+               default="none"
+               required="false"
+               description="Include column headers. Use friendly for human readable paths. (Only for flat-file formats)">columnheaders</param>
         <returns>
             <format accept="application/tsv">tab</format>
             <format accept="application/csv">csv</format>
             <format accept="application/json" key="results">json</format>
+            <format accept="application/json;type=objects" key="results">jsonobjects</format>
             <format accept="application/xml">xml</format>
+            <format accept="text/html">html</format>
         </returns>
     </method>
   </metadata>
@@ -260,7 +267,11 @@
                 </description>
                 <param required="false" type="String" description="A stable identifier that can be used to find the object.">publicId</param>
                 <param required="false" type="Integer" description="The internal DB id (changes on each re-release).">id</param>
-                <param required="false" type="String" description="The type of object (required if using a public id)">type</param>
+                <param required="false"
+                    type="String"
+                    options="/model|model.classes"
+                    default="{name}"
+                    description="The type of object (required if using a public id)">type</param>
                 <param required="false" type="String" description="An extra value to disambiguate objects">extraValue</param>
                 <returns>
                     <format accept="application/json">json</format>
@@ -305,7 +316,11 @@
             the union operation on that list an existing one, if the resulant
             list replaced the existing list.
         </description>
-        <param required="true" type="String" description="The name of the list to append to">name</param>
+        <param required="true"
+            type="String"
+            description="The name of the list to append to. The list must exist, and belong to you."
+            options="/lists|lists{authorized}"
+            default="{name}">name</param>
         <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
           <content type="text/plain">
             "even skipped"
@@ -314,7 +329,7 @@
           </content>
         </body>
         <returns>
-          <format accept="application/json">json</format>
+          <format accept="application/json" key="list">json</format>
           <format accept="text/plain">text</format>
         </returns>
       </method>
@@ -354,7 +369,11 @@
             itself may be considered a copy.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list">lists</param>
+        <param required="true"
+            type="String[]"
+            description="The name of a source list."
+            options="/lists|lists"
+            default="{name}">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -400,8 +419,15 @@
             but need not be the owner of any of them.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list">references</param>
-        <param required="true" type="String[]" description="The name of a list to exclude">subtract</param>
+        <param required="true" type="String[]"
+            options="/lists|lists"
+            default="{name}"
+            description="The name of a source list">references</param>
+        <param required="true"
+            options="/lists|lists"
+            default="{name}"
+            type="String[]"
+            description="The name of a list to exclude">subtract</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -445,7 +471,10 @@
             may be considered a copy.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list, or multiple list names concatenated with a ';' separator.">lists</param>
+        <param required="true" type="String[]"
+            options="/lists|lists"
+            default="{name}"
+            description="The name of a source list, or multiple list names concatenated with a ';' separator.">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -488,7 +517,10 @@
             The user must have access to all the input lists, but need not be the owner of any of them.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list">lists</param>
+        <param required="true" type="String[]"
+            options="/lists|lists"
+            default="{name}"
+            description="The name of a source list">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -524,7 +556,7 @@
                 </description>
                 <param required="false" type="String" description="An optional filter by name.">name</param>
                 <returns>
-                    <format accept="application/json">json</format>
+                    <format key="lists" accept="application/json">json</format>
                     <format accept="text/html">html</format>
                     <format accept="text/plain">text</format>
                     <format accept="application/csv">csv</format>
@@ -537,7 +569,10 @@
                 This service allows users to delete
                 lists that belong to them.
             </description>
-            <param required="true" type="String" description="The name of the list to delete">name</param>
+            <param required="true" type="String"
+                options="/lists|lists{authorized}"
+                default="{name}"
+                description="The name of the list to delete">name</param>
 	        <returns>
 	          <format accept="application/json">json</format>
 	          <format accept="text/plain">text</format>
@@ -546,14 +581,17 @@
         <method type="POST" authenticationRequired="true">
 	        <summary>Create a new list</summary>
 	          <description>
-	            This service allows users to add new items to an existing
-	            list by uploading a set of identifiers. This is equivalent to
-	            creating a new list from a set of identifiers, and then performing
-	            the union operation on that list an existing one, if the resulant
-	            list replaced the existing list.
+	            This service allows users to create a new
+	            list by uploading a set of identifiers. 
+                The list is created by using the default settings
+                of the ID resolution mechanism and then taking
+                all the good matches.
 	          </description>
 	        <param required="true" type="String" description="The name of the new list">name</param>
-	        <param required="true" type="String" description="The type of the list">type</param>
+            <param required="true"
+                options="/model|model.classes"
+                default="{name}"
+                type="String" description="The type of the list">type</param>
 	        <param required="false" type="String" description="A disambiguating value (such as organism name)">extraValue</param>
 	        <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
              <content type="text/plain">
@@ -591,7 +629,10 @@
         This service allows users to change the name of an existing list that
         they are the owner of.
       </description>
-      <param required="true" type="String" description="The current name of the list">oldname</param>
+      <param required="true" type="String"
+          options="/lists|lists{authorized}"
+          default="{name}"
+          description="The current name of the list">oldname</param>
       <param required="true" type="String" description="The name the list should have">newname</param>
       <returns>
         <format accept="application/json">json</format>
@@ -648,26 +689,77 @@
       <name>Template Results</name>
       <method type="GET" ALSO="POST" authenticationRequired="false">
         <summary>Get the results from running a template with a given set of parameters</summary>
-        <description>
-        Templates are predefined parameterised queries which may be run by supplying values and
-        operators for the available editable constraints. To run a template, for example which
-        has the following editable constraints:
-          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
-          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
-        Then the user should supply the following parameters to run it with the default values:
-          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
-        The value of the number used to identify each constraint is ignored - it must however be
-        consistent for each parameter. 
+        <description format="markdown">
+Templates are predefined parameterised queries which may be run by supplying values and
+operators for the available editable constraints. The editable constraints vary from 
+template to template, so knowledge of these (obtainable by calls to `/templates`)
+is required to use this service correctly.
+
+Users should provide parameters of the form `constraint{N}`, `op{N}`, `value{N}`
+and `extra{N}` for each editable contraint, where `N` represents a number to group
+the values. The value of the `constraint{N}` parameter serves to identify
+the constraint, and may not be changed. Values for `op{N}` and `value{N}` must be
+given, and may be anything the user requires.
+
+To run a template, for example which has the following editable constraints:
+```
+&lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"/&gt;
+&lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"/&gt;
+```
+
+Then the user should supply the following parameters to run it with the above values:
+
+| Parameter           | Value            |
+|---------------------|------------------|
+| constraint1         | Gene.symbol      |
+| op1                 | eq               |
+| value1              | eve              |
+| constraint2         | Gene.length      |
+| op2                 | gt               |
+| value2              | 1000             |
+
+The value of the number used to identify each constraint is ignored - it must however be
+consistent for each parameter. One set of template constraint parameters is required
+for each editable constraint on the query. These are not required for optional constraints.
         </description>
-        <param type="String" required="true" description="The name of the template to run">name</param>
-        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
+        <param type="String"
+            required="true"
+            description="The name of the template to run"
+            options="/templates|templates"
+            default="{name}">name</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint paths"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{path}">constraint{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint operators"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{op}">op{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint values"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{extraValue}">extra{N}</param>
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
         <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <param type="enumerated"
+               values="none,path,friendly" 
+               default="none"
+               required="false"
+               description="Include column headers. Use friendly for human readable paths. (Only for flat-file formats)">columnheaders</param>
         <returns>
           <format accept="application/tsv">tab</format>
           <format accept="application/csv">csv</format>
           <format accept="application/json" key="results">json</format>
           <format accept="application/xml">xml</format>
+          <format accept="text/html">html</format>
         </returns>
       </method>
     </metadata>
@@ -687,29 +779,77 @@
   <url-pattern>/service/template/tolist/*</url-pattern>
   <metadata>
       <name>Template to list</name>
-      <method type="GET" ALSO="POST" authenticationRequired="false">
+      <method type="GET" ALSO="POST" authenticationRequired="true">
         <summary>Create a List from the Output of a Template</summary>
-        <description>
-        This service allows the user to create a list from the result set of running a template
-        with a given set of parameters. The parameters for running the template are the same as when
-        requesting results, and in addition to these parameters the user needs to supply a name 
-        and optional description for the list to be created.
-        To define which part of the template results, the user must supply a path parameter which
-        indicates a valid column from the output to be used.
-        Templates are predefined parameterised queries which may be run by supplying values and
-        operators for the available editable constraints. To run a template, for example which
-        has the following editable constraints:
-          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
-          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
-        Then the user should supply the following parameters to run it with the default values:
-          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
-        The value of the number used to identify each constraint is ignored - it must however be
-        consistent for each parameter. 
+        <description format="markdown">
+This service allows the user to create a list from the result set of running a template
+with a given set of parameters. The parameters for running the template are the same as when
+requesting results (see documentation for `template-results`), and in addition to these
+parameters the user needs to supply a name and optional description for the list to be created. 
+
+To define which part of the template results to use, the user must supply a path parameter which
+indicates a valid column from the output to be used.
+
+Users should provide parameters of the form `constraint{N}`, `op{N}`, `value{N}`
+and `extra{N}` for each editable contraint, where `N` represents a number to group
+the values. The value of the `constraint{N}` parameter serves to identify
+the constraint, and may not be changed. Values for `op{N}` and `value{N}` must be
+given, and may be anything the user requires.
+
+To run a template, for example which has the following editable constraints:
+```
+&lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"/&gt;
+&lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"/&gt;
+```
+
+Then the user should supply the following parameters to run it with the above values:
+
+| Parameter           | Value            |
+|---------------------|------------------|
+| constraint1         | Gene.symbol      |
+| op1                 | eq               |
+| value1              | eve              |
+| constraint2         | Gene.length      |
+| op2                 | gt               |
+| value2              | 1000             |
+
+The value of the number used to identify each constraint is ignored - it must however be
+consistent for each parameter. One set of template constraint parameters is required
+for each editable constraint on the query. These are not required for optional constraints.
         </description>
-        <param type="String" required="true" description="The name of the template to run">name</param>
-        <param type="String" required="true" description="The path to use to compose the results">path</param>
-        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
-        <param required="true" type="String" description="The name for the new list. There must be no existing list of this name">listName</param>
+        <param type="String"
+            required="true"
+            description="The name of the template to run"
+            options="/templates|templates"
+            default="{name}">name</param>
+        <param type="String"
+            required="true"
+            options="/templates|templates.$name.select"
+            default="{}"
+            description="The path to use to compose the results. This should be one of the selected view paths.">path</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint paths"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{path}">constraint{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint operators"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{op}">op{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint values"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{extraValue}">extra{N}</param>
+        <param required="true"
+            type="String"
+            description="The name for the new list. There must be no existing list of this name">listName</param>
         <param required="false" type="String" description="A description to attach to the new list">description</param>
         <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
         <returns>
@@ -737,27 +877,77 @@
       <minVersion>4</minVersion>
       <method type="POST" ALSO="GET" authenticationRequired="true">
         <summary>Add items to a list from a set of results from running a template</summary>
-        <description>
-        This service allows the user to add items to a list from the result set of running a template
-        with a given set of parameters. The parameters for running the template are the same as when
-        requesting results, and in addition to these parameters the user needs to supply a name 
-        and optional description for the list to be created.
-        To define which part of the template results, the user must supply a path parameter which
-        indicates a valid column from the output to be used.
-        Templates are predefined parameterised queries which may be run by supplying values and
-        operators for the available editable constraints. To run a template, for example which
-        has the following editable constraints:
-          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
-          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
-        Then the user should supply the following parameters to run it with the default values:
-          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
-        The value of the number used to identify each constraint is ignored - it must however be
-        consistent for each parameter. 
+        <description format="markdown">
+This service allows the user to add items to a list from the result set of running a template
+with a given set of parameters. The parameters for running the template are the same as when
+requesting results, and in addition to these parameters the user needs to supply the name 
+of a list to append the results to.
+
+To define which part of the template results to use, the user must supply a path parameter which
+indicates a valid column from the output to be used.
+
+Users should provide parameters of the form `constraint{N}`, `op{N}`, `value{N}`
+and `extra{N}` for each editable contraint, where `N` represents a number to group
+the values. The value of the `constraint{N}` parameter serves to identify
+the constraint, and may not be changed. Values for `op{N}` and `value{N}` must be
+given, and may be anything the user requires.
+
+To run a template, for example which has the following editable constraints:
+```
+&lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"/&gt;
+&lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"/&gt;
+```
+
+Then the user should supply the following parameters to run it with the above values:
+
+| Parameter           | Value            |
+|---------------------|------------------|
+| constraint1         | Gene.symbol      |
+| op1                 | eq               |
+| value1              | eve              |
+| constraint2         | Gene.length      |
+| op2                 | gt               |
+| value2              | 1000             |
+
+The value of the number used to identify each constraint is ignored - it must however be
+consistent for each parameter. One set of template constraint parameters is required
+for each editable constraint on the query. These are not required for optional constraints.
         </description>
-        <param type="String" required="true" description="The name of the template to run">name</param>
-        <param type="String" required="true" description="The path to use to compose the results">path</param>
-        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
-        <param required="true" type="String" description="The name of the list to add items to.">listName</param>
+        <param type="String"
+            required="true"
+            description="The name of the template to run"
+            options="/templates|templates"
+            default="{name}">name</param>
+        <param type="String"
+            required="true"
+            options="/templates|templates.$name.select"
+            default="{}"
+            description="The path to use to compose the results. This should be one of the selected view paths.">path</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint paths"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{path}">constraint{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint operators"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{op}">op{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint values"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{extraValue}">extra{N}</param>
+        <param required="true"
+            type="String"
+            options="/lists|lists{authorized}"
+            default="{name}"
+            description="The name of the list to add items to.">listName</param>
         <returns>
           <format accept="application/json">json</format>
           <format accept="text/plain">text</format>
@@ -806,6 +996,15 @@
                 Upload a set of templates to the current user profile.
             </description>
             <param required="false" type="boolean" default="false" description="The xml to load, if using form parameters.">includeBroken</param>
+            <body description="The templates to upload. If using body content.">
+             <content type="application/xml">
+                &lt;template name="my-new-template"&gt;
+                    &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
+                        &lt;constraint editable="true" path="Gene" op="LOOKUP" value="eve"/&gt;
+                    &lt;/query&gt;
+                &lt;/template&gt;
+             </content>
+            </body>
             <returns>
                 <format>xml</format>
                 <format>json</format>
@@ -1136,12 +1335,34 @@
                 the background population over a certain domain. They return a list of members of the
                 domain ranked by p-value (low to high).
             </description>
-            <param type="String" required="true" description="The name of the list to investigate">list</param>
-            <param type="String" required="true" description="The name of the enrichment widget to display">widget</param>
-            <param type="String" required="false" description="The name of the list to use as the background population">population</param>
-            <param type="Float" default="0.05" required="true" description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
-            <param type="enumerated" values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None" default="Holm-Bonferroni" required="true" description="The error correction algorithm to use.">correction</param>
-            <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
+            <param type="String"
+                required="true"
+                description="The name of the list to investigate"
+                options="/lists|lists"
+                default="{name}">list</param>
+            <param type="String"
+                required="true"
+                description="The name of the enrichment widget to display"
+                options="/widgets|widgets{widgetType=enrichment}"
+                default="{name}">widget</param>
+            <param type="String"
+                required="false"
+                description="The name of the list to use as the background population"
+                options="/lists|lists"
+                default="{name}">population</param>
+            <param type="Float"
+                default="0.05"
+                required="true"
+                description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
+            <param type="enumerated"
+                values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None"
+                default="Holm-Bonferroni"
+                required="true"
+                description="The error correction algorithm to use.">correction</param>
+            <param type="String"
+                required="false"
+                options="/widgets|widgets{name=$name}.0.filters"
+                description="An optional filter that some widgets accept">filter</param>
             <returns>
 	            <format key="results">json</format>
 	            <format>xml</format>
@@ -1175,8 +1396,14 @@
 	           as Google's javascript Charts API, to produce graphical representations
 	           of the overview of data in a list.
 	        </description>
-            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
-            <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
+            <param type="String"
+                required="true"
+                description="The name of the list to investigate"
+                default="/lists|lists.0.name">list</param>
+            <param type="String"
+                required="true"
+                description="The name of the graphical widget to display"
+                default="/widgets|widgets{widgetType=chart}.0.name">widget</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
 	        <returns>
 	            <format key="results">json</format>
@@ -1675,17 +1902,17 @@
             <description>
                 Get a query stored at the service.
             </description>
-            <param type="Integer" required="true" description="The id of the query to fetch">id</param>
+            <param type="String" required="true" description="The id of the query to fetch">id</param>
             <returns>
-                <format key="id">json</format>
+                <format>json</format>
+                <format>xml</format>
             </returns>
         </method>
         <method authenticationRequired="false" type="POST">
             <summary>Store a query</summary>
             <param type="String" required="true" description="The xml of the query to store.">query</param>
             <returns>
-                <format>json</format>
-                <format>xml</format>
+                <format key="id">json</format>
             </returns>
         </method>
     </metadata>
