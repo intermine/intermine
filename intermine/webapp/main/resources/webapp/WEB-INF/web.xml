@@ -976,13 +976,14 @@ for each editable constraint on the query. These are not required for optional c
         <name>Templates</name>
         <method type="GET" authenticationRequired="false">
             <summary>Get the list of available templates.</summary>
-            <description>
-                Get a listing of the templates configured in an InterMine instance.
-                Each template contains a description of its properties, defining the
-                parameters that must be provided to run it, as well as a definition of the
-                output format for its results.
-                If the request is authenticated to a user, then the templates that that has access
-                to will also be returned.
+            <description format="markdown">
+Get a listing of the templates configured in an InterMine instance.
+Each template contains a description of its properties, defining the
+parameters that must be provided to run it, as well as a definition of the
+output format for its results.
+
+If the request is authenticated to a user, then the templates that that has access
+to will also be returned.
             </description>
             <param required="false" type="boolean" default="false" description="Whether or not to include invalid templates. Invalid templates cannot be run.">includeBroken</param>
             <returns>
@@ -1857,7 +1858,7 @@ for each editable constraint on the query. These are not required for optional c
             <format key="preferences">json</format>
           </returns>
       </method>
-      <method type="DELETE" requiresAuthentication="true" slug="/:uid">
+      <method type="DELETE" requiresAuthentication="true">
           <name>Delete Preference(s)</name>
           <summary>Remove one or all preferences.</summary>
           <description>
@@ -1941,16 +1942,29 @@ for each editable constraint on the query. These are not required for optional c
         <minVersion>13</minVersion>
         <method authenticationRequired="false" type="GET" also="POST">
             <summary>Get a portion of a sequence-like object.</summary>
-            <description>
-                Get either the entire sequence of an object, or
-                fetch an indexed sub-sequence of it.
-                
-                This service expects a query with a single output column that resolves
-                tp a sub-sequenceable object.
+            <description format="markdown">
+Get either the entire sequence of an object, or
+fetch an indexed sub-sequence of it.
+
+This service expects a query with a single output column that resolves
+to a sub-sequenceable object. For example to get a sub-sequence
+of the genomic sequence of the fly X chromosome in a genomic mine, the following
+query could be used:
+
+```
+&lt;query model="genomic" view="Chromosome.sequence.residues"&gt;
+    &lt;constraint path="Chromosome" op="LOOKUP" value="X" extraValue="D. melanogaster"/&gt;
+&lt;/query&gt;
+```
             </description>
             <param type="Integer" required="false" default="0" description="The start index">start</param>
             <param type="Integer" required="false" description="The end index">end</param>
-            <param type="String" required="true" description="The xml of the query to run.">query</param>
+            <param type="XML"
+                default="
+&lt;query model=&quot;genomic&quot; view=&quot;Chromosome.sequence.residues&quot;&gt;
+    &lt;constraint path=&quot;Chromosome&quot; op=&quot;LOOKUP&quot; value=&quot;X&quot; extraValue=&quot;D. melanogaster&quot;/&gt;
+&lt;/query&gt;"
+                required="true" description="The xml of the query to run.">query</param>
             <returns>
                 <format key="results">json</format>
             </returns>
@@ -2095,6 +2109,36 @@ for each editable constraint on the query. These are not required for optional c
   <servlet-mapping>
      <servlet-name>ws-saved-template</servlet-name>
      <url-pattern>/service/templates/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-session</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.SessionService</param-value>
+     </init-param>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-session</servlet-name>
+     <url-pattern>/service/session</url-pattern>
+     <metadata>
+         <name>Sessions</name>
+         <minVersion>16</minVersion>
+         <method authenticationRequired="false" type="GET">
+            <summary>Open a new Web-Services Session</summary>
+            <description format="markdown">
+                This service opens a new 24 session for users. If authenticated to
+                an existing user, it has the same effect as requesting a new 24hr
+                token. But for unauthenticated users, it allocates a new temporary
+                profile, and assigns a 24hr usage token.
+            </description>
+            <returns>
+                <format key="token">json</format>
+            </returns>
+         </method>
+     </metadata>
   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
