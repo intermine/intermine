@@ -12,9 +12,12 @@ package org.intermine.web.search;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -67,6 +70,7 @@ import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.util.TextUtil;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -890,6 +894,7 @@ class InterMineObjectFetcher extends Thread
 public final class KeywordSearch
 {
     private static final String LUCENE_INDEX_DIR = "keyword_search_index";
+    private static final String LUCENE_INDEX_SIGNATURE = "keyword_search_signature";
 
     /**
      * maximum number of hits returned
@@ -1041,9 +1046,9 @@ public final class KeywordSearch
                         debugOutput =
                                 "1".equals(value) || "true".equals(value.toLowerCase())
                                         || "on".equals(value.toLowerCase());
+                    } else if (key.startsWith("index.temp.directory")) {
+                      tempDirectory = resolveEnvironmentVariable(value);
                     }
-
-                    tempDirectory = resolveEnvironmentVariable(properties.getProperty("index.temp.directory", ""));
                 }
             } catch (IOException e) {
                 LOG.error("keyword_search.properties: errow while loading file '" + configFileName
@@ -1197,6 +1202,8 @@ public final class KeywordSearch
                 LOG.info("No previous search index blob found in db");
             }
 
+            LOG.info("Saving signature to database...");
+            writeObjectToDB(os,MetadataManager.SEARCH_INDEX_SIGNATURE,TextUtil.generateRandomUniqueString());
             LOG.info("Saving search index information to database...");
             writeObjectToDB(os, MetadataManager.SEARCH_INDEX, index);
             LOG.info("Successfully saved search index information to database.");
@@ -1630,96 +1637,163 @@ public final class KeywordSearch
                 } else {
                     LOG.warn("IS is null");
                 }
+                
+                String databaseSignature = null;
+                String diskSignature = null;
+                
+                InputStream ss = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX_SIGNATURE);
+                if (ss != null) {
+                  GZIPInputStream gzipInput = new GZIPInputStream(ss);
+                  ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
+
+                  try {
+                    Object object = objectInput.readObject();
+                    if (object instanceof String) {
+                      LOG.info("Search index signature is "+(String)object);
+                      databaseSignature = (String)object;
+                    } else {
+                      LOG.info("Search index signature has class "+object.getClass().getName());
+                    }
+                  } finally {
+                    objectInput.close();
+                    gzipInput.close();
+                  }
+                }
+                
+                if (databaseSignature != null) {
+                  try {
+                  FileReader signatureFile = new FileReader(path + File.separator + "LUCENE_INDEX_SIGNATURE");
+                  LOG.info("Looking for signature in "+signatureFile);
+                  BufferedReader br = new BufferedReader(signatureFile);
+                  try {
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+                    if(line != null) {
+                      sb.append(line);
+                    }
+                    diskSignature= sb.toString();
+                  } finally {
+                    br.close();
+                  }
+                  LOG.info("Read signature on disk: " + diskSignature);
+                  } catch (IOException e) {
+                    LOG.warn("Cannot read signature from the file system. Restoring...");
+                  }
+                }
 
                 if (index != null) {
+                  if (databaseSignature != null && diskSignature != null && diskSignature.equals(databaseSignature)){
+                    LOG.info("No need to restore search index. file system is up to data.");
+                    File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
+                    FSDirectory directory = FSDirectory.open(directoryPath);
+                    index.setDirectory(directory);
+                  } else {
+
                     time = System.currentTimeMillis();
                     LOG.info("Attempting to restore search directory from database...");
                     is =
-                            MetadataManager.readLargeBinary(db,
-                                    MetadataManager.SEARCH_INDEX_DIRECTORY);
+                        MetadataManager.readLargeBinary(db,
+                            MetadataManager.SEARCH_INDEX_DIRECTORY);
 
                     if (is != null) {
-                        if ("FSDirectory".equals(index.getDirectoryType())) {
-                            final int bufferSize = 2048;
-                            File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
-                            LOG.info("Directory path: " + directoryPath);
+                      if ("FSDirectory".equals(index.getDirectoryType())) {
+                        final int bufferSize = 2048;
+                        File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
+                        LOG.info("Directory path: " + directoryPath);
 
-                            // make sure we start with a new index
-                            if (directoryPath.exists()) {
-                                String[] files = directoryPath.list();
-                                for (int i = 0; i < files.length; i++) {
-                                    LOG.info("Deleting old file: " + files[i]);
-                                    new File(directoryPath.getAbsolutePath() + File.separator
-                                            + files[i]).delete();
-                                }
-                            } else {
-                                directoryPath.mkdir();
-                            }
-
-                            ZipInputStream zis = new ZipInputStream(is);
-                            ZipEntry entry;
-                            while ((entry = zis.getNextEntry()) != null) {
-                                LOG.info("Extracting: " + entry.getName() + " (" + entry.getSize()
-                                        + " MB)");
-
-                                FileOutputStream fos =
-                                        new FileOutputStream(directoryPath.getAbsolutePath()
-                                                + File.separator + entry.getName());
-                                BufferedOutputStream bos =
-                                        new BufferedOutputStream(fos, bufferSize);
-
-                                int count;
-                                byte[] data = new byte[bufferSize];
-
-                                while ((count = zis.read(data, 0, bufferSize)) != -1) {
-                                    bos.write(data, 0, count);
-                                }
-
-                                bos.flush();
-                                bos.close();
-                            }
-
-                            FSDirectory directory = FSDirectory.open(directoryPath);
-                            index.setDirectory(directory);
-
-                            LOG.info("Successfully restored FS directory from database in "
-                                    + (System.currentTimeMillis() - time) + " ms");
-                            time = System.currentTimeMillis();
-                        } else if ("RAMDirectory".equals(index.getDirectoryType())) {
-                            GZIPInputStream gzipInput = new GZIPInputStream(is);
-                            ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
-
-                            try {
-                                Object object = objectInput.readObject();
-
-                                if (object instanceof FSDirectory) {
-                                    RAMDirectory directory = (RAMDirectory) object;
-                                    index.setDirectory(directory);
-
-                                    time = System.currentTimeMillis() - time;
-                                    LOG.info("Successfully restored RAM directory"
-                                            + " from database in " + time + " ms");
-                                }
-                            } finally {
-                                objectInput.close();
-                                gzipInput.close();
-                            }
+                        // make sure we start with a new index
+                        if (directoryPath.exists()) {
+                          String[] files = directoryPath.list();
+                          for (int i = 0; i < files.length; i++) {
+                            LOG.info("Deleting old file: " + files[i]);
+                            new File(directoryPath.getAbsolutePath() + File.separator
+                                + files[i]).delete();
+                          }
                         } else {
-                            LOG.warn("Unknown directory type specified: "
-                                    + index.getDirectoryType());
+                          directoryPath.mkdir();
                         }
 
-                        LOG.info("Directory: " + index.getDirectory());
+                        ZipInputStream zis = new ZipInputStream(is);
+                        ZipEntry entry;
+                        while ((entry = zis.getNextEntry()) != null) {
+                          LOG.info("Extracting: " + entry.getName() + " (" + entry.getSize()
+                              + " MB)");
+
+                          FileOutputStream fos =
+                              new FileOutputStream(directoryPath.getAbsolutePath()
+                                  + File.separator + entry.getName());
+                          BufferedOutputStream bos =
+                              new BufferedOutputStream(fos, bufferSize);
+
+                          int count;
+                          byte[] data = new byte[bufferSize];
+
+                          while ((count = zis.read(data, 0, bufferSize)) != -1) {
+                            bos.write(data, 0, count);
+                          }
+
+                          bos.flush();
+                          bos.close();
+                        }
+
+                        FSDirectory directory = FSDirectory.open(directoryPath);
+                        index.setDirectory(directory);
+
+                        LOG.info("Successfully restored FS directory from database in "
+                            + (System.currentTimeMillis() - time) + " ms");
+                        time = System.currentTimeMillis();
+                      } else if ("RAMDirectory".equals(index.getDirectoryType())) {
+                        GZIPInputStream gzipInput = new GZIPInputStream(is);
+                        ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
+
+                        try {
+                          Object object = objectInput.readObject();
+
+                          if (object instanceof FSDirectory) {
+                            RAMDirectory directory = (RAMDirectory) object;
+                            index.setDirectory(directory);
+
+                            time = System.currentTimeMillis() - time;
+                            LOG.info("Successfully restored RAM directory"
+                                + " from database in " + time + " ms");
+                          }
+                        } finally {
+                          objectInput.close();
+                          gzipInput.close();
+                        }
+                      } else {
+                        LOG.warn("Unknown directory type specified: "
+                            + index.getDirectoryType());
+                      }
+
+                      LOG.info("Directory: " + index.getDirectory());
+                      // now save the signature.
+                      if (databaseSignature != null) {
+                        try {
+                          File file = new File(path + File.separator + "LUCENE_INDEX_SIGNATURE");
+                          // creates the file
+                          file.createNewFile();
+                          // creates a FileWriter Object
+                          FileWriter writer = new FileWriter(file); 
+                          // Writes the content to the file
+                          writer.write(databaseSignature+"\n"); 
+                          writer.flush();
+                          writer.close();
+                        } catch (IOException e) {
+                          LOG.warn("Cannot write signature to the file system. continuing...");
+                        }
+                      }
                     } else {
-                        LOG.warn("index is null!");
+                      LOG.warn("index is null!");
                     }
+                  }
                 }
             } catch (ClassNotFoundException e) {
-                LOG.error("Could not load search index", e);
+              LOG.error("Could not load search index", e);
             } catch (SQLException e) {
-                LOG.error("Could not load search index", e);
+              LOG.error("Could not load search index", e);
             } catch (IOException e) {
-                LOG.error("Could not load search index", e);
+              LOG.error("Could not load search index", e);
             }
         } else {
             LOG.error("ObjectStore is of wrong type!");
@@ -1915,11 +1989,11 @@ public final class KeywordSearch
     }
     private static String resolveEnvironmentVariable(String inString) {
       String outString= new String(inString);
-      Pattern environmentPattern = Pattern.compile("\\$\\{(\\W+)\\}");
+      Pattern environmentPattern = Pattern.compile("\\$\\{?(\\S+)\\}?");
       Matcher m = environmentPattern.matcher(inString);
       while(m.find()) {
-        String value = System.getenv(m.group(1));
-        outString.replace(m.group(0), value);
+        // should I be fancier about this?
+        outString = System.getenv(m.group(1));
       }
       return outString;
     }
