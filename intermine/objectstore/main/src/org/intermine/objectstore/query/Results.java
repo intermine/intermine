@@ -25,8 +25,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 /**
  * Results representation as a List of ResultRows.
  * Extending AbstractList requires implementation of get(int) and size().
