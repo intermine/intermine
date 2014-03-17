@@ -60,15 +60,23 @@ public class IdResolverService
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
         // HACK - for worm in ncbi
         IdResolverService.getWormIdResolver();
+        // HACK - resolve human ids to HGNC symbols
+        IdResolverService.getHumanIdResolver();
+        taxonIds.remove("6239");
+        taxonIds.remove("9606");
         return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
     }
 
     public static IdResolver getIdResolverForMOD() {
-        String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
+        // String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
         // String[] modTaxonIdsWithoutWorm = {"9606", "7227", "7955", "10090","10116", "4932"};
         // HACK - In entrezIdResolver_config.properties, 6239 (worm) is disabled.
+
+        String[] modTaxonIdsWithoutHuman = {"7227", "7955", "10090","10116", "4932", "6239"};
+        // HACK - resolve human ids to HGNC symbols
+        IdResolverService.getHumanIdResolver();
         return new EntrezGeneIdResolverFactory()
-                .getIdResolver(new HashSet<String>(Arrays.asList(modTaxonIds)));
+                .getIdResolver(new HashSet<String>(Arrays.asList(modTaxonIdsWithoutHuman)));
     }
 
     /**

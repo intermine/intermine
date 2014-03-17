@@ -1,6 +1,8 @@
 package testprojecttitle;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.webservice.client.core.ServiceFactory;
@@ -8,35 +10,40 @@ import org.intermine.webservice.client.services.TemplateService;
 import org.intermine.webservice.client.template.TemplateParameter;
 
 /**
- * This is an automatically generated Java program to run the TEST_PROJECT_TITLE template, TEMP_NAME
+ * This is a Java program to run a query from TEST_PROJECT_TITLE.
+ * It was automatically generated at __SOME-DATE__
  *
  * @author TEST_PROJECT_TITLE
  *
  */
-public class TemplateTEMPNAME
+public class TemplateQueryTEMPNAME
 {
     private static final String ROOT = "TEST_SERVICE_ROOT/service";
 
     /**
+     * Perform the query and print the rows of results.
      * @param args command line arguments
+     * @throws IOException
      */
-    public static void main(String[] args) {
-        TemplateService service = new ServiceFactory(ROOT).getTemplateService();
+    public static void main(String[] args) throws IOException {
+        ServiceFactory factory = new ServiceFactory(ROOT);
+        // Edit the template parameter values to get different results
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
-
-        // You can edit the constraint values below
-        parameters.add(new TemplateParameter("Employee.age", "gt", "10"));
+        parameters.add(new TemplateParameter("Employee.age", ">", "10", null, "A"));
 
         // Name of template
         String name = "TEMP_NAME";
-        List<List<String>> rows = service.getAllResults(name, parameters);
-        System.out.println("Results:");
-        for (List<String> row : rows) {
-            for (String cell : row) {
-                System.out.print(cell + " ");
-            }
-            System.out.print("\n");
+        // Template Service - use this object to fetch results.
+        TemplateService service = factory.getTemplateService();
+        // Format to present data in fixed width columns
+        String format = "%-97.97s";
+
+        System.out.printf(format, "Employee.name");
+        Iterator<List<Object>> rows = service.getRowListIterator(name, parameters);
+        while (rows.hasNext()) {
+            System.out.printf(format, rows.next().toArray());
         }
+        System.out.printf("%d rows\n", service.getCount(name, parameters));
     }
 
 }

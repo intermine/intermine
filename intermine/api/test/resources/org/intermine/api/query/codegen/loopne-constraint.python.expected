@@ -20,7 +20,7 @@ query = service.new_query("Employee")
 query.add_view("name", "department.name")
 
 # You can edit the constraint values below
-query.add_constraint("department.manager", "IS NOT", "department.company.CEO", "A")
+query.add_constraint("department.manager", "IS NOT", "department.company.CEO", code = "A")
 
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A")

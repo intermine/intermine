@@ -1,23 +1,13 @@
-package org.intermine.webservice.server.idresolution;
+package org.intermine.api.idresolution;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.webservice.server.idresolution.IdResolutionService.Input;
 
-public class Job implements Runnable
+public class ResolutionJob implements Job
 {
-    public enum JobStatus {PENDING, RUNNING, SUCCESS, ERROR};
-
-    @SuppressWarnings("unchecked")
-    public static final Map<String, Job> JOBS = MapUtils.synchronizedMap(
-            new HashMap<String, Job>());
-
-    private final Input input;
+    private final JobInput input;
     private final BagQueryRunner runner;
 
     private BagQueryResult result;
@@ -26,54 +16,18 @@ public class Job implements Runnable
     private Exception error = null;
     private final Long startedAt;
     private JobStatus status = JobStatus.PENDING;
-    private final String uid = generateUID();
+    private final String uid;
 
-    public Job(BagQueryRunner runner, Input in) {
+    public ResolutionJob(UUID id, BagQueryRunner runner, JobInput in) {
         this.input = in;
         this.runner = runner;
         startedAt = System.currentTimeMillis();
-        JOBS.put(this.getUid(), this);
-    }
-    
-    private static String generateUID() {
-        String uid = getPossibleUID();
-        while (!uidIsUnique(uid)) {
-            uid = getPossibleUID();
-        }
-
-        return uid;
-    }
-    
-    private static boolean uidIsUnique(String uid) {
-        if (uid == null) {
-            throw new IllegalArgumentException("uid may not be null");
-        }
-        if (JOBS.isEmpty()) {
-            return true;
-        }
-        if (JOBS.containsKey(uid)) {
-            return false;
-        }
-        return true;
-    }
-    
-    private static String getPossibleUID() {
-        return String.format("%s-%s-%s-%s",
-            RandomStringUtils.randomAlphanumeric(4),
-            RandomStringUtils.randomAlphanumeric(4),
-            RandomStringUtils.randomAlphanumeric(4),
-            RandomStringUtils.randomAlphanumeric(4)).toLowerCase(); 
-    }
-    
-    public static Job getJobById(String uid) {
-        if (JOBS.containsKey(uid)) {
-            return JOBS.get(uid);
-        }
-        else {
-            return null;
-        }
+        uid = id.toString();
     }
 
+    /* (non-Javadoc)
+     * @see org.intermine.api.idresolution.JJob#run()
+     */
     @Override
     public void run() {
         this.status = JobStatus.RUNNING;
@@ -90,15 +44,35 @@ public class Job implements Runnable
             this.status = JobStatus.ERROR;
         }
     }
-    
+
+    public String getType() {
+        return input.getType();
+    }
+
+    /* (non-Javadoc)
+     * @see org.intermine.api.idresolution.JJob#getResult()
+     */
+    @Override
     public BagQueryResult getResult() {
         return result;
     }
-    
-    public boolean wasSuccessful() {
-        return error == null;
+
+    public JobInput getInput() {
+        return input;
     }
     
+    /* (non-Javadoc)
+     * @see org.intermine.api.idresolution.JJob#wasSuccessful()
+     */
+    @Override
+    public boolean wasSuccessful() {
+        return status == JobStatus.SUCCESS;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.intermine.api.idresolution.JJob#getError()
+     */
+    @Override
     public Exception getError() {
         return error;
     }
@@ -129,10 +103,10 @@ public class Job implements Runnable
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Job)) {
+        if (!(obj instanceof ResolutionJob)) {
             return false;
         }
-        Job other = (Job) obj;
+        ResolutionJob other = (ResolutionJob) obj;
         if (input == null) {
             if (other.input != null) {
                 return false;
@@ -159,16 +133,18 @@ public class Job implements Runnable
                 + ", startedAt=" + startedAt + "]";
     }
 
-    /**
-     * @return the uid
+    /* (non-Javadoc)
+     * @see org.intermine.api.idresolution.JJob#getUid()
      */
+    @Override
     public String getUid() {
         return uid;
     }
 
-    /**
-     * @return the status
+    /* (non-Javadoc)
+     * @see org.intermine.api.idresolution.JJob#getStatus()
      */
+    @Override
     public JobStatus getStatus() {
         return status;
     }

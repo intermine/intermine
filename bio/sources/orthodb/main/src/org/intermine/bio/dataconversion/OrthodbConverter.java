@@ -26,6 +26,7 @@ import java.util.Vector;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -62,13 +63,9 @@ public class OrthodbConverter extends BioFileConverter
     private Properties props = new Properties();
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
-    private OrganismRepository or;
     private Map<String, String> organismNameVisitedMap = new HashMap<String, String>();
 
     private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
-
-    private IdResolver rslv;
-
     private Set<String> processedHomologueRelationships = new HashSet<String>();
 
     /**
@@ -79,7 +76,6 @@ public class OrthodbConverter extends BioFileConverter
     public OrthodbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        or = OrganismRepository.getOrganismRepository();
     }
 
     /**
@@ -134,18 +130,6 @@ public class OrthodbConverter extends BioFileConverter
         if (homologues.isEmpty()) {
             LOG.warn("orthodb.homologues property not set in project XML file");
         }
-
-        Set<String> allTaxonIds = new HashSet<String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                addAll(taxonIds);
-                addAll(homologues);
-            }
-        };
-        if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
-        }
-
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
@@ -154,13 +138,12 @@ public class OrthodbConverter extends BioFileConverter
             }
 
             // Level is an integer, ignore the title line
-            if (!bits[0].matches("^\\d*$")) {
+            if (bits[0] != null && bits[0].startsWith("OD")) {
                 continue;
             }
 
             String groupId = bits[1];
             currentGroup = groupId;
-
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !currentGroup.equals(previousGroup)) {
                 if (homologueList.size() >= 2) {
@@ -169,8 +152,10 @@ public class OrthodbConverter extends BioFileConverter
                 homologueList = new ArrayList<List<String>>(); // reset the list
             }
 
-            String taxonId = getTaxon(bits[5]); // bits[5] is UniProt name
-            organismNameVisitedMap.put(bits[5], taxonId);
+
+            String taxonId = getTaxon(bits[4]); // bits[4] is the long string of taxon Ids
+            organismNameVisitedMap.put(bits[4], taxonId);
+
             if (!isValid(taxonId) || taxonId == null) {
                 // not an organism of interest, skip
                 previousGroup = groupId;
@@ -187,6 +172,11 @@ public class OrthodbConverter extends BioFileConverter
 
             previousGroup = groupId;
         }
+        // parse the last group of the file
+        if (homologueList.size() >= 2) {
+        	processHomologues(homologueList, previousGroup);
+        }
+        homologueList = new ArrayList<List<String>>(); // reset the list
     }
 
     private void readConfig() {
@@ -310,7 +300,7 @@ public class OrthodbConverter extends BioFileConverter
          * For a better fix, load uniprot data, set key to secondaryIdentifier, protein and
          * organism. But MasterMine does not load protein data.
          */
-
+        	// TODO don't hardcode symbols
             if ("ZC416.8".equals(geneId)) {
                 geneId = "cha-1";
                 identifierType = "symbol";
@@ -327,17 +317,11 @@ public class OrthodbConverter extends BioFileConverter
             }
         }
 
-        // Resolver always returns primaryIdentifier, this behaviour could adjust in id resolver.
-        String resolvedGenePid = resolveGene(taxonId, geneId);
-        if (resolvedGenePid == null) {
-            return null;
-        }
-
         // Id resolver always resolve ids to pids.
-        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, geneId));
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, geneId);
 
             if (!StringUtils.isEmpty(identifierType)) {
                 if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
@@ -353,28 +337,23 @@ public class OrthodbConverter extends BioFileConverter
 
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
-            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
+            identifiersToGenes.put(new MultiKey(taxonId, geneId), refId);
             store(gene);
         }
         return refId;
     }
 
-    private String getTaxon(String name) {
-        if (!organismNameVisitedMap.isEmpty() && organismNameVisitedMap.keySet().contains(name)) {
-            return organismNameVisitedMap.get(name);
+    private String getTaxon(String speciesString) {
+        if (!organismNameVisitedMap.isEmpty() && organismNameVisitedMap.keySet().contains(speciesString)) {
+            return organismNameVisitedMap.get(speciesString);
         }
-        OrganismData od = or.getOrganismDataByUniprot(name);
-        if (od == null) {
-            // Not throw BuildException
-            // TODO add more taxons to organism_config.properties?
-            LOG.warn("No data for `" + name + "`.  Please add to repository.");
-            return null;
-//            throw new BuildException("No data for `" + name + "`.  Please add to repository.");
-        }
-
-        int taxonId = od.getTaxonId();
-        String taxonIdString = String.valueOf(taxonId);
-        return taxonIdString;
+        String taxonId = null;
+        
+        String[] firstSplit = speciesString.split(":");
+        String[] secondSplit = firstSplit[1].split(";");
+        //System.out.println(secondSplit[0]);
+        taxonId = secondSplit[0];
+        return taxonId;
     }
 
     private String getEvidence() throws ObjectStoreException {
@@ -442,20 +421,5 @@ public class OrthodbConverter extends BioFileConverter
                 combination(allCombinations, newData, newCombination, length - 1);
             }
         }
-    }
-
-    private String resolveGene(String taxonId, String identifier) {
-        if (rslv == null || !rslv.hasTaxon(taxonId)) {
-            // no id resolver available, so return the original identifier
-            return identifier;
-        }
-        int resCount = rslv.countResolutions(taxonId, identifier);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " Resolved: "
-                     + rslv.resolveId(taxonId, identifier));
-            return null;
-        }
-        return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 }

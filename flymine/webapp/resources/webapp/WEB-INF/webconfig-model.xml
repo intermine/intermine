@@ -197,12 +197,20 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Interaction">
+    <fields>
+      <fieldconfig fieldExpr="gene1.symbol" />
+      <fieldconfig fieldExpr="gene2.symbol" />
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.InteractionExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
+  
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>

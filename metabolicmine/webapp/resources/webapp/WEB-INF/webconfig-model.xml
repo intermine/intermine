@@ -303,9 +303,6 @@
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp"/>
       <fieldconfig fieldExpr="alleles"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="true" showInSummary="true" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="true" showInSummary="true" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="true" showInSummary="true" />
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
@@ -665,7 +662,7 @@
       <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
                          pathStrings="SNP.consequences"
                          description="Consequence types for SNPs in this list"
-                         displayFields="description, transcript.primaryIdentifier"
+                         displayFields="description"
                          exportField="primaryIdentifier"
                          typeClass="SNP"
                          columnTitle="SNPs"

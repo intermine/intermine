@@ -79,13 +79,6 @@ public class GoConverter extends BioFileConverter
     protected IdResolver rslv;
     private static Config defaultConfig = null;
 
-    // In some cases, we'd like to treat protein annotation as gene's, use 3rd col symbol
-    private static Config proteinToGeneConfig = null;
-    private static final String PROTEIN_TO_GENE_READ_COL = "symbol";
-
-    boolean isHumanTypeAnnotatedAsGene = false;
-    private static final String HUMAN = "9606";
-
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
     /**
@@ -98,8 +91,6 @@ public class GoConverter extends BioFileConverter
     public GoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
         defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
-                DEFAULT_ANNOTATION_TYPE);
-        proteinToGeneConfig = new Config(DEFAULT_IDENTIFIER_FIELD, PROTEIN_TO_GENE_READ_COL,
                 DEFAULT_ANNOTATION_TYPE);
         readConfig();
     }
@@ -130,15 +121,6 @@ public class GoConverter extends BioFileConverter
         Enumeration<?> propNames = props.propertyNames();
         while (propNames.hasMoreElements()) {
             String key = (String) propNames.nextElement();
-
-            // human annotation from UniProt as gene
-            if ("isHumanTypeAnnotatedAsGene".equals(key)) {
-                if ("true".equals((String) props.get(key))) {
-                    isHumanTypeAnnotatedAsGene = true;
-                }
-                continue;
-            }
-
             String taxonId = key.substring(0, key.indexOf("."));
             Properties taxonProps = PropertiesUtil.stripStart(taxonId,
                     PropertiesUtil.getPropertiesStartingWith(taxonId, props));
@@ -175,11 +157,6 @@ public class GoConverter extends BioFileConverter
             Config config = new Config(identifier, readColumn, annotationType);
             configs.put(taxonId, config);
         }
-
-        // human annotation from UniProt as gene
-        if (isHumanTypeAnnotatedAsGene) {
-            configs.put(HUMAN, proteinToGeneConfig);
-        }
     }
 
     /**
@@ -210,22 +187,11 @@ public class GoConverter extends BioFileConverter
                         + array.length + ") in line: " + line);
             }
 
-            String db = array[0];
-
             String taxonId = parseTaxonId(array[12]);
             Config config = configs.get(taxonId);
             if (config == null) {
                 config = defaultConfig;
                 missedTaxa.add(taxonId);
-            }
-
-            // Some annotation files mix gene and protein, e.g. wormbase, etc.
-            if ("UniProtKB".equals(db) && "gene".equals(config.annotationType)) {
-                config = proteinToGeneConfig;
-                LOG.debug("Using GeneTOProteinConfig. TaxonId:" + taxonId
-                        + " annotation file has gene and protein mixture."
-                        + " The first 3 col: " + array[0] + "|" + array[1]
-                        + "|" + array[2]);
             }
 
             int readColumn = config.readColumn();
@@ -237,7 +203,7 @@ public class GoConverter extends BioFileConverter
             String withText = array[7];
             String annotationExtension = null;
             if (array.length >= 16) {
-                annotationExtension = array[15];
+            	annotationExtension = array[15];
             }
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence);

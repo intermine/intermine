@@ -84,6 +84,7 @@ public class BioGridConverter extends BioFileConverter
 
     protected IdResolver rslv;
     private static final String FLY = "7227";
+    private static final String HUMAN = "9606";
 
     /**
      * Constructor
@@ -123,6 +124,7 @@ public class BioGridConverter extends BioFileConverter
 
         if (rslv == null) {
             rslv = IdResolverService.getIdResolverByOrganism(FLY);
+            rslv = IdResolverService.getHumanIdResolver();
         }
 
         BioGridHandler handler = new BioGridHandler();
@@ -640,7 +642,7 @@ public class BioGridConverter extends BioFileConverter
         }
 
         /**
-         * resolve dmel genes
+         * resolve dmel and human genes
          * @param taxonId id of organism for this gene
          * @param ih interactor holder
          * @throws ObjectStoreException
@@ -657,6 +659,18 @@ public class BioGridConverter extends BioFileConverter
                 }
                 id = rslv.resolveId(taxonId, identifier).iterator().next();
             }
+
+            if (HUMAN.equals(taxonId) && rslv != null && rslv.hasTaxon(HUMAN)) {
+                int resCount = rslv.countResolutions(taxonId, identifier);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                             + identifier + " count: " + resCount + " Human identifier: "
+                             + rslv.resolveId(taxonId, identifier));
+                    return null;
+                }
+                id = rslv.resolveId(taxonId, identifier).iterator().next();
+            }
+
             return id;
         }
 
@@ -735,7 +749,7 @@ public class BioGridConverter extends BioFileConverter
                 } else {
                     exp.setAttribute("name", BLANK_EXPERIMENT_NAME);
                 }
-                
+
                 exp.setReference("publication", pubRefId);
                 idsToExperiments.put(key, exp);
             }

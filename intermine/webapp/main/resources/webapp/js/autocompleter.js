@@ -264,58 +264,50 @@
                 $(FRAME).height = "150";
             }
 
-            var ul = document.createElement('ul');
-            ul.setAttribute("id", "ulList");
-            var li;
-
-            for (var i = 0; i < array.length; i++) {
-                // IE & FF
-                li = document.createElement('li');
-                li.setAttribute("val", array[i].toString());
-                li.setAttribute("id", "li" + i.toString());
-                if (IE) {
-                    li.setAttribute("onmousedown", function() { $(INPUT).value = this.getAttribute('val'); removeList();});
-                    li.setAttribute("onmouseover", function() {  remarkIndex();
-                                                                 setIndex(parseInt(this.getAttribute('id').replace("li","")));
-                                                                 markIndex();
-                                                               });
-                    li.setAttribute("onmouseout", function() { remarkIndex(); setIndex(-1); } );
-                } else { // FF
-                    li.setAttribute("onMouseDown", "$(INPUT).value = this.getAttribute('val'); removeList();" );
-                    li.setAttribute("onMouseOver", "remarkIndex(); setIndex(" + i + "); markIndex();" );
-                    li.setAttribute("onMouseOut", "remarkIndex(); setIndex(-1);" );
+            var ul = jQuery('<ul/>', { 'id': 'ulList' });
+            jQuery.each(array, function(idx, value) {
+              jQuery('<li/>', {
+                'text': value,
+                'id': 'li' + idx,
+                mousedown: function() {
+                  $(INPUT).value = value;
+                  removeList();
+                },
+                mouseover: function() {
+                  remarkIndex();
+                  setIndex(idx);
+                  markIndex();
+                },
+                mouseout: function() {
+                  remarkIndex();
+                  setIndex(-1);
                 }
-                // IE & FF
-                $(DISPLAY).style.visibility = "visible";
-                li.appendChild(document.createTextNode(array[i]));
-                ul.appendChild(li);
-            }
+              }).appendTo(ul);
+              
+              $(DISPLAY).style.visibility = "visible";
+            });
 
             // should the link for more results shown
             if (!WHOLE_LIST && array.length == 31 && $(INPUT).value.length > 3) {
-                // IE & FF
-                var input = document.createElement('input');
-                input.setAttribute("type", "button");
-                if (IE) {
-                    input.setAttribute("onmousedown", function() { setWholeList(true); loadList(); });
-                    input.setAttribute("onmouseout", function() { this.style.background = '#b2cdbf'; });
-                    input.setAttribute("onmouseover", function() { this.style.background = '#8AECFF'; });
-                    input.style.background = "#b2cdbf";
-                    input.style.color = "#4c4d6b";
-                    input.style.border = "none";
-                    input.style.width = "100%";
-                } else { // FF
-                    input.setAttribute("class", "more_results");
-                    input.setAttribute("onMouseDown", "setWholeList(true); loadList();");
-                    input.setAttribute("onMouseOver", "this.style.background = '#8AECFF';");
-                    input.setAttribute("onMouseOut", "this.style.background = '#b2cdbf';");
-                }
-                 // IE & FF
-                input.setAttribute("value", "MORE RESULTS...");
-                input.setAttribute("TABINDEX","0");
-                ul.appendChild(input);
+                var input = jQuery('<input/>', {
+                  'type': 'button',
+                  'class': 'more_results',
+                  'value': 'MORE RESULTS...',
+                  mousedown: function() {
+                    setWholeList(true);
+                    loadList();
+                  },
+                  mouseover: function() {
+                    jQuery(this).css('background', '#8AECFF');
+                  },
+                  mouseout: function() {
+                    jQuery(this).css('background', '#B2CDBF');
+                  }
+                });
+                input[0].tabIndex = 0
+                ul.append(input);
             }
-            $(DISPLAY).appendChild(ul);
+            $(DISPLAY).appendChild(ul[0]);
         } else {
             $(FRAME).height = "0"; // IE
         }
