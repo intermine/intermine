@@ -2,7 +2,7 @@
 #
 # default usage: bup_userprofile
 #
-# note used by crontab 
+# note used by crontab
 #
 # TODO: add cleaning procedure (how much/what do we want to keep?)
 #
@@ -26,7 +26,9 @@ then
 echo
 echo -n "Reading latest modMine release number: "
 cd $PROPDIR
-REL=`ls -1 modmine.properties.r* | sed 's/modmine.properties.r//g' | sort -n | tail -1`
+#REL=`ls -1 modmine.properties.r* | sed 's/modmine.properties.r//g' | sort -n | tail -1`
+#added removing eventual '.save'
+REL=`ls -1 modmine.properties.r*|sed 's/modmine.properties.r//g'|sort -n|sed 's/.save//g'|tail -1`
 cd $RETURNDIR
 else
 REL="$1"
