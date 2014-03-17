@@ -996,7 +996,7 @@ to will also be returned.
             <description>
                 Upload a set of templates to the current user profile.
             </description>
-            <param required="false" type="boolean" default="false" description="The xml to load, if using form parameters.">includeBroken</param>
+            <param required="false" type="XML" default="" description="The xml to load, if using form parameters.">xml</param>
             <body description="The templates to upload. If using body content.">
              <content type="application/xml">
                 &lt;template name="my-new-template"&gt;
@@ -2091,6 +2091,132 @@ query could be used:
   <servlet-mapping>
      <servlet-name>ws-saved-queries</servlet-name>
      <url-pattern>/service/user/queries</url-pattern>
+     <metadata>
+         <name>Saved Queries</name>
+         <minVersion>16</minVersion>
+         <method authenticationRequired="false" type="GET">
+            <summary>Get the Saved Queries You have Access to.</summary>
+            <description>
+                This resource represents access to the set of saved-queries
+                accessible to a user. Saved queries are just normal queries, but
+                persisted with the user's account.
+            </description>
+            <param required="false"
+                type="String"
+                description="An optional filter by name, allowing wildcards.">filter</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="POST">
+            <summary>Upload New Queries to be Saved into a User's Profile</summary>
+            <description>
+                This resource allows users to upload queries to be saved into their profile.
+                Queries that the user uploads should all be valid, and ideally have names. If they
+                do not have names, names will be assigned to them.
+            </description>
+            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <body description="The queries to upload. If using body content.">
+             <content type="application/xml">
+                &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
+                    &lt;constraint path="Gene" op="LOOKUP" value="eve"/&gt;
+                &lt;/query&gt;
+             </content>
+             <content type="none"/>
+            </body>
+            <returns>
+                <format accept="text/plain">text</format>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+                <format accept="text/tab-separated-values">tab</format>
+                <format accept="text/comma-separated-values">csv</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="PUT">
+            <summary>Update Existing Queries in a User's Profile</summary>
+            <description>
+                This resource allows users to upload queries to be saved into their profile.
+                Queries that the user uploads should all be valid, and ideally have names. If they
+                do not have names, names will be assigned to them. If queries with the same name
+                already exist, they will be over-written. This provides a mechanism for updating
+                the value of saved queries on a service.
+            </description>
+            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <body description="The queries to upload. If using body content.">
+             <content type="application/xml">
+                &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
+                    &lt;constraint path="Gene" op="LOOKUP" value="eve"/&gt;
+                &lt;/query&gt;
+             </content>
+             <content type="none"/>
+            </body>
+            <returns>
+                <format accept="text/plain">text</format>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+                <format accept="text/tab-separated-values">tab</format>
+                <format accept="text/comma-separated-values">csv</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="DELETE">
+            <summary>Delete a saved query by name</summary>
+            <description format="markdown">
+                This resource exposes the ability to delete specific saved queries, identified
+                by name.
+
+                A user can only delete queries that they own, and must be executed
+                with `Read/Write` permission.
+            </description>
+            <param required="true"
+                options="/user/queries|queries"
+                default="{title}"
+                type="String"
+                description="The name of the query to delete">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+     </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-saved-query</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+         <param-name>DELETE</param-name>
+         <param-value>org.intermine.webservice.server.query.QueryRemovalService</param-value>
+     </init-param>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-saved-query</servlet-name>
+     <url-pattern>/service/user/queries/*</url-pattern>
+     <metadata>
+         <name>Saved Query</name>
+         <minVersion>16</minVersion>
+
+         <method authenticationRequired="true" type="DELETE" slug="/:name">
+            <summary>Delete a saved query by name</summary>
+            <description format="markdown">
+                This resource exposes the ability to delete specific saved queries, identified
+                by name.
+
+                A user can only delete queries that they own, and must be executed
+                with `Read/Write` permission.
+            </description>
+            <param required="true"
+                options="/user/queries|queries"
+                default="{title}"
+                type="String"
+                description="The name of the query to delete">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+     </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -2109,6 +2235,48 @@ query could be used:
   <servlet-mapping>
      <servlet-name>ws-saved-template</servlet-name>
      <url-pattern>/service/templates/*</url-pattern>
+     <metadata>
+         <name>Saved Template</name>
+         <minVersion>16</minVersion>
+         <method authenticationRequired="false" type="GET" slug="/:name">
+            <summary>Retrieve a template by name</summary>
+            <description format="markdown">
+                This resource retrieves a representation of a named template, returning
+                404 if the template cannot be found.
+
+                If the request is authenticated, then the templates visible to that user (created by
+                or shared with them) will be included along with publically accessible templates.
+            </description>
+            <param required="true"
+                options="/templates|templates"
+                default="{name}"
+                type="String"
+                description="The name of the template to fetch">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="DELETE" slug="/:name">
+            <summary>Delete a template by name</summary>
+            <description format="markdown">
+                This resource exposes the ability to delete specific templates, identified
+                by name.
+
+                A user can only delete templates that they own, and must be executed
+                with `Read/Write` permission.
+            </description>
+            <param required="true"
+                options="/templates|templates"
+                default="{name}"
+                type="String"
+                description="The name of the template to delete">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+     </metadata>
   </servlet-mapping>
 
   <servlet>
