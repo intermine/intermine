@@ -658,6 +658,21 @@ public class ProfileManager
         this.createProfile(p);
     }
 
+    public Profile createAnonymousProfile() {
+        String username = null;
+        Integer id = null;
+        String password = null;
+        String token = null;
+        boolean isLocal = true;
+        boolean isSuperUser = false;
+
+        Profile p = new Profile(this, username, id, password,
+                new HashMap<String, org.intermine.api.profile.SavedQuery>(),
+                new HashMap<String, InterMineBag>(),
+                new HashMap<String, ApiTemplate>(), token, isLocal, isSuperUser);
+        return p;
+    }
+
     /**
      * Creates a profile in the userprofile database.
      *

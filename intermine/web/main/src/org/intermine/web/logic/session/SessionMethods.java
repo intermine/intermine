@@ -458,9 +458,7 @@ public final class SessionMethods
     public static void initSession(HttpSession session) {
         InterMineAPI im = getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();
-        session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
-                    new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                    new HashMap<String, ApiTemplate>(), null, true, false));
+        session.setAttribute(Constants.PROFILE, pm.createAnonymousProfile());
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 
