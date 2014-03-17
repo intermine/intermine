@@ -525,8 +525,8 @@ public abstract class WebService {
         }
         if (output != null) {
             output.setError(msg, code);
+            LOG.debug("Set error to : " + msg + "," + code);
         }
-        LOG.debug("Set error to : " + msg + "," + code);
     }
 
     private void logError(Throwable t, String msg, int code) {

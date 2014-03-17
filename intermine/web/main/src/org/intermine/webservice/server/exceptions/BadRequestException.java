@@ -23,6 +23,8 @@ public class BadRequestException extends ServiceException
     private static final long serialVersionUID = 1L;
 
     /**
+     * 404 - BAD REQUEST
+     *
      * @param message message
      */
     public BadRequestException(String message) {
@@ -31,6 +33,8 @@ public class BadRequestException extends ServiceException
     }
 
     /**
+     * 404 - BAD REQUEST
+     *
      * @param message message
      * @param cause cause
      */
@@ -40,6 +44,8 @@ public class BadRequestException extends ServiceException
     }
 
     /**
+     * 404 - BAD REQUEST
+     *
      * @param cause cause
      */
     public BadRequestException(Throwable cause) {

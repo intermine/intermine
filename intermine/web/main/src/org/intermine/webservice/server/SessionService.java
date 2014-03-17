@@ -35,6 +35,7 @@ public class SessionService extends JSONService {
             p = getPermission().getProfile();
         } else {
             p = pm.createAnonymousProfile();
+            p.disableSaving();
         }
         String token = pm.generate24hrKey(p);
         addResultValue(token, false);
