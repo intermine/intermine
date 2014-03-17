@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="main/client-build/src"/>
+	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="samples/GenesFinder/src"/>
+	<classpathentry kind="src" path="samples/ListClient/src"/>
+	<classpathentry kind="src" path="samples/QueryAPIClient/src"/>
+	<classpathentry kind="src" path="samples/QueryClient/src"/>
+	<classpathentry kind="src" path="samples/TemplateClient/src"/>
+	<classpathentry kind="src" path="samples/WorkshopExample/src"/>
+	<classpathentry kind="src" path="test/src"/>
+	<classpathentry kind="lib" path="main/client-build/lib/antlr-2.7.6-caching.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/commons-httpclient-3.0.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/intermine-client.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/intermine-objectstore.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/intermine-pathquery.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/json20110106.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/stax-api-1.0.jar"/>
+	<classpathentry kind="lib" path="main/client-build/lib/stax-ri-1.0.jar"/>
+	<classpathentry kind="lib" path="main/dist/intermine-webservice-client.jar"/>
+	<classpathentry kind="lib" path="main/lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="main/lib/commons-httpclient-3.0.jar"/>
+	<classpathentry kind="lib" path="main/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="main/lib/json20110106.jar"/>
+	<classpathentry kind="lib" path="main/lib/log4j.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="samples/bin"/>
+</classpath>
