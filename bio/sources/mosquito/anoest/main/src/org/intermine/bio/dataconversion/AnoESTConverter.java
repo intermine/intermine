@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -35,7 +36,7 @@ public class AnoESTConverter extends BioDBConverter
     private final Map<String, Item> clusters = new LinkedHashMap<String, Item>();
     private final Map<String, Item> ests = new LinkedHashMap<String, Item>();
     private final Map<String, String> cloneIds = new LinkedHashMap<String, String>();
-
+    private static final Logger LOG = Logger.getLogger(AnoESTConverter.class);
     /**
      * Create a new AnoESTConverter object.
      * @param database the database to read from
@@ -58,6 +59,8 @@ public class AnoESTConverter extends BioDBConverter
             connection = null;
         } else {
             connection = getDatabase().getConnection();
+            System.out.println(connection.toString());
+            LOG.error(connection.toString());
         }
         makeClusterItems(connection);
         makeEstItems(connection);
