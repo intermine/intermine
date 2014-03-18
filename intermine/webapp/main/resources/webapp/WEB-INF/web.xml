@@ -1632,9 +1632,33 @@ to will also be returned.
         <method type="POST" authenticationRequired="true">
           <name>Submit Job</name>
           <summary>Start a New ID Resolution Job on the Server</summary>
-          <description>
-            New ID resolution jobs are created by posting a representation of the job to this
-            service.
+          <description format="markdown">
+New ID resolution jobs are created by posting a representation of the job to this
+service. Jobs are run asynchronously, so this service simply submits the
+job, and returns the identifier of the job, so that its results and status
+may be polled later.
+
+A job is a data structure (represented as `json`) that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["identifiers", "type"],
+    "properties": {
+        "identifiers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        },
+        "type":          { "type": "string"  },
+        "extra":         { "type": "string"  },
+        "caseSensitive": { "type": "boolean" },
+        "wildCards":     { "type": "boolean" }
+    }
+}
+```
           </description>
           <body
             description="A representation of the job. This must include a list of identifiers to resolve, and the type of object these ids are meant to resolve to">
