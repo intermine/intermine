@@ -109,8 +109,30 @@ public class ServicesListingsServlet extends HttpServlet
     }
 
     private DefaultHandler getHandler() {
+
+        final Map<String, Object> TOKEN_AUTH = new HashMap<String, Object>() {{
+            put("name", "API key - parameter");
+            put("type", "token");
+            put("mechanism", "parameter");
+            put("key", "token");
+        }};
+        final Map<String, Object> TOKEN_HEADER = new HashMap<String, Object>() {{
+            put("name", "API key - header");
+            put("type", "token");
+            put("mechanism", "header");
+            put("key", "Authorization");
+            put("prefix", "Token ");
+        }};
+        final Map<String, Object> BASIC_AUTH = new HashMap<String, Object>() {{
+            put("name", "Username and Password");
+            put("type", "password");
+            put("mechanism", "basic"); // Special shortcut definiton.
+        }};
+
         DefaultHandler handler = new DefaultHandler() {
             private final Map<String, Object> result = new HashMap<String, Object>();
+            private final List<Map<String, Object>> auth = new ArrayList<Map<String, Object>>();
+            
             private final List<Map<String, Object>> endpoints
                 = new ArrayList<Map<String, Object>>();
             private Map<String, Object> currentEndPoint = null;
@@ -129,6 +151,10 @@ public class ServicesListingsServlet extends HttpServlet
             private static final String DEFAULT_PROP_FMT = "ws.listing.default.%s.%s";
 
             public void startDocument() {
+                result.put("auth", auth);
+                auth.add(TOKEN_HEADER);
+                auth.add(TOKEN_AUTH);
+                auth.add(BASIC_AUTH);
                 result.put("endpoints", endpoints);
             }
 
