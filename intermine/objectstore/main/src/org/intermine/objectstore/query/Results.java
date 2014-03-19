@@ -435,18 +435,7 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
 
     @Override
     public String toString() {
-        // Stringification must not hit the DB. Only read previously fetched results.
-        if (lastGet < 0) {
-            return "Results([UNEVALUATED DB RESULTS])";
-        }
-        StringBuffer sb = new StringBuffer("Results([");
-        for (int i = 0; i <= lastGet; i++) {
-            sb.append(String.valueOf(get(i)));
-            if (i < lastGet) {
-                sb.append(",");
-            }
-        }
-        sb.append(", ...])");
-        return sb.toString();
+        // Stringification must not hit the DB.
+        return "[Results " + hashCode + "]";
     }
 }
