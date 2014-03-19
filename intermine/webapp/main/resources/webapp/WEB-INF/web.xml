@@ -113,7 +113,7 @@
         <param required="true" type="XML" schema="/schema/query.xsd" description="A definition of the query to execute in Path-Query XML format">query</param>
         <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format used">version</param>
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
-        <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <param type="Integer" required="false" recommended="true" default="10" description="The maximum size of the result set.">size</param>
         <param type="enumerated"
                values="none,path,friendly" 
                default="none"
@@ -2341,6 +2341,13 @@ query could be used:
       <name>Service Listing</name>
       <method type="GET" requiresAuthentication="false">
         <summary>Get a description of the services offered by this data-warehouse.</summary>
+        <description format="markdown">
+            This service returns a description of all the endpoints of the
+            web services provided by this application. It includes a listing
+            of all the calls that can be made, along with information about
+            request parameters and output formats. This information is used
+            to provide the listings rendered by [iodocs](http://iodocs.intermine.org).
+        </description>
         <returns>
           <format accept="application/json">json</format>
         </returns>
