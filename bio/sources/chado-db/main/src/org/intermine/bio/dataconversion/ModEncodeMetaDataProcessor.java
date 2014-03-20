@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +68,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private static final String STRAIN = "strain";
     private static final String DEVSTAGE = "developmental stage";
 
-
     // submission maps
     // ---------------
     private Map<Integer, String> submissionOrganismMap = new HashMap<Integer, String>();
@@ -78,6 +78,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     // subId to dcc id
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
+    // dcc id to subId
+    private Map<String, Integer> idDccMap = new HashMap<String, Integer>();
 
     // superseded/deleted subId to dcc id: to be checked in case we need to skip
     // loading a sub
@@ -294,6 +296,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processSubmissionOrganism(connection);
         processSubmission(connection);
         processSubmissionAttributes(connection);
+        processSubmissionsAssayFactor();
         processProtocolTable(connection);
         processAppliedProtocolTable(connection);
         processProtocolAttributes(connection);
@@ -1368,6 +1371,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 value = DCC_PREFIX + value;
                 LOG.debug("DCC: " + submissionId + ", " + value);
                 dccIdMap.put(submissionId, value);
+                idDccMap.put(value, submissionId);
             }
 
             if ("category".equals(fieldName)) {
@@ -1433,6 +1437,30 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                         + "from experiment_prop ep ";
         return doQuery(connection, query, "getExperimentProperties");
     }
+
+    /**
+     * submission attribute assay factor (lookup map from faceted browser)
+     *
+     * We populate the empty 'name' field of submission with the assay factor read from an
+     * internal map. the map is populated with data from http://data.modencode.org/
+     * In the web-app we label the field 'assay factor'
+     *
+     */
+    private void processSubmissionsAssayFactor()
+        throws ObjectStoreException {
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
+        int count = 0;
+        for (Entry<String, String> af : ASSAY_FACTOR_MAP.entrySet()) {
+            String thisSub = af.getKey();
+            Integer submissionId = idDccMap.get(thisSub);
+            setAttribute(submissionMap.get(submissionId).interMineObjectId, "name", af.getValue());
+            count++;
+        }
+            LOG.info("created " + count + " ASSAY FACTOR submissions attributes");
+            LOG.info("PROCESS TIME assay factor submissions attributes: "
+                    + (System.currentTimeMillis() - bT) + " ms");
+    }
+
 
     /**
      * ==========================
@@ -2111,7 +2139,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
                 attValue= refItems.get(0);
                 wikiPageUrl = refItems.get(1);
-//            	attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
+//              attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
             }
 
             // we are starting a new data row
@@ -2806,6 +2834,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private List<Item> createItemsForSubmissionProperties(String dccId, String clsName,
             List<SubmissionProperty> subProps)
         throws ObjectStoreException {
+
+//       // if we have a lookup of target genes, add them here
+//    	 // needs debug
+//        if (subProps.isEmpty() && clsName.equalsIgnoreCase("Antibody") &&
+//                TARGET_GENE_MAP.get(dccId) != null){
+//            SubmissionProperty targetGeneProp = new SubmissionProperty("Antibody", "no-wiki-url");
+//            targetGeneProp.addDetail("target name", TARGET_GENE_MAP.get(dccId), 0);
+//            subProps.add(targetGeneProp);
+//            LOG.info("AAA0 " + dccId + ":" + clsName +":" + subProps);
+//        }
         List<Item> items = new ArrayList<Item>();
         for (SubmissionProperty subProp : subProps) {
             Item item = getItemForSubmissionProperty(clsName, subProp, dccId);
@@ -2820,7 +2858,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         throws ObjectStoreException {
         Item propItem = subItemsMap.get(prop.wikiPageUrl);
         if (propItem == null) {
-
             if (clsName != null) {
                 List<String> checkOfficialName = prop.details.get("official name");
 
@@ -4093,6 +4130,33 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         FIELD_NAME_MAP.put("lab", NOT_TO_BE_LOADED);
         FIELD_NAME_MAP.put("Comment", NOT_TO_BE_LOADED);
     }
+
+
+    /**
+     * maps from submissions to target genes (antibody attribute)
+     *
+     */
+    private static final Map<String, String> TARGET_GENE_MAP =
+            new HashMap<String, String>();
+
+    static {
+        TARGET_GENE_MAP.put("2381", "IAMJUSTATEST");
+        TARGET_GENE_MAP.put("3831", "IAManotherTEST");
+    }
+
+
+    /**
+     * maps from submissions to assay factor (as in faceted data browser)
+     *
+     */
+    private static final Map<String, String> ASSAY_FACTOR_MAP =
+            new HashMap<String, String>();
+
+    static {
+        ASSAY_FACTOR_MAP.put("modENCODE_2381", "IAMJUSTATEST");
+        ASSAY_FACTOR_MAP.put("modENCODE_2831", "IAManotherTEST");
+    }
+
 
     /**
      * to store identifiers in project maps.
