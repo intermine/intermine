@@ -177,8 +177,108 @@ will be selected.
 <servlet-mapping>
   <servlet-name>ws-genomic-region-to-gff3</servlet-name>
   <url-pattern>/service/regions/gff3</url-pattern>
-</servlet-mapping>
+  <metadata>
+      <name>Genomic Intervals as GFF3</name>
+      <minVersion>8</minVersion>
+      <method type="GET" authenticationRequired="false">
+          <summary>Get Genomic Features overlapping given Regions</summary>
+          <description format="markdown">
+This service returns information about features found
+overlapping a set of genomic intervals. The results are
+returned in the General Feature Format
+[GFF3](http://en.wikipedia.org/wiki/General_feature_format)
+where each row represents a feature.
 
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <param 
+              description="The region search input"
+              default="
+{&#10;
+    &quot;regions&quot;: [&#10;
+    &quot;2L:14615455..14619002&quot;,&#10;
+    &quot;2R:5866646..5868384&quot;,&#10;
+    &quot;3R:2578486..2580016&quot;&#10;
+    ],&#10;
+    &quot;featureTypes&quot;: [&quot;Gene&quot;, &quot;Exon&quot;, &quot;Intron&quot;],&#10;
+    &quot;organism&quot;: &quot;D. melanogaster&quot;&#10;
+}&#10;
+              "
+              required="true" type="JSON">query</param>
+       </method>
+      <method type="POST" authenticationRequired="false">
+          <summary>Get Genomic Features overlapping given Regions</summary>
+          <description format="markdown">
+This service returns information about features found
+overlapping a set of genomic intervals. The results are
+returned in the General Feature Format
+[GFF3](http://en.wikipedia.org/wiki/General_feature_format)
+where each row represents a feature.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <body description="A representation of the search request.">
+              <content type="application/json" schema="/schema/region-search-request.schema">
+                {
+                  "regions": [
+                    "2L:14615455..14619002",
+                    "2R:5866646..5868384",
+                    "3R:2578486..2580016"
+                  ],
+                  "featureTypes": ["Gene", "Exon", "Intron"],
+                  "organism": "D. melanogaster"
+                }
+              </content>
+           </body>
+       </method>
+   </metadata>
+</servlet-mapping>
 
 <servlet>
   <servlet-name>ws-genomic-region-to-fasta</servlet-name>
@@ -192,6 +292,109 @@ will be selected.
 <servlet-mapping>
   <servlet-name>ws-genomic-region-to-fasta</servlet-name>
   <url-pattern>/service/regions/fasta</url-pattern>
+  <metadata>
+      <name>Genomic Intervals as FASTA</name>
+      <minVersion>8</minVersion>
+      <method type="GET" authenticationRequired="false">
+          <summary>Get Genomic Features overlapping given Regions</summary>
+          <description format="markdown">
+This service returns information about features found
+overlapping a set of genomic intervals. The results are
+returned in the 
+[FASTA](http://en.wikipedia.org/wiki/FASTA_format) format
+where each record represents a feature, including the sequence
+associated with that feature.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <param 
+              description="The region search input"
+              default="
+{&#10;
+    &quot;regions&quot;: [&#10;
+    &quot;2L:14615455..14619002&quot;,&#10;
+    &quot;2R:5866646..5868384&quot;,&#10;
+    &quot;3R:2578486..2580016&quot;&#10;
+    ],&#10;
+    &quot;featureTypes&quot;: [&quot;Gene&quot;, &quot;Exon&quot;, &quot;Intron&quot;],&#10;
+    &quot;organism&quot;: &quot;D. melanogaster&quot;&#10;
+}&#10;
+              "
+              required="true" type="JSON">query</param>
+       </method>
+      <method type="POST" authenticationRequired="false">
+          <summary>Get Genomic Features overlapping given Regions</summary>
+          <description format="markdown">
+This service returns information about features found
+overlapping a set of genomic intervals. The results are
+returned in the 
+[FASTA](http://en.wikipedia.org/wiki/FASTA_format) format
+where each record represents a feature, including the sequence
+associated with that feature.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <body description="A representation of the search request.">
+              <content type="application/json" schema="/schema/region-search-request.schema">
+                {
+                  "regions": [
+                    "2L:14615455..14619002",
+                    "2R:5866646..5868384",
+                    "3R:2578486..2580016"
+                  ],
+                  "featureTypes": ["Gene", "Exon", "Intron"],
+                  "organism": "D. melanogaster"
+                }
+              </content>
+           </body>
+       </method>
+   </metadata>
 </servlet-mapping>
 
 <servlet>
@@ -206,6 +409,105 @@ will be selected.
 <servlet-mapping>
   <servlet-name>ws-genomic-region-to-bed</servlet-name>
   <url-pattern>/service/regions/bed</url-pattern>
+  <metadata>
+      <name>Genomic Intervals as BED</name>
+      <minVersion>8</minVersion>
+      <method type="GET" authenticationRequired="false">
+          <summary>Get Genomic Features overlapping given Regions</summary>
+          <description format="markdown">
+This service returns information about features found
+overlapping a set of genomic intervals. The results are
+returned in the [UCSC BED](http://genome.ucsc.edu/FAQ/FAQformat.html) format
+where each row represents a feature.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <param 
+              description="The region search input"
+              default="
+{&#10;
+    &quot;regions&quot;: [&#10;
+    &quot;2L:14615455..14619002&quot;,&#10;
+    &quot;2R:5866646..5868384&quot;,&#10;
+    &quot;3R:2578486..2580016&quot;&#10;
+    ],&#10;
+    &quot;featureTypes&quot;: [&quot;Gene&quot;, &quot;Exon&quot;, &quot;Intron&quot;],&#10;
+    &quot;organism&quot;: &quot;D. melanogaster&quot;&#10;
+}&#10;
+              "
+              required="true" type="JSON">query</param>
+       </method>
+      <method type="POST" authenticationRequired="false">
+          <summary>Get Genomic Features overlapping given Regions</summary>
+          <description format="markdown">
+This service returns information about features found
+overlapping a set of genomic intervals. The results are
+returned in the [UCSC BED](http://genome.ucsc.edu/FAQ/FAQformat.html) format
+where each row represents a feature.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <body description="A representation of the search request.">
+              <content type="application/json" schema="/schema/region-search-request.schema">
+                {
+                  "regions": [
+                    "2L:14615455..14619002",
+                    "2R:5866646..5868384",
+                    "3R:2578486..2580016"
+                  ],
+                  "featureTypes": ["Gene", "Exon", "Intron"],
+                  "organism": "D. melanogaster"
+                }
+              </content>
+           </body>
+       </method>
+   </metadata>
 </servlet-mapping>
 
 <servlet>

@@ -122,8 +122,10 @@
         <returns>
             <format accept="application/tsv">tab</format>
             <format accept="application/csv">csv</format>
+            <format accept="text/count">count</format>
             <format accept="application/json" key="results">json</format>
             <format accept="application/json;type=objects" key="results">jsonobjects</format>
+            <format accept="application/json;type=count" key="results">jsoncount</format>
             <format accept="application/xml">xml</format>
             <format accept="text/html">html</format>
         </returns>
@@ -757,7 +759,10 @@ for each editable constraint on the query. These are not required for optional c
         <returns>
           <format accept="application/tsv">tab</format>
           <format accept="application/csv">csv</format>
+          <format accept="text/count">count</format>
           <format accept="application/json" key="results">json</format>
+          <format accept="application/json;type=objects" key="results">jsonobjects</format>
+          <format accept="application/json;type=count" key="count">jsoncount</format>
           <format accept="application/xml">xml</format>
           <format accept="text/html">html</format>
         </returns>
