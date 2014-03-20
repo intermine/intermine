@@ -130,10 +130,10 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     if (ua && ua.msie && parseInt(ua.version, 10) < 9) { // removed in 1.9.1
         new Notification({message: '<fmt:message key="old.browser"/>'}).render();
     }
+}
 
-    function reportVersion (v) {
-        console.log("Webservice is at version " + v);
-    }
+function reportVersion (v) {
+    console.log("Webservice is at version " + v);
 }
 
 $MODEL_TRANSLATION_TABLE = {
