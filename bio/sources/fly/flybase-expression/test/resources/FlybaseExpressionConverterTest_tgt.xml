@@ -9,7 +9,7 @@
 </item>
 <item id="4_2" class="RNASeqResult">
 <attribute name="expressionLevel" value="Very high expression"/>
-<attribute name="expressionScore" value="6825"/>
+<attribute name="expressionScore" value="682"/>
 <attribute name="stage" value="embryo 02-04hr"/>
 <reference name="gene" ref_id="5_1"/>
 </item>
@@ -28,7 +28,7 @@
 </item>
 <item id="4_3" class="RNASeqResult">
 <attribute name="expressionLevel" value="Moderately high expression"/>
-<attribute name="expressionScore" value="1178"/>
+<attribute name="expressionScore" value="28"/>
 <attribute name="stage" value="embryo 04-06hr"/>
 <reference name="gene" ref_id="5_1"/>
 </item>
@@ -38,7 +38,7 @@
 </item>
 <item id="4_1" class="RNASeqResult">
 <attribute name="expressionLevel" value="High expression"/>
-<attribute name="expressionScore" value="3486"/>
+<attribute name="expressionScore" value="86"/>
 <attribute name="stage" value="embryo 00-02hr"/>
 <reference name="gene" ref_id="5_1"/>
 </item>

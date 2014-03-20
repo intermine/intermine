@@ -40,10 +40,7 @@ public class FlybaseExpressionConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        File srcFile = new File(getClass().getClassLoader().getResource("BinLOOKUP_modENCODE_FlyAtlas.txt").toURI());
-        converter.setFlybaseExpressionLevelsFile(srcFile);
-
-        srcFile = new File(getClass().getClassLoader().getResource("HTD_modENCODE_BinData_2010-10-05.txt").toURI());
+        File srcFile = new File(getClass().getClassLoader().getResource("HTD_modENCODE_BinData_2010-10-05.txt").toURI());
         File stages = new File(getClass().getClassLoader().getResource("stages.txt").toURI());
         converter.setFlybaseStagesFile(stages);
 
