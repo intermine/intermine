@@ -114,9 +114,8 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         "help": "${WEB_PROPERTIES['feedback.destination']}"
     });
     var notification = new FailureNotification({message: $SERVICE.root + " is incorrect"});
-    $SERVICE.fetchVersion().fail(notification.render).done(function(v) {
-        console.log("Webservice is at version " + v);
-    });
+
+    $SERVICE.fetchVersion().then(reportVersion, notification.render);
   
     // Load list widgets.  
     (function() {
@@ -130,6 +129,10 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua && ua.msie && parseInt(ua.version, 10) < 9) { // removed in 1.9.1
         new Notification({message: '<fmt:message key="old.browser"/>'}).render();
+    }
+
+    function reportVersion (v) {
+        console.log("Webservice is at version " + v);
     }
 }
 
