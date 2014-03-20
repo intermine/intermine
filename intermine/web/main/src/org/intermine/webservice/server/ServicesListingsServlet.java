@@ -236,6 +236,7 @@ public class ServicesListingsServlet extends HttpServlet
                     currentParam.put("Depends", attrs.getValue("depends"));
                     currentParam.put("Schema", attrs.getValue("schema"));
                     currentParam.put("Options", attrs.getValue("options"));
+                    currentParam.put("Recommended", "true".equals(attrs.getValue("recommended")));
                     String defaultValue = attrs.getValue("default");
                     if (defaultValue != null) {
                         currentParam.put("Default", defaultValue);

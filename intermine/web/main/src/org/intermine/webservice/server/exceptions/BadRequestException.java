@@ -23,7 +23,7 @@ public class BadRequestException extends ServiceException
     private static final long serialVersionUID = 1L;
 
     /**
-     * 404 - BAD REQUEST
+     * 400 - BAD REQUEST
      *
      * @param message message
      */

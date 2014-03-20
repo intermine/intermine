@@ -67,6 +67,10 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
     }
 
     @Override
+    protected void validateState() {
+    }
+
+    @Override
     protected void makeList(ListInput input, String type, Profile profile,
             Set<String> temporaryBagNamesAccumulator) throws Exception {
         
