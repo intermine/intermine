@@ -63,7 +63,8 @@ input.submit {
      // (un)Check all ids checkboxes
      function checkAll()
      {
-         jQuery(".item").attr('checked', jQuery('#allItems').is(':checked'));
+         // Removed code, not compatible with jQuery 1.6+: jQuery(".item").attr('checked', jQuery('#allItems').is(':checked'));
+         jQuery(".item").prop('checked', jQuery('#allItems').is(':checked'));
          jQuery('#allItems').css("opacity", 1);
      }
 

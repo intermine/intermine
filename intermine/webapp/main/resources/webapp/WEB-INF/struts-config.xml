@@ -361,6 +361,7 @@
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="results" redirect="true" path="/results.do"/>
       <forward name="errors" redirect="true" path="/bag.do"/>
+      <forward name="report" path="/report.do"/>
     </action>
     <action path="/fileDownload" type="org.intermine.web.struts.FileDownloadAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
