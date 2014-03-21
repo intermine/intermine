@@ -1,0 +1,1 @@
+/jgi/tools/SUN/jdk/DEFAULT/jre/bin/java -agentlib:jdwp=transport=dt_socket,address=localhost:9009,server=y,suspend=y -classpath /jgi/tools/misc_software/ant/DEFAULT/lib/ant-launcher.jar -Dant.home=/jgi/tools/misc_software/ant/DEFAULT -Dant.library.dir=/jgi/tools/misc_software/ant/DEFAULT/lib org.apache.tools.ant.launch.Launcher -cp "" -Dsource=phytozome-chado-P.trichocarpa

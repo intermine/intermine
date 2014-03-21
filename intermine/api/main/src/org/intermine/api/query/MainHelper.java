@@ -787,6 +787,10 @@ public final class MainHelper
             value = c.getValue();
             op = (ConstraintOp.EXACT_MATCH.equals(op))
                     ? ConstraintOp.EQUALS: ConstraintOp.NOT_EQUALS;
+        } else if (ConstraintOp.EQUALS.equals(op) || ConstraintOp.NOT_EQUALS.equals(op) ) {
+          // we're not going to rewrite this as a case insensitive 'like' match.
+          qe = qf;
+          value = c.getValue();
         } else {
             qe = new QueryExpression(QueryExpression.LOWER, qf);
             value = Util.wildcardUserToSql(c.getValue().toLowerCase());
@@ -799,15 +803,11 @@ public final class MainHelper
         //     normal equals.  for example 'Dpse\GA10108' needs to be 'Dpse\\GA10108' for equals
         //     but 'Dpse\\\\GA10108' (and hence "Dpse\\\\\\\\GA10108" as a Java string because
         //     backslash must be quoted with a backslash)
-        if (ConstraintOp.EQUALS.equals(op)) {
-            return new SimpleConstraint(qe, ConstraintOp.MATCHES, new QueryValue(value));
-        } else if (ConstraintOp.NOT_EQUALS.equals(op)) {
-            return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH, new QueryValue(value));
-        } else if (ConstraintOp.CONTAINS.equals(op)) {
-            return new SimpleConstraint(qe, ConstraintOp.MATCHES,
-                    new QueryValue("%" + value + "%"));
-        } else {
-            return new SimpleConstraint(qe, op, new QueryValue(value));
+
+        if (ConstraintOp.CONTAINS.equals(op)) {
+          return new SimpleConstraint(qe, ConstraintOp.MATCHES,new QueryValue("%" + value + "%"));
+        } else { 
+          return new SimpleConstraint(qe, op, new QueryValue(value));
         }
     }
 

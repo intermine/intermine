@@ -1,0 +1,4 @@
+<project name="gene-defline-tasks" default="default" basedir=".">
+  <description>build gene-defline tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

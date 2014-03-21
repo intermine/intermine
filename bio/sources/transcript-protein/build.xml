@@ -1,0 +1,5 @@
+<project name="transcript-protein" default="default" basedir=".">
+  <description>build, test, package transcript-protein</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

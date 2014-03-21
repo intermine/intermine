@@ -1,0 +1,5 @@
+<project name="pac-clusters" default="default" basedir=".">
+  <description>build, test, package pac-clusters</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

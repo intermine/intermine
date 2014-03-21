@@ -1,0 +1,2187 @@
+
+-init-project:
+
+library.-pre-pre-init:
+
+-pre-pre-init:
+
+library.-pre-init:
+
+webapp.-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+[dependencies] ---- Dependency build order:-----------------------
+[dependencies]  intermine/objectstore/main
+[dependencies]  intermine/integrate/model/fulldata
+[dependencies]  intermine/integrate/main
+[dependencies]  intermine/api/model/userprofile
+[dependencies]  intermine/pathquery/main
+[dependencies]  intermine/webservice/client/main
+[dependencies]  intermine/api/main
+[dependencies]  bio/core/main
+[dependencies]  phytomine/dbmodel
+[dependencies]  intermine/web/main
+[dependencies]  intermine/webservice/client/download
+[dependencies]  intermine/webapp/main
+[dependencies]  intermine/webtasks/main
+[dependencies]  bio/tools/main
+[dependencies]  bio/webapp
+[dependencies] ---------------------------------------------------
+[dependencies] Mon Mar 03 14:57:54 PST 2014
+[dependencies] Executing "jar" for source "intermine/objectstore/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/objectstore/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:55 PST 2014
+[dependencies] Executing "jar" for source "intermine/integrate/model/fulldata"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/integrate/model/fulldata
+
+-init-project:
+
+-pre-pre-init:
+
+library.-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+library.-init-generate:
+
+-pre-define-task-classpath:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/intermine/integrate/model/fulldata/build/tmp
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/intermine/integrate/model/fulldata/build/tmp
+
+-define-task-classpath:
+
+-check-task-availability:
+
+-load-os-tasks:
+     [echo] Loading objectstore tasks
+
+-load-int-tasks:
+     [echo] Loading integration tasks
+
+-load-web-tasks:
+
+-load-task-taskdefs:
+
+-init-macrodef-build-db:
+
+-init-task-xml:
+
+-init-model-out-of-date:
+
+-init-generate:
+
+-pre-generate:
+
+build-model-from-xml-in-build-dir:
+
+build-model-from-xml-in-project-dir:
+     [echo] Found xml file in project directory
+
+-generate-model-java-message:
+     [echo] generated model java is up to date - not regenerating
+
+-init-macrodef-model-output:
+
+generate-model-java:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:55 PST 2014
+[dependencies] Executing "jar" for source "intermine/integrate/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/integrate/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:56 PST 2014
+[dependencies] Executing "jar" for source "intermine/api/model/userprofile"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/api/model/userprofile
+
+-init-project:
+
+-pre-pre-init:
+
+library.-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+library.-init-generate:
+
+-pre-define-task-classpath:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/intermine/api/model/userprofile/build/tmp
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/intermine/api/model/userprofile/build/tmp
+
+-define-task-classpath:
+
+-check-task-availability:
+
+-load-os-tasks:
+     [echo] Loading objectstore tasks
+
+-load-int-tasks:
+     [echo] Loading integration tasks
+
+-load-web-tasks:
+
+-load-task-taskdefs:
+
+-init-macrodef-build-db:
+
+-init-task-xml:
+
+-init-model-out-of-date:
+
+-init-generate:
+
+-pre-generate:
+
+build-model-from-xml-in-build-dir:
+
+build-model-from-xml-in-project-dir:
+     [echo] Found xml file in project directory
+
+-generate-model-java-message:
+     [echo] generated model java is up to date - not regenerating
+
+-init-macrodef-model-output:
+
+generate-model-java:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:56 PST 2014
+[dependencies] Executing "jar" for source "intermine/pathquery/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/pathquery/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:57 PST 2014
+[dependencies] Executing "jar" for source "intermine/webservice/client/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/webservice/client/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:57 PST 2014
+[dependencies] Executing "jar" for source "intermine/api/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/api/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:57 PST 2014
+[dependencies] Executing "jar" for source "bio/core/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../bio/core/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:57:58 PST 2014
+[dependencies] Executing "jar" for source "phytomine/dbmodel"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../phytomine/dbmodel
+
+-init-project:
+
+-pre-pre-init:
+
+library.-pre-init:
+
+model.-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+library.-init-generate:
+
+-pre-define-task-classpath:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build/tmp
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build/tmp
+
+-define-task-classpath:
+
+-check-task-availability:
+
+-load-os-tasks:
+     [echo] Loading objectstore tasks
+
+-load-int-tasks:
+     [echo] Loading integration tasks
+
+-load-web-tasks:
+
+-load-task-taskdefs:
+
+-init-macrodef-build-db:
+
+-init-task-xml:
+
+-init-model-out-of-date:
+
+model.-init-generate:
+
+-init-generate:
+
+-check-for-intermine-properties-file:
+
+-set-release-suffix-not-exists:
+
+-set-release-suffix-exists:
+
+-set-release-suffix:
+
+-init-check-for-intermine-properties-dir:
+
+-check-for-intermine-properties-dir:
+
+-init-check-for-intermine-properties:
+
+-check-for-intermine-properties:
+
+-init-properties:
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build/main
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build/main
+
+-pre-generate-retrieve:
+     [echo] Retrieving model from os.production...
+[dependencies] Not writing "genomic_keyDefs.properties" as version in database is identical to local copy
+[dependencies] Not writing "genomic_model.xml" as version in database is identical to local copy
+
+-pre-generate-properties:
+
+-pre-generate:
+
+build-model-from-xml-in-build-dir:
+     [echo] Found xml file in /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build
+
+build-model-from-xml-in-project-dir:
+
+-generate-model-java-message:
+
+-init-macrodef-model-output:
+
+generate-model-java:
+     [echo] Generating model java code...
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+    [javac] Compiling 178 source files to /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build/classes
+[dependencies] warning: [options] bootstrap class path not set in conjunction with -source 1.6
+[dependencies] Note: Some input files use unchecked or unsafe operations.
+[dependencies] Note: Recompile with -Xlint:unchecked for details.
+[dependencies] 1 warning
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+  [lib:jar] Building jar: /global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/dist/phytomine-dbmodel.jar
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:58:08 PST 2014
+[dependencies] Executing "jar" for source "intermine/web/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/web/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:58:08 PST 2014
+[dependencies] Executing "jar" for source "intermine/webservice/client/download"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/webservice/client/download
+
+clean:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/download/dist
+
+jar:
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/download/dist
+
+clean:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-dist
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build
+
+compile:
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+library.jar:
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+library.jar:
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+library.jar:
+
+build:
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build
+     [copy] Copying 44 files to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/src
+     [copy] Copying 5 files to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+      [jar] Building jar: /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib/intermine-client.jar
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/lib
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build
+
+copy-samples:
+
+javadoc:
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-javadoc:
+
+-javadoc-build:
+  [javadoc] Generating Javadoc
+  [javadoc] Javadoc execution
+  [javadoc] warning: [options] bootstrap class path not set in conjunction with -source 1.6
+  [javadoc] Loading source files for package org.intermine.pathquery...
+  [javadoc] Loading source files for package org.intermine.template...
+  [javadoc] Loading source files for package org.intermine.template.xml...
+  [javadoc] Constructing Javadoc information...
+  [javadoc] Standard Doclet version 1.7.0_51
+  [javadoc] Building tree for all the packages and classes...
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/pathquery/main/src/org/intermine/pathquery/PathConstraintRange.java:33: warning - @param argument "range" is not a parameter name.
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/pathquery/main/src/org/intermine/pathquery/PathQuery.java:1004: warning - @param argument "pq" is not a parameter name.
+  [javadoc] Building index for all the packages and classes...
+  [javadoc] Building index for all classes...
+  [javadoc] Generating /global/u1/j/jcarlson/src/intermine/intermine/pathquery/main/build/javadoc/help-doc.html...
+  [javadoc] 3 warnings
+
+javadoc:
+     [copy] Copying 64 files to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/doc/javadoc-pathquery
+  [javadoc] Generating Javadoc
+  [javadoc] Javadoc execution
+  [javadoc] Creating destination directory: "/global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/doc/javadoc-client/"
+  [javadoc] Loading source files for package org.intermine.webservice.client.core...
+  [javadoc] Loading source files for package org.intermine.webservice.client.exceptions...
+  [javadoc] Loading source files for package org.intermine.webservice.client.lists...
+  [javadoc] Loading source files for package org.intermine.webservice.client.results...
+  [javadoc] Loading source files for package org.intermine.webservice.client.services...
+  [javadoc] Loading source files for package org.intermine.webservice.client.template...
+  [javadoc] Loading source files for package org.intermine.webservice.client.util...
+  [javadoc] Loading source files for package org.intermine.webservice.client.widget...
+  [javadoc] Constructing Javadoc information...
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/core/MultiPartRequest.java:16: error: package org.apache.commons.httpclient.methods.multipart does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.multipart.Part;
+  [javadoc]                                                       ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/core/MultiPartRequest.java:26: error: cannot find symbol
+  [javadoc]     private List<Part> parts = new ArrayList<Part>();
+  [javadoc]                  ^
+  [javadoc]   symbol:   class Part
+  [javadoc]   location: class MultiPartRequest
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/core/MultiPartRequest.java:39: error: cannot find symbol
+  [javadoc]     public List<Part> getParts() {
+  [javadoc]                 ^
+  [javadoc]   symbol:   class Part
+  [javadoc]   location: class MultiPartRequest
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/core/Service.java:16: error: package org.apache.commons.codec.binary does not exist
+  [javadoc] import org.apache.commons.codec.binary.Base64;
+  [javadoc]                                       ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/core/ServiceFactory.java:13: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.Model;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:19: error: package org.apache.commons.httpclient does not exist
+  [javadoc] import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+  [javadoc]                                     ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:20: error: package org.apache.commons.httpclient does not exist
+  [javadoc] import org.apache.commons.httpclient.HttpClient;
+  [javadoc]                                     ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:21: error: package org.apache.commons.httpclient does not exist
+  [javadoc] import org.apache.commons.httpclient.HttpException;
+  [javadoc]                                     ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:22: error: package org.apache.commons.httpclient does not exist
+  [javadoc] import org.apache.commons.httpclient.HttpMethodBase;
+  [javadoc]                                     ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:23: error: package org.apache.commons.httpclient.methods does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.DeleteMethod;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:24: error: package org.apache.commons.httpclient.methods does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.GetMethod;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:25: error: package org.apache.commons.httpclient.methods does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.PostMethod;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:26: error: package org.apache.commons.httpclient.methods does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.RequestEntity;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:27: error: package org.apache.commons.httpclient.methods.multipart does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+  [javadoc]                                                       ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:28: error: package org.apache.commons.httpclient.methods.multipart does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.multipart.Part;
+  [javadoc]                                                       ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:29: error: package org.apache.commons.httpclient.params does not exist
+  [javadoc] import org.apache.commons.httpclient.params.HttpMethodParams;
+  [javadoc]                                            ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:43: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:44: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:23: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.AttributeDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:24: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.FieldDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:25: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.Model;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:26: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.Path;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:27: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathException;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:28: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathQuery;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:29: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathQueryBinding;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:38: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:39: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/AbstractQueryService.java:24: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/AbstractQueryService.java:25: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:83: error: cannot find symbol
+  [javadoc] public class QueryService extends AbstractQueryService<PathQuery>
+  [javadoc]                                                        ^
+  [javadoc]   symbol: class PathQuery
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:23: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.ClassDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:24: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.Model;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:25: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.Path;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:26: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathConstraint;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:27: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathException;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:28: error: package org.intermine.template does not exist
+  [javadoc] import org.intermine.template.SwitchOffAbility;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:29: error: package org.intermine.template does not exist
+  [javadoc] import org.intermine.template.TemplateQuery;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:30: error: package org.intermine.template.xml does not exist
+  [javadoc] import org.intermine.template.xml.TemplateQueryBinding;
+  [javadoc]                                  ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:40: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:41: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:122: error: cannot find symbol
+  [javadoc] public class TemplateService extends AbstractQueryService<TemplateQuery>
+  [javadoc]                                                           ^
+  [javadoc]   symbol: class TemplateQuery
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:26: error: package org.apache.commons.collections does not exist
+  [javadoc] import static org.apache.commons.collections.CollectionUtils.collect;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:26: error: static import only from classes and interfaces
+  [javadoc] import static org.apache.commons.collections.CollectionUtils.collect;
+  [javadoc] ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:27: error: package org.apache.commons.lang does not exist
+  [javadoc] import static org.apache.commons.lang.StringUtils.join;
+  [javadoc]                                      ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:27: error: static import only from classes and interfaces
+  [javadoc] import static org.apache.commons.lang.StringUtils.join;
+  [javadoc] ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:28: error: package org.apache.commons.collections does not exist
+  [javadoc] import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:28: error: static import only from classes and interfaces
+  [javadoc] import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
+  [javadoc] ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:29: error: package org.apache.commons.httpclient.methods.multipart does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
+  [javadoc]                                                       ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:30: error: package org.apache.commons.httpclient.methods.multipart does not exist
+  [javadoc] import org.apache.commons.httpclient.methods.multipart.FilePart;
+  [javadoc]                                                       ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:31: error: package org.apache.commons.io does not exist
+  [javadoc] import org.apache.commons.io.IOUtils;
+  [javadoc]                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:32: error: package org.apache.commons.lang does not exist
+  [javadoc] import org.apache.commons.lang.StringUtils;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:33: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathQuery;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:34: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.Constraints;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:46: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:47: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:48: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:17: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.Model;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:18: error: package org.intermine.modelproduction.xml does not exist
+  [javadoc] import org.intermine.modelproduction.xml.InterMineModelParser;
+  [javadoc]                                         ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/WidgetService.java:27: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/WidgetService.java:28: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/WidgetService.java:29: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/core/ServiceFactory.java:175: error: cannot find symbol
+  [javadoc]     public Model getModel() {
+  [javadoc]            ^
+  [javadoc]   symbol:   class Model
+  [javadoc]   location: class ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:57: error: cannot find symbol
+  [javadoc]     HttpMethodBase executedMethod;
+  [javadoc]     ^
+  [javadoc]   symbol:   class HttpMethodBase
+  [javadoc]   location: class HttpConnection
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:154: error: cannot find symbol
+  [javadoc]     private void setMultiPartPostEntity(PostMethod postMethod, MultiPartRequest req) {
+  [javadoc]                                         ^
+  [javadoc]   symbol:   class PostMethod
+  [javadoc]   location: class HttpConnection
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/HttpConnection.java:163: error: cannot find symbol
+  [javadoc]     private void setPostMethodParameters(PostMethod postMethod,
+  [javadoc]                                          ^
+  [javadoc]   symbol:   class PostMethod
+  [javadoc]   location: class HttpConnection
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:144: error: cannot find symbol
+  [javadoc]     public PathQuery createPathQuery(String queryXml) {
+  [javadoc]            ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:153: error: cannot find symbol
+  [javadoc]     public int getCount(PathQuery query) {
+  [javadoc]                         ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:178: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getAllJSONResults(String queryXml) throws JSONException {
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:178: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getAllJSONResults(String queryXml) throws JSONException {
+  [javadoc]                                                                       ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:183: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(PathQuery query, Page page) throws JSONException {
+  [javadoc]                                            ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:183: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(PathQuery query, Page page) throws JSONException {
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:183: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(PathQuery query, Page page) throws JSONException {
+  [javadoc]                                                                               ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:198: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(String queryXml, Page page)
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:199: error: cannot find symbol
+  [javadoc]         throws JSONException {
+  [javadoc]                ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:209: error: cannot find symbol
+  [javadoc]     public List<List<String>> getResults(PathQuery query, Page page) {
+  [javadoc]                                          ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:242: error: cannot find symbol
+  [javadoc]     public Iterator<List<String>> getRowIterator(PathQuery query, Page page) {
+  [javadoc]                                                  ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/XMLTableResult.java:24: error: package org.apache.commons.lang does not exist
+  [javadoc] import org.apache.commons.lang.StringEscapeUtils;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/RowResultSet.java:23: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/RowResultSet.java:24: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:391: error: cannot find symbol
+  [javadoc]     protected RowResultSet getRows(PathQuery query, Page page) {
+  [javadoc]                                    ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:412: error: cannot find symbol
+  [javadoc]     public NumericSummary getNumericSummary(PathQuery query, String summaryPath) {
+  [javadoc]                                             ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:459: error: cannot find symbol
+  [javadoc]     public Map<String, Integer> getSummary(PathQuery query, String summaryPath) {
+  [javadoc]                                            ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:476: error: cannot find symbol
+  [javadoc]     public Map<String, Integer> getSummary(PathQuery query, String summaryPath, Page page) {
+  [javadoc]                                            ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class QueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/AbstractQueryService.java:84: error: cannot find symbol
+  [javadoc]     abstract List<JSONObject> getJSONResults(T query, Page page) throws JSONException;
+  [javadoc]                   ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class AbstractQueryService<T>
+  [javadoc]   where T is a type-variable:
+  [javadoc]     T extends Object declared in class AbstractQueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/AbstractQueryService.java:84: error: cannot find symbol
+  [javadoc]     abstract List<JSONObject> getJSONResults(T query, Page page) throws JSONException;
+  [javadoc]                                                                         ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class AbstractQueryService<T>
+  [javadoc]   where T is a type-variable:
+  [javadoc]     T extends Object declared in class AbstractQueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/AbstractQueryService.java:129: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getAllJSONResults(T query) throws JSONException {
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class AbstractQueryService<T>
+  [javadoc]   where T is a type-variable:
+  [javadoc]     T extends Object declared in class AbstractQueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/AbstractQueryService.java:129: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getAllJSONResults(T query) throws JSONException {
+  [javadoc]                                                               ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class AbstractQueryService<T>
+  [javadoc]   where T is a type-variable:
+  [javadoc]     T extends Object declared in class AbstractQueryService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:21: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:22: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:23: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:206: error: cannot find symbol
+  [javadoc]     public Map<String, TemplateQuery> getTemplates() {
+  [javadoc]                        ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:234: error: cannot find symbol
+  [javadoc]     public TemplateQuery getTemplate(String name) {
+  [javadoc]            ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:248: error: cannot find symbol
+  [javadoc]     public Set<TemplateQuery> getTemplatesForType(String type) {
+  [javadoc]                ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:292: error: cannot find symbol
+  [javadoc]     public int getCount(TemplateQuery template) {
+  [javadoc]                         ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:297: error: cannot find symbol
+  [javadoc]     private List<TemplateParameter> getParametersFor(TemplateQuery template) {
+  [javadoc]                                                      ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:352: error: cannot find symbol
+  [javadoc]     public List<List<String>> getResults(TemplateQuery template, Page page) {
+  [javadoc]                                          ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:368: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getAllJSONResults(String templateName,
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:369: error: cannot find symbol
+  [javadoc]             List<TemplateParameter> parameters) throws JSONException {
+  [javadoc]                                                        ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:385: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(String templateName,
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:386: error: cannot find symbol
+  [javadoc]             List<TemplateParameter> parameters, Page page) throws JSONException {
+  [javadoc]                                                                   ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:396: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(TemplateQuery template, Page page)
+  [javadoc]                                            ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:396: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getJSONResults(TemplateQuery template, Page page)
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:397: error: cannot find symbol
+  [javadoc]         throws JSONException {
+  [javadoc]                ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:441: error: cannot find symbol
+  [javadoc]     public Iterator<List<String>> getRowIterator(TemplateQuery template, Page page) {
+  [javadoc]                                                  ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:568: error: cannot find symbol
+  [javadoc]     protected RowResultSet getRows(TemplateQuery query, Page page) {
+  [javadoc]                                    ^
+  [javadoc]   symbol:   class TemplateQuery
+  [javadoc]   location: class TemplateService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:26: error: package org.apache.commons.collections does not exist
+  [javadoc] import static org.apache.commons.collections.CollectionUtils.collect;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:26: error: static import only from classes and interfaces
+  [javadoc] import static org.apache.commons.collections.CollectionUtils.collect;
+  [javadoc] ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:27: error: package org.apache.commons.collections does not exist
+  [javadoc] import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:27: error: static import only from classes and interfaces
+  [javadoc] import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
+  [javadoc] ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:28: error: package org.apache.commons.collections does not exist
+  [javadoc] import static org.apache.commons.collections.TransformerUtils.stringValueTransformer;
+  [javadoc]                                             ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:28: error: static import only from classes and interfaces
+  [javadoc] import static org.apache.commons.collections.TransformerUtils.stringValueTransformer;
+  [javadoc] ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:29: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.Constraints;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:30: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathQuery;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:21: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.ClassDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:22: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.FieldDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:23: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.Model;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:24: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.ReferenceDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:25: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.Constraints;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:26: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathQuery;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:291: error: cannot find symbol
+  [javadoc]     public ItemList append(ItemList list, PathQuery query) {
+  [javadoc]                                           ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:49: error: cannot find symbol
+  [javadoc]     private static Map<String, Model> models = new HashMap<String, Model>();
+  [javadoc]                                ^
+  [javadoc]   symbol:   class Model
+  [javadoc]   location: class ModelService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:67: error: cannot find symbol
+  [javadoc]     public Model getModel() {
+  [javadoc]            ^
+  [javadoc]   symbol:   class Model
+  [javadoc]   location: class ModelService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:83: error: cannot find symbol
+  [javadoc]     private Model fetchModel() {
+  [javadoc]             ^
+  [javadoc]   symbol:   class Model
+  [javadoc]   location: class ModelService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/WidgetService.java:149: error: cannot find symbol
+  [javadoc]     private Widget parseWidget(ServiceFactory factory, JSONObject json)
+  [javadoc]                                                        ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class WidgetService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/WidgetService.java:150: error: cannot find symbol
+  [javadoc]         throws JSONException {
+  [javadoc]                ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class WidgetService
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:531: error: cannot find symbol
+  [javadoc]         private NumericSummary(String name, JSONObject data) throws JSONException {
+  [javadoc]                                             ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class NumericSummary
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:531: error: cannot find symbol
+  [javadoc]         private NumericSummary(String name, JSONObject data) throws JSONException {
+  [javadoc]                                                                     ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class NumericSummary
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:54: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getObjects() throws JSONException {
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class JSONResult
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:54: error: cannot find symbol
+  [javadoc]     public List<JSONObject> getObjects() throws JSONException {
+  [javadoc]                                                 ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class JSONResult
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:66: error: cannot find symbol
+  [javadoc]     public JSONArray getResults() {
+  [javadoc]            ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class JSONResult
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:122: error: cannot find symbol
+  [javadoc]     public Iterator<JSONObject> getIterator() throws JSONException {
+  [javadoc]                     ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class JSONResult
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:122: error: cannot find symbol
+  [javadoc]     public Iterator<JSONObject> getIterator() throws JSONException {
+  [javadoc]                                                      ^
+  [javadoc]   symbol:   class JSONException
+  [javadoc]   location: class JSONResult
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:288: error: cannot find symbol
+  [javadoc]     public void append(PathQuery pq) {
+  [javadoc]                        ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ItemList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:362: error: cannot find symbol
+  [javadoc]     private void createListAndSubtract(PathQuery pq) {
+  [javadoc]                                        ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ItemList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:46: error: cannot find symbol
+  [javadoc]     private final Model model;
+  [javadoc]                   ^
+  [javadoc]   symbol:   class Model
+  [javadoc]   location: class Item
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:192: error: cannot find symbol
+  [javadoc]     private ReferenceDescriptor getReferenceDescriptor(String key) {
+  [javadoc]             ^
+  [javadoc]   symbol:   class ReferenceDescriptor
+  [javadoc]   location: class Item
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/Item.java:214: error: cannot find symbol
+  [javadoc]     private List<Map<String, Object>> getReferenceData(FieldDescriptor fd) {
+  [javadoc]                                                        ^
+  [javadoc]   symbol:   class FieldDescriptor
+  [javadoc]   location: class Item
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:788: error: cannot find symbol
+  [javadoc]         PathQuery querySrc;
+  [javadoc]         ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService.ListCreationInfo
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:807: error: cannot find symbol
+  [javadoc]         public ListCreationInfo(PathQuery pq) {
+  [javadoc]                                 ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService.ListCreationInfo
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:819: error: cannot find symbol
+  [javadoc]         public ListCreationInfo(PathQuery pq, String name) {
+  [javadoc]                                 ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService.ListCreationInfo
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:844: error: cannot find symbol
+  [javadoc]         public ListCreationInfo(PathQuery pq, String name, String description) {
+  [javadoc]                                 ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService.ListCreationInfo
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:872: error: cannot find symbol
+  [javadoc]         public ListCreationInfo(PathQuery pq, String name, String description,
+  [javadoc]                                 ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService.ListCreationInfo
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:956: error: cannot find symbol
+  [javadoc]         public void setContent(PathQuery pq) {
+  [javadoc]                                ^
+  [javadoc]   symbol:   class PathQuery
+  [javadoc]   location: class ListService.ListCreationInfo
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/Lists.java:21: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/Lists.java:22: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/Lists.java:23: error: package org.json does not exist
+  [javadoc] import org.json.JSONObject;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/Lists.java:46: error: cannot find symbol
+  [javadoc]     public static ItemList parseList(ServiceFactory fac, JSONObject data) {
+  [javadoc]                                                          ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class Lists
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:88: error: cannot find symbol
+  [javadoc]     private class JSONIterator implements Iterator<JSONObject>
+  [javadoc]                                                    ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class JSONResult
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:91: error: cannot find symbol
+  [javadoc]         private JSONArray results;
+  [javadoc]                 ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class JSONResult.JSONIterator
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JSONResult.java:102: error: cannot find symbol
+  [javadoc]         public JSONObject next() {
+  [javadoc]                ^
+  [javadoc]   symbol:   class JSONObject
+  [javadoc]   location: class JSONResult.JSONIterator
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRow.java:15: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRow.java:16: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRow.java:29: error: cannot find symbol
+  [javadoc]     private final JSONArray data;
+  [javadoc]                   ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class JsonRow
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRow.java:35: error: cannot find symbol
+  [javadoc]     public JsonRow(JSONArray ja) {
+  [javadoc]                    ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class JsonRow
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRowMap.java:18: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRowMap.java:19: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRowMap.java:31: error: cannot find symbol
+  [javadoc]     private final JSONArray data;
+  [javadoc]                   ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class JsonRowMap
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/JsonRowMap.java:40: error: cannot find symbol
+  [javadoc]     public JsonRowMap(JSONArray ja, List<String> views) {
+  [javadoc]                       ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class JsonRowMap
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowList.java:19: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowList.java:20: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowList.java:33: error: cannot find symbol
+  [javadoc]     private final JSONArray data;
+  [javadoc]                   ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class ResultRowList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowList.java:39: error: cannot find symbol
+  [javadoc]     public ResultRowList(JSONArray ja) {
+  [javadoc]                          ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class ResultRowList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowMap.java:18: error: package org.json does not exist
+  [javadoc] import org.json.JSONArray;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowMap.java:19: error: package org.json does not exist
+  [javadoc] import org.json.JSONException;
+  [javadoc]                ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowMap.java:30: error: cannot find symbol
+  [javadoc]     private final JSONArray data;
+  [javadoc]                   ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class ResultRowMap
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/ResultRowMap.java:39: error: cannot find symbol
+  [javadoc]     public ResultRowMap(JSONArray ja, List<String> views) {
+  [javadoc]                         ^
+  [javadoc]   symbol:   class JSONArray
+  [javadoc]   location: class ResultRowMap
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/PQUtil.java:17: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.AttributeDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/PQUtil.java:18: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.ClassDescriptor;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/PQUtil.java:19: error: package org.intermine.metadata does not exist
+  [javadoc] import org.intermine.metadata.Model;
+  [javadoc]                              ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/PQUtil.java:20: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.Path;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/PQUtil.java:21: error: package org.intermine.pathquery does not exist
+  [javadoc] import org.intermine.pathquery.PathException;
+  [javadoc]                               ^
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/util/PQUtil.java:43: error: cannot find symbol
+  [javadoc]     public static Collection<String> getStar(Model m, String path) {
+  [javadoc]                                              ^
+  [javadoc]   symbol:   class Model
+  [javadoc]   location: class PQUtil
+  [javadoc] Standard Doclet version 1.7.0_51
+  [javadoc] Building tree for all the packages and classes...
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:47: warning - Tag @link: reference not found: InterMineBag
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/lists/ItemList.java:502: warning - Tag @link: reference not found: PathQuery
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/XMLTableResult.java:216: warning - @inheritDoc used but getIterator() does not override or implement any method.
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/XMLTableResult.java:216: warning - @inheritDoc used but getIterator() does not override or implement any method.
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:92: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:537: warning - Tag @link: can't find subtract(ListOperationInfo, Collection) in org.intermine.webservice.client.lists.ItemList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:488: warning - Tag @link: can't find subtract(ListOperationInfo, ItemList...) in org.intermine.webservice.client.lists.ItemList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:475: warning - Tag @link: can't find subtract(ListOperationInfo, ItemList...) in org.intermine.webservice.client.lists.ItemList
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:92: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:41: warning - Tag @see: reference not found: org.intermine.metadata.Model
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:41: warning - Tag @see: reference not found: org.intermine.pathquery.PathQuery
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:58: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:58: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:83: warning - Tag @link: reference not found: PathQuery
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/QueryService.java:100: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:133: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:133: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] Building index for all the packages and classes...
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/results/XMLTableResult.java:216: warning - @inheritDoc used but getIterator() does not override or implement any method.
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ListService.java:92: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/ModelService.java:58: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/src/org/intermine/webservice/client/services/TemplateService.java:133: warning - Tag @link: reference not found: ServiceFactory
+  [javadoc] Building index for all classes...
+  [javadoc] Generating /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-build/doc/javadoc-client/help-doc.html...
+  [javadoc] 193 warnings
+
+dist:
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-dist
+      [zip] Building zip: /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-dist/java-intermine-webservice-client-2.0.zip
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/main/client-dist
+     [copy] Copying 2 files to /global/u1/j/jcarlson/src/intermine/intermine/webservice/client/download/dist
+[dependencies] Mon Mar 03 14:58:15 PST 2014
+[dependencies] Executing "jar" for source "intermine/webapp/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/webapp/main
+
+-init-project:
+
+library.-pre-pre-init:
+
+-pre-pre-init:
+
+library.-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-check-project-level:
+
+-pre-jar:
+     [echo] Running webapp pre-jar
+     [copy] Copying 2 files to /global/u1/j/jcarlson/src/intermine/intermine/webapp/main/build/webapp/WEB-INF/lib
+
+-init-presetdef-war:
+
+-init-yui:
+
+-define-minify-task:
+
+-minify:
+     [echo] Minifying javascript and css files
+[yui-compressor] [100%] autocompleter.js [7207] ---> autocompleter-COMPRESSED.js [7207]
+[yui-compressor] [100%] bag.js [316] ---> bag-COMPRESSED.js [316]
+[yui-compressor] [100%] baguploadconfirm.js [7748] ---> baguploadconfirm-COMPRESSED.js [7748]
+[yui-compressor] [100%] builder.js [2001] ---> builder-COMPRESSED.js [2001]
+[yui-compressor] [100%] controls.js [17186] ---> controls-COMPRESSED.js [17186]
+[yui-compressor] [100%] date.js [3018] ---> date-COMPRESSED.js [3018]
+[yui-compressor] [100%] dragdealer.js [10007] ---> dragdealer-COMPRESSED.js [10007]
+[yui-compressor] [100%] effects.js [24345] ---> effects-COMPRESSED.js [24345]
+[yui-compressor] [100%] excanvas.js [14372] ---> excanvas-COMPRESSED.js [14372]
+[yui-compressor] [100%] exportoptions.js [1923] ---> exportoptions-COMPRESSED.js [1923]
+[yui-compressor] [100%] historyBagView.js [796] ---> historyBagView-COMPRESSED.js [796]
+[yui-compressor] [100%] im.js [43387] ---> im-COMPRESSED.js [43387]
+[yui-compressor] [100%] imdwr.js [21093] ---> imdwr-COMPRESSED.js [21093]
+[yui-compressor] [100%] import.js [410] ---> import-COMPRESSED.js [410]
+[yui-compressor] [100%] imtables-deps.js [206834] ---> imtables-deps-COMPRESSED.js [206834]
+[yui-compressor] [100%] imtables.js [141254] ---> imtables-COMPRESSED.js [141254]
+[yui-compressor] [100%] imutils.js [6310] ---> imutils-COMPRESSED.js [6310]
+[yui-compressor] [100%] inlineTagEditor.js [3271] ---> inlineTagEditor-COMPRESSED.js [3271]
+[yui-compressor] [100%] inlinetemplate.js [1069] ---> inlinetemplate-COMPRESSED.js [1069]
+[yui-compressor] [100%] intermine.api.js [3527] ---> intermine.api-COMPRESSED.js [3527]
+[yui-compressor] [100%] intermine.js [7447] ---> intermine-COMPRESSED.js [7447]
+[yui-compressor] [100%] jQuery.roundCorners-1.1.1.js [11668] ---> jQuery.roundCorners-1.1.1-COMPRESSED.js [11668]
+[yui-compressor] [100%] jquery-1.7.js [139520] ---> jquery-1.7-COMPRESSED.js [139520]
+[yui-compressor] [100%] jquery-ui-1.10.3.custom.js [256245] ---> jquery-ui-1.10.3.custom-COMPRESSED.js [256245]
+[yui-compressor] [100%] jquery.boxy.js [10414] ---> jquery.boxy-COMPRESSED.js [10414]
+[yui-compressor] [100%] jquery.center.js [957] ---> jquery.center-COMPRESSED.js [957]
+[yui-compressor] [100%] jsphylosvg.js [43322] ---> jsphylosvg-COMPRESSED.js [43322]
+[yui-compressor] [100%] list-listener.js [1308] ---> list-listener-COMPRESSED.js [1308]
+[yui-compressor] [100%] mymine.js [5348] ---> mymine-COMPRESSED.js [5348]
+[yui-compressor] [100%] notifications.js [1367] ---> notifications-COMPRESSED.js [1367]
+[yui-compressor] [100%] pngfix.js [960] ---> pngfix-COMPRESSED.js [960]
+[yui-compressor] [100%] properties.js [117] ---> properties-COMPRESSED.js [117]
+[yui-compressor] [100%] prototype.js [94035] ---> prototype-COMPRESSED.js [94035]
+[yui-compressor] [100%] queryBuilder.js [4244] ---> queryBuilder-COMPRESSED.js [4244]
+[yui-compressor] [100%] queryBuilderView.js [1392] ---> queryBuilderView-COMPRESSED.js [1392]
+[yui-compressor] [100%] raphael.js [80971] ---> raphael-COMPRESSED.js [80971]
+[yui-compressor] [100%] report.js [4145] ---> report-COMPRESSED.js [4145]
+[yui-compressor] [100%] scriptaculous.js [780] ---> scriptaculous-COMPRESSED.js [780]
+[yui-compressor] [100%] shareBag.js [2119] ---> shareBag-COMPRESSED.js [2119]
+[yui-compressor] [100%] slider.js [7274] ---> slider-COMPRESSED.js [7274]
+[yui-compressor] [100%] table.js [3219] ---> table-COMPRESSED.js [3219]
+[yui-compressor] [100%] tablesort.js [21286] ---> tablesort-COMPRESSED.js [21286]
+[yui-compressor] [100%] tagSelect.js [627] ---> tagSelect-COMPRESSED.js [627]
+[yui-compressor] [100%] templateForm.js [8960] ---> templateForm-COMPRESSED.js [8960]
+[yui-compressor] [100%] textarea-resize.js [1020] ---> textarea-resize-COMPRESSED.js [1020]
+[yui-compressor] [100%] toolbar.js [689] ---> toolbar-COMPRESSED.js [689]
+[yui-compressor] [100%] track.js [3599] ---> track-COMPRESSED.js [3599]
+[yui-compressor] [100%] underscore.js [12066] ---> underscore-COMPRESSED.js [12066]
+[yui-compressor] [JavaScript] Compressed 48 files to 100% (1212KB to 1212KB, saving 0KB)
+[yui-compressor] [CSS] No files to compress, or all files already up to date
+[yui-compressor] Compressed 48 files to 100% (1212KB to 1212KB, saving 0KB)
+
+do-jar:
+     [echo] Running webapp do-jar
+      [war] Building war: /global/u1/j/jcarlson/src/intermine/intermine/webapp/main/dist/intermine-webapp.war
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:58:18 PST 2014
+[dependencies] Executing "jar" for source "intermine/webtasks/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../intermine/webtasks/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:58:18 PST 2014
+[dependencies] Executing "jar" for source "bio/tools/main"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../bio/tools/main
+
+-init-project:
+
+-pre-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-pre-jar:
+
+-init-presetdef-jar:
+
+do-jar:
+
+-post-jar:
+
+jar:
+[dependencies] Mon Mar 03 14:58:19 PST 2014
+[dependencies] Executing "jar" for source "bio/webapp"  in directory: /global/u1/j/jcarlson/src/intermine/imbuild/../bio/webapp
+
+-init-project:
+
+library.-pre-pre-init:
+
+-pre-pre-init:
+
+library.-pre-init:
+
+webapp.-pre-init:
+
+-pre-init:
+
+init:
+
+-pre-init-deps:
+
+-init-deps:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-check-for-intermine-properties-file:
+
+-set-release-suffix-not-exists:
+
+-set-release-suffix-exists:
+
+-set-release-suffix:
+
+-pre-define-task-classpath:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/bio/webapp/build/tmp
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/bio/webapp/build/tmp
+
+-init-check-for-intermine-properties-dir:
+
+-check-for-intermine-properties-dir:
+
+-init-check-for-intermine-properties:
+
+-check-for-intermine-properties:
+
+-init-properties:
+
+-final-app-pre-jar:
+
+-check-project-level:
+
+webapp.-pre-jar:
+     [echo] Running webapp pre-jar
+
+application.-pre-jar:
+     [echo] Running appl  pre-jar
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/bio/webapp/dist
+
+-add-struts-config:
+    [unwar] Expanding: /global/u1/j/jcarlson/src/intermine/bio/webapp/dist/bio-webapp.war into /global/u1/j/jcarlson/src/intermine/bio/webapp/build/webapp
+      [war] Updating war: /global/u1/j/jcarlson/src/intermine/bio/webapp/dist/bio-webapp.war
+
+-pre-jar:
+
+-init-presetdef-war:
+
+-define-task-classpath:
+
+-check-task-availability:
+
+-load-os-tasks:
+     [echo] Loading objectstore tasks
+
+-load-int-tasks:
+     [echo] Loading integration tasks
+
+-load-web-tasks:
+     [echo] Loading web tasks
+
+-load-task-taskdefs:
+
+-init-macrodef-build-db:
+
+-init-task-xml:
+
+-init-summarise-objectstore:
+
+retrieve-objectstore-summary:
+
+do-jar:
+     [echo] Running appl  do-jar
+      [war] Updating war: /global/u1/j/jcarlson/src/intermine/bio/webapp/dist/bio-webapp.war
+
+-post-jar:
+
+jar:
+
+-init-compile:
+
+-init-generate:
+
+-pre-generate:
+
+do-generate:
+
+-post-generate:
+
+generate:
+
+-pre-compile:
+
+-init-macrodef-javac:
+
+do-compile-with-gen-src:
+
+do-compile-without-gen-src:
+
+do-compile:
+
+-post-compile:
+
+compile:
+
+-init-jar:
+
+-check-for-intermine-properties-file:
+
+-set-release-suffix-not-exists:
+
+-set-release-suffix-exists:
+
+-set-release-suffix:
+
+-pre-define-task-classpath:
+   [delete] Deleting directory /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/tmp
+    [mkdir] Created dir: /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/tmp
+
+-init-check-for-intermine-properties-dir:
+
+-check-for-intermine-properties-dir:
+
+-init-check-for-intermine-properties:
+
+-check-for-intermine-properties:
+
+-init-properties:
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/main
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/main
+
+-final-app-pre-jar:
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/webapp/WEB-INF/classes
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/webapp/WEB-INF/classes
+
+-check-project-level:
+
+webapp.-pre-jar:
+     [echo] Running webapp pre-jar
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/webapp/WEB-INF/lib
+
+application.-pre-jar:
+     [echo] Running appl  pre-jar
+     [copy] Copying 1 file to /global/u1/j/jcarlson/src/intermine/phytomine/webapp/dist
+
+-add-struts-config:
+    [unwar] Expanding: /global/u1/j/jcarlson/src/intermine/phytomine/webapp/dist/phytomine-webapp.war into /global/u1/j/jcarlson/src/intermine/phytomine/webapp/build/webapp
+     [echo] replacing model.structs.config <!-- this comment is here to prevent ant from setting model.struts.config to null -->
+     [echo] 
+     [echo] <!-- used by the fasta... buttons on object details pages -->
+     [echo] <action path="/sequenceExporter"
+     [echo]   type="org.intermine.bio.web.struts.SequenceExportAction" />
+     [echo] 
+     [echo] 
+     [echo] <action path="/initHeatMap"
+     [echo]   type="org.intermine.bio.web.displayer.HeatMapController" />
+     [echo] 
+     [echo] <action path="/heatMap" forward="heatMap.page" />
+     [echo] 
+     [echo] 
+     [echo] <action path="/initSequenceExportOptions"
+     [echo]         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
+     [echo] 
+     [echo] <action path="/sequenceExportAction" name="sequenceExportForm"
+     [echo]         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+     [echo] 
+     [echo] <action path="/gff3ExportAction" name="gff3ExportForm"
+     [echo]         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+     [echo] 
+     [echo] <action path="/bedExportAction" name="bedExportForm"
+     [echo]         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
+     [echo] 
+     [echo] <action path="/galaxyExportOptions" forward="galaxyExportOptions.page"/>
+     [echo] 
+     [echo] <action path="/initGalaxyExportOptions"
+     [echo]         type="org.intermine.bio.web.struts.GalaxyExportOptionsController"/>
+     [echo] 
+     [echo] <action path="/galaxyExportAction" name="galaxyExportForm"
+     [echo]         type="org.intermine.bio.web.struts.GalaxyExportAction" parameter="method"/>
+     [echo] 
+     [echo] <!-- Beginning of Genomic Region Search configuration -->
+     [echo] 
+     [echo] <action path="/initGenomicRegionSearchOptions"
+     [echo]         type="org.intermine.bio.web.struts.GenomicRegionSearchOptionsController"/>
+     [echo] 
+     [echo] <action path="/genomicRegionSearch" forward="genomicRegionSearchOptions.page"/>
+     [echo] 
+     [echo] <action path="/genomicRegionSearchResults" forward="genomicRegionSearchResults.page"/>
+     [echo] 
+     [echo] <action input="/genomicRegionSearchOptionsBase.jsp" path="/genomicRegionSearchAction" name="genomicRegionSearchForm" scope="request" type="org.intermine.bio.web.struts.GenomicRegionSearchAction" >
+     [echo]     <!-- Not use redirect="true". here it is doing a forward, not redirecting. Redirecting causes the browser to make a new request, and that's why the things I put in the request aren't there anymore. -->
+     [echo]     <forward name="genomicRegionSearchResults" path="/genomicRegionSearchResults.do" redirect="false"/>
+     [echo]     <forward name="genomicRegionSearchOptions" path="/genomicRegionSearch.do" redirect="true"/>
+     [echo] </action>
+     [echo] 
+     [echo] <action path="/genomicRegionSearchAjax" type="org.intermine.bio.web.struts.GenomicRegionSearchAjaxAction"/>
+     [echo] 
+     [echo] <!-- End of Genomic Region Search configuration -->
+     [echo] 
+     [echo] <action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>
+     [echo]  end of replacment.
+     [echo] replacing model.structs.form.config <!-- this comment is here to prevent ant from setting model.struts.form.config to null -->
+     [echo] 
+     [echo] <form-bean name="sequenceExportForm" type="org.intermine.bio.web.struts.SequenceExportForm"/>
+     [echo] <form-bean name="gff3ExportForm" type="org.intermine.bio.web.struts.GFF3ExportForm"/>
+     [echo] <form-bean name="bedExportForm" type="org.intermine.bio.web.struts.BEDExportForm"/>
+     [echo] <form-bean name="galaxyExportForm" type="org.intermine.bio.web.struts.GalaxyExportForm"/>
+     [echo] 
+     [echo] <form-bean name="genomicRegionSearchForm" type="org.intermine.bio.web.struts.GenomicRegionSearchForm">
+     [echo]   <form-property name="organism" type="java.lang.String"/>
+     [echo]   <form-property name="featureTypes" type="java.lang.String[]"/>
+     [echo]   <form-property name="pasteInput" type="java.lang.String"/>
+     [echo]   <form-property name="fileInput" type="org.apache.struts.upload.FormFile"/>
+     [echo]   <form-property name="whichInput" type="java.lang.String"/>
+     [echo]   <form-property name="dataFormat" type="java.lang.String" initial="isNotInterBaseCoordinate"/>
+     [echo]   <form-property name="extendedRegionSize" type="java.lang.String"/>
+     [echo] </form-bean> end of replacment.
+     [echo] replacing model.tiles.def ${model.tiles.def} end of replacment.
+
+-pre-jar:
+
+-init-presetdef-war:
+
+-define-task-classpath:
+
+-check-task-availability:
+
+-load-os-tasks:
+     [echo] Loading objectstore tasks
+
+-load-int-tasks:
+     [echo] Loading integration tasks
+
+-load-web-tasks:
+     [echo] Loading web tasks
+
+-load-task-taskdefs:
+
+-init-macrodef-build-db:
+
+-init-task-xml:
+
+-init-summarise-objectstore:
+
+retrieve-objectstore-summary:
+     [echo] Retrieving object store summary from os.production...
+
+do-jar:
+     [echo] Running appl  do-jar
+      [war] Updating war: /global/u1/j/jcarlson/src/intermine/phytomine/webapp/dist/phytomine-webapp.war
+
+-post-jar:
+
+jar:
+
+-init-action:
+
+-pre-action:
+
+do-action:
+
+-post-action:
+
+action:
+
+default:
+
+BUILD SUCCESSFUL
+Total time: 38 seconds

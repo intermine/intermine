@@ -78,7 +78,10 @@ public class GatkvcfConverter extends BioFileConverter
   private Item organism = null;
   // we'll get this from the header. When parsing, we need to keep these in order
   private ArrayList<String> sampleList = new ArrayList<String>();
-  private Pattern EFF_PATTERN;
+  final static String[] expectedHeaders = {"#CHROM","POS","ID","REF","ALT",
+    "QUAL","FILTER","INFO","FORMAT"};
+  final static int formatPosition = 8;
+  private Pattern effPattern;
   // we'll use this for printing log message when we go to a new chromosome
   private String lastChromosome = null;
 
@@ -89,7 +92,7 @@ public class GatkvcfConverter extends BioFileConverter
    */
   public GatkvcfConverter(ItemWriter writer, Model model) {
     super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-    EFF_PATTERN = Pattern.compile("(\\w+)\\((.+)\\)");
+    effPattern = Pattern.compile("(\\w+)\\((.+)\\)");
   }
 
   public void setOrganisms(String organisms) {
@@ -203,24 +206,20 @@ public class GatkvcfConverter extends BioFileConverter
   {
     // here is what we expect for the first few columns. Complain if this
     // is not case;
-    if (header.length < 9) {
+    if (header.length < expectedHeaders.length + 1) {
+      // there needs to be at least 1 sample. Or is it OK to have
+      // a VCF file w/o samples?
       throw new BuildException("Unexpected length of header fields.");
     } else {
-      // we haven't stripped off the # from CHROM
-      if ( header[0] == null || !header[0].equals("#CHROM") ||
-            header[1] == null || !header[1].equals("POS") ||
-            header[2] == null || !header[2].equals("ID") ||
-            header[3] == null || !header[3].equals("REF") ||
-            header[4] == null || !header[4].equals("ALT") ||
-            header[5] == null || !header[5].equals("QUAL") ||
-            header[6] == null || !header[6].equals("FILTER") ||
-            header[7] == null || !header[7].equals("INFO") ||
-            header[8] == null || !header[8].equals("FORMAT") ) {
-            throw new BuildException("Unexpected item in header fields.");
+      for(int i=0;i<expectedHeaders.length;i++) {
+        if ( header[i] == null || !header[i].equals(expectedHeaders[i]) ) {
+          throw new BuildException("Unexpected item in header at position "+
+             i+": "+header[i]);
+        }
       }
       // we're going to be certain there are no duplicates.
       HashSet<String> sampleNameSet = new HashSet<String>();
-      for(int i=9;i<header.length;i++) {
+      for(int i=expectedHeaders.length;i<header.length;i++) {
         if( sampleNameSet.contains(header[i]) ) {
           throw new BuildException("Duplicated sample in header name: "+ header[i]);
         }
@@ -238,13 +237,23 @@ public class GatkvcfConverter extends BioFileConverter
   }
   private boolean processData(String[] fields) throws BuildException
   {
-    if (fields.length < 10) {
+    if (fields.length < expectedHeaders.length + 1) {
       throw new BuildException("Unexpected number of columns in VCF file.");
     }
     String chr = fields[0];
     //TODO  remove for production
     //if (!chr.equals("Chr01")) return false;
-    
+
+    // look in the FORMAT field to see if the FilTer tag is there. We'll
+    // use it if it's there
+    Pattern checker = Pattern.compile("(.+:)?FT(:.+)?");
+    Pattern goodSamplePattern;
+    if (checker.matcher(fields[formatPosition]).matches()) {
+      goodSamplePattern = Pattern.compile("(.*:)?PASS(:.+)?");
+    } else {
+      // otherwise look for ./.
+      goodSamplePattern = Pattern.compile("(.+:)?\\./\\.(:.+)?");
+    }
     if (lastChromosome==null || !chr.equals(lastChromosome)) {
       lastChromosome = chr;
       LOG.info("Processing "+chr);
@@ -288,25 +297,32 @@ public class GatkvcfConverter extends BioFileConverter
       throw new BuildException("Problem storing SNP: " + e);
     }
     
-    // process the genotype field. First we have attribute:attribute:attribute... and value:value:value...
-    // convert these to attribute=value;attribute=value;...
-    String[] attBits = fields[8].split(":");
+    // process the genotype field. First we have attribute:attribute:attribute... 
+    // and value:value:value... Convert these to attribute=value;attribute=value;...
+    String[] attBits = fields[formatPosition].split(":");
     
     // look through the different genotype scores for column 9 onward.
-    for(int col=9;col<fields.length;col++) {
-      if (fields[col].equals("./.")) {
-        continue;
-      } else {
-        String[] valBits = fields[col].split(":");
-        StringBuffer genotype = new StringBuffer();
-        if ( valBits.length != attBits.length) LOG.warn("Genotype fields have unexpected length.");
-        for(int i=0; i< attBits.length && i<valBits.length;i++) {
-          if ( i > 0) genotype.append(";");
-          genotype.append(attBits[i] + "=" + valBits[i]);
+    for(int col=expectedHeaders.length;col<fields.length;col++) {
+      Boolean passField = null;
+      Boolean genoField = null;
+      String[] valBits = fields[col].split(":");
+      StringBuffer genotype = new StringBuffer();
+      if ( (valBits.length != attBits.length) && !fields[col].equals("./."))
+        LOG.warn("Genotype fields have unexpected length.");
+      for(int i=0; i< attBits.length && i<valBits.length;i++) {
+        if ( i > 0) genotype.append(":");
+        genotype.append(attBits[i] + "=" + valBits[i]);
+        if (attBits[i].equals("FT")) {
+          passField = (valBits[i].equals("PASS"))?true:false;
+        } else if (attBits[i].equals("GT")) {
+          genoField = (valBits[i].equals("./."))?false:true;
         }
+      }
+      if ((passField != null && passField) ||
+          (passField == null && genoField != null && genoField)) {
         Item snpSource = createItem("SNPDiversitySample");
         snpSource.setAttribute("genotype", genotype.toString());
-        snpSource.setReference("diversitySample", sampleList.get(col-9));
+        snpSource.setReference("diversitySample", sampleList.get(col-expectedHeaders.length));
         snpSource.setReference("snp",snp.getIdentifier());
         try {
           store(snpSource);
@@ -320,8 +336,8 @@ public class GatkvcfConverter extends BioFileConverter
   }
   /**
    * parseInfo
-   * We're taking the INFO field of the VCF record, extracting the EFF tag and stuffing the remainder
-   * into the info attribute
+   * We're taking the INFO field of the VCF record, extracting the EFF tag and
+   * stuffing the remainder into the info attribute
    * @param snp The snp record being processed
    * @param info The info string
    */
@@ -368,7 +384,7 @@ public class GatkvcfConverter extends BioFileConverter
     ArrayList<String> aList = new ArrayList<String>();
     snpMap.put(snp.getReference("snpLocation")+":"+snp.getAttribute("alternate"),aList);
     for (String bit : eff.split(",") ) {
-      Matcher match = EFF_PATTERN.matcher(bit);
+      Matcher match = effPattern.matcher(bit);
       if (match.matches() ) {
         String cType = match.group(1);
         String effect = match.group(2);

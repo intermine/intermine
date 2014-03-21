@@ -1,0 +1,424 @@
+package org.intermine.bio.dataconversion;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.sql.Database;
+import org.intermine.xml.full.Item;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+
+/**
+ * 
+ * @author
+ */
+public class PacClustersConverter extends BioDBConverter
+{
+    // 
+    private static final String DATASET_TITLE = "Phytozome Protein Families";;
+    private static final String DATA_SOURCE_NAME = "Phytozome";
+
+    protected Map<Integer,ArrayList<Integer>> methodToClusterList = new HashMap<Integer,ArrayList<Integer>>();
+    protected Map<String,String> methodNames = new HashMap<String,String>();
+    protected String methodIds = null;
+    protected Map<String,Map<String,Item>> proteinMap = new HashMap<String,Map<String,Item>>();
+    protected Map<String,Map<String,Item>> geneMap = new HashMap<String,Map<String,Item>>();
+    protected Map<String,String> organismMap = new HashMap<String,String>();
+    protected Map<String,String> crossrefMap = new HashMap<String,String>();
+    protected Map<String,String> dataSourceMap = new HashMap<String,String>();
+    private Connection connection;
+
+    private static final Logger LOG =
+        Logger.getLogger(PacClustersConverter.class);
+
+    /**
+     * Construct a new PacClustersConverter.
+     * @param database the database to read from
+     * @param model the Model used by the object store we will write to with the ItemWriter
+     * @param writer an ItemWriter used to handle Items created
+     */
+    public PacClustersConverter(Database database, Model model, ItemWriter writer) {
+        super(database, model, writer, DATA_SOURCE_NAME, DATASET_TITLE);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process() throws Exception {
+      // a database has been initialised from properties starting with db.pac-clusters
+      connection = getDatabase().getConnection();
+      fillMethodMap();
+      ResultSet res = getProteinFamilies();
+
+      int ctr = 0;
+      while (res.next()) {
+        // uncompress and process msa
+        Blob zMSA = res.getBlob("zMSA");
+        StringBuffer msaString = null;
+        if ( zMSA != null) {
+          Inflater inf = new Inflater();
+          inf.setInput(zMSA.getBytes(1,(int) zMSA.length()));
+          int increment;
+          msaString = new StringBuffer();
+          byte[] msaBuffer = new byte[1000];
+          do {
+            increment = inf.inflate(msaBuffer,0,1000);
+            msaString.append(new String(msaBuffer,0,increment,"UTF-8"));
+          } while (inf.getRemaining() > 0);
+        }
+
+        Item proFamily = createItem("ProteinFamily");
+        String clusterId = res.getString("clusterId");
+        proFamily.setAttribute("clusterId", clusterId);
+        setIfNotNull(proFamily,"clusterName",res.getString("clusterName"));
+        
+        proFamily.setAttribute("methodId", res.getString("methodId"));
+        setIfNotNull(proFamily,"methodName", methodNames.get(res.getString("methodId")));
+        String consensusSequence = res.getString("sequence");
+        if (consensusSequence != null && !consensusSequence.isEmpty()) {
+          String sequenceIdentifier = storeSequence(consensusSequence);
+          proFamily.setReference("consensus", sequenceIdentifier);
+        }
+        HashMap<String,String> idToName = registerProteins(clusterId,proFamily);
+        if (msaString != null) {
+          String newMSA = reformatMSA(msaString,idToName);
+          Item msa = createItem("MSA");
+          msa.setAttribute("primaryIdentifier","Cluster "+clusterId+" alignment");
+          msa.setAttribute("alignment", newMSA);
+          try {
+            store(msa);
+          } catch (ObjectStoreException e) {
+            throw new BuildException("Problem storing MSA: " + e.getMessage());
+          }
+          proFamily.setReference("msa",msa.getIdentifier());
+        }
+        registerCrossReferences(clusterId,proFamily);
+        try {
+          store(proFamily);
+          ctr++;
+          if (ctr%10000 == 0) {
+            LOG.info("Stored "+ctr+" clusters...");
+          }
+        } catch (ObjectStoreException e) {
+          throw new BuildException("Problem storing protein family." + e.getMessage());
+        }
+      }
+      LOG.info("Stored "+ctr+" clusters.");
+      // now register proteins and genes
+      for( String taxonId : proteinMap.keySet()) {
+        Map<String,Item> prots = proteinMap.get(taxonId);
+        for( String protein: prots.keySet()) {
+          store(prots.get(protein));
+        }
+      }
+      for( String taxonId : geneMap.keySet()) {
+        Map<String,Item> genes = geneMap.get(taxonId);
+        for( String gene: genes.keySet()) {
+          store(genes.get(gene));
+        }
+      }
+    }
+    
+    HashMap<String,String> registerProteins(String clusterId, Item family) throws Exception{
+      ResultSet res = getFamilyMembers(clusterId);
+      HashMap<String,String> idToName = new HashMap<String,String>();
+      Map<String,Integer>organismCount = new HashMap<String,Integer>();
+      while( res.next()) {
+        String taxonId = res.getString("taxid");
+        idToName.put(res.getString("transcriptId"), res.getString("peptideName"));
+        if (!organismCount.containsKey(taxonId)) {
+          organismCount.put(taxonId, new Integer(1));
+        } else {
+          Integer j = organismCount.get(taxonId);
+          organismCount.put(taxonId, ++j);
+        }
+        if (!organismMap.containsKey(taxonId)) {
+          Item o = createItem("Organism");
+          o.setAttribute("taxonId", taxonId);
+          store(o);
+          organismMap.put(taxonId, o.getIdentifier());
+          proteinMap.put(taxonId, new HashMap<String,Item>());
+          geneMap.put(taxonId, new HashMap<String,Item>());
+        }
+        String proteinName = res.getString("peptideName");
+        if (!proteinMap.get(taxonId).containsKey(proteinName)) {
+          Item p = createItem("Protein");
+          p.setAttribute("primaryIdentifier",proteinName);
+          p.setReference("organism",organismMap.get(taxonId));
+          proteinMap.get(taxonId).put(proteinName,p);
+        }
+        family.addToCollection("protein", proteinMap.get(taxonId).get(proteinName));
+        proteinMap.get(taxonId).get(proteinName).addToCollection("proteinFamily",family.getIdentifier());
+        String geneName = res.getString("locusName");
+        if (!geneMap.get(taxonId).containsKey(geneName)) {
+          Item g = createItem("Gene");
+          g.setAttribute("primaryIdentifier",geneName);
+          g.setReference("organism",organismMap.get(taxonId));
+          geneMap.get(taxonId).put(geneName,g);
+        }
+        family.addToCollection("gene", geneMap.get(taxonId).get(geneName));
+       
+      }
+      res.close();
+      // register the organism counts
+      for( String taxonId : organismCount.keySet()) {
+        Item count = createItem("ProteinFamilyOrganism");
+        count.setAttribute("count", organismCount.get(taxonId).toString());
+        //count.setAttribute("primaryIdentifier",family.getAttribute("clusterId")+":"+taxonId);
+        count.setReference("proteinFamily",family.getIdentifier());
+        count.setReference("organism",organismMap.get(taxonId));
+        family.addToCollection("proteinFamilyOrganism",count.getIdentifier());
+        store(count);
+      }
+      return idToName;
+    }
+
+    protected String storeSequence(String residues)  throws ObjectStoreException {
+      if ( residues.length() == 0) {
+        return null;
+      }
+      MessageDigest md;
+      try {
+        md = MessageDigest.getInstance("MD5");
+      } catch (NoSuchAlgorithmException e) {
+        throw new BuildException("No such algorothm for md5?");
+      }
+      Item sequence = createItem("Sequence");
+      sequence.setAttribute("residues",residues);
+      md.update(residues.getBytes(),0,residues.length());
+      String md5sum = new BigInteger(1,md.digest()).toString(16);
+      sequence.setAttribute("md5checksum",md5sum);
+      Integer len = new Integer(residues.length());
+      sequence.setAttribute("length",len.toString());
+      try {
+        store(sequence);
+        return sequence.getIdentifier();
+      } catch (ObjectStoreException e) {
+        throw new BuildException("Problem storing sequence." + e.getMessage());
+      }
+    }
+    
+    public ResultSet getFamilyMembers(String clusterId) {
+      ResultSet res = null;
+      try {
+        Statement stmt = connection.createStatement();
+        // we're going to want transcript id and taxon id as strings. so cast them here
+        String query = "select peptideName,"
+                             + " locusName, "
+                             + " cast(t.id as char) as transcriptId, "
+                             + " cast(taxid as char) as taxid from"
+                             + " clusterJoin c, proteome p, transcript t"
+                             + " where clusterId="+clusterId 
+                             + " and memberId=t.id and c.active=1"
+                             + " and t.active=1 and p.id=c.proteomeId";
+        res = stmt.executeQuery(query);
+      } catch (SQLException e) {
+        throw new BuildException("Trouble getting family members names: " + e.getMessage());
+      }
+
+      return res;
+    }
+    public ResultSet getProteinFamilies() {
+      // process data with direct SQL queries on the source database
+      ResultSet res = null;
+      try {
+        Statement stmt = connection.createStatement();
+        // we're going to want clusterId as string. so cast it here
+        String query = "select zMSA,sequence,clusterName,"
+            + " cast(clusterDetail.id as char) as clusterId,"
+            + " cast(methodId as char) as methodId"
+            + " from"
+            + " clusterDetail left outer join"
+            + " (msa left outer join centroid"
+            + " on centroid.msaId=msa.id) "
+            + " on msa.clusterId=clusterDetail.id"
+            + " where"
+            + " clusterDetail.active=1 and"
+            + " clusterDetail.methodId in ("+methodIds+")";
+        LOG.info("Executing query: "+query);
+        res = stmt.executeQuery(query);
+      } catch (SQLException e) {
+        throw new BuildException("Trouble method names: " + e.getMessage());
+      }
+      return res;
+    }
+
+    void registerCrossReferences(String clusterId, Item family) throws Exception{
+      ResultSet res = getFamilyCrossReferences(clusterId);
+
+      //TODO: right now we only have KOG terms to worry about.
+      // This may be more complex later.
+      while( res.next()) {
+        String value = res.getString("value");
+        String dbName = res.getString("name");
+        if (!dataSourceMap.containsKey(dbName)) {
+          Item source = createItem("DataSource");
+          source.setAttribute("name",dbName);
+          store(source);
+          dataSourceMap.put(dbName,source.getIdentifier());
+        }
+        if (!crossrefMap.containsKey(value)) {
+          Item crossref = createItem("CrossReference");
+          crossref.setAttribute("identifier",value);
+          crossref.setReference("source",dataSourceMap.get(dbName));
+          store(crossref);
+          crossrefMap.put(value,crossref.getIdentifier());
+        }
+        family.addToCollection("crossReferences",crossrefMap.get(value));
+      }
+      res.close();
+    }
+      
+    protected ResultSet getFamilyCrossReferences(String clusterId) {
+      ResultSet res;
+      try {
+        Statement stmt = connection.createStatement();
+        // we're going to want clusterId as string. so cast it here
+        String query = "select value,'KOG' as name"
+                             + " from"
+                             + " annotation a, annotationField f, objectType t"
+                             + " where ObjectId="+clusterId 
+                             + " and fieldId=f.id and a.active=1"
+                             + " and objectTypeId=t.id and t.name ='cluster'"
+                             + " and f.name='clusterKogLetter'";
+        res = stmt.executeQuery(query);
+      } catch (SQLException e) {
+        throw new BuildException("Trouble getting cluster annotations: " + e.getMessage());
+      }
+
+      return res;
+    }
+    String reformatMSA(StringBuffer msa, HashMap<String,String>idToName) {
+      // idLength is the max length of the id string, nameLength is the
+      // max length of the replacement id string. The difference is the
+      // number of spaces we need to pad
+      //
+      // The transcript numbers could be of different width, but I'm 
+      // assuming one of them has no space before the start.
+      int nameLength = 0;
+      int idLength = 0;
+      for (String id : idToName.keySet() ) {
+        idLength = (id.length() > idLength)?
+            id.length():idLength;
+        nameLength = (idToName.get(id).length() >nameLength)?
+            idToName.get(id).length():nameLength;
+      }
+      String[] lines = msa.toString().split("\\n");
+      String[] processedLines = new String[lines.length];
+      // precompile patterns
+      HashMap<String,Pattern> idToPattern = new HashMap<String,Pattern>();
+      for ( String id : idToName.keySet()) {
+        idToPattern.put(id, Pattern.compile(" *"+id+" .*"));
+      }
+      
+      int lineCtr = 0;
+      for( String line : lines ) {
+        // scan through every line, replacing id with name:id
+        for( String id : idToName.keySet() ) {
+          // Look for maybe space at the beginning,
+          // the number and a single space character
+          // followed by the rest of the line
+          Pattern p = idToPattern.get(id);
+          if (p.matcher(line).matches()) {
+            String replacement = idToName.get(id)+":"+id;
+            int nSpaces = nameLength - idToName.get(id).length() + 1;
+            StringBuffer s = new StringBuffer(line.replaceFirst(" *"+id+" ", replacement));
+            for(int i=0;i<nSpaces;i++) s.insert(0, " ");
+            processedLines[lineCtr] = s.toString();
+            break;
+          }
+        }
+        // not touched? copy. maybe with spaces.
+        if (processedLines[lineCtr] == null) {
+          if (line.length() == 0) {
+            processedLines[lineCtr] = line;
+          } else if (lineCtr == 1) {
+            // header line. Do not pad with spaces
+            processedLines[lineCtr] = line;
+          } else {
+            // add spaces
+            StringBuffer s = new StringBuffer();
+            // we're also adding a :. So +1
+            for(int i=0;i<nameLength+1;i++) s.append(" ");
+            s.append(line);
+            processedLines[lineCtr] =s.toString();
+          }
+        }
+        lineCtr++;
+      }
+      StringBuffer returnMSA = new StringBuffer();
+      for( String line: processedLines ) {
+        if (returnMSA.length() > 0) returnMSA.append("\\n");
+        returnMSA.append(line);
+      }
+      return returnMSA.toString();
+    }
+    /*
+     * set the list of method ids as a comma-delimited list.
+     */
+    public void setMethodIds(String inString)
+    {
+      methodIds = inString;
+    }
+    public String getMethodIds()
+    {
+      return methodIds;
+    }
+
+    void setIfNotNull(Item s,String field,String value) {
+      if (value != null && value.trim().length() > 0) {
+        s.setAttribute(field,value.trim());
+      }
+    }
+    private void fillMethodMap()
+    {
+      if (methodIds == null) return;
+      String query = "select id,name from method where id in ("+methodIds+")";
+      try {
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        while (res.next() ) {
+          methodNames.put((new Integer(res.getInt("id"))).toString(),res.getString("name"));
+        }
+        res.close();
+      } catch (SQLException e) {
+        throw new BuildException("Trouble method names: " + e.getMessage());
+      }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDataSetTitle(int taxonId) {
+        return DATASET_TITLE;
+    }
+}

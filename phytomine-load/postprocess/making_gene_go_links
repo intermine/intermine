@@ -1,0 +1,2 @@
+select distinct ot.id as go_id,g.genes as gene_id into table joe from genesproteins g,protein p,ontologyterm ot, ontologyannotation oa, bioentity o , proteinanalysisfeature a, crossreference c where o.id=c.subjectid and o.id=oa.subjectid and c.id=crossreferenceid  and ot.id=oa.ontologytermid and ot.ontologyid=473000000 and a.proteinid=p.id and g.proteins=p.id;
+

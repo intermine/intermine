@@ -138,7 +138,7 @@ public class CufflinksConverter extends BioFileConverter
       processCufflinksFile(reader,"FPKM","MRNA");
     } else if (theFile.getName().endsWith("genes.count_tracking")) {
       processCufflinksFile(reader,"Count","Gene");
-    } else if (theFile.getName().startsWith("isoforms.count_tracking")) {
+    } else if (theFile.getName().endsWith("isoforms.count_tracking")) {
       processCufflinksFile(reader,"Count","MRNA");
     } else {
       LOG.info("Ignoring file "+theFile.getName()+".");
@@ -304,7 +304,7 @@ public class CufflinksConverter extends BioFileConverter
   }
 
   private Item createExperiment(String name) throws ObjectStoreException {
-    Item experiment = createItem("Experiment");
+    Item experiment = createItem("RNAseqExperiment");
     experiment.setAttribute("name",name);
     experiment.setReference("organism",organism);
     experimentMap.put(name,experiment);

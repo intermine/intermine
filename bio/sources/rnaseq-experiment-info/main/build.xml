@@ -1,0 +1,4 @@
+<project name="rnaseq-experiment-info-tasks" default="default" basedir=".">
+  <description>build rnaseq-experiment-info tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

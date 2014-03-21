@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="Protein" extends="BioEntity" is-interface="true">
+    <collection name="proteinFamily" referenced-type="ProteinFamily" reverse-reference="protein" />
+  </class>
+  <class name="MSA" is-interface="true">
+    <attribute name="primaryIdentifier" type="java.lang.String" />
+    <attribute name="alignment" type="java.lang.String" />
+  </class>
+  <class name="ProteinFamily" is-interface="true">
+    <attribute name="clusterId" type="java.lang.Integer" />
+    <attribute name="methodId" type="java.lang.Integer" />
+    <attribute name="methodName" type="java.lang.String" />
+    <attribute name="clusterName" type="java.lang.String" />
+    <reference name="msa" referenced-type="MSA" />
+    <reference name="consensus" referenced-type="Sequence" />
+    <collection name="protein" referenced-type="Protein" reverse-reference="proteinFamily" /> 
+    <collection name="gene" referenced-type="Gene" />
+    <collection name="proteinFamilyOrganism" referenced-type="ProteinFamilyOrganism" reverse-reference="proteinFamily" /> 
+    <collection name="crossReferences" referenced-type="CrossReference" />
+  </class>
+  <class name="ProteinFamilyOrganism" is-interface="true">
+    <attribute name="count" type="java.lang.Integer" />
+    <reference name="organism" referenced-type="Organism" />
+    <reference name="proteinFamily" referenced-type="ProteinFamily" reverse-reference="proteinFamilyOrganism" />
+  </class>
+</classes>

@@ -22,7 +22,7 @@ if (returnToPath != null) {
 </c:if>
 <c:choose>
   <c:when test="${!PROFILE.loggedIn}">  
-    <a href="/${WEB_PROPERTIES['webapp.path']}/login.do${returnToString}" rel="NOFOLLOW">
+    <a href="/${WEB_PROPERTIES['webapp.path']}/caliban.do${returnToString}" rel="NOFOLLOW">
       <c:if test="${empty loginMessage}">
         <fmt:message var="loginMessage" key="menu.login"/>
       </c:if>

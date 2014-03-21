@@ -1,0 +1,5 @@
+<project name="ontology-terms" default="default" basedir=".">
+  <description>build, test, package ontology-terms</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

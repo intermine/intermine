@@ -51,13 +51,15 @@ public class InterProConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+      if(getCurrentFile().getName().endsWith(".xml")) {
         InterProHandler handler = new InterProHandler(getItemWriter());
         try {
-            SAXParser.parse(new InputSource(reader), handler);
+          SAXParser.parse(new InputSource(reader), handler);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
+          e.printStackTrace();
+          throw new RuntimeException(e);
         }
+      }
     }
 
     private class InterProHandler extends DefaultHandler

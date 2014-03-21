@@ -1,0 +1,4 @@
+<project name="rna-seq-tasks" default="default" basedir=".">
+  <description>build rna-seq tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

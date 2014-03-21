@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+  <class name="Experiment" is_interface="true">
+    <attribute name="name" type="java.lang.String" />
+    <reference name="organism" referenced-type="Organism" />
+  </class>
+
+  <class name="RNASeqScore" is_interface="true">
+    <attribute name="fpkm" type="java.lang.Float" />
+    <attribute name="conf_lo" type="java.lang.Float" />
+    <attribute name="conf_hi" type="java.lang.Float" />
+    <attribute name="count" type="java.lang.Float" />
+    <attribute name="count_variance" type="java.lang.Float" />
+    <attribute name="count_uncertainty_var" type="java.lang.Float" />
+    <attribute name="count_dispersion_var" type="java.lang.Float" />
+    <attribure name="status" type="java.lang.String" />
+    <reference name="item" referenced-type="BioEntity" />
+    <reference name="experiment" referenced-type="Experiment" />
+  </class>
+</classes>
+

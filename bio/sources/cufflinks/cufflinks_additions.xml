@@ -8,8 +8,9 @@
     <collection name="cufflinksscores" referenced-type="CufflinksScore" reverse-reference="bioentity" />
   </class>
 
-  <class name="Experiment" is_interface="true">
+  <class name="RNAseqExperiment" is_interface="true">
     <attribute name="name" type="java.lang.String" />
+    <attribute name="experimentGroup" type="java.lang.String" />
     <attribute name="description" type="java.lang.String" />
     <attribute name="url" type="java.lang.String" />
     <reference name="organism" referenced-type="Organism" />
@@ -25,6 +26,6 @@
     <attribute name="countdispersionvar" type="java.lang.Float" />
     <attribure name="status" type="java.lang.String" />
     <reference name="bioentity" referenced-type="BioEntity" />
-    <reference name="experiment" referenced-type="Experiment" />
+    <reference name="experiment" referenced-type="RNAseqExperiment" />
   </class>
 </classes>

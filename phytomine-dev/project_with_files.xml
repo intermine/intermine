@@ -1,0 +1,93 @@
+<project type="bio">
+  <property name="target.model" value="genomic" />
+  <property name="source.location" location="../bio/sources/" />
+  <property name="common.os.prefix" value="common" />
+  <property name="intermine.properties.file" value="phytomine-dev.properties" />
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
+  <sources>
+    <source name="Z.mays_chromosome.fasta" type="fasta" >
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
+      <property name="fasta.dataSourceName" value="Maize Genome Project" />
+      <property name="fasta.dataSetTitle" value="B73 Maize Genome" />
+      <property name="fasta.taxonId" value="4577" />
+      <property name="fasta.includes" value="Z.mays_chromosome.fasta" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/fasta/Z.mays" />
+    </source>
+    <source name="Z.mays_mRNA.fasta" type="fasta" >
+      <property name="fasta.className" value="org.intermine.model.bio.MRNA" />
+      <property name="fasta.dataSourceName" value="Maize Genome Project" />
+      <property name="fasta.dataSetTitle" value="B73 Maize mRNAs" />
+      <property name="fasta.taxonId" value="4577" />
+      <property name="fasta.includes" value="Z.mays_mRNA.fasta" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/fasta/Z.mays" />
+    </source>
+    <source name="Z.mays_polypeptide.fasta" type="fasta" >
+      <property name="fasta.className" value="org.intermine.model.bio.Protein" />
+      <property name="fasta.dataSourceName" value="Maize Genome Project" />
+      <property name="fasta.dataSetTitle" value="B73 Maize Proteins" />
+      <property name="fasta.taxonId" value="4577" />
+      <property name="fasta.includes" value="Z.mays_polypeptide.fasta" />
+      <property name="fasta.sequenceType" value="protein" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/fasta/Z.mays" />
+    </source>
+    <source name="Z.mays.gff" type="phytozome-gff" >
+      <property name="gff3.taxonId" value="4577" />
+      <property name="gff3.seqDataSourceName" value="SeqSource" />
+      <property name="gff3.dataSourceName" value="DataSource" />
+      <property name="gff3.seqClsName" value="Chromosome" />
+      <property name="gff3.dataSetTitle" value="Zea mays genome" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/gff/Z.mays" />
+    </source>
+    <source name="P.trichocarpa_chromosome.fasta" type="fasta">
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
+      <property name="fasta.dataSourceName" value="JGI Poplar Genome " />
+      <property name="fasta.dataSetTitle" value="JGI Poplar Genome" />
+      <property name="fasta.taxonId" value="3694" />
+      <property name="fasta.includes" value="P.trichocarpa_chromosome.fasta" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/fasta/P.trichocarpa" />
+    </source>
+    <source name="P.trichocarpa_polypeptide.fasta" type="fasta" >
+      <property name="fasta.className" value="org.intermine.model.bio.Protein" />
+      <property name="fasta.dataSourceName" value="JGI Poplar Genome" />
+      <property name="fasta.dataSetTitle" value="JGI Poplar Proteins" />
+      <property name="fasta.taxonId" value="3694" />
+      <property name="fasta.includes" value="P.trichocarpa_polypeptide.fasta" />
+      <property name="fasta.sequenceType" value="protein" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/fasta/P.trichocarpa" />
+    </source>
+    <source name="P.trichocarpa.gff" type="phytozome-gff">
+      <property name="gff3.taxonId" value="3694" />
+      <property name="gff3.seqDataSourceName" value="SeqSource" />
+      <property name="gff3.dataSourceName" value="DataSource" />
+      <property name="gff3.seqClsName" value="Chromosome" />
+      <property name="gff3.dataSetTitle" value="P.trichocarpays genome" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/gff/P.trichocarpa" />
+    </source>
+    <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml" />
+    </source>
+    <source name="go" type="go">
+      <property name="src.data.file" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/go/gene_ontology.obo" />
+      <property name="createrelations" value="false" />
+    </source>
+    <source name="go-annotation" type="go-annotation" >
+      <property name="ontologyfile" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/go/gene_ontology.obo" />
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/go-annotation/" />
+    </source>
+    <source name="interpro" type="interpro">
+      <property name="src.data.dir" location="/house/groupdirs/compgen/userdata/jcarlson/phytomine-dev/interpro/" />
+    </source>
+  </sources>
+  <post-processing>
+    <post-process name="create-references" />
+    <post-process name="transfer-sequences" />
+
+    <!-- this runs the postprocessing steps in all sources -->
+    <post-process name="do-sources" />
+
+    <post-process name="summarise-objectstore" />
+    <post-process name="create-autocomplete-index" />
+    <post-process name="create-search-index" />
+  </post-processing>
+
+</project>

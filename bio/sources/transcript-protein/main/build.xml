@@ -1,0 +1,4 @@
+<project name="transcript-protein-tasks" default="default" basedir=".">
+  <description>build transcript-protein tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

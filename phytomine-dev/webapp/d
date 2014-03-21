@@ -1,0 +1,105 @@
+219,221d218
+<    <bagdisplayers>
+<       <displayer src="heatMap.tile" showOnLeft="true"/>
+<     </bagdisplayers>
+247c244,245
+<       <fieldconfig fieldExpr="msa" label="Sequence Alignment" />
+---
+>       <fieldconfig fieldExpr="msa" label="Sequence Alignment"
+>                                       displayer="/model/alignmentPreview.jsp" />
+264c262
+<       <fieldconfig fieldExpr="alignment" label=""
+---
+>       <fieldconfig fieldExpr="alignment" label="MSA"
+266c264
+<                      displayer="model/nullFormatter.jsp" />
+---
+>                      displayer="model/alignmentDisplayer.jsp" />
+296c294
+<     <!-- reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+---
+>     <!--reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+346a345,427
+>       <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
+>                                  title="Gene Ontology Enrichment"
+>                                  description="GO terms enriched for items in this list."
+>                                  label="GO Term"
+>                                  filterLabel="Ontology"
+>                                  filters="biological_process,cellular_component,molecular_function"
+>                                  startClass="Gene"
+>                                  startClassDisplay="primaryIdentifier"
+>                                  enrich="goAnnotation.ontologyTerm.parents.name"
+>                                  enrichIdentifier="goAnnotation.ontologyTerm.parents.identifier"
+>                                  constraints="goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
+>                                               primaryIdentifier != null, goAnnotation.qualifier = null,
+>                                               goAnnotation.ontologyTerm.parents.identifier != go:0008150,
+>                                               goAnnotation.ontologyTerm.parents.identifier != go:0003674,
+>                                               goAnnotation.ontologyTerm.parents.identifier != go:0005575"
+>                                  typeClass="Gene"
+>                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+>                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
+>                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
+>                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+> 
+>       <enrichmentwidgetdisplayer id="go_enrichment_for_protein"
+>                                  title="Gene Ontology Enrichment"
+>                                  description="GO terms enriched for items in this list."
+>                                  label="GO Term"
+>                                  filterLabel="Ontology"
+>                                  filters="biological_process,cellular_component,molecular_function"
+>                                  startClass="Protein"
+>                                  startClassDisplay="primaryAccession"
+>                                  enrich="genes.goAnnotation.ontologyTerm.parents.name"
+>                                  enrichIdentifier="genes.goAnnotation.ontologyTerm.parents.identifier"
+>                                  constraints="genes.goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
+>                                               genes.primaryIdentifier != null, genes.goAnnotation.qualifier = null,
+>                                               genes.goAnnotation.ontologyTerm.parents.identifier != go:0008150,
+>                                               genes.goAnnotation.ontologyTerm.parents.identifier != go:0003674,
+>                                               genes.goAnnotation.ontologyTerm.parents.identifier != go:0005575"
+>                                  typeClass="Protein"
+>                                  views="primaryAccession, name,organism.name,
+>                                        genes.goAnnotation.ontologyTerm.identifier, genes.goAnnotation.ontologyTerm.name,
+>                                        genes.goAnnotation.ontologyTerm.parents.identifier,genes.goAnnotation.ontologyTerm.parents.name"
+>                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+> 
+>       <!-- enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
+>                                  title="Protein Domain Enrichment"
+>                                  description="Protein Domains enriched for items in this list."
+>                                  label="Protein Domain"
+>                                  startClass="Gene"
+>                                  startClassDisplay="primaryIdentifier"
+>                                  enrich="proteins.proteinDomains.name"
+>                                  enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
+>                                  constraints="organism.name=[list]"
+>                                  typeClass="Gene"
+>                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+>                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
+>                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+> 
+>       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
+>                                  title="Protein Domain Enrichment"
+>                                  description="Protein Domains enriched for items in this list."
+>                                  label="Protein Domain"
+>                                  startClass="Protein"
+>                                  startClassDisplay="primaryIdentifier"
+>                                  enrich="proteinDomains.name"
+>                                  enrichIdentifier="proteinDomains.primaryIdentifier"
+>                                  constraints="organism.name=[list]"
+>                                  typeClass="Protein"
+>                                  views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
+>                                        proteinDomains.name"
+>                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+> 
+>       <enrichmentwidgetdisplayer id="pathway_enrichment"
+>                                  title="Pathway Enrichment"
+>                                  description="Pathways enriched for genes in this list - data from KEGG and Reactome"
+>                                  label="Pathways"
+>                                  filterLabel="DataSet"
+>                                  filters="All,KEGG pathways data set,Reactome data set"
+>                                  startClass="Gene"
+>                                  startClassDisplay="primaryIdentifier"
+>                                  enrich="pathways.name"
+>                                  enrichIdentifier="pathways.identifier"
+>                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
+>                                  typeClass="Gene"
+>                                  views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/ -->
