@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -44,6 +44,7 @@ import org.intermine.xml.full.Reference;
  * @author Wenyan Ji
  * @author Richard Smith
  * @author Fengyuan Hu
+ * @author sc
  */
 
 public class GFF3Converter extends DataConverter
@@ -184,6 +185,7 @@ public class GFF3Converter extends DataConverter
         }
     }
 
+
     /**
      * Parse a bufferedReader and process GFF3 record
      * @param bReader the Reader
@@ -298,14 +300,8 @@ private int max(int endLoc, int end) {
         return endLoc;
     }
 
-    /**
-     * process GFF3 record and give a xml presentation
-     * @param record GFF3Record
-     * @throws ObjectStoreException if an error occurs storing items
-     * @throws IOException
-     */
-    public void process(GFF3Record record) throws ObjectStoreException {
-        String term = record.getType();
+    return end;
+}
 
 private int min(int startLoc, int start) {
     // TODO Auto-generated method stub
@@ -333,22 +329,23 @@ public void storeAll() throws ObjectStoreException {
     handler.clearFinalItems();
 }
 
-/**
- * process GFF3 record and give a xml presentation
- * @param record GFF3Record
- * @throws ObjectStoreException if an error occurs storing items
- */
-public void process(GFF3Record record) throws ObjectStoreException {
-    String term = record.getType();
-    LOG.debug("CC: rec " + term + "|" + record);
 
-    if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
-        if (config_term.containsKey(this.orgTaxonId)) {
-            if (!config_term.get(this.orgTaxonId).contains(term)) {
-                return;
+    /**
+     * process GFF3 record and give a xml presentation
+     * @param record GFF3Record
+     * @throws ObjectStoreException if an error occurs storing items
+     * @throws IOException
+     */
+    public void process(GFF3Record record) throws ObjectStoreException {
+        String term = record.getType();
+
+        if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
+            if (config_term.containsKey(this.orgTaxonId)) {
+                if (!config_term.get(this.orgTaxonId).contains(term)) {
+                    return;
+                }
             }
         }
-    }
 
         // By default, use ID field in attributes
         String primaryIdentifier = record.getId();
@@ -373,70 +370,65 @@ public void process(GFF3Record record) throws ObjectStoreException {
                         }
                     }
                 }
-            } else {
-                primaryIdentifier = record.getAttributes().get(pidAttr).get(0);
             }
         }
-    }
 
-    String refId = identifierMap.get(primaryIdentifier);
-    // get rid of previous record Items from handler
-    handler.clear();
-    Item seq = getSeq(record.getSequenceID());
-    String className = TypeUtil.javaiseClassName(term);
-    String fullClassName = tgtModel.getPackageName() + "." + className;
+        String refId = identifierMap.get(primaryIdentifier);
 
-    ClassDescriptor cd = tgtModel.getClassDescriptorByName(fullClassName);
+        // get rid of previous record Items from handler
+        handler.clear();
 
-    if (cd == null) {
-        throw new IllegalArgumentException("no class found in model for: " + className
-                + " (original GFF record type: " + term + ") for "
-                + "record: " + record);
-    }
+        Item seq = getSeq(record.getSequenceID());
 
-    Set<Item> synonymsToAdd = new HashSet<Item>();
+        String className = TypeUtil.javaiseClassName(term);
+        String fullClassName = tgtModel.getPackageName() + "." + className;
 
-    Item feature = null;
+        ClassDescriptor cd = tgtModel.getClassDescriptorByName(fullClassName);
 
-    // new feature
-//    if (refId == null) {
-//        LOG.info("CC: refId NULL! " + className);
-//        feature = createItem(className);
-//        refId = feature.getIdentifier();
-//    }
+        if (cd == null) {
+            throw new IllegalArgumentException("no class found in model for: " + className
+                    + " (original GFF record type: " + term + ") for "
+                    + "record: " + record);
+        }
 
-    if (!"chromosome".equals(term) && seq != null) {
+        Set<Item> synonymsToAdd = new HashSet<Item>();
 
-        feature = createItem(className);
-        refId = feature.getIdentifier();
+        Item feature = null;
 
-        boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
+        // new feature
+        if (refId == null) {
+            feature = createItem(className);
+            refId = feature.getIdentifier();
+        }
+
+        if (!"chromosome".equals(term) && seq != null) {
+            boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
                 && handler.createLocations(record);
-        if (makeLocation) {
-            Item location = getLocation(record, refId, seq, cd);
-//            if (feature == null) {
-//                // this feature has already been created and stored
-//                // we only wanted the location, we're done here.
-//                store(location);
-//                return;
-//            }
-            int length = getLength(record);
-            feature.setAttribute("length", String.valueOf(length));
-            handler.setLocation(location);
-            if ("Chromosome".equals(seqClsName)
-                    && (cd.getFieldDescriptorByName("chromosome") != null)) {
-                feature.setReference("chromosome", seq.getIdentifier());
-                feature.setReference("chromosomeLocation", location);
+            if (makeLocation) {
+                Item location = getLocation(record, refId, seq, cd);
+                if (feature == null) {
+                    // this feature has already been created and stored
+                    // we only wanted the location, we're done here.
+                    store(location);
+                    return;
+                }
+                int length = getLength(record);
+                feature.setAttribute("length", String.valueOf(length));
+                handler.setLocation(location);
+                if ("Chromosome".equals(seqClsName)
+                        && (cd.getFieldDescriptorByName("chromosome") != null)) {
+                    feature.setReference("chromosome", seq.getIdentifier());
+                    feature.setReference("chromosomeLocation", location);
+                }
             }
         }
-    }
 
-    if (feature == null) {
-        // this feature has already been created and stored
-        // feature with discontinuous location, this location wasn't valid for some reason
-        return;
-    }
+        if (feature == null) {
+            // this feature has already been created and stored
+            // feature with discontinous location, this location wasn't valid for some reason
+            return;
+        }
 
         if (primaryIdentifier != null) {
             feature.setAttribute("primaryIdentifier", primaryIdentifier);
@@ -498,15 +490,10 @@ public void process(GFF3Record record) throws ObjectStoreException {
                 }
             }
         }
-    }
 
-    // get the attribute set for synonym
-    if (config_attr.containsKey(this.orgTaxonId)) {
-        if (config_attr.get(this.orgTaxonId).containsKey("synonym")) {
-            String synonymAttr = config_attr.get(this.orgTaxonId).get("synonym");
-            synonyms = record.getAttributes().get(synonymAttr);
+        if (names != null) {
+            setNames(names, symbol, synonyms, synonymsToAdd, primaryIdentifier, feature, cd);
         }
-    }
 
         // Other attributes
         List<String> primeAttrList = Arrays.asList("primaryIdentifier", "symbol", "synonym");
@@ -557,141 +544,139 @@ public void process(GFF3Record record) throws ObjectStoreException {
             setRefsAndCollections(parents, feature);
         }
 
-    List<String> parents = record.getParents();
-    if (parents != null && !parents.isEmpty()) {
-        setRefsAndCollections(parents, feature);
-    }
+        feature.addReference(getOrgRef());
+        feature.addToCollection("dataSets", dataSet);
 
-    feature.addReference(getOrgRef());
-    feature.addToCollection("dataSets", dataSet);
-
-    handler.addDataSet(dataSet);
-    Double score = record.getScore();
-    if (score != null && !"".equals(String.valueOf(score))) {
-        feature.setAttribute("score", String.valueOf(score));
-        feature.setAttribute("scoreType", record.getSource());
-    }
-    for (Item synonym : synonymsToAdd) {
-        handler.addItem(synonym);
-    }
-    handler.process(record);
-    if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
-        feature.addCollection(handler.getDataSetReferenceList());
-    }
-    handler.clearDataSetReferenceList();
-    if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
-        feature.addCollection(handler.getPublicationReferenceList());
-    }
-    handler.clearPublicationReferenceList();
-
-    try {
-        Iterator<Item> iter = handler.getItems().iterator();
-        while (iter.hasNext()) {
-            store(iter.next());
+        handler.addDataSet(dataSet);
+        Double score = record.getScore();
+        if (score != null && !"".equals(String.valueOf(score))) {
+            feature.setAttribute("score", String.valueOf(score));
+            feature.setAttribute("scoreType", record.getSource());
         }
-    } catch (ObjectStoreException e) {
-        LOG.error("Problem writing item to the itemwriter");
-        throw e;
-    }
-}
+        for (Item synonym : synonymsToAdd) {
+            handler.addItem(synonym);
+        }
+        handler.process(record);
+        if (handler.getDataSetReferenceList().getRefIds().size() > 0) {
+            feature.addCollection(handler.getDataSetReferenceList());
+        }
+        handler.clearDataSetReferenceList();
+        if (handler.getPublicationReferenceList().getRefIds().size() > 0) {
+            feature.addCollection(handler.getPublicationReferenceList());
+        }
+        handler.clearPublicationReferenceList();
 
-private Item getLocation(GFF3Record record, String refId, Item seq, ClassDescriptor cd) {
-    Item location = createItem("Location");
-    int start = record.getStart();
-    int end = record.getEnd();
-    if (record.getStart() < record.getEnd()) {
-        location.setAttribute("start", String.valueOf(start));
-        location.setAttribute("end", String.valueOf(end));
-    } else {
-        location.setAttribute("start", String.valueOf(end));
-        location.setAttribute("end", String.valueOf(start));
+        try {
+            Iterator<Item> iter = handler.getItems().iterator();
+            while (iter.hasNext()) {
+                store(iter.next());
+            }
+        } catch (ObjectStoreException e) {
+            LOG.error("Problem writing item to the itemwriter");
+            throw e;
+        }
     }
-    if (record.getStrand() != null && "+".equals(record.getStrand())) {
-        location.setAttribute("strand", "1");
-    } else if (record.getStrand() != null && "-".equals(record.getStrand())) {
-        location.setAttribute("strand", "-1");
-    } else {
-        location.setAttribute("strand", "0");
-    }
-    location.setReference("locatedOn", seq.getIdentifier());
-    location.setReference("feature", refId);
-    location.addToCollection("dataSets", dataSet);
-    return location;
-}
 
-private void setRefsAndCollections(List<String> parents, Item feature) {
-    String clsName = feature.getClassName();
-    Map<String, String> refsAndCollections = handler.getRefsAndCollections();
-    if (refsAndCollections != null && refsAndCollections.containsKey(clsName)
-            && parents != null && !parents.isEmpty()) {
-        ClassDescriptor cld =
+
+    private Item getLocation(GFF3Record record, String refId, Item seq, ClassDescriptor cd) {
+        Item location = createItem("Location");
+        int start = record.getStart();
+        int end = record.getEnd();
+        if (record.getStart() < record.getEnd()) {
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
+        } else {
+            location.setAttribute("start", String.valueOf(end));
+            location.setAttribute("end", String.valueOf(start));
+        }
+        if (record.getStrand() != null && "+".equals(record.getStrand())) {
+            location.setAttribute("strand", "1");
+        } else if (record.getStrand() != null && "-".equals(record.getStrand())) {
+            location.setAttribute("strand", "-1");
+        } else {
+            location.setAttribute("strand", "0");
+        }
+        location.setReference("locatedOn", seq.getIdentifier());
+        location.setReference("feature", refId);
+        location.addToCollection("dataSets", dataSet);
+        return location;
+    }
+
+
+    private void setRefsAndCollections(List<String> parents, Item feature) {
+        String clsName = feature.getClassName();
+        Map<String, String> refsAndCollections = handler.getRefsAndCollections();
+        if (refsAndCollections != null && refsAndCollections.containsKey(clsName)
+                && parents != null && !parents.isEmpty()) {
+            ClassDescriptor cld =
                 tgtModel.getClassDescriptorByName(tgtModel.getPackageName() + "." + clsName);
-        String refName = refsAndCollections.get(clsName);
-        Iterator<String> parentIter = parents.iterator();
-        if (cld.getReferenceDescriptorByName(refName, true) != null) {
-            String parent = parentIter.next();
-            feature.setReference(refName, getRefId(parent));
-            if (parentIter.hasNext()) {
-                String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
-                throw new RuntimeException("Feature has multiple relations for reference: "
-                        + refName + " for feature: " + feature.getClassName()
-                        + ", " + feature.getIdentifier() + ", " + primaryIdent);
+            String refName = refsAndCollections.get(clsName);
+            Iterator<String> parentIter = parents.iterator();
+            if (cld.getReferenceDescriptorByName(refName, true) != null) {
+                String parent = parentIter.next();
+                feature.setReference(refName, getRefId(parent));
+                if (parentIter.hasNext()) {
+                    String primaryIdent  = feature.getAttribute("primaryIdentifier").getValue();
+                    throw new RuntimeException("Feature has multiple relations for reference: "
+                            + refName + " for feature: " + feature.getClassName()
+                            + ", " + feature.getIdentifier() + ", " + primaryIdent);
+                }
+            } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
+                List<String> refIds = new ArrayList<String>();
+                while (parentIter.hasNext()) {
+                    refIds.add(getRefId(parentIter.next()));
+                }
+                feature.setCollection(refName, refIds);
+            } else if (parentIter.hasNext()) {
+                throw new RuntimeException("No '" + refName + "' reference/collection found in "
+                        + "class: " + clsName + " - is map configured correctly?");
             }
-        } else if (cld.getCollectionDescriptorByName(refName, true) != null) {
-            List<String> refIds = new ArrayList<String>();
-            while (parentIter.hasNext()) {
-                refIds.add(getRefId(parentIter.next()));
-            }
-            feature.setCollection(refName, refIds);
-        } else if (parentIter.hasNext()) {
-            throw new RuntimeException("No '" + refName + "' reference/collection found in "
-                    + "class: " + clsName + " - is map configured correctly?");
         }
     }
-}
 
-private void setNames(List<?> names, String symbol, List<String> synonyms,
-        Set<Item> synonymsToAdd, String primaryIdentifier, Item feature, ClassDescriptor cd) {
-    if (cd.getFieldDescriptorByName("symbol") == null) { // if symbol is not in the model
-        String name = (String) names.get(0);
-        feature.setAttribute("name", name);
-        for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
-            String recordName = (String) i.next();
-            if (!recordName.equals(primaryIdentifier) && !recordName.equals(name)) {
-                synonymsToAdd.add(getSynonym(feature, recordName));
-            }
-        }
-
-        if (synonyms != null) {
-            for (Iterator<?> i = synonyms.iterator(); i.hasNext(); ) {
+    private void setNames(List<?> names, String symbol, List<String> synonyms,
+            Set<Item> synonymsToAdd, String primaryIdentifier, Item feature, ClassDescriptor cd) {
+        if (cd.getFieldDescriptorByName("symbol") == null) { // if symbol is not in the model
+            String name = (String) names.get(0);
+            feature.setAttribute("name", name);
+            for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
                 if (!recordName.equals(primaryIdentifier) && !recordName.equals(name)) {
                     synonymsToAdd.add(getSynonym(feature, recordName));
                 }
             }
-        }
-    } else {
-        if (symbol == null) {
-            symbol = (String) names.get(0);
-        }
-        feature.setAttribute("symbol", symbol);
-        for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
-            String recordName = (String) i.next();
-            if (!recordName.equals(primaryIdentifier) && !recordName.equals(symbol)) {
-                synonymsToAdd.add(getSynonym(feature, recordName));
-            }
-        }
 
-        if (synonyms != null) {
-            for (Iterator<?> i = synonyms.iterator(); i.hasNext(); ) {
+            if (synonyms != null) {
+                for (Iterator<?> i = synonyms.iterator(); i.hasNext(); ) {
+                    String recordName = (String) i.next();
+                    if (!recordName.equals(primaryIdentifier) && !recordName.equals(name)) {
+                        synonymsToAdd.add(getSynonym(feature, recordName));
+                    }
+                }
+            }
+        } else {
+            if (symbol == null) {
+                symbol = (String) names.get(0);
+            }
+            feature.setAttribute("symbol", symbol);
+            for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
                 if (!recordName.equals(primaryIdentifier) && !recordName.equals(symbol)) {
                     synonymsToAdd.add(getSynonym(feature, recordName));
                 }
             }
+
+            if (synonyms != null) {
+                for (Iterator<?> i = synonyms.iterator(); i.hasNext(); ) {
+                    String recordName = (String) i.next();
+                    if (!recordName.equals(primaryIdentifier) && !recordName.equals(symbol)) {
+                        synonymsToAdd.add(getSynonym(feature, recordName));
+                    }
+                }
+            }
         }
     }
-}
+
 
 /**
  * Perform any necessary clean-up after post-conversion
