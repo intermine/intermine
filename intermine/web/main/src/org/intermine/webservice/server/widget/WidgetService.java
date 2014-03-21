@@ -80,8 +80,8 @@ public abstract class WidgetService extends JSONService
         while (it.hasNext()) {
             List<Object> row = it.next();
             List<String> processed = processor.formatRow(row);
-            if (!formatIsFlatFile() && it.hasNext()) {
-                processed.add("");
+            if (formatIsJSON() && it.hasNext()) {
+                processed.add(""); // TODO: this idiom is dumb. Expunge.
             }
             output.addResultItem(processed);
         }
