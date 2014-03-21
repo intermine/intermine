@@ -54,10 +54,6 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
 public class QueryToListService extends AbstractQueryService
 {
 
-    private static final String XML_PARAM = "query";
-    private static final String NAME_PARAM = "listName";
-    private static final String DESC_PARAM = "description";
-
     private static final String TEMP = "_temp";
 
     protected final BagManager bagManager;

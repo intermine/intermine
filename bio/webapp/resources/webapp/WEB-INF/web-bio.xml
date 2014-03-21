@@ -49,6 +49,53 @@ will be selected.
   </metadata>
 </servlet-mapping>
 
+<!-- TODO: The GAF export still needs to be implemented.
+<servlet>
+  <servlet-name>ws-gaf-query</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GAFQueryServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>ws-gaf-query</servlet-name>
+  <url-pattern>/service/query/results/gaf</url-pattern>
+  <metadata>
+    <name>GAF Query Results</name>
+    <minVersion>16</minVersion>
+    <method type="POST" authenticationRequired="false" ALSO="GET">
+        <summary>Query the Database for Sequence Annotations.</summary>
+        <description format="markdown">
+This service provides full access to arbitrary database queries.
+Queries are accepted in a serialised XML format, executed and returned
+in a streaming manner. The query format is a custom subset of the capabilities
+of SQL; see the InterMine wiki for a full description of the query XML
+syntax.
+
+This endpoint specialises in dealing with queries for sequence
+annotations, and returning results in [GAF](http://www.geneontology.org/GO.format.gaf-2_0.shtml)
+format. The user is responsible for
+ensuring that the query contains only suitable types for export.
+A suitable query is one where every view column references a
+field of a `SequenceFeature` (including all sub-classes). The
+particular field selected is not important, and the object itself
+will be selected.
+        </description>
+        <param required="true"
+            type="XML"
+            default="&lt;query name=&quot;short genes on the X chromosome&quot; model=&quot;genomic&quot; view=&quot;Gene.id Gene.exons.id&quot;&gt;&#10;    &lt;constraint path=&quot;Gene.chromosome.primaryIdentifier&quot; op=&quot;=&quot; value=&quot;X&quot;/&gt;&#10;    &lt;constraint path=&quot;Gene.length&quot; op=&quot;&amp;lt;&quot; value=&quot;1000&quot;/&gt;&#10;&lt;/query&gt;"
+            schema="/schema/query.xsd"
+            description="A definition of the query to execute in Path-Query XML format">query</param>
+        <param type="String[]" required="false"
+            description="Extra columns to include as extra information in the ninth column"
+            default="Gene.length">view</param>
+    </method>
+  </metadata>
+</servlet-mapping>
+-->
+
 <servlet>
   <servlet-name>ws-gff3-lists</servlet-name>
   <servlet-class>org.intermine.bio.webservice.GFF3ListServlet</servlet-class>
@@ -70,11 +117,44 @@ will be selected.
             This service allows users to export the contents of a list
             of `SequenceFeature`s as GFF3.
         </description>
+        <!-- Only suggest Genes, although others would work -->
         <param type="String"
-               options="/lists|lists"
-               default="{name}"
-               required="true"
-               description="The name of the list">list</param>
+            options="/lists|lists{type=Gene}"
+            default="{name}"
+            required="true"
+            description="The name of the list">list</param>
+    </method>
+  </metadata>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>ws-fa-lists</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.FastaListServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>ws-fa-lists</servlet-name>
+  <url-pattern>/service/list/results/fasta</url-pattern>
+  <metadata>
+    <name>List as FASTA</name>
+    <minVersion>16</minVersion>
+    <method type="GET" authenticationRequired="false" ALSO="POST">
+        <summary>Get the Contents of a List as FASTA.</summary>
+        <description format="markdown">
+This service allows users to export the contents of a list
+of `SequenceFeature`s or `Protein`s as
+[FASTA](http://en.wikipedia.org/wiki/FASTA_format)
+        </description>
+        <!-- Only suggest Genes and Proteins, although others would work -->
+        <param type="String"
+            options="/lists|lists{type=Gene,type=Protein}"
+            default="{name}"
+            required="true"
+            description="The name of the list">list</param>
     </method>
   </metadata>
 </servlet-mapping>
@@ -179,15 +259,144 @@ will be selected.
 <servlet-mapping>
   <servlet-name>ws-genomic-region-to-list</servlet-name>
   <url-pattern>/service/regions/list</url-pattern>
+  <metadata>
+      <name>Create List from Genomic Intervals</name>
+      <minVersion>8</minVersion>
+      <method type="GET" authenticationRequired="true">
+          <summary>Create a New List from Features found in Genomic Intervals</summary>
+          <description format="markdown">
+This service creates a list of features found
+overlapping a set of genomic intervals. All features
+found will be saved in a list of the given name. The type of this
+list will be inferred from the types provided in the search input.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <param
+              description="The name of the list to save these features to"
+              required="true"
+              type="String">name</param>
+          <param
+              description="An optional description for this list"
+              required="false"
+              type="String">description</param>
+          <param
+              description="A set of tags to apply to this list"
+              required="false"
+              type="String[]">tags</param>
+          <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
+          <param 
+              description="The region search input"
+              default="
+{&#10;
+    &quot;regions&quot;: [&#10;
+    &quot;2L:14615455..14619002&quot;,&#10;
+    &quot;2R:5866646..5868384&quot;,&#10;
+    &quot;3R:2578486..2580016&quot;&#10;
+    ],&#10;
+    &quot;featureTypes&quot;: [&quot;Gene&quot;, &quot;Exon&quot;, &quot;Intron&quot;],&#10;
+    &quot;organism&quot;: &quot;D. melanogaster&quot;&#10;
+}&#10;
+              "
+              required="true" type="JSON">query</param>
+       </method>
+      <method type="POST" authenticationRequired="true">
+          <summary>Create a New List from Features found in Genomic Intervals</summary>
+          <description format="markdown">
+This service creates a list of features found
+overlapping a set of genomic intervals. All features
+found will be saved in a list of the given name. The type of this
+list will be inferred from the types provided in the search input.
+
+The input to this service is a `json` object that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["regions", "featureTypes", "organism"],
+    "properties": {
+        "regions": "#/definitions/stringset",
+        "featureTypes": "#/definitions/stringset",
+        "isInterbase": { "type": "boolean" },
+        "extension": { "type": "number" },
+        "organism": { "type": "string" }
+    },
+    "definitions": {
+        "stringset": {
+            "type": "array",
+            "items: { "type: "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        }
+    }
+}
+```
+          </description>
+          <param
+              description="The name of the list to save these features to"
+              required="true"
+              type="String">listName</param>
+          <param
+              description="An optional description for this list"
+              required="false"
+              type="String">description</param>
+          <param
+              description="A set of tags to apply to this list"
+              required="false"
+              type="String[]">tags</param>
+          <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
+          <body description="A representation of the search request.">
+              <content type="application/json" schema="/schema/region-search-request.schema">
+                {
+                  "regions": [
+                    "2L:14615455..14619002",
+                    "2R:5866646..5868384",
+                    "3R:2578486..2580016"
+                  ],
+                  "featureTypes": ["Gene", "Exon", "Intron"],
+                  "organism": "D. melanogaster"
+                }
+              </content>
+           </body>
+       </method>
+   </metadata>
 </servlet-mapping>
 
 <servlet>
-  <servlet-name>ws-genomic-region-to-gff3</servlet-name>
-  <servlet-class>org.intermine.bio.webservice.GenomicRegionGFF3Servlet</servlet-class>
-  <init-param>
-     <param-name>debug</param-name>
-     <param-value>true</param-value>
-  </init-param>
+    <servlet-name>ws-genomic-region-to-gff3</servlet-name>
+    <servlet-class>org.intermine.bio.webservice.GenomicRegionGFF3Servlet</servlet-class>
 </servlet>
 
 <servlet-mapping>

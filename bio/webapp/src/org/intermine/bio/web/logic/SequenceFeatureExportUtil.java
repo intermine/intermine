@@ -211,7 +211,7 @@ public final class SequenceFeatureExportUtil
                         summaryPath);
 
                 for (ResultsRow row : results) {
-                    organismTaxonIds.add((String) row.get(0));
+                    organismTaxonIds.add(String.valueOf(row.get(0)));
                 }
             } catch (ObjectStoreException e) {
                 LOG.error("Failed to summarise path: " + summaryPath + " when retrieving organism"
