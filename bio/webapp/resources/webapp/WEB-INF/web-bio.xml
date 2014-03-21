@@ -61,6 +61,22 @@ will be selected.
 <servlet-mapping>
   <servlet-name>ws-gff3-lists</servlet-name>
   <url-pattern>/service/list/results/gff3</url-pattern>
+  <metadata>
+    <name>List as GFF3</name>
+    <minVersion>10</minVersion>
+    <method type="GET" authenticationRequired="false" ALSO="POST">
+        <summary>Get the Contents of a List as GFF3.</summary>
+        <description format="markdown">
+            This service allows users to export the contents of a list
+            of `SequenceFeature`s as GFF3.
+        </description>
+        <param type="String"
+               options="/lists|lists"
+               default="{name}"
+               required="true"
+               description="The name of the list">list</param>
+    </method>
+  </metadata>
 </servlet-mapping>
 
 <servlet>
@@ -508,20 +524,6 @@ following [json-schema](http://json-schema.org/) schema:
            </body>
        </method>
    </metadata>
-</servlet-mapping>
-
-<servlet>
-  <servlet-name>ws-genomic-region-sequence-export</servlet-name>
-  <servlet-class>org.intermine.bio.webservice.GenomicRegionSequenceExportServlet</servlet-class>
-  <init-param>
-     <param-name>debug</param-name>
-     <param-value>true</param-value>
-  </init-param>
-</servlet>
-
-<servlet-mapping>
-  <servlet-name>ws-genomic-region-sequence-export</servlet-name>
-  <url-pattern>/service/regions/sequence</url-pattern>
 </servlet-mapping>
 
 <!--  Allow models to do further replacements -->
