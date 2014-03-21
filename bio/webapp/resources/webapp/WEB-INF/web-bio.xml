@@ -119,7 +119,7 @@ will be selected.
         </description>
         <!-- Only suggest Genes, although others would work -->
         <param type="String"
-            options="/lists|lists{type=Gene}"
+            options="/lists|lists{status=CURRENT,type=Gene}"
             default="{name}"
             required="true"
             description="The name of the list">list</param>
@@ -151,7 +151,7 @@ of `SequenceFeature`s or `Protein`s as
         </description>
         <!-- Only suggest Genes and Proteins, although others would work -->
         <param type="String"
-            options="/lists|lists{type=Gene,type=Protein}"
+            options="/lists|lists{status=CURRENT,type=Gene,type=Protein}"
             default="{name}"
             required="true"
             description="The name of the list">list</param>
