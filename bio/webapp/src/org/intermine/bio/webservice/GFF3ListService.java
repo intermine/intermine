@@ -9,6 +9,11 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
+/**
+ * Export a List as GFF3.
+ * @author Alex Kalderimis
+ *
+ */
 public class GFF3ListService extends GFFQueryService
 {
 
