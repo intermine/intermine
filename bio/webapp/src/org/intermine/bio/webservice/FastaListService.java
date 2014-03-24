@@ -8,16 +8,16 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
- * Export a List as GFF3.
- * @author Alex Kalderimis
+ * Export a list as FASTA.
+ * @author alex
  *
  */
-public class GFF3ListService extends GFFQueryService
+public class FastaListService extends FastaQueryService
 {
 
     private static final String LIST_PARAM = "list";
 
-    public GFF3ListService(InterMineAPI im) {
+    public FastaListService(InterMineAPI im) {
         super(im);
     }
 

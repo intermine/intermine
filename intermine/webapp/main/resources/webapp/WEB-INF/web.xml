@@ -150,17 +150,31 @@
         <minVersion>4</minVersion>
         <method type="POST" authenticationRequired="true" ALSO="GET">
             <summary>Save the result set of a query as a list on the server.</summary>
-            <description>
-                This service provides the facility to submit a query and create a new list
-                whose contents shall be the result set defined by running the query. This
-                facility places a couple of restrictions on the query itself, namely that
-                the view list may only contain a single item, which should refer to the
-                internal id attribute of an object in the query.
+            <description format="markdown">
+This service provides the facility to submit a query and create a new list
+whose contents shall be the result set defined by running the query.
+
+This facility places a couple of restrictions on the query itself, namely that
+the view list may only contain a single item, which can refer to any attribute
+of an object. The attribute itself will be ignored, and the object itself
+will be selected. For this reason, one might choose to always select the `.id`
+attribute when using this service.
             </description>
-            <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format">query</param>
-            <param required="true" type="String" description="The name for the new list. There must be no existing list of this name">listName</param>
+            <param
+                required="true"
+                type="XML"
+                description="A definition of the query to execute in Path-Query XML format">query</param>
+            <param
+                description="The name for the new list. There must be no existing list of this name"
+                required="true"
+                type="String">name</param>
             <param required="false" type="String" description="A description to attach to the new list">description</param>
             <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+          <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
             <returns>
                 <format accept="application/json">json</format>
                 <format accept="text/plain">text</format>
@@ -589,12 +603,21 @@
                 of the ID resolution mechanism and then taking
                 all the good matches.
 	          </description>
-	        <param required="true" type="String" description="The name of the new list">name</param>
+              <param required="true"
+                  type="String"
+                  description="The name of the new list">name</param>
             <param required="true"
                 options="/model|model.classes"
                 default="{name}"
                 type="String" description="The type of the list">type</param>
-	        <param required="false" type="String" description="A disambiguating value (such as organism name)">extraValue</param>
+            <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
+            <param required="false"
+                type="String"
+                description="A disambiguating value (such as organism name)">extraValue</param>
 	        <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
              <content type="text/plain">
               "even skipped"
@@ -745,6 +768,11 @@ for each editable constraint on the query. These are not required for optional c
             repeat="/templates|templates.$name.where{editable}"
             default="{value}">value{N}</param>
         <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint codes. Codes are only required if two constraints have the same path."
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{code}">code{N}</param>
+        <param type="String[]"
             description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
             required="false"
             repeat="/templates|templates.$name.where{editable}"
@@ -848,6 +876,11 @@ for each editable constraint on the query. These are not required for optional c
             repeat="/templates|templates.$name.where{editable}"
             default="{value}">value{N}</param>
         <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint codes. Codes are only required if two constraints have the same path."
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{code}">code{N}</param>
+        <param type="String[]"
             description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
             required="false"
             repeat="/templates|templates.$name.where{editable}"
@@ -857,6 +890,11 @@ for each editable constraint on the query. These are not required for optional c
             description="The name for the new list. There must be no existing list of this name">listName</param>
         <param required="false" type="String" description="A description to attach to the new list">description</param>
         <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+          <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
         <returns>
           <format accept="application/json">json</format>
           <format accept="text/plain">text</format>
@@ -943,6 +981,11 @@ for each editable constraint on the query. These are not required for optional c
             required="false"
             repeat="/templates|templates.$name.where{editable}"
             default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint codes. Codes are only required if two constraints have the same path."
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{code}">code{N}</param>
         <param type="String[]"
             description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
             required="false"
@@ -1334,7 +1377,7 @@ to will also be returned.
     <metadata>
         <name>Enrichment Widgets</name>
         <minVersion>8</minVersion>
-        <method authenticationRequired="true" type="GET" ALSO="POST">
+        <method authenticationRequired="false" type="GET" ALSO="POST">
             <summary>get the data for a given enrichment widget</summary>
             <description>
                 Enrichment widgets provide a statistical summary of what makes a list distinct from

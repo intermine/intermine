@@ -80,15 +80,20 @@ public class XMLFormatter extends Formatter
         if (attributes != null) {
             for (String key : attributes.keySet()) {
                 if (attributes.get(key) instanceof Map) {
-                    for (Object subK: ((Map) attributes.get(key)).keySet()) {
-                        sb.append(subK + "=\"" + ((Map) attributes.get(key)).get(subK) + "\" ");
+                    Map obj = (Map) attributes.get(key);
+                    for (Object subK: obj.keySet()) {
+                        sb.append(subK + "=\"" + escapeAttribute(obj.get(subK)) + "\" ");
                     }
                 } else {
-                    sb.append(key + "=\"" + attributes.get(key) + "\" ");
+                    sb.append(key + "=\"" + escapeAttribute(attributes.get(key)) + "\" ");
                 }
             }
         }
         sb.append(">");
+    }
+
+    protected String escapeAttribute(Object attr) {
+        return StringEscapeUtils.escapeXml(String.valueOf(attr));
     }
 
     /** {@inheritDoc}} **/
@@ -109,8 +114,12 @@ public class XMLFormatter extends Formatter
     protected void addElement(StringBuilder sb, String tag, String contents) {
         sb.append("<" + tag + ">");
         openElements.push(tag);
-        sb.append(StringEscapeUtils.escapeXml(contents));
+        sb.append(escapeElementContent(contents));
         sb.append("</" + openElements.pop() + ">");
+    }
+
+    protected String escapeElementContent(String contents) {
+        return StringEscapeUtils.escapeXml(contents);
     }
 
     /** {@inheritDoc}} **/
