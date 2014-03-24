@@ -61,6 +61,7 @@ public class EnrichmentWidgetResultService extends WidgetService
 
         @Override
         public String formatResult(List<String> resultRow) {
+            // The EnrichmentXMLProcessor produces XML elements.
             return StringUtils.join(resultRow, "");
         }
 
@@ -79,6 +80,11 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         return false;
     }
+
+    private static final String BAD_POPULATION_MSG =
+            "One or more of the %$1ss in this list are missing from your background population."
+            + " The background population should include all %1$ss that were tested as part of"
+            + " your experiment.";
 
     /**
      * Executes service specific logic.
@@ -119,10 +125,7 @@ public class EnrichmentWidgetResultService extends WidgetService
             if (input.isSavePopulation()) {
                 deleteReferencePopulationPreference(input);
             }
-            addOutputAttribute("message", "One or more of the " + imBag.getType() + "s in this list"
-                + " are currently not included in your background population. The background "
-                + "population should include all " + imBag.getType() + "s that were tested as part of "
-                + "your experiment.");
+            addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
             return;
         }
 
@@ -154,6 +157,7 @@ public class EnrichmentWidgetResultService extends WidgetService
     }
 
     private void addOutputPathQuery(EnrichmentWidget widget, WidgetConfig config) {
+        // TODO: Make this a) not an effing string, and b) work equally well in XML.
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
         addOutputInfo("pathConstraint", widget.getPathConstraint());
         addOutputInfo("pathQueryForMatches", widget.getPathQueryForMatches().toJson());
@@ -200,9 +204,10 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
     }
 
-    protected Output makeXMLOutput(PrintWriter out) {
+    @Override
+    protected Output makeXMLOutput(PrintWriter out, String separator) {
         ResponseUtil.setXMLHeader(response, "result.xml");
-        return new StreamedOutput(out, new EnrichmentXMLFormatter());
+        return new StreamedOutput(out, new EnrichmentXMLFormatter(), separator);
     }
 
     private WidgetsServiceInput getInput() {
