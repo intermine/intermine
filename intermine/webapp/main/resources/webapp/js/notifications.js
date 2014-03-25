@@ -31,7 +31,7 @@
             this.$el.hide('slow', function() {self.remove()});
         },
         render: function() {
-            return if !canShow;
+            if (!canShow) return;
             var self = this
               , remAfter = self.options.autoRemove;
             this.$el.append('<a class="closer" href="#">Hide</a>');
