@@ -78,8 +78,6 @@ public class JSONFormatter extends Formatter {
                 KEY_KV_PAIRS,
                 KEY_TIME)));
 
-   
-
     /**
      * Constructor
      */

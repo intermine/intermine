@@ -27,6 +27,7 @@ public class DeleteTokensService extends ReadWriteJSONService {
 	@Override
 	protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
+        if (profile.getUserId() == null) return; // Temporary user. Nothing to delete.
         ProfileManager pm = im.getProfileManager();
         UserProfile up = (UserProfile) pm.getProfileObjectStoreWriter().getObjectById(profile.getUserId());
         if (up == null) {

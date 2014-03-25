@@ -335,7 +335,7 @@ attribute when using this service.
         <param required="true"
             type="String"
             description="The name of the list to append to. The list must exist, and belong to you."
-            options="/lists|lists{authorized}"
+            options="/lists|lists{authorized,status=CURRENT}"
             default="{name}">name</param>
         <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
           <content type="text/plain">
@@ -388,7 +388,7 @@ attribute when using this service.
         <param required="true"
             type="String[]"
             description="The name of a source list."
-            options="/lists|lists"
+            options="/lists|lists{status=CURRENT}"
             default="{name}">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
@@ -436,11 +436,11 @@ attribute when using this service.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
         <param required="true" type="String[]"
-            options="/lists|lists"
+            options="/lists|lists{status=CURRENT}"
             default="{name}"
             description="The name of a source list">references</param>
         <param required="true"
-            options="/lists|lists"
+            options="/lists|lists{status=CURRENT}"
             default="{name}"
             type="String[]"
             description="The name of a list to exclude">subtract</param>
@@ -488,7 +488,7 @@ attribute when using this service.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
         <param required="true" type="String[]"
-            options="/lists|lists"
+            options="/lists|lists{status=CURRENT}"
             default="{name}"
             description="The name of a source list, or multiple list names concatenated with a ';' separator.">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
@@ -534,7 +534,7 @@ attribute when using this service.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
         <param required="true" type="String[]"
-            options="/lists|lists"
+            options="/lists|lists{status=CURRENT}"
             default="{name}"
             description="The name of a source list">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
@@ -1143,7 +1143,23 @@ to will also be returned.
   <servlet-mapping>
     <servlet-name>ws-check-resource</servlet-name>
     <url-pattern>/service/check/*</url-pattern>
-    
+    <metadata>
+        <deprecated/>
+        <name>Check Resource</name>
+        <method type="GET" slug="/:resource">
+            <summary>Find out where a resource is mounted</summary>
+            <description>
+                This service is deprecated. Use the full service listing instead.
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The resource to locate">resource</param>
+            <returns>
+                <format accept="text/plain">text</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <!-- NEW IN VERSION 6 -->
@@ -1193,6 +1209,28 @@ to will also be returned.
   <servlet-mapping>
     <servlet-name>ws-schemata</servlet-name>
     <url-pattern>/service/schema/*</url-pattern>
+    <metadata>
+        <name>Schemata</name>
+        <minVersion>6</minVersion>
+        <method type="GET">
+            <name>All Schemata</name>
+            <summary>Get all Schemata</summary>
+            <description>Get a listing of the available schemata</description>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" slug="/:name">
+            <name>One Schema</name>
+            <summary>Get one Schema</summary>
+            <description>Retrieve a specific schema</description>
+            <param
+                required="true"
+                options="/schema|schemata"
+                default="{}"
+                description="The name of the schema to retrieve">name</param>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <!-- NEW IN VERSION 7 -->
@@ -1387,7 +1425,7 @@ to will also be returned.
             <param type="String"
                 required="true"
                 description="The name of the list to investigate"
-                options="/lists|lists"
+                options="/lists|lists{status=CURRENT}"
                 default="{name}">list</param>
             <param type="String"
                 required="true"
@@ -1397,7 +1435,7 @@ to will also be returned.
             <param type="String"
                 required="false"
                 description="The name of the list to use as the background population"
-                options="/lists|lists"
+                options="/lists|lists{status=CURRENT}"
                 default="{name}">population</param>
             <param type="Float"
                 default="0.05"
@@ -1447,12 +1485,14 @@ to will also be returned.
 	        </description>
             <param type="String"
                 required="true"
+                options="/lists|lists{status=CURRENT}"
                 description="The name of the list to investigate"
-                default="/lists|lists.0.name">list</param>
+                default="{name}">list</param>
             <param type="String"
                 required="true"
                 description="The name of the graphical widget to display"
-                default="/widgets|widgets{widgetType=chart}.0.name">widget</param>
+                options="/widgets|widgets{widgetType=chart}"
+                default="{name}">widget</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
 	        <returns>
 	            <format key="results">json</format>
@@ -1484,7 +1524,10 @@ to will also be returned.
 	            This service returns data to produce a table representations
 	            of the overview of data in a list.
 	        </description>
-            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
+            <param type="String" required="true"
+                options="/lists|lists{status=CURRENT}"
+                default="{name}"
+                description="The name of the list to use as the population for the graph">list</param>
             <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
             <returns>
 	            <format key="results">json</format>
@@ -1523,7 +1566,10 @@ to will also be returned.
             <param type="String" required="false" description="The query string to search with. If absent, or blank, all results will be returned">q</param>
             <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, up to 100 results will be returned." default="10">size</param>
             <param type="int" required="false" description="The index of the first result to return." default="0">start</param>
-            <param type="String" required="false" description="A list to search within.">list</param>
+            <param type="String"
+                options="/lists|lists{status=CURRENT}"
+                default="{name}"
+                required="false" description="A list to search within.">list</param>
             <param type="String[]" required="false" description="A facet parameter, eg facet_Organism=D.melanogaster">facet_?</param>
             <returns>
               <format key="results">json</format>
@@ -1770,12 +1816,26 @@ following [json-schema](http://json-schema.org/) schema:
        <method type="POST" requiresAuthentication="true">
           <name>Invitation Creation</name>
           <summary>Invite another user to share a list</summary>
-          <description>
-			Blah... todo
+          <description format="markdown">
+              This service allows users to share one of their lists with another user.
+              This allows read-only access to the given list, allowing it to be used in
+              queries, exported, etc. You should only do this if you trust the other
+              party with your data.
+
+              Users can be designated by their username, display-name (if set) or by 
+              and email address. If the email address is not registered with a user in
+              the system, an invitation will be sent to that address, with a code that
+              allows the user to activate the list share.
           </description>
-          <param type="String" required="true" description="The list of yours you wish to share">list</param>
+          <param type="String" required="true" description="The list of yours you wish to share"
+              options="/lists|lists{status=CURRENT,authorized}"
+              default="{name}"
+              >list</param>
           <param type="String" required="true" description="The email address of the user to invite to share a list.">to</param>
-          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">send-emai</param>
+          <param type="boolean"
+              required="false"
+              default="false"
+              description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">notify</param>
           <returns>
             <format key="invitation">json</format>
           </returns>
@@ -1806,7 +1866,8 @@ following [json-schema](http://json-schema.org/) schema:
           <name>Invitation Acceptance</name>
           <summary>Declare the acceptance of an invitation.</summary>
           <description>
-			Blah... todo
+              The service accepts the invitation, activating the share. It must be accessed
+              by the user it was sent to.
           </description>
           <param type="String" required="true" description="The identifier of the invitation - a 20 character unique string">uid</param>
           <param type="boolean" required="true" description="Whether or not this invitation is accepted or not.">accepted</param>
@@ -2061,9 +2122,248 @@ query could be used:
    <servlet-mapping>
     <servlet-name>ws-jbrowse</servlet-name>
     <url-pattern>/service/jbrowse/*</url-pattern>
+    <metadata>
+        <name>JBrowse Endpoint</name>
+        <minVersion>16</minVersion>
+        <method type="GET" requiresAuthentication="false" slug="/:domain/features/:refseq">
+            <name>Get Features</name>
+            <summary>Get Features on a Reference Sequence</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` feature
+                requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="true"
+                options="/data/Chromosome|results{length}"
+                default="{primaryIdentifier}"
+                description="The identifier of the reference sequence to find
+                    features within">refseq</param>
+            <param
+                type="Integer"
+                required="false"
+                recommended="true"
+                default="100000"
+                description="The starting index">start</param>
+            <param
+                type="Integer"
+                required="false"
+                recommended="true"
+                default="120000"
+                description="The end index">end</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature to return">type</param>
+            <param
+                type="boolean"
+                required="false"
+                default="false"
+                description="Make this a reference sequence request">reference</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+        <method type="GET" requiresAuthentication="false" slug="/:domain/stats/global">
+            <name>Get Global Statistics</name>
+            <summary>Get Statistics about the Features Served by this Store</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` global statistics
+                requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature we are interested in">type</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+      <method type="GET" requiresAuthentication="false" slug="/:domain/stats/region/:refseq">
+            <name>Get Region Statistics</name>
+            <summary>Get Statistics for a Sub-Set of Features Served by this Store</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` region statistics
+                requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="true"
+                options="/data/Chromosome|results{length}"
+                default="{primaryIdentifier}"
+                description="The identifier of the reference sequence to find
+                    features within">refseq</param>
+            <param
+                type="Integer"
+                required="false"
+                default="1000"
+                description="The starting index">start</param>
+            <param
+                type="Integer"
+                required="false"
+                default="2000"
+                description="The end index">end</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature we are interested in">type</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+      <method type="GET"
+              requiresAuthentication="false"
+              slug="/:domain/stats/regionFeatureDensities/:refseq">
+            <name>Get Region Statistics</name>
+            <summary>Get Binned Density Statistics for a Sub-Set of Features Served by this Store</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` binned
+                region statistics requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="true"
+                options="/data/Chromosome|results{length}"
+                default="{primaryIdentifier}"
+                description="The identifier of the reference sequence to find
+                    features within">refseq</param>
+            <param
+                type="Integer"
+                required="false"
+                default="1000"
+                description="The starting index">start</param>
+            <param
+                type="Integer"
+                required="false"
+                default="2000"
+                description="The end index">end</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature we are interested in">type</param>
+            <param
+                type="String"
+                required="false"
+                description="The number of bases per bin, used to determine the number of bins"
+                default="20000">basesPerBin</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+    </metadata>
    </servlet-mapping>
    
    <!--  New in version 16 -->
+
+    <servlet>
+     <servlet-name>ws-jbrowse-names</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.jbrowse.Names</param-value>
+     </init-param>
+   </servlet>
+   
+   <servlet-mapping>
+    <servlet-name>ws-jbrowse-names</servlet-name>
+    <url-pattern>/service/jbrowse/names/*</url-pattern>
+    <metadata>
+        <name>JBrowse Name Lookup</name>
+        <minVersion>16</minVersion>
+        <method type="GET" requiresAuthentication="false" slug="/:domain">
+            <name>Find Features By Name</name>
+            <summary>Lookup features by name</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` name
+                look-up requests.
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                required="true"
+                type="String"
+                default="eve"
+                description="The search prefix string to look for">startswith</param>
+            <param
+                required="true"
+                type="String"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain for this search (generally an organism)">domain</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" requiresAuthentication="false" slug="/:domain">
+            <name>Retrieve Feature Information</name>
+            <summary>Retrieve feature information by name</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` name
+                look-up requests.
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                required="true"
+                type="String"
+                default="eve"
+                description="The name of the item.">equals</param>
+            <param
+                required="true"
+                type="String"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain for this search (generally an organism)">domain</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+   </servlet-mapping>
    
    <servlet>
      <servlet-name>ws-deregistration-token</servlet-name>
@@ -2073,6 +2373,49 @@ query could be used:
    <servlet-mapping>
     <servlet-name>ws-deregistration-token</servlet-name>
     <url-pattern>/service/user/deregistration/*</url-pattern>
+    <metadata>
+        <name>Deregistration Tokens</name>
+        <minVersion>16</minVersion>
+        <method type="GET" authenticationRequired="true" slug="/:uid">
+            <summary>Get information about a deregistration token</summary>
+            <description>
+                This service returns a representation of a deregistration
+                token that a user has access to.
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The identifier of the token">uid</param>
+            <returns>
+                <format accept="application/json" key="token">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Create a deregistration token</summary>
+            <description>
+                This service creates a deregistration token,
+                thus starting the process of de-registerin a user.
+            </description>
+            <returns>
+                <format accept="application/json" key="token">json</format>
+            </returns>
+        </method>
+        <method type="DELETE" authenticationRequired="true" slug="/:uid">
+            <summary>Delete a deregistration token</summary>
+            <description>
+                This service deletes a deregistration
+                token that a user has access to, thus cancelling
+                the request to de-register the user.
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The identifier of the token">uid</param>
+            <returns>
+                <format accept="application/json" key="token">json</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
 
    <servlet>
@@ -2091,6 +2434,40 @@ query could be used:
    <servlet-mapping>
      <servlet-name>ws-user</servlet-name>
      <url-pattern>/service/user</url-pattern>
+     <metadata>
+         <name>User</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="true">
+             <summary>Get information about the Current User</summary>
+             <description format="markdown">
+                 This service provides information about the current user,
+                 including their user name and preferences.
+             </description>
+             <returns>
+                <format key="user" accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="DELETE" authenticationRequired="true">
+             <summary>Delete the Current User</summary>
+             <description format="markdown">
+                 This service deletes the current User and all their data.
+                 
+                 To ensure that you really mean to deregister a user
+                 programmatically, this service requires a deregistration
+                 token to be obtained before sending the delete request.
+
+                 As output it returns all of the user data it had before it was
+                 deleted.
+             </description>
+             <param
+                 required="true"
+                 description="A token to ensure this is not a mistake"
+                 type="String">deregistrationToken</param>
+             <returns>
+                <format accept="application/xml">xml</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
 
    <servlet>
@@ -2113,6 +2490,73 @@ query could be used:
    <servlet-mapping>
      <servlet-name>ws-perma-tokens</servlet-name>
      <url-pattern>/service/user/tokens</url-pattern>
+     <metadata>
+         <name>Tokens</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="true">
+             <summary>Get List of Permanent Tokens</summary>
+             <description format="markdown">
+                 Tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users inspect the permanent tokens they have
+                 issued.
+                 
+                 No access is provide here to other tokens (24hrs, api, day), for
+                 security and other reasons. Please look at the `Session` service
+                 for issuing new temporary tokens.
+             </description>
+             <returns>
+                <format key="tokens" accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="POST" authenticationRequired="true">
+             <summary>Create a New Token</summary>
+             <description format="markdown">
+Tokens are issued so that users may provide access
+to their private data to third parties in a more secure manner.
+This service lets users create a new token they can provide
+to others.
+
+The different token types are:
+
+`day`
+ : A token that will be valid for up to 24 hrs.
+`once`
+ : A token that can only be used for a single request.
+`api`
+ : The main Read-Write API key of the user. Generating one of these replaces the currrent key.
+`perm`
+ : A permanent Read-Only token that others can use.
+             </description>
+             <param
+                 required="false"
+                 type="enumerated"
+                 values="day,once,api,perm"
+                 default="day"
+                 description="The type of token to issue">type</param>
+             <param
+                 required="false"
+                 type="String"
+                 description="An optional message to associate with a token">message</param>
+             <returns>
+                <format key="token" accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="DELETE" authenticationRequired="true">
+             <summary>Delete all Tokens</summary>
+             <description format="markdown">
+                 Delete all permanent tokens.
+
+                 Permanent tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users all the delete permanent tokens they have
+                 issued.
+             </description>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
    
    <servlet>
@@ -2123,6 +2567,46 @@ query could be used:
    <servlet-mapping>
      <servlet-name>ws-perma-token</servlet-name>
      <url-pattern>/service/user/tokens/*</url-pattern>
+     <metadata>
+         <name>Permanent Token</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="true" slug="/:uid">
+             <summary>Get Token Information</summary>
+             <description format="markdown">
+                 Retrieve information about a specific permanent token.
+
+                 Permanent tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users inspect a specific permanent tokens they have
+                 issued.
+             </description>
+             <param
+                 required="true"
+                 type="String"
+                 description="The identifier of one of your tokens">uid</param>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="DELETE" authenticationRequired="true" slug="/:uid">
+             <summary>Delete a Token</summary>
+             <description format="markdown">
+                 Delete a specific permanent token.
+
+                 Permanent tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users delete permanent tokens they have
+                 issued.
+             </description>
+             <param
+                 required="true"
+                 type="String"
+                 description="The identifier of one of your tokens">uid</param>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
 
   <servlet>
@@ -2137,6 +2621,20 @@ query could be used:
   <servlet-mapping>
      <servlet-name>ws-branding</servlet-name>
      <url-pattern>/service/branding</url-pattern>
+     <metadata>
+         <name>Branding</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="false">
+             <summary>Get Branding Information</summary>
+             <description>
+                 Retrieve branding information, so that elements may be
+                 visually styled appropriately for their source.
+             </description>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -2381,6 +2879,50 @@ query could be used:
      </metadata>
   </servlet-mapping>
 
+  <servlet>
+      <servlet-name>ws-data</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.data.DataService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+      <servlet-name>ws-data</servlet-name>
+      <url-pattern>/service/data/*</url-pattern>
+      <metadata>
+          <name>Simple Data Service</name>
+          <minVersion>16</minVersion>
+          <method type="GET" authenticationRequired="false" slug="/:type">
+              <summary>Get Data about Objects of the Given Type</summary>
+              <description>
+                  This service allows simple access to queries against a
+                  single type. This is meant to allow for simple linking
+                  and resource-based access to InterMine data.
+              </description>
+              <header
+                  required="false"
+                  default="records=0-10"
+                  description="The range of values requested">Range</header>
+              <param
+                  required="true"
+                  options="/model|model.classes"
+                  default="{name}"
+                  type="String"
+                  description="The type of the object to find.">type</param>
+              <param
+                  required="false"
+                  type="String[]"
+                  description="An optional filter over the objects"
+                  repeat="/model|model.classes.$type.attributes">?</param>
+              <returns>
+                  <format accept="application/json" key="results">json</format>
+              </returns>
+          </method>
+      </metadata>
+  </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
@@ -2440,7 +2982,7 @@ query could be used:
       </init-param>
       <init-param>
         <param-name>Access-Control-Allow-Headers</param-name>
-        <param-value>Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, Content-Range</param-value>
+        <param-value>Origin, X-Requested-With, Content-Type, Accept, Range, Authorization, Content-Length, Content-Range</param-value>
     </init-param>
       <init-param>
         <param-name>Access-Control-Expose-Headers</param-name>
