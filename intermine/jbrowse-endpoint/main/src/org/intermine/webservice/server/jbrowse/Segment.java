@@ -55,7 +55,8 @@ public final class Segment {
         } else if (start == null || end == null) {
             throw new RuntimeException("Not implemented"); // TODO
         } else {
-            return String.format("%s:%d..%d", section, start + 1, end + 1);
+            // Convert Interbase -> Base coördinates: start + 1
+            return String.format("%s:%d..%d", section, start + 1, end);
         }
     }
 

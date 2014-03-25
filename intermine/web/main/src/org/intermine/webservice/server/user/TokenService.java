@@ -36,6 +36,7 @@ public class TokenService extends ReadWriteJSONService {
         } else if ("api".equals(token)) {
             token = pm.generateApiKey(profile);
         } else if ("perm".equals(tokenType)) {
+            if (profile.getUserId() == null) throw new BadRequestException("Temporary users cannot have permanent tokens");
             token = pm.generateReadOnlyAccessToken(profile, message);
         } else {
             throw new BadRequestException("Unknown token type: " + tokenType);
