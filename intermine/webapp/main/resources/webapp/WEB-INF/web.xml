@@ -1663,7 +1663,7 @@ to will also be returned.
     <metadata>
       <name>Users</name>
       <minVersion>9</minVersion>
-      <method type="POST" requiresAuthentication="false">
+      <method type="POST" authenticationRequired="false">
           <name>User Creation</name>
           <summary>Create a new user in the user-profile</summary>
           <description>
@@ -1697,7 +1697,7 @@ to will also be returned.
     <metadata>
         <name>Key Fields</name>
         <minVersion>9</minVersion>
-        <method type="GET" requiresAuthentication="false">
+        <method type="GET" authenticationRequired="false">
             <summary>Get the fields used to identify an object</summary>
             <description>
                 Get the fields configured for this service to identify objects uniquely within
@@ -1813,7 +1813,7 @@ following [json-schema](http://json-schema.org/) schema:
      <metadata>
        <name>List Invitations</name>
        <minVersion>11</minVersion>
-       <method type="POST" requiresAuthentication="true">
+       <method type="POST" authenticationRequired="true">
           <name>Invitation Creation</name>
           <summary>Invite another user to share a list</summary>
           <description format="markdown">
@@ -1840,7 +1840,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format key="invitation">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true">
+      <method type="GET" authenticationRequired="true">
           <name>Invitation Details</name>
           <summary>Details of all outstanding invitations</summary>
           <description>
@@ -1851,7 +1851,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format key="invitation">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true" slug="/:uid">
+      <method type="GET" authenticationRequired="true" slug="/:uid">
           <name>Invitation Details</name>
           <summary>Details of a single invitation</summary>
           <description>
@@ -1862,7 +1862,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format key="invitation">json</format>
           </returns>
       </method>
-      <method type="PUT" requiresAuthentication="true" slug="/:uid">
+      <method type="PUT" authenticationRequired="true" slug="/:uid">
           <name>Invitation Acceptance</name>
           <summary>Declare the acceptance of an invitation.</summary>
           <description>
@@ -1890,7 +1890,7 @@ following [json-schema](http://json-schema.org/) schema:
      <metadata>
        <name>List Sharing</name>
        <minVersion>11</minVersion>
-       <method type="POST" requiresAuthentication="true">
+       <method type="POST" authenticationRequired="true">
           <name>Share a List</name>
           <summary>Authorise another user to access a list</summary>
           <description>
@@ -1910,7 +1910,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format accept="application/javascript" key="share">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true">
+      <method type="GET" authenticationRequired="true">
           <name>Details of Currently Shared Lists</name>
           <summary>Retrieve information about which lists are shared with and by whom.</summary>
           <description>
@@ -1923,7 +1923,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format accept="application/javascript" key="share">json</format>
           </returns>
       </method>
-       <method type="DELETE" requiresAuthentication="true">
+       <method type="DELETE" authenticationRequired="true">
           <name>Stop Sharing a List</name>
           <summary>Rescind the Permission Granted to a User to Access a List.</summary>
           <description>
@@ -1967,7 +1967,7 @@ following [json-schema](http://json-schema.org/) schema:
      <metadata>
        <name>User Preferences</name>
        <minVersion>11</minVersion>
-       <method type="POST" also="PUT" requiresAuthentication="true">
+       <method type="POST" also="PUT" authenticationRequired="true">
           <name>Set Preference(s)</name>
           <summary>Set the value of one or more preferences</summary>
           <description>
@@ -1980,7 +1980,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format key="preferences">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true">
+      <method type="GET" authenticationRequired="true">
           <name>View Preferences</name>
           <summary>Get a user's preferences</summary>
           <description>
@@ -1991,7 +1991,7 @@ following [json-schema](http://json-schema.org/) schema:
             <format key="preferences">json</format>
           </returns>
       </method>
-      <method type="DELETE" requiresAuthentication="true">
+      <method type="DELETE" authenticationRequired="true">
           <name>Delete Preference(s)</name>
           <summary>Remove one or all preferences.</summary>
           <description>
@@ -2125,7 +2125,7 @@ query could be used:
     <metadata>
         <name>JBrowse Endpoint</name>
         <minVersion>16</minVersion>
-        <method type="GET" requiresAuthentication="false" slug="/:domain/features/:refseq">
+        <method type="GET" authenticationRequired="false" slug="/:domain/features/:refseq">
             <name>Get Features</name>
             <summary>Get Features on a Reference Sequence</summary>
             <description format="markdown">
@@ -2175,7 +2175,7 @@ query could be used:
             <format accept="application/json">json</format>
         </returns>
       </method>
-        <method type="GET" requiresAuthentication="false" slug="/:domain/stats/global">
+        <method type="GET" authenticationRequired="false" slug="/:domain/stats/global">
             <name>Get Global Statistics</name>
             <summary>Get Statistics about the Features Served by this Store</summary>
             <description format="markdown">
@@ -2201,7 +2201,7 @@ query could be used:
             <format accept="application/json">json</format>
         </returns>
       </method>
-      <method type="GET" requiresAuthentication="false" slug="/:domain/stats/region/:refseq">
+      <method type="GET" authenticationRequired="false" slug="/:domain/stats/region/:refseq">
             <name>Get Region Statistics</name>
             <summary>Get Statistics for a Sub-Set of Features Served by this Store</summary>
             <description format="markdown">
@@ -2245,7 +2245,7 @@ query could be used:
         </returns>
       </method>
       <method type="GET"
-              requiresAuthentication="false"
+              authenticationRequired="false"
               slug="/:domain/stats/regionFeatureDensities/:refseq">
             <name>Get Region Statistics</name>
             <summary>Get Binned Density Statistics for a Sub-Set of Features Served by this Store</summary>
@@ -2314,7 +2314,7 @@ query could be used:
     <metadata>
         <name>JBrowse Name Lookup</name>
         <minVersion>16</minVersion>
-        <method type="GET" requiresAuthentication="false" slug="/:domain">
+        <method type="GET" authenticationRequired="false" slug="/:domain">
             <name>Find Features By Name</name>
             <summary>Lookup features by name</summary>
             <description format="markdown">
@@ -2338,7 +2338,7 @@ query could be used:
                 <format accept="application/json">json</format>
             </returns>
         </method>
-        <method type="GET" requiresAuthentication="false" slug="/:domain">
+        <method type="GET" authenticationRequired="false" slug="/:domain">
             <name>Retrieve Feature Information</name>
             <summary>Retrieve feature information by name</summary>
             <description format="markdown">
@@ -2929,7 +2929,7 @@ The different token types are:
     <url-pattern>/service</url-pattern>
     <metadata>
       <name>Service Listing</name>
-      <method type="GET" requiresAuthentication="false">
+      <method type="GET" authenticationRequired="false">
         <summary>Get a description of the services offered by this data-warehouse.</summary>
         <description format="markdown">
             This service returns a description of all the endpoints of the
