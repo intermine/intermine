@@ -1476,7 +1476,7 @@ to will also be returned.
     <metadata>
         <name>Graphical Widgets</name>
         <minVersion>8</minVersion>
-        <method type="GET" authenticationRequired="true" ALSO="POST">
+        <method type="GET" authenticationRequired="false" ALSO="POST">
             <summary>get the data to produce a graph</summary>
             <description>
 	           This service returns data that can be passed to charting software, such
@@ -1518,7 +1518,7 @@ to will also be returned.
     <metadata>
         <name>Table Widgets</name>
         <minVersion>8</minVersion>
-        <method type="GET" authenticationRequired="true" ALSO="POST">
+        <method type="GET" authenticationRequired="false" ALSO="POST">
             <summary>Get the data as displayed by a table widget</summary>
             <description>
 	            This service returns data to produce a table representations
