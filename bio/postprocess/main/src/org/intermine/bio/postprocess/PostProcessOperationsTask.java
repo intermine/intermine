@@ -280,7 +280,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
             } else if ("modmine-metadata-cache".equals(operation)) {
                 CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
-            } else if ("populate-located-features".equals(operation)) {
+            } else if ("populate-child-features".equals(operation)) {
             	PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
             	jb.populateCollection();
             }
