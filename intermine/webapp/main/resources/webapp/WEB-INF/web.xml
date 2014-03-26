@@ -531,6 +531,18 @@
                     <format accept="application/tsv">tab</format>
                 </returns>
         </method>
+        <method type="DELETE" authenticationRequired="true">
+            <summary>Delete an existing list</summary>
+            <description>
+                This service allows users to delete
+                lists that belong to them.
+            </description>
+            <param required="true" type="String" description="The name of the list to delete">name</param>
+	        <returns>
+	          <format accept="application/json">json</format>
+	          <format accept="text/plain">text</format>
+	        </returns>
+        </method>
         <method type="POST" authenticationRequired="true">
 	        <summary>Create a new list</summary>
 	          <description>
