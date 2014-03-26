@@ -20,7 +20,7 @@ PREFIX="applied_patches_"
 
 FTPURL=http://submit.modencode.org/submit/public
 SUBDIR=/shared/data/modmine/subs
-SCRIPTDIR=../bio/scripts/flymine/modmine/
+SCRIPTDIR=./scripts/
 
 RECIPIENTS=contrino@flymine.org,rns@flymine.org
 
