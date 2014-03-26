@@ -72,4 +72,9 @@ final class AnonProfile extends Profile
     public String getUsername() {
         return "__ANONYMOUS_USER__";
     }
+
+    @Override
+    public String getDayToken() {
+        return null;
+    }
 }
