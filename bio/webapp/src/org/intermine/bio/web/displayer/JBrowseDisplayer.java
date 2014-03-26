@@ -16,6 +16,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
+import org.intermine.model.bio.SequenceFeature;
+import org.json.*;
 
 /**
  * Displayer for JBrowse
@@ -35,5 +37,32 @@ public class JBrowseDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
+        String type = reportObject.getType();
+	JSONObject params = config.getParameterJson();
+        String baseURL = null;
+        String tracks = "";
+
+        try{
+           baseURL = params.getString("baseURL");
+           try{
+              tracks = params.getString(type);
+           }catch(Exception e){}
+
+           if(tracks == null || tracks.trim().length()==0){
+              tracks = params.getString("defaultTrack");
+           }
+        }catch (JSONException jse){
+           throw new RuntimeException("Error with JBrowseDisplayer parameters ");
+        }
+        if(baseURL == null){
+           throw new RuntimeException("baseURL for JBrowse is null. Check report displayer config");
+         }
+	String species = ((SequenceFeature)reportObject.getObject()).getOrganism().getSpecies();
+        if("sapiens".equals(species)){
+         baseURL =  baseURL.replace("mouse","GRCh38");
+        }
+        request.setAttribute("baseURL",baseURL);         
+        request.setAttribute("tracks", tracks);
+
     }
 }
