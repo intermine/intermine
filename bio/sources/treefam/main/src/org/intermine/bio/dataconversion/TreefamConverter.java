@@ -209,10 +209,10 @@ public class TreefamConverter extends BioFileConverter
         String refId = identifiersToGenes.get(holder.resolvedIdentifier);
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, holder.resolvedIdentifier);
-
             if (!holder.identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
             	gene.setAttribute(holder.identifierType, holder.resolvedIdentifier);
+            } else {
+            	gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, holder.resolvedIdentifier);
             }
             gene.setReference("organism", getOrganism(holder.taxonId));
             refId = gene.getIdentifier();
