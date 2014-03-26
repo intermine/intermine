@@ -11,6 +11,8 @@ package org.intermine.api.query.codegen;
  */
 
 import java.util.Collection;
+import java.util.Formattable;
+import java.util.Formatter;
 
 import org.intermine.pathquery.PathQuery;
 
@@ -63,8 +65,28 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
           .append(JSStrings.getString("PRELUDE"))
           .append(JSStrings.getString("IMPORTS"))
           .append(JSStrings.getString("PLACEHOLDER"))
-          .append(JSStrings.getString("SCRIPT", url, token, json));
+          .append(JSStrings.getString("SCRIPT", new StringLiteral(url), new StringLiteral(token), json));
 
         return sb.toString().replaceAll("\n", wsCodeGenInfo.getLineBreak());
+    }
+
+    private class StringLiteral implements Formattable {
+
+        private String value;
+
+        StringLiteral(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public void formatTo(Formatter formatter, int flags, int width, int precision) {
+            // Ignore flags, width, precision.
+            if (value == null) {
+                formatter.format("null");
+            } else {
+                formatter.format("'%s'", value);
+            }
+        }
+        
     }
 }
