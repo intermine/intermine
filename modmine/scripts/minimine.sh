@@ -36,7 +36,7 @@
 REPDIR=$HOME/reports
 #RECIPIENTS=
 PROPDIR=$HOME/.intermine
-SCRIPTDIR=../flymine-private/scripts/modmine/
+SCRIPTDIR=./scripts/
 REPORTPATH=file://$REPDIR
 SOURCES=modmine-static,modencode-metadata
 #SOURCES=modmine-static,modencode-metadata,entrez-organism

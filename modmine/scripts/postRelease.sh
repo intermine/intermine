@@ -14,7 +14,8 @@ INTERACT=y
 DOIT=y
 
 ALLPRO="lieb henikoff macalpine oliver snyder karpen white celniker lai waterston piano"
-PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+PRO="lieb henikoff macalpine oliver snyder karpen celnikerlai"
+#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
 #PRO="henikoff karpen waterstonpiano"
 
 progname=$0
@@ -22,11 +23,11 @@ progname=$0
 umask 0002
 
 function usage () {
-	cat <<EOF
+  cat <<EOF
 
 Usage:
-$progname [-b] 
-	-b: batch mode (all operations are executed without warning)
+$progname [-b]
+  -b: batch mode (all operations are executed without warning)
 
 examples:
 
@@ -35,17 +36,17 @@ $progname 33    deal with post release 33
 $progname -b 33 idem, batch mode (careful!)
 
 EOF
-	exit 0
+  exit 0
 }
 
 echo
 
 while getopts ":b" opt; do
-	case $opt in
-	b )  echo "- BATCH mode" ; INTERACT=n;;
-	h )  usage ;;
-	\?)  usage ;;
-	esac
+  case $opt in
+  b )  echo "- BATCH mode" ; INTERACT=n;;
+  h )  usage ;;
+  \?)  usage ;;
+  esac
 done
 
 shift $(($OPTIND - 1))
@@ -151,7 +152,7 @@ echo "Arkiving $p..-------------------"
 
 sed 's/$/.chadoxml/g' $DATADIR/$p.live > $p.ark
 # tar in bzip format using list in .ark
-tar -c -v -j -T $p.ark -f $ARKDIR/r$REL/xml/$p.bz2 
+tar -c -v -j -T $p.ark -f $ARKDIR/r$REL/xml/$p.bz2
 
 #more $p.ark
 #echo "now?"
@@ -192,7 +193,7 @@ echo
 }
 
 function do_branch {
-# do branch 
+# do branch
 RETURNDIR=$PWD
 svn copy svn://svn.flymine.org/flymine/trunk svn://svn.flymine.org/flymine/branches/modmine/modmine-$REL -m "modmine $REL branch"
 cd /data/code/modmine/
@@ -239,7 +240,7 @@ echo "        /etc/apache2/sites-available/intermine.modencode.org.conf"
 echo "on web0 and restart the server with"
 #echo "        sudo /usr/sbin/apachectl restart"
 echo "        sudo /etc/init.d/apache2 restart"
-echo 
+echo
 
 cd $RETURNDIR
 echo "done"
@@ -297,7 +298,7 @@ done
 
 cd $RETURNDIR
 echo "done"
-echo   
+echo
 }
 
 

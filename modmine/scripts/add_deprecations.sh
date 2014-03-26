@@ -10,6 +10,7 @@
 DATADIR=/micklem/data/modmine/subs/chado
 LOGDIR=$DATADIR/logs
 FTPARK=$DATADIR/ark
+SCRIPTDIR=./scripts
 
 INTERACT=y
 DOIT=y
