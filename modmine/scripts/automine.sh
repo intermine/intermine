@@ -29,7 +29,7 @@ PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
 PROPDIR=$HOME/.intermine
-SCRIPTDIR=../bio/scripts/modmine
+SCRIPTDIR=./scripts
 
 ARKDIR=/micklem/releases/modmine
 
