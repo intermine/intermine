@@ -13,6 +13,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
@@ -71,7 +72,7 @@ public class PathQueryBuilderTest extends TestCase {
     public void testBuildGoodQuery() {
         PathQueryBuilder pqb = new PathQueryBuilder();
 
-        pqb.buildQuery(goodXML, schemaUrl, bags);
+        pqb.buildQuery(goodXML, schemaUrl, new ConstantProducer(bags));
         assertEquals(expectedGoodQuery.toString(), pqb.getQuery().toString());
 
     }
@@ -80,7 +81,7 @@ public class PathQueryBuilderTest extends TestCase {
         PathQueryBuilder pqb = new PathQueryBuilder();
 
         try {
-            pqb.buildQuery(invalidXML, schemaUrl, bags);
+            pqb.buildQuery(invalidXML, schemaUrl, new ConstantProducer(bags));
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -94,7 +95,7 @@ public class PathQueryBuilderTest extends TestCase {
         }
 
         try {
-            pqb.buildQuery(badQuery, schemaUrl, bags);
+            pqb.buildQuery(badQuery, schemaUrl, new ConstantProducer(bags));
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -108,7 +109,7 @@ public class PathQueryBuilderTest extends TestCase {
         }
 
         try {
-            pqb.buildQuery(bagXML, schemaUrl, bags);
+            pqb.buildQuery(bagXML, schemaUrl, new ConstantProducer(bags));
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -126,4 +127,18 @@ public class PathQueryBuilderTest extends TestCase {
 
     }
 
+    private class ConstantProducer implements Producer<Map<String, InterMineBag>> {
+
+        private Map<String, InterMineBag> bags;
+
+        ConstantProducer(Map<String, InterMineBag> bags) {
+            this.bags = bags;
+        }
+
+        @Override
+        public Map<String, InterMineBag> produce() {
+            return bags;
+        }
+        
+    }
 }
