@@ -22,6 +22,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -67,11 +69,18 @@ public class DataService extends JSONService {
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String param = params.nextElement();
-            FieldDescriptor fd = cd.getFieldDescriptorByName(param);
-            if (fd == null) {
-                throw new BadRequestException(param + " is not a field of " + className);
+            String pathString = String.format("%s.%s", className, param);
+            Path p;
+            try {
+                p = new Path(m, pathString);
+            } catch (PathException e) {
+                throw new BadRequestException(pathString + " is not a valid relationship.");
             }
-            pq.addConstraint(Constraints.equalsExactly(className + "." + param, request.getParameter(param)));
+            if (p.endIsAttribute()) {
+                pq.addConstraint(Constraints.equalsExactly(pathString, request.getParameter(param)));
+            } else {
+                pq.addConstraint(Constraints.lookup(pathString, request.getParameter(param), ""));
+            }
         }
         Profile p = getPermission().getProfile();
         Query q;
