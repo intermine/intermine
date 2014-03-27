@@ -8,6 +8,13 @@
         this.console.error = this.console.log;
     }
 
+  var canShow = true;
+
+  window.addEventListener('beforeunload', function () {
+    canShow = false;
+    return;
+  });
+
 	var Notification = Backbone.View.extend( {
         tagName: 'div',
         className: 'im-event-notification topBar messages',
@@ -24,6 +31,7 @@
             this.$el.hide('slow', function() {self.remove()});
         },
         render: function() {
+            if (!canShow) return;
             var self = this
               , remAfter = self.options.autoRemove;
             this.$el.append('<a class="closer" href="#">Hide</a>');

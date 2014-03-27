@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,7 @@ import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -379,7 +380,7 @@ public class ProfileManager
             for (SavedBag sb: userProfile.getSavedBags()) {
                 uosw.delete(sb);
             }
-            
+
             for (PermanentToken token: userProfile.getPermanentTokens()) {
             	removePermanentToken(token);
             }
@@ -395,7 +396,9 @@ public class ProfileManager
             uosw.delete(userProfile);
             uosw.commitTransaction();
         } catch (ObjectStoreException e) {
-            uosw.abortTransaction();
+            if (uosw.isInTransaction()) {
+                uosw.abortTransaction();
+            }
             throw e;
         } finally {
             // Should not happen.
@@ -461,29 +464,43 @@ public class ProfileManager
                     ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
                         UserProfile.class)));
         try {
-            Results bags = uosw.execute(q, 1000, false, false, true);
-            for (Iterator<?> i = bags.iterator(); i.hasNext();) {
-                ResultsRow<?> row = (ResultsRow<?>) i.next();
-                Integer bagId = (Integer) row.get(0);
-                SavedBag savedBag = (SavedBag) row.get(1);
-                String bagName = savedBag.getName();
-                if (StringUtils.isBlank(bagName)) {
-                    LOG.warn("Failed to load bag with blank name on login for user: " + userProfile.getUsername());
-                } else {
-                    try {
-                        InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                        bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
-                                             classKeys, bag.getType()));
-                        savedBags.put(bagName, bag);
-                    } catch (UnknownBagTypeException e) {
-                        LOG.warn("The bag '" + bagName + "' for user '" +
-                                userProfile.getUsername() + "'"
-                                + " with type: " + savedBag.getType()
-                                + " is not in the model. It will be saved into invalidBags", e);
-                        InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
-                        savedInvalidBags.put(bagName, bag);
+            // Multiple attempts to access the userprofile (create/delete bags, for instance)
+            // will cause this to fail. Allow three retries.
+            ConcurrentModificationException lastError = null;
+            boolean succeeded = false;
+            for (int attemptsRemaining = 3; attemptsRemaining >= 0; attemptsRemaining--) {
+                try {
+                    Results bags = uosw.execute(q, 1000, false, false, true);
+                    for (Iterator<?> i = bags.iterator(); i.hasNext();) {
+                        ResultsRow<?> row = (ResultsRow<?>) i.next();
+                        Integer bagId = (Integer) row.get(0);
+                        SavedBag savedBag = (SavedBag) row.get(1);
+                        String bagName = savedBag.getName();
+                        if (StringUtils.isBlank(bagName)) {
+                            LOG.warn("Failed to load bag with blank name on login for user: " + userProfile.getUsername());
+                        } else {
+                            try {
+                                InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                                bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
+                                                     classKeys, bag.getType()));
+                                savedBags.put(bagName, bag);
+                            } catch (UnknownBagTypeException e) {
+                                LOG.warn("The bag '" + bagName + "' for user '" +
+                                        userProfile.getUsername() + "'"
+                                        + " with type: " + savedBag.getType()
+                                        + " is not in the model. It will be saved into invalidBags", e);
+                                InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
+                                savedInvalidBags.put(bagName, bag);
+                            }
+                        }
                     }
+                    succeeded = true;
+                } catch (ConcurrentModificationException e) {
+                    lastError = e;
                 }
+            }
+            if (!succeeded && (lastError != null)) {
+                throw lastError;
             }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
@@ -639,6 +656,21 @@ public class ProfileManager
                 null, true, false);
 
         this.createProfile(p);
+    }
+
+    public Profile createAnonymousProfile() {
+        String username = null;
+        Integer id = null;
+        String password = null;
+        String token = null;
+        boolean isLocal = true;
+        boolean isSuperUser = false;
+
+        Profile p = new Profile(this, username, id, password,
+                new HashMap<String, org.intermine.api.profile.SavedQuery>(),
+                new HashMap<String, InterMineBag>(),
+                new HashMap<String, ApiTemplate>(), token, isLocal, isSuperUser);
+        return p;
     }
 
     /**
@@ -1332,12 +1364,22 @@ ission levels.
         Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(true));
         q.setConstraint(c);
 
-        Results res = uosw.execute(q);
-        Iterator<Object> iterator = res.iterator();
-        while (iterator.hasNext()) {
-            superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+        // Multiple attempts to access the userprofile (create/delete bags, for instance)
+        // will cause this to fail. Allow three retries.
+        ConcurrentModificationException lastError = null;
+        for (int attemptsRemaining = 3; attemptsRemaining >= 0; attemptsRemaining--) {
+            try {
+                Results res = uosw.execute(q);
+                Iterator<Object> iterator = res.iterator();
+                while (iterator.hasNext()) {
+                    superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+                }
+                return superusers;
+            } catch (ConcurrentModificationException e) {
+                lastError = e;
+            }
         }
-        return superusers;
+        throw lastError;
     }
 
     /**

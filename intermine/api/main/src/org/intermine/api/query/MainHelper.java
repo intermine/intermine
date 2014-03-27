@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -376,8 +376,13 @@ public final class MainHelper
                             codeToConstraint.put(code, makeQueryDateConstraint(
                                         (QueryField) field, pca));
                         } else {
+                            // Use simple forms of operators when not dealing with strings.
+                            ConstraintOp simpleOp = ConstraintOp.EXACT_MATCH == pca.getOp()
+                                    ? ConstraintOp.EQUALS :
+                                        ConstraintOp.STRICT_NOT_EQUALS == pca.getOp()
+                                                ? ConstraintOp.NOT_EQUALS : pca.getOp();
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
-                                        pca.getOp(), new QueryValue(TypeUtil.stringToObject(
+                                        simpleOp, new QueryValue(TypeUtil.stringToObject(
                                                 fieldType, pca.getValue()))));
                         }
                     
@@ -877,7 +882,7 @@ public final class MainHelper
         endOfDay.add(Calendar.DATE, 1);
         QueryValue endOfDayQV = new QueryValue(endOfDay.getTime());
 
-        if (ConstraintOp.EQUALS.equals(c.getOp())) {
+        if (ConstraintOp.EXACT_MATCH.equals(c.getOp()) || ConstraintOp.EQUALS.equals(c.getOp())) {
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
             cs.addConstraint(new SimpleConstraint(qf, ConstraintOp.GREATER_THAN_EQUALS,
                         startOfDayQV));

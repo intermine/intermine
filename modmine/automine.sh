@@ -1,1 +1,1 @@
-../bio/scripts/modmine/automine.sh
+scripts/automine.sh

@@ -63,7 +63,8 @@ input.submit {
      // (un)Check all ids checkboxes
      function checkAll()
      {
-         jQuery(".item").attr('checked', jQuery('#allItems').is(':checked'));
+         // Removed code, not compatible with jQuery 1.6+: jQuery(".item").attr('checked', jQuery('#allItems').is(':checked'));
+         jQuery(".item").prop('checked', jQuery('#allItems').is(':checked'));
          jQuery('#allItems').css("opacity", 1);
      }
 
@@ -342,7 +343,7 @@ input.submit {
                                          </c:forEach>
                                         </c:url>"
                       title="Click to only show '<c:out value="${facetItem.value}" />'">
-                    <c:out value="${facetItem.value}" />: <c:out
+                    <c:out value="${imf:formatPathStr(facetItem.value, INTERMINE_API, WEBCONFIG)}" />: <c:out
                       value="${facetItem.facetValueHitCount}"></c:out> </a></li>
                   </c:forEach>
                 </ul>
