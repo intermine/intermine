@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -64,6 +64,10 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
         // Allow anyone to use this service, as it doesn't use a list, but 
         // an id-list query.
         return true;
+    }
+
+    @Override
+    protected void validateState() {
     }
 
     @Override

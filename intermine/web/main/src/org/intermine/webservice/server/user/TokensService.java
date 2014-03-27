@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,11 +29,14 @@ public class TokensService extends ReadWriteJSONService {
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-
-        UserProfile up = (UserProfile) im.getProfileManager().getProfileObjectStoreWriter().getObjectById(profile.getUserId());
         List<Map<String, Object>> tokens = new ArrayList<Map<String, Object>>();
-        for (PermanentToken t: up.getPermanentTokens()) {
-            tokens.add(PermaTokens.format(t));
+
+        if (profile.getUserId() != null) { // ie. is really in the DB.
+            UserProfile up = (UserProfile) im.getProfileManager().getProfileObjectStoreWriter().getObjectById(profile.getUserId());
+
+            for (PermanentToken t: up.getPermanentTokens()) {
+                tokens.add(PermaTokens.format(t));
+            }
         }
         addResultItem(tokens, false);
     }

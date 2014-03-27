@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,16 +51,19 @@ public class GAFQueryService extends BioQueryService
 
     @Override
     protected GAFExporter getExporter(PathQuery pq) {
-        String taxonIds = null;
         Set<String> orgSet = SequenceFeatureExportUtil.getTaxonIds(pq, im, getPermission().getProfile());
-        taxonIds = StringUtil.join(orgSet, ",");
-        List<Integer> indexes = new ArrayList<Integer>();
         List<String> viewColumns = new ArrayList<String>(pq.getView());
-        for (int i = 0; i < viewColumns.size(); i++) {
-            indexes.add(Integer.valueOf(i));
-        }
 
-        return new GAFExporter(getPrintWriter(), indexes, taxonIds);
+        return new GAFExporter(getPrintWriter(), indices(viewColumns), orgSet);
+    }
+
+    private List<Integer> indices(List<?> list) {
+        List<Integer> indices = new ArrayList<Integer>();
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            indices.add(Integer.valueOf(i));
+        }
+        return indices;
     }
 
     @Override

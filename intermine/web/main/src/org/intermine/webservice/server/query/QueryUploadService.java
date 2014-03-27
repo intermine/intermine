@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,6 +12,7 @@ package org.intermine.webservice.server.query;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -24,6 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -35,12 +41,17 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager.ApiPermission.Level;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.JSONFormatter;
+import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
+import org.intermine.webservice.server.output.StreamedOutput;
 
 /**
  * A service to enable queries to be uploaded programmatically.
@@ -76,6 +87,7 @@ public class QueryUploadService extends WebService
     @Override
     protected boolean canServe(Format f) {
         return f == Format.JSON ||
+                f == Format.XML  ||
                 f == Format.TEXT ||
                 f == Format.TSV  ||
                 f == Format.CSV;
@@ -95,7 +107,7 @@ public class QueryUploadService extends WebService
         switch (getFormat()) {
         case JSON:
             headerAttributes.put(JSONFormatter.KEY_INTRO, "\"queries\":{");
-            headerAttributes.put(JSONFormatter.KEY_OUTRO, "}");
+            headerAttributes.put(JSONFormatter.KEY_OUTRO, "},");
         }
         return headerAttributes;
     }
@@ -115,10 +127,16 @@ public class QueryUploadService extends WebService
         int version = getVersion();
 
         Reader r = new StringReader(queriesXML);
-        Map<String, PathQuery> queries = PathQueryBinding.unmarshalPathQueries(r, version);
+        Map<String, PathQuery> queries;
+        try {
+            queries = PathQueryBinding.unmarshalPathQueries(r, version);
+        } catch (Exception e) {
+            throw new BadRequestException("Could not de-serialize queries: " + e.getMessage());
+        }
 
         for (String name: queries.keySet()) {
             PathQuery pq = queries.get(name);
+            pq.setTitle(name);
             if (!pq.isValid()) {
                 problems.add(name + ": " + formatMessage(pq.verifyQuery()));
             } else {
@@ -206,5 +224,77 @@ public class QueryUploadService extends WebService
 
     private Integer getVersion() {
         return getIntParameter(VERSION_PARAMETER, PathQuery.USERPROFILE_VERSION);
+    }
+    
+
+    @Override
+    protected Output makeXMLOutput(PrintWriter out, String separator) {
+        ResponseUtil.setXMLHeader(response, "uploaded-queries.xml");
+        try {
+            return new StreamedOutput(out, new XMLFormatter(out), separator);
+        } catch (XMLStreamException e) {
+            throw new ServiceException(e);
+        } catch (FactoryConfigurationError e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    private static class XMLFormatter extends Formatter {
+
+        private XMLStreamWriter writer;
+
+        XMLFormatter(PrintWriter output) throws XMLStreamException, FactoryConfigurationError {
+            this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(output);
+        }
+
+        @Override
+        public String formatHeader(Map<String, Object> attributes) {
+            try {
+                writer.writeStartElement("report");
+            } catch (XMLStreamException e) {
+                throw new ServiceException(e);
+            }
+            return "";
+        }
+
+        @Override
+        public String formatResult(List<String> resultRow) {
+            try {
+                writer.writeStartElement("entry");
+
+                writer.writeStartElement("input");
+                writer.writeCharacters(resultRow.get(0));
+                writer.writeEndElement();
+
+                writer.writeStartElement("saved-as");
+                writer.writeCharacters(resultRow.get(1));
+                writer.writeEndElement();
+
+                writer.writeEndElement();
+            } catch (XMLStreamException e) {
+                throw new ServiceException(e);
+            }
+            return "";
+        }
+
+        @Override
+        public String formatFooter(String errorMessage, int errorCode) {
+            try {
+                if (errorMessage != null && errorCode >= 400) {
+                    writer.writeStartElement("error");
+                    writer.writeAttribute("code", String.valueOf(errorCode));
+
+                    writer.writeStartElement("message");
+                    writer.writeCharacters(errorMessage);
+                    writer.writeEndElement();
+                    
+                    writer.writeEndElement();
+                }
+                writer.writeEndElement();
+            } catch (XMLStreamException e) {
+                throw new ServiceException(e);
+            }
+            return "";
+        }
     }
 }

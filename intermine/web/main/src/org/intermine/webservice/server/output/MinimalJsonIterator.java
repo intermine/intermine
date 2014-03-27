@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,7 +47,12 @@ public class MinimalJsonIterator implements Iterator<JSONArray>
                 // In the case of flattened outerjoins.
                 jsonRow.add(null);
             } else {
-                jsonRow.add(re.getField());
+                Object field = re.getField();
+                // Stringify all char-sequences, (ie. force Clob evaluation)
+                if (field instanceof CharSequence) {
+                    field = field.toString();
+                }
+                jsonRow.add(field);
             }
         }
         JSONArray next = new JSONArray(jsonRow);

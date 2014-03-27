@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -109,8 +109,30 @@ public class ServicesListingsServlet extends HttpServlet
     }
 
     private DefaultHandler getHandler() {
+
+        final Map<String, Object> TOKEN_AUTH = new HashMap<String, Object>() {{
+            put("name", "API key - parameter");
+            put("type", "token");
+            put("mechanism", "parameter");
+            put("key", "token");
+        }};
+        final Map<String, Object> TOKEN_HEADER = new HashMap<String, Object>() {{
+            put("name", "API key - header");
+            put("type", "token");
+            put("mechanism", "header");
+            put("key", "Authorization");
+            put("prefix", "Token ");
+        }};
+        final Map<String, Object> BASIC_AUTH = new HashMap<String, Object>() {{
+            put("name", "Username and Password");
+            put("type", "password");
+            put("mechanism", "basic"); // Special shortcut definiton.
+        }};
+
         DefaultHandler handler = new DefaultHandler() {
             private final Map<String, Object> result = new HashMap<String, Object>();
+            private final List<Map<String, Object>> auth = new ArrayList<Map<String, Object>>();
+            
             private final List<Map<String, Object>> endpoints
                 = new ArrayList<Map<String, Object>>();
             private Map<String, Object> currentEndPoint = null;
@@ -129,6 +151,10 @@ public class ServicesListingsServlet extends HttpServlet
             private static final String DEFAULT_PROP_FMT = "ws.listing.default.%s.%s";
 
             public void startDocument() {
+                result.put("auth", auth);
+                auth.add(TOKEN_HEADER);
+                auth.add(TOKEN_AUTH);
+                auth.add(BASIC_AUTH);
                 result.put("endpoints", endpoints);
             }
 
@@ -148,9 +174,11 @@ public class ServicesListingsServlet extends HttpServlet
                     return null;
                 }
                 input = input.replaceAll("^\\n", "").replaceAll("\\t", "    ");
+
                 if (!input.startsWith(" ")) {
                     return input;
                 }
+
                 int i = 1;
                 while (input.charAt(i) == ' ') {
                     i++;
@@ -169,6 +197,8 @@ public class ServicesListingsServlet extends HttpServlet
                 } else if ("returns".equals(qName)) {
                     returns = new ArrayList<Map<String, Object>>();
                     addToCurrentMethod("returnFormats", returns);
+                } else if ("description".equals(qName) && "method".equals(path.get(Math.max(0, path.size() - 2)))) {
+                    currentMethod.put("DescriptionFormat", attrs.getValue("format"));
                 } else if ("method".equals(qName)) {
                     currentMethod = new HashMap<String, Object>();
                     addToCurrentMethod("URI",
@@ -202,7 +232,11 @@ public class ServicesListingsServlet extends HttpServlet
                             Boolean.valueOf(attrs.getValue("required")) ? "Y" : "N");
                     currentParam.put("Type", attrs.getValue("type"));
                     currentParam.put("Description", attrs.getValue("description"));
+                    currentParam.put("Repeat", attrs.getValue("repeat"));
+                    currentParam.put("Depends", attrs.getValue("depends"));
                     currentParam.put("Schema", attrs.getValue("schema"));
+                    currentParam.put("Options", attrs.getValue("options"));
+                    currentParam.put("Recommended", "true".equals(attrs.getValue("recommended")));
                     String defaultValue = attrs.getValue("default");
                     if (defaultValue != null) {
                         currentParam.put("Default", defaultValue);
@@ -227,9 +261,14 @@ public class ServicesListingsServlet extends HttpServlet
             public void endElement(String uri, String localName,
                     String qName) throws SAXException {
 
-                final String content = sb.toString().replace("\n", "")
+                final String[] lines = sb.toString().replace("\n", "")
                                               .trim()
-                                              .replaceAll(" +", " ");
+                                              .split("\n");
+                StringBuffer contentBuffer = new StringBuffer();
+                for (String line: lines) {
+                    contentBuffer.append(line.replaceAll("^ +", "") + "\n");
+                }
+                final String content = contentBuffer.toString().trim();
 
                 if ("servlet-mapping".equals(qName)) {
                     currentEndPoint = null; 
@@ -279,7 +318,7 @@ public class ServicesListingsServlet extends HttpServlet
                 } else if ("summary".equals(qName)) {
                     currentMethod.put("Synopsis", content);
                 } else if ("description".equals(qName)) {
-                    currentMethod.put("Description", content);
+                    currentMethod.put("Description", deIndent(sb.toString()));
                 } else if ("minVersion".equals(qName)) {
                     Integer minVersion = Integer.valueOf(content);
                     currentEndPoint.put("minVersion", minVersion);

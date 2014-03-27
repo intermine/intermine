@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -165,36 +165,15 @@ public class UniprotKeywordConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+		@Override
         public void characters(char[] ch, int start, int length) {
-            int st = start;
-            int l = length;
             if (attName != null) {
-
-                // DefaultHandler may call this method more than once for a single
-                // attribute content -> hold text & create attribute in endElement
-                while (l > 0) {
-                    boolean whitespace = false;
-                    switch(ch[st]) {
-                        case ' ':
-                        case '\r':
-                        case '\n':
-                        case '\t':
-                            whitespace = true;
-                            break;
-                        default:
-                            break;
-                    }
-                    if (!whitespace) {
-                        break;
-                    }
-                    ++st;
-                    --l;
-                }
-
-                if (l > 0) {
-                    StringBuffer s = new StringBuffer();
-                    s.append(ch, st, l);
-                    attValue.append(s);
+                if (length > 0) {
+                	StringBuffer s = new StringBuffer();
+                	s.append(ch, start, length);
+                	String str = s.toString();
+                	str = str.replaceAll("[\n\r]", " ");
+                	attValue.append(str);
                 }
             }
         }
