@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -19,6 +20,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -26,6 +28,7 @@ import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.jbrowse.util.ArrayFormatter;
+import org.intermine.webservice.server.jbrowse.util.NameSpacedProperties;
 import org.intermine.webservice.server.jbrowse.util.ObjectFormatter;
 import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.Output;
@@ -110,7 +113,7 @@ public class Config extends JSONService {
     /** Get the prefix used to namespace this service **/
     private String getPropertyPrefix() {
         String modelName = im.getModel().getName();
-        String prefix = "org.intermine.webservice.server.jbrowse." + modelName + ".";
+        String prefix = "org.intermine.webservice.server.jbrowse." + modelName;
         return prefix;
     }
 
@@ -119,15 +122,16 @@ public class Config extends JSONService {
         super.initState();
         config = InterMineContext.getWebConfig();
         String prefix = getPropertyPrefix();
-        refType = webProperties.getProperty(prefix + "referenceClass");
-        featType = webProperties.getProperty(prefix + "featureClass");
-        domainPath = webProperties.getProperty(prefix + "domain");
-        identPath = webProperties.getProperty(prefix + "paths.ident");
-        lengthPath = webProperties.getProperty(prefix + "paths.length", "length");
-        referenceLabel = webProperties.getProperty(prefix + "reference.label");
-        referenceCat = webProperties.getProperty(prefix + "reference.category");
-        featureCat = webProperties.getProperty(prefix + "feature.category");
-        referenceKey = webProperties.getProperty(prefix + "reference.key");
+        Properties namespaced = new NameSpacedProperties(prefix, webProperties);
+        refType        = namespaced.getProperty("referenceClass");
+        featType       = namespaced.getProperty("featureClass");
+        domainPath     = namespaced.getProperty("domain");
+        identPath      = namespaced.getProperty("paths.ident");
+        lengthPath     = namespaced.getProperty("paths.length", "length");
+        referenceLabel = namespaced.getProperty("reference.label");
+        referenceCat   = namespaced.getProperty("reference.category");
+        featureCat     = namespaced.getProperty("feature.category");
+        referenceKey   = namespaced.getProperty("reference.key");
 
         String pathInfo = StringUtils.defaultString(request.getPathInfo(), "/")
                                      .trim()
