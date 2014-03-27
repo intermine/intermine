@@ -69,6 +69,7 @@ public class DataService extends JSONService {
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String param = params.nextElement();
+            String value = request.getParameter(param);
             String pathString = String.format("%s.%s", className, param);
             Path p;
             try {
@@ -77,9 +78,9 @@ public class DataService extends JSONService {
                 throw new BadRequestException(pathString + " is not a valid relationship.");
             }
             if (p.endIsAttribute()) {
-                pq.addConstraint(Constraints.equalsExactly(pathString, request.getParameter(param)));
+                pq.addConstraint(Constraints.equalsExactly(pathString, value));
             } else {
-                pq.addConstraint(Constraints.lookup(pathString, request.getParameter(param), ""));
+                pq.addConstraint(Constraints.lookup(pathString, value, ""));
             }
         }
         Profile p = getPermission().getProfile();
