@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,11 +10,34 @@
 
 1.3.1
 
-#506 - Do not remember checkbox state on template forms
-#540 - Fix normalise by length UI in list widgets
-#545 - Lists not being upgraded throw error on homepage
+#172 - Error when middle click on 'Show Results'
+#370 - Add HTTP api docs for the bio web services
+#383 - Warning messages keep popping up when navigating between lists
+#407 - Favicons for mines - flymine, modmine, intermine
+#446 - Interaction Widget download only capturing 50 rows
+#456 - we should serve subfeatures in our jbrowse output.
+#463 - Add InterMine Query Tool
+#473 - MouseMine - synonyms not being indexed correctly
+#503 - Add janitor thread to id resolution servlet
+#515 - UniProt keywords: multi-line text loses whitespace
+#524 - list enrichment web service xml output
+#526 - web service documentation
+#528 - Keyword search iodocs - add facet and 100 limit
 #529 - Add path formatter to keyword search facets, as per @hkmoon
-#548 - Initial HumanMine theme
+#530 - unmatched </div> in dataCategories.jsp
+#535 - keyword search with quotes
+#536 - uniprot features location
+#537 - pop-up info box on mouse-over in results table..
+#539 - web service (perl): "XML is not well formatted" error if field names have underscore [_] 
+#540 - list-widgets normalise by length does not work anymore
+#543 - Add List DELETE to web.xml
+#545 - Error on home page related to lists
+#549 - Panther - update to allow for new codes
+#550 - Webapp failing regularly
+#555 - Exception when running query using Java client library
+#560 - Update links on docs
+#570 - Keyword search - select all checkbox doesn't work
+#573 - Breadcrumbs don't make sense
 
 1.3
 
