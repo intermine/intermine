@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,9 +55,13 @@ public abstract class JSONService extends WebService
     }
 
     protected String getResultsKey() {
-    	return null;
+        return null;
     }
-    
+
+    protected boolean lazyList() {
+        return false;
+    }
+
     /**
      * Get the header attributes to apply to the formatter.
      * @return A map from string to object.
@@ -66,7 +70,12 @@ public abstract class JSONService extends WebService
         Map<String, Object> attributes = new HashMap<String, Object>();
         String resultsKey = getResultsKey();
         if (resultsKey != null) {
-        	attributes.put(JSONFormatter.KEY_INTRO, "\"" + resultsKey + "\":");
+            String intro = "\"" + resultsKey + "\":";
+            if (lazyList()) {
+                intro += "[";
+                attributes.put(JSONFormatter.KEY_OUTRO, "]");
+            }
+        	attributes.put(JSONFormatter.KEY_INTRO, intro);
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
@@ -115,6 +124,11 @@ public abstract class JSONService extends WebService
 
     protected void addResultEntries(
             Collection<Map.Entry<String, Object>> entries) {
+        addResultEntries(entries, false);
+    }
+
+    protected void addResultEntries(
+            Collection<Map.Entry<String, Object>> entries, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
         for (Map.Entry<String, Object> entry: entries) {
             String key = entry.getKey();
@@ -135,6 +149,9 @@ public abstract class JSONService extends WebService
             }
             outputStrings.add(String.format("\"%s\":%s", key, valStr));
         }
+        if (hasMore) {
+            outputStrings.add("");
+        }
         output.addResultItem(outputStrings);
     }
 
@@ -147,7 +164,7 @@ public abstract class JSONService extends WebService
         JSONArray ja = new JSONArray(listing);
         addResultItemInternal(ja, hasMore);
     }
-    
+
     private void addResultItemInternal(Object obj, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
         outputStrings.add(String.valueOf(obj));

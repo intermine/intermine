@@ -1,0 +1,43 @@
+package org.intermine.bio.webservice;
+
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+
+/**
+ * Export a list as FASTA.
+ * @author alex
+ *
+ */
+public class FastaListService extends FastaQueryService
+{
+
+    private static final String LIST_PARAM = "list";
+
+    public FastaListService(InterMineAPI im) {
+        super(im);
+    }
+
+    @Override
+    protected PathQuery getQuery() {
+        InterMineBag list = getList();
+        PathQuery pq = new PathQuery(im.getModel());
+        pq.addView(list.getType() + ".id");
+        pq.addConstraint(Constraints.in(list.getType(), list.getName()));
+        return pq;
+    }
+
+    private InterMineBag getList() {
+        String listName = getRequiredParameter(LIST_PARAM);
+        Profile p = getPermission().getProfile();
+        InterMineBag list = im.getBagManager().getBag(p, listName);
+        if (list == null) {
+            throw new BadRequestException("Cannot access a list called" + listName);
+        }
+        return list;
+    }
+
+}

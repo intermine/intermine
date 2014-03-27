@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,7 @@ import org.intermine.api.profile.Profile;
  * Manager of public lists used by web service.
  * @author Jakub Kulaviak
  **/
-public class ListManager
+public class ListManager implements Producer<Map<String, InterMineBag>>
 {
     private static final long MAX_WAIT = 0;
     private final BagManager bagManager;
@@ -98,5 +98,11 @@ public class ListManager
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {
         return bagManager.getCurrentBagsContainingId(profile, objectId);
+    }
+
+
+    @Override
+    public Map<String, InterMineBag> produce() {
+        return getListMap();
     }
 }

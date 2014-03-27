@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -200,7 +200,7 @@ public class PathQueryHandler extends DefaultHandler {
             // class that has
             // attributes on the view list before adding it. We ignore invalid
             // descriptions to
-            // cope with legacy bad validation of qyery XML.
+            // cope with legacy bad validation of query XML.
             if (pathString.endsWith(".")) {
                 throw new SAXException("Invalid path '" + pathString
                         + "' for description: " + description);

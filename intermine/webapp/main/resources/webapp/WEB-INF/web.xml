@@ -113,12 +113,21 @@
         <param required="true" type="XML" schema="/schema/query.xsd" description="A definition of the query to execute in Path-Query XML format">query</param>
         <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format used">version</param>
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
-        <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <param type="Integer" required="false" recommended="true" default="10" description="The maximum size of the result set.">size</param>
+        <param type="enumerated"
+               values="none,path,friendly" 
+               default="none"
+               required="false"
+               description="Include column headers. Use friendly for human readable paths. (Only for flat-file formats)">columnheaders</param>
         <returns>
             <format accept="application/tsv">tab</format>
             <format accept="application/csv">csv</format>
+            <format accept="text/count">count</format>
             <format accept="application/json" key="results">json</format>
+            <format accept="application/json;type=objects" key="results">jsonobjects</format>
+            <format accept="application/json;type=count" key="results">jsoncount</format>
             <format accept="application/xml">xml</format>
+            <format accept="text/html">html</format>
         </returns>
     </method>
   </metadata>
@@ -141,17 +150,31 @@
         <minVersion>4</minVersion>
         <method type="POST" authenticationRequired="true" ALSO="GET">
             <summary>Save the result set of a query as a list on the server.</summary>
-            <description>
-                This service provides the facility to submit a query and create a new list
-                whose contents shall be the result set defined by running the query. This
-                facility places a couple of restrictions on the query itself, namely that
-                the view list may only contain a single item, which should refer to the
-                internal id attribute of an object in the query.
+            <description format="markdown">
+This service provides the facility to submit a query and create a new list
+whose contents shall be the result set defined by running the query.
+
+This facility places a couple of restrictions on the query itself, namely that
+the view list may only contain a single item, which can refer to any attribute
+of an object. The attribute itself will be ignored, and the object itself
+will be selected. For this reason, one might choose to always select the `.id`
+attribute when using this service.
             </description>
-            <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format">query</param>
-            <param required="true" type="String" description="The name for the new list. There must be no existing list of this name">listName</param>
+            <param
+                required="true"
+                type="XML"
+                description="A definition of the query to execute in Path-Query XML format">query</param>
+            <param
+                description="The name for the new list. There must be no existing list of this name"
+                required="true"
+                type="String">name</param>
             <param required="false" type="String" description="A description to attach to the new list">description</param>
             <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+          <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
             <returns>
                 <format accept="application/json">json</format>
                 <format accept="text/plain">text</format>
@@ -260,7 +283,11 @@
                 </description>
                 <param required="false" type="String" description="A stable identifier that can be used to find the object.">publicId</param>
                 <param required="false" type="Integer" description="The internal DB id (changes on each re-release).">id</param>
-                <param required="false" type="String" description="The type of object (required if using a public id)">type</param>
+                <param required="false"
+                    type="String"
+                    options="/model|model.classes"
+                    default="{name}"
+                    description="The type of object (required if using a public id)">type</param>
                 <param required="false" type="String" description="An extra value to disambiguate objects">extraValue</param>
                 <returns>
                     <format accept="application/json">json</format>
@@ -305,7 +332,11 @@
             the union operation on that list an existing one, if the resulant
             list replaced the existing list.
         </description>
-        <param required="true" type="String" description="The name of the list to append to">name</param>
+        <param required="true"
+            type="String"
+            description="The name of the list to append to. The list must exist, and belong to you."
+            options="/lists|lists{authorized,status=CURRENT}"
+            default="{name}">name</param>
         <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
           <content type="text/plain">
             "even skipped"
@@ -314,7 +345,7 @@
           </content>
         </body>
         <returns>
-          <format accept="application/json">json</format>
+          <format accept="application/json" key="list">json</format>
           <format accept="text/plain">text</format>
         </returns>
       </method>
@@ -354,7 +385,11 @@
             itself may be considered a copy.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list">lists</param>
+        <param required="true"
+            type="String[]"
+            description="The name of a source list."
+            options="/lists|lists{status=CURRENT}"
+            default="{name}">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -400,8 +435,15 @@
             but need not be the owner of any of them.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list">references</param>
-        <param required="true" type="String[]" description="The name of a list to exclude">subtract</param>
+        <param required="true" type="String[]"
+            options="/lists|lists{status=CURRENT}"
+            default="{name}"
+            description="The name of a source list">references</param>
+        <param required="true"
+            options="/lists|lists{status=CURRENT}"
+            default="{name}"
+            type="String[]"
+            description="The name of a list to exclude">subtract</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -445,7 +487,10 @@
             may be considered a copy.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list, or multiple list names concatenated with a ';' separator.">lists</param>
+        <param required="true" type="String[]"
+            options="/lists|lists{status=CURRENT}"
+            default="{name}"
+            description="The name of a source list, or multiple list names concatenated with a ';' separator.">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -488,7 +533,10 @@
             The user must have access to all the input lists, but need not be the owner of any of them.
         </description>
         <param required="true" type="String" description="The name of the list to create">name</param>
-        <param required="true" type="String[]" description="The name of a source list">lists</param>
+        <param required="true" type="String[]"
+            options="/lists|lists{status=CURRENT}"
+            default="{name}"
+            description="The name of a source list">lists</param>
         <param required="false" type="String" description="A description of this new list">description</param>
         <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
         <returns>
@@ -524,25 +572,52 @@
                 </description>
                 <param required="false" type="String" description="An optional filter by name.">name</param>
                 <returns>
-                    <format accept="application/json">json</format>
+                    <format key="lists" accept="application/json">json</format>
                     <format accept="text/html">html</format>
                     <format accept="text/plain">text</format>
                     <format accept="application/csv">csv</format>
                     <format accept="application/tsv">tab</format>
                 </returns>
         </method>
+        <method type="DELETE" authenticationRequired="true">
+            <summary>Delete an existing list</summary>
+            <description>
+                This service allows users to delete
+                lists that belong to them.
+            </description>
+            <param required="true" type="String"
+                options="/lists|lists{authorized}"
+                default="{name}"
+                description="The name of the list to delete">name</param>
+	        <returns>
+	          <format accept="application/json">json</format>
+	          <format accept="text/plain">text</format>
+	        </returns>
+        </method>
         <method type="POST" authenticationRequired="true">
 	        <summary>Create a new list</summary>
 	          <description>
-	            This service allows users to add new items to an existing
-	            list by uploading a set of identifiers. This is equivalent to
-	            creating a new list from a set of identifiers, and then performing
-	            the union operation on that list an existing one, if the resulant
-	            list replaced the existing list.
+	            This service allows users to create a new
+	            list by uploading a set of identifiers. 
+                The list is created by using the default settings
+                of the ID resolution mechanism and then taking
+                all the good matches.
 	          </description>
-	        <param required="true" type="String" description="The name of the new list">name</param>
-	        <param required="true" type="String" description="The type of the list">type</param>
-	        <param required="false" type="String" description="A disambiguating value (such as organism name)">extraValue</param>
+              <param required="true"
+                  type="String"
+                  description="The name of the new list">name</param>
+            <param required="true"
+                options="/model|model.classes"
+                default="{name}"
+                type="String" description="The type of the list">type</param>
+            <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
+            <param required="false"
+                type="String"
+                description="A disambiguating value (such as organism name)">extraValue</param>
 	        <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
              <content type="text/plain">
               "even skipped"
@@ -579,7 +654,10 @@
         This service allows users to change the name of an existing list that
         they are the owner of.
       </description>
-      <param required="true" type="String" description="The current name of the list">oldname</param>
+      <param required="true" type="String"
+          options="/lists|lists{authorized}"
+          default="{name}"
+          description="The current name of the list">oldname</param>
       <param required="true" type="String" description="The name the list should have">newname</param>
       <returns>
         <format accept="application/json">json</format>
@@ -636,26 +714,85 @@
       <name>Template Results</name>
       <method type="GET" ALSO="POST" authenticationRequired="false">
         <summary>Get the results from running a template with a given set of parameters</summary>
-        <description>
-        Templates are predefined parameterised queries which may be run by supplying values and
-        operators for the available editable constraints. To run a template, for example which
-        has the following editable constraints:
-          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
-          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
-        Then the user should supply the following parameters to run it with the default values:
-          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
-        The value of the number used to identify each constraint is ignored - it must however be
-        consistent for each parameter. 
+        <description format="markdown">
+Templates are predefined parameterised queries which may be run by supplying values and
+operators for the available editable constraints. The editable constraints vary from 
+template to template, so knowledge of these (obtainable by calls to `/templates`)
+is required to use this service correctly.
+
+Users should provide parameters of the form `constraint{N}`, `op{N}`, `value{N}`
+and `extra{N}` for each editable contraint, where `N` represents a number to group
+the values. The value of the `constraint{N}` parameter serves to identify
+the constraint, and may not be changed. Values for `op{N}` and `value{N}` must be
+given, and may be anything the user requires.
+
+To run a template, for example which has the following editable constraints:
+```
+&lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"/&gt;
+&lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"/&gt;
+```
+
+Then the user should supply the following parameters to run it with the above values:
+
+| Parameter           | Value            |
+|---------------------|------------------|
+| constraint1         | Gene.symbol      |
+| op1                 | eq               |
+| value1              | eve              |
+| constraint2         | Gene.length      |
+| op2                 | gt               |
+| value2              | 1000             |
+
+The value of the number used to identify each constraint is ignored - it must however be
+consistent for each parameter. One set of template constraint parameters is required
+for each editable constraint on the query. These are not required for optional constraints.
         </description>
-        <param type="String" required="true" description="The name of the template to run">name</param>
-        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
+        <param type="String"
+            required="true"
+            description="The name of the template to run"
+            options="/templates|templates"
+            default="{name}">name</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint paths"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{path}">constraint{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint operators"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{op}">op{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint values"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint codes. Codes are only required if two constraints have the same path."
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{code}">code{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{extraValue}">extra{N}</param>
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
         <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <param type="enumerated"
+               values="none,path,friendly" 
+               default="none"
+               required="false"
+               description="Include column headers. Use friendly for human readable paths. (Only for flat-file formats)">columnheaders</param>
         <returns>
           <format accept="application/tsv">tab</format>
           <format accept="application/csv">csv</format>
+          <format accept="text/count">count</format>
           <format accept="application/json" key="results">json</format>
+          <format accept="application/json;type=objects" key="results">jsonobjects</format>
+          <format accept="application/json;type=count" key="count">jsoncount</format>
           <format accept="application/xml">xml</format>
+          <format accept="text/html">html</format>
         </returns>
       </method>
     </metadata>
@@ -675,31 +812,89 @@
   <url-pattern>/service/template/tolist/*</url-pattern>
   <metadata>
       <name>Template to list</name>
-      <method type="GET" ALSO="POST" authenticationRequired="false">
+      <method type="GET" ALSO="POST" authenticationRequired="true">
         <summary>Create a List from the Output of a Template</summary>
-        <description>
-        This service allows the user to create a list from the result set of running a template
-        with a given set of parameters. The parameters for running the template are the same as when
-        requesting results, and in addition to these parameters the user needs to supply a name 
-        and optional description for the list to be created.
-        To define which part of the template results, the user must supply a path parameter which
-        indicates a valid column from the output to be used.
-        Templates are predefined parameterised queries which may be run by supplying values and
-        operators for the available editable constraints. To run a template, for example which
-        has the following editable constraints:
-          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
-          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
-        Then the user should supply the following parameters to run it with the default values:
-          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
-        The value of the number used to identify each constraint is ignored - it must however be
-        consistent for each parameter. 
+        <description format="markdown">
+This service allows the user to create a list from the result set of running a template
+with a given set of parameters. The parameters for running the template are the same as when
+requesting results (see documentation for `template-results`), and in addition to these
+parameters the user needs to supply a name and optional description for the list to be created. 
+
+To define which part of the template results to use, the user must supply a path parameter which
+indicates a valid column from the output to be used.
+
+Users should provide parameters of the form `constraint{N}`, `op{N}`, `value{N}`
+and `extra{N}` for each editable contraint, where `N` represents a number to group
+the values. The value of the `constraint{N}` parameter serves to identify
+the constraint, and may not be changed. Values for `op{N}` and `value{N}` must be
+given, and may be anything the user requires.
+
+To run a template, for example which has the following editable constraints:
+```
+&lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"/&gt;
+&lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"/&gt;
+```
+
+Then the user should supply the following parameters to run it with the above values:
+
+| Parameter           | Value            |
+|---------------------|------------------|
+| constraint1         | Gene.symbol      |
+| op1                 | eq               |
+| value1              | eve              |
+| constraint2         | Gene.length      |
+| op2                 | gt               |
+| value2              | 1000             |
+
+The value of the number used to identify each constraint is ignored - it must however be
+consistent for each parameter. One set of template constraint parameters is required
+for each editable constraint on the query. These are not required for optional constraints.
         </description>
-        <param type="String" required="true" description="The name of the template to run">name</param>
-        <param type="String" required="true" description="The path to use to compose the results">path</param>
-        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
-        <param required="true" type="String" description="The name for the new list. There must be no existing list of this name">listName</param>
+        <param type="String"
+            required="true"
+            description="The name of the template to run"
+            options="/templates|templates"
+            default="{name}">name</param>
+        <param type="String"
+            required="true"
+            options="/templates|templates.$name.select"
+            default="{}"
+            description="The path to use to compose the results. This should be one of the selected view paths.">path</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint paths"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{path}">constraint{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint operators"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{op}">op{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint values"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint codes. Codes are only required if two constraints have the same path."
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{code}">code{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{extraValue}">extra{N}</param>
+        <param required="true"
+            type="String"
+            description="The name for the new list. There must be no existing list of this name">listName</param>
         <param required="false" type="String" description="A description to attach to the new list">description</param>
         <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+          <param
+              description="Whether or not to replace any existing list of this name"
+              required="false"
+              type="boolean"
+              default="false">replaceExisting</param>
         <returns>
           <format accept="application/json">json</format>
           <format accept="text/plain">text</format>
@@ -725,27 +920,82 @@
       <minVersion>4</minVersion>
       <method type="POST" ALSO="GET" authenticationRequired="true">
         <summary>Add items to a list from a set of results from running a template</summary>
-        <description>
-        This service allows the user to add items to a list from the result set of running a template
-        with a given set of parameters. The parameters for running the template are the same as when
-        requesting results, and in addition to these parameters the user needs to supply a name 
-        and optional description for the list to be created.
-        To define which part of the template results, the user must supply a path parameter which
-        indicates a valid column from the output to be used.
-        Templates are predefined parameterised queries which may be run by supplying values and
-        operators for the available editable constraints. To run a template, for example which
-        has the following editable constraints:
-          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
-          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
-        Then the user should supply the following parameters to run it with the default values:
-          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
-        The value of the number used to identify each constraint is ignored - it must however be
-        consistent for each parameter. 
+        <description format="markdown">
+This service allows the user to add items to a list from the result set of running a template
+with a given set of parameters. The parameters for running the template are the same as when
+requesting results, and in addition to these parameters the user needs to supply the name 
+of a list to append the results to.
+
+To define which part of the template results to use, the user must supply a path parameter which
+indicates a valid column from the output to be used.
+
+Users should provide parameters of the form `constraint{N}`, `op{N}`, `value{N}`
+and `extra{N}` for each editable contraint, where `N` represents a number to group
+the values. The value of the `constraint{N}` parameter serves to identify
+the constraint, and may not be changed. Values for `op{N}` and `value{N}` must be
+given, and may be anything the user requires.
+
+To run a template, for example which has the following editable constraints:
+```
+&lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"/&gt;
+&lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"/&gt;
+```
+
+Then the user should supply the following parameters to run it with the above values:
+
+| Parameter           | Value            |
+|---------------------|------------------|
+| constraint1         | Gene.symbol      |
+| op1                 | eq               |
+| value1              | eve              |
+| constraint2         | Gene.length      |
+| op2                 | gt               |
+| value2              | 1000             |
+
+The value of the number used to identify each constraint is ignored - it must however be
+consistent for each parameter. One set of template constraint parameters is required
+for each editable constraint on the query. These are not required for optional constraints.
         </description>
-        <param type="String" required="true" description="The name of the template to run">name</param>
-        <param type="String" required="true" description="The path to use to compose the results">path</param>
-        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
-        <param required="true" type="String" description="The name of the list to add items to.">listName</param>
+        <param type="String"
+            required="true"
+            description="The name of the template to run"
+            options="/templates|templates"
+            default="{name}">name</param>
+        <param type="String"
+            required="true"
+            options="/templates|templates.$name.select"
+            default="{}"
+            description="The path to use to compose the results. This should be one of the selected view paths.">path</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint paths"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{path}">constraint{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint operators"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{op}">op{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint values"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{value}">value{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply constraint codes. Codes are only required if two constraints have the same path."
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{code}">code{N}</param>
+        <param type="String[]"
+            description="One of a variable set of parameters used to supply extra constraint values (used by LOOKUP constraints)"
+            required="false"
+            repeat="/templates|templates.$name.where{editable}"
+            default="{extraValue}">extra{N}</param>
+        <param required="true"
+            type="String"
+            options="/lists|lists{authorized}"
+            default="{name}"
+            description="The name of the list to add items to.">listName</param>
         <returns>
           <format accept="application/json">json</format>
           <format accept="text/plain">text</format>
@@ -774,13 +1024,14 @@
         <name>Templates</name>
         <method type="GET" authenticationRequired="false">
             <summary>Get the list of available templates.</summary>
-            <description>
-                Get a listing of the templates configured in an InterMine instance.
-                Each template contains a description of its properties, defining the
-                parameters that must be provided to run it, as well as a definition of the
-                output format for its results.
-                If the request is authenticated to a user, then the templates that that has access
-                to will also be returned.
+            <description format="markdown">
+Get a listing of the templates configured in an InterMine instance.
+Each template contains a description of its properties, defining the
+parameters that must be provided to run it, as well as a definition of the
+output format for its results.
+
+If the request is authenticated to a user, then the templates that that has access
+to will also be returned.
             </description>
             <param required="false" type="boolean" default="false" description="Whether or not to include invalid templates. Invalid templates cannot be run.">includeBroken</param>
             <returns>
@@ -793,7 +1044,16 @@
             <description>
                 Upload a set of templates to the current user profile.
             </description>
-            <param required="false" type="boolean" default="false" description="The xml to load, if using form parameters.">includeBroken</param>
+            <param required="false" type="XML" default="" description="The xml to load, if using form parameters.">xml</param>
+            <body description="The templates to upload. If using body content.">
+             <content type="application/xml">
+                &lt;template name="my-new-template"&gt;
+                    &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
+                        &lt;constraint editable="true" path="Gene" op="LOOKUP" value="eve"/&gt;
+                    &lt;/query&gt;
+                &lt;/template&gt;
+             </content>
+            </body>
             <returns>
                 <format>xml</format>
                 <format>json</format>
@@ -883,7 +1143,23 @@
   <servlet-mapping>
     <servlet-name>ws-check-resource</servlet-name>
     <url-pattern>/service/check/*</url-pattern>
-    
+    <metadata>
+        <deprecated/>
+        <name>Check Resource</name>
+        <method type="GET" slug="/:resource">
+            <summary>Find out where a resource is mounted</summary>
+            <description>
+                This service is deprecated. Use the full service listing instead.
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The resource to locate">resource</param>
+            <returns>
+                <format accept="text/plain">text</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <!-- NEW IN VERSION 6 -->
@@ -933,6 +1209,28 @@
   <servlet-mapping>
     <servlet-name>ws-schemata</servlet-name>
     <url-pattern>/service/schema/*</url-pattern>
+    <metadata>
+        <name>Schemata</name>
+        <minVersion>6</minVersion>
+        <method type="GET">
+            <name>All Schemata</name>
+            <summary>Get all Schemata</summary>
+            <description>Get a listing of the available schemata</description>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" slug="/:name">
+            <name>One Schema</name>
+            <summary>Get one Schema</summary>
+            <description>Retrieve a specific schema</description>
+            <param
+                required="true"
+                options="/schema|schemata"
+                default="{}"
+                description="The name of the schema to retrieve">name</param>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <!-- NEW IN VERSION 7 -->
@@ -1117,19 +1415,41 @@
     <metadata>
         <name>Enrichment Widgets</name>
         <minVersion>8</minVersion>
-        <method authenticationRequired="true" type="GET" ALSO="POST">
+        <method authenticationRequired="false" type="GET" ALSO="POST">
             <summary>get the data for a given enrichment widget</summary>
             <description>
                 Enrichment widgets provide a statistical summary of what makes a list distinct from
                 the background population over a certain domain. They return a list of members of the
                 domain ranked by p-value (low to high).
             </description>
-            <param type="String" required="true" description="The name of the list to investigate">list</param>
-            <param type="String" required="true" description="The name of the enrichment widget to display">widget</param>
-            <param type="String" required="false" description="The name of the list to use as the background population">population</param>
-            <param type="Float" default="0.05" required="true" description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
-            <param type="enumerated" values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None" default="Holm-Bonferroni" required="true" description="The error correction algorithm to use.">correction</param>
-            <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
+            <param type="String"
+                required="true"
+                description="The name of the list to investigate"
+                options="/lists|lists{status=CURRENT}"
+                default="{name}">list</param>
+            <param type="String"
+                required="true"
+                description="The name of the enrichment widget to display"
+                options="/widgets|widgets{widgetType=enrichment}"
+                default="{name}">widget</param>
+            <param type="String"
+                required="false"
+                description="The name of the list to use as the background population"
+                options="/lists|lists{status=CURRENT}"
+                default="{name}">population</param>
+            <param type="Float"
+                default="0.05"
+                required="true"
+                description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
+            <param type="enumerated"
+                values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None"
+                default="Holm-Bonferroni"
+                required="true"
+                description="The error correction algorithm to use.">correction</param>
+            <param type="String"
+                required="false"
+                options="/widgets|widgets{name=$name}.0.filters"
+                description="An optional filter that some widgets accept">filter</param>
             <returns>
 	            <format key="results">json</format>
 	            <format>xml</format>
@@ -1156,15 +1476,23 @@
     <metadata>
         <name>Graphical Widgets</name>
         <minVersion>8</minVersion>
-        <method type="GET" authenticationRequired="true" ALSO="POST">
+        <method type="GET" authenticationRequired="false" ALSO="POST">
             <summary>get the data to produce a graph</summary>
             <description>
 	           This service returns data that can be passed to charting software, such
 	           as Google's javascript Charts API, to produce graphical representations
 	           of the overview of data in a list.
 	        </description>
-            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
-            <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
+            <param type="String"
+                required="true"
+                options="/lists|lists{status=CURRENT}"
+                description="The name of the list to investigate"
+                default="{name}">list</param>
+            <param type="String"
+                required="true"
+                description="The name of the graphical widget to display"
+                options="/widgets|widgets{widgetType=chart}"
+                default="{name}">widget</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
 	        <returns>
 	            <format key="results">json</format>
@@ -1190,45 +1518,21 @@
     <metadata>
         <name>Table Widgets</name>
         <minVersion>8</minVersion>
-        <method type="GET" authenticationRequired="true" ALSO="POST">
+        <method type="GET" authenticationRequired="false" ALSO="POST">
             <summary>Get the data as displayed by a table widget</summary>
             <description>
 	            This service returns data to produce a table representations
 	            of the overview of data in a list.
 	        </description>
-            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
+            <param type="String" required="true"
+                options="/lists|lists{status=CURRENT}"
+                default="{name}"
+                description="The name of the list to use as the population for the graph">list</param>
             <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
             <returns>
 	            <format key="results">json</format>
 	            <format>xml</format>
 	        </returns>
-        </method>
-    </metadata>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ws-report-widget</servlet-name>
-    <servlet-class>org.intermine.webservice.server.widget.ReportWidgetsServlet</servlet-class>
-    <init-param>
-       <param-name>debug</param-name>
-       <param-value>true</param-value>
-    </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ws-report-widget</servlet-name>
-    <url-pattern>/service/widget/report/*</url-pattern>
-    <metadata>
-        <name>Report Widgets</name>
-        <minVersion>8</minVersion>
-        <method authenticationRequired="false" type="GET">
-            <description>get the Report Widget JavaScript package</description>
-            <param type="String" required="true" description="The name of the widget to use">id</param>
-            <param type="String" required="true" description="The callback to use in the widget">callback</param>
-            <returns>
-              <format key="results">json</format>
-              <format>js</format>
-            </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1260,9 +1564,13 @@
                 facetting information to restrict the search results.
             </description>
             <param type="String" required="false" description="The query string to search with. If absent, or blank, all results will be returned">q</param>
-            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, all results will be returned." default="10">size</param>
+            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, up to 100 results will be returned." default="10">size</param>
             <param type="int" required="false" description="The index of the first result to return." default="0">start</param>
-            <param type="String" required="false" description="A list to search within.">list</param>
+            <param type="String"
+                options="/lists|lists{status=CURRENT}"
+                default="{name}"
+                required="false" description="A list to search within.">list</param>
+            <param type="String[]" required="false" description="A facet parameter, eg facet_Organism=D.melanogaster">facet_?</param>
             <returns>
               <format key="results">json</format>
             </returns>
@@ -1355,7 +1663,7 @@
     <metadata>
       <name>Users</name>
       <minVersion>9</minVersion>
-      <method type="POST" requiresAuthentication="false">
+      <method type="POST" authenticationRequired="false">
           <name>User Creation</name>
           <summary>Create a new user in the user-profile</summary>
           <description>
@@ -1389,7 +1697,7 @@
     <metadata>
         <name>Key Fields</name>
         <minVersion>9</minVersion>
-        <method type="GET" requiresAuthentication="false">
+        <method type="GET" authenticationRequired="false">
             <summary>Get the fields used to identify an object</summary>
             <description>
                 Get the fields configured for this service to identify objects uniquely within
@@ -1418,9 +1726,33 @@
         <method type="POST" authenticationRequired="true">
           <name>Submit Job</name>
           <summary>Start a New ID Resolution Job on the Server</summary>
-          <description>
-            New ID resolution jobs are created by posting a representation of the job to this
-            service.
+          <description format="markdown">
+New ID resolution jobs are created by posting a representation of the job to this
+service. Jobs are run asynchronously, so this service simply submits the
+job, and returns the identifier of the job, so that its results and status
+may be polled later.
+
+A job is a data structure (represented as `json`) that satisfies the
+following [json-schema](http://json-schema.org/) schema:
+
+```
+{
+    "type": "object",
+    "required": ["identifiers", "type"],
+    "properties": {
+        "identifiers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "uniqueItems": true
+        },
+        "type":          { "type": "string"  },
+        "extra":         { "type": "string"  },
+        "caseSensitive": { "type": "boolean" },
+        "wildCards":     { "type": "boolean" }
+    }
+}
+```
           </description>
           <body
             description="A representation of the job. This must include a list of identifiers to resolve, and the type of object these ids are meant to resolve to">
@@ -1481,20 +1813,34 @@
      <metadata>
        <name>List Invitations</name>
        <minVersion>11</minVersion>
-       <method type="POST" requiresAuthentication="true">
+       <method type="POST" authenticationRequired="true">
           <name>Invitation Creation</name>
           <summary>Invite another user to share a list</summary>
-          <description>
-			Blah... todo
+          <description format="markdown">
+              This service allows users to share one of their lists with another user.
+              This allows read-only access to the given list, allowing it to be used in
+              queries, exported, etc. You should only do this if you trust the other
+              party with your data.
+
+              Users can be designated by their username, display-name (if set) or by 
+              and email address. If the email address is not registered with a user in
+              the system, an invitation will be sent to that address, with a code that
+              allows the user to activate the list share.
           </description>
-          <param type="String" required="true" description="The list of yours you wish to share">list</param>
+          <param type="String" required="true" description="The list of yours you wish to share"
+              options="/lists|lists{status=CURRENT,authorized}"
+              default="{name}"
+              >list</param>
           <param type="String" required="true" description="The email address of the user to invite to share a list.">to</param>
-          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">send-emai</param>
+          <param type="boolean"
+              required="false"
+              default="false"
+              description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">notify</param>
           <returns>
             <format key="invitation">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true">
+      <method type="GET" authenticationRequired="true">
           <name>Invitation Details</name>
           <summary>Details of all outstanding invitations</summary>
           <description>
@@ -1505,7 +1851,7 @@
             <format key="invitation">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true" slug="/:uid">
+      <method type="GET" authenticationRequired="true" slug="/:uid">
           <name>Invitation Details</name>
           <summary>Details of a single invitation</summary>
           <description>
@@ -1516,11 +1862,12 @@
             <format key="invitation">json</format>
           </returns>
       </method>
-      <method type="PUT" requiresAuthentication="true" slug="/:uid">
+      <method type="PUT" authenticationRequired="true" slug="/:uid">
           <name>Invitation Acceptance</name>
           <summary>Declare the acceptance of an invitation.</summary>
           <description>
-			Blah... todo
+              The service accepts the invitation, activating the share. It must be accessed
+              by the user it was sent to.
           </description>
           <param type="String" required="true" description="The identifier of the invitation - a 20 character unique string">uid</param>
           <param type="boolean" required="true" description="Whether or not this invitation is accepted or not.">accepted</param>
@@ -1543,7 +1890,7 @@
      <metadata>
        <name>List Sharing</name>
        <minVersion>11</minVersion>
-       <method type="POST" requiresAuthentication="true">
+       <method type="POST" authenticationRequired="true">
           <name>Share a List</name>
           <summary>Authorise another user to access a list</summary>
           <description>
@@ -1563,7 +1910,7 @@
             <format accept="application/javascript" key="share">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true">
+      <method type="GET" authenticationRequired="true">
           <name>Details of Currently Shared Lists</name>
           <summary>Retrieve information about which lists are shared with and by whom.</summary>
           <description>
@@ -1576,7 +1923,7 @@
             <format accept="application/javascript" key="share">json</format>
           </returns>
       </method>
-       <method type="DELETE" requiresAuthentication="true">
+       <method type="DELETE" authenticationRequired="true">
           <name>Stop Sharing a List</name>
           <summary>Rescind the Permission Granted to a User to Access a List.</summary>
           <description>
@@ -1620,7 +1967,7 @@
      <metadata>
        <name>User Preferences</name>
        <minVersion>11</minVersion>
-       <method type="POST" also="PUT" requiresAuthentication="true">
+       <method type="POST" also="PUT" authenticationRequired="true">
           <name>Set Preference(s)</name>
           <summary>Set the value of one or more preferences</summary>
           <description>
@@ -1633,7 +1980,7 @@
             <format key="preferences">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true">
+      <method type="GET" authenticationRequired="true">
           <name>View Preferences</name>
           <summary>Get a user's preferences</summary>
           <description>
@@ -1644,7 +1991,7 @@
             <format key="preferences">json</format>
           </returns>
       </method>
-      <method type="DELETE" requiresAuthentication="true" slug="/:uid">
+      <method type="DELETE" authenticationRequired="true">
           <name>Delete Preference(s)</name>
           <summary>Remove one or all preferences.</summary>
           <description>
@@ -1689,17 +2036,17 @@
             <description>
                 Get a query stored at the service.
             </description>
-            <param type="Integer" required="true" description="The id of the query to fetch">id</param>
+            <param type="String" required="true" description="The id of the query to fetch">id</param>
             <returns>
-                <format key="id">json</format>
+                <format>json</format>
+                <format>xml</format>
             </returns>
         </method>
         <method authenticationRequired="false" type="POST">
             <summary>Store a query</summary>
             <param type="String" required="true" description="The xml of the query to store.">query</param>
             <returns>
-                <format>json</format>
-                <format>xml</format>
+                <format key="id">json</format>
             </returns>
         </method>
     </metadata>
@@ -1727,17 +2074,30 @@
         <name>Sequence Access</name>
         <minVersion>13</minVersion>
         <method authenticationRequired="false" type="GET" also="POST">
-            <summary>Get a portion of a sequence-like object</summary>
-            <description>
-                Get either the entire sequence of a character-sequence like thing, or
-                fetch an indexed sub-sequence of it.
-                
-                This service expects a query with a single output column that resolves
-                tp a sub-sequenceable object.
+            <summary>Get a portion of a sequence-like object.</summary>
+            <description format="markdown">
+Get either the entire sequence of an object, or
+fetch an indexed sub-sequence of it.
+
+This service expects a query with a single output column that resolves
+to a sub-sequenceable object. For example to get a sub-sequence
+of the genomic sequence of the fly X chromosome in a genomic mine, the following
+query could be used:
+
+```
+&lt;query model="genomic" view="Chromosome.sequence.residues"&gt;
+    &lt;constraint path="Chromosome" op="LOOKUP" value="X" extraValue="D. melanogaster"/&gt;
+&lt;/query&gt;
+```
             </description>
             <param type="Integer" required="false" default="0" description="The start index">start</param>
             <param type="Integer" required="false" description="The end index">end</param>
-            <param type="String" required="true" description="The xml of the query to run.">query</param>
+            <param type="XML"
+                default="
+&lt;query model=&quot;genomic&quot; view=&quot;Chromosome.sequence.residues&quot;&gt;
+    &lt;constraint path=&quot;Chromosome&quot; op=&quot;LOOKUP&quot; value=&quot;X&quot; extraValue=&quot;D. melanogaster&quot;/&gt;
+&lt;/query&gt;"
+                required="true" description="The xml of the query to run.">query</param>
             <returns>
                 <format key="results">json</format>
             </returns>
@@ -1762,9 +2122,248 @@
    <servlet-mapping>
     <servlet-name>ws-jbrowse</servlet-name>
     <url-pattern>/service/jbrowse/*</url-pattern>
+    <metadata>
+        <name>JBrowse Endpoint</name>
+        <minVersion>16</minVersion>
+        <method type="GET" authenticationRequired="false" slug="/:domain/features/:refseq">
+            <name>Get Features</name>
+            <summary>Get Features on a Reference Sequence</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` feature
+                requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="true"
+                options="/data/Chromosome|results{length}"
+                default="{primaryIdentifier}"
+                description="The identifier of the reference sequence to find
+                    features within">refseq</param>
+            <param
+                type="Integer"
+                required="false"
+                recommended="true"
+                default="100000"
+                description="The starting index">start</param>
+            <param
+                type="Integer"
+                required="false"
+                recommended="true"
+                default="120000"
+                description="The end index">end</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature to return">type</param>
+            <param
+                type="boolean"
+                required="false"
+                default="false"
+                description="Make this a reference sequence request">reference</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+        <method type="GET" authenticationRequired="false" slug="/:domain/stats/global">
+            <name>Get Global Statistics</name>
+            <summary>Get Statistics about the Features Served by this Store</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` global statistics
+                requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature we are interested in">type</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+      <method type="GET" authenticationRequired="false" slug="/:domain/stats/region/:refseq">
+            <name>Get Region Statistics</name>
+            <summary>Get Statistics for a Sub-Set of Features Served by this Store</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` region statistics
+                requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="true"
+                options="/data/Chromosome|results{length}"
+                default="{primaryIdentifier}"
+                description="The identifier of the reference sequence to find
+                    features within">refseq</param>
+            <param
+                type="Integer"
+                required="false"
+                default="1000"
+                description="The starting index">start</param>
+            <param
+                type="Integer"
+                required="false"
+                default="2000"
+                description="The end index">end</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature we are interested in">type</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+      <method type="GET"
+              authenticationRequired="false"
+              slug="/:domain/stats/regionFeatureDensities/:refseq">
+            <name>Get Region Statistics</name>
+            <summary>Get Binned Density Statistics for a Sub-Set of Features Served by this Store</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` binned
+                region statistics requests. 
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <param
+                type="String"
+                required="true"
+                options="/data/Chromosome|results{length}"
+                default="{primaryIdentifier}"
+                description="The identifier of the reference sequence to find
+                    features within">refseq</param>
+            <param
+                type="Integer"
+                required="false"
+                default="1000"
+                description="The starting index">start</param>
+            <param
+                type="Integer"
+                required="false"
+                default="2000"
+                description="The end index">end</param>
+            <param
+                type="String"
+                required="false"
+                options="/model|model.classes"
+                default="{name}"
+                description="The type of feature we are interested in">type</param>
+            <param
+                type="String"
+                required="false"
+                description="The number of bases per bin, used to determine the number of bins"
+                default="20000">basesPerBin</param>
+        <returns>
+            <format accept="application/json">json</format>
+        </returns>
+      </method>
+    </metadata>
    </servlet-mapping>
    
    <!--  New in version 16 -->
+
+    <servlet>
+     <servlet-name>ws-jbrowse-names</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.jbrowse.Names</param-value>
+     </init-param>
+   </servlet>
+   
+   <servlet-mapping>
+    <servlet-name>ws-jbrowse-names</servlet-name>
+    <url-pattern>/service/jbrowse/names/*</url-pattern>
+    <metadata>
+        <name>JBrowse Name Lookup</name>
+        <minVersion>16</minVersion>
+        <method type="GET" authenticationRequired="false" slug="/:domain">
+            <name>Find Features By Name</name>
+            <summary>Lookup features by name</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` name
+                look-up requests.
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                required="true"
+                type="String"
+                default="eve"
+                description="The search prefix string to look for">startswith</param>
+            <param
+                required="true"
+                type="String"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain for this search (generally an organism)">domain</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" authenticationRequired="false" slug="/:domain">
+            <name>Retrieve Feature Information</name>
+            <summary>Retrieve feature information by name</summary>
+            <description format="markdown">
+                This service provides the functionality for `JBrowse` name
+                look-up requests.
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                required="true"
+                type="String"
+                default="eve"
+                description="The name of the item.">equals</param>
+            <param
+                required="true"
+                type="String"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain for this search (generally an organism)">domain</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+   </servlet-mapping>
    
    <servlet>
      <servlet-name>ws-deregistration-token</servlet-name>
@@ -1774,6 +2373,49 @@
    <servlet-mapping>
     <servlet-name>ws-deregistration-token</servlet-name>
     <url-pattern>/service/user/deregistration/*</url-pattern>
+    <metadata>
+        <name>Deregistration Tokens</name>
+        <minVersion>16</minVersion>
+        <method type="GET" authenticationRequired="true" slug="/:uid">
+            <summary>Get information about a deregistration token</summary>
+            <description>
+                This service returns a representation of a deregistration
+                token that a user has access to.
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The identifier of the token">uid</param>
+            <returns>
+                <format accept="application/json" key="token">json</format>
+            </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+            <summary>Create a deregistration token</summary>
+            <description>
+                This service creates a deregistration token,
+                thus starting the process of de-registerin a user.
+            </description>
+            <returns>
+                <format accept="application/json" key="token">json</format>
+            </returns>
+        </method>
+        <method type="DELETE" authenticationRequired="true" slug="/:uid">
+            <summary>Delete a deregistration token</summary>
+            <description>
+                This service deletes a deregistration
+                token that a user has access to, thus cancelling
+                the request to de-register the user.
+            </description>
+            <param
+                required="true"
+                type="String"
+                description="The identifier of the token">uid</param>
+            <returns>
+                <format accept="application/json" key="token">json</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
 
    <servlet>
@@ -1792,6 +2434,40 @@
    <servlet-mapping>
      <servlet-name>ws-user</servlet-name>
      <url-pattern>/service/user</url-pattern>
+     <metadata>
+         <name>User</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="true">
+             <summary>Get information about the Current User</summary>
+             <description format="markdown">
+                 This service provides information about the current user,
+                 including their user name and preferences.
+             </description>
+             <returns>
+                <format key="user" accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="DELETE" authenticationRequired="true">
+             <summary>Delete the Current User</summary>
+             <description format="markdown">
+                 This service deletes the current User and all their data.
+                 
+                 To ensure that you really mean to deregister a user
+                 programmatically, this service requires a deregistration
+                 token to be obtained before sending the delete request.
+
+                 As output it returns all of the user data it had before it was
+                 deleted.
+             </description>
+             <param
+                 required="true"
+                 description="A token to ensure this is not a mistake"
+                 type="String">deregistrationToken</param>
+             <returns>
+                <format accept="application/xml">xml</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
 
    <servlet>
@@ -1814,6 +2490,73 @@
    <servlet-mapping>
      <servlet-name>ws-perma-tokens</servlet-name>
      <url-pattern>/service/user/tokens</url-pattern>
+     <metadata>
+         <name>Tokens</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="true">
+             <summary>Get List of Permanent Tokens</summary>
+             <description format="markdown">
+                 Tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users inspect the permanent tokens they have
+                 issued.
+                 
+                 No access is provide here to other tokens (24hrs, api, day), for
+                 security and other reasons. Please look at the `Session` service
+                 for issuing new temporary tokens.
+             </description>
+             <returns>
+                <format key="tokens" accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="POST" authenticationRequired="true">
+             <summary>Create a New Token</summary>
+             <description format="markdown">
+Tokens are issued so that users may provide access
+to their private data to third parties in a more secure manner.
+This service lets users create a new token they can provide
+to others.
+
+The different token types are:
+
+`day`
+ : A token that will be valid for up to 24 hrs.
+`once`
+ : A token that can only be used for a single request.
+`api`
+ : The main Read-Write API key of the user. Generating one of these replaces the currrent key.
+`perm`
+ : A permanent Read-Only token that others can use.
+             </description>
+             <param
+                 required="false"
+                 type="enumerated"
+                 values="day,once,api,perm"
+                 default="day"
+                 description="The type of token to issue">type</param>
+             <param
+                 required="false"
+                 type="String"
+                 description="An optional message to associate with a token">message</param>
+             <returns>
+                <format key="token" accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="DELETE" authenticationRequired="true">
+             <summary>Delete all Tokens</summary>
+             <description format="markdown">
+                 Delete all permanent tokens.
+
+                 Permanent tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users all the delete permanent tokens they have
+                 issued.
+             </description>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
    
    <servlet>
@@ -1824,6 +2567,46 @@
    <servlet-mapping>
      <servlet-name>ws-perma-token</servlet-name>
      <url-pattern>/service/user/tokens/*</url-pattern>
+     <metadata>
+         <name>Permanent Token</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="true" slug="/:uid">
+             <summary>Get Token Information</summary>
+             <description format="markdown">
+                 Retrieve information about a specific permanent token.
+
+                 Permanent tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users inspect a specific permanent tokens they have
+                 issued.
+             </description>
+             <param
+                 required="true"
+                 type="String"
+                 description="The identifier of one of your tokens">uid</param>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+         <method type="DELETE" authenticationRequired="true" slug="/:uid">
+             <summary>Delete a Token</summary>
+             <description format="markdown">
+                 Delete a specific permanent token.
+
+                 Permanent tokens are issued so that users may provide access
+                 to their private data to third parties in a more secure manner.
+                 This service lets users delete permanent tokens they have
+                 issued.
+             </description>
+             <param
+                 required="true"
+                 type="String"
+                 description="The identifier of one of your tokens">uid</param>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
    </servlet-mapping>
 
   <servlet>
@@ -1838,6 +2621,20 @@
   <servlet-mapping>
      <servlet-name>ws-branding</servlet-name>
      <url-pattern>/service/branding</url-pattern>
+     <metadata>
+         <name>Branding</name>
+         <minVersion>16</minVersion>
+         <method type="GET" authenticationRequired="false">
+             <summary>Get Branding Information</summary>
+             <description>
+                 Retrieve branding information, so that elements may be
+                 visually styled appropriately for their source.
+             </description>
+             <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -1864,6 +2661,132 @@
   <servlet-mapping>
      <servlet-name>ws-saved-queries</servlet-name>
      <url-pattern>/service/user/queries</url-pattern>
+     <metadata>
+         <name>Saved Queries</name>
+         <minVersion>16</minVersion>
+         <method authenticationRequired="false" type="GET">
+            <summary>Get the Saved Queries You have Access to.</summary>
+            <description>
+                This resource represents access to the set of saved-queries
+                accessible to a user. Saved queries are just normal queries, but
+                persisted with the user's account.
+            </description>
+            <param required="false"
+                type="String"
+                description="An optional filter by name, allowing wildcards.">filter</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="POST">
+            <summary>Upload New Queries to be Saved into a User's Profile</summary>
+            <description>
+                This resource allows users to upload queries to be saved into their profile.
+                Queries that the user uploads should all be valid, and ideally have names. If they
+                do not have names, names will be assigned to them.
+            </description>
+            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <body description="The queries to upload. If using body content.">
+             <content type="application/xml">
+                &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
+                    &lt;constraint path="Gene" op="LOOKUP" value="eve"/&gt;
+                &lt;/query&gt;
+             </content>
+             <content type="none"/>
+            </body>
+            <returns>
+                <format accept="text/plain">text</format>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+                <format accept="text/tab-separated-values">tab</format>
+                <format accept="text/comma-separated-values">csv</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="PUT">
+            <summary>Update Existing Queries in a User's Profile</summary>
+            <description>
+                This resource allows users to upload queries to be saved into their profile.
+                Queries that the user uploads should all be valid, and ideally have names. If they
+                do not have names, names will be assigned to them. If queries with the same name
+                already exist, they will be over-written. This provides a mechanism for updating
+                the value of saved queries on a service.
+            </description>
+            <param required="false" type="XML" default="" description="The queries to upload, if using form parameters.">xml</param>
+            <body description="The queries to upload. If using body content.">
+             <content type="application/xml">
+                &lt;query model="genomic" view="Gene.symbol Gene.proteins.proteinDomains.name"&gt;
+                    &lt;constraint path="Gene" op="LOOKUP" value="eve"/&gt;
+                &lt;/query&gt;
+             </content>
+             <content type="none"/>
+            </body>
+            <returns>
+                <format accept="text/plain">text</format>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+                <format accept="text/tab-separated-values">tab</format>
+                <format accept="text/comma-separated-values">csv</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="DELETE">
+            <summary>Delete a saved query by name</summary>
+            <description format="markdown">
+                This resource exposes the ability to delete specific saved queries, identified
+                by name.
+
+                A user can only delete queries that they own, and must be executed
+                with `Read/Write` permission.
+            </description>
+            <param required="true"
+                options="/user/queries|queries"
+                default="{title}"
+                type="String"
+                description="The name of the query to delete">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+     </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-saved-query</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+         <param-name>DELETE</param-name>
+         <param-value>org.intermine.webservice.server.query.QueryRemovalService</param-value>
+     </init-param>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-saved-query</servlet-name>
+     <url-pattern>/service/user/queries/*</url-pattern>
+     <metadata>
+         <name>Saved Query</name>
+         <minVersion>16</minVersion>
+
+         <method authenticationRequired="true" type="DELETE" slug="/:name">
+            <summary>Delete a saved query by name</summary>
+            <description format="markdown">
+                This resource exposes the ability to delete specific saved queries, identified
+                by name.
+
+                A user can only delete queries that they own, and must be executed
+                with `Read/Write` permission.
+            </description>
+            <param required="true"
+                options="/user/queries|queries"
+                default="{title}"
+                type="String"
+                description="The name of the query to delete">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+     </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -1882,6 +2805,122 @@
   <servlet-mapping>
      <servlet-name>ws-saved-template</servlet-name>
      <url-pattern>/service/templates/*</url-pattern>
+     <metadata>
+         <name>Saved Template</name>
+         <minVersion>16</minVersion>
+         <method authenticationRequired="false" type="GET" slug="/:name">
+            <summary>Retrieve a template by name</summary>
+            <description format="markdown">
+                This resource retrieves a representation of a named template, returning
+                404 if the template cannot be found.
+
+                If the request is authenticated, then the templates visible to that user (created by
+                or shared with them) will be included along with publically accessible templates.
+            </description>
+            <param required="true"
+                options="/templates|templates"
+                default="{name}"
+                type="String"
+                description="The name of the template to fetch">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+         <method authenticationRequired="true" type="DELETE" slug="/:name">
+            <summary>Delete a template by name</summary>
+            <description format="markdown">
+                This resource exposes the ability to delete specific templates, identified
+                by name.
+
+                A user can only delete templates that they own, and must be executed
+                with `Read/Write` permission.
+            </description>
+            <param required="true"
+                options="/templates|templates"
+                default="{name}"
+                type="String"
+                description="The name of the template to delete">name</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
+            </returns>
+         </method>
+     </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-session</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+         <param-name>GET</param-name>
+         <param-value>org.intermine.webservice.server.SessionService</param-value>
+     </init-param>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-session</servlet-name>
+     <url-pattern>/service/session</url-pattern>
+     <metadata>
+         <name>Sessions</name>
+         <minVersion>16</minVersion>
+         <method authenticationRequired="false" type="GET">
+            <summary>Open a new Web-Services Session</summary>
+            <description format="markdown">
+                This service opens a new 24 session for users. If authenticated to
+                an existing user, it has the same effect as requesting a new 24hr
+                token. But for unauthenticated users, it allocates a new temporary
+                profile, and assigns a 24hr usage token.
+            </description>
+            <returns>
+                <format key="token">json</format>
+            </returns>
+         </method>
+     </metadata>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>ws-data</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.data.DataService</param-value>
+      </init-param>
+  </servlet>
+
+  <servlet-mapping>
+      <servlet-name>ws-data</servlet-name>
+      <url-pattern>/service/data/*</url-pattern>
+      <metadata>
+          <name>Simple Data Service</name>
+          <minVersion>16</minVersion>
+          <method type="GET" authenticationRequired="false" slug="/:type">
+              <summary>Get Data about Objects of the Given Type</summary>
+              <description>
+                  This service allows simple access to queries against a
+                  single type. This is meant to allow for simple linking
+                  and resource-based access to InterMine data.
+              </description>
+              <header
+                  required="false"
+                  default="records=0-10"
+                  description="The range of values requested">Range</header>
+              <param
+                  required="true"
+                  options="/model|model.classes"
+                  default="{name}"
+                  type="String"
+                  description="The type of the object to find.">type</param>
+              <param
+                  required="false"
+                  type="String[]"
+                  description="An optional filter over the objects"
+                  repeat="/model|model.classes.$type.attributes">?</param>
+              <returns>
+                  <format accept="application/json" key="results">json</format>
+              </returns>
+          </method>
+      </metadata>
   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
@@ -1890,8 +2929,15 @@
     <url-pattern>/service</url-pattern>
     <metadata>
       <name>Service Listing</name>
-      <method type="GET" requiresAuthentication="false">
+      <method type="GET" authenticationRequired="false">
         <summary>Get a description of the services offered by this data-warehouse.</summary>
+        <description format="markdown">
+            This service returns a description of all the endpoints of the
+            web services provided by this application. It includes a listing
+            of all the calls that can be made, along with information about
+            request parameters and output formats. This information is used
+            to provide the listings rendered by [iodocs](http://iodocs.intermine.org).
+        </description>
         <returns>
           <format accept="application/json">json</format>
         </returns>
@@ -1936,7 +2982,7 @@
       </init-param>
       <init-param>
         <param-name>Access-Control-Allow-Headers</param-name>
-        <param-value>Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length, Content-Range</param-value>
+        <param-value>Origin, X-Requested-With, Content-Type, Accept, Range, Authorization, Content-Length, Content-Range</param-value>
     </init-param>
       <init-param>
         <param-name>Access-Control-Expose-Headers</param-name>

@@ -33,6 +33,11 @@ public class HTMLTableFormatter extends XMLFormatter {
         return "p";
     }
 
+    @Override
+    protected String getProcessingInstruction() {
+        return "";
+    }
+
     protected void handleHeaderAttributes(Map<String, Object> attributes, StringBuilder sb) {
         sb.append(">");
         if (attributes != null && attributes.containsKey(KEY_COLUMN_HEADERS)) {

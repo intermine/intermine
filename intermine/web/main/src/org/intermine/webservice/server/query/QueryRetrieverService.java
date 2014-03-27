@@ -13,6 +13,7 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
 public class QueryRetrieverService extends WebService {
@@ -49,6 +50,8 @@ public class QueryRetrieverService extends WebService {
         String xml;
         try {
             xml = im.getQueryStore().getQuery(qid);
+        } catch (NotPresentException e) {
+            throw new ResourceNotFoundException(e.getMessage());
         } catch (QueryStoreException e) {
             throw new BadRequestException(e.getMessage());
         }

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -80,8 +80,8 @@ public abstract class WidgetService extends JSONService
         while (it.hasNext()) {
             List<Object> row = it.next();
             List<String> processed = processor.formatRow(row);
-            if (!formatIsFlatFile() && it.hasNext()) {
-                processed.add("");
+            if (formatIsJSON() && it.hasNext()) {
+                processed.add(""); // TODO: this idiom is dumb. Expunge.
             }
             output.addResultItem(processed);
         }

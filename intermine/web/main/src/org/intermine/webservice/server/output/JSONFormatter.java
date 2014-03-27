@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -77,8 +77,6 @@ public class JSONFormatter extends Formatter {
                 KEY_HEADER_OBJS,
                 KEY_KV_PAIRS,
                 KEY_TIME)));
-
-   
 
     /**
      * Constructor
