@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V1.0//EN"
+"http://www.oasis-open.org/docbook/xml/simple/1.0/sdocbook.dtd">
+<article>
+  <section>
+    <title>Tutorial 8: MyMine</title>
+
+
+
+    <para>It is possible to save bags, queries and templates
+    permanently to FlyMine, in a personal FlyMine account called
+    MyMine, by creating a log-in.  Your MyMine account allows you to
+    manage your saved items.  To create a log-in, click on 'Log in' on
+    the main menu bar at the top of each FlyMine page, and give an
+    email address and password. To access your MyMine account click on
+    'MyMine' on the top menu bar.</para>
+
+
+    <para>Your MyMine page has four tabs: Bags, Saved queries, Saved
+    templates and Favourite templates plus a tab to allow you to
+    change your password.</para>
+
+
+       <mediaobject>
+          <imageobject>
+            <imagedata fileref="MyMine1.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+    <para>In this tutorial we will look at how to save queries. See
+   <ulink url="tutorial4-Bags.xml">Tutorial 4</ulink> for information
+   on how to save bags and <ulink url="tutorial7-Export.xml">Tutorial
+   7</ulink> for information on how to build and save your own
+   template queries.</para>
+
+    
+    <para>Every query that is run in FlyMine (template queries and
+    queries constructed in the query builder, but not quick search
+    queries) is automatically saved with a default name (format
+    query_x (x=incrementing number).  These are saved to your query
+    history. </para>
+
+    <para> Find the template 'Gene --> Orthologues' under the
+    'Comparative genomics' aspect. Run this template with the default
+    values provided.  At the top of the results page notice that there
+    is a message saying 'Saved in your query history as "query_x"'.
+    You can access your query history from the top menu bar.</para>
+
+    
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="MyMine2.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+ 
+     <para>Your 'Query history' lists all the queries you have run in
+     this particular session and gives the date and time they were
+     run, the starting class of the query and the fields in the
+     results (these latter two columns are more relevent if you have
+     constructed a query yourself in the query builder or modified a
+     template in the query builder).  For each query there are also a
+     set of actions: Run, Edit, Save and Export:</para>
+   
+    <orderedlist>
+
+      <listitem>
+	<para>Run: will run the query directly. </para></listitem>
+
+       <listitem>
+	<para>Edit: Will take you either to the template form if you
+	ran a template query or to the query builder if you
+	constructed the query yourself (or modified a
+	template).</para> </listitem> 
+
+       <listitem> 
+       <para>Save: This allows you to save your query permanently to
+	the 'Saved queries' tab of your MyMine
+	account.</para></listitem>
+
+       <listitem>
+       <para>Export: This allows you to export the query as xml.  This
+       is useful if you want to give your query to someone else to
+       use in FlyMine (queries saved as xml can be re-imported into
+       FlyMine).</para></listitem>
+
+   </orderedlist>    
+
+
+   
+      <mediaobject>
+          <imageobject>
+            <imagedata fileref="MyMine3.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+
+    <para>Navigate to your query history, find the query you just ran
+    and click on 'Save'.  You will automatically be taken to the
+    'Saved queries' tab of your MyMine page where you can find your
+    saved query.  Click on the blue circle next to the query name to
+    re-name the query.  Note that queries can also be re-named in your
+    query history. Queries saved in your MyMine account have the same
+    set of actions available as for the query history described
+    above.</para>
+
+     <mediaobject>
+          <imageobject>
+            <imagedata fileref="MyMine4.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+
+    <para>Queries constructed in the query builder can be saved
+    directly to your MyMine account.  At the bottom of the query
+    builder page under 'Actions' is a box allowing you to name and
+    save your query.  This option is only available if you are logged
+    in.</para>
+
+
+
+    <mediaobject>
+          <imageobject>
+            <imagedata fileref="MyMine5.png" />
+          </imageobject><textobject><phrase> </phrase></textobject>
+        </mediaobject>
+
+
+ </section>
+</article>

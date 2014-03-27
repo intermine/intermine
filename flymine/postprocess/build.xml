@@ -1,0 +1,7 @@
+<project name="flymine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for flymine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>

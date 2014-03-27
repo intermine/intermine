@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE set PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+
+<set>
+  <title>FlyMine Cookbook</title>
+
+<book id="flymineCookbook">
+  <title>
+    FlyMine Cookbook
+  </title>
+
+  <bookinfo>
+    <productname>
+      <emphasis>FlyMine</emphasis> - An integrated database for Drosophila and
+      Anopheles genomics 
+    </productname>
+  </bookinfo>
+
+
+  <chapter id="cookbookGeneralFaq">
+
+   <title>Introduction</title>
+
+     
+   <sect1 id="cookbookTemplateQuery">
+           <title>What is a template query</title>
+	
+	<para>stuff</para>
+</sect1>
+ 
+   <sect1 id="cookbookQueryBuilder">
+            <title>What is the query Builder</title>
+	<para>stuff</para>
+</sect1> 
+ 
+
+   <sect1 id="cookbookBags">
+             <title>What are bags</title> 
+	<para>stuff</para>
+</sect1>
+ 
+ </chapter>
+
+
+
+
+</book>
+</set>
