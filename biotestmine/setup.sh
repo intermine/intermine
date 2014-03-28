@@ -76,7 +76,7 @@ fi
 
 echo Checking databases...
 for db in $USERPROFILE_DB $PROD_DB $ITEMS_DB; do
-    if psql --list | egrep -q $db; then
+    if psql --list | egrep -q '\s'$db'\s'; then
         echo $db exists.
     else
         echo Creating $db ...
@@ -99,6 +99,7 @@ fi
 cd $DIR
 echo Personalising project.xml
 sed -i "s!DATA_DIR!$DATA_DIR!g" project.xml
+sed -i "s/malariamine/$MINENAME/g" project.xml
 
 echo Adjusting priorities.
 PRIORITIES=$DIR/dbmodel/resources/genomic_priorities.properties
@@ -109,7 +110,8 @@ echo Building DB
 ant clean build-db >> $DIR/log/build-db.log
 
 echo 'Loading data (this could take some time) ...'
-$DIR/../bio/scripts/project_build -b -v $SERVER $HOME/${MINENAME}-dump
+cd $DIR
+../bio/scripts/project_build -b -v $SERVER $HOME/${MINENAME}-dump
 
 cd $DIR/webapp
 echo 'Building userprofile..'
