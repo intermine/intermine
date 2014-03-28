@@ -10,10 +10,11 @@ set -e # Errors are fatal.
 
 USERPROFILEDB=userprofile-demo
 PRODDB=objectstore-demo
+MINENAME=demomine
 DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
 LOG=$DIR/build.log
-PROP_FILE=$IMDIR/testmodel.properties
+PROP_FILE=$IMDIR/testmodel.properties.demo
 
 # Inherit SERVER, PORT, PSQL_USER, PSQL_PWD, TOMCAT_USER and TOMCAT_PWD if in env.
 if test -z $SERVER; then
@@ -43,16 +44,18 @@ if test ! -d $IMDIR; then
 fi
 
 if test ! -f $PROP_FILE; then
-    echo No properties found. Providing default properties file.
+    echo $PROP_FILE not found. Providing default properties file.
     cd $IMDIR
     cp $DIR/testmodel.properties $PROP_FILE
     sed -i "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
     sed -i "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
     sed -i "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
     sed -i "s/TOMCAT_PWD/$TOMCAT_PWD/g" $PROP_FILE
-    sed -i "s/localhost/$SERVER/g" $PROP_FILE
+    sed -i "s/USERPROFILEDB/$USERPROFILEDB/g" $PROP_FILE
+    sed -i "s/PRODDB/$PRODDB/g" $PROP_FILE
+    sed -i "s/SERVER/$SERVER/g" $PROP_FILE
     sed -i "s/8080/$PORT/g" $PROP_FILE
-    sed -i "s/USER/$USER/g" 
+    sed -i "s/USER/$USER/g" $PROP_FILE
 fi
 
 echo Checking databases.
@@ -68,11 +71,12 @@ done
 cd $DIR/dbmodel
 
 echo Loading demo data set...
-ant loadsadata >> $LOG
+ant -Drelease=demo loadsadata >> $LOG
 
 cd $DIR/webapp/main
 
-ant -Ddont.minify=true \
+echo Building and releasing web-app...
+ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     default \
