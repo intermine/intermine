@@ -1,62 +1,12 @@
-﻿The Project Gutenberg EBook of Die Verwandlung, by Franz Kafka
-
-This eBook is for the use of anyone anywhere at no cost and with
-almost no restrictions whatsoever.  You may copy it, give it away or
-re-use it under the terms of the Project Gutenberg License included
-with this eBook or online at www.gutenberg.org
-
-
-Title: Die Verwandlung
-
-Author: Franz Kafka
-
-Release Date: August 21, 2007 [EBook #22367]
-
-Language: German
-
-
-*** START OF THIS PROJECT GUTENBERG EBOOK DIE VERWANDLUNG ***
-
-
-
-
-Produced by Jana Srna, Alexander Bauer and the Online
-Distributed Proofreading Team at http://www.pgdp.net
-
-
-
-
-
-
-                          DIE VERWANDLUNG
-
-                                VON
-
-                            FRANZ KAFKA
-
-
-                  K U R T  W O L F F  V E R L A G
-
-                           L E I P Z I G
-
-
-
-
- B Ü C H E R E I  »D E R  J Ü N G S T E  T A G«  B A N D  2 2 / 2 3
-
-              GEDRUCKT BEI DIETSCH & BRÜCKNER · WEIMAR
-
-
-
-
-            COPYRIGHT KURT WOLFF VERLAG · LEIPZIG. 1917
-
-
-
-
-I.
-
-
+﻿<book Title="Die Verwandlung"
+    Author="Franz Kafka"
+    Release-Date="August 21, 2007"
+    Language="German"
+    Publisher="KURT WOLFF VERLAG, LEIPZIG"
+    Copyright="KURT WOLFF VERLAG · LEIPZIG. 1917"
+    Printer="DIETSCH &amp; BRÜCKNER · WEIMAR">
+<chapter title="I.">
+<paragraph>
 Als Gregor Samsa eines Morgens aus unruhigen Träumen erwachte, fand er
 sich in seinem Bett zu einem ungeheuren Ungeziefer verwandelt. Er lag
 auf seinem panzerartig harten Rücken und sah, wenn er den Kopf ein wenig
@@ -65,7 +15,8 @@ geteilten Bauch, auf dessen Höhe sich die Bettdecke, zum gänzlichen
 Niedergleiten bereit, kaum noch erhalten konnte. Seine vielen, im
 Vergleich zu seinem sonstigen Umfang kläglich dünnen Beine flimmerten
 ihm hilflos vor den Augen.
-
+</paragraph>
+<paragraph>
 »Was ist mit mir geschehen?« dachte er. Es war kein Traum. Sein Zimmer,
 ein richtiges, nur etwas zu kleines Menschenzimmer, lag ruhig zwischen
 den vier wohlbekannten Wänden. Über dem Tisch, auf dem eine
@@ -76,7 +27,8 @@ vergoldeten Rahmen untergebracht hatte. Es stellte eine Dame dar, die,
 mit einem Pelzhut und einer Pelzboa versehen, aufrecht dasaß und einen
 schweren Pelzmuff, in dem ihr ganzer Unterarm verschwunden war, dem
 Beschauer entgegenhob.
-
+</paragraph>
+<paragraph>
 Gregors Blick richtete sich dann zum Fenster, und das trübe Wetter --
 man hörte Regentropfen auf das Fensterblech aufschlagen -- machte ihn
 ganz melancholisch. »Wie wäre es, wenn ich noch ein wenig
@@ -88,7 +40,8 @@ warf, immer wieder schaukelte er in die Rückenlage zurück. Er versuchte
 es wohl hundertmal, schloß die Augen, um die zappelnden Beine nicht
 sehen zu müssen, und ließ erst ab, als er in der Seite einen noch nie
 gefühlten, leichten, dumpfen Schmerz zu fühlen begann.
-
+</paragraph>
+<paragraph>
 »Ach Gott,« dachte er, »was für einen anstrengenden Beruf habe ich
 gewählt! Tag aus, Tag ein auf der Reise. Die geschäftlichen Aufregungen
 sind viel größer, als im eigentlichen Geschäft zu Hause, und außerdem
@@ -102,7 +55,8 @@ Stelle, die mit lauter kleinen weißen Pünktchen besetzt war, die er
 nicht zu beurteilen verstand; und wollte mit einem Bein die Stelle
 betasten, zog es aber gleich zurück, denn bei der Berührung umwehten ihn
 Kälteschauer.
-
+</paragraph>
+<paragraph>
 Er glitt wieder in seine frühere Lage zurück. »Dies frühzeitige
 Aufstehen«, dachte er, »macht einen ganz blödsinnig. Der Mensch muß
 seinen Schlaf haben. Andere Reisende leben wie Haremsfrauen. Wenn ich
@@ -121,7 +75,8 @@ um die Schuld der Eltern an ihn abzuzahlen -- es dürfte noch fünf bis
 sechs Jahre dauern --, mache ich die Sache unbedingt. Dann wird der
 große Schnitt gemacht. Vorläufig allerdings muß ich aufstehen, denn mein
 Zug fährt um fünf.«
-
+</paragraph>
+<paragraph>
 Und er sah zur Weckuhr hinüber, die auf dem Kasten tickte. »Himmlischer
 Vater!« dachte er, Es war halb sieben Uhr, und die Zeiger gingen ruhig
 vorwärts, es war sogar halb vorüber, es näherte sich schon dreiviertel.
@@ -146,7 +101,8 @@ aber arbeitsscheue Menschen gibt. Und hätte er übrigens in diesem Falle
 so ganz unrecht? Gregor fühlte sich tatsächlich, abgesehen von einer
 nach dem langen Schlaf wirklich überflüssigen Schläfrigkeit, ganz wohl
 und hatte sogar einen besonders kräftigen Hunger.
-
+</paragraph>
+<paragraph>
 Als er dies alles in größter Eile überlegte, ohne sich entschließen zu
 können, das Bett zu verlassen -- gerade schlug der Wecker dreiviertel
 sieben -- klopfte es vorsichtig an die Tür am Kopfende seines Bettes.
@@ -176,7 +132,7 @@ aber flüsterte: »Gregor, mach auf, ich beschwöre dich.« Gregor aber
 dachte gar nicht daran aufzumachen, sondern lobte die vom Reisen her
 übernommene Vorsicht, auch zu Hause alle Türen während der Nacht zu
 versperren.
-
+</paragraph><paragraph>
 Zunächst wollte er ruhig und ungestört aufstehen, sich anziehen und vor
 allem frühstücken, und dann erst das Weitere überlegen, denn, das merkte
 er wohl, im Bett würde er mit dem Nachdenken zu keinem vernünftigen Ende
@@ -187,7 +143,7 @@ und er war gespannt, wie sich seine heutigen Vorstellungen allmählich
 auflösen würden. Daß die Veränderung der Stimme nichts anderes war als
 der Vorbote einer tüchtigen Verkühlung, einer Berufskrankheit der
 Reisenden, daran zweifelte er nicht im geringsten.
-
+</paragraph><paragraph>
 Die Decke abzuwerfen war ganz einfach; er brauchte sich nur ein wenig
 aufzublasen und sie fiel von selbst. Aber weiterhin wurde es schwierig,
 besonders weil er so ungemein breit war. Er hätte Arme und Hände
@@ -199,7 +155,7 @@ es ihm endlich, mit diesem Bein das auszuführen, was er wollte, so
 arbeiteten inzwischen alle anderen, wie freigelassen, in höchster,
 schmerzlicher Aufregung. »Nur sich nicht im Bett unnütz aufhalten,«
 sagte sich Gregor.
-
+</paragraph><paragraph>
 Zuerst wollte er mit dem unteren Teil seines Körpers aus dem Bett
 hinauskommen, aber dieser untere Teil, den er übrigens noch nicht
 gesehen hatte und von dem er sich auch keine rechte Vorstellung machen
@@ -209,7 +165,7 @@ Rücksicht sich vorwärtsstieß, hatte er die Richtung falsch gewählt,
 schlug an den unteren Bettpfosten heftig an, und der brennende Schmerz,
 den er empfand, belehrte ihn, daß gerade der untere Teil seines Körpers
 augenblicklich vielleicht der empfindlichste war.
-
+</paragraph><paragraph>
 Er versuchte es daher, zuerst den Oberkörper aus dem Bett zu bekommen,
 und drehte vorsichtig den Kopf dem Bettrand zu. Dies gelang auch leicht,
 und trotz ihrer Breite und Schwere folgte schließlich die Körpermasse
@@ -219,7 +175,7 @@ Weise vorzurücken, denn wenn er sich schließlich so fallen ließ, mußte
 geradezu ein Wunder geschehen wenn der Kopf nicht verletzt werden
 sollte. Und die Besinnung durfte er gerade jetzt um keinen Preis
 verlieren; lieber wollte er im Bett bleiben.
-
+</paragraph><paragraph>
 Aber als er wieder nach gleicher Mühe aufseufzend so dalag wie früher,
 und wieder seine Beinchen womöglich noch ärger gegeneinander kämpfen sah
 und keine Möglichkeit fand, in diese Willkür Ruhe und Ordnung zu
@@ -236,7 +192,7 @@ sich beim neuerlichen Schlagen des Weckers, »schon sieben Uhr und noch
 immer ein solcher Nebel.« Und ein Weilchen lang lag er ruhig mit
 schwachem Atem, als erwarte er vielleicht von der völligen Stille die
 Wiederkehr der wirklichen und selbstverständlichen Verhältnisse.
-
+</paragraph><paragraph>
 Dann aber sagte er sich: »Ehe es einviertel acht schlägt, muß ich
 unbedingt das Bett vollständig verlassen haben. Im übrigen wird auch bis
 dahin jemand aus dem Geschäft kommen, um nach mir zu fragen, denn das
@@ -249,7 +205,7 @@ wohl bei dem Fall auf den Teppich nichts geschehen. Das größte Bedenken
 machte ihm die Rücksicht auf den lauten Krach, den es geben müßte und
 der wahrscheinlich hinter allen Türen wenn nicht Schrecken, so doch
 Besorgnisse erregen würde. Das mußte aber gewagt werden.
-
+</paragraph><paragraph>
 Als Gregor schon zur Hälfte aus dem Bette ragte -- die neue Methode war
 mehr ein Spiel als eine Anstrengung, er brauchte immer nur ruckweise zu
 schaukeln --, fiel ihm ein, wie einfach alles wäre, wenn man ihm zu
@@ -262,7 +218,7 @@ hoffentlich einen Sinn bekommen würden. Nun, ganz abgesehen davon, daß
 die Türen versperrt waren, hätte er wirklich um Hilfe rufen sollen?
 Trotz aller Not konnte er bei diesem Gedanken ein Lächeln nicht
 unterdrücken.
-
+</paragraph><paragraph>
 Schon war er so weit, daß er bei stärkerem Schaukeln kaum das
 Gleichgewicht noch erhielt, und sehr bald mußte er sich nun endgültig
 entscheiden, denn es war in fünf Minuten einviertel acht, -- als es an
@@ -292,7 +248,7 @@ elastischer, als Gregor gedacht hatte, daher kam der nicht gar so
 auffallende dumpfe Klang. Nur den Kopf hatte er nicht vorsichtig genug
 gehalten und ihn angeschlagen; er drehte ihn und rieb ihn an dem Teppich
 vor Ärger und Schmerz.
-
+</paragraph><paragraph>
 »Da drin ist etwas gefallen,« sagte der Prokurist im Nebenzimmer links.
 Gregor suchte sich vorzustellen, ob nicht auch einmal dem Prokuristen
 etwas Ähnliches passieren könnte, wie heute ihm; die Möglichkeit dessen
@@ -303,7 +259,7 @@ flüsterte die Schwester, um Gregor zu verständigen: »Gregor, der
 Prokurist ist da.« »Ich weiß,« sagte Gregor vor sich hin; aber so laut,
 daß es die Schwester hätte hören können, wagte er die Stimme nicht zu
 erheben.
-
+</paragraph><paragraph>
 »Gregor,« sagte nun der Vater aus dem Nebenzimmer links, »der Herr
 Prokurist ist gekommen und erkundigt sich, warum du nicht mit dem
 Frühzug weggefahren bist. Wir wissen nicht, was wir ihm sagen sollen.
@@ -335,7 +291,7 @@ schon zu dir hinein?« fragte der ungeduldige Vater und klopfte wiederum
 an die Tür. »Nein,« sagte Gregor. Im Nebenzimmer links trat eine
 peinliche Stille ein, im Nebenzimmer rechts begann die Schwester zu
 schluchzen.
-
+</paragraph><paragraph>
 Warum ging denn die Schwester nicht zu den anderen? Sie war wohl erst
 jetzt aus dem Bett aufgestanden und hatte noch gar nicht angefangen sich
 anzuziehen. Und warum weinte sie denn? Weil er nicht aufstand und den
@@ -352,7 +308,7 @@ Und Gregor schien es, daß es viel vernünftiger wäre, ihn jetzt in Ruhe
 zu lassen, statt ihn mit Weinen und Zureden zu stören. Aber es war eben
 die Ungewißheit, welche die anderen bedrängte und ihr Benehmen
 entschuldigte.
-
+</paragraph><paragraph>
 »Herr Samsa,« rief nun der Prokurist mit erhobener Stimme, »was ist denn
 los? Sie verbarrikadieren sich da in Ihrem Zimmer, antworten bloß mit ja
 und nein, machen Ihren Eltern schwere, unnötige Sorgen und versäumen --
@@ -375,7 +331,7 @@ sollen. Ihre Leistungen in der letzten Zeit waren also sehr
 unbefriedigend; es ist zwar nicht die Jahreszeit, um besondere Geschäfte
 zu machen, das erkennen wir an; aber eine Jahreszeit, um keine Geschäfte
 zu machen, gibt es überhaupt nicht, Herr Samsa, darf es nicht geben.«
-
+</paragraph><paragraph>
 »Aber Herr Prokurist,« rief Gregor außer sich und vergaß in der
 Aufregung alles andere, »ich mache ja sofort, augenblicklich auf. Ein
 leichtes Unwohlsein, ein Schwindelanfall, haben mich verhindert
@@ -395,7 +351,7 @@ fahre ich auf die Reise, die paar Stunden Ruhe haben mich gekräftigt.
 Halten Sie sich nur nicht auf, Herr Prokurist; ich bin gleich selbst im
 Geschäft, und haben Sie die Güte, das zu sagen und mich dem Herrn Chef
 zu empfehlen!«
-
+</paragraph><paragraph>
 Und während Gregor dies alles hastig ausstieß und kaum wußte, was er
 sprach, hatte er sich leicht, wohl infolge der im Bett bereits erlangten
 Übung, dem Kasten genähert und versuchte nun, an ihm sich aufzurichten.
@@ -413,7 +369,7 @@ er sich gegen die Rücklehne eines nahen Stuhles fallen, an deren Rändern
 er sich mit seinen Beinchen festhielt. Damit hatte er aber auch die
 Herrschaft über sich erlangt und verstummte, denn nun konnte er den
 Prokuristen anhören.
-
+</paragraph><paragraph>
 »Haben Sie auch nur ein Wort verstanden?« fragte der Prokurist die
 Eltern, »er macht sich doch wohl nicht einen Narren aus uns?« »Um Gottes
 willen,« rief die Mutter schon unter Weinen, »er ist vielleicht schwer
@@ -429,7 +385,7 @@ Vorzimmer -- wie hatte sich die Schwester denn so schnell angezogen? --
 und rissen die Wohnungstüre auf. Man hörte gar nicht die Türe
 zuschlagen; sie hatten sie wohl offen gelassen, wie es in Wohnungen zu
 sein pflegt, in denen ein großes Unglück geschehen ist.
-
+</paragraph><paragraph>
 Gregor war aber viel ruhiger geworden. Man verstand zwar also seine
 Worte nicht mehr, trotzdem sie ihm genug klar, klarer als früher,
 vorgekommen waren, vielleicht infolge der Gewöhnung des Ohres. Aber
@@ -446,7 +402,7 @@ menschlicher Husten klang, was er selbst zu entscheiden sich nicht mehr
 getraute. Im Nebenzimmer war es inzwischen ganz still geworden.
 Vielleicht saßen die Eltern mit dem Prokuristen beim Tisch und
 tuschelten, vielleicht lehnten alle an der Türe und horchten.
-
+</paragraph><paragraph>
 Gregor schob sich langsam mit dem Sessel zur Tür hin, ließ ihn dort los,
 warf sich gegen die Tür, hielt sich an ihr aufrecht -- die Ballen seiner
 Beinchen hatten ein wenig Klebstoff -- und ruhte sich dort einen
@@ -471,7 +427,7 @@ ihn dann wieder nieder mit der ganzen Last seines Körpers. Der hellere
 Klang des endlich zurückschnappenden Schlosses erweckte Gregor förmlich.
 Aufatmend sagte er sich: »Ich habe also den Schlosser nicht gebraucht,«
 und legte den Kopf auf die Klinke, um die Türe gänzlich zu öffnen.
-
+</paragraph><paragraph>
 Da er die Türe auf diese Weise öffnen mußte, war sie eigentlich schon
 recht weit geöffnet, und er selbst noch nicht zu sehen. Er mußte sich
 erst langsam um den einen Türflügel herumdrehen, und zwar sehr
@@ -491,7 +447,7 @@ zu ihrer Brust gesenkt. Der Vater ballte mit feindseligem Ausdruck die
 Faust, als wolle er Gregor in sein Zimmer zurückstoßen, sah sich dann
 unsicher im Wohnzimmer um, beschattete dann mit den Händen die Augen und
 weinte, daß sich seine mächtige Brust schüttelte.
-
+</paragraph><paragraph>
 Gregor trat nun gar nicht in das Zimmer, sondern lehnte sich von innen
 an den festgeriegelten Türflügel, so daß sein Leib nur zur Hälfte und
 darüber der seitlich geneigte Kopf zu sehen war, mit dem er zu den
@@ -510,7 +466,7 @@ sorglos lächelnd, Respekt für seine Haltung und Uniform verlangte. Die
 Tür zum Vorzimmer war geöffnet, und man sah, da auch die Wohnungstür
 offen war, auf den Vorplatz der Wohnung hinaus und auf den Beginn der
 abwärts führenden Treppe.
-
+</paragraph><paragraph>
 »Nun,« sagte Gregor und war sich dessen wohl bewußt, daß er der einzige
 war, der die Ruhe bewahrt hatte, »ich werde mich gleich anziehen, die
 Kollektion zusammenpacken und wegfahren. Wollt ihr, wollt ihr mich
@@ -543,7 +499,7 @@ Ursachen hin nicht mehr zu durchschauenden Folgen am eigenen Leibe zu
 spüren bekommt. Herr Prokurist, gehen Sie nicht weg, ohne mir ein Wort
 gesagt zu haben, das mir zeigt, daß Sie mir wenigstens zu einem kleinen
 Teil recht geben!«
-
+</paragraph><paragraph>
 Aber der Prokurist hatte sich schon bei den ersten Worten Gregors
 abgewendet, und nur über die zuckende Schulter hinweg sah er mit
 aufgeworfenen Lippen nach Gregor zurück. Und während Gregors Rede stand
@@ -555,7 +511,7 @@ Wohnzimmer zog, hätte man glauben können, er habe sich soeben die Sohle
 verbrannt. Im Vorzimmer aber streckte er die rechte Hand weit von sich
 zur Treppe hin, als warte dort auf ihn eine geradezu überirdische
 Erlösung.
-
+</paragraph><paragraph>
 Gregor sah ein, daß er den Prokuristen in dieser Stimmung auf keinen
 Fall weggehen lassen dürfe, wenn dadurch seine Stellung im Geschäft
 nicht aufs äußerste gefährdet werden sollte. Die Eltern verstanden das
@@ -593,7 +549,7 @@ ihr der gedeckte Tisch stand; setzte sich, als sie bei ihm angekommen
 war, wie in Zerstreutheit, eilig auf ihn, und schien gar nicht zu
 merken, daß neben ihr aus der umgeworfenen großen Kanne der Kaffee in
 vollem Strome auf den Teppich sich ergoß.
-
+</paragraph><paragraph>
 »Mutter, Mutter,« sagte Gregor leise und sah zu ihr hinauf. Der
 Prokurist war ihm für einen Augenblick ganz aus dem Sinn gekommen;
 dagegen konnte er sich nicht versagen, im Anblick des fließenden Kaffees
@@ -657,13 +613,10 @@ der anderen waren schmerzhaft zu Boden gedrückt -- da gab ihm der Vater
 von hinten einen jetzt wahrhaftig erlösenden starken Stoß, und er flog,
 heftig blutend, weit in sein Zimmer hinein. Die Tür wurde noch mit dem
 Stock zugeschlagen, dann war es endlich still.
-
-
-
-
-II.
-
-
+</paragraph>
+</chapter>
+<chapter Title="II.">
+<paragraph>
 Erst in der Abenddämmerung erwachte Gregor aus seinem schweren
 ohnmachtähnlichen Schlaf. Er wäre gewiß nicht viel später auch ohne
 Störung erwacht, denn er fühlte sich genügend ausgeruht und
@@ -678,7 +631,7 @@ einzige lange, unangenehm spannende Narbe, und er mußte auf seinen zwei
 Beinreihen regelrecht hinken. Ein Beinchen war übrigens im Laufe der
 vormittägigen Vorfälle schwer verletzt worden -- es war fast ein
 Wunder, daß nur eines verletzt worden war -- und schleppte leblos nach.
-
+</paragraph><paragraph>
 Erst bei der Tür merkte er, was ihn dorthin eigentlich gelockt hatte; es
 war der Geruch von etwas Eßbarem gewesen. Denn dort stand ein Napf mit
 süßer Milch gefüllt, in der kleine Schnitte von Weißbrot schwammen. Fast
@@ -691,7 +644,7 @@ mitarbeitete --, so schmeckte ihm überdies die Milch, die sonst sein
 Lieblingsgetränk war und die ihm gewiß die Schwester deshalb
 hereingestellt hatte, gar nicht, ja er wandte sich fast mit Widerwillen
 von dem Napf ab und kroch in die Zimmermitte zurück.
-
+</paragraph><paragraph>
 Im Wohnzimmer war, wie Gregor durch die Türspalte sah, das Gas
 angezündet, aber während sonst zu dieser Tageszeit der Vater seine
 nachmittags erscheinende Zeitung der Mutter und manchmal auch der
@@ -707,7 +660,7 @@ verschaffen können. Wie aber, wenn jetzt alle Ruhe, aller Wohlstand,
 alle Zufriedenheit ein Ende mit Schrecken nehmen sollte? Um sich nicht
 in solche Gedanken zu verlieren, setzte sich Gregor lieber in Bewegung
 und kroch im Zimmer auf und ab.
-
+</paragraph><paragraph>
 Einmal während des langen Abends wurde die eine Seitentüre und einmal
 die andere bis zu einer kleinen Spalte geöffnet und rasch wieder
 geschlossen; jemand hatte wohl das Bedürfnis hereinzukommen, aber auch
@@ -719,7 +672,7 @@ als die Türen versperrt waren, hatten alle zu ihm hereinkommen wollen,
 jetzt, da er die eine Tür geöffnet hatte und die anderen offenbar
 während des Tages geöffnet worden waren, kam keiner mehr, und die
 Schlüssel steckten nun auch von außen.
-
+</paragraph><paragraph>
 Spät erst in der Nacht wurde das Licht im Wohnzimmer ausgelöscht, und
 nun war leicht festzustellen, daß die Eltern und die Schwester so lange
 wachgeblieben waren, denn wie man genau hören konnte, entfernten sich
@@ -734,7 +687,7 @@ Kanapee, wo er sich, trotzdem sein Rücken ein wenig gedrückt wurde und
 trotzdem er den Kopf nicht mehr erheben konnte, gleich sehr behaglich
 fühlte und nur bedauerte, daß sein Körper zu breit war, um vollständig
 unter dem Kanapee untergebracht zu werden.
-
+</paragraph><paragraph>
 Dort blieb er die ganze Nacht, die er zum Teil im Halbschlaf, aus dem
 ihn der Hunger immer wieder aufschreckte, verbrachte, zum Teil aber in
 Sorgen und undeutlichen Hoffnungen, die aber alle zu dem Schlusse
@@ -742,7 +695,7 @@ führten, daß er sich vorläufig ruhig verhalten und durch Geduld und
 größte Rücksichtnahme der Familie die Unannehmlichkeiten erträglich
 machen müsse, die er ihr in seinem gegenwärtigen Zustand nun einmal zu
 verursachen gezwungen war.
-
+</paragraph><paragraph>
 Schon am frühen Morgen, es war fast noch Nacht, hatte Gregor
 Gelegenheit, die Kraft seiner eben gefaßten Entschlüsse zu prüfen, denn
 vom Vorzimmer her öffnete die Schwester, fast völlig angezogen, die Tür
@@ -804,7 +757,7 @@ also auch diese nicht mehr zu gebrauchen, und wie sie alles hastig in
 einen Kübel schüttete, den sie mit einem Holzdeckel schloß, worauf sie
 alles hinaustrug. Kaum hatte sie sich umgedreht, zog sich schon Gregor
 unter dem Kanapee hervor und streckte und blähte sich.
-
+</paragraph><paragraph>
 Auf diese Weise bekam nun Gregor täglich sein Essen, einmal am Morgen,
 wenn die Eltern und das Dienstmädchen noch schliefen, das zweitemal nach
 dem allgemeinen Mittagessen, denn dann schliefen die Eltern gleichfalls
@@ -814,7 +767,7 @@ Gregor verhungere, aber vielleicht hätten sie es nicht ertragen können,
 von seinem Essen mehr als durch Hörensagen zu erfahren, vielleicht
 wollte die Schwester ihnen auch eine möglicherweise nur kleine Trauer
 ersparen, denn tatsächlich litten sie ja gerade genug.
-
+</paragraph><paragraph>
 Mit welchen Ausreden man an jenem ersten Vormittag den Arzt und den
 Schlosser wieder aus der Wohnung geschafft hatte, konnte Gregor gar
 nicht erfahren, denn da er nicht verstanden wurde, dachte niemand daran,
@@ -829,7 +782,7 @@ sagte sie, wenn Gregor unter dem Essen tüchtig aufgeräumt hatte, während
 sie im gegenteiligen Fall, der sich allmählich immer häufiger
 wiederholte, fast traurig zu sagen pflegte: »Nun ist wieder alles
 stehengeblieben.«
-
+</paragraph><paragraph>
 Während aber Gregor unmittelbar keine Neuigkeit erfahren konnte,
 erhorchte er manches aus den Nebenzimmern, und wo er nun einmal Stimmen
 hörte, lief er gleich zu der betreffenden Tür und drückte sich mit
@@ -847,7 +800,7 @@ eine Viertelstunde danach verabschiedete, dankte sie für die Entlassung
 unter Tränen, wie für die größte Wohltat, die man ihr hier erwiesen
 hatte, und gab, ohne daß man es von ihr verlangte, einen fürchterlichen
 Schwur ab, niemandem auch nur das geringste zu verraten.
-
+</paragraph><paragraph>
 Nun mußte die Schwester im Verein mit der Mutter auch kochen; allerdings
 machte das nicht viel Mühe, denn man aß fast nichts. Immer wieder hörte
 Gregor, wie der eine den anderen vergebens zum Essen aufforderte und
@@ -858,7 +811,7 @@ sich, es selbst zu holen, und als der Vater schwieg, sagte sie, um ihm
 jedes Bedenken zu nehmen, sie könne auch die Hausmeisterin darum
 schicken, aber dann sagte der Vater schließlich ein großes »Nein«, und
 es wurde nicht mehr davon gesprochen.
-
+</paragraph><paragraph>
 Schon im Laufe des ersten Tages legte der Vater die ganzen
 Vermögensverhältnisse und Aussichten sowohl der Mutter als auch der
 Schwester dar. Hie und da stand er vom Tische auf und holte aus seiner
@@ -896,7 +849,7 @@ Konservatorium erwähnt, aber immer nur als schöner Traum, an dessen
 Verwirklichung nicht zu denken war, und die Eltern hörten nicht einmal
 diese unschuldigen Erwähnungen gern; aber Gregor dachte sehr bestimmt
 daran und beabsichtigte, es am Weihnachtsabend feierlich zu erklären.
-
+</paragraph><paragraph>
 Solche in seinem gegenwärtigen Zustand ganz nutzlose Gedanken gingen ihm
 durch den Kopf, während er dort aufrecht an der Türe klebte und horchte.
 Manchmal konnte er vor allgemeiner Müdigkeit gar nicht mehr zuhören und
@@ -906,7 +859,7 @@ hatte, war nebenan gehört worden und hatte alle verstummen lassen. »Was
 er nur wieder treibt,« sagte der Vater nach einer Weile, offenbar zur
 Türe hingewendet, und dann erst wurde das unterbrochene Gespräch
 allmählich wieder aufgenommen.
-
+</paragraph><paragraph>
 Gregor erfuhr nun zur Genüge -- denn der Vater pflegte sich in seinen
 Erklärungen öfters zu wiederholen, teils, weil er selbst sich mit diesen
 Dingen schon lange nicht beschäftigt hatte, teils auch, weil die Mutter
@@ -923,7 +876,7 @@ die Schuld des Vaters gegenüber dem Chef weiter abgetragen haben können,
 und jener Tag, an dem er diesen Posten hätte loswerden können, wäre weit
 näher gewesen, aber jetzt war es zweifellos besser so, wie es der Vater
 eingerichtet hatte.
-
+</paragraph><paragraph>
 Nun genügte dieses Geld aber ganz und gar nicht, um die Familie etwa von
 den Zinsen leben zu lassen; es genügte vielleicht, um die Familie ein,
 höchstens zwei Jahre zu erhalten, mehr war es nicht. Es war also bloß
@@ -946,7 +899,7 @@ spielen? Wenn die Rede auf diese Notwendigkeit des Geldverdienens kam,
 ließ zuerst immer Gregor die Türe los und warf sich auf das neben der
 Tür befindliche kühle Ledersofa, denn ihm war ganz heiß vor Beschämung
 und Trauer.
-
+</paragraph><paragraph>
 Oft lag er dort die ganzen langen Nächte über, schlief keinen Augenblick
 und scharrte nur stundenlang auf dem Leder. Oder er scheute nicht die
 große Mühe, einen Sessel zum Fenster zu schieben, dann die
@@ -965,7 +918,7 @@ müssen, daß der Sessel beim Fenster stand, als sie schon jedesmal,
 nachdem sie das Zimmer aufgeräumt hatte, den Sessel wieder genau zum
 Fenster hinschob, ja sogar von nun ab den inneren Fensterflügel offen
 ließ.
-
+</paragraph><paragraph>
 Hätte Gregor nur mit der Schwester sprechen und ihr für alles danken
 können, was sie für ihn machen mußte, er hätte ihre Dienste leichter
 ertragen; so aber litt er darunter. Die Schwester suchte freilich die
@@ -982,7 +935,7 @@ zweimal; die ganze Zeit über zitterte er unter dem Kanapee und wußte
 doch sehr gut, daß sie ihn gewiß gerne damit verschont hätte, wenn es
 ihr nur möglich gewesen wäre, sich in einem Zimmer, in dem sich Gregor
 befand, bei geschlossenem Fenster aufzuhalten.
-
+</paragraph><paragraph>
 Einmal, es war wohl schon ein Monat seit Gregors Verwandlung vergangen,
 und es war doch schon für die Schwester kein besonderer Grund mehr, über
 Gregors Aussehen in Erstaunen zu geraten, kam sie ein wenig früher als
@@ -1010,7 +963,7 @@ genug, aber sie ließ das Leintuch, so wie es war, und Gregor glaubte
 sogar einen dankbaren Blick erhascht zu haben, als er einmal mit dem
 Kopf vorsichtig das Leintuch ein wenig lüftete, um nachzusehen, wie die
 Schwester die neue Einrichtung aufnahm.
-
+</paragraph><paragraph>
 In den ersten vierzehn Tagen konnten es die Eltern nicht über sich
 bringen, zu ihm hereinzukommen, und er hörte oft, wie sie die jetzige
 Arbeit der Schwester völlig anerkannten, während sie sich bisher häufig
@@ -1031,7 +984,7 @@ hereinkäme, nicht jeden Tag natürlich, aber vielleicht einmal in der
 Woche; sie verstand doch alles viel besser als die Schwester, die trotz
 all ihrem Mute doch nur ein Kind war und im letzten Grunde vielleicht
 nur aus kindlichem Leichtsinn eine so schwere Aufgabe übernommen hatte.
-
+</paragraph><paragraph>
 Der Wunsch Gregors, die Mutter zu sehen, ging bald in Erfüllung. Während
 des Tages wollte Gregor schon aus Rücksicht auf seine Eltern sich nicht
 beim Fenster zeigen, kriechen konnte er aber auf den paar Quadratmetern
@@ -1091,7 +1044,7 @@ selbst überlassen? Ich glaube, es wäre das beste, wir suchen das Zimmer
 genau in dem Zustand zu erhalten, in dem es früher war, damit Gregor,
 wenn er wieder zu uns zurückkommt, alles unverändert findet und um so
 leichter die Zwischenzeit vergessen kann.«
-
+</paragraph><paragraph>
 Beim Anhören dieser Worte der Mutter erkannte Gregor, daß der Mangel
 jeder unmittelbaren menschlichen Ansprache, verbunden mit dem
 einförmigen Leben inmitten der Familie, im Laufe dieser zwei Monate
@@ -1108,7 +1061,7 @@ mußte bleiben, die guten Einwirkungen der Möbel auf seinen Zustand
 konnte er nicht entbehren; und wenn die Möbel ihn hinderten, das
 sinnlose Herumkriechen zu betreiben, so war es kein Schaden, sondern ein
 großer Vorteil.
-
+</paragraph><paragraph>
 Aber die Schwester war leider anderer Meinung; sie hatte sich,
 allerdings nicht ganz unberechtigt, angewöhnt, bei Besprechung der
 Angelegenheiten Gregors als besonders Sachverständige gegenüber den
@@ -1128,7 +1081,7 @@ schreckenerregender machen zu wollen, um dann noch mehr als bis jetzt
 für ihn leisten zu können. Denn in einem Raum, in dem Gregor ganz allein
 die leeren Wände beherrschte, würde wohl kein Mensch außer Grete jemals
 einzutreten sich getrauen.
-
+</paragraph><paragraph>
 Und so ließ sie sich von ihrem Entschlusse durch die Mutter nicht
 abbringen, die auch in diesem Zimmer vor lauter Unruhe unsicher schien,
 bald verstummte und der Schwester nach Kräften beim Hinausschaffen des
@@ -1146,7 +1099,7 @@ andere Ende des Kanapees, konnte es aber nicht mehr verhindern, daß das
 Leintuch vorne ein wenig sich bewegte. Das genügte, um die Mutter
 aufmerksam zu machen. Sie stockte, stand einen Augenblick still und ging
 dann zu Grete zurück.
-
+</paragraph><paragraph>
 Trotzdem sich Gregor immer wieder sagte, daß ja nichts Außergewöhnliches
 geschehe, sondern nur ein paar Möbel umgestellt würden, wirkte doch, wie
 er sich bald eingestehen mußte, dieses Hin- und Hergehen der Frauen,
@@ -1163,7 +1116,7 @@ geschrieben hatte, -- da hatte er wirklich keine Zeit mehr, die guten
 Absichten zu prüfen, welche die zwei Frauen hatten, deren Existenz er
 übrigens fast vergessen hatte, denn vor Erschöpfung arbeiteten sie schon
 stumm, und man hörte nur das schwere Tappen ihrer Füße.
-
+</paragraph><paragraph>
 Und so brach er denn hervor -- die Frauen stützten sich gerade im
 Nebenzimmer an den Schreibtisch, um ein wenig zu verschnaufen --,
 wechselte viermal die Richtung des Laufes, er wußte wirklich nicht, was
@@ -1174,7 +1127,7 @@ seinem heißen Bauch wohltat. Dieses Bild wenigstens, das Gregor jetzt
 ganz verdeckte, würde nun gewiß niemand wegnehmen. Er verdrehte den Kopf
 nach der Tür des Wohnzimmers, um die Frauen bei ihrer Rückkehr zu
 beobachten.
-
+</paragraph><paragraph>
 Sie hatten sich nicht viel Ruhe gegönnt und kamen schon wieder; Grete
 hatte den Arm um die Mutter gelegt und trug sie fast. »Also was nehmen
 wir jetzt?« sagte Grete und sah sich um, Da kreuzten sich ihre Blicke
@@ -1186,7 +1139,7 @@ zurückgehen?« Die Absicht Gretes war für Gregor klar, sie wollte die
 Mutter in Sicherheit bringen und dann ihn von der Wand hinunterjagen.
 Nun, sie konnte es ja immerhin versuchen! Er saß auf seinem Bild und
 gab es nicht her. Lieber würde er Grete ins Gesicht springen.
-
+</paragraph><paragraph>
 Aber Gretes Worte hatten die Mutter erst recht beunruhigt, sie trat zur
 Seite, erblickte den riesigen braunen Fleck auf der geblümten Tapete,
 rief, ehe ihr eigentlich zum Bewußtsein kam, daß das Gregor war, was sie
@@ -1214,7 +1167,7 @@ Besorgnis bedrängt, begann er zu kriechen, überkroch alles, Wände,
 Möbel und Zimmerdecke und fiel endlich in seiner Verzweiflung, als sich
 das ganze Zimmer schon um ihn zu drehen anfing, mitten auf den großen
 Tisch.
-
+</paragraph><paragraph>
 Es verging eine kleine Weile, Gregor lag matt da, ringsherum war es
 still, vielleicht war das ein gutes Zeichen. Da läutete es. Das Mädchen
 war natürlich in ihrer Küche eingesperrt und Grete mußte daher öffnen
@@ -1233,7 +1186,7 @@ damit der Vater beim Eintritt vom Vorzimmer her gleich sehen könne, daß
 Gregor die beste Absicht habe, sofort in sein Zimmer zurückzukehren, und
 daß es nicht nötig sei, ihn zurückzutreiben, sondern daß man nur die Tür
 zu öffnen brauchte, und gleich werde er verschwinden.
-
+</paragraph><paragraph>
 Aber der Vater war nicht in der Stimmung, solche Feinheiten zu bemerken.
 »Ah!« rief er gleich beim Eintritt in einem Tone, als sei er
 gleichzeitig wütend und froh. Gregor zog den Kopf von der Tür zurück und
@@ -1306,13 +1259,10 @@ wie sie stolpernd über die Röcke auf den Vater eindrang und ihn
 umarmend, in gänzlicher Vereinigung mit ihm -- nun versagte aber Gregors
 Sehkraft schon -- die Hände an des Vaters Hinterkopf um Schonung von
 Gregors Leben bat.
-
-
-
-
-III.
-
-
+</paragraph>
+</chapter>
+<chapter Title="III.">
+<paragraph>
 Die schwere Verwundung Gregors, an der er über einen Monat litt -- der
 Apfel blieb, da ihn niemand zu entfernen wagte, als sichtbares Andenken
 im Fleische sitzen --, schien selbst den Vater daran erinnert zu haben,
@@ -1320,7 +1270,7 @@ daß Gregor trotz seiner gegenwärtigen traurigen und ekelhaften Gestalt
 ein Familienglied war, das man nicht wie einen Feind behandeln durfte,
 sondern dem gegenüber es das Gebot der Familienpflicht war, den
 Widerwillen hinunterzuschlucken und zu dulden, nichts als dulden.
-
+</paragraph><paragraph>
 Und wenn nun auch Gregor durch seine Wunde an Beweglichkeit
 wahrscheinlich für immer verloren hatte und vorläufig zur Durchquerung
 seines Zimmers wie ein alter Invalide lange, lange Minuten brauchte --
@@ -1332,7 +1282,7 @@ beobachten pflegte, geöffnet wurde, so daß er, im Dunkel seines Zimmers
 liegend, vom Wohnzimmer aus unsichtbar, die ganze Familie beim
 beleuchteten Tische sehen und ihre Reden, gewissermaßen mit allgemeiner
 Erlaubnis, also ganz anders als früher, anhören durfte.
-
+</paragraph><paragraph>
 Freilich waren es nicht mehr die lebhaften Unterhaltungen der früheren
 Zeiten, an die Gregor in den kleinen Hotelzimmern stets mit einigem
 Verlangen gedacht hatte, wenn er sich müde in das feuchte Bettzeug hatte
@@ -1346,7 +1296,7 @@ erreichen. Manchmal wachte der Vater auf, und als wisse er gar nicht,
 daß er geschlafen habe, sagte er zur Mutter: »Wie lange du heute schon
 wieder nähst!« und schlief sofort wieder ein, während Mutter und
 Schwester einander müde zulächelten.
-
+</paragraph><paragraph>
 Mit einer Art Eigensinn weigerte sich der Vater, auch zu Hause seine
 Dieneruniform abzulegen; und während der Schlafrock nutzlos am
 Kleiderhaken hing, schlummerte der Vater vollständig angezogen auf
@@ -1356,7 +1306,7 @@ anfangs nicht neue Uniform trotz aller Sorgfalt von Mutter und Schwester
 an Reinlichkeit, und Gregor sah oft ganze Abende lang auf dieses über
 und über fleckige, mit seinen stets geputzten Goldknöpfen leuchtende
 Kleid, in dem der alte Mann höchst unbequem und doch ruhig schlief.
-
+</paragraph><paragraph>
 Sobald die Uhr zehn schlug, suchte die Mutter durch leise Zusprache den
 Vater zu wecken und dann zu überreden, ins Bett zu gehen, denn hier war
 es doch kein richtiger Schlaf und diesen hatte der Vater, der um sechs
@@ -1379,7 +1329,7 @@ den Frauen bis zur Türe führen, winkte ihnen dort ab und ging nun
 selbständig weiter, während die Mutter ihr Nähzeug, die Schwester ihre
 Feder eiligst hinwarfen, um hinter dem Vater zu laufen und ihm weiter
 behilflich zu sein.
-
+</paragraph><paragraph>
 Wer hatte in dieser abgearbeiteten und übermüdeten Familie Zeit, sich um
 Gregor mehr zu kümmern, als unbedingt nötig war? Der Haushalt wurde
 immer mehr eingeschränkt; das Dienstmädchen wurde nun doch entlassen;
@@ -1411,7 +1361,7 @@ Wange an Wange saßen; wenn jetzt die Mutter, auf Gregors Zimmer zeigend,
 sagte: »Mach' dort die Tür zu, Grete,« und wenn nun Gregor wieder im
 Dunkel war, während nebenan die Frauen ihre Tränen vermischten oder gar
 tränenlos den Tisch anstarrten.
-
+</paragraph><paragraph>
 Die Nächte und Tage verbrachte Gregor fast ganz ohne Schlaf. Manchmal
 dachte er daran, beim nächsten Öffnen der Tür die Angelegenheiten der
 Familie ganz so wie früher wieder in die Hand zu nehmen; in seinen
@@ -1462,7 +1412,7 @@ Schlafzimmer zu schleppen suchte; die Schwester, von Schluchzen
 geschüttelt, mit ihren kleinen Fäusten den Tisch bearbeitete; und Gregor
 laut vor Wut darüber zischte, daß es keinem einfiel, die Tür zu
 schließen und ihm diesen Anblick und Lärm zu ersparen.
-
+</paragraph><paragraph>
 Aber selbst wenn die Schwester, erschöpft von ihrer Berufsarbeit, dessen
 überdrüssig geworden war, für Gregor, wie früher, zu sorgen, so hätte
 noch keineswegs die Mutter für sie eintreten müssen und Gregor hätte
@@ -1493,7 +1443,7 @@ erst zu schließen, wenn der Sessel in ihrer Hand auf Gregors Rücken
 niederschlagen würde. »Also weiter geht es nicht?« fragte sie, als
 Gregor sich wieder umdrehte, und stellte den Sessel ruhig in die Ecke
 zurück.
-
+</paragraph><paragraph>
 Gregor aß nun fast gar nichts mehr. Nur wenn er zufällig an der
 vorbereiteten Speise vorüberkam, nahm er zum Spiel einen Bissen in den
 Mund, hielt ihn dort stundenlang und spie ihn dann meist wieder aus.
@@ -1523,7 +1473,7 @@ und es in Bewegung brachte, zuerst gezwungen, weil kein sonstiger Platz
 zum Kriechen frei war, später aber mit wachsendem Vergnügen, obwohl er
 nach solchen Wanderungen, zum Sterben müde und traurig, wieder
 stundenlang sich nicht rührte.
-
+</paragraph><paragraph>
 Da die Zimmerherren manchmal auch ihr Abendessen zu Hause im gemeinsamen
 Wohnzimmer einnahmen, blieb die Wohnzimmertür an manchen Abenden
 geschlossen, aber Gregor verzichtete ganz leicht auf das Öffnen der Tür,
@@ -1545,7 +1495,7 @@ offenbar um festzustellen, ob es mürbe genug sei und ob es nicht etwa in
 die Küche zurückgeschickt werden solle. Er war befriedigt, und Mutter
 und Schwester, die gespannt zugesehen hatten, begannen aufatmend zu
 lächeln.
-
+</paragraph><paragraph>
 Die Familie selbst aß in der Küche. Trotzdem kam der Vater, ehe er in
 die Küche ging, in dieses Zimmer herein und machte mit einer einzigen
 Verbeugung, die Kappe in der Hand, einen Rundgang um den Tisch. Die
@@ -1558,7 +1508,7 @@ brauche, um zu essen, und daß man auch mit den schönsten zahnlosen
 Kiefern nichts ausrichten könne. »Ich habe ja Appetit,« sagte sich
 Gregor sorgenvoll, »aber nicht auf diese Dinge. Wie sich diese
 Zimmerherren nähren, und ich komme um!«
-
+</paragraph><paragraph>
 Gerade an diesem Abend -- Gregor erinnerte sich nicht, während der
 ganzen Zeit die Violine gehört zu haben -- ertönte sie von der Küche
 her. Die Zimmerherren hatten schon ihr Nachtmahl beendet, der mittlere
@@ -1581,7 +1531,7 @@ der Vater lehnte an der Tür, die rechte Hand zwischen zwei Knöpfe des
 geschlossenen Livreerockes gesteckt; die Mutter aber erhielt von einem
 Herrn einen Sessel angeboten und saß, da sie den Sessel dort ließ, wohin
 ihn der Herr zufällig gestellt hatte, abseits in einem Winkel.
-
+</paragraph><paragraph>
 Die Schwester begann zu spielen; Vater und Mutter verfolgten, jeder von
 seiner Seite, aufmerksam die Bewegungen ihrer Hände. Gregor hatte, von
 dem Spiele angezogen, sich ein wenig weiter vorgewagt und war schon mit
@@ -1596,7 +1546,7 @@ Gleichgültigkeit gegen alles war viel zu groß, als daß er sich, wie
 früher mehrmals während des Tages, auf den Rücken gelegt und am Teppich
 gescheuert hätte. Und trotz dieses Zustandes hatte er keine Scheu, ein
 Stück auf dem makellosen Fußboden des Wohnzimmers vorzurücken.
-
+</paragraph><paragraph>
 Allerdings achtete auch niemand auf ihn. Die Familie war gänzlich vom
 Violinspiel in Anspruch genommen; die Zimmerherren dagegen, die
 zunächst, die Hände in den Hosentaschen, viel zu nahe hinter dem
@@ -1632,7 +1582,7 @@ Nach dieser Erklärung würde die Schwester in Tränen der Rührung
 ausbrechen, und Gregor würde sich bis zu ihrer Achsel erheben und ihren
 Hals küssen, den sie, seitdem sie ins Geschäft ging, frei ohne Band oder
 Kragen trug.
-
+</paragraph><paragraph>
 »Herr Samsa!« rief der mittlere Herr dem Vater zu und zeigte, ohne ein
 weiteres Wort zu verlieren, mit dem Zeigefinger auf den langsam sich
 vorwärtsbewegenden Gregor. Die Violine verstummte, der mittlere
@@ -1675,7 +1625,7 @@ auftreten werde.« Er schwieg und sah gerade vor sich hin, als erwarte er
 etwas. Tatsächlich fielen sofort seine zwei Freunde mit den Worten ein:
 »Auch wir kündigen augenblicklich.« Darauf faßte er die Türklinke und
 schloß mit einem Krach die Tür.
-
+</paragraph><paragraph>
 Der Vater wankte mit tastenden Händen zu seinem Sessel und ließ sich
 hineinfallen; es sah aus, als strecke er sich zu seinem gewöhnlichen
 Abendschläfchen, aber das starke Nicken seines wie haltlosen Kopfes
@@ -1688,7 +1638,7 @@ Bestimmtheit schon für den nächsten Augenblick einen allgemeinen über
 ihn sich entladenden Zusammensturz und wartete. Nicht einmal die Violine
 schreckte ihn auf, die, unter den zitternden Fingern der Mutter hervor,
 ihr vom Schoße fiel und einen hallenden Ton von sich gab.
-
+</paragraph><paragraph>
 »Liebe Eltern,« sagte die Schwester und schlug zur Einleitung mit der
 Hand auf den Tisch, »so geht es nicht weiter. Wenn ihr das vielleicht
 nicht einsehet, ich sehe es ein. Ich will vor diesem Untier nicht den
@@ -1696,17 +1646,17 @@ Namen meines Bruders aussprechen und sage daher bloß: wir müssen
 versuchen es loszuwerden. Wir haben das Menschenmögliche versucht, es zu
 pflegen und zu dulden, ich glaube, es kann uns niemand den geringsten
 Vorwurf machen.«
-
+</paragraph><paragraph>
 »Sie hat tausendmal recht,« sagte der Vater für sich. Die Mutter, die
 noch immer nicht genug Atem finden konnte, fing mit einem irrsinnigen
 Ausdruck der Augen dumpf in die vorgehaltene Hand zu husten an.
-
+</paragraph><paragraph>
 Die Schwester eilte zur Mutter und hielt ihr die Stirn. Der Vater schien
 durch die Worte der Schwester auf bestimmtere Gedanken gebracht zu sein,
 hatte sich aufrecht gesetzt, spielte mit seiner Dienermütze zwischen den
 Tellern, die noch vom Nachtmahl der Zimmerherren her auf dem Tische
 standen, und sah bisweilen auf den stillen Gregor hin.
-
+</paragraph><paragraph>
 »Wir müssen es loszuwerden suchen,« sagte die Schwester nun
 ausschließlich zum Vater, denn die Mutter hörte in ihrem Husten nichts,
 »es bringt euch noch beide um, ich sehe es kommen. Wenn man schon so
@@ -1714,23 +1664,23 @@ schwer arbeiten muß, wie wir alle, kann man nicht noch zu Hause diese
 ewige Quälerei ertragen. Ich kann es auch nicht mehr.« Und sie brach so
 heftig in Weinen aus, daß ihre Tränen auf das Gesicht der Mutter
 niederflossen, von dem sie sie mit mechanischen Handbewegungen wischte.
-
+</paragraph><paragraph>
 »Kind,« sagte der Vater mitleidig und mit auffallendem Verständnis, »was
 sollen wir aber tun?«
-
+</paragraph><paragraph>
 Die Schwester zuckte nur die Achseln zum Zeichen der Ratlosigkeit, die
 sie nun während des Weinens im Gegensatz zu ihrer früheren Sicherheit
 ergriffen hatte.
-
+</paragraph><paragraph>
 »Wenn er uns verstünde,« sagte der Vater halb fragend; die Schwester
 schüttelte aus dem Weinen heraus heftig die Hand zum Zeichen, daß daran
 nicht zu denken sei.
-
+</paragraph><paragraph>
 »Wenn er uns verstünde,« wiederholte der Vater und nahm durch Schließen
 der Augen die Überzeugung der Schwester von der Unmöglichkeit dessen in
 sich auf, »dann wäre vielleicht ein Übereinkommen mit ihm möglich. Aber
 so --«
-
+</paragraph><paragraph>
 »Weg muß es,« rief die Schwester, »das ist das einzige Mittel, Vater. Du
 mußt bloß den Gedanken loszuwerden suchen, daß es Gregor ist. Daß wir es
 so lange geglaubt haben, das ist ja unser eigentliches Unglück. Aber wie
@@ -1747,7 +1697,7 @@ sich förmlich von ihrem Sessel ab, als wollte sie lieber die Mutter
 opfern, als in Gregors Nähe bleiben, und eilte hinter den Vater, der,
 lediglich durch ihr Benehmen erregt, auch aufstand und die Arme wie zum
 Schutze der Schwester vor ihr halb erhob.
-
+</paragraph><paragraph>
 Aber Gregor fiel es doch gar nicht ein, irgend jemandem und gar seiner
 Schwester Angst machen zu wollen. Er hatte bloß angefangen sich
 umzudrehen, um in sein Zimmer zurückzuwandern, und das nahm sich
@@ -1760,7 +1710,7 @@ und traurig an. Die Mutter lag, die Beine ausgestreckt und
 aneinandergedrückt, in ihrem Sessel, die Augen fielen ihr vor Ermattung
 fast zu; der Vater und die Schwester saßen nebeneinander, die Schwester
 hatte ihre Hand um des Vaters Hals gelegt.
-
+</paragraph><paragraph>
 »Nun darf ich mich schon vielleicht umdrehen,« dachte Gregor und begann
 seine Arbeit wieder. Er konnte das Schnaufen der Anstrengung nicht
 unterdrücken und mußte auch hie und da ausruhen. Im übrigen drängte ihn
@@ -1775,7 +1725,7 @@ wendete er den Kopf, nicht, vollständig, denn er fühlte den Hals steif
 werden, immerhin sah er noch, daß sich hinter ihm nichts verändert
 hatte, nur die Schwester war aufgestanden. Sein letzter Blick streifte
 die Mutter, die nun völlig eingeschlafen war.
-
+</paragraph><paragraph>
 Kaum war er innerhalb seines Zimmers, wurde die Tür eiligst zugedrückt,
 festgeriegelt und versperrt. Über den plötzlichen Lärm hinter sich
 erschrak Gregor so, daß ihm die Beinchen einknickten. Es war die
@@ -1784,7 +1734,7 @@ gestanden und hatte gewartet, leichtfüßig war sie dann
 vorwärtsgesprungen, Gregor hatte sie gar nicht kommen hören, und ein
 »Endlich!« rief sie den Eltern zu, während sie den Schlüssel im Schloß
 umdrehte.
-
+</paragraph><paragraph>
 »Und jetzt?« fragte sich Gregor und sah sich im Dunkeln um. Er machte
 bald die Entdeckung, daß er sich nun überhaupt nicht mehr rühren konnte.
 Er wunderte sich darüber nicht, eher kam es ihm unnatürlich vor, daß er
@@ -1801,7 +1751,7 @@ er, bis die Turmuhr die dritte Morgenstunde schlug. Den Anfang des
 allgemeinen Hellerwerdens draußen vor dem Fenster erlebte er noch. Dann
 sank sein Kopf ohne seinen Willen gänzlich nieder, und aus seinen
 Nüstern strömte sein letzter Atem schwach hervor.
-
+</paragraph><paragraph>
 Als am frühen Morgen die Bedienerin kam -- vor lauter Kraft und Eile
 schlug sie, wie oft man sie auch schon gebeten hatte, das zu vermeiden,
 alle Türen derartig zu, daß in der ganzen Wohnung von ihrem Kommen an
@@ -1817,7 +1767,7 @@ wahren Sachverhalt erkannte, machte sie große Augen, pfiff vor sich hin,
 hielt sich aber nicht lange auf, sondern riß die Tür des Schlafzimmers
 auf und rief mit lauter Stimme in das Dunkel hinein: »Sehen Sie nur mal
 an, es ist krepiert; da liegt es, ganz und gar krepiert!«
-
+</paragraph><paragraph>
 Das Ehepaar Samsa saß im Ehebett aufrecht da und hatte zu tun, den
 Schrecken über die Bedienerin zu verwinden, ehe es dazu kam, ihre
 Meldung aufzufassen. Dann aber stiegen Herr und Frau Samsa, jeder auf
@@ -1839,14 +1789,14 @@ gegessen. So wie die Speisen hereinkamen, sind sie wieder
 hinausgekommen.« Tatsächlich war Gregors Körper vollständig flach und
 trocken, man erkannte das eigentlich erst jetzt, da er nicht mehr von
 den Beinchen gehoben war und auch sonst nichts den Blick ablenkte.
-
+</paragraph><paragraph>
 »Komm, Grete, auf ein Weilchen zu uns herein,« sagte Frau Samsa mit
 einem wehmütigen Lächeln, und Grete ging, nicht ohne nach der Leiche
 zurückzusehen, hinter den Eltern in das Schlafzimmer. Die Bedienerin
 schloß die Tür und öffnete gänzlich das Fenster. Trotz des frühen
 Morgens war der frischen Luft schon etwas Lauigkeit beigemischt. Es war
 eben schon Ende März.
-
+</paragraph><paragraph>
 Aus ihrem Zimmer traten die drei Zimmerherren und sahen sich erstaunt
 nach ihrem Frühstück um; man hatte sie vergessen. »Wo ist das
 Frühstück?« fragte der mittlere der Herren mürrisch die Bedienerin.
@@ -1855,12 +1805,12 @@ schweigend den Herren zu, sie möchten in Gregors Zimmer kommen. Sie
 kamen auch und standen dann, die Hände in den Taschen ihrer etwas
 abgenützten Röckchen, in dem nun schon ganz hellen Zimmer um Gregors
 Leiche herum.
-
+</paragraph><paragraph>
 Da öffnete sich die Tür des Schlafzimmers, und Herr Samsa erschien in
 seiner Livree, an einem Arm seine Frau, am anderen seine Tochter. Alle
 waren ein wenig verweint; Grete drückte bisweilen ihr Gesicht an den Arm
 des Vaters.
-
+</paragraph><paragraph>
 »Verlassen Sie sofort meine Wohnung!« sagte Herr Samsa und zeigte auf
 die Tür, ohne die Frauen von sich zu lassen. »Wie meinen Sie das?« sagte
 der mittlere der Herren etwas bestürzt und lächelte süßlich. Die zwei
@@ -1891,7 +1841,7 @@ Samsa für sie, und als ihnen entgegen und dann hoch über sie hinweg ein
 Fleischergeselle mit der Trage auf dem Kopf in stolzer Haltung
 heraufstieg, verließ bald Herr Samsa mit den Frauen das Geländer, und
 alle kehrten, wie erleichtert, in ihre Wohnung zurück.
-
+</paragraph><paragraph>
 Sie beschlossen, den heutigen Tag zum Ausruhen und Spazierengehen zu
 verwenden; sie hatten diese Arbeitsunterbrechung nicht nur verdient, sie
 brauchten sie sogar unbedingt. Und so setzten sie sich zum Tisch und
@@ -1917,7 +1867,7 @@ anfangen wollte, wehrte dies mit ausgestreckter Hand entschieden ab. Da
 sie aber nicht erzählen durfte, erinnerte sie sich an die große Eile,
 die sie hatte, rief offenbar beleidigt: »Adjes allseits,« drehte sich
 wild um und verließ unter fürchterlichem Türezuschlagen die Wohnung.
-
+</paragraph><paragraph>
 »Abends wird sie entlassen,« sagte Herr Samsa, bekam aber weder von
 seiner Frau noch von seiner Tochter eine Antwort, denn die Bedienerin
 schien ihre kaum gewonnene Ruhe wieder gestört zu haben. Sie erhoben
@@ -1927,7 +1877,7 @@ sie still ein Weilchen. Dann rief er: »Also kommt doch her. Laßt schon
 endlich die alten Sachen. Und nehmt auch ein wenig Rücksicht auf mich.«
 Gleich folgten ihm die Frauen, eilten zu ihm, liebkosten ihn und
 beendeten rasch ihre Briefe.
-
+</paragraph><paragraph>
 Dann verließen alle drei gemeinschaftlich die Wohnung, was sie schon
 seit Monaten nicht getan hatten, und fuhren mit der Elektrischen ins
 Freie vor die Stadt. Der Wagen, in dem sie allein saßen, war ganz von
@@ -1949,371 +1899,6 @@ verständigend, dachten sie daran, daß es nun Zeit sein werde, auch einen
 braven Mann für sie zu suchen. Und es war ihnen wie eine Bestätigung
 ihrer neuen Träume und guten Absichten, als am Ziele ihrer Fahrt die
 Tochter als erste sich erhob und ihren jungen Körper dehnte.
-
-
-
-
-
-End of the Project Gutenberg EBook of Die Verwandlung, by Franz Kafka
-
-*** END OF THIS PROJECT GUTENBERG EBOOK DIE VERWANDLUNG ***
-
-***** This file should be named 22367-8.txt or 22367-8.zip *****
-This and all associated files of various formats will be found in:
-        http://www.gutenberg.org/2/2/3/6/22367/
-
-Produced by Jana Srna, Alexander Bauer and the Online
-Distributed Proofreading Team at http://www.pgdp.net
-
-
-Updated editions will replace the previous one--the old editions
-will be renamed.
-
-Creating the works from public domain print editions means that no
-one owns a United States copyright in these works, so the Foundation
-(and you!) can copy and distribute it in the United States without
-permission and without paying copyright royalties.  Special rules,
-set forth in the General Terms of Use part of this license, apply to
-copying and distributing Project Gutenberg-tm electronic works to
-protect the PROJECT GUTENBERG-tm concept and trademark.  Project
-Gutenberg is a registered trademark, and may not be used if you
-charge for the eBooks, unless you receive specific permission.  If you
-do not charge anything for copies of this eBook, complying with the
-rules is very easy.  You may use this eBook for nearly any purpose
-such as creation of derivative works, reports, performances and
-research.  They may be modified and printed and given away--you may do
-practically ANYTHING with public domain eBooks.  Redistribution is
-subject to the trademark license, especially commercial
-redistribution.
-
-
-
-*** START: FULL LICENSE ***
-
-THE FULL PROJECT GUTENBERG LICENSE
-PLEASE READ THIS BEFORE YOU DISTRIBUTE OR USE THIS WORK
-
-To protect the Project Gutenberg-tm mission of promoting the free
-distribution of electronic works, by using or distributing this work
-(or any other work associated in any way with the phrase "Project
-Gutenberg"), you agree to comply with all the terms of the Full Project
-Gutenberg-tm License (available with this file or online at
-http://gutenberg.org/license).
-
-
-Section 1.  General Terms of Use and Redistributing Project Gutenberg-tm
-electronic works
-
-1.A.  By reading or using any part of this Project Gutenberg-tm
-electronic work, you indicate that you have read, understand, agree to
-and accept all the terms of this license and intellectual property
-(trademark/copyright) agreement.  If you do not agree to abide by all
-the terms of this agreement, you must cease using and return or destroy
-all copies of Project Gutenberg-tm electronic works in your possession.
-If you paid a fee for obtaining a copy of or access to a Project
-Gutenberg-tm electronic work and you do not agree to be bound by the
-terms of this agreement, you may obtain a refund from the person or
-entity to whom you paid the fee as set forth in paragraph 1.E.8.
-
-1.B.  "Project Gutenberg" is a registered trademark.  It may only be
-used on or associated in any way with an electronic work by people who
-agree to be bound by the terms of this agreement.  There are a few
-things that you can do with most Project Gutenberg-tm electronic works
-even without complying with the full terms of this agreement.  See
-paragraph 1.C below.  There are a lot of things you can do with Project
-Gutenberg-tm electronic works if you follow the terms of this agreement
-and help preserve free future access to Project Gutenberg-tm electronic
-works.  See paragraph 1.E below.
-
-1.C.  The Project Gutenberg Literary Archive Foundation ("the Foundation"
-or PGLAF), owns a compilation copyright in the collection of Project
-Gutenberg-tm electronic works.  Nearly all the individual works in the
-collection are in the public domain in the United States.  If an
-individual work is in the public domain in the United States and you are
-located in the United States, we do not claim a right to prevent you from
-copying, distributing, performing, displaying or creating derivative
-works based on the work as long as all references to Project Gutenberg
-are removed.  Of course, we hope that you will support the Project
-Gutenberg-tm mission of promoting free access to electronic works by
-freely sharing Project Gutenberg-tm works in compliance with the terms of
-this agreement for keeping the Project Gutenberg-tm name associated with
-the work.  You can easily comply with the terms of this agreement by
-keeping this work in the same format with its attached full Project
-Gutenberg-tm License when you share it without charge with others.
-
-1.D.  The copyright laws of the place where you are located also govern
-what you can do with this work.  Copyright laws in most countries are in
-a constant state of change.  If you are outside the United States, check
-the laws of your country in addition to the terms of this agreement
-before downloading, copying, displaying, performing, distributing or
-creating derivative works based on this work or any other Project
-Gutenberg-tm work.  The Foundation makes no representations concerning
-the copyright status of any work in any country outside the United
-States.
-
-1.E.  Unless you have removed all references to Project Gutenberg:
-
-1.E.1.  The following sentence, with active links to, or other immediate
-access to, the full Project Gutenberg-tm License must appear prominently
-whenever any copy of a Project Gutenberg-tm work (any work on which the
-phrase "Project Gutenberg" appears, or with which the phrase "Project
-Gutenberg" is associated) is accessed, displayed, performed, viewed,
-copied or distributed:
-
-This eBook is for the use of anyone anywhere at no cost and with
-almost no restrictions whatsoever.  You may copy it, give it away or
-re-use it under the terms of the Project Gutenberg License included
-with this eBook or online at www.gutenberg.org
-
-1.E.2.  If an individual Project Gutenberg-tm electronic work is derived
-from the public domain (does not contain a notice indicating that it is
-posted with permission of the copyright holder), the work can be copied
-and distributed to anyone in the United States without paying any fees
-or charges.  If you are redistributing or providing access to a work
-with the phrase "Project Gutenberg" associated with or appearing on the
-work, you must comply either with the requirements of paragraphs 1.E.1
-through 1.E.7 or obtain permission for the use of the work and the
-Project Gutenberg-tm trademark as set forth in paragraphs 1.E.8 or
-1.E.9.
-
-1.E.3.  If an individual Project Gutenberg-tm electronic work is posted
-with the permission of the copyright holder, your use and distribution
-must comply with both paragraphs 1.E.1 through 1.E.7 and any additional
-terms imposed by the copyright holder.  Additional terms will be linked
-to the Project Gutenberg-tm License for all works posted with the
-permission of the copyright holder found at the beginning of this work.
-
-1.E.4.  Do not unlink or detach or remove the full Project Gutenberg-tm
-License terms from this work, or any files containing a part of this
-work or any other work associated with Project Gutenberg-tm.
-
-1.E.5.  Do not copy, display, perform, distribute or redistribute this
-electronic work, or any part of this electronic work, without
-prominently displaying the sentence set forth in paragraph 1.E.1 with
-active links or immediate access to the full terms of the Project
-Gutenberg-tm License.
-
-1.E.6.  You may convert to and distribute this work in any binary,
-compressed, marked up, nonproprietary or proprietary form, including any
-word processing or hypertext form.  However, if you provide access to or
-distribute copies of a Project Gutenberg-tm work in a format other than
-"Plain Vanilla ASCII" or other format used in the official version
-posted on the official Project Gutenberg-tm web site (www.gutenberg.org),
-you must, at no additional cost, fee or expense to the user, provide a
-copy, a means of exporting a copy, or a means of obtaining a copy upon
-request, of the work in its original "Plain Vanilla ASCII" or other
-form.  Any alternate format must include the full Project Gutenberg-tm
-License as specified in paragraph 1.E.1.
-
-1.E.7.  Do not charge a fee for access to, viewing, displaying,
-performing, copying or distributing any Project Gutenberg-tm works
-unless you comply with paragraph 1.E.8 or 1.E.9.
-
-1.E.8.  You may charge a reasonable fee for copies of or providing
-access to or distributing Project Gutenberg-tm electronic works provided
-that
-
-- You pay a royalty fee of 20% of the gross profits you derive from
-     the use of Project Gutenberg-tm works calculated using the method
-     you already use to calculate your applicable taxes.  The fee is
-     owed to the owner of the Project Gutenberg-tm trademark, but he
-     has agreed to donate royalties under this paragraph to the
-     Project Gutenberg Literary Archive Foundation.  Royalty payments
-     must be paid within 60 days following each date on which you
-     prepare (or are legally required to prepare) your periodic tax
-     returns.  Royalty payments should be clearly marked as such and
-     sent to the Project Gutenberg Literary Archive Foundation at the
-     address specified in Section 4, "Information about donations to
-     the Project Gutenberg Literary Archive Foundation."
-
-- You provide a full refund of any money paid by a user who notifies
-     you in writing (or by e-mail) within 30 days of receipt that s/he
-     does not agree to the terms of the full Project Gutenberg-tm
-     License.  You must require such a user to return or
-     destroy all copies of the works possessed in a physical medium
-     and discontinue all use of and all access to other copies of
-     Project Gutenberg-tm works.
-
-- You provide, in accordance with paragraph 1.F.3, a full refund of any
-     money paid for a work or a replacement copy, if a defect in the
-     electronic work is discovered and reported to you within 90 days
-     of receipt of the work.
-
-- You comply with all other terms of this agreement for free
-     distribution of Project Gutenberg-tm works.
-
-1.E.9.  If you wish to charge a fee or distribute a Project Gutenberg-tm
-electronic work or group of works on different terms than are set
-forth in this agreement, you must obtain permission in writing from
-both the Project Gutenberg Literary Archive Foundation and Michael
-Hart, the owner of the Project Gutenberg-tm trademark.  Contact the
-Foundation as set forth in Section 3 below.
-
-1.F.
-
-1.F.1.  Project Gutenberg volunteers and employees expend considerable
-effort to identify, do copyright research on, transcribe and proofread
-public domain works in creating the Project Gutenberg-tm
-collection.  Despite these efforts, Project Gutenberg-tm electronic
-works, and the medium on which they may be stored, may contain
-"Defects," such as, but not limited to, incomplete, inaccurate or
-corrupt data, transcription errors, a copyright or other intellectual
-property infringement, a defective or damaged disk or other medium, a
-computer virus, or computer codes that damage or cannot be read by
-your equipment.
-
-1.F.2.  LIMITED WARRANTY, DISCLAIMER OF DAMAGES - Except for the "Right
-of Replacement or Refund" described in paragraph 1.F.3, the Project
-Gutenberg Literary Archive Foundation, the owner of the Project
-Gutenberg-tm trademark, and any other party distributing a Project
-Gutenberg-tm electronic work under this agreement, disclaim all
-liability to you for damages, costs and expenses, including legal
-fees.  YOU AGREE THAT YOU HAVE NO REMEDIES FOR NEGLIGENCE, STRICT
-LIABILITY, BREACH OF WARRANTY OR BREACH OF CONTRACT EXCEPT THOSE
-PROVIDED IN PARAGRAPH F3.  YOU AGREE THAT THE FOUNDATION, THE
-TRADEMARK OWNER, AND ANY DISTRIBUTOR UNDER THIS AGREEMENT WILL NOT BE
-LIABLE TO YOU FOR ACTUAL, DIRECT, INDIRECT, CONSEQUENTIAL, PUNITIVE OR
-INCIDENTAL DAMAGES EVEN IF YOU GIVE NOTICE OF THE POSSIBILITY OF SUCH
-DAMAGE.
-
-1.F.3.  LIMITED RIGHT OF REPLACEMENT OR REFUND - If you discover a
-defect in this electronic work within 90 days of receiving it, you can
-receive a refund of the money (if any) you paid for it by sending a
-written explanation to the person you received the work from.  If you
-received the work on a physical medium, you must return the medium with
-your written explanation.  The person or entity that provided you with
-the defective work may elect to provide a replacement copy in lieu of a
-refund.  If you received the work electronically, the person or entity
-providing it to you may choose to give you a second opportunity to
-receive the work electronically in lieu of a refund.  If the second copy
-is also defective, you may demand a refund in writing without further
-opportunities to fix the problem.
-
-1.F.4.  Except for the limited right of replacement or refund set forth
-in paragraph 1.F.3, this work is provided to you 'AS-IS' WITH NO OTHER
-WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-WARRANTIES OF MERCHANTIBILITY OR FITNESS FOR ANY PURPOSE.
-
-1.F.5.  Some states do not allow disclaimers of certain implied
-warranties or the exclusion or limitation of certain types of damages.
-If any disclaimer or limitation set forth in this agreement violates the
-law of the state applicable to this agreement, the agreement shall be
-interpreted to make the maximum disclaimer or limitation permitted by
-the applicable state law.  The invalidity or unenforceability of any
-provision of this agreement shall not void the remaining provisions.
-
-1.F.6.  INDEMNITY - You agree to indemnify and hold the Foundation, the
-trademark owner, any agent or employee of the Foundation, anyone
-providing copies of Project Gutenberg-tm electronic works in accordance
-with this agreement, and any volunteers associated with the production,
-promotion and distribution of Project Gutenberg-tm electronic works,
-harmless from all liability, costs and expenses, including legal fees,
-that arise directly or indirectly from any of the following which you do
-or cause to occur: (a) distribution of this or any Project Gutenberg-tm
-work, (b) alteration, modification, or additions or deletions to any
-Project Gutenberg-tm work, and (c) any Defect you cause.
-
-
-Section  2.  Information about the Mission of Project Gutenberg-tm
-
-Project Gutenberg-tm is synonymous with the free distribution of
-electronic works in formats readable by the widest variety of computers
-including obsolete, old, middle-aged and new computers.  It exists
-because of the efforts of hundreds of volunteers and donations from
-people in all walks of life.
-
-Volunteers and financial support to provide volunteers with the
-assistance they need, is critical to reaching Project Gutenberg-tm's
-goals and ensuring that the Project Gutenberg-tm collection will
-remain freely available for generations to come.  In 2001, the Project
-Gutenberg Literary Archive Foundation was created to provide a secure
-and permanent future for Project Gutenberg-tm and future generations.
-To learn more about the Project Gutenberg Literary Archive Foundation
-and how your efforts and donations can help, see Sections 3 and 4
-and the Foundation web page at http://www.pglaf.org.
-
-
-Section 3.  Information about the Project Gutenberg Literary Archive
-Foundation
-
-The Project Gutenberg Literary Archive Foundation is a non profit
-501(c)(3) educational corporation organized under the laws of the
-state of Mississippi and granted tax exempt status by the Internal
-Revenue Service.  The Foundation's EIN or federal tax identification
-number is 64-6221541.  Its 501(c)(3) letter is posted at
-http://pglaf.org/fundraising.  Contributions to the Project Gutenberg
-Literary Archive Foundation are tax deductible to the full extent
-permitted by U.S. federal laws and your state's laws.
-
-The Foundation's principal office is located at 4557 Melan Dr. S.
-Fairbanks, AK, 99712., but its volunteers and employees are scattered
-throughout numerous locations.  Its business office is located at
-809 North 1500 West, Salt Lake City, UT 84116, (801) 596-1887, email
-business@pglaf.org.  Email contact links and up to date contact
-information can be found at the Foundation's web site and official
-page at http://pglaf.org
-
-For additional contact information:
-     Dr. Gregory B. Newby
-     Chief Executive and Director
-     gbnewby@pglaf.org
-
-
-Section 4.  Information about Donations to the Project Gutenberg
-Literary Archive Foundation
-
-Project Gutenberg-tm depends upon and cannot survive without wide
-spread public support and donations to carry out its mission of
-increasing the number of public domain and licensed works that can be
-freely distributed in machine readable form accessible by the widest
-array of equipment including outdated equipment.  Many small donations
-($1 to $5,000) are particularly important to maintaining tax exempt
-status with the IRS.
-
-The Foundation is committed to complying with the laws regulating
-charities and charitable donations in all 50 states of the United
-States.  Compliance requirements are not uniform and it takes a
-considerable effort, much paperwork and many fees to meet and keep up
-with these requirements.  We do not solicit donations in locations
-where we have not received written confirmation of compliance.  To
-SEND DONATIONS or determine the status of compliance for any
-particular state visit http://pglaf.org
-
-While we cannot and do not solicit contributions from states where we
-have not met the solicitation requirements, we know of no prohibition
-against accepting unsolicited donations from donors in such states who
-approach us with offers to donate.
-
-International donations are gratefully accepted, but we cannot make
-any statements concerning tax treatment of donations received from
-outside the United States.  U.S. laws alone swamp our small staff.
-
-Please check the Project Gutenberg Web pages for current donation
-methods and addresses.  Donations are accepted in a number of other
-ways including checks, online payments and credit card donations.
-To donate, please visit: http://pglaf.org/donate
-
-
-Section 5.  General Information About Project Gutenberg-tm electronic
-works.
-
-Professor Michael S. Hart is the originator of the Project Gutenberg-tm
-concept of a library of electronic works that could be freely shared
-with anyone.  For thirty years, he produced and distributed Project
-Gutenberg-tm eBooks with only a loose network of volunteer support.
-
-
-Project Gutenberg-tm eBooks are often created from several printed
-editions, all of which are confirmed as Public Domain in the U.S.
-unless a copyright notice is included.  Thus, we do not necessarily
-keep eBooks in compliance with any particular paper edition.
-
-
-Most people start at our Web site which has the main PG search facility:
-
-     http://www.gutenberg.org
-
-This Web site includes information about Project Gutenberg-tm,
-including how to make donations to the Project Gutenberg Literary
-Archive Foundation, how to help produce our new eBooks, and how to
-subscribe to our email newsletter to hear about new eBooks.
+</paragraph>
+</chapter>
+</book>
