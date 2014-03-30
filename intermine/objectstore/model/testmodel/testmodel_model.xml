@@ -101,4 +101,72 @@
         <attribute name="name" type="java.lang.String"/>
         <reference name="parent" referenced-type="Company"/>
     </class>
+
+    <!--
+      Classes that mirror the structure of 1-dimensional locations
+      found in a reference sequence characteristic of genomes.
+    -->
+    <class name="Text" is-interface="false">
+        <attribute name="text" type="org.intermine.objectstore.query.ClobAccess"/>
+        <attribute name="length" type="int"/>
+        <attribute name="language" type="java.lang.String"/>
+        <reference name="composition" referenced-type="Composition" reverse-reference="text"/>
+    </class>
+    <class name="TextLocation" is-interface="false">
+        <attribute name="start" type="int"/>
+        <attribute name="end" type="int"/>
+        <reference name="foundIn" referenced-type="Composition"
+                reverse-reference="textLocation"/>
+    </class>
+    <class name="Composition" is-interface="false">
+        <attribute name="name" type="java.lang.String"/>
+        <reference name="text" referenced-type="Text"
+                reverse-reference="composition"/>
+        <reference name="textLocation" referenced-type="TextLocation"
+                reverse-reference="foundIn"/>
+        <collection name="subSections" referenced-type="Composition"/>
+    </class>
+    <class name="Book" is-interface="false" extends="Composition">
+        <attribute name="title" type="java.lang.String"/>
+        <reference name="author" referenced-type="Author"/>
+        <attribute name="publicationDate" type="java.util.Date"/>
+        <collection name="chapters" referenced-type="Chapter"/>
+    </class>
+    <class name="Section" is-interface="false" extends="Composition">
+        <reference name="book" referenced-type="Book"/>
+    </class>
+    <class name="Chapter" is-interface="false" extends="Section">
+        <attribute name="title" type="java.lang.String"/>
+        <collection name="paragraphs" referenced-type="Paragraph"
+                reverse-reference="chapter"/>
+    </class>
+    <class name="Paragraph" is-interface="false" extends="Section">
+        <attribute name="number" type="java.lang.Integer"/>
+        <reference name="chapter" referenced-type="Chapter"/>
+    </class>
+    <class name="Line" is-interface="false" extends="Section">
+        <attribute name="number" type="int"/>
+        <reference name="stanza" referenced-type="Stanza" reverse-reference="lines"/>
+    </class>
+    <class name="Poem" is-interface="false" extends="Section">
+        <attribute name="title" type="java.lang.String"/>
+        <collection name="stanzas" referenced-type="Stanza" reverse-reference="poem"/>
+    </class>
+    <class name="Stanza" is-interface="false" extends="Section">
+        <reference name="poem" referenced-type="Poem" reverse-reference="stanzas"/>
+        <collection name="lines" referenced-type="Line" reverse-reference="stanza"/>
+    </class>
+    <class name="Chorus" is-interface="false" extends="Stanza"/>
+    <class name="FavouritePassage" is-interface="false" extends="Section">
+        <attribute name="rating" type="float"/>
+        <attribute name="comment" type="java.lang.String"/>
+        <reference name="belovedOf" referenced-type="Bibliophile" reverse-reference="favouritePassages"/>
+    </class>
+    <class name="Author" is-interface="true" extends="Employable">
+        <attribute name="born" type="java.util.Date"/>
+        <attribute name="died" type="java.util.Date"/>
+    </class>
+    <class name="Bibliophile" is-interface="true" extends="Employable">
+        <collection name="favouritePassages" referenced-type="FavouritePassage" reverse-reference="belovedOf"/>
+    </class>
 </model>
