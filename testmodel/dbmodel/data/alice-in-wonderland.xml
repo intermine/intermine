@@ -1,9 +1,10 @@
 ﻿<book
         Title="Alice's Adventures in Wonderland"
         Author="Lewis Carroll"
-        Release-Date="March, 1994"
-        Language="English">
-<chapter title="CHAPTER I. Down the Rabbit-Hole">
+        Release-Date="1994-03"
+        Publication-Date="1865-11-26"
+        Language="en">
+<chapter Title="CHAPTER I. Down the Rabbit-Hole">
 <paragraph>
 Alice was beginning to get very tired of sitting by her sister on the
 bank, and of having nothing to do: once or twice she had peeped into the
