@@ -1,11 +1,12 @@
 ﻿<book Title="Die Verwandlung"
     Author="Franz Kafka"
     Release-Date="August 21, 2007"
-    Language="German"
+    Publication-Date="1915"
+    Language="de"
     Publisher="KURT WOLFF VERLAG, LEIPZIG"
     Copyright="KURT WOLFF VERLAG · LEIPZIG. 1917"
     Printer="DIETSCH &amp; BRÜCKNER · WEIMAR">
-<chapter title="I.">
+<chapter Title="I.">
 <paragraph>
 Als Gregor Samsa eines Morgens aus unruhigen Träumen erwachte, fand er
 sich in seinem Bett zu einem ungeheuren Ungeziefer verwandelt. Er lag
