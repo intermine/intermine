@@ -96,40 +96,6 @@ public class Engine extends CommandRunner
         this.model = api.getModel();
     }
 
-    @Override
-    public void stats(Command command) {
-        Map<String, Object> stats;
-        Query q = getStatsQuery(command);
-        // Stats can be expensive to calculate, so they are independently cached.
-        synchronized (STATS_CACHE) {
-            stats = STATS_CACHE.get(command);
-            if (stats == null) {
-                stats = new HashMap<String, Object>();
-                try {
-                    List<?> results = getAPI().getObjectStore().execute(q, 0, 1, false, false,
-                            ObjectStore.SEQUENCE_IGNORE);
-                    List<?> row = (List<?>) results.get(0);
-                    stats.put("featureDensity", row.get(0));
-                    stats.put("featureCount",   row.get(1));
-                } catch (ObjectStoreException e) {
-                    throw new RuntimeException("Error getting statistics.", e);
-                }
-                LOG.debug("caching " + stats);
-                STATS_CACHE.put(command, stats);
-            }
-        }
-        sendMap(stats);
-    }
-
-    private void sendMap(Map<String, Object> map) {
-        Iterator<Entry<String, Object>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, Object> e = it.next();
-            onData(e, it.hasNext());
-        }
-    }
-
-    @Override
     public void reference(Command command) {
         Query q = getReferenceQuery(command);
         Segment seg = command.getSegment();
@@ -285,6 +251,8 @@ public class Engine extends CommandRunner
         return pending;
     }
 
+    //------------ PRIVATE METHODS --------------------//
+
     private PathQuery getSFPathQuery(Command command) {
         return getSFPathQuery(command, command.getSegment());
     }
@@ -314,7 +282,8 @@ public class Engine extends CommandRunner
     }
 
     // A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
-    private Query getStatsQuery(Command command) {
+    @Override
+    protected Query getStatsQuery(Command command) {
 
         String featureType = command.getType("SequenceFeature");
         ClassDescriptor seqf = model.getClassDescriptorByName("SequenceFeature");
@@ -384,8 +353,8 @@ public class Engine extends CommandRunner
         return q;
     }
 
-    private static PathConstraintRange makeRangeConstraint(String type, Segment seg) {
-        return new PathConstraintRange(String.format("%s.chromosomeLocation", type),
+    private PathConstraintRange makeRangeConstraint(String type, Segment seg) {
+        return new PathConstraintRange(format("%s.chromosomeLocation", type),
                 ConstraintOp.OVERLAPS, Collections.singleton(seg.toRangeString()));
     }
 
@@ -491,13 +460,15 @@ public class Engine extends CommandRunner
         return pathQueryToOSQ(pq);
     }
 
-    private Query getFeatureQuery(Command command) {
+    @Override
+    protected PathQuery getFeaturePathQuery(Command command, Segment segment) {
         PathQuery pq = new PathQuery(model);
         String type = command.getType("SequenceFeature");
-        pq.addView(format("%s.id", type));
-        pq.addConstraint(Constraints.eq(format("%s.organism.taxonId", type), command.getDomain()));
-        pq.addConstraint(makeRangeConstraint(type, command.getSegment()));
-        return pathQueryToOSQ(pq);
+        pq.addView(String.format("%s.id", type));
+        pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
+        if (segment != Segment.GLOBAL_SEGMENT)
+            pq.addConstraint(makeRangeConstraint(type, segment));
+        return pq;
     }
 
 }

@@ -12,12 +12,31 @@ package org.intermine.webservice.server.jbrowse;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.intermine.api.InterMineAPI;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.util.CacheMap;
+
+import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 
 /**
  *
@@ -75,10 +94,170 @@ public abstract class CommandRunner
         return runner;
     }
 
+    private static final Map<Command, Map<String, Object>> STATS_CACHE =
+            new CacheMap<Command, Map<String, Object>>("jbrowse.commandrunner.STATS_CACHE");
+
+    public void stats(Command command) {
+        Map<String, Object> stats;
+        Query q = getStatsQuery(command);
+        // Stats can be expensive to calculate, so they are independently cached.
+        synchronized(STATS_CACHE) {
+            stats = STATS_CACHE.get(command);
+            if (stats == null) {
+                stats = new HashMap<String, Object>();
+                try {
+                    List<?> results = getAPI().getObjectStore().execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                    List<?> row = (List<?>) results.get(0);
+                    stats.put("featureDensity", row.get(0));
+                    stats.put("featureCount",   row.get(1));
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException("Error getting statistics.", e);
+                }
+                STATS_CACHE.put(command, stats);
+            }
+        }
+        sendMap(stats);
+    }
+
+    static private Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
+
+    public void densities(Command command) {
+        final int nSlices = getNumberOfSlices(command);
+        List<PathQuery> segmentQueries = getSliceQueries(command, nSlices);
+        List<Future<Integer>> pending = countInParallel(segmentQueries);
+        List<Integer> results = new ArrayList<Integer>();
+
+        int max = 0, sum = 0;
+        for (Future<Integer> future: pending) {
+            try {
+                Integer r = future.get();
+                if (r != null && r > max) max = r;
+                sum += r;
+                results.add(r);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        double mean = Double.valueOf(sum) / results.size();
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Number> binStats = new HashMap<String, Number>();
+        Integer currentMax = 0;
+        if (command.getSegment() != Segment.NEGATIVE_SEGMENT) {
+            Integer bpb = command.getSegment().getWidth() / nSlices;
+            binStats.put("basesPerBin", bpb);
+            MultiKey maxKey = new MultiKey( // Key by domain, type, ref-seq and band size
+                    command.getDomain(),
+                    command.getType("SequenceFeature"),
+                    command.getSegment().getSection(),
+                    bpb);
+            currentMax = maxima.get(maxKey);
+            if (currentMax == null || max > currentMax) {
+                maxima.put(maxKey, Integer.valueOf(max));
+            }
+        }
+        binStats.put("max", (currentMax != null && max < currentMax) ? currentMax : max);
+        binStats.put("mean", mean);
+
+        result.put("bins", results);
+        result.put("stats", binStats);
+        sendMap(result);
+    }
+
+    private List<Future<Integer>> countInParallel(List<PathQuery> segmentQueries) {
+        if (segmentQueries.isEmpty())
+            return Collections.emptyList();
+        ExecutorService executor = Executors.newFixedThreadPool(segmentQueries.size());
+        List<Future<Integer>> pending = new ArrayList<Future<Integer>>();
+        for (PathQuery pq: segmentQueries) {
+            Callable<Integer> counter = new PathQueryCounter(pq, getAPI().getObjectStore());
+            pending.add(executor.submit(counter));
+        }
+        executor.shutdown();
+        return pending;
+    }
+
+    /** Get a list of queries to count the features in a slice of the segment. **/
+    private List<PathQuery> getSliceQueries(Command command, int nSlices) {
+        if (command.getSegment() == Segment.NEGATIVE_SEGMENT)
+            return Collections.emptyList();
+        List<Segment> slices = sliceUp(nSlices, command.getSegment());
+        List<PathQuery> segmentQueries = new ArrayList<PathQuery>();
+        for (Segment s: slices) {
+            segmentQueries.add(getFeaturePathQuery(command, s));
+        }
+        return segmentQueries;
+    }
+
+    protected Query getFeatureQuery(Command command) {
+        return pathQueryToOSQ(getFeaturePathQuery(command, command.getSegment()));
+    }
+
+    protected abstract PathQuery getFeaturePathQuery(Command command, Segment s);
+
+    private static List<Segment> sliceUp(int n, Segment segment) {
+        if (n < 1)
+            throw new IllegalArgumentException("n must be greater than 0");
+        if (segment == null || segment.getWidth() == null)
+            throw new IllegalArgumentException("segment must be non null with defined width");
+        List<Segment> subsegments = new ArrayList<Segment>();
+        int sliceWidth = segment.getWidth() / n;
+        int inital = Math.max(0, segment.getStart());
+        int end = segment.getEnd();
+        for (int i = inital; i < end; i += sliceWidth) {
+            subsegments.add(segment.subsegment(i, Math.min(end, i + sliceWidth)));
+        }
+        return subsegments;
+    }
+
+    private static final class PathQueryCounter implements Callable<Integer>
+    {
+        final PathQuery pq;
+        final ObjectStore os;
+        
+        PathQueryCounter(PathQuery pq, ObjectStore os) {
+            this.pq = pq.clone();
+            this.os = os;
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            Query q = pathQueryToOSQ(pq);
+            return os.count(q, ObjectStore.SEQUENCE_IGNORE);
+        }
+    }
+
+    private int getNumberOfSlices(Command command) {
+        int defaultNum = 10;
+        String bpb = command.getParameter("basesPerBin");
+        if (command == null
+                || bpb == null
+                || command.getSegment() == null
+                || command.getSegment().getWidth() == null) {
+            return defaultNum;
+        }
+        int width = command.getSegment().getWidth();
+        int numBPB = Integer.valueOf(bpb);
+        return width / numBPB;
+    }
+
     /**
-     * @param command command
-     * @return action
+     * A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
+     * @param command
+     * @return A query for the count and density.
      */
+    protected abstract Query getStatsQuery(Command command);
+
+    protected void sendMap(Map<String, Object> map) {
+        Iterator<Entry<String, Object>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<String, Object> e = it.next();
+            onData(e, it.hasNext());
+        }
+    }
+
     public String getIntro(Command command) {
         switch (command.getAction()) {
             case STATS:
@@ -134,22 +313,12 @@ public abstract class CommandRunner
     /**
      * @param command command
      */
-    public abstract void stats(Command command);
-
-    /**
-     * @param command command
-     */
     public abstract void reference(Command command);
 
     /**
      * @param command command
      */
     public abstract void features(Command command);
-
-    /**
-     * @param command command
-     */
-    public abstract void densities(Command command);
 
     /**
      * @param datum data
