@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry kind="src" path="/intermine-jbrowse-endpoint"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -25,5 +25,5 @@ build:
 
 .PHONY: clean
 clean:
-	rm -r build
+	if test -d build; then rm -r build; fi
 
