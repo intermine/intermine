@@ -5,7 +5,7 @@ files = build/verwandlung.xml build/alice-in-wonderland.xml
 all: $(files)
 
 $(files): venv build $(model) ../../data/$(@F)
-	. venv/bin/activate; ./process-book $(model) ../../data/$(@F) > $@
+	. venv/bin/activate; ./process-book $(model) ../../data/$(@F) $@
 
 # Build virtual environment and keep in sync with reqs.
 venv: venv/bin/activate
