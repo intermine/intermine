@@ -12,14 +12,14 @@ import org.intermine.model.testmodel.*;
 
 public class TransferText extends PostProcessor {
 
+    private static final String INDEX_ERROR = "Error getting text for %s at %d - %d";
+
     public TransferText(ObjectStoreWriter osw) {
         super(osw);
     }
 
     public void postProcess() throws ObjectStoreException {
         ObjectStoreWriter osw = getObjectStoreWriter();
-
-        System.out.println(osw.getModel());
 
         QueryClass section = new QueryClass(Section.class);
 
@@ -40,13 +40,17 @@ public class TransferText extends PostProcessor {
             if (bookText == null) continue;
             ClobAccess reference = bookText.getText();
             int start = loc.getStart() - 1;
-            int end = loc.getEnd();
+            int end = Math.min(reference.length(), loc.getEnd());
 
             Text sectionText = new Text(); 
             sectionText.setLength(end - start);
             sectionText.setLanguage(bookText.getLanguage());
             sectionText.setComposition(sec);
-            sectionText.setText(reference.subSequence(start, end));
+            try {
+                sectionText.setText(reference.subSequence(start, end));
+            } catch (IndexOutOfBoundsException e) {
+                throw new RuntimeException(String.format(INDEX_ERROR, sec.getName(), start, end), e);
+            }
             osw.store(sectionText);
 
             sec.setText(sectionText);
