@@ -37,7 +37,7 @@ class BookHandler(ContentHandler):
 
     def endCurrentComposition(self, name):
         self.endChunk()
-        comp = self.current[name]
+        comp = self.current.pop(name)
         loc = comp.get('textLocation')
         loc.set('end', self.text_position)
         if name != 'book' and self.debug:
@@ -116,12 +116,12 @@ class BookHandler(ContentHandler):
         fac = self.factory
         book = self.current['book']
         chapter = self.current['chapter']
-        title = attrs.get('Name', 'Untitled')
+        title = attrs.get('name', 'Untitled')
         if title == 'Untitled':
             self.untitled_poems += 1
             name = '{}:Untitled({})'.format(book.get('title'), self.untitled_poems)
         else:
-            name = '{}:{}'.format(book.get('name'), poem.get('title'))
+            name = '{}:{}'.format(book.get('name'), title)
 
         if name in self.poems:
             poem = self.poems[name]
@@ -172,10 +172,10 @@ class BookHandler(ContentHandler):
             stanza = self.start_stanza()
         poem = stanza.get('poem')
         line_start = chunk_start
+        offset = len([l for s in poem.get('stanzas') for l in s.get('lines')])
         for idx, line_text in enumerate(lines):
-            line_no = 1 + idx
-            name = '{}:{};{}'.format(
-                book.get('title'), poem.get('title'), line_no)
+            line_no = offset + 1 + idx
+            name = '{};{}'.format(poem.get('name'), line_no)
             text_location = self.factory.add('TextLocation')
             text_location.set('start', line_start)
             text_location.set('end', line_start + len(line_text))
@@ -186,6 +186,7 @@ class BookHandler(ContentHandler):
             text_location.set('foundIn', line)
             line_start += len(line_text) + 1
             stanza.add_to('lines', line)
+            stanza.get('textLocation').set('end', text_location.get('end'))
             if self.debug:
                 text = ' '.join(self.text_buffer)
                 start = text_location.get('start')
@@ -195,9 +196,11 @@ class BookHandler(ContentHandler):
     def endChunk(self):
         chunk = ''.join(self.current_chunk)
         self.current_chunk = []
+        lines = filter(len, map(lambda line: line.strip(), chunk.split('\n')))
+        if not len(lines):
+            return
         if len(self.text_buffer):
             self.text_position += 1
-        lines = filter(len, map(lambda line: line.strip(), chunk.split('\n')))
         chunk_length = sum(map(len, lines)) + len(lines) - 1
         self.text_buffer.extend(lines)
         if self.character_context is CharacterContext.VERSE:

@@ -2747,26 +2747,31 @@ with sobs, to sing this:--
 </paragraph>
 <poem name="Beautiful Soup">
 <stanza>
-   'Beautiful Soup, so rich and green,
+   Beautiful Soup, so rich and green,
    Waiting in a hot tureen!
    Who for such dainties would not stoop?
    Soup of the evening, beautiful Soup!
+</stanza>
+<chorus>
    Soup of the evening, beautiful Soup!
      Beau--ootiful Soo--oop!
      Beau--ootiful Soo--oop!
    Soo--oop of the e--e--evening,
      Beautiful, beautiful Soup!
-</stanza><stanza>
-   'Beautiful Soup! Who cares for fish,
+</chorus>
+<stanza>
+   Beautiful Soup! Who cares for fish,
    Game, or any other dish?
    Who would not give all else for two
    Pennyworth only of beautiful Soup?
+</stanza>
+<chorus>
    Pennyworth only of beautiful Soup?
      Beau--ootiful Soo--oop!
      Beau--ootiful Soo--oop!
    Soo--oop of the e--e--evening,
-     Beautiful, beauti--FUL SOUP!'
-</stanza>
+     Beautiful, beauti--FUL SOUP!
+</chorus>
 </poem>
 <paragraph>
 'Chorus again!' cried the Gryphon, and the Mock Turtle had just begun
@@ -2781,10 +2786,10 @@ answered 'Come on!' and ran the faster, while more and more faintly
 came, carried on the breeze that followed them, the melancholy words:--
 </paragraph>
 <poem name="Beautiful Soup">
-<stanza>
-   'Soo--oop of the e--e--evening,
-     Beautiful, beautiful Soup!'
-</stanza>
+<chorus>
+   Soo--oop of the e--e--evening,
+     Beautiful, beautiful Soup!
+</chorus>
 </poem>
 </chapter>
 <chapter Title="CHAPTER XI. Who Stole the Tarts?">
@@ -2850,10 +2855,10 @@ On this the White Rabbit blew three blasts on the trumpet, and then
 unrolled the parchment scroll, and read as follows:--
 </paragraph>
 <poem>
-   'The Queen of Hearts, she made some tarts,
+   The Queen of Hearts, she made some tarts,
       All on a summer day:
-    The Knave of Hearts, he stole those tarts,
-      And took them quite away!'
+   The Knave of Hearts, he stole those tarts,
+      And took them quite away!
 </poem>
 <paragraph>
 'Consider your verdict,' the King said to the jury.
