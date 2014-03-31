@@ -1,0 +1,5 @@
+argparse==1.2.1
+intermine==1.09.04
+itemxml==0.1.0
+loxun==1.3
+wsgiref==0.1.2
