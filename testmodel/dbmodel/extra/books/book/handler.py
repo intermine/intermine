@@ -19,6 +19,7 @@ class BookHandler(ContentHandler):
         self.text_buffer = []
         self.locations = []
         self.current_chunk = []
+        self.debug = False
 
     def startDocument(self):
         pass
@@ -39,6 +40,12 @@ class BookHandler(ContentHandler):
         comp = self.current[name]
         loc = comp.get('textLocation')
         loc.set('end', self.text_position)
+        if name != 'book' and self.debug:
+            text = ' '.join(self.text_buffer)
+            start = loc.get('start')
+            end = loc.get('end')
+            print u'{}: {}-{}\n\t{}'.format(name, start, end, text[start - 1:end])
+
         self.character_context = CharacterContext.NONE
 
     def start_book(self, attrs):
@@ -177,16 +184,23 @@ class BookHandler(ContentHandler):
                 book = book, stanza = stanza,
                 textLocation = text_location)
             text_location.set('foundIn', line)
-            line_start += len(line_text)
+            line_start += len(line_text) + 1
             stanza.add_to('lines', line)
+            if self.debug:
+                text = ' '.join(self.text_buffer)
+                start = text_location.get('start')
+                end = text_location.get('end')
+                print u'{}: {}-{}\n\t{}'.format('line', start, end, text[start - 1:end])
 
     def endChunk(self):
         chunk = ''.join(self.current_chunk)
         self.current_chunk = []
+        if len(self.text_buffer):
+            self.text_position += 1
         lines = filter(len, map(lambda line: line.strip(), chunk.split('\n')))
-        if self.character_context is CharacterContext.VERSE:
-            self.createLines(self.text_position, lines)
         chunk_length = sum(map(len, lines)) + len(lines) - 1
         self.text_buffer.extend(lines)
+        if self.character_context is CharacterContext.VERSE:
+            self.createLines(self.text_position, lines)
         self.text_position += chunk_length
 
