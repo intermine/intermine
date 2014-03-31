@@ -8,6 +8,8 @@
     <!-- Override to alter the classpath created -->
     <path id="task.class.path">
       <pathelement location="${build.task.dir}"/>
+      <pathelement location="${build.dir}"/>
+      <pathelement location="${build.classes.dir}"/>
       <pathelement location="${resources.dir}"/>
       <pathelement location="${resources.dir}/../extra/books/build"/>
       <path refid="project.execute.path"/>
@@ -43,6 +45,10 @@
             xmlResource="alice-in-wonderland.xml"
             sourceName="books"
             sourceType="testsource"/>
+    <postprocessor
+        osName="osw.unittest" 
+        clsName="org.intermine.testmodel.postprocess.TransferText"
+        />
   </target>
 
   <target name="load-workers-and-books" depends="load-books,loadsadata"/>
