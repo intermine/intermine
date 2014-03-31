@@ -1,10 +1,13 @@
 ﻿<book Title="Die Verwandlung"
     Author="Franz Kafka"
-    Release-Date="August 21, 2007"
-    Publication-Date="1915"
+    Release-Date="2007-08-21"
+    Publication-Date="1915-12-1"
     Language="de"
     Publisher="KURT WOLFF VERLAG, LEIPZIG"
     Copyright="KURT WOLFF VERLAG · LEIPZIG. 1917"
+    Public-Domain="true"
+    DNB="580321991"
+    Aleph="012743212"
     Printer="DIETSCH &amp; BRÜCKNER · WEIMAR">
 <chapter Title="I.">
 <paragraph>

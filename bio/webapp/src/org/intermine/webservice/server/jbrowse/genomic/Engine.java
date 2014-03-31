@@ -81,38 +81,6 @@ public class Engine extends CommandRunner {
     }
 
     @Override
-    public void stats(Command command) {
-        Map<String, Object> stats;
-        Query q = getStatsQuery(command);
-        // Stats can be expensive to calculate, so they are independently cached.
-        synchronized(STATS_CACHE) {
-            stats = STATS_CACHE.get(command);
-            if (stats == null) {
-                stats = new HashMap<String, Object>();
-                try {
-                    List<?> results = getAPI().getObjectStore().execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
-                    List<?> row = (List<?>) results.get(0);
-                    stats.put("featureDensity", row.get(0));
-                    stats.put("featureCount",   row.get(1));
-                } catch (ObjectStoreException e) {
-                    throw new RuntimeException("Error getting statistics.", e);
-                }
-                LOG.debug("caching " + stats);
-                STATS_CACHE.put(command, stats);
-            }
-        }
-        sendMap(stats);
-    }
-
-    private void sendMap(Map<String, Object> map) {
-        Iterator<Entry<String, Object>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, Object> e = it.next();
-            onData(e, it.hasNext());
-        }
-     }
-
-    @Override
     public void reference(Command command) {
         Query q = getReferenceQuery(command);
         Segment seg = command.getSegment();
@@ -139,141 +107,12 @@ public class Engine extends CommandRunner {
         }
     }
 
-    private static List<Segment> sliceUp(int n, Segment segment) {
-        if (n < 1)
-            throw new IllegalArgumentException("n must be greater than 0");
-        if (segment == null || segment.getWidth() == null)
-            throw new IllegalArgumentException("segment must be non null with defined width");
-        List<Segment> subsegments = new ArrayList<Segment>();
-        int sliceWidth = segment.getWidth() / n;
-        int inital = Math.max(0, segment.getStart());
-        int end = segment.getEnd();
-        for (int i = inital; i < end; i += sliceWidth) {
-            subsegments.add(segment.subsegment(i, Math.min(end, i + sliceWidth)));
-        }
-        return subsegments;
-    }
-
-    private static final class PathQueryCounter implements Callable<Integer>
-    {
-        final PathQuery pq;
-        final ObjectStore os;
-        
-        PathQueryCounter(PathQuery pq, ObjectStore os) {
-            this.pq = pq.clone();
-            this.os = os;
-        }
-
-        @Override
-        public Integer call() throws Exception {
-            Query q = pathQueryToOSQ(pq);
-            return os.count(q, ObjectStore.SEQUENCE_IGNORE);
-        }
-    }
-
-    static private Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
-
-    /**
-     */
-    @Override
-    public void densities(Command command) {
-        final int nSlices = getNumberOfSlices(command);
-        List<PathQuery> segmentQueries = getSliceQueries(command, nSlices);
-        List<Future<Integer>> pending = countInParallel(segmentQueries);
-        List<Integer> results = new ArrayList<Integer>();
-
-        int max = 0, sum = 0;
-        for (Future<Integer> future: pending) {
-            try {
-                Integer r = future.get();
-                if (r != null && r > max) max = r;
-                sum += r;
-                results.add(r);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        double mean = Double.valueOf(sum) / results.size();
-
-        Map<String, Object> result = new HashMap<String, Object>();
-        Map<String, Number> binStats = new HashMap<String, Number>();
-        Integer currentMax = 0;
-        if (command.getSegment() != Segment.NEGATIVE_SEGMENT) {
-            Integer bpb = command.getSegment().getWidth() / nSlices;
-            binStats.put("basesPerBin", bpb);
-            MultiKey maxKey = new MultiKey( // Key by domain, type, ref-seq and band size
-                    command.getDomain(),
-                    command.getType("SequenceFeature"),
-                    command.getSegment().getSection(),
-                    bpb);
-            currentMax = maxima.get(maxKey);
-            if (currentMax == null || max > currentMax) {
-                maxima.put(maxKey, Integer.valueOf(max));
-            }
-        }
-        binStats.put("max", (currentMax != null && max < currentMax) ? currentMax : max);
-        binStats.put("mean", mean);
-
-        result.put("bins", results);
-        result.put("stats", binStats);
-        sendMap(result);
-    }
-
     //------------ PRIVATE METHODS --------------------//
-
-    private int getNumberOfSlices(Command command) {
-        int defaultNum = 10;
-        String bpb = command.getParameter("basesPerBin");
-        if (command == null
-                || bpb == null
-                || command.getSegment() == null
-                || command.getSegment().getWidth() == null) {
-            return defaultNum;
-        }
-        int width = command.getSegment().getWidth();
-        int numBPB = Integer.valueOf(bpb);
-        return width / numBPB;
-    }
-
-    private List<PathQuery> getSliceQueries(Command command, final int nSlices) {
-        if (command.getSegment() == Segment.NEGATIVE_SEGMENT)
-            return Collections.emptyList();
-        List<Segment> slices = sliceUp(nSlices, command.getSegment());
-        List<PathQuery> segmentQueries = new ArrayList<PathQuery>();
-        for (Segment s: slices) {
-            segmentQueries.add(getSFPathQuery(command, s));
-        }
-        return segmentQueries;
-    }
-
-    private List<Future<Integer>> countInParallel(List<PathQuery> segmentQueries) {
-        if (segmentQueries.isEmpty())
-            return Collections.emptyList();
-        ExecutorService executor = Executors.newFixedThreadPool(segmentQueries.size());
-        List<Future<Integer>> pending = new ArrayList<Future<Integer>>();
-        for (PathQuery pq: segmentQueries) {
-            Callable<Integer> counter = new PathQueryCounter(pq, getAPI().getObjectStore());
-            pending.add(executor.submit(counter));
-        }
-        executor.shutdown();
-        return pending;
-    }
 
     private PathQuery getSFPathQuery(Command command) {
         return getSFPathQuery(command, command.getSegment());
     }
 
-    private PathQuery getSFPathQuery(Command command, Segment segment) {
-        PathQuery pq = new PathQuery(model);
-        String type = command.getType("SequenceFeature");
-        pq.addView(String.format("%s.id", type));
-        pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
-        if (segment != Segment.GLOBAL_SEGMENT)
-            pq.addConstraint(makeRangeConstraint(type, segment));
-        return pq;
-    }
 
     private ConstraintSet constrainToOrganism(QueryClass features, QueryClass organisms, String taxonId) {
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -288,7 +127,8 @@ public class Engine extends CommandRunner {
     }
 
     // A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
-    private Query getStatsQuery(Command command) {
+    @Override
+    protected Query getStatsQuery(Command command) {
 
         String featureType = command.getType("SequenceFeature");
         ClassDescriptor seqf = model.getClassDescriptorByName("SequenceFeature");
@@ -356,7 +196,7 @@ public class Engine extends CommandRunner {
     }
 
     private PathConstraintRange makeRangeConstraint(String type, Segment seg) {
-        return new PathConstraintRange(String.format("%s.chromosomeLocation", type),
+        return new PathConstraintRange(format("%s.chromosomeLocation", type),
                 ConstraintOp.OVERLAPS, Collections.singleton(seg.toRangeString()));
     }
 
@@ -455,13 +295,15 @@ public class Engine extends CommandRunner {
         return pathQueryToOSQ(pq);
     }
 
-    private Query getFeatureQuery(Command command) {
+    @Override
+    protected PathQuery getFeaturePathQuery(Command command, Segment segment) {
         PathQuery pq = new PathQuery(model);
         String type = command.getType("SequenceFeature");
-        pq.addView(format("%s.id", type));
-        pq.addConstraint(Constraints.eq(format("%s.organism.taxonId", type), command.getDomain()));
-        pq.addConstraint(makeRangeConstraint(type, command.getSegment()));
-        return pathQueryToOSQ(pq);
+        pq.addView(String.format("%s.id", type));
+        pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
+        if (segment != Segment.GLOBAL_SEGMENT)
+            pq.addConstraint(makeRangeConstraint(type, segment));
+        return pq;
     }
 
 }

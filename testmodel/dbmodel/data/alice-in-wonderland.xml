@@ -1,8 +1,9 @@
 ﻿<book
         Title="Alice's Adventures in Wonderland"
         Author="Lewis Carroll"
-        Release-Date="1994-03"
+        Release-Date="1994-03-01"
         Publication-Date="1865-11-26"
+        Aleph="014426500"
         Language="en">
 <chapter Title="CHAPTER I. Down the Rabbit-Hole">
 <paragraph>
@@ -278,15 +279,15 @@ same as they used to do:--
 </paragraph>
 <poem>
 <stanza>
-     'How doth the little crocodile
+     How doth the little crocodile
       Improve his shining tail,
      And pour the waters of the Nile
       On every golden scale!
 </stanza><stanza>
-     'How cheerfully he seems to grin,
+     How cheerfully he seems to grin,
       How neatly spread his claws,
      And welcome little fishes in
-      With gently smiling jaws!'
+      With gently smiling jaws!
 </stanza>
 </poem>
 <paragraph>
@@ -544,8 +545,8 @@ the Mouse's tail; 'but why do you call it sad?' And she kept on puzzling
 about it while the Mouse was speaking, so that her idea of the tale was
 something like this:--
 </paragraph>
-<poem>
-         'Fury said to a
+<poem name="The Mouse's Tale">
+         Fury said to a
          mouse, That he
         met in the
        house,
@@ -588,7 +589,7 @@ something like this:--
            condemn
            you
           to
-           death."'
+           death."
 </poem>
 <paragraph>
 'You are not attending!' said the Mouse to Alice severely. 'What are you
@@ -1341,13 +1342,13 @@ every line:
 </paragraph>
 <poem name="lullaby">
 <stanza number="1">
-   'Speak roughly to your little boy,
+   Speak roughly to your little boy,
     And beat him when he sneezes:
    He only does it to annoy,
-    Because he knows it teases.'
+    Because he knows it teases.
 </stanza>
 <chorus aside="In which the cook and the baby joined">
-       'Wow! wow! wow!'
+       Wow! wow! wow!
 </chorus>
 </poem>
 <paragraph>
@@ -1357,13 +1358,13 @@ that Alice could hardly hear the words:--
 </paragraph>
 <poem name="lullaby">
 <stanza number="2">
-   'I speak severely to my boy,
+   I speak severely to my boy,
     I beat him when he sneezes;
    For he can thoroughly enjoy
-    The pepper when he pleases!'
+    The pepper when he pleases!
 </stanza>
 <chorus>
-       'Wow! wow! wow!'
+       Wow! wow! wow!
 </chorus>
 </poem>
 <paragraph>
@@ -1669,9 +1670,9 @@ quarrelled last March--just before HE went mad, you know--' (pointing
 with his tea spoon at the March Hare,) '--it was at the great concert
 given by the Queen of Hearts, and I had to sing
 </paragraph>
-<poem name="twinkle-twinkle">
-     "Twinkle, twinkle, little bat!
-     How I wonder what you're at!"
+<poem name="Twinkle, twinkle, little bat">
+     Twinkle, twinkle, little bat!
+     How I wonder what you're at!
 </poem>
 <paragraph>
 You know the song, perhaps?'
@@ -1680,10 +1681,10 @@ You know the song, perhaps?'
 </paragraph><paragraph>
 'It goes on, you know,' the Hatter continued, 'in this way:--
 </paragraph>
-<poem name="twinkle-twinkle">
-     "Up above the world you fly,
+<poem name="Twinkle, twinkle, little bat">
+     Up above the world you fly,
      Like a tea-tray in the sky.
-         Twinkle, twinkle--"'
+         Twinkle, twinkle--
 </poem>
 <paragraph>
 Here the Dormouse shook itself, and began singing in its sleep 'Twinkle,
@@ -2540,9 +2541,9 @@ then treading on her toes when they passed too close, and waving their
 forepaws to mark the time, while the Mock Turtle sang this, very slowly
 and sadly:--
 </paragraph>
-<poem>
+<poem name="The Lobster Quadrille">
 <stanza>
- '"Will you walk a little faster?" said a whiting to a snail.
+ "Will you walk a little faster?" said a whiting to a snail.
  "There's a porpoise close behind us, and he's treading on my tail.
 </stanza><stanza>
  See how eagerly the lobsters and the turtles all advance!
@@ -2565,7 +2566,7 @@ and sadly:--
  Then turn not pale, beloved snail, but come and join the dance.
 </stanza><stanza>
  Will you, won't you, will you, won't you, will you join the dance?
- Will you, won't you, will you, won't you, won't you join the dance?"'
+ Will you, won't you, will you, won't you, won't you join the dance?"
 </stanza>
 </poem>
 <paragraph>
@@ -2673,12 +2674,12 @@ got up, and began to repeat it, but her head was so full of the Lobster
 Quadrille, that she hardly knew what she was saying, and the words came
 very queer indeed:--
 </paragraph>
-<poem name="TIS THE VOICE OF THE SLUGGARD">
+<poem name="'Tis the Voice of the Lobster">
 <stanza>
-  ''Tis the voice of the Lobster; I heard him declare,
+  'Tis the voice of the Lobster; I heard him declare,
   "You have baked me too brown, I must sugar my hair."
   As a duck with its eyelids, so he with his nose
-  Trims his belt and his buttons, and turns out his toes.'
+  Trims his belt and his buttons, and turns out his toes.
 </stanza><stanza aside="later editions continued as follows">
   When the sands are all dry, he is gay as a lark,
   And will talk in contemptuous tones of the Shark,
@@ -2713,10 +2714,10 @@ begins "I passed by his garden."'
 Alice did not dare to disobey, though she felt sure it would all come
 wrong, and she went on in a trembling voice:--
 </paragraph>
-<poem name="TIS THE VOICE OF THE SLUGGARD">
+<poem name="'Tis the Voice of the Lobster">
 <stanza>
-  'I passed by his garden, and marked, with one eye,
-  How the Owl and the Panther were sharing a pie--'
+  I passed by his garden, and marked, with one eye,
+  How the Owl and the Panther were sharing a pie--
 </stanza><stanza aside="later editions continued as follows">
   The Panther took pie-crust, and gravy, and meat,
   While the Owl had the dish as its share of the treat.
@@ -3181,7 +3182,7 @@ These were the verses the White Rabbit read:--
 </paragraph>
 <poem>
 <stanza>
-   'They told me you had been to her,
+   They told me you had been to her,
     And mentioned me to him:
    She gave me a good character,
     But said I could not swim.
@@ -3209,7 +3210,7 @@ These were the verses the White Rabbit read:--
    Don't let him know she liked them best,
     For this must ever be
    A secret, kept from all the rest,
-    Between yourself and me.'
+    Between yourself and me.
 </stanza>
 </poem>
 <paragraph>

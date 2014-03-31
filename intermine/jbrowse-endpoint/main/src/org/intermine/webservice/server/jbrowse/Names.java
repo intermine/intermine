@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
@@ -109,8 +110,19 @@ public class Names extends JSONService {
         return searchTerm;
     }
 
-    private String[] getNamePaths() {
-        return namePaths;
+    /** Paths which are guaranteed not to blow up in your face. **/
+    private List<Path> getNamePaths() {
+        List<Path> goodPaths = new ArrayList<Path>();
+        Model m = im.getModel();
+        for (String n: namePaths) {
+            try {
+                Path p = new Path(m, featureClass + "." + n);
+                goodPaths.add(p);
+            } catch (PathException e) {
+                // Skip bad baths.
+            }
+        }
+        return goodPaths;
     }
 
     @Override
@@ -158,7 +170,7 @@ public class Names extends JSONService {
         return record;
     }
 
-    private Iterable<Object> getNames(final FastPathObject o, final String[] namePaths) {
+    private Iterable<Object> getNames(final FastPathObject o, final List<Path> namePaths) {
         return new Iterable<Object>() {
             FastPathObject root = o;
             String featureClass = webProperties.getProperty(getPropertyPrefix() + "featureClass");
@@ -176,7 +188,7 @@ public class Names extends JSONService {
                         if (subCol != null) {
                             return subIdx < subCol.size();
                         }
-                        return current < namePaths.length;
+                        return current < namePaths.size();
                     }
 
                     private Object nextFromSubCol() {
@@ -192,32 +204,27 @@ public class Names extends JSONService {
                     @Override
                     public Object next() {
                         if (subCol != null) return nextFromSubCol();
-                        String path = namePaths[current];
+                        Path path = namePaths.get(current);
                         current++;
-                        try {
-                            Path p = new Path(im.getModel(), featureClass + "." + path);
-                            if (!p.containsCollections()) {
-                                return resolveValue(root, path);
-                            } else {
-                                String upToCollection = "";
-                                for (Path pp: p.decomposePath()) {
-                                    upToCollection = pp.toStringNoConstraints();
-                                    if (pp.endIsCollection()) {
-                                        break;
-                                    }
-                                }
-                                Collection things = (Collection) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
-                                if (things.isEmpty()) {
-                                    return null;
-                                } else {
-                                    subCol = new ArrayList(things);
-                                    subIdx = 0;
-                                    subPath = p.toStringNoConstraints().replace(upToCollection + ".", "");
-                                    return nextFromSubCol();
+                        if (!path.containsCollections()) {
+                            return resolveValue(root, headless(path));
+                        } else {
+                            String upToCollection = "";
+                            for (Path pp: path.decomposePath()) {
+                                upToCollection = pp.toStringNoConstraints();
+                                if (pp.endIsCollection()) {
+                                    break;
                                 }
                             }
-                        } catch (PathException e) {
-                            throw new RuntimeException("Bad path: " + path);
+                            Collection things = (Collection) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
+                            if (things.isEmpty()) {
+                                return null;
+                            } else {
+                                subCol = new ArrayList(things);
+                                subIdx = 0;
+                                subPath = path.toStringNoConstraints().replace(upToCollection + ".", "");
+                                return nextFromSubCol();
+                            }
                         }
                     }
 
@@ -229,6 +236,12 @@ public class Names extends JSONService {
             }
             
         };
+    }
+
+    private String headless(Path path) {
+        String pstring = path.toStringNoConstraints();
+        int idx = pstring.indexOf('.');
+        return pstring.substring(idx + 1);
     }
 
     private String getTrackName(ClassDescriptor cd) {
@@ -245,7 +258,7 @@ public class Names extends JSONService {
     private PathQuery getQuery(String domain, ConstraintOp op, String searchTerm) {
         PathQuery pq = new PathQuery(im.getModel());
         String prefix = getPropertyPrefix();
-        String[] namePaths = getNamePaths();
+        List<Path> namePaths = getNamePaths();
 
         String featureClass = webProperties.getProperty(prefix + "featureClass");
         String domainPath = webProperties.getProperty(prefix + "domain");
@@ -261,10 +274,11 @@ public class Names extends JSONService {
         logic.append(" AND ");
 
         logic.append(" (");
-        for (int i = 0; i < namePaths.length; i++) {
-            PathConstraint c = new PathConstraintAttribute(featureClass + "." + namePaths[i], op, searchTerm);
+        for (int i = 0; i < namePaths.size(); i++) {
+            Path p = namePaths.get(i);
+            PathConstraint c = new PathConstraintAttribute(p.toStringNoConstraints(), op, searchTerm);
             logic.append(pq.addConstraint(c));
-            if (i + 1 < namePaths.length) {
+            if (i + 1 < namePaths.size()) {
                 logic.append(" OR ");
             }
         }
