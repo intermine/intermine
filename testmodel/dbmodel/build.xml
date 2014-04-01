@@ -39,11 +39,23 @@
     <delete file="${objectstoresummary.properties}"/>
     <insert-xml-data integrationWriter="integration.unittestmulti"
             xmlResource="verwandlung.xml"
-            sourceName="books"
+            sourceName="books-kafka"
             sourceType="testsource"/>
     <insert-xml-data integrationWriter="integration.unittestmulti"
             xmlResource="alice-in-wonderland.xml"
-            sourceName="books"
+            sourceName="books-carroll"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="horace-C-I.xml"
+            sourceName="books-hc1"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="horace-C-II.xml"
+            sourceName="books-hc2"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="horace-C-III.xml"
+            sourceName="books-hc3"
             sourceType="testsource"/>
     <postprocessor
         osName="osw.unittest" 

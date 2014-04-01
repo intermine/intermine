@@ -9,6 +9,8 @@
 
 set -e # Errors are fatal.
 
+set -e
+
 USERPROFILEDB=userprofile-demo
 PRODDB=objectstore-demo
 MINENAME=demomine
@@ -78,6 +80,27 @@ if test ! -f $PROP_FILE; then
     sed -i=bak -e "s/USER/$USER/g" $PROP_FILE
 fi
 
+echo "------> Checking properties file"
+if test ! -d .intermine; then
+    mkdir .intermine
+    cp $DIR/testmodel.properties .
+    sed -i "s/USER/$USER/g" testmodel.properties
+fi
+
+echo "------> Checking databases..."
+for db in $PRODDB $USERPROFILEDB; do
+    if psql --list | egrep -q '\s'$db'\s'; then
+        echo $db exists
+    else
+        echo Creating $db
+        createdb $db
+    fi
+done
+
+echo "------> Processing books..."
+cd $DIR/dbmodel/extra/books
+make 
+
 echo "------> Checking databases..."
 for db in $USERPROFILEDB $PRODDB; do
     if psql --list | egrep -q '\s'$db'\s'; then
@@ -95,12 +118,14 @@ ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
 cd $DIR/dbmodel
 
 echo "------> Loading demo data set..."
-ant -Drelease=demo loadsadata >> $LOG
+ant -Drelease=demo \
+    clean \
+    load-workers-and-books >> $LOG
 
 cd $DIR/webapp/main
 
 echo "------> Building and releasing web-app..."
-ant -Drelease=demo -Ddont.minify=true \
+ant -Ddont.minify=true -Drelease=demo \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     retrieve-objectstore-summary \
