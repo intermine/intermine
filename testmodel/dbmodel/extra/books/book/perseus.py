@@ -122,6 +122,9 @@ class BookHandler(ContentHandler):
         poem.set('name', u'{}-{}'.format(
             self.book.get('name'),
             len(self.book.get('subSections'))))
+        meter = attrs.get('met')
+        if meter:
+            poem.set('meter', meter)
 
         self.poem = poem
 
