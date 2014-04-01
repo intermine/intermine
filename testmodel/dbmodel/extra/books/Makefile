@@ -1,11 +1,15 @@
 model = ../../../../intermine/objectstore/model/testmodel/testmodel_model.xml
 files = build/verwandlung.xml build/alice-in-wonderland.xml
+carmina = build/horace-C-I.xml build/horace-C-II.xml build/horace-C-III.xml
 
 .PHONY: all
-all: $(files)
+all: $(files) $(carmina)
 
 $(files): venv build $(model) ../../data/$(@F)
-	. venv/bin/activate; ./process-book $(model) ../../data/$(@F) $@
+	. venv/bin/activate; ./process-book $(model) gutenberg ../../data/$(@F) $@
+
+$(carmina): venv build $(model) ../../data/$(@F)
+	. venv/bin/activate; ./process-book $(model) perseus ../../data/$(@F) $@
 
 # Build virtual environment and keep in sync with reqs.
 venv: venv/bin/activate
