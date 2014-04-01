@@ -46,6 +46,10 @@
             sourceName="books-carroll"
             sourceType="testsource"/>
     <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="sherlock.xml"
+            sourceName="books-conandoyle"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
             xmlResource="horace-C-I.xml"
             sourceName="books-hc1"
             sourceType="testsource"/>
