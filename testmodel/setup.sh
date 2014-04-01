@@ -26,23 +26,25 @@ for db in $PRODDB $USERPROFILEDB; do
     fi
 done
 
+echo Beginning build - logging to $LOG
+
 echo Processing data sources.
 cd $DIR/dbmodel/extra/books
 make 
 
 cd $DIR/dbmodel
-echo "Loading test data set"
-ant -v clean load-workers-and-books >> $DIR/build.log
+echo "Loading test data set - this takes about 3-4 minutes."
+ant -v clean load-workers-and-books >> $LOG
 
 cd $DIR/webapp/main
 
-echo "Building and releasing web-application"
+echo "Building and releasing web-application - about 1min left."
 ant -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     default \
     remove-webapp \
-    release-webapp | tee $DIR/build.log | grep tomcat-deploy
+    release-webapp | tee $LOG | grep tomcat-deploy
 
-echo build complete. Log available in $DIR/build.log
+echo build complete. Log available in $LOG
 
