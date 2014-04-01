@@ -1,5 +1,5 @@
 model = ../../../../intermine/objectstore/model/testmodel/testmodel_model.xml
-files = build/verwandlung.xml build/alice-in-wonderland.xml
+files = build/verwandlung.xml build/alice-in-wonderland.xml build/sherlock.xml
 carmina = build/horace-C-I.xml build/horace-C-II.xml build/horace-C-III.xml
 
 .PHONY: all
