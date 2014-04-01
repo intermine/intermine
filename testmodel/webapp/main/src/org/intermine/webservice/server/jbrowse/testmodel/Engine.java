@@ -104,7 +104,7 @@ public class Engine extends CommandRunner {
             ConstraintSet cs = constrainToLanguage(books, text, command.getDomain());
             if (seg.getSection() != null) {
                 cs.addConstraint(new SimpleConstraint(
-                        new QueryField(books, "alephIdentifier"),
+                        new QueryField(books, "identifier"),
                         ConstraintOp.EQUALS,
                         new QueryValue(seg.getSection())));
             }
@@ -165,7 +165,7 @@ public class Engine extends CommandRunner {
     private Query getReferenceQuery(Command command) {
         PathQuery pq = new PathQuery(getAPI().getModel());
         pq.addView("Book.id");
-        pq.addConstraint(Constraints.eq("Book.alephIdentifier", command.getSegment().getSection()));
+        pq.addConstraint(Constraints.eq("Book.identifier", command.getSegment().getSection()));
         pq.addConstraint(Constraints.eq("Book.text.language", command.getDomain()));
         LOG.info("REFERENCE QUERY: " + pq.toXml());
         return pathQueryToOSQ(pq);
