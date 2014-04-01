@@ -130,7 +130,7 @@
     <class name="Book" is-interface="false" extends="Composition">
         <attribute name="title" type="java.lang.String"/>
         <attribute name="publicationDate" type="java.util.Date"/>
-        <attribute name="alephIdentifier" type="java.lang.String"/>
+        <attribute name="identifier" type="java.lang.String"/>
         <collection name="chapters" referenced-type="Chapter"/>
     </class>
     <class name="Section" is-interface="false" extends="Composition">
@@ -150,6 +150,7 @@
         <reference name="stanza" referenced-type="Stanza" reverse-reference="lines"/>
     </class>
     <class name="Poem" is-interface="false" extends="Section">
+        <attribute name="meter" type="java.lang.String"/>
         <attribute name="title" type="java.lang.String"/>
         <collection name="stanzas" referenced-type="Stanza" reverse-reference="poem"/>
     </class>

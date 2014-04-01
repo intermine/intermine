@@ -28,7 +28,7 @@ public class TextLocationHelper implements RangeHelper {
 
     private final static QueryClass book = new QueryClass(Book.class);
     private final static QueryClass section = new QueryClass(Section.class);
-    private final static QueryField alephId = new QueryField(book, "alephIdentifier");
+    private final static QueryField ident = new QueryField(book, "identifier");
     
     public TextLocationHelper() {
         Model model = Model.getInstanceByName("testmodel");
@@ -71,7 +71,7 @@ public class TextLocationHelper implements RangeHelper {
             rangeSet.addConstraint(new ContainsConstraint(sectionRef, ConstraintOp.CONTAINS, section));
             QueryObjectReference bref = new QueryObjectReference(section, "book");
             rangeSet.addConstraint(new ContainsConstraint(bref, ConstraintOp.CONTAINS, book));
-            rangeSet.addConstraint(new SimpleConstraint(alephId, ConstraintOp.EQUALS, new QueryValue(range.getAlephId())));
+            rangeSet.addConstraint(new SimpleConstraint(ident, ConstraintOp.EQUALS, new QueryValue(range.getIdent())));
             OverlapRange right = range.getOverlapRange(sectionRef);
             if (right != null) {
                 rangeSet.addConstraint(new OverlapConstraint(left, rangeOp, right));
@@ -120,34 +120,34 @@ public class TextLocationHelper implements RangeHelper {
             return end;
         }
 
-        public String getAlephId() {
-            return alephId;
+        public String getIdent() {
+            return ident;
         }
 
-        private final String alephId;
+        private final String ident;
 
-        TextRange(String alephId, Integer start, Integer end) {
-            this.alephId = alephId;
+        TextRange(String ident, Integer start, Integer end) {
+            this.ident = ident;
             this.start = start;
             this.end = end;
         }
 
-        TextRange(String alephId, Integer point) {
-            this.alephId = alephId;
+        TextRange(String ident, Integer point) {
+            this.ident = ident;
             this.start = point;
             this.end = point;
         }
 
-        TextRange(String alephId) {
-            this.alephId = alephId;
+        TextRange(String ident) {
+            this.ident = ident;
             this.start = null;
             this.end = null;
         }
 
         @Override
         public String toString() {
-            return "TextRange [start=" + start + ", end=" + end + ", alephId="
-                    + alephId + "]";
+            return "TextRange [start=" + start + ", end=" + end + ", ident="
+                    + ident + "]";
         }
 
         OverlapRange getOverlapRange(QueryObjectReference section) {
@@ -163,7 +163,7 @@ public class TextLocationHelper implements RangeHelper {
             final int prime = 31;
             int result = 1;
             result = prime * result
-                    + ((alephId == null) ? 0 : alephId.hashCode());
+                    + ((ident == null) ? 0 : ident.hashCode());
             result = prime * result + ((end == null) ? 0 : end.hashCode());
             result = prime * result + ((start == null) ? 0 : start.hashCode());
             return result;
@@ -178,10 +178,10 @@ public class TextLocationHelper implements RangeHelper {
             if (getClass() != obj.getClass())
                 return false;
             TextRange other = (TextRange) obj;
-            if (alephId == null) {
-                if (other.alephId != null)
+            if (ident == null) {
+                if (other.ident != null)
                     return false;
-            } else if (!alephId.equals(other.alephId))
+            } else if (!ident.equals(other.ident))
                 return false;
             if (end == null) {
                 if (other.end != null)
