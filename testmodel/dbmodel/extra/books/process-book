@@ -8,18 +8,20 @@ import intermine.model
 import itemxml.document
 import itemxml.io
 
-import book.handler
+import book.handlers
 
 model_file = sys.argv[1]
-book_xml = sys.argv[2]
-output = sys.argv[3]
+handler = getattr(book.handlers, sys.argv[2])
+book_xml = sys.argv[3]
+output = sys.argv[4]
 
 model = intermine.model.Model(model_file)
 
 item_factory = itemxml.document.Factory(model)
-handler = book.handler.BookHandler(item_factory)
+parser = handler.BookHandler(item_factory)
 if os.environ.get('DEBUG'):
-    handler.debug = True
-xml.sax.parse(book_xml, handler)
+    parser.debug = True
+
+xml.sax.parse(book_xml, parser)
 
 itemxml.io.write_itemsxml(item_factory, output)

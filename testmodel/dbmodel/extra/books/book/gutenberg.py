@@ -1,7 +1,6 @@
 # vim: set fileencoding=utf8 :
 
 from xml.sax.handler import ContentHandler
-from collections import defaultdict
 
 class CharacterContext:
     PROSE, VERSE, NONE = range(3)
@@ -17,7 +16,6 @@ class BookHandler(ContentHandler):
         self.current = {}
         self.untitled_poems = 0
         self.text_buffer = []
-        self.locations = []
         self.current_chunk = []
         self.debug = False
 
@@ -40,12 +38,6 @@ class BookHandler(ContentHandler):
         comp = self.current.pop(name)
         loc = comp.get('textLocation')
         loc.set('end', self.text_position)
-        if name != 'book' and self.debug:
-            text = ' '.join(self.text_buffer)
-            start = loc.get('start')
-            end = loc.get('end')
-            print u'{}: {}-{}\n\t{}'.format(name, start, end, text[start - 1:end])
-
         self.character_context = CharacterContext.NONE
 
     def start_book(self, attrs):
@@ -55,7 +47,7 @@ class BookHandler(ContentHandler):
         book = fac.add('Book', author = author)
         book.set('title', attrs.get('Title'))
         book.set('name', attrs.get('Title'))
-        book.set('alephIdentifier', attrs.get('Aleph'))
+        book.set('identifier', attrs.get('Aleph'))
         book.set('publicationDate', attrs.get('Publication-Date'))
         text = fac.add('Text', composition = book, language = attrs.get('Language'))
         book.set('text', text)
@@ -95,7 +87,7 @@ class BookHandler(ContentHandler):
         chapter.set('title', attrs.get('Title'))
         book.add_to('chapters', chapter)
         num = len(book.get('chapters'))
-        chapter.set('name', u'{}-ch{}'.format(book.get('alephIdentifier'), num))
+        chapter.set('name', u'{}-ch{}'.format(book.get('identifier'), num))
         book.add_to('subSections', chapter)
         return chapter
 
@@ -125,7 +117,7 @@ class BookHandler(ContentHandler):
         title = attrs.get('name')
 
         if title:
-            name = '{}:poem-{}'.format(book.get('alephIdentifier'), title)
+            name = '{}:poem-{}'.format(book.get('identifier'), title)
         else:
             name = None
 
@@ -181,7 +173,7 @@ class BookHandler(ContentHandler):
         if not poem.get('title'):
             line_0 = lines[0].strip(',.')
             poem.set('title', line_0)
-            poem.set('name', u'{}:poem-{}'.format(book.get('alephIdentifier'), line_0))
+            poem.set('name', u'{}:poem-{}'.format(book.get('identifier'), line_0))
             stanza.set('name', u'{},{}'.format(poem.get('name'), len(poem.get('stanzas'))))
             self.poems[poem.get('name')] = poem
 
