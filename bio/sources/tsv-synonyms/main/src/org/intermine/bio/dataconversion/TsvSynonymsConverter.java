@@ -75,14 +75,17 @@ public class TsvSynonymsConverter extends BioFileConverter
         // <proteome id> (ignored)
         // <taxon id>
         // <gene name>
-        // <synonym>
+        // <which> (symbol or synonym>
+        // <synonym> or <symbol>
+        // only 1 symbol is allowed. And it must be first in the list.
         
 
         while (tsvIter.hasNext()) {
           String[] fields = (String[]) tsvIter.next();
           String taxonId = fields[1];
           String geneName = fields[2];
-          String synonym = fields[3];
+          String which = fields[3];
+          String synonym = fields[4];
           try {
             Integer taxon = Integer.parseInt(taxonId);
             if (!organismMap.containsKey(taxonId)) {
@@ -102,6 +105,9 @@ public class TsvSynonymsConverter extends BioFileConverter
               Item i = createItem("Gene");
               i.setAttribute("primaryIdentifier", geneName);
               i.setReference("organism", organismMap.get(taxonId));
+              if (which.equals("symbol") ) {
+                i.setAttribute("symbol",synonym);
+              }
               try {
                 store(i);
               } catch (ObjectStoreException e) {
@@ -109,13 +115,15 @@ public class TsvSynonymsConverter extends BioFileConverter
               }
               geneMap.put(geneName,i.getIdentifier());
             }
-            Item s = createItem("Synonym");
-            s.setAttribute("value",synonym);
-            s.setReference("subject",geneMap.get(geneName));
-            try {
-              store(s);
-            } catch (ObjectStoreException e) {
-              throw new BuildException("Trouble storing synonym: "+e.getMessage());
+            if (which.equals("synonym")) {
+              Item s = createItem("Synonym");
+              s.setAttribute("value",synonym);
+              s.setReference("subject",geneMap.get(geneName));
+              try {
+                store(s);
+              } catch (ObjectStoreException e) {
+                throw new BuildException("Trouble storing synonym: "+e.getMessage());
+              }
             }
             
             lineNumber++;

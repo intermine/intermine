@@ -60,7 +60,7 @@
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.shortName" />
+      <fieldconfig fieldExpr="organism.shortName" label="Organism Name" />
     </fields>
    <bagdisplayers>
       <displayer src="heatMap.tile" showOnLeft="true"/>
@@ -291,10 +291,10 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
-                     placement="summary"
+                     placement="Summary"
                      types="SequenceFeature"/>
 
-    <!-- reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+    <!--reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
                      replacesFields=""
                      placement="Proteins"
@@ -303,7 +303,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SampleGeoDisplayer"
                      jspName="model/sampleGeoDisplayer.jsp"
                      replacesFields=""
-                     placement="summary"
+                     placement="Summary"
                      types="DiversitySample"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSNPDisplayer"
@@ -315,14 +315,20 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.FamilyAlignmentDisplayer"
                      jspName="model/nullFormatter.jsp"
                      replacesFields="msa"
-                     placement="summary"
+                     placement="Analysis"
                      types="ProteinFamily"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.AlignmentDisplayer"
                      jspName="model/alignmentDisplayer.jsp"
                      replacesFields=""
-                     placement="summary"
+                     placement="Analysis"
                      types="MSA"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAnalysisDisplayer"
+                     jspName="model/proteinAnalysisDisplayer.jsp"
+                     replacesFields="proteinAnalysisFeatures,locatedFeatures"
+                     placement="Analysis"
+                     types="Protein" />
 
   </reportdisplayers>
 

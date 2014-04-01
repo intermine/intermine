@@ -36,7 +36,7 @@ public class PantherTermsConverter extends OntologyTermsFileConverter {
   @Override
   boolean parseLine(String line) {
     String[] fields = line.split("\\t");
-    if (fields.length == 2) {
+    if (fields.length >= 2) {
       String p1 = fields[0].trim().replace(".mod","");
       identifierLine = p1.trim().replace(".mag","");
       descriptionLine = fields[1].trim();

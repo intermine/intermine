@@ -107,7 +107,7 @@ ul#nav li{
   background:#D2CEBF;}
 
 ul#submenulist li a {
-  color:#000;text-decoration: none;font-weight: bold;}
+  color:#AAA;text-decoration: none;font-weight: bold;}
 
 ul#submenulist li a:hover {
   color:#FFF;text-decoration: underline;font-weight: bold;}

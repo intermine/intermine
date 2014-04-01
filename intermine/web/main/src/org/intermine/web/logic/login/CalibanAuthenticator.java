@@ -79,6 +79,8 @@ public class CalibanAuthenticator extends HttpServlet {
       if ((request.getParameter("checkonly") != null) &&
                        request.getParameter("checkonly").equals("1")) {
         // If we're just checking, then move on.
+        log.debug("Not logged in, but just checking. off to "+
+            InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+ returnTo);
         response.sendRedirect(
             InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+ returnTo);
       } else {
@@ -118,9 +120,14 @@ public class CalibanAuthenticator extends HttpServlet {
 
   public boolean hasIdentity(HttpServletRequest request,
       HttpServletResponse response) {
+    
     // first, see if there is a jgi_session cookie
+    if ( (request == null) || (request.getCookies() == null) ) {
+      return false;
+    }
+    
     for( Cookie cookie : request.getCookies() ) {
-      //log.info("Examining cookie "+cookie.getName()+" with value "+cookie.getValue());
+      //log.debug("Examining cookie "+cookie.getName()+" with value "+cookie.getValue());
       if (cookie.getName().equals("jgi_session")) {
         calibanSessionId = cookie.getValue();
         if (calibanSessionId.isEmpty()) {
@@ -129,14 +136,16 @@ public class CalibanAuthenticator extends HttpServlet {
         // just the token
         calibanSessionId = calibanSessionId.replace("%2Fapi%2Fsessions%2F","");
         try {
-        identity = Caliban.getIdentityHash(calibanSessionId);
+          identity = Caliban.getIdentityHash(calibanSessionId);
         } catch (IOException e) {
           log.error("There was a IO exception: " + e.getMessage());
+          return false;
         } catch (SAXException e) {
           log.error("There was a problem parsing response: "+e.getMessage());
+          return false;
         }
         // return true if we have a login.
-        return identity.containsKey("login") && !identity.get("login").isEmpty();
+        return identity != null && identity.containsKey("login") && !identity.get("login").isEmpty();
       }
     }
     return false;
