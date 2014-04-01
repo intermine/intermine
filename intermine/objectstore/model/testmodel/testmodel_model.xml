@@ -120,6 +120,7 @@
     </class>
     <class name="Composition" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
+        <attribute name="title" type="java.lang.String"/>
         <reference name="author" referenced-type="Author"/>
         <reference name="text" referenced-type="Text"
                 reverse-reference="composition"/>
@@ -128,7 +129,6 @@
         <collection name="subSections" referenced-type="Composition"/>
     </class>
     <class name="Book" is-interface="false" extends="Composition">
-        <attribute name="title" type="java.lang.String"/>
         <attribute name="publicationDate" type="java.util.Date"/>
         <attribute name="identifier" type="java.lang.String"/>
         <collection name="chapters" referenced-type="Chapter"/>
@@ -137,9 +137,10 @@
         <reference name="book" referenced-type="Book"/>
     </class>
     <class name="Chapter" is-interface="false" extends="Section">
-        <attribute name="title" type="java.lang.String"/>
         <collection name="paragraphs" referenced-type="Paragraph"
                 reverse-reference="chapter"/>
+    </class>
+    <class name="Story" is-interface="false" extends="Chapter">
     </class>
     <class name="Paragraph" is-interface="false" extends="Section">
         <attribute name="number" type="java.lang.Integer"/>
@@ -151,7 +152,6 @@
     </class>
     <class name="Poem" is-interface="false" extends="Section">
         <attribute name="meter" type="java.lang.String"/>
-        <attribute name="title" type="java.lang.String"/>
         <collection name="stanzas" referenced-type="Stanza" reverse-reference="poem"/>
     </class>
     <class name="Stanza" is-interface="false" extends="Section">
