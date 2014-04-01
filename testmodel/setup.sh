@@ -118,14 +118,14 @@ ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
 cd $DIR/dbmodel
 
 echo "------> Loading demo data set..."
-ant -Drelease=demo \
+ant -Ddont.minify=true -Drelease=demo \
     clean \
     load-workers-and-books >> $LOG
 
 cd $DIR/webapp/main
 
-echo "------> Building and releasing web-app..."
-ant -Ddont.minify=true -Drelease=demo \
+echo "------> Building and releasing web-app..., nearly done"
+ant -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     retrieve-objectstore-summary \
@@ -133,4 +133,3 @@ ant -Ddont.minify=true -Drelease=demo \
     release-webapp | tee -a $LOG | grep tomcat-deploy
 
 echo "------> All done. Build log is available in $LOG"
-
