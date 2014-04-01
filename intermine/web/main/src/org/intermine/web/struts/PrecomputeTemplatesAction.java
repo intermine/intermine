@@ -31,17 +31,17 @@ public class PrecomputeTemplatesAction extends Action
     @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        String pwd = request.getParameter("pwd");
         String msg ="";
         precompute:
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             ProfileManager pm = im.getProfileManager();
-            Profile profile = pm.getProfile("superuser",pwd,im.getClassKeys());
+           // Profile profile = pm.getProfile("superuser",pwd,im.getClassKeys());
+            Profile profile = pm.getProfile("superuser");
 	    if(profile == null){
-		LOG.info("Precompute templates action needs superuser pwd");
+		LOG.info("Could not create superuse profile");
 	  	LOG.info("No templates precomputed");
-                msg = "Precompute templates needs parameter 'pwd' with superuser password";
+                msg = "Precompute templates could not create superuse profile";
 		break precompute;
 	    }
             Map<String, ApiTemplate> templates = profile.getSavedTemplates();
