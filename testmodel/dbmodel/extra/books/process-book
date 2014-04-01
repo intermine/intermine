@@ -2,7 +2,9 @@
 
 import sys
 import os
+import os.path
 import xml.sax
+from contextlib import closing
 
 import intermine.model
 import itemxml.document
@@ -24,4 +26,9 @@ if os.environ.get('DEBUG'):
 
 xml.sax.parse(book_xml, parser)
 
-itemxml.io.write_itemsxml(item_factory, output)
+try:
+    with closing(open(output, 'w')) as out, itemxml.io.XMLWriter(out, allow_none = False) as writer:
+        writer.write_items(item_factory)
+except:
+    os.remove(output)
+    raise

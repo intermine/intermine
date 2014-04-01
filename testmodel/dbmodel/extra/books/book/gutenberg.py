@@ -47,7 +47,7 @@ class BookHandler(ContentHandler):
         book = fac.add('Book', author = author)
         book.set('title', attrs.get('Title'))
         book.set('name', attrs.get('Title'))
-        book.set('identifier', attrs.get('Aleph'))
+        book.set('identifier', attrs.get('Aleph', attrs.get('Identifier')))
         book.set('publicationDate', attrs.get('Publication-Date'))
         text = fac.add('Text', composition = book, language = attrs.get('Language'))
         book.set('text', text)
@@ -81,8 +81,8 @@ class BookHandler(ContentHandler):
         self.initLocation(comp)
         return comp
 
-    def start_chapter(self, attrs):
-        chapter = self.create_subsection('Chapter')
+    def start_chapter(self, attrs, cls = 'Chapter'):
+        chapter = self.create_subsection(cls)
         book = chapter.get('book')
         chapter.set('title', attrs.get('Title'))
         book.add_to('chapters', chapter)
@@ -94,6 +94,27 @@ class BookHandler(ContentHandler):
     def end_chapter(self):
         self.endCurrentComposition('chapter')
 
+    def start_story(self, attrs):
+        story = self.start_chapter(attrs, 'Story')
+        book = story.get('book')
+        story.set('name', u'{}-{}'.format(book.get('name'), attrs.get('Number')))
+        self.current['chapter'] = story
+        return story
+
+    def end_story(self):
+        self.end_chapter()
+        self.current.pop('story')
+
+    def start_section(self, attrs):
+        section = self.create_subsection('Section')
+        chapter = self.current['chapter']
+        if chapter:
+            chapter.add_to('subSections', section)
+        return section
+
+    def end_section(self):
+        self.endCurrentComposition('section')
+
     def start_paragraph(self, attrs):
         paragraph = self.create_subsection('Paragraph')
         book = paragraph.get('book')
@@ -104,7 +125,12 @@ class BookHandler(ContentHandler):
         paragraph.set('number', n)
         paragraph.set('name', u'{}-¶{}'.format(chapter.get('name'), n))
         self.character_context = CharacterContext.PROSE
-        chapter.add_to('subSections', paragraph)
+        section = self.current.get('section')
+        if section:
+            section.add_to('subSections', paragraph)
+        else:
+            chapter.add_to('subSections', paragraph)
+
         return paragraph
 
     def end_paragraph(self):
@@ -159,6 +185,7 @@ class BookHandler(ContentHandler):
 
     def end_chorus(self):
         self.end_stanza()
+        self.current.pop('chorus')
 
     def characters(self, content):
         self.current_chunk.extend(content)
