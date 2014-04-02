@@ -53,13 +53,21 @@ public class JBrowseDisplayer extends ReportDisplayer
         int start = sf.getChromosomeLocation().getStart() - offset;
         int end = sf.getChromosomeLocation().getEnd() - offset;
         String project = props.getProperty("project.title");
-        String base = props.getProperty("webapp.baseUrl");
+        String base = props.getProperty("webapp.baseurl");
         String path = props.getProperty("webapp.path");
         String taxonId = String.valueOf(sf.getOrganism().getTaxonId());
         String data = String.format("%s/%s/service/jbrowse/config/%s", base, path, taxonId);
         Collection<String> tracks = new HashSet<String>();
         tracks.add(String.format("%s-%s-%s", project, taxonId, reportObject.getClassDescriptor().getUnqualifiedName()));
-        if (!(sf instanceof Gene)) {
+        String refKeyPropName = String.format("org.intermine.webservice.server.jbrowse."
+                + InterMineContext.getInterMineAPI().getModel().getName()
+                + ".reference.key");
+        tracks.add(String.format("%s-%s-%s", project, taxonId, props.getProperty(refKeyPropName)));
+        if (sf instanceof Gene) {
+            if (sf.getChildFeatures().isEmpty()) {
+                tracks.add(String.format("%s-%s-Transcript", project, taxonId));
+            }
+        } else {
             tracks.add(String.format("%s-%s-Gene", project, taxonId));
         }
         String segment = String.format("%s:%d..%d", chr, start, end);
