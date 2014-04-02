@@ -1,0 +1,244 @@
+<webconfig>
+  <class className="org.intermine.model.bio.Author">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.BioEntity">
+    <headerconfig>
+      <titles>
+        <title mainTitles="symbol|primaryIdentifier" numberOfMainTitlesToShow="1" subTitles="*organism.shortName*" />
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier" label="DB identifier"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Chromosome">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Comment">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.DataSet">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.DataSource">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+    </fields>
+    <tabledisplayer src="/model/dataSourceShort.jsp"/>
+  </class>
+
+  <class className="org.intermine.model.bio.Gene">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="symbol"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.shortName" />
+    </fields>
+  </class>
+
+ <class className="org.intermine.model.bio.Location">
+    <fields>
+      <fieldconfig fieldExpr="feature.primaryIdentifier"/>
+      <fieldconfig fieldExpr="start"/>
+      <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="strand"/>
+    </fields>
+  </class>
+
+
+  <class className="org.intermine.model.bio.SequenceFeature">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Ontology">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.OntologyTerm">
+    <headerconfig>
+      <titles>
+      <title mainTitles="identifier|name" subTitles="ontology.name" />
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description" doNotTruncate="true" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.OntologyRelation">
+    <fields>
+      <fieldconfig fieldExpr="relationship"/>
+      <fieldconfig fieldExpr="parentTerm.identifier"/>
+      <fieldconfig fieldExpr="childTerm.identifier"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.OntologyTermSynonym">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Organism">
+    <headerconfig>
+      <titles>
+      <title mainTitles="name"/>
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="taxonId" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Protein">
+    <inlinelist>
+      <table path="synonyms.value" showLinksToObjects="true" />
+    </inlinelist>
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryAccession"/>
+      <fieldconfig fieldExpr="organism.name"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Publication">
+    <headerconfig>
+  <titles>
+    <title mainTitles="title" />
+ </titles>
+    </headerconfig>
+    <inlinelist>
+      <table path="authors.name" showLinksToObjects="true" />
+    </inlinelist>
+    <fields>
+      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="title"/>
+      <fieldconfig fieldExpr="year"/>
+      <fieldconfig fieldExpr="journal"/>
+      <fieldconfig fieldExpr="volume"/>
+      <fieldconfig fieldExpr="pages"/>
+      <fieldconfig fieldExpr="pubMedId"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Sequence">
+    <fields>
+      <fieldconfig fieldExpr="residues" fieldExporter="org.intermine.bio.web.export.ResidueFieldExporter"
+                   sectionOnRight="true" sectionTitle="Residues" openByDefault="true"
+                   showInSummary="false" showInResults="false" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="length"/>
+    </fields>
+    <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
+  </class>
+
+  <class className="org.intermine.model.bio.Synonym">
+    <fields>
+      <fieldconfig fieldExpr="value"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Transcript">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
+      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+    </fields>
+  </class>
+
+<!-- exporters -->
+  <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+  <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+  <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
+
+  <reportdisplayers>
+
+   <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+                     jspName="model/geneOntologyDisplayer.jsp"
+                     replacesFields="goAnnotation,ontologyAnnotations"
+                     placement="Genomics"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
+                     jspName="model/geneStructureDisplayer.jsp"
+                     replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
+                     placement="Genomics"
+                     types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
+                     jspName="model/sequenceFeatureDisplayer.jsp"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
+                     placement="summary"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+                     jspName="model/uniProtCommentsDisplayer.jsp"
+                     replacesFields=""
+                     placement="Proteins"
+                     types="Gene,Protein"/>
+
+  </reportdisplayers>
+
+<!-- widgets -->
+<widgets>
+      <graphdisplayer id="chromosome_distribution_for_gene"
+                      title="Chromosome Distribution"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="ColumnChart"
+                      rangeLabel="Count"
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath="ActualExpectedCriteria"
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
+                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
+
+</widgets>
+</webconfig>
