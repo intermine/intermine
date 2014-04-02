@@ -202,8 +202,10 @@ public final class Constants
      * 15 - Added jbrowse endpoint.
      * 16 - Added lists with issues, also changed the default output of the id resolution service
      *      which is now category based by default.
+     *    - Added JBrowse-names, simple-data service.
+     * 17 - Added jbrowse-config.
      */
-    public static final int WEB_SERVICE_VERSION = 16;
+    public static final int WEB_SERVICE_VERSION = 17;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

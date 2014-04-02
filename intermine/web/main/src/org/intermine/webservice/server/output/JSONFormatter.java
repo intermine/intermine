@@ -227,7 +227,7 @@ public class JSONFormatter extends Formatter {
         sb.append("\"" + KEY_TIME + "\":\"" + executionTime + "\",");
 
         sb.append("\"wasSuccessful\":");
-        if (errorCode != Output.SC_OK) {
+        if (errorCode >= 400) {
             sb.append("false,\"error\":\"" + escapeJava(errorMessage) + "\"");
         } else {
             sb.append("true,\"error\":null");
