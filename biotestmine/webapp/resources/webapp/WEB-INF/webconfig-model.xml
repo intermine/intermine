@@ -199,7 +199,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
         jspName="model/jbrowseDisplayer.jsp"
         replacesFields=""
-        placement="Genes"
+        placement="Genomics"
         types="SequenceFeature"/>
 
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
