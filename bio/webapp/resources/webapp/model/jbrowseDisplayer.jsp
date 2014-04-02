@@ -32,34 +32,5 @@
     </p>
 </div>
 
-<!--
-
-<script type="text/javascript">
-/* <![CDATA[ */
-var bookmarkCallback = function(brwsr) {
-    return window.location.protocol
-       + "//" + window.location.host
-       + window.location.pathname
-       + "?loc=" + brwsr.visibleRegion()
-       + "&tracks=" + brwsr.visibleTracks();
-    }
-var dataDir = window.location.protocol
-       + "//" + window.location.host
-	   + "/jbrowse/data";
-var b = new Browser({
-    containerID: "GenomeBrowser",
-    refSeqs: refSeqs,
-    trackData: trackInfo,
-    defaultTracks: "DNA,gene,mRNA,noncodingRNA",
-    location: "chr${chr}:${start}..${end}",
-    tracks: "${tracks}",
-    bookmark: bookmarkCallback,
-    dataRoot: dataDir
-});
-/* ]]> */
-</script>
-
--->
-
 </c:if>
 <!-- /jBrowseDisplayer.jsp -->
