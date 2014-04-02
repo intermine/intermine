@@ -105,9 +105,13 @@ echo Personalising project.xml
 sed -i "s!DATA_DIR!$DATA_DIR!g" project.xml
 sed -i "s/malariamine/$MINENAME/g" project.xml
 
-echo Adjusting priorities.
 PRIORITIES=$DIR/dbmodel/resources/genomic_priorities.properties
-echo 'ProteinDomain.shortName = interpro, uniprot-malaria' >> $PRIORITIES
+if egrep -q ProteinDomain.shortName $PRIORITIES; then
+    echo Integration key exists.
+else
+    echo Adjusting priorities.
+    echo 'ProteinDomain.shortName = interpro, uniprot-malaria' >> $PRIORITIES
+fi
 
 cd $DIR/dbmodel
 echo Building DB
@@ -116,6 +120,7 @@ ant clean build-db >> $DIR/log/build-db.log
 echo 'Loading data (this could take some time) ...'
 cd $DIR
 ../bio/scripts/project_build -b -v $SERVER $HOME/${MINENAME}-dump
+cp pbuild.log $DIR/log/
 
 cd $DIR/webapp
 echo 'Building userprofile..'
