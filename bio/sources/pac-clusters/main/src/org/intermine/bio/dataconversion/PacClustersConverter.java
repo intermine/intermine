@@ -103,11 +103,19 @@ public class PacClustersConverter extends BioDBConverter
         proFamily.setAttribute("methodId", res.getString("methodId"));
         setIfNotNull(proFamily,"methodName", methodNames.get(res.getString("methodId")));
         String consensusSequence = res.getString("sequence");
+
+        HashMap<String,String> idToName = registerProteins(clusterId,proFamily);
+        
+        // for singletons, there will (never?) be a consensus sequence
+        // it is the protein sequence.
+        if ((idToName.keySet().size()==1) && (consensusSequence==null) ) {
+          consensusSequence = getPeptideSequence((String)idToName.keySet().toArray()[0]);
+        }
         if (consensusSequence != null && !consensusSequence.isEmpty()) {
           String sequenceIdentifier = storeSequence(consensusSequence);
           proFamily.setReference("consensus", sequenceIdentifier);
         }
-        HashMap<String,String> idToName = registerProteins(clusterId,proFamily);
+        
         if (msaString != null) {
           String newMSA = reformatMSA(msaString,idToName);
           Item msa = createItem("MSA");
@@ -209,7 +217,7 @@ public class PacClustersConverter extends BioDBConverter
       try {
         md = MessageDigest.getInstance("MD5");
       } catch (NoSuchAlgorithmException e) {
-        throw new BuildException("No such algorothm for md5?");
+        throw new BuildException("No such algorithm for md5?");
       }
       Item sequence = createItem("Sequence");
       sequence.setAttribute("residues",residues);
@@ -224,6 +232,32 @@ public class PacClustersConverter extends BioDBConverter
       } catch (ObjectStoreException e) {
         throw new BuildException("Problem storing sequence." + e.getMessage());
       }
+    }
+    
+    public String getPeptideSequence(String transcriptId) {
+      ResultSet res = null;
+      try {
+        Statement stmt = connection.createStatement();
+        // we're going to want transcript id and taxon id as strings. so cast them here
+        String query = "SELECT peptide FROM "
+            + " transcript"
+            + " WHERE id="+transcriptId;
+        res = stmt.executeQuery(query);
+        // should only have 1 row; we'll return the first non-empty value,
+        // but we'll remove terminal stops.
+        while( res.next()) {
+          String peptide = res.getString("peptide");
+          if (peptide.endsWith("*")) {
+            return peptide.substring(0,peptide.length()-1);
+          } else if (!peptide.isEmpty() ) {
+            return peptide;
+          }
+        }
+
+      } catch (SQLException e) {
+        throw new BuildException("Trouble getting singleton peptide: " + e.getMessage());
+      }
+      return null;
     }
     
     public ResultSet getFamilyMembers(String clusterId) {
@@ -252,17 +286,17 @@ public class PacClustersConverter extends BioDBConverter
       try {
         Statement stmt = connection.createStatement();
         // we're going to want clusterId as string. so cast it here
-        String query = "select zMSA,sequence,clusterName,"
-            + " cast(clusterDetail.id as char) as clusterId,"
-            + " cast(methodId as char) as methodId"
-            + " from"
-            + " clusterDetail left outer join"
-            + " (msa left outer join centroid"
-            + " on centroid.msaId=msa.id) "
-            + " on msa.clusterId=clusterDetail.id"
-            + " where"
-            + " clusterDetail.active=1 and"
-            + " clusterDetail.methodId in ("+methodIds+")";
+        String query = "SELECT zMSA,sequence,clusterName,"
+            + " CAST(clusterDetail.id AS char) as clusterId,"
+            + " CAST(methodId as char) AS methodId"
+            + " FROM"
+            + " clusterDetail LEFT OUTER JOIN"
+            + " (msa LEFT OUTER JOIN centroid"
+            + " ON centroid.msaId=msa.id) "
+            + " ON msa.clusterId=clusterDetail.id"
+            + " WHERE"
+            + " clusterDetail.active=1 AND"
+            + " clusterDetail.methodId IN ("+methodIds+")";
         LOG.info("Executing query: "+query);
         res = stmt.executeQuery(query);
       } catch (SQLException e) {
@@ -401,12 +435,16 @@ public class PacClustersConverter extends BioDBConverter
     private void fillMethodMap()
     {
       if (methodIds == null) return;
-      String query = "select id,name from method where id in ("+methodIds+")";
+      String query = "select id,name,adjective from method where id in ("+methodIds+")";
       try {
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         while (res.next() ) {
-          methodNames.put((new Integer(res.getInt("id"))).toString(),res.getString("name"));
+          String name = res.getString("name");
+          if (name==null) {
+            name = res.getString("adjective");
+          }
+          methodNames.put((new Integer(res.getInt("id"))).toString(),name);
         }
         res.close();
       } catch (SQLException e) {

@@ -153,7 +153,7 @@
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="commonName" label = "Common name"/>
+      <fieldconfig fieldExpr="commonName" label="Common name"/>
       <fieldconfig fieldExpr="taxonId" />
     </fields>
   </class>
@@ -291,7 +291,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
-                     placement="Summary"
+                     placement="summary"
                      types="SequenceFeature"/>
 
     <!--reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
@@ -303,7 +303,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SampleGeoDisplayer"
                      jspName="model/sampleGeoDisplayer.jsp"
                      replacesFields=""
-                     placement="Summary"
+                     placement="summary"
                      types="DiversitySample"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSNPDisplayer"
@@ -315,19 +315,19 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.FamilyAlignmentDisplayer"
                      jspName="model/nullFormatter.jsp"
                      replacesFields="msa"
-                     placement="Analysis"
+                     placement="summary"
                      types="ProteinFamily"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.AlignmentDisplayer"
                      jspName="model/alignmentDisplayer.jsp"
                      replacesFields=""
-                     placement="Analysis"
+                     placement="summary"
                      types="MSA"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAnalysisDisplayer"
                      jspName="model/proteinAnalysisDisplayer.jsp"
                      replacesFields="proteinAnalysisFeatures,locatedFeatures"
-                     placement="Analysis"
+                     placement="summary"
                      types="Protein" />
 
   </reportdisplayers>
