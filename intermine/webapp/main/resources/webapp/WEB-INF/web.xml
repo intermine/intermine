@@ -2106,6 +2106,7 @@ query could be used:
 	</servlet-mapping>
     
     <!--  New in version 14 -->
+
     <servlet>
      <servlet-name>ws-jbrowse</servlet-name>
      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -2921,6 +2922,66 @@ The different token types are:
               </returns>
           </method>
       </metadata>
+  </servlet-mapping>
+
+  <!-- New in version 17 -->
+
+    <servlet>
+     <servlet-name>ws-jbrowse-config</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.jbrowse.Config</param-value>
+     </init-param>
+   </servlet>
+
+   <servlet-mapping>
+    <servlet-name>ws-jbrowse-config</servlet-name>
+    <url-pattern>/service/jbrowse/config/*</url-pattern>
+    <metadata>
+        <name>JBrowse Configuration Files</name>
+        <minVersion>17</minVersion>
+        <method type="GET" authenticationRequired="false" slug="/:domain/trackList.json">
+            <name>Get Track Listing</name>
+            <summary>Get the Configuration for the Track Listing</summary>
+            <description format="markdown">
+                This service serves a `trackList.json` file suitable for
+                use with JBrowse.
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" authenticationRequired="false" slug="/:domain/seq/refSeqs.json">
+            <name>Get Reference Sequence List</name>
+            <summary>Get the Configuration for the Reference Sequences</summary>
+            <description format="markdown">
+                This service serves a `refSeqs.json` file suitable for
+                use with JBrowse.
+
+                See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
+            </description>
+            <param
+                type="String"
+                required="true"
+                options="/data/Organism|results"
+                default="{taxonId}"
+                description="The domain we are operating in. This will generally refer to an
+                    organism taxon-id">domain</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
