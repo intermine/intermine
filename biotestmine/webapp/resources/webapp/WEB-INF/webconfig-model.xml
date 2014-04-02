@@ -1,0 +1,19 @@
+<webconfig>
+
+  <!-- exporters -->
+  <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
+  <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
+  <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
+
+  <reportdisplayers>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+        jspName="model/jbrowseDisplayer.jsp"
+        replacesFields=""
+        placement="Genes"
+        types="SequenceFeature"/>
+
+  </reportdisplayers>
+
+</webconfig>
+<!-- vim: setl ts=2 sw=2 extandtab -->

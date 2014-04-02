@@ -97,6 +97,10 @@ else
 fi
 
 cd $DIR
+if test ! -f project.xml; then
+    cp ../bio/tutorial/project.xml .
+    echo Copied over malariamine project.xml
+fi
 echo Personalising project.xml
 sed -i "s!DATA_DIR!$DATA_DIR!g" project.xml
 sed -i "s/malariamine/$MINENAME/g" project.xml
