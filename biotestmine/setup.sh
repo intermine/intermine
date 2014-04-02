@@ -28,6 +28,9 @@ fi
 if test -z $TOMCAT_PWD; then
     TOMCAT_PWD=manager
 fi
+if test -z $DB_ENCODING; then
+    DB_ENCODING=SQL_ASCII
+fi
 
 # Report settings before we do anything.
 if test $DEBUG; then
@@ -46,6 +49,7 @@ if test $DEBUG; then
     echo " PSQL_PWD = $PSQL_PWD"
     echo " TOMCAT_USER = $TOMCAT_USER"
     echo " TOMCAT_PWD = $TOMCAT_PWD"
+    echo " DB_ENCODING = $DB_ENCODING"
 fi
 
 if test ! -d $DIR/log; then
@@ -79,8 +83,8 @@ for db in $USERPROFILE_DB $PROD_DB $ITEMS_DB; do
     if psql --list | egrep -q '\s'$db'\s'; then
         echo $db exists.
     else
-        echo Creating $db ...
-        createdb $db
+        echo Creating $db with encoding $DB_ENCODING ...
+        createdb -E $DB_ENCODING $db
     fi
 done
 
@@ -105,9 +109,13 @@ echo Personalising project.xml
 sed -i "s!DATA_DIR!$DATA_DIR!g" project.xml
 sed -i "s/malariamine/$MINENAME/g" project.xml
 
-echo Adjusting priorities.
 PRIORITIES=$DIR/dbmodel/resources/genomic_priorities.properties
-echo 'ProteinDomain.shortName = interpro, uniprot-malaria' >> $PRIORITIES
+if egrep -q ProteinDomain.shortName $PRIORITIES; then
+    echo Integration key exists.
+else
+    echo Adjusting priorities.
+    echo 'ProteinDomain.shortName = interpro, uniprot-malaria' >> $PRIORITIES
+fi
 
 cd $DIR/dbmodel
 echo Building DB
@@ -116,6 +124,7 @@ ant clean build-db >> $DIR/log/build-db.log
 echo 'Loading data (this could take some time) ...'
 cd $DIR
 ../bio/scripts/project_build -b -v $SERVER $HOME/${MINENAME}-dump
+cp pbuild.log $DIR/log/
 
 cd $DIR/webapp
 echo 'Building userprofile..'
