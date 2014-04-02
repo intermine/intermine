@@ -14,7 +14,7 @@
 
     <c:set var="padding" value="${10}"/>
 
-    <c:set var="jbLink" value="${jbrowseInstall}?data=${data}&loc=${segment}&tracks=${tracks}"/>
+    <c:set var="jbLink" value="${jbrowseInstall}?data=${dataLoc}&loc=${segment}&tracks=${tracks}&nav=0&tracklist=0"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
 	   panel to see the data. Clicking on individual features to open a report page for that feature.
