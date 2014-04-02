@@ -1,6 +1,7 @@
 package org.intermine.webservice.server.jbrowse;
 
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
+import static org.intermine.webservice.server.jbrowse.Queries.resolveValue;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -25,10 +26,9 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.jbrowse.util.ArrayFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class Names extends JSONService {
 
@@ -235,22 +235,6 @@ public class Names extends JSONService {
         return cd.getUnqualifiedName();
     }
 
-    private Object resolveValue(FastPathObject o, String path) {
-        String[] parts = path.split("\\.");
-        Object res = null;
-        for (int i = 0; i < parts.length; i++) {
-            if (o == null) return res;
-            try {
-                res = o.getFieldValue(parts[i]);
-            } catch (IllegalAccessException e) {
-                throw new ServiceException("Could not read object value.", e);
-            }
-            if (i + 1 < parts.length && res instanceof FastPathObject) {
-                o = (FastPathObject) res;
-            }
-        }
-        return res;
-    }
 
     private String getPropertyPrefix() {
         String modelName = im.getModel().getName();
@@ -288,42 +272,6 @@ public class Names extends JSONService {
         pq.setConstraintLogic(logic.toString());
 
         return pq;
-    }
-
-    /**
-     * Not good practice, but this is how JBrowse wants results, so when in
-     * Rome.
-     * @author Alex Kalderimis
-     *
-     */
-    private static class ArrayFormatter extends org.intermine.webservice.server.output.Formatter
-    {
-
-        @Override
-        public String formatHeader(Map<String, Object> attributes) {
-            return "[";
-        }
-
-        @Override
-        public String formatResult(List<String> resultRow) {
-            return StringUtils.join(resultRow, ",");
-        }
-
-        @Override
-        public String formatFooter(String errorMessage, int errorCode) {
-            if (errorCode >= 400) {
-                JSONObject error = new JSONObject();
-                try {
-                    error.put("message", errorMessage);
-                    error.put("code", errorCode);
-                    return error.toString() + "]";
-                } catch (JSONException e) {
-                    return "{\"message\":\"JSON formatting error\",\"code\":500\"}";
-                }
-            }
-            return "]";
-        }
-        
     }
 
 }
