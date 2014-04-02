@@ -1,0 +1,37 @@
+<definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp"
+        controllerUrl="/initGeneMicroArrayDisplayer.do"/>
+
+<definition name="sequenceExportOptions.tile" path="/model/sequenceExportOptions.jsp"
+        controllerUrl="/initSequenceExportOptions.do"/>
+
+<definition name="gff3ExportOptions.tile" path="/model/gff3ExportOptions.jsp" />
+
+<definition name="bedExportOptions.tile" path="/model/bedExportOptions.jsp"
+  controllerUrl="/initSequenceFeatureExportOptions.do" />
+
+<definition name="galaxyExportOptions.page" extends="layout.template">
+    <put name="body" value="galaxyExportOptions.tile"/>
+    <put name="pageName" value="galaxyExportOptions"/>
+</definition>
+
+<definition name="galaxyExportOptions.tile" path="/model/galaxyExportOptions.jsp"
+  controllerUrl="/initGalaxyExportOptions.do" />
+
+<!-- Beginning of Genomic Region Search configuration -->
+
+<definition name="genomicRegionSearchOptions.page" extends="layout.template">
+  <put name="body" value="genomicRegionSearchOptions.tile" />
+  <put name="pageName" value="genomicRegionSearch" />
+</definition>
+
+<definition name="genomicRegionSearchOptions.tile" path="/model/genomicRegionSearchOptionsBase.jsp"
+  controllerUrl="/initGenomicRegionSearchOptions.do" />
+
+<definition name="genomicRegionSearchResults.page" extends="layout.template">
+  <put name="body" value="/model/genomicRegionSearchResultsBase.jsp" />
+  <put name="pageName" value="genomicRegionSearchResults" />
+</definition>
+
+<!-- End of Genomic Region Search configuration -->
+
+<definition name="friendlyMineLinkDisplayer.tile" path="/model/friendlyMineLinkDisplayer.jsp" controllerUrl="/initFriendlyMineLinkDisplayer.do"/>
