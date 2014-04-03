@@ -19,6 +19,11 @@ before_script:
     - sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
     - ant -f bio/test-all/dbmodel/build.xml build-db
 script:
-    - ant -f intermine/objectstore/test/build.xml
-    - ant -f intermine/integrate/test/build.xml
-    - ant -f bio/sources/uniprot/build.xml
+    - ant -f intermine/objectstore/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[objectstore] /' >> failures.list)
+    - ant -f intermine/integrate/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[integrate] /' >> failures.list)
+    - ant -f intermine/pathquery/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[pathquery] /' >> failures.list)
+    - ant -f intermine/api/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[api] /' >> failures.list)
+    - ant -f intermine/web/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[web] /' >> failures.list)
+    - cat failures.list
+    - test ! -s failures.list
+
