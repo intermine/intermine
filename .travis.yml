@@ -8,10 +8,10 @@ before_script:
     - psql -c 'create database truncunittest;' -U postgres
     - psql -c 'create database flatmodetest;' -U postgres
     - psql -c 'create database fulldatatest;' -U postgres
-    - psql -c 'create database userprofile-test;' -U postgres
+    - psql -c 'create database userprofiletest;' -U postgres
     - psql -c 'create database unittest;' -U postgres
-    - psql -c 'create database bio-test;' -U postgres
-    - psql -c 'create database bio-fulldata-test;' -U postgres
+    - psql -c 'create database biotest;' -U postgres
+    - psql -c 'create database biofulldatatest;' -U postgres
     - mkdir ~/.intermine
     - cp config/travis.properties ~/.intermine/intermine-test.properties
     - ant -f bio/test-all/dbmodel build-db
