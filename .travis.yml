@@ -1,0 +1,23 @@
+language: java
+jdk:
+    - oraclejdk7
+    - openjdk7
+    - openjdk6
+addons:
+    - postgresql: "9.3"
+before_script:
+    - psql -c 'create database notxmltest;' -U postgres
+    - psql -c 'create database truncunittest;' -U postgres
+    - psql -c 'create database flatmodetest;' -U postgres
+    - psql -c 'create database fulldatatest;' -U postgres
+    - psql -c 'create database userprofile-test;' -U postgres
+    - psql -c 'create database unittest;' -U postgres
+    - psql -c 'create database bio-test;' -U postgres
+    - psql -c 'create database bio-fulldata-test;' -U postgres
+    - mkdir ~/.intermine
+    - cp config/travis.properties ~/.intermine/intermine-test.properties
+    - ant -f bio/test-all/dbmodel build-db
+script:
+    - ant -f intermine/objectstore/test/build.xml
+    - ant -f intermine/integrate/test/build.xml
+    - ant -f bio/test-all/build.xml
