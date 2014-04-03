@@ -19,4 +19,4 @@ before_script:
 script:
     - ant -f intermine/objectstore/test/build.xml
     - ant -f intermine/integrate/test/build.xml
-    - ant -f bio/test-all/build.xml
+    - ant -f bio/sources/uniprot/build.xml
