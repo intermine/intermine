@@ -3,8 +3,6 @@ jdk:
     - oraclejdk7
     - openjdk7
     - openjdk6
-addons:
-    - postgresql: "9.3"
 before_script:
     - psql -c 'create database notxmltest;' -U postgres
     - psql -c 'create database truncunittest;' -U postgres
