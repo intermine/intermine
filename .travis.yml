@@ -14,7 +14,7 @@ before_script:
     - psql -c 'create database biofulldatatest;' -U postgres
     - mkdir ~/.intermine
     - cp config/travis.properties ~/.intermine/intermine-test.properties
-    - ant -f bio/test-all/dbmodel build-db
+    - ant -f bio/test-all/dbmodel/build.xml build-db
 script:
     - ant -f intermine/objectstore/test/build.xml
     - ant -f intermine/integrate/test/build.xml
