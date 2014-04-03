@@ -3,6 +3,8 @@ jdk:
     - oraclejdk7
     - openjdk7
     - openjdk6
+env:
+    ANT_OPTS='-server'
 before_script:
     - psql -c 'create database notxmltest;' -U postgres
     - psql -c 'create database truncunittest;' -U postgres
