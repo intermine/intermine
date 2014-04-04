@@ -25,16 +25,7 @@ sed -i "s/PG_PASS/$PG_PASSWORD/" $HOME/.intermine/intermine-bio-test.properties
 pip install -r testmodel/webapp/selenium/requirements.txt
 
 # Install and configure tomcat 7.0.53
-TOMCAT_VERSION=7.0.53
-wget http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.zip
-unzip apache-tomcat-${TOMCAT_VERSION}.zip
-cp config/tomcat-users.xml apache-tomcat-${TOMCAT_VERSION}/conf/tomcat-users.xml
-echo 'JAVA_OPTS="$JAVA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"' >> prefixed
-echo 'export JAVA_OPTS' >> prefixed
-cat apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh >> prefixed
-cp prefixed apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh
-sed -i 's!<Context>!<Context sessionCookiePath="/" useHttpOnly="false">!' apache-tomcat-${TOMCAT_VERSION}/conf/context.xml
-chmod +x apache-tomcat-${TOMCAT_VERSION}/bin/catalina.sh # startup.sh won't work unless catalina.sh is executable.
+TOMCAT_VERSION=7.0.53 sh config/download_and_configure_tomcat.sh
 
 # Start tomcat on the default port (8080)
 nohup bash -c "sh apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh 2>&1 " && sleep 4; cat nohup.out
