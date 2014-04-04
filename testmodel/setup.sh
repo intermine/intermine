@@ -81,7 +81,7 @@ ant -Drelease=demo -Ddont.minify=true \
     create-quicksearch-index \
     default \
     remove-webapp \
-    release-webapp >> $LOG
+    release-webapp | tee -a $LOG | grep tomcat-deploy
 
 echo All done. Build log is available in $LOG
 
