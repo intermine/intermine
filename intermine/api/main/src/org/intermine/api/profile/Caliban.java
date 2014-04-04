@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.util.PropertiesUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,12 +45,15 @@ public class Caliban {
   MalformedURLException,SAXException,IOException
   {
 
-    System.setProperty("javax.net.ssl.trustStore","/scratch/www/tomcat-6/keystore");
-    System.setProperty("javax.net.ssl.trustStorePassword","changeit");
+    System.setProperty("javax.net.ssl.trustStore",
+        PropertiesUtil.getProperties().getProperty("keystore.name"));
+    System.setProperty("javax.net.ssl.trustStorePassword",
+        PropertiesUtil.getProperties().getProperty("keystore.password"));
     
     // we make a couple requests to our authenticator API using this token
     // we get bac very simple documents, so we'll just DOM them.
-    URL url = new URL("https://signon.phytozome.net/api/sessions/"+token);
+    String signonURLBase = PropertiesUtil.getProperties().getProperty("caliban.signon");
+    URL url = new URL(signonURLBase+"/api/sessions/"+token);
     DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
     DocumentBuilder dB;
     try {
@@ -63,7 +67,7 @@ public class Caliban {
     if (nL.item(0).getNodeType() == Node.ELEMENT_NODE) {
       String link = ((Element)nL.item(0)).getTextContent();
       URL userURL = null;
-      userURL = new URL("https://signon.phytozome.net"+link);
+      userURL = new URL(signonURLBase+link);
       Document userDoc = dB.parse(userURL.openStream());
       // we got something. Time to fill it
       HashMap<String,String> newIdentity = new HashMap<String,String>();

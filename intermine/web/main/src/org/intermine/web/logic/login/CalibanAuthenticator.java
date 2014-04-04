@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.Caliban;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
@@ -61,9 +62,15 @@ public class CalibanAuthenticator extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    System.setProperty("javax.net.ssl.trustStore","/scratch/www/tomcat-6/keystore");
-    System.setProperty("javax.net.ssl.trustStorePassword","changeit");
+    //System.setProperty("javax.net.ssl.trustStore",
+    //    InterMineAction.getWebProperties(request).getProperty("keystore.name"));
+    //System.setProperty("javax.net.ssl.trustStorePassword",
+    //    InterMineAction.getWebProperties(request).getProperty("keystore.password"));
     ServletContext context = config.getServletContext();
+    System.setProperty("javax.net.ssl.trustStore",
+        PropertiesUtil.getProperties().getProperty("keystore.name"));
+    System.setProperty("javax.net.ssl.trustStorePassword",
+        PropertiesUtil.getProperties().getProperty("keystore.password"));
     profileManager = SessionMethods.getInterMineAPI(context).getProfileManager();
   }
 
@@ -74,25 +81,28 @@ public class CalibanAuthenticator extends HttpServlet {
     String returnTo = request.getParameter("returnto");
     if( returnTo==null || returnTo.isEmpty()) returnTo = "/begin.do";
 
+
+    
     if (!hasIdentity(request,response) ) {
       // this person is not logged in. 
       if ((request.getParameter("checkonly") != null) &&
-                       request.getParameter("checkonly").equals("1")) {
+          request.getParameter("checkonly").equals("1")) {
         // If we're just checking, then move on.
         log.debug("Not logged in, but just checking. off to "+
             InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+ returnTo);
         response.sendRedirect(
             InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+ returnTo);
       } else {
-      // off to the authenticator
+        // off to the authenticator
         Cookie cookie = new Cookie("jgi_return",
-          URLEncoder.encode(
-              InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+"/caliban?returnto="+returnTo,"UTF-8"));
-      //log.info("Setting jgi_return cookie to "+cookie.getValue());
-      cookie.setDomain(InterMineAction.getWebProperties(request).getProperty("project.siteDomain"));
-      cookie.setPath("/");
-      response.addCookie(cookie);
-      response.sendRedirect("https://signon.phytozome.net/signon");
+            URLEncoder.encode(
+                InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+
+                "/caliban?returnto="+returnTo,"UTF-8"));
+        //log.info("Setting jgi_return cookie to "+cookie.getValue());
+        cookie.setDomain(InterMineAction.getWebProperties(request).getProperty("project.siteDomain"));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        response.sendRedirect(InterMineAction.getWebProperties(request).getProperty("caliban.signon"));
       }
     } else {
       Profile prof;
