@@ -1,3 +1,5 @@
+# Build and release a biological test mine.
+
 set -e
 
 DIR="$(cd $(dirname "$0"); pwd)"
@@ -84,7 +86,10 @@ for db in $USERPROFILE_DB $PROD_DB $ITEMS_DB; do
         echo $db exists.
     else
         echo Creating $db with encoding $DB_ENCODING ...
-        createdb -E $DB_ENCODING $db
+        createdb --template template0 \
+                 --username $PSQL_USER \
+                 --encoding $DB_ENCODING \
+                 $db
     fi
 done
 
@@ -101,6 +106,10 @@ else
 fi
 
 cd $DIR
+if test ! -f project.xml; then
+    cp ../bio/tutorial/project.xml .
+    echo Copied over malariamine project.xml
+fi
 echo Personalising project.xml
 sed -i "s!DATA_DIR!$DATA_DIR!g" project.xml
 sed -i "s/malariamine/$MINENAME/g" project.xml
@@ -119,7 +128,11 @@ ant clean build-db >> $DIR/log/build-db.log
 
 echo 'Loading data (this could take some time) ...'
 cd $DIR
-../bio/scripts/project_build -b -v $SERVER $HOME/${MINENAME}-dump
+../bio/scripts/project_build -b -v $SERVER $HOME/${MINENAME}-dump 2>&1 \
+    | tee -a $DIR/log/load-data.log \
+    | grep 'action.*took'
+
+echo 'Finished loading data.'
 cp pbuild.log $DIR/log/
 
 cd $DIR/webapp
@@ -128,7 +141,7 @@ ant build-db-userprofile >> $DIR/log/build-userprofile-db.log
 echo 'Building web-application'
 ant default >> $DIR/log/build-webapp.log
 echo 'Releasing web-application'
-ant remove-webapp release-webapp >> $DIR/log/build-webapp.log
+ant remove-webapp release-webapp | tee -a $DIR/log/build-webapp.log | grep tomcat-deploy
 
 echo All done. Logs available in $DIR/log
 
