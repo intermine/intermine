@@ -6,7 +6,6 @@ jdk:
 env:
     ANT_OPTS='-server'
 before_script:
-    - "export DISPLAY=:99.0"
     - "export TOMCAT_VERSION=7.0.53"
     - psql -c 'create database notxmltest;' -U postgres
     - psql -c 'create database truncunittest;' -U postgres
@@ -24,10 +23,13 @@ before_script:
     - sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
     - sudo pip install -r testmodel/webapp/selenium/requirements.txt
     - sh config/download_and_configure_tomcat.sh
-    - sh -e /etc/init.d/xvfb start
     - "sh apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh 2>&1 &"
     - sleep 3
     - ant -f bio/test-all/dbmodel/build.xml build-db
+before_install:
+    - "export DISPLAY=:99.0"
+    - sh -e /etc/init.d/xvfb start
+    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 script:
     - ant -f intermine/objectstore/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[objectstore] /' >> failures.list)
     - ant -f intermine/integrate/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[integrate] /' >> failures.list)
