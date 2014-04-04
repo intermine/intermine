@@ -7,7 +7,7 @@ class TemplateTestCase(unittest.TestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
         self.addCleanup(self.browser.quit)
-        self.browser.get('http://localhost:8080/intermine-test/templates.do')
+        self.browser.get('http://localhost:8080/intermine-demo/templates.do')
 
     def elem(self, selector):
         return self.browser.find_element_by_css_selector(selector)
