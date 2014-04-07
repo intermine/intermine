@@ -1,12 +1,10 @@
 import unittest
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from test.browsertestcase import BrowserTestCase
 
-class TemplateTestCase(unittest.TestCase):
+class TemplateTestCase(BrowserTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
-        self.addCleanup(self.browser.quit)
+        BrowserTestCase.setUp(self)
         self.browser.get('http://localhost:8080/intermine-demo/templates.do')
 
     def elem(self, selector):
