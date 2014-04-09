@@ -7,7 +7,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
-<div id="protein-analysis-displayer" class="collection-table">
+<div id="protein_analysis_displayer" class="collection-table">
 
 <h3>InterPro Analysis Data</h3>
 
@@ -50,25 +50,7 @@
 
 
 <script type="text/javascript">
-(function() {
-  jQuery("#protein-analysis-displayer div.toggle a.more").click(function() {
-    jQuery("#protein-analysis-displayer div.locations-table tr:hidden").each(function(index) {
-        if (index < 3) {
-            jQuery(this).show();
-        }
-    });
-    if (jQuery("#protein-analysis-displayer div.locations-table tr:hidden").length <= 0) {
-        jQuery("#protein-analysis-displayer div.toggle a.more").remove();
-    }
-  });
-
-  <%-- fixup number of columns --%>
-  var l = jQuery('#protein-analysis-displayer table tr:first td').length,
-       m = jQuery('#protein-analysis-displayer table tr:last td').length;
-  if (l != m) {
-    jQuery('#protein-analysis-displayer table tr:last td:last').attr('colspan', l - m + 1);
-  }
-})();
+        trimTable('#protein_analysis_displayer');
 </script>
 
 </div>

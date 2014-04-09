@@ -49,6 +49,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
       Gene geneObj = (Gene)reportObject.getObject();
       
       LOG.info("Entering GeneSNPDisplayer.display for "+geneObj.getPrimaryIdentifier());
+      LOG.info("Id is "+geneObj.getId());
 
       // query the consequences, snps and location
       PathQuery query = getConsequenceTable(geneObj.getPrimaryIdentifier());
@@ -76,7 +77,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
             if((columns.get(i)==null && lastColumns.get(i)!=null) ||
                 (columns.get(i)!=null && lastColumns.get(i)==null) ||
                 (columns.get(i)!=null && !columns.get(i).equals(lastColumns.get(i)))) {
-              LOG.info(columns.get(i)+ " does not match " + lastColumns.get(i));
+              LOG.debug(columns.get(i)+ " does not match " + lastColumns.get(i));
               coalesce = false;
               break;
             }
@@ -97,6 +98,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
       }
 
       request.setAttribute("list",list);
+      request.setAttribute("id",geneObj.getId());
   }
 
   private PathQuery getConsequenceTable(String identifier) {
@@ -108,6 +110,10 @@ public class GeneSNPDisplayer extends ReportDisplayer {
         "SNP.consequences.substitution",
         "SNP.consequences.type.type");
     query.addOrderBy("SNP.snpLocation.start", OrderDirection.ASC);
+    query.addOrderBy("SNP.snpLocation.reference", OrderDirection.ASC);
+    query.addOrderBy("SNP.alternate", OrderDirection.ASC);
+    query.addOrderBy("SNP.consequences.substitution", OrderDirection.ASC);
+    query.addOrderBy("SNP.consequences.type.type", OrderDirection.ASC);
     query.addConstraint(Constraints.eq("SNP.consequences.gene.primaryIdentifier",identifier));
     return query;
   }

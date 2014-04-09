@@ -1,4 +1,4 @@
-<!-- familyAlignmentDisplayer.jsp -->
+<!-- geneSNPDisplayer.jsp -->
 <%@ page language="java" contentType="text/html; charset=US-ASCII"
     pageEncoding="US-ASCII"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -7,7 +7,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
-<div id="gene-to-snp-displayer" class="collection-table">
+<div id="gene_snp_displayer" class="collection-table">
 
 <h3>SNV Data</h3>
 
@@ -36,11 +36,12 @@
 	    </c:forEach>
       </tbody>
     </table>
-    <c:if test="${listSize >= 9}">
-      <div class="toggle">
-        <a class="more">Show more rows</a>
-      </div>
-    </c:if>
+    <!-- this will not work until I name the collection -->
+    <!-- div class="show-in-table" style="display:none;" -->
+    <!-- html:link action="/collectionDetails?id=${id}&amp;field=snps&amp;trail=${param.trail}" -->
+    <!-- Show all in a table -->
+    <!-- /html:link -->
+    </div>
    </div>
   </c:when>
   <c:otherwise>
@@ -50,25 +51,9 @@
 
 
 <script type="text/javascript">
-(function() {
-  jQuery("#gene-to-snp-displayer div.toggle a.more").click(function() {
-    jQuery("#gene-to-snp-displayer div.locations-table tr:hidden").each(function(index) {
-        if (index < 3) {
-            jQuery(this).show();
-        }
-    });
-    if (jQuery("#gene-to-snp-displayer div.locations-table tr:hidden").length <= 0) {
-        jQuery("#gene-to-snp-displayer div.toggle a.more").remove();
-    }
-  });
-
-  <%-- fixup number of columns --%>
-  var l = jQuery('#gene-to-snp-displayer table tr:first td').length,
-       m = jQuery('#gene-to-snp-displayer table tr:last td').length;
-  if (l != m) {
-    jQuery('#gene-to-snp-displayer table tr:last td:last').attr('colspan', l - m + 1);
-  }
-})();
+        numberOfTableRowsToShow=100000
+        trimTable('#gene_snp_displayer');
 </script>
+
 
 </div>
