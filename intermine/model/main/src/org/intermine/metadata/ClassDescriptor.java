@@ -21,10 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.model.FastPathObject;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TextTable;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
+
 
 /**
  * Describe a business model class.  Gives access to attribute, reference and collection
@@ -105,7 +102,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         }
 
         if (supers != null) {
-            superNames.addAll(StringUtil.tokenize(supers));
+            superNames.addAll(Util.tokenize(supers));
         } else if (!INTERMINEOBJECT_NAME.equals(name)) {
             superNames.add(INTERMINEOBJECT_NAME);
         }
@@ -192,7 +189,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @return unqualified name of the described Class
      */
     public String getUnqualifiedName() {
-        return TypeUtil.unqualifiedName(className);
+        return Util.unqualifiedName(className);
     }
 
     /**
@@ -863,7 +860,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         StringBuffer retval = new StringBuffer(isInterface ? "Interface " : "Class ")
             .append(terseClass(className));
         if (superNames != null) {
-            retval.append(" extends ").append(StringUtil.join(terseClasses(superNames), ", "));
+            retval.append(" extends ").append(Util.join(terseClasses(superNames), ", "));
         }
         retval.append("\n");
         TextTable table = new TextTable(true, true, true);

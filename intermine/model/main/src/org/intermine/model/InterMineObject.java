@@ -10,9 +10,6 @@ package org.intermine.model;
  *
  */
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringConstructor;
-
 /**
  * A root interface for all objects that can be stored in a InterMine database.
  *
@@ -42,21 +39,21 @@ public interface InterMineObject extends FastPathObject
      */
     StringConstructor getoBJECT();
 
-    /**
-     * Sets the values of the fields to the values in the given NotXml.
-     *
-     * @param notXml a String containing NotXml for this class
-     * @param os an ObjectStore from which to create proxies
-     */
-    void setoBJECT(String notXml, ObjectStore os);
-
-    /**
-     * Sets the values of the fields to the values in the given split NotXml.
-     *
-     * @param notXml a String array containing the NotXml split with the delimiter
-     * @param os an ObjectStore from which to create proxies
-     */
-    void setoBJECT(String[] notXml, ObjectStore os);
+//    /**
+//     * Sets the values of the fields to the values in the given NotXml.
+//     *
+//     * @param notXml a String containing NotXml for this class
+//     * @param os an ObjectStore from which to create proxies
+//     */
+//    void setoBJECT(String notXml, ObjectStore os);
+//
+//    /**
+//     * Sets the values of the fields to the values in the given split NotXml.
+//     *
+//     * @param notXml a String array containing the NotXml split with the delimiter
+//     * @param os an ObjectStore from which to create proxies
+//     */
+//    void setoBJECT(String[] notXml, ObjectStore os);
 
     /**
      * Returns the element type of a collection by name.

@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.intermine.modelproduction.MetadataManager;
-import org.intermine.util.PropertiesUtil;
-import org.intermine.util.TypeUtil;
-
 /**
  * Utility methods for PrimaryKey objects.
  *
@@ -52,9 +48,9 @@ public abstract class PrimaryKeyUtil
         if (keyMap == null) {
             keyMap = new LinkedHashMap<String, PrimaryKey>();
             Properties keys = getKeyProperties(cld.getModel().getName());
-            String cldName = TypeUtil.unqualifiedName(cld.getName());
-            Properties cldKeys = PropertiesUtil.getPropertiesStartingWith(cldName, keys);
-            cldKeys = PropertiesUtil.stripStart(cldName, cldKeys);
+            String cldName = Util.unqualifiedName(cld.getName());
+            Properties cldKeys = Util.getPropertiesStartingWith(cldName, keys);
+            cldKeys = Util.stripStart(cldName, cldKeys);
             List<String> keyNames = new ArrayList<String>();
             for (Object key : cldKeys.keySet()) {
                 if (key instanceof String) {
@@ -82,7 +78,7 @@ public abstract class PrimaryKeyUtil
         synchronized (modelKeys) {
             keys = modelKeys.get(modelName);
             if (keys == null) {
-                keys = MetadataManager.loadKeyDefinitions(modelName);
+                keys = Util.loadKeyDefinitions(modelName);
                 modelKeys.put(modelName, keys);
             }
         }

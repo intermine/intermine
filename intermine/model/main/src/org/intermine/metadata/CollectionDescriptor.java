@@ -10,7 +10,7 @@ package org.intermine.metadata;
  *
  */
 
-import org.intermine.util.Util;
+
 
 /**
  * Describes a field that references a collection of other objects.

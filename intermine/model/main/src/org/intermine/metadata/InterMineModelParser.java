@@ -1,4 +1,4 @@
-package org.intermine.modelproduction.xml;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
@@ -23,9 +23,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.modelproduction.ModelParser;
-import org.intermine.modelproduction.ModelParserException;
-import org.intermine.util.SAXParser;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
