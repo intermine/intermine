@@ -26,9 +26,6 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 import org.intermine.model.InterMineObject;
-import org.intermine.modelproduction.MetadataManager;
-import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.util.TypeUtil;
 
 /**
  * Represents a named business model, makes available metadata for each class
@@ -58,9 +55,10 @@ public class Model
     private List<ClassDescriptor> topDownOrderClasses = null;
     private List<ClassDescriptor> bottomUpOrderClasses = null;
     private List<String> problems = new ArrayList<String>();
-
+    
+    private static final String CLOB_ACCESS = "org.intermine.objectstore.query.ClobAccess";
     private boolean generatedClassesAvailable = true;
-
+        
     /**
      * Return a Model for specified model name (loading Model if necessary)
      * @param name the name of the model
@@ -68,7 +66,7 @@ public class Model
      */
     public static Model getInstanceByName(String name) {
         if (!models.containsKey(name)) {
-            models.put(name, MetadataManager.loadModel(name));
+        	models.put(name, ModelFactory.loadModel(name));
         }
         return models.get(name);
     }
@@ -453,7 +451,7 @@ public class Model
             throw new IllegalArgumentException("Expected an unqualified class name: " + className);
         }
 
-        if (TypeUtil.instantiate(className) != null) {
+        if (Util.instantiate(className) != null) {
             // a primitive type
             return className;
         } else {
@@ -476,7 +474,7 @@ public class Model
             }
 
             if ("ClobAccess".equals(className)) {
-                return ClobAccess.class.getName();
+                return CLOB_ACCESS;
             }
 
             return Class.forName("java.lang." + className).getName();

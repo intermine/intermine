@@ -1,4 +1,4 @@
-package org.intermine.modelproduction;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
