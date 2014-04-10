@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

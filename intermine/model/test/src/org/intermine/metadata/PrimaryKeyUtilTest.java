@@ -10,16 +10,10 @@ package org.intermine.metadata;
  *
  */
 
-import junit.framework.TestCase;
-
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
+import junit.framework.TestCase;
 
 /**
  * Tests for PrimaryKeyUtil

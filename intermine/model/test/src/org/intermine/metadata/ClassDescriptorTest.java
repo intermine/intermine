@@ -10,13 +10,13 @@ package org.intermine.metadata;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.HashSet;
+
+import junit.framework.TestCase;
 
 public class ClassDescriptorTest extends TestCase
 {

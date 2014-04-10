@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
