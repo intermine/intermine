@@ -12,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry exported="true" kind="lib" path="lib/biojava-1.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jena.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
