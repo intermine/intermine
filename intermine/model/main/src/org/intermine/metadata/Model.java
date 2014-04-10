@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import org.intermine.model.InterMineObject;
+import org.intermine.model.InterMineFastPathObject;
 
 /**
  * Represents a named business model, makes available metadata for each class
@@ -368,12 +368,12 @@ public class Model
                         }
                         Class<?> superClass = toAdd.getSuperclass();
                         if ((superClass != null)
-                                && (InterMineObject.class.isAssignableFrom(superClass))) {
+                                && (InterMineFastPathObject.class.isAssignableFrom(superClass))) {
                             todo.push(superClass);
                         }
                         Class<?>[] interfaces = toAdd.getInterfaces();
                         for (int i = 0; i < interfaces.length; i++) {
-                            if (InterMineObject.class.isAssignableFrom(interfaces[i])) {
+                            if (InterMineFastPathObject.class.isAssignableFrom(interfaces[i])) {
                                 todo.push(interfaces[i]);
                             }
                         }

@@ -20,7 +20,7 @@ import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.util.NullFirstComparator;
-import org.intermine.util.StringConstructor;
+import org.intermine.model.StringConstructor;
 
 /**
  * A class representing all changes to be made to an SQL table.

@@ -63,7 +63,7 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.util.StringConstructor;
+import org.intermine.model.StringConstructor;
 import org.intermine.util.TypeUtil;
 
 import org.apache.log4j.Logger;

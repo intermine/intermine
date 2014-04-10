@@ -13,7 +13,7 @@ package org.intermine.metadata;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-class ModelFactory {
+public class ModelFactory {
 
     /**
      * Name of the key under which to store the serialized version of the model

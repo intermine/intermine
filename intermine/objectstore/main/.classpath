@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-2.3.jar"/>
+	<classpathentry kind="src" path="/intermine-model"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

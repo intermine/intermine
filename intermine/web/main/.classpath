@@ -34,5 +34,6 @@
 	<classpathentry kind="lib" path="/intermine-api-main/lib/json20110106.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
