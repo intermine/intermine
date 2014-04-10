@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ModelFactory;
 import org.intermine.modelproduction.MetadataManager;
 import static org.intermine.objectstore.intermine.TorqueModelOutput.FORMAT_VERSION;
 import org.intermine.sql.Database;
@@ -65,7 +66,7 @@ public class StoreMetadataTask extends Task
         try {
             Database db = DatabaseFactory.getDatabase(database);
 
-            Model model = MetadataManager.loadModel(modelName);
+            Model model = ModelFactory.loadModel(modelName);
             MetadataManager.store(db, MetadataManager.MODEL, model.toString());
 
             Properties keys = MetadataManager.loadKeyDefinitions(modelName);

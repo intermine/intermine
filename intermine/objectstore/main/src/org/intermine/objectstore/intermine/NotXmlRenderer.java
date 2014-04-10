@@ -20,7 +20,7 @@ import java.util.Map;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringConstructor;
+import org.intermine.model.StringConstructor;
 import org.intermine.util.TypeUtil;
 import org.intermine.util.TypeUtil.FieldInfo;
 

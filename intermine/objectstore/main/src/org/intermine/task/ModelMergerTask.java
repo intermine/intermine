@@ -16,7 +16,7 @@ import java.util.List;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.ModelFileMerger;
-import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.metadata.InterMineModelParser;
 
 import java.io.File;
 import java.io.FileWriter;

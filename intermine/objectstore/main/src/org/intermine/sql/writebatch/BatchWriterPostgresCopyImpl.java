@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.util.StringConstructor;
+import org.intermine.model.StringConstructor;
 
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;

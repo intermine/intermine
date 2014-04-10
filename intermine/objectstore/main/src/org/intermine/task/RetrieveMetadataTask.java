@@ -20,7 +20,7 @@ import org.apache.tools.ant.BuildException;
 
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.MetadataManager;
-import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.PropertiesUtil;

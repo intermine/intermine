@@ -16,7 +16,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
 import org.intermine.objectstore.translating.Translator;
-import org.intermine.util.StringConstructor;
+import org.intermine.model.StringConstructor;
 
 /**
  * Class which holds a reference to an object in the database
@@ -175,4 +175,6 @@ public class ProxyReference implements InterMineObject, Lazy
         throw new UnsupportedOperationException("Tried to get element type for field " + fieldName
                 + " from proxy");
     }
+
+
 }

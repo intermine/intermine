@@ -130,7 +130,7 @@ public class JavaModelOutput
             if (hasReferences) {
                 sb.append("import org.intermine.objectstore.proxy.ProxyReference;" + ENDL);
             }
-            sb.append("import org.intermine.util.StringConstructor;" + ENDL);
+            sb.append("import org.intermine.model.StringConstructor;" + ENDL);
             sb.append("import org.intermine.util.TypeUtil;" + ENDL);
             if (shadow) {
                 sb.append("import org.intermine.model.ShadowClass;" + ENDL);

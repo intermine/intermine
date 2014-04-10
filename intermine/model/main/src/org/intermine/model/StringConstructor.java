@@ -1,4 +1,4 @@
-package org.intermine.util;
+package org.intermine.model;
 
 /*
  * Copyright (C) 2002-2014 FlyMine

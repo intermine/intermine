@@ -13,10 +13,9 @@ package org.intermine.model;
 /**
  * A root interface for all objects that can be stored in a InterMine database.
  *
- * @author Matthew Wakeling
- * @author Andrew Varley
+ * @author Julie
  */
-public interface InterMineObject extends FastPathObject
+public interface InterMineFastPathObject extends FastPathObject
 {
     /**
      * Getter for the ID field - ensures that every object in the database has an ID.
@@ -39,6 +38,7 @@ public interface InterMineObject extends FastPathObject
      */
     StringConstructor getoBJECT();
 
+//	TODO FIXME 
 //    /**
 //     * Sets the values of the fields to the values in the given NotXml.
 //     *
