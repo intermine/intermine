@@ -24,6 +24,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SimpleConstraint;
 
@@ -135,4 +136,73 @@ public abstract class BioQueries
         return res;
     }
 
+    /**
+     * Query ObjectStore for all objects of a give type (eg. Chromosome) and
+     * optionally the sequence.  Return an iterator over the results ordered by object id if
+     * orderBySubject is true, otherwise order by object.
+     * @param os the ObjectStore to find the Objects
+     * @param objectCls type of the Object
+     * @param orderBySubject if true order the results using the object ids
+     * @param hasLength if true, only query locations where the objectCls object has a non-zero
+     * length, e.g. a chromosome's length should be greater than zero
+     * @param batchSize the batch size for the results object
+     * @param hasChromosomeLocation if true, only query where the subject has a chromosome location
+     * @return a Results object: object.id, location, subject
+     * @throws ObjectStoreException if problem reading ObjectStore
+     */
+    public static Results findObjects(ObjectStore os, Class<?> objectCls,
+        boolean orderBySubject, boolean hasSequence, int batchSize)
+        throws ObjectStoreException {
+        // TODO check objectCls and subjectCls assignable to BioEntity
+
+        Query q = new Query();
+        q.setDistinct(true);
+        QueryClass qcObj = new QueryClass(objectCls);
+        q.addFrom(qcObj);
+        q.addToSelect(qcObj);
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        if (hasSequence) {
+          QueryClass qsObj;
+          try {
+            qsObj = new QueryClass(Class.forName("org.intermine.model.bio.Sequence"));
+          } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+          }
+          q.addFrom(qsObj);
+          q.addToSelect(qsObj);
+          QueryObjectReference seqRef = new QueryObjectReference(qcObj, "sequence");
+          QueryField qsId = new QueryField(qsObj, "id");
+          ContainsConstraint seqRefIsSeq = new ContainsConstraint(seqRef, ConstraintOp.CONTAINS,qsObj);
+          cs.addConstraint(seqRefIsSeq);
+        }
+
+       
+        q.setConstraint(cs);
+        //Set<QueryNode> indexesToCreate = new HashSet<QueryNode>();
+        //indexesToCreate.add(qfObj);
+        //((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
+        //                                           Constants.PRECOMPUTE_CATEGORY);
+
+        /**
+         * Query in a semi-SQL form:
+         *
+         * SELECT a1_.id AS a2_, a3_, a4_ FROM
+         * org.intermine.model.bio.Chromosome AS a1_,
+         * org.intermine.model.bio.SequenceFeature AS a3_,
+         * org.intermine.model.bio.Location AS a4_ WHERE (a4_.locatedOn CONTAINS
+         * a1_ AND a4_.feature CONTAINS a3_ AND a1_.length IS NOT NULL) ORDER BY
+         * a1_.id with indexes [a2_, a3_id, a4_id, a2_, a3_id]
+         *
+         *or equivalently as:
+         *
+         * SELECT a1_.id AS a2_, a3_.id AS a3_id, a4_.id AS a4_id FROM
+         * Chromosome AS a1_, SequenceFeature AS a3_, Location AS a4_ WHERE
+         * a4_.locatedOnId = a1_.id AND a4_.featureId = a3_.id AND a1_.length IS
+         * NOT NULL ORDER BY a1_.id, a3_.id, a4_.id
+         */
+        Results res = os.execute(q, batchSize, true, true, true);
+
+        return res;
+    }
 }

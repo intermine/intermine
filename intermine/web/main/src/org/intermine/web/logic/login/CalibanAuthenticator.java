@@ -98,7 +98,7 @@ public class CalibanAuthenticator extends HttpServlet {
             URLEncoder.encode(
                 InterMineAction.getWebProperties(request).getProperty("project.sitePrefix")+
                 "/caliban?returnto="+returnTo,"UTF-8"));
-        //log.info("Setting jgi_return cookie to "+cookie.getValue());
+        log.debug("Setting jgi_return cookie to "+cookie.getValue());
         cookie.setDomain(InterMineAction.getWebProperties(request).getProperty("project.siteDomain"));
         cookie.setPath("/");
         response.addCookie(cookie);
@@ -137,7 +137,7 @@ public class CalibanAuthenticator extends HttpServlet {
     }
     
     for( Cookie cookie : request.getCookies() ) {
-      //log.debug("Examining cookie "+cookie.getName()+" with value "+cookie.getValue());
+      log.debug("Examining cookie "+cookie.getName()+" with value "+cookie.getValue());
       if (cookie.getName().equals("jgi_session")) {
         calibanSessionId = cookie.getValue();
         if (calibanSessionId.isEmpty()) {
@@ -147,6 +147,7 @@ public class CalibanAuthenticator extends HttpServlet {
         calibanSessionId = calibanSessionId.replace("%2Fapi%2Fsessions%2F","");
         try {
           identity = Caliban.getIdentityHash(calibanSessionId);
+          log.debug("Have an identity hash "+((identity==null)?"which is null":identity.get("login")));
         } catch (IOException e) {
           log.error("There was a IO exception: " + e.getMessage());
           return false;

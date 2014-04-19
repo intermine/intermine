@@ -280,6 +280,12 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
             } else if ("modmine-metadata-cache".equals(operation)) {
                 CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
+            } else if ("add-uniprot-ids".equals(operation)) {
+              AddUniProtIds task = new AddUniProtIds(getObjectStoreWriter());
+              task.execute();
+            } else if ("transfer-go-terms".equals(operation)) {
+              TransferGOAnnotations task = new TransferGOAnnotations(getObjectStoreWriter());
+              task.execute();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
