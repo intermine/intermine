@@ -4,9 +4,11 @@ import java.util.HashMap;
 
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.query.MainHelper;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 public class Queries {
 
@@ -35,5 +37,22 @@ public class Queries {
             throw new RuntimeException("Error generating query.", e);
         }
         return q;
+    }
+
+    public static Object resolveValue(FastPathObject o, String path) {
+        String[] parts = path.split("\\.");
+        Object res = null;
+        for (int i = 0; i < parts.length; i++) {
+            if (o == null) return res;
+            try {
+                res = o.getFieldValue(parts[i]);
+            } catch (IllegalAccessException e) {
+                throw new ServiceException("Could not read object value.", e);
+            }
+            if (i + 1 < parts.length && res instanceof FastPathObject) {
+                o = (FastPathObject) res;
+            }
+        }
+        return res;
     }
 }
