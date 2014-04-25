@@ -33,6 +33,7 @@ public class WebserviceCodeGenInfo
     private String resultTablesLib = null;
     private String baseUrl = null;
     private String lineBreak;
+    private Properties properties = new Properties();
 
     /**
      * Constructor.
@@ -69,10 +70,22 @@ public class WebserviceCodeGenInfo
     }
 
     public void readWebProperties(Properties properties) {
+        this.properties.putAll(properties);
         if (properties != null) {
             resultTablesLib = (String) properties.get("ws.imtables.provider");
             baseUrl = properties.get("webapp.baseurl") + "/" + properties.get("webapp.path") + "/";
         }
+    }
+
+    /**
+     * Get a configured property for which an accessor does not exist.
+     *
+     * @param key The key for this property.
+     * @param defaultValue The value to return if this property is not configured.
+     * @return The value of the property.
+     */
+    public String getProperty(String key, String defaultValue) {
+        return properties.getProperty(key, defaultValue);
     }
 
     public String getResultsTablesLib() {
