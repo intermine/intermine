@@ -8,6 +8,13 @@
  *
  */
 
+1.3.6
+
+#593 - CDN correctly generated JavaScript 
+
+1.3.5
+
+#633 - GFF3Converter can skip (exclude) a defined list of GFF3 terms 
 
 1.3.4
 
