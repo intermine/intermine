@@ -42,6 +42,7 @@ import org.intermine.xml.full.Reference;
  * @author Wenyan Ji
  * @author Richard Smith
  * @author Fengyuan Hu
+ * @author Vivek Krishnakumar
  */
 
 public class GFF3Converter extends DataConverter
@@ -61,6 +62,7 @@ public class GFF3Converter extends DataConverter
 
     protected String PROP_FILE = "gff_config.properties";
     protected Map<String, Set<String>> config_term = new HashMap<String, Set<String>>();
+    protected Map<String, Set<String>> config_exclude = new HashMap<String, Set<String>>();
     protected Map<String, Map<String, String>> config_attr =
             new HashMap<String, Map<String, String>>();
     protected Map<String, Map<String, String>> config_attr_class =
@@ -126,6 +128,16 @@ public class GFF3Converter extends DataConverter
                     config_term.put(
                             entry.getKey().toString().split("\\.")[0],
                             new HashSet<String>(Arrays.asList(termArray)));
+                }
+            } else if (entry.getKey().toString().contains("excludes")) {
+                if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
+                    String[] excludeArray = ((String) entry.getValue()).trim().split(",");
+                    for (int i = 0; i < excludeArray.length; i++) { // Trim each string in the array
+                        excludeArray[i] = excludeArray[i].trim();
+                    }
+                    config_exclude.put(
+                            entry.getKey().toString().split("\\.")[0],
+                            new HashSet<String>(Arrays.asList(excludeArray)));
                 }
             } else if (entry.getKey().toString().contains("attributes")) {
                 if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
@@ -244,6 +256,14 @@ public class GFF3Converter extends DataConverter
      */
     public void process(GFF3Record record) throws ObjectStoreException {
         String term = record.getType();
+
+        if (config_exclude != null && !config_exclude.isEmpty()) { // don't process terms in the exclude list
+            if(config_exclude.containsKey(this.orgTaxonId)) {
+                if(config_exclude.get(this.orgTaxonId).contains(term)) {
+                    return;
+                }
+            }
+        }
 
         if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
             if (config_term.containsKey(this.orgTaxonId)) {
