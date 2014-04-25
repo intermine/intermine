@@ -2309,9 +2309,21 @@ public class PathQuery implements Cloneable
     /**
      * Convert this PathQuery to a JSON serialisation.
      *
+     * The returned version should be trimmed to represent only the current state
+     * of the query, not all possible states.
+     *
      * @return This query as json.
      */
-    public synchronized String toJson() {
+    public String toJson() {
+        return toJson(true);
+    }
+
+    /**
+     * Convert this PathQuery to a JSON serialisation.
+     *
+     * @return This query as json.
+     */
+    public synchronized String toJson(boolean onlyRelevant) {
         StringBuffer sb = new StringBuffer("{");
 
         sb.append(String.format("\"model\":{\"name\":\"%s\"}",
@@ -2357,7 +2369,7 @@ public class PathQuery implements Cloneable
         }
 
         // CONSTRAINTS
-        Map<PathConstraint, String> cons = getRelevantConstraints();
+        Map<PathConstraint, String> cons = onlyRelevant ? getRelevantConstraints() : getConstraints();
         if (!cons.isEmpty()) {
             sb.append(",\"where\":[");
             Iterator<Entry<PathConstraint, String>> it = cons.entrySet().iterator();
