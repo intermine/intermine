@@ -20,7 +20,7 @@
       <property name="source.db.name" value="phytozome"/>
       <property name="genus" value="Aquilegia"/>
       <property name="species" value="coerulea"/>
-      <property name="dbxrefId" value="6656202"/>
+      wrong<property name="dbxrefId" value="6656202"/>
       <property name="organisms" value="218851"/>
       <property name="dataSourceName" value="phytozome-A.coerulea"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
@@ -119,7 +119,7 @@
       <property name="source.db.name" value="phytozome"/>
       <property name="genus" value="Citrus"/>
       <property name="species" value="clementina"/>
-      <property name="dbxrefId" value="4399348"/>
+      <property name="dbxrefId" value="4399346"/>
       <property name="organisms" value="85681"/>
       <property name="dataSourceName" value="phytozome-C.clementina"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
@@ -339,7 +339,7 @@
       <property name="source.db.name" value="phytozome"/>
       <property name="genus" value="Physcomitrella"/>
       <property name="species" value="patens"/>
-      <property name="dbxrefId" value="3455697"/>
+      wrong<property name="dbxrefId" value="4417255"/>
       <property name="organisms" value="3218"/>
       <property name="dataSourceName" value="phytozome-P.patens"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
@@ -592,34 +592,32 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro-go/"/>
     </source>
+
     <source name="Panther-terms" type="ontology-terms">
-      <property name="src.data.dir" value="/projectb/sandbox/plant/iprscan/iprscan.uge/data/PANTHER8.1/globals/" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
       <property name="src.data.file" value="names.tab"/>
       <property name="dataSetTitle" value="PANTHER"/>
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter"/>
     </source>
-
     <source name="Panther-terms-v7" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
       <property name="src.data.file" value="panther_7_2.tsv"/>
-      <property name="dataSetTitle" value="PANTHER_7.2"/>
+      <property name="dataSetTitle" value="PANTHER"/>
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/7.2" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter"/>
     </source>
-
-    <source name="Panther-terms-v7-reload" type="ontology-terms">
+    <source name="Panther-terms-reformat" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
-      <property name="src.data.file" value="panther_7_2.tsv"/>
-      <property name="dataSetTitle" value="PANTHER_7.2redo"/>
-      <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/7.2" />
+      <property name="src.data.file" value="panther_8_1_reformat.tsv"/>
+      <property name="dataSetTitle" value="PANTHER"/>
+      <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter"/>
     </source>
-
-    <source name="Panther-terms-reformatted" type="ontology-terms">
+    <source name="Panther-terms-v7-reformat" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
-      <property name="src.data.file" value="SF.tsv"/>
-      <property name="dataSetTitle" value="PANTHER.reformat"/>
+      <property name="src.data.file" value="panther_7_2_reformat.tsv"/>
+      <property name="dataSetTitle" value="PANTHER"/>
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/7.2" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter"/>
     </source>
@@ -748,12 +746,13 @@
   </sources>
   <post-processing>
     <!--post-process name="create-references" /-->
-    <post-process name="transfer-sequences" />
+    <!--post-process name="transfer-sequences" /-->
     <!-- this runs the postprocessing steps in all sources -->
     <!-- post-process name="do-sources" / -->
     <!--post-process name="create-gene-flanking-features" /-->
     <post-process name="summarise-objectstore" />
-    <post-process name="create-autocomplete-index" />
+    <!--post-process name="create-autocomplete-index" /-->
     <post-process name="create-search-index" />
+    <post-process name="add-singleton-sequence" />
   </post-processing>
 </project>

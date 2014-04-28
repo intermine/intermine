@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
+	<classpathentry kind="lib" path="/bio-skeleton-phytomine/dbmodel/build/classes"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

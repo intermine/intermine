@@ -34,7 +34,6 @@ import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
-import org.intermine.bio.dataconversion.SequenceGenerator;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;

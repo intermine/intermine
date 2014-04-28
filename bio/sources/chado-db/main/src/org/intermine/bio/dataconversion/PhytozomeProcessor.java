@@ -34,7 +34,6 @@ import org.intermine.bio.chado.config.ConfigAction;
 import org.intermine.bio.chado.config.CreateSynonymAction;
 import org.intermine.bio.chado.config.DoNothingAction;
 import org.intermine.bio.chado.config.SetFieldConfigAction;
-import org.intermine.bio.dataconversion.SequenceGenerator;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -143,7 +142,6 @@ public class PhytozomeProcessor extends ChadoProcessor
   protected static String tempFeatureTableName = null;
   protected static String tempLocationTableName = null;
   protected static String tempProteinFeatureTableName = null;
-  protected SequenceGenerator sequenceGenerator = null;
 
   // PRIVATE HASHMAPS
 
@@ -241,8 +239,6 @@ public class PhytozomeProcessor extends ChadoProcessor
   }
   protected PhytozomeProcessor(PhytozomeProcessor parent) {
     super(parent.getChadoDBConverter());
-
-    sequenceGenerator = new SequenceGenerator();
   }
 
   /**
@@ -558,9 +554,6 @@ public class PhytozomeProcessor extends ChadoProcessor
     return StringUtil.join(bits, " OR ");
   }
 
-  protected SequenceGenerator getSequenceGenerator() {
-    return sequenceGenerator;
-  }
   /**
    * Create and store a new Item, returning a FeatureData object for
    * the feature.

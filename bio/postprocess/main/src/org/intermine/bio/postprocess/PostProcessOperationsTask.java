@@ -286,6 +286,12 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("transfer-go-terms".equals(operation)) {
               TransferGOAnnotations task = new TransferGOAnnotations(getObjectStoreWriter());
               task.execute();
+            } else if ("rename-ontologies".equals(operation)) {
+              OntologyRenamer task = new OntologyRenamer(getObjectStoreWriter());
+              task.execute();
+            } else if ("add-singleton-sequence".equals(operation)) {
+              SingletonSequenceTransfer task = new SingletonSequenceTransfer(getObjectStoreWriter());
+              task.execute();
             } else {
                 throw new BuildException("unknown operation: " + operation);
             }
