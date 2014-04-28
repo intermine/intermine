@@ -1,0 +1,32 @@
+language: java
+jdk:
+    - oraclejdk7
+    - openjdk7
+    - openjdk6
+env:
+    ANT_OPTS='-server'
+before_script:
+    - psql -c 'create database notxmltest;' -U postgres
+    - psql -c 'create database truncunittest;' -U postgres
+    - psql -c 'create database flatmodetest;' -U postgres
+    - psql -c 'create database fulldatatest;' -U postgres
+    - psql -c 'create database userprofiletest;' -U postgres
+    - psql -c 'create database unittest;' -U postgres
+    - psql -c 'create database biotest;' -U postgres
+    - psql -c 'create database biofulldatatest;' -U postgres
+    - mkdir ~/.intermine
+    - cp config/ci.properties ~/.intermine/intermine-test.properties
+    - sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-test.properties
+    - cp ~/.intermine/intermine-test.properties ~/.intermine/testmodel.properties
+    - cp config/ci-bio.properties ~/.intermine/intermine-bio-test.properties
+    - sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
+    - ant -f bio/test-all/dbmodel/build.xml build-db
+script:
+    - ant -f intermine/objectstore/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[objectstore] /' >> failures.list)
+    - ant -f intermine/integrate/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[integrate] /' >> failures.list)
+    - ant -f intermine/pathquery/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[pathquery] /' >> failures.list)
+    - ant -f intermine/api/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[api] /' >> failures.list)
+    - ant -f intermine/web/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[web] /' >> failures.list)
+    - cat failures.list
+    - test ! -s failures.list
+
