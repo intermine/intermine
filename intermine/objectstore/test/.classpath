@@ -11,6 +11,6 @@
 	<classpathentry kind="lib" path="/intermine-objectstore-main/lib/ojdbc14.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.8.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
