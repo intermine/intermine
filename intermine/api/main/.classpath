@@ -21,6 +21,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/bobo-browse-2.5.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/json20110106.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

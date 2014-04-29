@@ -10,6 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="/intermine-objectstore-main/lib/ojdbc14.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
