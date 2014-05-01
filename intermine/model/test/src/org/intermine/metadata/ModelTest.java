@@ -23,6 +23,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.model.testmodel.SimpleObject;
 
 public class ModelTest extends TestCase
 {

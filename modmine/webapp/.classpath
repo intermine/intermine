@@ -17,5 +17,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/modmine-dbmodel"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
