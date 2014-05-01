@@ -16,5 +16,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="src" path="/intermine-jbrowse-endpoint"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

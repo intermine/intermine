@@ -12,5 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/fulldata"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,10 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-pathquery"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
