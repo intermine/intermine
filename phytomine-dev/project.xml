@@ -530,12 +530,12 @@
     <source name="pac-clusters" type="pac-clusters">
       <property name="source.db.name" value="pac-clusters" />
       <property name="dataSourceName" value="pac-clusters"/>
-      <property name="organisms" value="218851 59689 3702 15368 3711 85681 3649 3055 81985 3659 2711 574566 71139 72664 57918 3847 29730 180498 4006 3750 3983 4155 564608 296587 3880 436017 4530 3218 3760 3694 38727 3885 3988 4558 4555 4081 88036 4113 3641 3067 29760 4577"/>
-      <property name="methodIds" value="2289,4758" />
+      <property name="organisms" value="15368 218851 59689 3702 3711 72658 264402 81985 3649 3055 85681 2711 574566 3659 71139 72664 57918 3847 29730 4006 3750 3983 3880 564608 296587 4155 4530 436017 38727 3885 3218 3218 3218 3694 3760 3988 88036 4555 4081 4113 4558 3641 29760 3067 4577"/>
+      <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3119,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4614,4761,4762,4763,4764,4765,4766,4767,4768,4769,4770,4771,4772,4773" />
       <property name="dataSetTitle" value="Phytozome Clusters"/>
       <property name="createrelations" value="false"/>
     </source>
-    <source name="method-names" type="method-names">
+    <source name="method-names-redo" type="method-names">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/methodnames"/>
       <property name="src.data.file" value="fillmethodnames.tsv"/>
     </source>
@@ -629,6 +629,12 @@
     </source>
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro/"/>
+    </source>
+    <source name="go3" type="go">
+      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo"/>
+    </source>
+    <source name="go2" type="go">
+      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo"/>
@@ -773,6 +779,8 @@
     <!--post-process name="create-gene-flanking-features" /-->
     <!--post-process name="summarise-objectstore" /-->
     <!--post-process name="create-autocomplete-index" /-->
-    <post-process name="create-search-index" />
+    <!--post-process name="create-search-index" /-->
+    <!--post-process name="add-uniprot-ids" /-->
+    <post-process name="transfer-go-terms" />
   </post-processing>
 </project>

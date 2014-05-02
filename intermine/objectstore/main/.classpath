@@ -24,5 +24,6 @@
 	<classpathentry kind="lib" path="lib/xercesImpl-2.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-2.3.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/phytomine/dbmodel/build/classes"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

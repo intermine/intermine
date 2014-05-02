@@ -62,20 +62,18 @@ public class GatkvcfConverter extends BioFileConverter
   private HashMap<String,String> chrMap = new HashMap<String,String>();
   //  the snp keyed by snpLocation and nucleotide substitution
   private HashMap<String,ArrayList<String>> snpMap = new HashMap<String,ArrayList<String> >();
-  // standard organism map.
-  // key is taxon id
-  private Map<Integer,String> organismMap = new HashMap<Integer,String>();
-  // the organism we're working on now. Presumable this would be parsed from
-  // the file somehow.
-  private Integer currentOrganism;
-  private String version;
+  
+  // the one organism we're working on. taxonId and organismVersion are
+  // set by setters. organism is the registered Item
+  private Integer taxonId;
+  private String organismVersion = "current";
+  private Item organism = null;
   // the referenced consequences and consequence type types.
   private Map<String,String> consequenceMap = new HashMap<String,String>();
   private Map<String,String> consequenceTypeMap = new HashMap<String,String>();
   // referenced genes and transcripts.
   private Map<String,String> geneMap = new HashMap<String,String>();
   private Map<String,String> mRNAMap = new HashMap<String,String>();
-  private Item organism = null;
   // we'll get this from the header. When parsing, we need to keep these in order
   private ArrayList<String> sampleList = new ArrayList<String>();
   final static String[] expectedHeaders = {"#CHROM","POS","ID","REF","ALT",
@@ -95,43 +93,18 @@ public class GatkvcfConverter extends BioFileConverter
     effPattern = Pattern.compile("(\\w+)\\((.+)\\)");
   }
 
-  public void setOrganisms(String organisms) {
-    String[] bits = StringUtil.split(organisms, " ");
-    //for (int i = 0; i < bits.length; i++) {
-    for (String organismIdString: bits) {
-      OrganismData od = null;
-      Integer taxonId;
-      try {
-        taxonId = Integer.valueOf(organismIdString);
-        od = OrganismRepository.getOrganismRepository().getOrganismDataByTaxon(taxonId);
-        // the last one we register becomes the 'current' one
-        currentOrganism = taxonId;
-      } catch (NumberFormatException e) {
-        od = OrganismRepository.getOrganismRepository().getOrganismDataByAbbreviation(organismIdString);
-        taxonId = 999;
-      }
-      if (od == null) {
-        throw new RuntimeException("Can't find organism for: " + organismIdString);
-      }
-      if (!organismMap.containsKey(taxonId) ) {
-        organism = createItem("Organism");
-        organism.setAttribute("taxonId", taxonId.toString());
-        try {
-          store(organism);
-        } catch(ObjectStoreException e) {
-          throw new BuildException("Problem storing organism");
-        }
-        organismMap.put(taxonId,organism.getIdentifier());
-      }
-    }
-    // TODO: extend this to multiple organism processing; Until then, this
-    // only will process 1 organism. How will we link the file to the organism?
-    if (organismMap.size() > 1 ) {
-      throw new BuildException("This code only written for processing single organisms.");
+  public void setOrganism(String organism) {
+    try {
+      taxonId = Integer.valueOf(organism);
+    } catch (NumberFormatException e) {
+      throw new RuntimeException("Cannot find numerical taxon id for: " + organism);
     }
   }
-  public void setVersion(String versionProp) {
-    version = versionProp;
+  public void setVersion(String version) {
+    organismVersion = version;
+  }
+  public String getVersion() {
+    return organismVersion;
   }
   /**
    * 
@@ -140,9 +113,24 @@ public class GatkvcfConverter extends BioFileConverter
    */
   public void process(Reader reader) throws Exception {
     File theFile = getCurrentFile();
+
+    // register the (versioned) organism if needed
+    if ( organism == null ) {
+      if (taxonId != null ) {
+        organism = createItem("Organism");
+        organism.setAttribute("taxonId", taxonId.toString());
+        organism.setAttribute("version",organismVersion);
+        try {
+          store(organism);
+        } catch (ObjectStoreException e) {
+          throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+        }
+      } else {
+        throw new BuildException("No taxon Id specified.");
+      }
+    }
     LOG.info("Processing file " + theFile.getName() + "...");
-    //TODO if we want to process multiple organisms, makes sure we set
-    // the organism variable at this point.
+    
     if( !theFile.getName().endsWith(".vcf") ) {
       LOG.info("Ignoring file " + theFile.getName() + ". Not a SnpEff-processed GATK vcf file.");
     } else {
@@ -225,7 +213,7 @@ public class GatkvcfConverter extends BioFileConverter
         }
         Item source = createItem("DiversitySample");
         source.setAttribute("name",header[i]);
-        source.setReference("organism",organismMap.get(currentOrganism));
+        source.setReference("organism",organism);
         try {
         store(source);
         } catch (ObjectStoreException e) {
@@ -466,7 +454,6 @@ public class GatkvcfConverter extends BioFileConverter
     snpLocation.setAttribute("end",(new Integer(position + reference.length()-1)).toString());
     snpLocation.setReference("locatedOn",chrMap.get(chromosome));
 
-    //MultiKey snpLocKey = new MultiKey(chromosome,position,position+reference.length()-1);
     String snpLocKey = chromosome+":"+position.toString()+":"+reference;
     Integer intermineID = null;
     try {
@@ -484,7 +471,7 @@ public class GatkvcfConverter extends BioFileConverter
     if (!geneMap.containsKey(gene_name)) {
       Item gene = createItem("Gene");
       gene.setAttribute("primaryIdentifier", gene_name);
-      gene.setReference("organism", organismMap.get(currentOrganism));
+      gene.setReference("organism", organism);
       try {
         store(gene);
       } catch (ObjectStoreException e) {
@@ -498,7 +485,7 @@ public class GatkvcfConverter extends BioFileConverter
     if (!mRNAMap.containsKey(mrna_name)) {
       Item mRNA = createItem("MRNA");
       mRNA.setAttribute("primaryIdentifier", mrna_name);
-      mRNA.setReference("organism", organismMap.get(currentOrganism));
+      mRNA.setReference("organism", organism);
       try {
         store(mRNA);
       } catch (ObjectStoreException e) {
