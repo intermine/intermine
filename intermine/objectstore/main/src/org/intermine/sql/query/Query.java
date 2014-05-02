@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.util.ConsistentSet;
+
 import antlr.Token;
 import antlr.collections.AST;
 //import antlr.debug.misc.ASTFrame;
-
-import org.intermine.util.ConsistentSet;
 
 
 /**
