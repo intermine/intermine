@@ -273,9 +273,9 @@ public class ModelTest extends TestCase
     public void testToString3() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         InputStream is = getClass().getResourceAsStream("expected_model.xml");
-
+        
         String modelString = IOUtils.toString(is).replaceAll("\n$", "");
-        assertEquals(modelString, model.toString().replaceAll("\t", "    "));
+        assertEquals(modelString, model.toString().replaceAll("\t", "    "));        
     }
 
     public void testGetSimpleObjectClassDescriptors() throws Exception {
