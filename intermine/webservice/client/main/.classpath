@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

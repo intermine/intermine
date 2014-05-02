@@ -5,6 +5,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
