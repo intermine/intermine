@@ -29,8 +29,8 @@ import static org.intermine.objectstore.query.ConstraintOp.*;
 public class AbstractHelperTest {
 
     private final QueryClass empPeriod = new QueryClass(EmploymentPeriod.class);
-    private final QueryField start = new QueryField(empPeriod, "startPeriod");
-    private final QueryField end = new QueryField(empPeriod, "endPeriod");
+    private final QueryField start = new QueryField(empPeriod, "startDate");
+    private final QueryField end = new QueryField(empPeriod, "endDate");
     
     private final QueryValue startOf17May2008 = new QueryValue(new Date(1226880000000L));
     private final QueryValue endOf17May2008 = new QueryValue(new Date(1226966400000L));

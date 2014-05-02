@@ -109,6 +109,7 @@ public class ProfileManager
         superuserProfile.setUsername(superUserName);
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
+        System.out.println(superUserName);
         try {
             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
             if (superuserProfile != null) {
