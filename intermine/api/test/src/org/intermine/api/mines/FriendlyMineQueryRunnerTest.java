@@ -25,12 +25,12 @@ public final class FriendlyMineQueryRunnerTest extends InterMineAPITestCase
     public FriendlyMineQueryRunnerTest(String arg) {
         super(arg);
     }
-    
-    
+
+
     public void setUp() throws Exception {
         super.setUp();
     }
-    
+
     public void testRunJSONWebServiceQuery() {
         assertTrue(false);
     }
