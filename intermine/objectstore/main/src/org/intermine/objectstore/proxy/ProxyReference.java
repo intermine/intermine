@@ -12,11 +12,11 @@ package org.intermine.objectstore.proxy;
 
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.StringConstructor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
 import org.intermine.objectstore.translating.Translator;
-import org.intermine.model.StringConstructor;
 
 /**
  * Class which holds a reference to an object in the database

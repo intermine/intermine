@@ -31,11 +31,12 @@ import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.PathExpressionField;
@@ -54,7 +55,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -499,7 +500,7 @@ public class PagedTable
     public String findClassKeyValue(final Map<String, List<FieldDescriptor>> classKeysMap,
                                      final InterMineObject object) {
         try {
-            final String objectClassName = DynamicUtil.getFriendlyName(object.getClass());
+            final String objectClassName = Util.getFriendlyName(object.getClass());
             final List<FieldDescriptor> classKeyFds = classKeysMap.get(objectClassName);
             for (final FieldDescriptor fd: classKeyFds) {
                 final Object value = object.getFieldValue(fd.getName());
@@ -1115,18 +1116,18 @@ public class PagedTable
     }
 
     public Set<Integer> getIdsToRemove(final InterMineBag bag) {
-    	Set<Integer> idsToRemove = new HashSet<Integer>();
-    	if (allSelected == -1) {
+        Set<Integer> idsToRemove = new HashSet<Integer>();
+        if (allSelected == -1) {
             idsToRemove = selectionIds.keySet();
-    	} else {
-    		// selection is reversed, so selectionIds.keySet() are the ids to keep
-    		 idsToRemove = new HashSet<Integer>();
+        } else {
+            // selection is reversed, so selectionIds.keySet() are the ids to keep
+             idsToRemove = new HashSet<Integer>();
              for (final Integer id : bag.getContentsAsIds()) {
                  if (!selectionIds.keySet().contains(id)) {
                      idsToRemove.add(id);
                  }
              }
-    	}
-    	return idsToRemove;
+        }
+        return idsToRemove;
     }
 }

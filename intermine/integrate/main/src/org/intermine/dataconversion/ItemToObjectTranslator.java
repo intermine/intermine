@@ -21,8 +21,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.TypeUtil.FieldInfo;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.fulldata.Attribute;
@@ -35,7 +40,6 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.PendingClob;
@@ -53,9 +57,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.TypeUtil.FieldInfo;
 import org.intermine.xml.full.ItemHelper;
 
 /**
@@ -316,7 +317,7 @@ public class ItemToObjectTranslator extends Translator
                 FieldInfo info = TypeUtil.getFieldInfo(obj.getClass(), attr.getName());
                 if (info == null) {
                     String message = "Attribute not found in class: "
-                        + DynamicUtil.getFriendlyName(obj.getClass()) + "." + attr.getName()
+                        + Util.getFriendlyName(obj.getClass()) + "." + attr.getName()
                           + "\nProblem found while loading Item with identifier "
                           + item.getIdentifier() + " and attribute with id " + attr.getId();
                     LOG.error(message);
@@ -366,7 +367,7 @@ public class ItemToObjectTranslator extends Translator
                                 InterMineObject.class));
                 } else {
                     String message = "Reference not found in class: "
-                        + DynamicUtil.getFriendlyName(obj.getClass()) + "." + ref.getName()
+                        + Util.getFriendlyName(obj.getClass()) + "." + ref.getName()
                           + " while translating Item with identifier " + item.getIdentifier();
                     LOG.error(message);
                     throw new MetaDataException(message);
@@ -400,18 +401,18 @@ public class ItemToObjectTranslator extends Translator
                     obj.setFieldValue(refsName, os.executeSingleton(q));
                 } else {
                     String message = "Collection not found in class: "
-                        + DynamicUtil.getFriendlyName(obj.getClass()) + "." + refsName
+                        + Util.getFriendlyName(obj.getClass()) + "." + refsName
                           + " while translating Item with identifier " + item.getIdentifier();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
             }
         } catch (MetaDataException e) {
-            LOG.error("Broken with: " + DynamicUtil.getFriendlyName(obj.getClass())
+            LOG.error("Broken with: " + Util.getFriendlyName(obj.getClass())
                       + item.getIdentifier(), e);
             throw e;
         } catch (Exception e) {
-            LOG.error("Broken with: " + DynamicUtil.getFriendlyName(obj.getClass())
+            LOG.error("Broken with: " + Util.getFriendlyName(obj.getClass())
                       + item.getIdentifier(), e);
             throw new RuntimeException(e);
         }

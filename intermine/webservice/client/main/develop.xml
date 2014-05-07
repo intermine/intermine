@@ -58,6 +58,7 @@
     <copy file="../../../pathquery/main/lib/stax-api-1.0.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../pathquery/main/lib/stax-ri-1.0.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../model/main/lib/commons-lang-2.6.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/lib/commons-io-1.2.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../model/main/lib/antlr-2.7.6-caching.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../model/main/lib/json20110106.jar" todir="${build.dir}/lib/"/>
     <copy file="compile-run.sh" todir="${build.dir}"/>

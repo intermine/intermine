@@ -11,7 +11,7 @@ package org.intermine.xml.full;
  */
 
 import org.intermine.metadata.Model;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.util.XmlUtil;
 
 /**

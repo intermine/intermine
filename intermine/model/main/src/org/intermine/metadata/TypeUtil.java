@@ -1,4 +1,4 @@
-package org.intermine.util;
+package org.intermine.metadata;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
@@ -33,10 +33,8 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
-import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ClobAccess;
+
 
 /**
  * Provides utility methods for working with Java types and reflection
@@ -103,7 +101,7 @@ public final class TypeUtil
                 type = " (available fields are " + getFieldInfos(o.getClass()).keySet() + ")";
             }
             IllegalAccessException e2 = new IllegalAccessException("Couldn't get field \""
-                    + DynamicUtil.decomposeClass(o.getClass()) + "." + fieldName + "\""
+                    + Util.decomposeClass(o.getClass()) + "." + fieldName + "\""
                     + type);
             e2.initCause(e);
             throw e2;
@@ -141,35 +139,7 @@ public final class TypeUtil
         }
     }
 
-    /**
-     * Sets the value of a public or protected Field of an Object given the field name.
-     *
-     * @param o the Object
-     * @param fieldName the name of the relevant Field
-     * @param fieldValue the value of the Field
-     */
-    public static void setFieldValue(Object o, String fieldName, Object fieldValue) {
-        try {
-            if (fieldValue instanceof ProxyReference) {
-                getProxySetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
-            } else {
-                getSetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
-            }
-        } catch (Exception e) {
-            String type = null;
-            try {
-                type = getFieldInfo(o.getClass(), fieldName).getGetter().getReturnType().getName();
-            } catch (Exception e3) {
-                // ignore
-            }
-            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't set field \""
-                    + DynamicUtil.getFriendlyName(o.getClass()) + "." + fieldName + "\""
-                    + (type == null ? "" : " (a " + type + ")")
-                    + " to \"" + fieldValue + "\" (a " + fieldValue.getClass().getName() + ")");
-            e2.initCause(e);
-            throw e2;
-        }
-    }
+
 
     /**
      * Adds an element to a public or protected collection of an Object given the field name.
@@ -187,13 +157,13 @@ public final class TypeUtil
                 type = getFieldInfo(o.getClass(), fieldName).getElementType().getName();
             } catch (Exception e3) {
                 IllegalArgumentException e2 = new IllegalArgumentException("Couldn't add element to"
-                        + " collection \"" + DynamicUtil.getFriendlyName(o.getClass()) + "."
+                        + " collection \"" + Util.getFriendlyName(o.getClass()) + "."
                         + fieldName + "\"" + " - not an accessible collection");
                 e2.initCause(e);
                 throw e2;
             }
             IllegalArgumentException e2 = new IllegalArgumentException("Couldn't add element to"
-                    + " collection \"" + DynamicUtil.getFriendlyName(o.getClass()) + "."
+                    + " collection \"" + Util.getFriendlyName(o.getClass()) + "."
                     + fieldName + "\"" + " (a " + type + ") with \"" + element + "\" (a "
                     + element.getClass().getName() + ")");
             e2.initCause(e);
@@ -306,7 +276,7 @@ public final class TypeUtil
                 return info.getElementType();
             } catch (NullPointerException e) {
                 IllegalArgumentException e2 = new IllegalArgumentException("Field "
-                        + DynamicUtil.getFriendlyName(c) + "." + fieldName
+                        + Util.getFriendlyName(c) + "." + fieldName
                         + " is not a collection");
                 e2.initCause(e);
                 throw e2;
@@ -496,110 +466,7 @@ public final class TypeUtil
         return cls;
     }
 
-    private static final DateFormat DATE_TIME_FORMAT;
-    private static final DateFormat DATE_FORMAT;
 
-    static {
-        DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        DATE_TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-        DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
-    /**
-     * Returns an object for a given String
-     *
-     * @param clazz the class to convert to
-     * @param value the value to convert
-     * @return the corresponding Class
-     */
-    public static Object stringToObject(Class<?> clazz, String value) {
-        if (clazz.equals(Integer.class) || clazz.equals(Integer.TYPE)) {
-            return Integer.valueOf(value.replace(",", ""));
-        }
-        if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
-            if ("NULL".equals(value)) {
-                return "NULL";
-            } else {
-                return Boolean.valueOf(value);
-            }
-        }
-        if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
-            return Double.valueOf(value.replace(",", ""));
-        }
-        if (clazz.equals(Float.class) || clazz.equals(Float.TYPE)) {
-            return Float.valueOf(value.replace(",", ""));
-        }
-        if (clazz.equals(Long.class)  || clazz.equals(Long.TYPE)) {
-            return Long.valueOf(value.replace(",", ""));
-        }
-        if (clazz.equals(Short.class) || clazz.equals(Short.TYPE)) {
-            return Short.valueOf(value.replace(",", ""));
-        }
-        if (clazz.equals(Byte.class) || clazz.equals(Byte.TYPE)) {
-            return Byte.valueOf(value.replace(",", ""));
-        }
-        if (clazz.equals(Character.class) || clazz.equals(Character.TYPE)) {
-            return new Character(value.charAt(0));
-        }
-        if (clazz.equals(Date.class)) {
-            if (value.matches("^\\d+$")) {
-                return new Date(Long.parseLong(value));
-            } else {
-                try {
-                    return DATE_TIME_FORMAT.parse(value);
-                } catch (Exception e) {
-                    // probably ParseException, try a simpler format
-                    try {
-                        return DATE_FORMAT.parse(value);
-                    } catch (Exception e1) {
-                        throw new RuntimeException("Failed to parse " + value + " as a Date", e);
-                    }
-                }
-            }
-        }
-        if (clazz.equals(BigDecimal.class)) {
-            return new BigDecimal(value.replace(",", ""));
-        }
-        if (clazz.equals(String.class)) {
-            return value;
-        }
-        if (clazz.equals(URL.class)) {
-            try {
-                return new URL(value);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (clazz.equals(ClobAccess.class)) {
-        //    String[] parts = value.split(",");
-        //    if (parts.length == 1) {
-        //        return new ClobAccess(os, new Clob(Integer.parseInt(parts[0])));
-        //    } else {
-        //        return new ClobAccess(os, new Clob(Integer.parseInt(parts[0])))
-        //            .subSequence(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        //    }
-            throw new IllegalStateException("Cannot convert - we need an ObjectStore");
-        }
-        return value;
-    }
-
-    /**
-     * Returns a String for a given object
-     *
-     * @param value the value to convert
-     * @return the string representation
-     */
-    public static String objectToString(Object value) {
-        if (value instanceof Date) {
-            return "" + ((Date) value).getTime();
-        } else if (value instanceof ClobAccess) {
-            return ((ClobAccess) value).getDbDescription();
-        } else {
-            return value.toString();
-        }
-    }
 
     /**
      * Filter a URI fragment to remove illegal characters
@@ -637,7 +504,7 @@ public final class TypeUtil
      */
     public static boolean isInstanceOf(FastPathObject object, String className)
         throws ClassNotFoundException {
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(object.getClass());
+        Set<Class<?>> classes = Util.decomposeClass(object.getClass());
         Class<?> testClass = Class.forName(className);
         for (Class<?> objectClass: classes) {
             if (testClass.isAssignableFrom(objectClass)) {
@@ -824,4 +691,87 @@ public final class TypeUtil
             return sb.toString();
         }
     }
+
+    private static final DateFormat DATE_TIME_FORMAT;
+    private static final DateFormat DATE_FORMAT;
+
+    static {
+        DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DATE_TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
+    /**
+     * Returns an object for a given String. This used to be in TypeUtil.
+     *
+     * @param clazz the class to convert to
+     * @param value the value to convert
+     * @return the corresponding Class
+     */
+    public static Object stringToObject(Class<?> clazz, String value) {
+        if (clazz.equals(Integer.class) || clazz.equals(Integer.TYPE)) {
+            return Integer.valueOf(value.replace(",", ""));
+        }
+        if (clazz.equals(Boolean.class) || clazz.equals(Boolean.TYPE)) {
+            if ("NULL".equals(value)) {
+                return "NULL";
+            } else {
+                return Boolean.valueOf(value);
+            }
+        }
+        if (clazz.equals(Double.class) || clazz.equals(Double.TYPE)) {
+            return Double.valueOf(value.replace(",", ""));
+        }
+        if (clazz.equals(Float.class) || clazz.equals(Float.TYPE)) {
+            return Float.valueOf(value.replace(",", ""));
+        }
+        if (clazz.equals(Long.class)  || clazz.equals(Long.TYPE)) {
+            return Long.valueOf(value.replace(",", ""));
+        }
+        if (clazz.equals(Short.class) || clazz.equals(Short.TYPE)) {
+            return Short.valueOf(value.replace(",", ""));
+        }
+        if (clazz.equals(Byte.class) || clazz.equals(Byte.TYPE)) {
+            return Byte.valueOf(value.replace(",", ""));
+        }
+        if (clazz.equals(Character.class) || clazz.equals(Character.TYPE)) {
+            return new Character(value.charAt(0));
+        }
+        if (clazz.equals(Date.class)) {
+            if (value.matches("^\\d+$")) {
+                return new Date(Long.parseLong(value));
+            } else {
+                try {
+                    return DATE_TIME_FORMAT.parse(value);
+                } catch (Exception e) {
+                    // probably ParseException, try a simpler format
+                    try {
+                        return DATE_FORMAT.parse(value);
+                    } catch (Exception e1) {
+                        throw new RuntimeException("Failed to parse " + value + " as a Date", e);
+                    }
+                }
+            }
+        }
+        if (clazz.equals(BigDecimal.class)) {
+            return new BigDecimal(value.replace(",", ""));
+        }
+        if (clazz.equals(String.class)) {
+            return value;
+        }
+        if (clazz.equals(URL.class)) {
+            try {
+                return new URL(value);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if ("org.intermine.objectstore.query.ClobAccess".equals(clazz)) {
+            throw new IllegalStateException("Cannot convert - we need an ObjectStore");
+        }
+        return value;
+    }
+
 }

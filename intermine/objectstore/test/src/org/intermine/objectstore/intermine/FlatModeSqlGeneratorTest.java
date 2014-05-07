@@ -27,7 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
 {

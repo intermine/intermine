@@ -10,15 +10,14 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.HashSet;
+
 import junit.framework.TestCase;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.apache.log4j.Logger;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Employee;
-
-import org.apache.log4j.Logger;
 
 public class QueryHelperTest extends TestCase
 {

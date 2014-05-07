@@ -12,7 +12,7 @@ package org.intermine.webservice.server;
 
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.lowerCase;
-import static org.intermine.util.StringUtil.trimSlashes;
+import static org.intermine.metadata.StringUtil.trimSlashes;
 
 import java.util.ArrayList;
 import java.util.Arrays;

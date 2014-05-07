@@ -27,7 +27,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
 import org.intermine.xml.full.ItemFactory;

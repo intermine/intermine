@@ -22,7 +22,7 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 import org.intermine.model.testmodel.Bank;
 

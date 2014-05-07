@@ -10,8 +10,8 @@ package org.intermine.xml;
  *
  */
 
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 
 /**
  * Static methods to assist parsing and rendering of XML.

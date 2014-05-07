@@ -15,12 +15,11 @@ import java.io.FileReader;
 import java.io.StringReader;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
-
+import org.apache.tools.ant.Task;
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
 import org.intermine.modelproduction.MetadataManager;
-import org.intermine.metadata.InterMineModelParser;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.PropertiesUtil;

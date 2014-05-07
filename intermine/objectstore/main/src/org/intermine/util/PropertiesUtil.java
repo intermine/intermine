@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.NonOverrideableProperties;
 
 /**
  * Convenience class for working with global properties

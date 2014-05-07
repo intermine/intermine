@@ -22,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.model.StringConstructor;
-
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
-import org.apache.log4j.Logger;
 
 /**
  * An implementation of the BatchWriter interface that uses PostgreSQL-specific COPY commands.

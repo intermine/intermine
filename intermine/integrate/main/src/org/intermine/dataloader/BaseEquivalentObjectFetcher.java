@@ -21,17 +21,18 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -126,7 +127,7 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
         TreeMap<String, Class<? extends InterMineObject>> summaryNames =
             new TreeMap<String, Class<? extends InterMineObject>>();
         for (Class<? extends InterMineObject> c : summaryTimes.keySet()) {
-            summaryNames.put(DynamicUtil.getFriendlyName(c), c);
+            summaryNames.put(Util.getFriendlyName(c), c);
         }
         int totalObjects = 0;
         int totalNoPk = 0;

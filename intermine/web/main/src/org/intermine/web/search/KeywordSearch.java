@@ -30,10 +30,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -48,9 +48,9 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexReader.FieldOption;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.IndexReader.FieldOption;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -68,8 +68,10 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
@@ -78,7 +80,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -464,7 +465,7 @@ class InterMineObjectFetcher extends Thread
                     for (InterMineObject object : row) {
                         long time2 = System.currentTimeMillis();
 
-                        Set<Class<?>> objectClasses = DynamicUtil.decomposeClass(object.getClass());
+                        Set<Class<?>> objectClasses = Util.decomposeClass(object.getClass());
                         Class objectTopClass = objectClasses.iterator().next();
                         ClassDescriptor classDescriptor =
                                 os.getModel().getClassDescriptorByName(objectTopClass.getName());
@@ -542,11 +543,11 @@ class InterMineObjectFetcher extends Thread
                                 // It is possible that the inner loop iterator "lags behind" the
                                 // current object's id. See:
                                 // https://github.com/intermine/intermine/issues/473
-                                while(resultsContainer.getIterator().hasNext() && 
-                                		((Integer) next.get(0)).compareTo(object.getId()) == -1) {
-                                	next = resultsContainer.getIterator().next();
+                                while(resultsContainer.getIterator().hasNext() &&
+                                        ((Integer) next.get(0)).compareTo(object.getId()) == -1) {
+                                    next = resultsContainer.getIterator().next();
                                 }
-                                                                
+
                                 //reference is not for the current object?
                                 if (!next.get(0).equals(object.getId())) {
                                     // go back one step
@@ -811,7 +812,7 @@ class InterMineObjectFetcher extends Thread
             LOG.info("decomposedClassesCache: No entry for " + baseClass + ", adding...");
             attributes = new Vector<ClassAttributes>();
 
-            for (Class<?> cls : DynamicUtil.decomposeClass(baseClass)) {
+            for (Class<?> cls : Util.decomposeClass(baseClass)) {
                 ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
                 attributes.add(new ClassAttributes(cld.getUnqualifiedName(), cld
                         .getAllAttributeDescriptors()));
@@ -924,7 +925,7 @@ public final class KeywordSearch
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
     private static Map<String, String> attributePrefixes = null;
-    
+
     private KeywordSearch() {
         //don't
     }
@@ -1382,7 +1383,7 @@ public final class KeywordSearch
             if (redirector != null) {
                 linkRedirect = redirector.generateLink(im, o);
             }
-            KeywordSearchResult ksr = new KeywordSearchResult(webconfig, o, classKeys, 
+            KeywordSearchResult ksr = new KeywordSearchResult(webconfig, o, classKeys,
                     classDescriptor, keywordSearchHit.getScore(), null, linkRedirect);
             searchResultsParsed.add(ksr);
         }
@@ -1455,7 +1456,7 @@ public final class KeywordSearch
             Map<String, String> facetValues, List<Integer> ids) {
         return runBrowseSearch(searchString, offset, facetValues, ids, true);
     }
-    
+
     /**
      * perform a keyword search using bobo-browse for faceting and pagination
      * @param searchString string to search for
