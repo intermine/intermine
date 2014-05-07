@@ -51,7 +51,7 @@ public class OverlapViewTask
 
         con.setAutoCommit(false);
 
-        String dropSql = "DROP TABLE overlappingfeaturessequencefeature";
+        String dropSql = "DROP VIEW overlappingfeaturessequencefeature";
         String viewSql =
             "CREATE VIEW overlappingfeaturessequencefeature "
             + " AS SELECT l1.featureid AS overlappingfeatures, "
@@ -61,7 +61,15 @@ public class OverlapViewTask
             + "       AND l1.featureid != l2.featureid"
             + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
             + "              && bioseg_create(l2.intermine_start, l2.intermine_end)";
-
+       
+        String viewSqlRange =
+                "CREATE VIEW overlappingfeaturessequencefeature "
+                + " AS SELECT l1.featureid AS overlappingfeatures, "
+                + "           l2.featureid AS sequencefeature "
+                + "      FROM location l1, location l2 "
+                + "     WHERE l1.locatedonid = l2.locatedonid "
+                + "       AND l1.featureid != l2.featureid"
+                + "       AND l1.intermine_locrange && l2.intermine_locrange";
         Statement statement = con.createStatement();
         statement.executeUpdate(dropSql);
         statement.close();

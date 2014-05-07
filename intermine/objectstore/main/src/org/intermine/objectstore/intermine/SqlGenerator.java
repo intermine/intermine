@@ -1973,8 +1973,20 @@ public final class SqlGenerator
             .append(state.getFieldToAlias(rightParent.getQueryClass()).get(rightParent
                     .getFieldName()))
             .append(" AND ");
+//        if (true && ConstraintOp.OVERLAPS == c.getOp()) {
+//        	LOG.warn("GENERATIMG OVERLAP!!!");
+//        	// TODO need to check if table being constrained has an intrange field
+//        	buffer.append("range");
+//        	// TODO check actual op
+//        	buffer.append(" &&");
+//        	buffer.append(" int8range(");
+//        	queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+//	        buffer.append(", ");
+//	        queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+//	        buffer.append(")");
+//        } else if (schema.hasBioSeg()) {
         if (schema.hasBioSeg()) {
-            buffer.append("bioseg_create(");
+        	buffer.append("bioseg_create(");
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
