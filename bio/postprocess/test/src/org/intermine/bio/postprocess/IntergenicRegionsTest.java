@@ -40,7 +40,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * Tests for the IntergenicRegionUtil class.

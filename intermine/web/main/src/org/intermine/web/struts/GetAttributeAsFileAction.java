@@ -23,10 +23,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -57,7 +57,7 @@ public class GetAttributeAsFileAction extends Action
 
         FieldExporter fieldExporter = null;
 
-        Set classes = DynamicUtil.decomposeClass(object.getClass());
+        Set classes = Util.decomposeClass(object.getClass());
 
         Iterator classIter = classes.iterator();
 

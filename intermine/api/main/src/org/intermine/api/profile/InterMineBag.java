@@ -38,7 +38,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
@@ -50,7 +50,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * An object that represents a bag of objects in our database for the webapp. It is backed by an

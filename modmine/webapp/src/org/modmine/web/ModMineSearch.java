@@ -45,7 +45,7 @@ import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * allows for full-text searches over all metadata using the apache lucene
@@ -315,7 +315,7 @@ public class ModMineSearch
 
     private static HashMap<String, String> getAttributeMapForObject(Model model, Object obj) {
         HashMap<String, String> values = new HashMap<String, String>();
-        for (Class<?> cls : DynamicUtil.decomposeClass(obj.getClass())) {
+        for (Class<?> cls : Util.decomposeClass(obj.getClass())) {
             ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
             for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
                 try {

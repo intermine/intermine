@@ -46,7 +46,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
@@ -93,8 +93,8 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 
 /**
  * Helper methods for main controller and main action
@@ -1205,7 +1205,7 @@ public final class MainHelper
 
         QueryField origQf = (QueryField) origPathToQueryNode.get(summaryPath);
         String fieldName = origQf.getFieldName();
-        String className = DynamicUtil.getFriendlyName(((QueryClass) origQf.getFromElement())
+        String className = Util.getFriendlyName(((QueryClass) origQf.getFromElement())
                 .getType());
 
         if (!occurancesOnly && isNumeric(summaryType) && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {

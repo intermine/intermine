@@ -30,7 +30,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.Path;
@@ -45,7 +45,7 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.querybuilder.DisplayPath;
 

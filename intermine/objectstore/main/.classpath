@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>	
-        <classpathentry kind="src" path="build/gen/src"/>
-	<classpathentry exported="true" kind="lib" path="lib/cglib-full-2.0.1-patched.jar"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="build/gen/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-beanutils-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.0.jar"/>
@@ -15,7 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/velocity-1.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/ant-1.6.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/base64.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xercesImpl-2.6.1.jar"/>

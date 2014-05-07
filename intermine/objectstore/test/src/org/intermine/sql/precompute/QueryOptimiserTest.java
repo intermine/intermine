@@ -30,7 +30,7 @@ import java.util.SortedMap;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.query.*;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.util.ConsistentSet;
 
 public class QueryOptimiserTest extends TestCase

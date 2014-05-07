@@ -8,5 +8,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-2.7.6-caching.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/json20110106.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/cglib-full-2.0.1-patched.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

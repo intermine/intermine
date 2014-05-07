@@ -10,6 +10,8 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import static org.intermine.objectstore.query.Clob.CLOB_PAGE_SIZE;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -27,20 +29,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.StringConstructor;
 import org.intermine.objectstore.DataChangedException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Clob;
-import static org.intermine.objectstore.query.Clob.CLOB_PAGE_SIZE;
-
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
@@ -63,10 +67,6 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.model.StringConstructor;
-import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * An SQL-backed implementation of the ObjectStoreWriter interface, backed by
@@ -613,7 +613,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     if (schema.isFlatMode(cld.getType()) && (!schema.isTruncated(schema
                                     .getTableMaster(cld)))
                             && (!(cld.getType().equals(o.getClass())))) {
-                        Set<Class<?>> decomposed = DynamicUtil.decomposeClass(o.getClass());
+                        Set<Class<?>> decomposed = Util.decomposeClass(o.getClass());
                         if (!((decomposed.size() == 1) && cld.getType().equals(decomposed.iterator()
                                         .next()))) {
                             throw new ObjectStoreException("Non-flat model heirarchy used in flat "
@@ -630,7 +630,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             if (objectClass == null) {
                                 StringBuffer sb = new StringBuffer();
                                 boolean needComma = false;
-                                for (Class<?> objectClazz : DynamicUtil.decomposeClass(o
+                                for (Class<?> objectClazz : Util.decomposeClass(o
                                         .getClass())) {
                                     if (needComma) {
                                         sb.append(" ");
@@ -696,7 +696,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     if (schema.isFlatMode(cld.getType())) {
                         for (String validFieldName : validFieldNames) {
                             if (!fieldNamesWritten.contains(validFieldName)) {
-                                Set<Class<?>> decomposed = DynamicUtil.decomposeClass(o.getClass());
+                                Set<Class<?>> decomposed = Util.decomposeClass(o.getClass());
                                 throw new ObjectStoreException("Cannot store object " + decomposed
                                         + " - no column for field " + validFieldName + " in table "
                                         + tableInfo.tableName);
@@ -712,7 +712,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 writeCollections(c, o, collections);
             }
             if (tablesWritten < 1) {
-                throw new ObjectStoreException("Object " + DynamicUtil.decomposeClass(o.getClass())
+                throw new ObjectStoreException("Object " + Util.decomposeClass(o.getClass())
                         + " does not map onto any database table.");
             }
             if (o instanceof InterMineObject) {
@@ -1014,7 +1014,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     Clob clob = new Clob(getSerialWithConnection(c));
                     replaceClobWithConnection(c, clob, ((PendingClob) ca)
                             .toString());
-                    TypeUtil.setFieldValue(o, fieldInfo.getName(), new ClobAccess(this, clob));
+                    DynamicUtil.setFieldValue(o, fieldInfo.getName(), new ClobAccess(this, clob));
                 }
             }
         }

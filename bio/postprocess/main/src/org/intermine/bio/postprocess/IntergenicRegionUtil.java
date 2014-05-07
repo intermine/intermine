@@ -36,7 +36,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * Methods for creating feature for intergenic regions.

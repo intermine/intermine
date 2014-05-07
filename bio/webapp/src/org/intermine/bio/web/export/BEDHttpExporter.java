@@ -29,7 +29,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.BEDExportForm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;

@@ -13,6 +13,8 @@ package org.intermine.objectstore.query;
 import java.util.Arrays;
 import java.util.List;
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Represents a constraint comparing two range values on an object.
  *

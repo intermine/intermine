@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Static methods to create Lists of Constraint objects in a query and
  * Constraints in a query relating to a given QueryClass, plus helper methods

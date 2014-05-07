@@ -27,10 +27,10 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.metadata.Model;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 

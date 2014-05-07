@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.intermine.TestUtil;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;

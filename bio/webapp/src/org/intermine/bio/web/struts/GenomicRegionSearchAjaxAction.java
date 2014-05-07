@@ -46,7 +46,7 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;

@@ -10,20 +10,18 @@ package org.intermine.task;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.intermine.metadata.MetaDataException;
-import org.intermine.metadata.Model;
-import org.intermine.modelproduction.ModelFileMerger;
-import org.intermine.metadata.InterMineModelParser;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.metadata.InterMineModelParser;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.modelproduction.ModelFileMerger;
 
 /**
  * Task to merge a single additions file into an intermine XML model.
