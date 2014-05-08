@@ -54,7 +54,7 @@ public final class FriendlyMineQueryRunner
 
     /**
      * Query a mine and recieve map of results.  only processes first two columns set as id and
-     * name
+     * name.
      *
      * @param mine mine to query
      * @param xmlQuery query to run
@@ -77,17 +77,20 @@ public final class FriendlyMineQueryRunner
                     mine.getName(), xmlQuery));
             return null;
         }
-        JSONArray queryResults = new JSONArray(new JSONTokener(reader));
+        StringBuilder builder = new StringBuilder();
+        for (String line = null; (line = reader.readLine()) != null;) {
+            builder.append(line).append("\n");
+        }
+        JSONObject jsonResponse = new JSONObject(builder.toString());
+        JSONArray queryResults = jsonResponse.getJSONArray("results");
         for (int i = 0; i < queryResults.length(); i++) {
             Map<String, String> result = new HashMap<String, String>();
-            result.put("id", queryResults.getJSONObject(i).getString("id"));
-            result.put("name", queryResults.getJSONObject(i).getString("name"));
-
-            // optional
-            String extraValue = queryResults.getJSONObject(i).getString("shortName");
+            JSONArray row = queryResults.getJSONArray(i);
+            result.put("id", row.getString(0));
+            result.put("name", row.getString(1));
             // used for extra value, eg. organism name
-            if (extraValue != null) {
-                result.put("ref", extraValue);
+            if (row.length() > 2) {
+                result.put("ref", row.getString(2));
             }
             results.add(result);
         }

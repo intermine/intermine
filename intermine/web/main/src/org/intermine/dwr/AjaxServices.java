@@ -726,7 +726,9 @@ public class AjaxServices
      * @param mineName mine to query
      * @param orthologues list of genes to query for
      * @return the links to friendly intermines
+     * @deprecated Josh doesn't think this is used anymore
      */
+    @Deprecated
     public static String getFriendlyMinePathways(String mineName, String orthologues) {
         if (StringUtils.isEmpty(orthologues)) {
             return null;
@@ -1229,7 +1231,7 @@ public class AjaxServices
             } else {
                 WebSearchable ws = null;
                 if (TagTypes.BAG.equals(type)) {
-                    ws = (WebSearchable) bm.getBag(profile, tagged); 
+                    ws = (WebSearchable) bm.getBag(profile, tagged);
                 } else if (TagTypes.TEMPLATE.equals(type)) {
                     ws = (WebSearchable) tm.getUserOrGlobalTemplate(profile, tagged);
                 }
