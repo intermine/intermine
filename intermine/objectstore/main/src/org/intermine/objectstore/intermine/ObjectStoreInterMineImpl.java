@@ -472,27 +472,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     try {
                         os.setLogTableName(logTable);
                     } catch (SQLException e) {
-                        LOG.warn("Error setting up execute log in database tab/*
- * Copyright (C) 2002-2014 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */le " + logTable + ":"
+                        LOG.warn("Error setting up execute log in database table " + logTable + ":"
                                 + e);
                     }
                 }
-                if (minBagTableSizeString != null) {/*
-                     * Copyright (C) 2002-2014 FlyMine
-                    *
-                    * This code may be freely distributed and modified under the
-                    * terms of the GNU Lesser General Public Licence.  This should
-                    * be distributed with the code.  See the LICENSE file for more
-                    * information or http://www.gnu.org/copyleft/lesser.html.
-                    *
-                    */
+                if (minBagTableSizeString != null) {
                     try {
                         int minBagTableSizeInt = Integer.parseInt(minBagTableSizeString);
                         os.setMinBagTableSize(minBagTableSizeInt);
