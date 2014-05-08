@@ -201,6 +201,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         ShutdownHook.registerObject(new WeakReference<Object>(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
+        maxQueryParseTime = getMaxQueryParseTime();
+        if (maxQueryParseTime != null) {
+            limitedContext.setMaxQueryParseTime(maxQueryParseTime.longValue());
+        }
         description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 
@@ -468,11 +472,27 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     try {
                         os.setLogTableName(logTable);
                     } catch (SQLException e) {
-                        LOG.warn("Error setting up execute log in database table " + logTable + ":"
+                        LOG.warn("Error setting up execute log in database tab/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */le " + logTable + ":"
                                 + e);
                     }
                 }
-                if (minBagTableSizeString != null) {
+                if (minBagTableSizeString != null) {/*
+                     * Copyright (C) 2002-2014 FlyMine
+                    *
+                    * This code may be freely distributed and modified under the
+                    * terms of the GNU Lesser General Public Licence.  This should
+                    * be distributed with the code.  See the LICENSE file for more
+                    * information or http://www.gnu.org/copyleft/lesser.html.
+                    *
+                    */
                     try {
                         int minBagTableSizeInt = Integer.parseInt(minBagTableSizeString);
                         os.setMinBagTableSize(minBagTableSizeInt);
