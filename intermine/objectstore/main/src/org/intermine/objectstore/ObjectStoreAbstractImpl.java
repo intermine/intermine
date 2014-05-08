@@ -92,7 +92,6 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
             maxTime = Long.parseLong((String) props.get("max-time"));
         }
 
-        LOG.info("PROPERTY max-query-parse-time: " + props.get("max-query-parse-time"));
         if (props.get("max-query-parse-time") != null) {
             maxQueryParseTime = Long.parseLong((String) props.get("max-query-parse-time"));
         }
