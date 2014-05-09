@@ -95,7 +95,7 @@ public class PhytozomeProcessor extends ChadoProcessor
   static final List<String> ANNOTATION_FEATURES =
       Arrays.asList( "gene", "mRNA",
           "transcript", "polypeptide",
-  //        "intron",
+          "intron",
           "exon","CDS",
           "five_prime_untranslated_region",
           "five_prime_UTR",
@@ -308,6 +308,10 @@ public class PhytozomeProcessor extends ChadoProcessor
 
     if (fdat == null) {
       return false;
+    }
+    // (re)compute sequence length. CHADO may be out-of-sync
+    if (residues != null) {
+      seqlen = residues.length();
     }
 
     if (seqlen > 0) {
