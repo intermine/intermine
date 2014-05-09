@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,9 +38,11 @@ public class BagUploadConfirmController extends TilesAction
         throws Exception {
 
         HttpSession session = request.getSession();
-        
-        // Get list name?
+
         String bagName = (String) request.getAttribute("newBagName");
+        if (bagName != null) {
+            request.setAttribute("bagName", bagName);
+        }
 
         // Get the id of the job.
         request.setAttribute("jobUid", session.getAttribute(WS_JOB_ID_KEY));

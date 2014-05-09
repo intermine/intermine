@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,7 +36,7 @@ public class FieldConfig
     private String label = null;
     private Type parent = null;
     private Boolean showInListAnalysisPreviewTable = false;
-    private boolean hideInQueryBuilder = false;
+    private boolean showInQB = true;
 
     /**
      * Specify if we want to show this field for an object in list analysis page table preview
@@ -118,6 +118,21 @@ public class FieldConfig
      */
     public String getFieldExpr() {
         return fieldExpr;
+    }
+
+    /**
+     * Shall we show this field in a QueryBuilder? Ref #355
+     * @param showInQB
+     */
+    public void setShowInQB(boolean showInQB) {
+        this.showInQB = showInQB;
+    }
+
+    /**
+     * @return if we should show this field in a QueryBuilder
+     */
+    public boolean getShowInQB() {
+        return showInQB;
     }
 
     public boolean getIsDottedPath() {
@@ -354,11 +369,4 @@ public class FieldConfig
         this.displayer = displayer;
     }
 
-    public boolean isHideInQueryBuilder() {
-        return hideInQueryBuilder;
-    }
-
-    public void setHideInQueryBuilder(boolean hideInQueryBuilder) {
-        this.hideInQueryBuilder = hideInQueryBuilder;
-    }
 }

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -115,7 +115,7 @@ public class TableWidgetLdr extends WidgetLdr
 
         List<?> results;
         try {
-            results = os.execute(q, 0, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
+            results = os.execute(q, 0, 5000, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }

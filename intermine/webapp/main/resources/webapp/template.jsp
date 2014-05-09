@@ -198,6 +198,7 @@
                       onKeyUp="readInput(event, '${dec.path.lastClassName}', '${dec.path.fieldName}');"
                       onMouseOver="setMouseOver(${index});"
                       onMouseOut="setMouseOver(0);"
+                      autocomplete="off"
                       onBlur="if(MOUSE_OVER != ${index}) { removeList(); }" />
                     <iframe width="100%" height="0" id="attributeId_${index}_IEbugFixFrame"
                       marginheight="0" marginwidth="0" frameborder="0" style="position: absolute;"> </iframe>
@@ -274,7 +275,16 @@
         <tr>
         <td class="constraint_${index}">
           <c:if test="${!empty dec.bags && !dec.nullSelected}">
-            <html:checkbox property="useBagConstraint(${index})" styleId="useBagConstraint(${index})" onclick="clickUseBag(${index})" disabled="${empty dec.bags?'true':'false'}" />&nbsp;<fmt:message
+            <input
+              type="checkbox"
+              name="useBagConstraint(${index})"
+              id="useBagConstraint(${index})"
+              onclick="clickUseBag(${index})"
+              autocomplete="off"
+              <c:if test="${!empty dec.bags}">
+                checkbox="checked"
+              </c:if>
+            />&nbsp;<fmt:message
             key="template.constraintobe"/>&nbsp;<html:select
             property="bagOp(${index})" styleId="bagOp(${index})" disabled="true">
               <c:forEach items="${dec.bagOps}" var="bagOp">

@@ -1,5 +1,6 @@
 package org.intermine.api.idresolution;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.intermine.api.bag.BagQueryResult;
@@ -14,14 +15,14 @@ public class ResolutionJob implements Job
 
     private boolean isComplete = false;
     private Exception error = null;
-    private final Long startedAt;
+    private Date startedAt;
     private JobStatus status = JobStatus.PENDING;
     private final String uid;
 
     public ResolutionJob(UUID id, BagQueryRunner runner, JobInput in) {
         this.input = in;
         this.runner = runner;
-        startedAt = System.currentTimeMillis();
+        startedAt = null;
         uid = id.toString();
     }
 
@@ -31,6 +32,7 @@ public class ResolutionJob implements Job
     @Override
     public void run() {
         this.status = JobStatus.RUNNING;
+        startedAt = new Date();
         try {
             this.result = runner.search(
                     input.getType(),
@@ -147,6 +149,11 @@ public class ResolutionJob implements Job
     @Override
     public JobStatus getStatus() {
         return status;
+    }
+
+    @Override
+    public Date getStatedAt() {
+        return startedAt;
     }
 
 }

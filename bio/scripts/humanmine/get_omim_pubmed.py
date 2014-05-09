@@ -16,7 +16,8 @@ import os, json, requests, time, datetime, types
 
 ## TODO use a better logging system
 
-API_KEY = '3B39C906DBB6433782DA1D6FDB2DBBD3F05186F4' # the API key will expire after one year from the issue date
+API_KEY = 'F5DE0CBD69F9F6771E2E0D3BEFD9E7A1D4C3A994' # the API key will expire after one year from the issue date
+# estimated expiry - Jan 6th 2015
 # http://api.omim.org/api/html/apiKey.html
 OMIM_SERVICE_BASE_USA = 'http://api.omim.org/api/entry/referenceList'
 # http://api.europe.omim.org/api/html/apiKey.html

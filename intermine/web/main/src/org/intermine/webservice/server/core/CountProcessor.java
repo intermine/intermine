@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,7 @@ package org.intermine.webservice.server.core;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 import java.util.Arrays;
 
 import org.intermine.webservice.server.output.Output;

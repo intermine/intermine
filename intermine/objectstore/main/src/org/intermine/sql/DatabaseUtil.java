@@ -1,7 +1,7 @@
 package org.intermine.sql;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -460,7 +460,8 @@ public final class DatabaseUtil
         real("real"),
         double_precision("double precision"),
         timestamp("timestamp"),
-        boolean_type("boolean");
+        boolean_type("boolean"),
+        uuid("uuid");
 
         private final String sqlType;
 
@@ -491,10 +492,10 @@ public final class DatabaseUtil
             throw new NullPointerException("tableName cannot be null");
         }
 
-        ResultSet res = con.getMetaData().getTables(null, null, tableName, null);
+        ResultSet res = con.getMetaData().getTables(null, null, null, new String[] {"TABLE"});
 
         while (res.next()) {
-            if (res.getString(3).equals(tableName) && "TABLE".equals(res.getString(4))) {
+            if (res.getString(3).equalsIgnoreCase(tableName) && "TABLE".equals(res.getString(4))) {
                 return true;
             }
         }
@@ -1040,6 +1041,33 @@ public final class DatabaseUtil
             sqle.printStackTrace();
         }
         return true;
+    }
+
+    public static String getTableDefinition(Database db, ClassDescriptor cd) throws ClassNotFoundException {
+        StringBuffer sb = new StringBuffer("CREATE TABLE " + DatabaseUtil.getTableName(cd) + " (");
+        boolean needsComma = false;
+        for (AttributeDescriptor ad: cd.getAllAttributeDescriptors()) {
+            if (needsComma) {
+                sb.append(",");
+            }
+            sb.append(" ");
+            sb.append(DatabaseUtil.getColumnName(ad));
+            sb.append(" ");
+            sb.append(db.getColumnTypeString(Class.forName(ad.getType())));
+            needsComma = true;
+        }
+        for (ReferenceDescriptor rd: cd.getAllReferenceDescriptors()) {
+            if (needsComma) {
+                sb.append(",");
+            }
+            sb.append(" ");
+            sb.append(DatabaseUtil.getColumnName(rd));
+            sb.append(" ");
+            sb.append(db.getColumnTypeString(Integer.class));
+            needsComma = true;
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }
 

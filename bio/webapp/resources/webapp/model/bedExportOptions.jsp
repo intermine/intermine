@@ -28,7 +28,7 @@
     jQuery(document).ready(function() {
 
         jQuery('#makeUcscCompatibleCheckbox').change(function() {
-            if ( jQuery('#makeUcscCompatibleCheckbox').attr('checked')) {
+            if ( jQuery('#makeUcscCompatibleCheckbox').prop('checked')) {
                 jQuery('#ucscCompatibleCheck').val('yes');
             } else {
                 jQuery('#ucscCompatibleCheck').val('no');

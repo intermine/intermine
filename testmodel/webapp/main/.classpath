@@ -6,6 +6,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
-	<classpathentry kind="lib" path="/intermine-web/lib/commons-math-2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,7 +101,12 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         query.addConstraint(Constraints.neq("Gene.atlasExpression.condition", "(empty)"), "G");
         query.setConstraintLogic("A and B and D and (E or F) and G");
 
-        ExportResultsIterator results = summary.getExecutor().execute((PathQuery) query);
+        ExportResultsIterator results;
+        try {
+            results = summary.getExecutor().execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
 
         Integer up = 0;
         Integer down = 0;
@@ -136,7 +141,12 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         query.addConstraint(Constraints.neq("Gene.atlasExpression.condition", "(empty)"), "G");
         query.setConstraintLogic("A and B and D and (E or F) and G");
 
-        ExportResultsIterator results = summary.getExecutor().execute((PathQuery) query);
+        ExportResultsIterator results;
+        try {
+            results = summary.getExecutor().execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
 
         Integer up = 0;
         Integer down = 0;
@@ -300,7 +310,12 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         public void addCollectionDistinctCount(String key, String description, Object param,
                 String anchor) {
             if (param instanceof PathQuery) {
-                ExportResultsIterator results = executor.execute((PathQuery) param);
+                ExportResultsIterator results;
+                try {
+                    results = executor.execute((PathQuery) param);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
 
                 HashMap<String, Integer> temp = new HashMap<String, Integer>();
                 while (results.hasNext()) {

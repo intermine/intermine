@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Protein;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -73,7 +74,12 @@ public class ProteinAtlasDisplayer extends ReportDisplayer
                 // execute the query
                 Profile profile = SessionMethods.getProfile(session);
                 PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-                ExportResultsIterator values = executor.execute(query);
+                ExportResultsIterator values;
+                try {
+                    values = executor.execute(query);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
 
                 // parse values
                 ProteinAtlasExpressions pae = new ProteinAtlasExpressions(values);

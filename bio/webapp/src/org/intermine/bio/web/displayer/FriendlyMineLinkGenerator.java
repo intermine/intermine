@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,6 +35,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -241,11 +242,12 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
 
     /*****************************************************************************************
         HOMOLOGUES
+     * @throws ObjectStoreException 
      *****************************************************************************************/
 
     // query local mine for orthologues - results cache is handling
     private static Map<String, Set<String>> getLocalHomologues(FriendlyMineManager olm,
-            String constraintValue, String identifier) {
+            String constraintValue, String identifier) throws ObjectStoreException {
         Map<String, Set<String>> organismToHomologues = new HashMap<String, Set<String>>();
         InterMineAPI im = olm.getInterMineAPI();
         ProfileManager profileManager = im.getProfileManager();

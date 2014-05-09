@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,13 +28,13 @@ import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**

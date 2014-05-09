@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -271,22 +271,26 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         } else {
             newValue = cell.getField();
         }
+        if (newValue instanceof CharSequence) {
+            newValue = newValue.toString();
+        }
 
         if (objectMap.containsKey(key)) {
-            if (objectMap.get(key) == null) {
+            Object current = objectMap.get(key);
+            if (current == null) {
                 if (newValue != null) {
                     throw new JSONFormattingException(
-                            "Trying to set key " + key + " as " + cell.getField()
+                            "Trying to set key " + key + " as " + newValue
                             + " in " + objectMap + " but it already has the value "
-                            + objectMap.get(key)
+                            + current
                     );
                 }
             } else {
-                if (!objectMap.get(key).equals(newValue)) {
+                if (!current.equals(newValue)) {
                     throw new JSONFormattingException(
-                            "Trying to set key " + key + " as " + cell.getField()
+                            "Trying to set key " + key + " as " + newValue
                             + " in " + objectMap + " but it already has the value "
-                            + objectMap.get(key));
+                            + current);
                 }
             }
         } else {

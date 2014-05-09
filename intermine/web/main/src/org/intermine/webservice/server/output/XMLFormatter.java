@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,6 +25,14 @@ public class XMLFormatter extends Formatter
 {
 
     private final Stack<String> openElements = new Stack<String>();
+
+    protected void pushTag(String tag) {
+        openElements.push(tag);
+    }
+
+    protected String popTag() {
+        return openElements.pop();
+    }
 
     protected String getRootElement() {
         return "ResultSet";
@@ -50,15 +58,19 @@ public class XMLFormatter extends Formatter
         return "cause";
     }
 
+    protected String getProcessingInstruction() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+    }
+
     /** {@inheritDoc}} **/
     @SuppressWarnings("rawtypes")
     @Override
     public String formatHeader(Map<String, Object> attributes) {
         StringBuilder sb = new  StringBuilder();
-        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append(getProcessingInstruction());
         String elem = getRootElement();
         openElements.push(elem);
-        sb.append("<" + elem + " ");
+        sb.append("\n<" + elem + " ");
         handleHeaderAttributes(attributes, sb);
         return sb.toString();
     }
@@ -68,15 +80,20 @@ public class XMLFormatter extends Formatter
         if (attributes != null) {
             for (String key : attributes.keySet()) {
                 if (attributes.get(key) instanceof Map) {
-                    for (Object subK: ((Map) attributes.get(key)).keySet()) {
-                        sb.append(subK + "=\"" + ((Map) attributes.get(key)).get(subK) + "\" ");
+                    Map obj = (Map) attributes.get(key);
+                    for (Object subK: obj.keySet()) {
+                        sb.append(subK + "=\"" + escapeAttribute(obj.get(subK)) + "\" ");
                     }
                 } else {
-                    sb.append(key + "=\"" + attributes.get(key) + "\" ");
+                    sb.append(key + "=\"" + escapeAttribute(attributes.get(key)) + "\" ");
                 }
             }
         }
         sb.append(">");
+    }
+
+    protected String escapeAttribute(Object attr) {
+        return StringEscapeUtils.escapeXml(String.valueOf(attr));
     }
 
     /** {@inheritDoc}} **/
@@ -97,8 +114,12 @@ public class XMLFormatter extends Formatter
     protected void addElement(StringBuilder sb, String tag, String contents) {
         sb.append("<" + tag + ">");
         openElements.push(tag);
-        sb.append(StringEscapeUtils.escapeXml(contents));
+        sb.append(escapeElementContent(contents));
         sb.append("</" + openElements.pop() + ">");
+    }
+
+    protected String escapeElementContent(String contents) {
+        return StringEscapeUtils.escapeXml(contents);
     }
 
     /** {@inheritDoc}} **/

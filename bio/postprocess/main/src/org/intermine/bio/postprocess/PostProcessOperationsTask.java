@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -280,11 +280,11 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
             } else if ("modmine-metadata-cache".equals(operation)) {
                 CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
-            } else {
-                throw new BuildException("unknown operation: " + operation);
+            } else if ("populate-child-features".equals(operation)) {
+            	PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
+            	jb.populateCollection();
             }
-            LOGGER.info("PP - " + operation + " took "
-                     + (System.currentTimeMillis() - startTime) + " ms.");
+                
         } catch (BuildException e) {
             LOGGER.error("Failed postprocess. Operation was: " + operation, e);
             throw e;

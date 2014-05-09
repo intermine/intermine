@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -182,10 +181,8 @@ public class TreefamConverter extends BioFileConverter
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
             throws ObjectStoreException {
 
-        String gene1 = getGene(holder1.identifier, holder1.symbol,
-                holder1.identifierType, holder1.taxonId);
-        String gene2 = getGene(holder2.identifier, holder2.symbol,
-                holder2.identifierType, holder2.taxonId);
+        String gene1 = getGene(holder1);
+        String gene2 = getGene(holder2);
 
         // resolver didn't resolve
         if (gene1 == null || gene2 == null) {
@@ -206,39 +203,20 @@ public class TreefamConverter extends BioFileConverter
         store(homologue);
     }
 
-    private String getGene(String geneId, String symbol, String type, String taxonId)
+    private String getGene(GeneHolder holder)
             throws ObjectStoreException {
-        String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-
-        String resolvedGenePid = null;
-        // test if id has been resolved
-        if (resolvedIds.containsKey(new MultiKey(taxonId, geneId, symbol))) {
-            resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
-        } else {
-            resolvedGenePid = resolveGene(taxonId, geneId, symbol);
-        }
-
-        if (resolvedGenePid == null) {
-            return null;
-        }
-        String refId = identifiersToGenes.get(resolvedGenePid);
+        
+        String refId = identifiersToGenes.get(holder.resolvedIdentifier);
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-
-            if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                if ("crossReferences".equals(identifierType)) {
-                    gene.addToCollection(identifierType,
-                            createCrossReference(gene.getIdentifier(), geneId,
-                                    DATA_SOURCE_NAME, true));
-                } else {
-                    gene.setAttribute(identifierType, geneId);
-                }
+            if (!holder.identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+            	gene.setAttribute(holder.identifierType, holder.resolvedIdentifier);
+            } else {
+            	gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, holder.resolvedIdentifier);
             }
-
-            gene.setReference("organism", getOrganism(taxonId));
+            gene.setReference("organism", getOrganism(holder.taxonId));
             refId = gene.getIdentifier();
-            identifiersToGenes.put(resolvedGenePid, refId);
+            identifiersToGenes.put(holder.resolvedIdentifier, refId);
             store(gene);
         }
         return refId;
@@ -289,7 +267,7 @@ public class TreefamConverter extends BioFileConverter
                 throw new IllegalArgumentException("bad data file, couldn't process:" + bits[0]);
             }
             String id = bits[0];
-            String identifier = bits[4];
+            String geneId = bits[4];
             String symbol = bits[6];
             String taxonId = bits[8];
 
@@ -298,16 +276,24 @@ public class TreefamConverter extends BioFileConverter
                 continue;
             }
 
-            String identifierType = DEFAULT_IDENTIFIER_TYPE;
-            String geneField = DEFAULT_IDENTIFIER_COLUMN;
+            // remove special characters
+            symbol = chopSymbol(symbol);
+            
+            String identifierType = DEFAULT_IDENTIFIER_TYPE;  
+            String identifierColumn = DEFAULT_IDENTIFIER_COLUMN;
 
             if (config.containsKey(taxonId)) {
                 String[] configs = config.get(taxonId);
-                geneField = configs[0];
+                identifierColumn = configs[0];
                 identifierType = configs[1];
             }
-            identifier = setIdentifier(identifier, symbol, geneField);
-            idsToGenes.put(id, new GeneHolder(identifier, symbol, identifierType, taxonId));
+            
+            String resolvedIdentifier = resolveGene(taxonId, geneId, symbol);
+            if (StringUtils.isEmpty(resolvedIdentifier)) {
+            	resolvedIdentifier = ("symbol".equalsIgnoreCase(identifierType) ? symbol : geneId);
+            }
+            idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier, identifierColumn, 
+            		identifierType, taxonId));
         }
     }
 
@@ -345,18 +331,25 @@ public class TreefamConverter extends BioFileConverter
      */
     public class GeneHolder
     {
-        protected String identifier, symbol, taxonId, identifierType;
+        protected String identifier, symbol, taxonId, identifierType, resolvedIdentifier,
+        	whichColumn;
 
         /**
-         * @param identifier gene identifier, eg FBgn
+         * @param identifier gene identifier, eg FBgn from geneid column
          * @param identifierType which field to set, eg. primaryIdentifier or symbol
          * @param taxonId organism for this gene
+         * @param symbol gene symbol, 6th column. with special chars removed
+         * @param resolvedIdentifier the identifer found by the ID resolver
+         * @param whichColumn either geneid (4th col) or symbol (6th col)
          */
-        public GeneHolder(String identifier, String symbol, String identifierType, String taxonId) {
+        public GeneHolder(String identifier, String symbol, String resolvedIdentifier, 
+        		String whichColumn, String identifierType, String taxonId) {
             this.identifier = identifier;
             this.symbol = symbol;
             this.taxonId = taxonId;
             this.identifierType = identifierType;
+            this.whichColumn = whichColumn;
+            this.resolvedIdentifier = resolvedIdentifier;
         }
 
         /**
@@ -373,18 +366,22 @@ public class TreefamConverter extends BioFileConverter
             return homologues.contains(taxonId);
         }
     }
-
-    private String setIdentifier(String ident, String sym, String col) {
-        String identifier = ident;
-        String symbol = sym;
-        if ("symbol".equals(col)) {
-            if (symbol.contains("_")) {
-                // to handle this case:  Y65B4BL.6_F2
-                symbol = symbol.split("_")[0];
-            }
-            identifier = symbol;
+    
+    private String chopSymbol(String symbol) {
+    	String cleanSymbol = symbol;
+        if (cleanSymbol.contains("_")) {
+        	// to handle this case:  Y65B4BL.6_F2
+        	cleanSymbol = cleanSymbol.split("_")[0];
         }
-        return identifier;
+        if (cleanSymbol.contains("_")) {
+        	// to handle this case:  Y65B4BL.6_F2
+        	cleanSymbol = cleanSymbol.split("_")[0];
+        }
+        if (cleanSymbol.contains("-")) {
+        	// to handle this case:  LIMS3-201            	
+        	cleanSymbol = cleanSymbol.split("-")[0];
+        }            
+        return cleanSymbol;
     }
 
     private String resolveGene(String taxonId, String identifier, String symbol) {

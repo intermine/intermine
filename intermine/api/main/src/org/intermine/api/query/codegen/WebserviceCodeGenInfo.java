@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,8 @@ public class WebserviceCodeGenInfo
     private Profile user;
     private String resultTablesLib = null;
     private String baseUrl = null;
+    private String lineBreak;
+    private Properties properties = new Properties();
 
     /**
      * Constructor.
@@ -52,13 +54,38 @@ public class WebserviceCodeGenInfo
         this.perlWSModuleVer = perlWSModuleVer;
         this.isPublic = isPubliclyAccessible;
         this.user = user;
+        this.lineBreak = System.getProperty("line.separator");
+    }
+
+    public WebserviceCodeGenInfo(PathQuery pq, String serviceBaseURL,
+            String projectTitle, String perlWSModuleVer,
+            boolean pathQueryIsPublic, Profile profile, String lineBreak) {
+        this.query = pq;
+        this.serviceBaseURL = serviceBaseURL;
+        this.projectTitle = projectTitle;
+        this.perlWSModuleVer = perlWSModuleVer;
+        this.isPublic = pathQueryIsPublic;
+        this.user = profile;
+        this.lineBreak = lineBreak;
     }
 
     public void readWebProperties(Properties properties) {
+        this.properties.putAll(properties);
         if (properties != null) {
             resultTablesLib = (String) properties.get("ws.imtables.provider");
             baseUrl = properties.get("webapp.baseurl") + "/" + properties.get("webapp.path") + "/";
         }
+    }
+
+    /**
+     * Get a configured property for which an accessor does not exist.
+     *
+     * @param key The key for this property.
+     * @param defaultValue The value to return if this property is not configured.
+     * @return The value of the property.
+     */
+    public String getProperty(String key, String defaultValue) {
+        return properties.getProperty(key, defaultValue);
     }
 
     public String getResultsTablesLib() {
@@ -123,6 +150,10 @@ public class WebserviceCodeGenInfo
      */
     public String getUserName() {
         return user.getUsername();
+    }
+
+    public String getLineBreak() {
+        return lineBreak;
     }
 
     /**

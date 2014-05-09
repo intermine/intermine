@@ -11,10 +11,8 @@
 #pagecontentcontainer.login-page div.body div.column:first-child { margin-right:30px; }
 #pagecontentcontainer.login-page div.clear { clear:both; }
 
-#pagecontentcontainer.login-page a.myid,
 #pagecontentcontainer.login-page a.yahoo,
 #pagecontentcontainer.login-page a.google { width:32px; height:32px; float:left; display:block; margin-right:10px; }
-#pagecontentcontainer.login-page a.myid { background:url('../images/icons/myid.png') no-repeat top left; }
 #pagecontentcontainer.login-page a.yahoo { background:url('../images/icons/yahoo.png') no-repeat top left; }
 #pagecontentcontainer.login-page a.google { background:url('../images/icons/google.png') no-repeat top left; }
 

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.intermine.objectstore.DataChangedException;
@@ -229,7 +230,6 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
             e2.initCause(e);
             throw e2;
         } catch (ObjectStoreException e) {
-            //LOG.debug("get - " + e);
             throw new RuntimeException("ObjectStore error has occurred (in get)", e);
         }
         return resultList.get(0);
@@ -417,5 +417,25 @@ public class Results extends AbstractList<Object> implements LazyCollection<Obje
      */
     public ResultsBatches getResultsBatches() {
         return resultsBatches;
+    }
+
+    // Results equality is object equality. Hashcodes can be totally random.
+    private final int hashCode = new Random().nextInt();
+
+    @Override
+    public int hashCode() {
+        // hashCode must not hit the DB.
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other;
+    }
+
+    @Override
+    public String toString() {
+        // Stringification must not hit the DB.
+        return "[Results " + hashCode + "]";
     }
 }

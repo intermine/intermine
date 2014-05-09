@@ -168,7 +168,7 @@
    // (un)Check all featureType checkboxes
    function checkAll(id)
    {
-     jQuery(".featureType").attr('checked', jQuery('#' + id).is(':checked'));
+     jQuery(".featureType").prop('checked', jQuery('#' + id).is(':checked'));
      jQuery("#check").css("opacity", 1);
    }
 
@@ -182,7 +182,7 @@
            });
 
            if (statTag) {
-            jQuery("#check").attr('checked', true);
+            jQuery("#check").prop('checked', true);
             jQuery("#check").css("opacity", 0.5); }
            else {
             jQuery("#check").removeAttr('checked');
@@ -194,10 +194,10 @@
          });
 
          if (statTag) {
-           jQuery("#check").attr('checked', true);
+           jQuery("#check").prop('checked', true);
            jQuery("#check").css("opacity", 0.5); }
          else {
-           jQuery("#check").attr('checked', true);
+           jQuery("#check").prop('checked', true);
            jQuery("#check").css("opacity", 1);}
          }
    }

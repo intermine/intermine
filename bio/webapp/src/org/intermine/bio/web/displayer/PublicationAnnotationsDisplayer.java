@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,6 +29,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -95,7 +96,12 @@ public class PublicationAnnotationsDisplayer extends ReportDisplayer
                     continue;
                 }
             }
-            ExportResultsIterator values = executor.execute(q);
+            ExportResultsIterator values;
+            try {
+                values = executor.execute(q);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
             Collection<InterMineObject> results = new HashSet<InterMineObject>();
             int count = formatResults(results, values);
             InlineResultsTable t = new InlineResultsTable(results, im.getModel(),

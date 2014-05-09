@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,6 +33,8 @@ import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.xml.ProfileBinding;
+import org.intermine.api.xml.ProfileManagerBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.CEO;
@@ -42,8 +44,6 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.ProfileBinding;
-import org.intermine.web.ProfileManagerBinding;
 
 /**
  * Tests for the Profile class.

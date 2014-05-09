@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,6 +29,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Organism;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -119,7 +120,12 @@ public class GeneOntologyDisplayer extends ReportDisplayer
             }
 
             PathQuery query = buildQuery(model, new Integer(reportObject.getId()));
-            ExportResultsIterator result = executor.execute(query);
+            ExportResultsIterator result;
+            try {
+                result = executor.execute(query);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
 
             Map<String, Map<OntologyTerm, Set<String>>> goTermsByOntology =
                 new HashMap<String, Map<OntologyTerm, Set<String>>>();
@@ -203,7 +209,12 @@ public class GeneOntologyDisplayer extends ReportDisplayer
                 q.addConstraint(Constraints.eq("Gene.organism.name", organismField));
             }
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-            ExportResultsIterator result = executor.execute(q, 0, 1);
+            ExportResultsIterator result;
+            try {
+                result = executor.execute(q, 0, 1);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
             organismCache.put(organismField, Boolean.valueOf(result.hasNext()));
         }
         return organismCache.get(organismField).booleanValue();

@@ -1,7 +1,7 @@
 package org.modmine.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,6 +28,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -110,7 +111,12 @@ public class SubmissionExternalLinksDisplayer extends ReportDisplayer
 
             query.addOrderBy("Submission.DCCid", OrderDirection.ASC);
 
-            ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+            ExportResultsIterator results;
+            try {
+                results = im.getPathQueryExecutor(profile).execute(query);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Error retrieving results.", e);
+            }
 
             if (results == null || !results.hasNext()) {
 //          throw new Exception("None of the submissions has database records information...");
@@ -153,7 +159,12 @@ public class SubmissionExternalLinksDisplayer extends ReportDisplayer
         // Add constraints and you can edit the constraint values below
         query.addConstraint(Constraints.eq("Submission.DCCid", dccId));
 
-        ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+        ExportResultsIterator results;
+        try {
+            results = im.getPathQueryExecutor(profile).execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving results.", e);
+        }
 
         if (results == null || !results.hasNext()) {
             return null;

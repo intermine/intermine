@@ -758,7 +758,7 @@ function validateBagOperations(formName, operation) {
                 Boxy.alert(errMsg, null, {title: 'Error', modal: false});
                 if (operation == 'asymmetricdifference') {
                    jQuery("#directionDiv input[name='asymmetricDirection']:checked").each(function() {
-                      jQuery(this).attr('checked', false);
+                      jQuery(this).prop('checked', false);
                   });
                 }
             }

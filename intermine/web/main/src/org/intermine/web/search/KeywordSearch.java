@@ -1,7 +1,7 @@
 package org.intermine.web.search;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -539,6 +539,14 @@ class InterMineObjectFetcher extends Thread
                             while (resultsContainer.getIterator().hasNext()) {
                                 ResultsRow next = resultsContainer.getIterator().next();
 
+                                // It is possible that the inner loop iterator "lags behind" the
+                                // current object's id. See:
+                                // https://github.com/intermine/intermine/issues/473
+                                while(resultsContainer.getIterator().hasNext() && 
+                                		((Integer) next.get(0)).compareTo(object.getId()) == -1) {
+                                	next = resultsContainer.getIterator().next();
+                                }
+                                                                
                                 //reference is not for the current object?
                                 if (!next.get(0).equals(object.getId())) {
                                     // go back one step
@@ -1052,28 +1060,28 @@ public final class KeywordSearch
             LOG.error("keyword_search.properties: file '" + configFileName + "' not found!");
         }
 
-        LOG.info("Indexing - Ignored classes:");
+        LOG.debug("Indexing - Ignored classes:");
         for (Class<? extends InterMineObject> class1 : ignoredClasses) {
-            LOG.info("- " + class1.getSimpleName());
+            LOG.debug("- " + class1.getSimpleName());
         }
 
-        LOG.info("Indexing - Special References:");
+        LOG.debug("Indexing - Special References:");
         for (Entry<Class<? extends InterMineObject>, String[]> specialReference : specialReferences
                 .entrySet()) {
-            LOG.info("- " + specialReference.getKey() + " = "
+            LOG.debug("- " + specialReference.getKey() + " = "
                     + Arrays.toString(specialReference.getValue()));
         }
 
-        LOG.info("Indexing - Facets:");
+        LOG.debug("Indexing - Facets:");
         for (KeywordSearchFacetData facet : facets) {
-            LOG.info("- field = " + facet.getField() + ", name = " + facet.getName() + ", type = "
+            LOG.debug("- field = " + facet.getField() + ", name = " + facet.getName() + ", type = "
                     + facet.getType().toString());
         }
 
-        LOG.info("Indexing with and without attribute prefixes:");
+        LOG.debug("Indexing with and without attribute prefixes:");
         if (attributePrefixes != null) {
             for (String clsAndAttribute : attributePrefixes.keySet()) {
-                LOG.info("- class and attribute: " + clsAndAttribute + " with prefix: "
+                LOG.debug("- class and attribute: " + clsAndAttribute + " with prefix: "
                         + attributePrefixes.get(clsAndAttribute));
             }
         }
@@ -1138,10 +1146,10 @@ public final class KeywordSearch
 
                 boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
 
-                LOG.info("Fields:"
+                LOG.debug("Fields:"
                         + Arrays.toString(boboIndexReader.getFieldNames(FieldOption.ALL)
                                 .toArray()));
-                LOG.info("Indexed fields:"
+                LOG.debug("Indexed fields:"
                         + Arrays.toString(boboIndexReader.getFieldNames(FieldOption.INDEXED)
                                 .toArray()));
             }
@@ -1154,14 +1162,14 @@ public final class KeywordSearch
 
     private static void writeObjectToDB(ObjectStore os, String key, Object object)
         throws IOException, SQLException {
-        LOG.info("Saving stream to database...");
+        LOG.debug("Saving stream to database...");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         LargeObjectOutputStream streamOut = MetadataManager.storeLargeBinary(db, key);
 
         GZIPOutputStream gzipStream = new GZIPOutputStream(new BufferedOutputStream(streamOut));
         ObjectOutputStream objectStream = new ObjectOutputStream(gzipStream);
 
-        LOG.info("GZipping and serializing object...");
+        LOG.debug("GZipping and serializing object...");
         objectStream.writeObject(object);
 
         objectStream.flush();
@@ -1190,15 +1198,15 @@ public final class KeywordSearch
             boolean blobExisted = MetadataManager.deleteLargeBinary(db,
                     MetadataManager.SEARCH_INDEX);
             if (blobExisted) {
-                LOG.info("Deleting previous search index blob from db took: "
+                LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
             } else {
-                LOG.info("No previous search index blob found in db");
+                LOG.debug("No previous search index blob found in db");
             }
 
-            LOG.info("Saving search index information to database...");
+            LOG.debug("Saving search index information to database...");
             writeObjectToDB(os, MetadataManager.SEARCH_INDEX, index);
-            LOG.info("Successfully saved search index information to database.");
+            LOG.debug("Successfully saved search index information to database.");
 
             // if we have a FSDirectory we need to zip and save that separately
             if ("FSDirectory".equals(index.getDirectoryType())) {
@@ -1253,12 +1261,12 @@ public final class KeywordSearch
                                 zipOut.write(data, 0, count);
                                 progress++;
                                 if (progress % 1000 == 0) {
-                                    LOG.info("Written " + progress + " of " + total
+                                    LOG.debug("Written " + progress + " of " + total
                                             + " batches for file: " + file.getName());
                                 }
                             }
                         } finally {
-                            LOG.info("Closing file: " + file.getName() + "...");
+                            LOG.debug("Closing file: " + file.getName() + "...");
                             fileInput.close();
                         }
                         LOG.info("Finished storing file: " + file.getName());
@@ -1269,7 +1277,7 @@ public final class KeywordSearch
                     LOG.error(null, e);
                 }
             } else if ("RAMDirectory".equals(index.getDirectoryType())) {
-                LOG.info("Saving RAM directory to database...");
+                LOG.debug("Saving RAM directory to database...");
                 writeObjectToDB(os, MetadataManager.SEARCH_INDEX_DIRECTORY, index.getDirectory());
                 LOG.info("Successfully saved RAM directory to database.");
             }
@@ -1319,7 +1327,7 @@ public final class KeywordSearch
             // Filter filter = new TermsFilter();
             // searcher.search(query, filter, collector);
 
-            LOG.info("Found " + topDocs.totalHits + " document(s) that matched query '"
+            LOG.debug("Found " + topDocs.totalHits + " document(s) that matched query '"
                     + queryString + "'");
 
             for (int i = 0; (i < MAX_HITS && i < topDocs.totalHits); i++) {
@@ -1484,7 +1492,7 @@ public final class KeywordSearch
             query = query.rewrite(reader);
 
             if (debugOutput) {
-                LOG.info("Rewritten query: " + query);
+                LOG.debug("Rewritten query: " + query);
             }
 
             // initialize request
@@ -1543,7 +1551,7 @@ public final class KeywordSearch
                 for (int i = 0; i < result.getHits().length && i < 5; i++) {
                     Explanation expl = result.getHits()[i].getExplanation();
                     if (expl != null) {
-                        LOG.info(result.getHits()[i].getStoredFields().getFieldable("id")
+                        LOG.debug(result.getHits()[i].getStoredFields().getFieldable("id")
                                 + " - score explanation: " + expl.toString());
                     }
                 }
@@ -1572,7 +1580,7 @@ public final class KeywordSearch
         queryString = queryString.replaceAll("(^|\\s+)'(\\b[^']+ [^']+\\b)'(\\s+|$)", "$1\"$2\"$3");
         // escape special characters, see http://lucene.apache.org/java/2_9_0/queryparsersyntax.html
         final String[] specialCharacters = {"+", "-", "&&", "||", "!", "(", ")", "{", "}", "[",
-            "]", "^", "\"", "~", "?", ":", "\\"};
+            "]", "^", "~", "?", ":", "\\"};
         for (String s : specialCharacters) {
             if (queryString.contains(s)) {
                 queryString = queryString.replace(s, "*");
@@ -1598,7 +1606,7 @@ public final class KeywordSearch
 
     private static void loadIndexFromDatabase(ObjectStore os, String path) {
         long time = System.currentTimeMillis();
-        LOG.info("Attempting to restore search index from database...");
+        LOG.debug("Attempting to restore search index from database...");
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             try {
@@ -1617,7 +1625,7 @@ public final class KeywordSearch
                             LOG.info("Successfully restored search index information"
                                     + " from database in " + (System.currentTimeMillis() - time)
                                     + " ms");
-                            LOG.info("Index: " + index);
+                            LOG.debug("Index: " + index);
                         } else {
                             LOG.warn("Object from DB has wrong class:"
                                     + object.getClass().getName());
@@ -1632,16 +1640,14 @@ public final class KeywordSearch
 
                 if (index != null) {
                     time = System.currentTimeMillis();
-                    LOG.info("Attempting to restore search directory from database...");
-                    is =
-                            MetadataManager.readLargeBinary(db,
-                                    MetadataManager.SEARCH_INDEX_DIRECTORY);
+                    LOG.debug("Attempting to restore search directory from database...");
+                    is = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX_DIRECTORY);
 
                     if (is != null) {
                         if ("FSDirectory".equals(index.getDirectoryType())) {
                             final int bufferSize = 2048;
                             File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
-                            LOG.info("Directory path: " + directoryPath);
+                            LOG.debug("Directory path: " + directoryPath);
 
                             // make sure we start with a new index
                             if (directoryPath.exists()) {
@@ -1708,7 +1714,7 @@ public final class KeywordSearch
                                     + index.getDirectoryType());
                         }
 
-                        LOG.info("Directory: " + index.getDirectory());
+                        LOG.debug("Directory: " + index.getDirectory());
                     } else {
                         LOG.warn("index is null!");
                     }
@@ -1729,7 +1735,7 @@ public final class KeywordSearch
         throws IOException {
         long time = System.currentTimeMillis();
         File tempFile = null;
-        LOG.info("Creating keyword search index...");
+        LOG.debug("Creating keyword search index...");
 
         parseProperties(os);
 
@@ -1767,7 +1773,7 @@ public final class KeywordSearch
         int indexed = 0;
 
         // loop and index while we still have fetchers running
-        LOG.info("Starting to index...");
+        LOG.debug("Starting to index...");
         while (indexingQueue.hasNext()) {
             Document doc = indexingQueue.next();
 
@@ -1792,7 +1798,7 @@ public final class KeywordSearch
             }
         }
         index.getFieldNames().addAll(fetchThread.getFieldNames());
-        LOG.info("Indexing done, optimizing index files...");
+        LOG.debug("Indexing done, optimizing index files...");
         try {
             writer.optimize();
             writer.close();
@@ -1809,7 +1815,7 @@ public final class KeywordSearch
     }
 
     private static File makeTempFile(String tempDir) throws IOException {
-        LOG.info("Creating search index tmp dir: " + tempDir);
+        LOG.debug("Creating search index tmp dir: " + tempDir);
         File tempFile = File.createTempFile("search_index", "", new File(tempDir));
         if (!tempFile.delete()) {
             throw new IOException("Could not delete temp file");
@@ -1900,7 +1906,7 @@ public final class KeywordSearch
             if (tempFile.exists()) {
                 String[] files = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
-                    LOG.info("Deleting index file: " + files[i]);
+                    LOG.debug("Deleting index file: " + files[i]);
                     new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
                 }
                 tempFile.delete();

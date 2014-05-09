@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.model;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,7 +33,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.JSONFormatter;

@@ -1,16 +1,16 @@
 package org.intermine.api.idresolution;
 
+import java.util.Date;
 import java.util.UUID;
 
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryUpgrade;
-import org.intermine.api.idresolution.Job.JobStatus;
 
 public class UpgradeJob implements Job {
 
     private Exception error = null;
     private final BagQueryUpgrade upgrade;
-    private final Long startedAt;
+    private Date startedAt = null;
     private BagQueryResult result;
     private JobStatus status;
     private final String id;
@@ -19,14 +19,15 @@ public class UpgradeJob implements Job {
         this.upgrade = upgrade;
         this.id = id.toString();
         status = JobStatus.PENDING;
-        startedAt = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         this.status = JobStatus.RUNNING;
+        this.startedAt = new Date();
         try {
             this.result = upgrade.getBagQueryResult();
+            this.status = JobStatus.SUCCESS;
         } catch (Exception e) {
             error = e;
             this.status = JobStatus.ERROR;
@@ -61,6 +62,11 @@ public class UpgradeJob implements Job {
     @Override
     public String getType() {
         return upgrade.getType();
+    }
+
+    @Override
+    public Date getStatedAt() {
+        return startedAt;
     }
 
 }

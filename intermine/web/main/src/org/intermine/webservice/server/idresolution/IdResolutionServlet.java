@@ -1,19 +1,57 @@
 package org.intermine.webservice.server.idresolution;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
 
 public class IdResolutionServlet extends WebServiceServlet
 {
+    private static final Logger LOG = Logger.getLogger(IdResolutionServlet.class);
     private static final long serialVersionUID = -3364780354450369691L;
+    private JobJanitor janitor = null;
+    private Thread janitorThread = null;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        try {
+            janitor = new JobJanitor();
+            janitorThread = new Thread(janitor);
+            janitorThread.setDaemon(true);
+            janitorThread.start();
+        } catch (Exception e) {
+            LOG.warn(e);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (janitor != null) {
+            janitor.stop();
+        }
+        if (janitorThread != null) {
+            janitorThread.interrupt();
+        }
+        super.destroy();
+    }
 
     @Override
     protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)

@@ -1,7 +1,7 @@
 package org.intermine.sql;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.sql.DataSource;
@@ -368,6 +369,7 @@ public class Database implements Shutdownable
         POSTGRESQL_TYPE_STRING_MAP.put(BigDecimal.class, "numeric");
         POSTGRESQL_TYPE_STRING_MAP.put(Date.class, "bigint");
         POSTGRESQL_TYPE_STRING_MAP.put(String.class, "text");
+        POSTGRESQL_TYPE_STRING_MAP.put(UUID.class, "uuid");
     }
 
     /**

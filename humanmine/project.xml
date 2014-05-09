@@ -25,11 +25,13 @@
     <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
+<!--
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
       <property name="source.db.name" value="ensembl.9606.variation" />
       <property name="organism" value="9606" />
       <property name="sources" value="dbSNP" />
     </source>
+-->
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />

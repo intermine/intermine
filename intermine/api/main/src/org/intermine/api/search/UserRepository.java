@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -65,7 +65,7 @@ public class UserRepository extends SearchRepository
     protected void populateSearchItems() {
         searchItems.addAll(getProfile().getSavedBags().values());
         searchItems.addAll(getProfile().getSavedTemplates().values());
-        LOG.info("Populated repository with " + searchItems.size() + " items");
+        LOG.debug("Populated repository with " + searchItems.size() + " items");
     }
 
     @Override

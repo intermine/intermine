@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,7 @@ import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -25,10 +26,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
@@ -40,7 +44,9 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -81,14 +87,18 @@ public class ProfileManager
     protected CacheMap<String, Profile> profileCache = new CacheMap<String, Profile>();
     private String superuser = null;
     /** Number determining format of queries in the database */
-    protected int version;
+    protected int pathQueryFormat;
 
     private final Map<String, LimitedAccessToken> limitedAccessTokens
         = new HashMap<String, LimitedAccessToken>();
+
+    private final Map<UUID, PermanentToken> permanentTokens
+        = new HashMap<UUID, PermanentToken>();
+
     /**
      * Construct a ProfileManager for the webapp
      * @param os the ObjectStore to which the webapp is providing an interface
-     * @param userProfileOS the object store that hold user profile information
+     * @param userProfileOS the object store that holds user profile information
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
@@ -108,39 +118,46 @@ public class ProfileManager
             throw new RuntimeException("Unable to load super user profile", e);
         }
 
+        pathQueryFormat = loadPathQueryFormatVersion();
+
+        permanentTokens.putAll(loadPermanentTokens());
+    }
+
+    private int loadPathQueryFormatVersion() {
+        int v = 0;
+        int currentVersion = PathQuery.USERPROFILE_VERSION;
         try {
             String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) uosw)
                 .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
+            String message = "Could not recognise userprofile format version "
+                    + versionString + ", maybe you need to update InterMine";
             LOG.info("Database has userprofile version \"" + versionString + "\"");
-            if (versionString == null) {
-                version = 0;
-            } else {
-                version = Integer.parseInt(versionString);
+            if (versionString != null) {
+                try {
+                    v = Integer.parseInt(versionString);
+                } catch (NumberFormatException e) {
+                    throw new IllegalStateException(message);
+                }
             }
-            if ((version < 0) || (version > PathQuery.USERPROFILE_VERSION)) {
-                throw new IllegalStateException("Could not recognise userprofile format version "
-                        + version + ", maybe you need to update InterMine");
+            if ((v < 0) || (v > currentVersion)) {
+                throw new IllegalStateException(message);
             }
-            if (version == 0) {
-                // Check to see if we can upgrade
+            if (v < currentVersion) {
+                // We can upgrade if there is no data that might need updating.
                 Query q = new Query();
-                QueryClass qc = new QueryClass(SavedQuery.class);
-                q.addFrom(qc);
-                q.addToSelect(qc);
+                QueryClass savedQueries = new QueryClass(SavedQuery.class);
+                QueryClass templateQueries = new QueryClass(SavedTemplateQuery.class);
+                q.addFrom(savedQueries);
+                q.addFrom(templateQueries);
+                q.addToSelect(savedQueries);
+                q.addToSelect(templateQueries);
                 List<?> results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
-                    q = new Query();
-                    qc = new QueryClass(SavedTemplateQuery.class);
-                    q.addFrom(qc);
-                    q.addToSelect(qc);
-                    results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
-                    if (results.isEmpty()) {
-                        // We can safely upgrade the database
-                        MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
-                                MetadataManager.PROFILE_FORMAT_VERSION, ""
-                                + PathQuery.USERPROFILE_VERSION);
-                        version = PathQuery.USERPROFILE_VERSION;
-                    }
+                    // We can safely upgrade the database!
+                    MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                            MetadataManager.PROFILE_FORMAT_VERSION,
+                            "" + currentVersion);
+                    v = currentVersion;
                 }
             }
         } catch (ObjectStoreException e) {
@@ -148,6 +165,38 @@ public class ProfileManager
         } catch (SQLException e) {
             throw new IllegalStateException("Error reading version number from database", e);
         }
+        return v;
+    }
+
+    private Map<UUID, PermanentToken> loadPermanentTokens() {
+        Map<UUID, PermanentToken> map = new HashMap<UUID, PermanentToken>();
+        try {
+            // Get the current set of permanent tokens from the database.
+            Query q = new Query();
+            QueryClass tokens = new QueryClass(PermanentToken.class);
+            q.addFrom(tokens);
+            q.addToSelect(tokens);
+    
+            List<?> results = uosw.executeSingleton(q);
+            Set<PermanentToken> badTokens = new HashSet<PermanentToken>();
+            for (Object o: results) {
+                PermanentToken token = (PermanentToken) o;
+                try {
+                    UUID key = UUID.fromString(token.getToken());
+                    map.put(key, token);
+                } catch (IllegalArgumentException e) {
+                    badTokens.add(token);
+                }
+            }
+            for (PermanentToken t: badTokens) {
+                LOG.info("Removing bad token: " + t);
+                uosw.delete(t);
+            }
+        } catch (Exception e) {
+            LOG.error("Could not load permanent tokens", e);
+            throw new IllegalStateException("Error loading permanent tokens", e);
+        }
+        return map;
     }
 
     /**
@@ -172,7 +221,7 @@ public class ProfileManager
      * @return an int
      */
     public int getVersion() {
-        return version;
+        return pathQueryFormat;
     }
 
     /**
@@ -305,6 +354,61 @@ public class ProfileManager
     }
 
     /**
+     * Completely remove a profile and all of its associated data from the data-store.
+     * Use with extreme caution.
+     * @param profile The profile to remove.
+     * @throws ObjectStoreException If it cannot be removed.
+     */
+    public void deleteProfile(Profile profile) throws ObjectStoreException {
+        Integer userId = profile.getUserId();
+        removeTokensForProfile(profile);
+        evictFromCache(profile);
+        try {
+            uosw.beginTransaction();
+            UserProfile userProfile = getUserProfile(userId);
+            if (userProfile == null) {
+                throw new ObjectStoreException("User is not in the data store.");
+            }
+            for (org.intermine.model.userprofile.SavedQuery sq: userProfile.getSavedQuerys()) {
+                uosw.delete(sq);
+            }
+
+            for (SavedTemplateQuery st: userProfile.getSavedTemplateQuerys()) {
+                uosw.delete(st);
+            }
+
+            for (SavedBag sb: userProfile.getSavedBags()) {
+                uosw.delete(sb);
+            }
+
+            for (PermanentToken token: userProfile.getPermanentTokens()) {
+            	removePermanentToken(token);
+            }
+
+            TagManager tagManager = getTagManager();
+            for (Tag tag : tagManager.getUserTags(userProfile.getUsername())) {
+                tagManager.deleteTag(tag);
+            }
+            SharedBagManager sbm = SharedBagManager.getInstance(this);
+            sbm.removeAllSharesInvolving(userId);
+            sbm.removeAllInvitesBy(userId);
+
+            uosw.delete(userProfile);
+            uosw.commitTransaction();
+        } catch (ObjectStoreException e) {
+            if (uosw.isInTransaction()) {
+                uosw.abortTransaction();
+            }
+            throw e;
+        } finally {
+            // Should not happen.
+            if (uosw.isInTransaction()) {
+                uosw.abortTransaction();
+            }
+        }
+    }
+
+    /**
      * Get a user's Profile using a username
      * @param username the username
      * @param classKeys the classkeys
@@ -360,29 +464,43 @@ public class ProfileManager
                     ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
                         UserProfile.class)));
         try {
-            Results bags = uosw.execute(q, 1000, false, false, true);
-            for (Iterator<?> i = bags.iterator(); i.hasNext();) {
-                ResultsRow<?> row = (ResultsRow<?>) i.next();
-                Integer bagId = (Integer) row.get(0);
-                SavedBag savedBag = (SavedBag) row.get(1);
-                String bagName = savedBag.getName();
-                if (StringUtils.isBlank(bagName)) {
-                    LOG.warn("Failed to load bag with blank name on login for user: " + userProfile.getUsername());
-                } else {
-                    try {
-                        InterMineBag bag = new InterMineBag(os, bagId, uosw);
-                        bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
-                                             classKeys, bag.getType()));
-                        savedBags.put(bagName, bag);
-                    } catch (UnknownBagTypeException e) {
-                        LOG.warn("The bag '" + bagName + "' for user '" +
-                                userProfile.getUsername() + "'"
-                                + " with type: " + savedBag.getType()
-                                + " is not in the model. It will be saved into invalidBags", e);
-                        InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
-                        savedInvalidBags.put(bagName, bag);
+            // Multiple attempts to access the userprofile (create/delete bags, for instance)
+            // will cause this to fail. Allow three retries.
+            ConcurrentModificationException lastError = null;
+            boolean succeeded = false;
+            for (int attemptsRemaining = 3; attemptsRemaining >= 0; attemptsRemaining--) {
+                try {
+                    Results bags = uosw.execute(q, 1000, false, false, true);
+                    for (Iterator<?> i = bags.iterator(); i.hasNext();) {
+                        ResultsRow<?> row = (ResultsRow<?>) i.next();
+                        Integer bagId = (Integer) row.get(0);
+                        SavedBag savedBag = (SavedBag) row.get(1);
+                        String bagName = savedBag.getName();
+                        if (StringUtils.isBlank(bagName)) {
+                            LOG.warn("Failed to load bag with blank name on login for user: " + userProfile.getUsername());
+                        } else {
+                            try {
+                                InterMineBag bag = new InterMineBag(os, bagId, uosw);
+                                bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
+                                                     classKeys, bag.getType()));
+                                savedBags.put(bagName, bag);
+                            } catch (UnknownBagTypeException e) {
+                                LOG.warn("The bag '" + bagName + "' for user '" +
+                                        userProfile.getUsername() + "'"
+                                        + " with type: " + savedBag.getType()
+                                        + " is not in the model. It will be saved into invalidBags", e);
+                                InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
+                                savedInvalidBags.put(bagName, bag);
+                            }
+                        }
                     }
+                    succeeded = true;
+                } catch (ConcurrentModificationException e) {
+                    lastError = e;
                 }
+            }
+            if (!succeeded && (lastError != null)) {
+                throw lastError;
             }
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
@@ -394,11 +512,11 @@ public class ProfileManager
             try {
                 Map queries = SavedQueryBinding.unmarshal(
                             new StringReader(query.getQuery()), savedBags,
-                            version);
+                            pathQueryFormat);
                 if (queries.size() == 0) {
                     queries = PathQueryBinding.unmarshalPathQueries(
                             new StringReader(query.getQuery()),
-                            version);
+                            pathQueryFormat);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
                         String name = (String) entry.getKey();
@@ -420,7 +538,7 @@ public class ProfileManager
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
                 Map<String, TemplateQuery> templateMap =
-                        TemplateQueryBinding.unmarshalTemplates(sr, version);
+                        TemplateQueryBinding.unmarshalTemplates(sr, pathQueryFormat);
                 String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = templateMap.get(templateName);
                 ApiTemplate apiTemplate = new ApiTemplate(templateQuery);
@@ -489,7 +607,7 @@ public class ProfileManager
                     Map.Entry entry = (Map.Entry) i.next();
                     query = (org.intermine.api.profile.SavedQuery) entry.getValue();
                     SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(SavedQueryBinding.marshal(query, version));
+                    savedQuery.setQuery(SavedQueryBinding.marshal(query, pathQueryFormat));
                     savedQuery.setUserProfile(userProfile);
                     uosw.store(savedQuery);
                 } catch (Exception e) {
@@ -505,7 +623,7 @@ public class ProfileManager
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();
                     }
-                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template, version));
+                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template, pathQueryFormat));
                     savedTemplate.setUserProfile(userProfile);
                     uosw.store(savedTemplate);
                     template.setSavedTemplateQuery(savedTemplate);
@@ -538,6 +656,21 @@ public class ProfileManager
                 null, true, false);
 
         this.createProfile(p);
+    }
+
+    public Profile createAnonymousProfile() {
+        String username = null;
+        Integer id = null;
+        String password = null;
+        String token = null;
+        boolean isLocal = true;
+        boolean isSuperUser = false;
+
+        Profile p = new Profile(this, username, id, password,
+                new HashMap<String, org.intermine.api.profile.SavedQuery>(),
+                new HashMap<String, InterMineBag>(),
+                new HashMap<String, ApiTemplate>(), token, isLocal, isSuperUser);
+        return p;
     }
 
     /**
@@ -602,36 +735,75 @@ public class ProfileManager
         return key;
     }
 
+    public void removeTokensForProfile(Profile profile) {
+        if (profile == null) {
+            throw new NullPointerException("profile should not be null.");
+        }
+        synchronized (limitedAccessTokens) {
+            Set<String> tokens = limitedAccessTokens.keySet();
+            Iterator<String> itr = tokens.iterator();
+            while (itr.hasNext()) {
+                String key = itr.next();
+                LimitedAccessToken token = limitedAccessTokens.get(key);
+                if (profile.equals(token.getProfile())) {
+                    itr.remove();
+                }
+            }
+        }
+    }
+
     /**
      * Return whether the token given in input is suitable for using in the future.
      * @param token the token to verify
      * @return true if is suitable for using in the future.
      */
     public synchronized boolean tokenHasMoreUses(String token) {
-        if (token != null && limitedAccessTokens.containsKey(token)) {
-            LimitedAccessToken lat = limitedAccessTokens.get(token);
-            if (lat.isValid()) {
-                return lat.hasMoreUses();
-            } else {
-                limitedAccessTokens.remove(token);
+        if (token != null) {
+            if (limitedAccessTokens.containsKey(token)) {
+                LimitedAccessToken lat = limitedAccessTokens.get(token);
+                if (lat.isValid()) {
+                    return lat.hasMoreUses();
+                } else {
+                    limitedAccessTokens.remove(token);
+                }
+            }
+            try {
+                UUID key = UUID.fromString(token);
+                if (permanentTokens.containsKey(key)) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                // Suppress.
             }
         }
         return false;
     }
 
     /**
-     * TODO: actually make this return a token!!
-     * This will need storing in a permanent data-store!
-     * 
-     * In fact, scratch that; we need a system for reducing webservice
-     * queries down to tokens themselves, so I can share a result set, and
-     * know that the user cannot just run any query they like...
+     * Return a permanent user access token, with ReadOnly permission.
      * 
      * @param profile
      * @return A token granting read-only access to resources.
+     * @throws ObjectStoreException 
      */
-    public String generateReadOnlyAccessToken(Profile profile) {
-        return null;
+    public String generateReadOnlyAccessToken(Profile profile, String message) throws ObjectStoreException {
+        UserProfile up;
+        if (profile.getUserId() == null) {
+            throw new IllegalArgumentException("This profile does not have an associated user-profile");
+        }
+        up = (UserProfile) uosw.getObjectById(profile.getUserId());
+        PermanentToken token = new PermanentToken();
+        UUID uuid = UUID.randomUUID();
+        token.setToken(uuid.toString());
+        token.setLevel("RO");
+        token.setUserProfile(up);
+        token.setDateCreated(new Date());
+        if (message != null) {
+            token.setMessage(message);
+        }
+        uosw.store(token);
+        permanentTokens.put(uuid, token);
+        return token.getToken();
     }
 
     /**
@@ -847,6 +1019,10 @@ public class ProfileManager
         }
     }
 
+    public void evictFromCache(Profile profile) {
+        profileCache.remove(profile.getUsername());
+    }
+
     /**
      * Abstract class for API access keys.
      * @author Alex Kalderimis
@@ -958,7 +1134,8 @@ public class ProfileManager
     public static final class ApiPermission implements Principal
     {
         /**
-         * The possible permission levels.
+         * The possible 
+ission levels.
          */
         public enum Level { RO, RW };
 
@@ -1061,6 +1238,14 @@ public class ProfileManager
             }
             permission = new ApiPermission(p, t.getAuthenticationLevel());
         } else {
+            try {
+                UUID key = UUID.fromString(token);
+                if (permanentTokens.containsKey(key)) {
+                    return getPermission(permanentTokens.get(key), classKeys);
+                }
+            } catch (IllegalArgumentException e) {
+                // Suppress, continue.
+            }
             Profile p = getProfileByApiKey(token, classKeys);
             if (p == null) {
                 throw new AuthenticationException(
@@ -1072,6 +1257,41 @@ public class ProfileManager
             }
         }
         return permission;
+    }
+
+    public ApiPermission getPermission(PermanentToken token, Map<String, List<FieldDescriptor>> classKeys) {
+        if (token.getUserProfile() == null) {
+            // Remove it, as it is clearly invalid.
+            removePermanentToken(token);
+            throw new IllegalStateException("All permanent tokens should have users");
+        }
+        Profile profile = getProfile(token.getUserProfile().getUsername(), classKeys);
+        if (profile == null) {
+            removePermanentToken(token);
+            throw new AuthenticationException("This token is not a valid access key: " + token);
+        }
+        ApiPermission.Level level;
+        try {
+            level = ApiPermission.Level.valueOf(token.getLevel());
+        } catch (IllegalArgumentException e) {
+            String badLevel = token.getLevel();
+            removePermanentToken(token);
+            throw new IllegalStateException("Token has illegal level: " + badLevel);
+        }
+        return new ApiPermission(profile, level);
+    }
+
+    public void removePermanentToken(PermanentToken token) {
+        try {
+        	permanentTokens.remove(UUID.fromString(token.getToken()));
+        } catch (Exception e) {
+        	// Ignore.
+        }
+        try {
+            uosw.delete(token);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error removing permanent token", e);
+        }
     }
 
     /**
@@ -1144,12 +1364,22 @@ public class ProfileManager
         Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(true));
         q.setConstraint(c);
 
-        Results res = uosw.execute(q);
-        Iterator<Object> iterator = res.iterator();
-        while (iterator.hasNext()) {
-            superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+        // Multiple attempts to access the userprofile (create/delete bags, for instance)
+        // will cause this to fail. Allow three retries.
+        ConcurrentModificationException lastError = null;
+        for (int attemptsRemaining = 3; attemptsRemaining >= 0; attemptsRemaining--) {
+            try {
+                Results res = uosw.execute(q);
+                Iterator<Object> iterator = res.iterator();
+                while (iterator.hasNext()) {
+                    superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+                }
+                return superusers;
+            } catch (ConcurrentModificationException e) {
+                lastError = e;
+            }
         }
-        return superusers;
+        throw lastError;
     }
 
     /**

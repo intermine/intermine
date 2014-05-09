@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,8 @@ package org.intermine.api.query.codegen;
  */
 
 import java.util.Collection;
+import java.util.Formattable;
+import java.util.Formatter;
 
 import org.intermine.pathquery.PathQuery;
 
@@ -56,15 +58,36 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         }
 
         final String url = wsCodeGenInfo.getServiceBaseURL();
+        final String cdnLocation = wsCodeGenInfo.getProperty("head.cdn.location", "http://cdn.intermine.org");
         final String json = query.getJson();
         final String token = wsCodeGenInfo.getUserToken();
 
         StringBuffer sb = new StringBuffer()
           .append(JSStrings.getString("PRELUDE"))
-          .append(JSStrings.getString("IMPORTS"))
+          .append(String.format(JSStrings.getString("IMPORTS"), cdnLocation))
           .append(JSStrings.getString("PLACEHOLDER"))
-          .append(JSStrings.getString("SCRIPT", url, token, json));
+          .append(JSStrings.getString("SCRIPT", new StringLiteral(url), new StringLiteral(token), json));
 
-        return sb.toString();
+        return sb.toString().replaceAll("\n", wsCodeGenInfo.getLineBreak());
+    }
+
+    private class StringLiteral implements Formattable {
+
+        private String value;
+
+        StringLiteral(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public void formatTo(Formatter formatter, int flags, int width, int precision) {
+            // Ignore flags, width, precision.
+            if (value == null) {
+                formatter.format("null");
+            } else {
+                formatter.format("'%s'", value);
+            }
+        }
+        
     }
 }

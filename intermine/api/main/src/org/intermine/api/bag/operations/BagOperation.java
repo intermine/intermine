@@ -122,7 +122,7 @@ public abstract class BagOperation implements BagProducer {
         ObjectStoreBagCombination osbc = combineBags();
         Query q = new Query();
         q.addToSelect(osbc);
-        LOG.info(q.toString());
+        LOG.debug(q.toString());
         try {
             combined.addToBagFromQuery(q);
         } catch (ObjectStoreException e) {
