@@ -136,7 +136,7 @@ public class TransferGOAnnotations {
           ProteinDomain thisDomain = (ProteinDomain) rr.get(1);
           GOTerm thisTerm = (GOTerm) rr.get(2);
 
-          LOG.debug("store gene " + thisGene.getPrimaryIdentifier() + " with "
+          LOG.debug("Store gene " + thisGene.getPrimaryIdentifier() + " with "
               + thisDomain.getPrimaryIdentifier()+" with term "+thisTerm.getName());
           // store if not known already
           if (!knownGO.containsKey(thisGene.getOrganism().getId()) ||
@@ -202,7 +202,7 @@ public class TransferGOAnnotations {
         ResultsRow<?> rr = (ResultsRow<?>) res.next();
         Gene thisGene = (Gene) rr.get(0);
         GOTerm thisTerm = (GOTerm) rr.get(1);
-        LOG.info("There is a known annotation for "+thisGene.getPrimaryIdentifier() + 
+        LOG.debug("There is a known annotation for "+thisGene.getPrimaryIdentifier() + 
             " organism "+thisGene.getOrganism() + " to " + thisTerm.getIdentifier());
         if ( ! knownGO.containsKey(thisGene.getOrganism().getId())) {
           knownGO.put(thisGene.getOrganism().getId(),new HashMap<String,HashSet<String>>());
