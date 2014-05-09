@@ -6,6 +6,13 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
+    <source name="ensembl-snp" type="ensembl-snp" dump="true">
+      <property name="gff3.dataSetTitle" value="dbSNP data set" />
+      <property name="gff3.dataSourceName" value="Ensembl" />
+      <property name="gff3.taxonId" value="9606"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="src.data.dir" location="/SAN_humanmine/data/variation/ensembl"/>
+    </source>
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current" />
       <property name="src.data.dir.includes" value="9606.xml" />
@@ -25,13 +32,6 @@
     <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
-<!--
-    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-      <property name="source.db.name" value="ensembl.9606.variation" />
-      <property name="organism" value="9606" />
-      <property name="sources" value="dbSNP" />
-    </source>
--->
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />
