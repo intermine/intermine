@@ -10,7 +10,6 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,7 +57,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.sql.query.Constraint;
 
 public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCase
 {
@@ -927,7 +925,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         Results r4 = os.execute(q, 500, true, true, true);
         assertTrue(r1.getResultsBatches() != r4.getResultsBatches());
         assertTrue(r4.isSingleBatch());
-        assertEquals(r1, r4);
+        assertEquals(new ArrayList<Object>(r1), new ArrayList<Object>(r4));
         SingletonResults r5 = os.executeSingleton(q, 400, true, true, true);
         assertTrue(r1.getResultsBatches() != r5.getResultsBatches());
         assertTrue(r5.isSingleBatch());
