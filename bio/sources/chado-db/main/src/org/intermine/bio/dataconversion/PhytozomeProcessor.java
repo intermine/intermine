@@ -95,7 +95,7 @@ public class PhytozomeProcessor extends ChadoProcessor
   static final List<String> ANNOTATION_FEATURES =
       Arrays.asList( "gene", "mRNA",
           "transcript", "polypeptide",
-  //        "intron",
+          "intron",
           "exon","CDS",
           "five_prime_untranslated_region",
           "five_prime_UTR",
@@ -142,7 +142,6 @@ public class PhytozomeProcessor extends ChadoProcessor
   protected static String tempFeatureTableName = null;
   protected static String tempLocationTableName = null;
   protected static String tempProteinFeatureTableName = null;
-  protected SequenceGenerator sequenceGenerator = null;
 
   // PRIVATE HASHMAPS
 
@@ -241,7 +240,6 @@ public class PhytozomeProcessor extends ChadoProcessor
   protected PhytozomeProcessor(PhytozomeProcessor parent) {
     super(parent.getChadoDBConverter());
 
-    sequenceGenerator = new SequenceGenerator();
   }
 
   /**
@@ -311,6 +309,11 @@ public class PhytozomeProcessor extends ChadoProcessor
 
     if (fdat == null) {
       return false;
+    }
+    
+    // do not trust seqlen field.
+    if (residues != null) {
+      seqlen = residues.length();
     }
 
     if (seqlen > 0) {
@@ -557,9 +560,6 @@ public class PhytozomeProcessor extends ChadoProcessor
     return StringUtil.join(bits, " OR ");
   }
 
-  protected SequenceGenerator getSequenceGenerator() {
-    return sequenceGenerator;
-  }
   /**
    * Create and store a new Item, returning a FeatureData object for
    * the feature.

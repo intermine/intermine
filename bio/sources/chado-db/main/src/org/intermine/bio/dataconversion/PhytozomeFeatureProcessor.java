@@ -77,7 +77,7 @@ public final class PhytozomeFeatureProcessor extends PhytozomeProcessor {
         "CREATE TEMPORARY TABLE " + tempFeatureTableName + " AS"
             + " SELECT f.feature_id, f.name, f.uniquename,"
             + " f.type_id, f.seqlen, f.is_analysis,"
-            + " f.residues, f.md5checksum, f.organism_id,"
+            + " f.residues, md5(f.residues) as md5checksum, f.organism_id,"
             + " l.featureloc_id, l.srcfeature_id, l.fmin,"
             + " l.is_fmin_partial, l.fmax, l.is_fmax_partial,"
             + " l.strand"

@@ -110,7 +110,7 @@ public class PhytozomeChromosomeProcessor extends PhytozomeProcessor {
         "CREATE TEMPORARY TABLE " + tempChromosomeTableName + " AS"
             + " SELECT c.feature_id, c.name, c.uniquename,"
             + " c.seqlen, c.is_analysis,"
-            + " c.residues, c.md5checksum, c.organism_id"
+            + " c.residues, md5(c.residues) as md5checksum, c.organism_id"
             + " FROM "
             + " feature c, feature g, feature_relationship r"
             + " WHERE c.type_id " + chromosomeTypeIdsString
