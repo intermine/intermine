@@ -315,7 +315,7 @@ public class QueryTest extends TestCase
         assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bA));
         assertEquals(AbstractConstraint.INDEPENDENT, aC.compare(bB));
         assertEquals(AbstractConstraint.EQUAL, aC.compare(bC));
-        IdentityMap<AbstractTable> id = IdentityMap.getInstance(); 
+        IdentityMap<AbstractTable> id = IdentityMap.getInstance();
         assertEquals(AbstractConstraint.IMPLIES, a.internalCompare(b, id, id));
         assertEquals(AbstractConstraint.IMPLIES, b.internalCompare(a, id, id));
         assertEquals(AbstractConstraint.EQUAL, a.compare(b));
@@ -1192,5 +1192,42 @@ public class QueryTest extends TestCase
             fail("Expected exception");
         } catch (Exception e) {
         }
+    }
+
+    public void testOrderByAlias() throws Exception {
+        // referring to an alias in the order by should sort by the field
+        q1 = new Query("SELECT field1 AS alias1 FROM table1 ORDER BY alias1");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, "alias1");
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addOrderBy(f1);
+        assertEquals(q2, q1);
+    }
+
+    public void testOrderByAliasedFunction() throws Exception {
+        // count(*) in select is aliased, we are sorting by count(*) but referring to it by alias in order by
+        q1 = new Query("SELECT field1 AS alias1, COUNT(*) as alias1 FROM table2 GROUP BY field1 ORDER BY alias2");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        Function func1 = new Function(Function.COUNT);
+        SelectValue sv1 = new SelectValue(f1, "alias1");
+        SelectValue sv2 = new SelectValue(func1, "alias2");
+        q2.addSelect(sv1);
+        q2.addSelect(sv2);
+        q2.addFrom(t1);
+        q2.addOrderBy(func1);
+        assertEquals(q2, q1);
+    }
+
+    public void testOrderByUnaliasedFieldSingleTable() throws Exception {
+        fail("not yet implemented");
+    }
+
+    public void testOrderByUnaliasedFieldMultiTable() throws Exception {
+        fail("not yet implemented");
     }
 }
