@@ -257,7 +257,7 @@ public class PubMedGeneConverter extends BioFileConverter
             }
             store(gs);
         } catch (ObjectStoreException e) {
-            LOG.error(e);
+            throw new RuntimeException("storing genes collection failed", e);
         }
         genes = new HashMap<String, Item>();
     }
