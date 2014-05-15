@@ -27,6 +27,7 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -38,12 +39,13 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * @author Alexis Kalderimis
  *
  */
-public class JSONRowFormatterTest extends TestCase {
+public class JSONRowFormatterTest extends InterMineAPITestCase {
 
     /**
      * @param name
@@ -74,9 +76,8 @@ public class JSONRowFormatterTest extends TestCase {
 
     JSONRowResultProcessor processor;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    protected void setUp() throws Exception {
+
+    public void setUp() throws Exception {
 
         testProps = new Properties();
         testProps.load(getClass().getResourceAsStream("JSONRowFormatterTest.properties"));
@@ -146,6 +147,17 @@ public class JSONRowFormatterTest extends TestCase {
 
         iterator = getIterator(pq);
         processor = new JSONRowResultProcessor(dummyAPI);
+
+
+        Properties webProperties = new Properties();
+        try {
+            webProperties.load(this.getClass().getClassLoader()
+                    .getResourceAsStream("web.properties"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        InterMineContext.initilise(im, webProperties, null);
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
@@ -161,7 +173,7 @@ public class JSONRowFormatterTest extends TestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
     }
 

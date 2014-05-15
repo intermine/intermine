@@ -23,6 +23,7 @@
       <property name="test.results.dir" value="${test.results.dir}"/>
       <property name="generate.report" value="false"/>
       <!--<property name="test.fork" value="yes"/>-->
+      <fileset dir="../.." includes="intermine/model/test/build.xml"/>
       <fileset dir="../.." includes="intermine/objectstore/test/build.xml"/>
       <fileset dir="../.." includes="intermine/integrate/test/build.xml"/>
       <fileset dir="../.." includes="intermine/web/test/build.xml"/>

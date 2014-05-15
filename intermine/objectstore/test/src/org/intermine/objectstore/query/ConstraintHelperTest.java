@@ -10,23 +10,24 @@ package org.intermine.objectstore.query;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
-import java.util.Collection;
 
-import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.objectstore.query.iql.IqlQueryParser;
+import junit.framework.TestCase;
+
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.CEO;
+import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.objectstore.query.iql.IqlQueryParser;
 
 
 public class ConstraintHelperTest extends TestCase

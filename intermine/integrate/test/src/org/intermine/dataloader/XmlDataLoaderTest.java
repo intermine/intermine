@@ -30,7 +30,7 @@ import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.util.XmlBinding;
 
 public class XmlDataLoaderTest extends TestCase

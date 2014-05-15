@@ -19,7 +19,7 @@ import org.intermine.bio.web.export.GAFExporter;
 import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.bio.web.logic.SequenceFeatureExportUtil.InvalidQueryException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**

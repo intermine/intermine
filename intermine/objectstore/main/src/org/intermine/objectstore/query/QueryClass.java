@@ -12,6 +12,7 @@ package org.intermine.objectstore.query;
 
 import java.util.Set;
 
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.util.DynamicUtil;
 
@@ -72,7 +73,7 @@ public class QueryClass implements QueryNode, FromElement
      */
     @Override
     public String toString() {
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(type);
+        Set<Class<?>> classes = Util.decomposeClass(type);
         if (classes.size() == 1) {
             return type.getName();
         } else {

@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 import org.intermine.xml.full.Item;
 
 /**

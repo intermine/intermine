@@ -17,22 +17,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.model.bio.FlyAtlasResult;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MicroArrayResult;
-import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.output.JSONResultsIterator;
-import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Displayer for flyatlas expression data.

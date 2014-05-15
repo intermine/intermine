@@ -19,8 +19,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.intermine.model.StringConstructor;
 import org.intermine.util.NullFirstComparator;
-import org.intermine.util.StringConstructor;
 
 /**
  * A class representing all changes to be made to an SQL table.

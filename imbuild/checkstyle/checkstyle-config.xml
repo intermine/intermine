@@ -216,7 +216,6 @@
     <module name="UpperEll"/>
     <module name="Indentation"/>
     <module name="CovariantEquals"/>
-    <module name="DoubleCheckedLocking"/>
     <module name="RedundantThrows"/>
     <module name="StringLiteralEquality"/>
     <module name="SuperFinalize"/>
