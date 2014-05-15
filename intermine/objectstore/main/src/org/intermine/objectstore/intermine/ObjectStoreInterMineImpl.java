@@ -201,6 +201,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         ShutdownHook.registerObject(new WeakReference<Object>(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
+        maxQueryParseTime = getMaxQueryParseTime();
+        if (maxQueryParseTime != null) {
+            limitedContext.setMaxQueryParseTime(maxQueryParseTime.longValue());
+        }
         description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 

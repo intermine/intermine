@@ -53,6 +53,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int maxOffset = Integer.MAX_VALUE;
     protected int maxLimit = Integer.MAX_VALUE;
     protected long maxTime = Long.MAX_VALUE;
+    // Optimiser will use a default query parse time if none is provided from properties
+    protected Long maxQueryParseTime = null;
     protected CacheMap<Integer, InterMineObject> cache;
 
     protected int getObjectOps = 0;
@@ -88,6 +90,10 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
 
         if (props.get("max-time") != null) {
             maxTime = Long.parseLong((String) props.get("max-time"));
+        }
+
+        if (props.get("max-query-parse-time") != null) {
+            maxQueryParseTime = Long.parseLong((String) props.get("max-query-parse-time"));
         }
 
         LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
@@ -462,6 +468,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public long getMaxTime() {
         return maxTime;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Long getMaxQueryParseTime() {
+        return maxQueryParseTime;
     }
 
     /**

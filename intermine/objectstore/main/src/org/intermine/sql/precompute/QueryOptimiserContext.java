@@ -29,6 +29,11 @@ public class QueryOptimiserContext
 
     private String mode = MODE_NORMAL;
     private long timeLimit = -1;
+    // This is the maximum amout of time that should be spent parsing an SQL query from a string
+    // to a Query object in milliseconds. It can be overwritten by the property:
+    // os.query.max-query-parse-time=200
+    private long maxQueryParseTime = 100;
+
 
     /**
      * Sets the optimiser mode of operation.
@@ -78,6 +83,8 @@ public class QueryOptimiserContext
         return timeLimit;
     }
 
+
+
     /**
      * Returns true if the optimiser will print out stuff.
      *
@@ -86,6 +93,24 @@ public class QueryOptimiserContext
     public boolean isVerbose() {
         return (MODE_VERBOSE == mode) || (MODE_VERBOSE_LIST == mode)
             || (MODE_VERBOSE_SUMMARY == mode);
+    }
+
+    /**
+     * Get the maximum time in milliseconds that the optimiser should spend parsing a query from
+     * SQL string to an org.intermine.sql.Query object.
+     * @return the max query parse time
+     */
+    public long getMaxQueryParseTime() {
+        return maxQueryParseTime;
+    }
+
+    /**
+     * Set the maximum time in milliseconds that the optimiser should spend parsing a query from
+     * SQL string to an org.intermine.sql.Query object.
+     * @param maxQueryParseTime the max query parse time
+     */
+    public void setMaxQueryParseTime(long maxQueryParseTime) {
+        this.maxQueryParseTime = maxQueryParseTime;
     }
 
     /**
