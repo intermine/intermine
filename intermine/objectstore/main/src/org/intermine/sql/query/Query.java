@@ -64,7 +64,8 @@ public class Query implements SQLStringable
     private Map<String, AbstractTable> originalAliasToTable;
     private AbstractTable onlyTable;
 
-
+    // keep track of aliases defined in the select list as they may be used elsewhere
+    private Map<String, AbstractValue> aliasToSelect;
     /**
      * Construct a new Query.
      */
@@ -82,6 +83,7 @@ public class Query implements SQLStringable
         queriesInUnion = new ArrayList<Query>();
         queriesInUnion.add(this);
         onlyTable = null;
+        aliasToSelect = new HashMap<String, AbstractValue>();
         this.aliasToTable = null;
         this.originalAliasToTable = null;
     }
@@ -598,55 +600,6 @@ public class Query implements SQLStringable
         }
     }
 
-    /**
-     * Processes an AST node produced by antlr, at the top level of the SQL query.
-     *
-     * @param ast an AST node to process
-     */
-    private void processASTOld(AST ast) {
-
-        boolean processSelect = false;
-        switch (ast.getType()) {
-            case SqlTokenTypes.LITERAL_explain:
-                explain = true;
-                break;
-            case SqlTokenTypes.LITERAL_distinct:
-                distinct = true;
-                break;
-            case SqlTokenTypes.SELECT_LIST:
-                // Always do the select list last.
-                processSelect = true;
-                break;
-            case SqlTokenTypes.FROM_LIST:
-                processFromList(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.WHERE_CLAUSE:
-                processWhereClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.GROUP_CLAUSE:
-                processGroupClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.HAVING_CLAUSE:
-                processHavingClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.ORDER_CLAUSE:
-                processOrderClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.LIMIT_CLAUSE:
-                processLimitClause(ast.getFirstChild());
-                break;
-            default:
-                throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
-                            + ast.getType() + "]"));
-        }
-        if (ast.getNextSibling() != null) {
-            processAST(ast.getNextSibling());
-        }
-        if (processSelect) {
-            processSelectList(ast.getFirstChild());
-        }
-    }
-
 
     /**
      * Processes an AST node produced by antlr, at the top level of the SQL query.
@@ -670,8 +623,6 @@ public class Query implements SQLStringable
         //   DISTINCT
         //   ORDER BY
 
-
-        // TODO check for invalid AST types
         // find each part of the query first, map by SqlTokenType
         HashMap<Integer, AST> queryPartASTs = new HashMap<Integer, AST>();
         while (ast != null) {
@@ -837,6 +788,10 @@ public class Query implements SQLStringable
             ast = ast.getNextSibling();
         } while (ast != null);
         SelectValue sv = new SelectValue(v, alias);
+        // store aliases defined here as they may be used in other parts of the query
+        if (alias != null) {
+            aliasToSelect.put(alias, v);
+        }
         addSelect(sv);
     }
 
@@ -891,12 +846,14 @@ public class Query implements SQLStringable
     }
 
     /**
-     * Processes an AST node that describes a Field.
+     * Processes an AST node that describes a Field. If no table alias is found for a field the
+     * field may be an alias, in which case find the actual field name/function/etc that was
+     * defined in the select list.
      *
      * @param ast an AST node to process
      * @return a Field object corresponding to the input
      */
-    public Field processNewField(AST ast) {
+    public AbstractValue processNewField(AST ast) {
         String table = null;
         String field = null;
         do {
@@ -915,6 +872,10 @@ public class Query implements SQLStringable
         } while (ast != null);
         AbstractTable t = null;
         if (table == null) {
+            // if there is no table this may be an alias, so include field/function/etc from select
+            if (aliasToSelect.containsKey(field)) {
+                return aliasToSelect.get(field);
+            }
             t = onlyTable;
         } else {
             t = aliasToTable.get(table);
