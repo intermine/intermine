@@ -269,7 +269,6 @@ public class Query implements SQLStringable
         if (aliasToTable != null) {
             aliasToTable.put(obj.getAlias(), obj);
         }
-        onlyTable = obj;
     }
 
     /**
@@ -876,7 +875,14 @@ public class Query implements SQLStringable
             if (aliasToSelect.containsKey(field)) {
                 return aliasToSelect.get(field);
             }
-            t = onlyTable;
+            if (from.size() == 1) {
+                // there is only one table on this query so we can infer the alias
+                t = from.iterator().next();
+            } else {
+                // We can't do anything here, we don't know a table name and
+                throw new IllegalArgumentException("Unable to parse query - there was a field ("
+                        + field + ") in the query without a table name and that isn't an alias");
+            }
         } else {
             t = aliasToTable.get(table);
         }
@@ -954,7 +960,7 @@ public class Query implements SQLStringable
                     obj = retval;
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
             }
             ast = ast.getNextSibling();

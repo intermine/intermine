@@ -1209,7 +1209,7 @@ public class QueryTest extends TestCase
 
     public void testOrderByAliasedFunction() throws Exception {
         // count(*) in select is aliased, we are sorting by count(*) but referring to it by alias in order by
-        q1 = new Query("SELECT field1 AS alias1, COUNT(*) as alias1 FROM table2 GROUP BY field1 ORDER BY alias2");
+        q1 = new Query("SELECT field1 AS alias1, COUNT(*) as alias2 FROM table1 GROUP BY field1 ORDER BY alias2");
         q2 = new Query();
         Table t1 = new Table("table1");
         Field f1 = new Field("field1", t1);
@@ -1219,6 +1219,7 @@ public class QueryTest extends TestCase
         q2.addSelect(sv1);
         q2.addSelect(sv2);
         q2.addFrom(t1);
+        q2.addGroupBy(f1);
         q2.addOrderBy(func1);
         assertEquals(q2, q1);
     }
@@ -1239,15 +1240,16 @@ public class QueryTest extends TestCase
     public void testOrderByUnaliasedFieldMultiTable() throws Exception {
         // if a field (not an alias) appears in order by without a table name we shouldn't add a
         // table name to it
-        q1 = new Query("SELECT field1 FROM table1, table2 WHERE table1.k = table2.fk ORDER BY field1");
-        q2 = new Query();
-        Table t1 = new Table("table1");
-        Table t2 = new Table("table2");
-        Field f1 = new Field("field1", t1);
-        q2.addSelect(new SelectValue(f1, null));
-        q2.addFrom(t1);
-        q2.addFrom(t2);
-        q2.addOrderBy(f1);
-        assertEquals(q2, q1);
+        try {
+            q1 = new Query("SELECT field1 FROM table1, table2 WHERE table1.k = table2.fk ORDER BY field1");
+            fail("Expected an IllegalArgumentExcption");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    public void testSingleTableSubqueryNoAlias() throws Exception {
+        // just check this parses, it selects a value from a single table subquery without an alias
+        q1 = new Query("SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE (NOT (a1_.name IN (SELECT value FROM bag_table))) ORDER BY a1_.id");
     }
 }
