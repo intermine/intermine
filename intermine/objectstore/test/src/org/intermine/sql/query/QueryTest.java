@@ -1224,10 +1224,30 @@ public class QueryTest extends TestCase
     }
 
     public void testOrderByUnaliasedFieldSingleTable() throws Exception {
-        fail("not yet implemented");
+        // if a field (not an alias) appears in order by without a table name and there's only one
+        // table then we can set a table name
+        q1 = new Query("SELECT field1 FROM table1 ORDER BY field1");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        q2.addSelect(new SelectValue(f1, null));
+        q2.addFrom(t1);
+        q2.addOrderBy(f1);
+        assertEquals(q2, q1);
     }
 
     public void testOrderByUnaliasedFieldMultiTable() throws Exception {
-        fail("not yet implemented");
+        // if a field (not an alias) appears in order by without a table name we shouldn't add a
+        // table name to it
+        q1 = new Query("SELECT field1 FROM table1, table2 WHERE table1.k = table2.fk ORDER BY field1");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Table t2 = new Table("table2");
+        Field f1 = new Field("field1", t1);
+        q2.addSelect(new SelectValue(f1, null));
+        q2.addFrom(t1);
+        q2.addFrom(t2);
+        q2.addOrderBy(f1);
+        assertEquals(q2, q1);
     }
 }
