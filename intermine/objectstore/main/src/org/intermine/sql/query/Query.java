@@ -64,6 +64,7 @@ public class Query implements SQLStringable
     private Map<String, AbstractTable> originalAliasToTable;
     private AbstractTable onlyTable;
 
+
     /**
      * Construct a new Query.
      */
@@ -602,7 +603,8 @@ public class Query implements SQLStringable
      *
      * @param ast an AST node to process
      */
-    private void processAST(AST ast) {
+    private void processASTOld(AST ast) {
+
         boolean processSelect = false;
         switch (ast.getType()) {
             case SqlTokenTypes.LITERAL_explain:
@@ -644,6 +646,69 @@ public class Query implements SQLStringable
             processSelectList(ast.getFirstChild());
         }
     }
+
+
+    /**
+     * Processes an AST node produced by antlr, at the top level of the SQL query.
+     *
+     * @param ast an AST node to process
+     */
+    private void processAST(AST ast) {
+
+        // Parts of SQL statement need to be processed in the correct order, for example:
+        // - tables defined in FROM need to be referenced in the SELECT
+        // - aliases defined in SELECT may be used in GROUP BY and ORDER BY, etc
+        // The required order is:
+        //   FROM
+        //   ON
+        //   JOIN
+        //   WHERE
+        //   GROUP BY
+        //   WITH CUBE or WITH ROLLUP  (we don't use)
+        //   HAVING
+        //   SELECT
+        //   DISTINCT
+        //   ORDER BY
+
+
+        // TODO check for invalid AST types
+        // find each part of the query first, map by SqlTokenType
+        HashMap<Integer, AST> queryPartASTs = new HashMap<Integer, AST>();
+        while (ast != null) {
+            queryPartASTs.put(ast.getType(), ast.getFirstChild());
+            ast = ast.getNextSibling();
+        }
+
+        // process in appropriate order
+        if (queryPartASTs.containsKey(SqlTokenTypes.FROM_LIST)) {
+            processFromList(queryPartASTs.get(SqlTokenTypes.FROM_LIST));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.WHERE_CLAUSE)) {
+            processWhereClause(queryPartASTs.get(SqlTokenTypes.WHERE_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.GROUP_CLAUSE)) {
+            processGroupClause(queryPartASTs.get(SqlTokenTypes.GROUP_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.HAVING_CLAUSE)) {
+            processHavingClause(queryPartASTs.get(SqlTokenTypes.HAVING_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.SELECT_LIST)) {
+            processSelectList(queryPartASTs.get(SqlTokenTypes.SELECT_LIST));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.LITERAL_distinct)) {
+            distinct = true;
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.ORDER_CLAUSE)) {
+            processOrderClause(queryPartASTs.get(SqlTokenTypes.ORDER_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.LIMIT_CLAUSE)) {
+            processLimitClause(queryPartASTs.get(SqlTokenTypes.LIMIT_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.LITERAL_explain)) {
+            explain = true;
+        }
+    }
+
 
     /**
      * Processes an AST node that describes a FROM list.
