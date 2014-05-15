@@ -10,9 +10,14 @@ package org.intermine.objectstore.query;
  *
  */
 
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.testing.OneTimeTestCase;
-import org.intermine.model.testmodel.*;
 
 public class QueryTestCaseTest extends QueryTestCase
 {

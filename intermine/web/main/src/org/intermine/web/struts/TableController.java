@@ -38,7 +38,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;

@@ -1,8 +1,8 @@
 package org.intermine.api.query.range;
 
-import org.intermine.objectstore.query.ConstraintOp;
-import static org.intermine.objectstore.query.ConstraintOp.AND;
-import static org.intermine.objectstore.query.ConstraintOp.OR;
+import org.intermine.metadata.ConstraintOp;
+import static org.intermine.metadata.ConstraintOp.AND;
+import static org.intermine.metadata.ConstraintOp.OR;
 
 /**
  * A bundle of options consumed by the AbstractHelper when generating constraint

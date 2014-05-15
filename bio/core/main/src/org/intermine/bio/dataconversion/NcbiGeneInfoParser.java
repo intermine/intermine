@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 
 /**

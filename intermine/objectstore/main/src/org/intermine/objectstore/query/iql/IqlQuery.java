@@ -19,12 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
@@ -57,8 +58,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.WidthBucketFunction;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.Util;
 
 /**
  * OQL representation of an object-based Query
@@ -378,7 +377,7 @@ public class IqlQuery
             .append(col.getFieldName());
         if (col.getSubclass() != null) {
             Class<?> subclass = col.getSubclass();
-            Collection<Class<?>> subclasses = DynamicUtil.decomposeClass(subclass);
+            Collection<Class<?>> subclasses = Util.decomposeClass(subclass);
             if (subclasses.size() == 1) {
                 retval.append("::")
                     .append(subclasses.iterator().next().getName());
@@ -478,7 +477,7 @@ public class IqlQuery
             .append(ref.getFieldName());
         if (ref.getSubclass() != null) {
             Class<?> subclass = ref.getSubclass();
-            Collection<Class<?>> subclasses = DynamicUtil.decomposeClass(subclass);
+            Collection<Class<?>> subclasses = Util.decomposeClass(subclass);
             if (subclasses.size() == 1) {
                 retval.append("::")
                     .append(subclasses.iterator().next().getName());

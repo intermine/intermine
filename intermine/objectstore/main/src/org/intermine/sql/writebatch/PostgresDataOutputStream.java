@@ -16,8 +16,8 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.intermine.model.StringConstructor;
 import org.intermine.util.SensibleByteArrayOutputStream;
-import org.intermine.util.StringConstructor;
 
 /**
  * A subclass of DataOutputStream that has extra methods useful for reducing the memory

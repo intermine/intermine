@@ -10,7 +10,7 @@ package org.intermine.objectstore;
  *
  */
 
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * Object to be put in results maps, as representing a failure, with a given exception class and

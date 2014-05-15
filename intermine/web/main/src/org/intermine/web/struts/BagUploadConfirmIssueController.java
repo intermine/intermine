@@ -31,7 +31,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.metadata.Model;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.BagUploadConfirmInlineResultsTable;
 import org.intermine.web.logic.results.BagUploadConfirmInlineResultsTableRow;
