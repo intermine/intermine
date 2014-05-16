@@ -151,91 +151,96 @@ public class BagQueryRunner
         // return first record ONLY for identifier.  otherwise, run all queries and return all
         boolean matchOnFirst = bagQueryConfig.getMatchOnFirst();
 
-        for (BagQuery bq : queries) {
-            // run the next query on identifiers not yet resolved
-            // OR all identifiers if matchOnFirst = FALSE
-            if (!unresolved.isEmpty() || !matchOnFirst) {
-                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                try {
-                    Set<String> toProcess = (matchOnFirst) ? unresolved : unresolvedOriginal;
-                    Query q = bq.getQuery(toProcess, extraFieldValue);
-                    Results res = os.execute(q, 10000, true, true, false);
-                    for (Object rowObj : res) {
-                        ResultsRow<?> row = (ResultsRow<?>) rowObj;
-                        Integer id = (Integer) row.get(0);
-                        for (int i = 1; i < row.size(); i++) {
-                            final Object fieldObject = row.get(i);
-                            if (fieldObject != null) {
-                                String field = String.valueOf(fieldObject);
-                                String lowerField = field.toLowerCase();
+        if (wildcardInput.isEmpty()) {
+            for (BagQuery bq : queries) {
+                // run the next query on identifiers not yet resolved
+                // OR all identifiers if matchOnFirst = FALSE
+                if (!unresolved.isEmpty() || !matchOnFirst) {
+                    Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+                    try {
+                        Set<String> toProcess = (matchOnFirst) ? unresolved : unresolvedOriginal;
+                        Query q = bq.getQuery(toProcess, extraFieldValue);
+                        Results res = os.execute(q, 10000, true, true, false);
+                        for (Object rowObj : res) {
+                            ResultsRow<?> row = (ResultsRow<?>) rowObj;
+                            Integer id = (Integer) row.get(0);
+                            for (int i = 1; i < row.size(); i++) {
+                                final Object fieldObject = row.get(i);
+                                if (fieldObject != null) {
+                                    String field = String.valueOf(fieldObject);
+                                    String lowerField = field.toLowerCase();
 
-                                if (caseSensitive) {
-                                    if (cleanInput.contains(field)) {
-                                        processMatch(resMap, unresolved, id, field);
+                                    if (caseSensitive) {
+                                        if (cleanInput.contains(field)) {
+                                            processMatch(resMap, unresolved, id, field);
+                                        }
+                                    } else if (lowerCaseInput.containsKey(lowerField)) {
+                                        // because we are converting to lower case we need to match
+                                        // to original input so that 'h' matches 'H' and 'h' becomes
+                                        // a duplicate.
+                                        String originalInput = lowerCaseInput.get(lowerField);
+                                        processMatch(resMap, unresolved, id, originalInput);
                                     }
-                                } else if (lowerCaseInput.containsKey(lowerField)) {
-                                    // because we are converting to lower case we need to match
-                                    // to original input so that 'h' matches 'H' and 'h' becomes
-                                    // a duplicate.
-                                    String originalInput = lowerCaseInput.get(lowerField);
-                                    processMatch(resMap, unresolved, id, originalInput);
                                 }
                             }
                         }
+                    } catch (IllegalArgumentException e) {
+                        // Query couldn't handle extra value
+                        LOG.info("couldn't handle organism value", e);
                     }
-                } catch (IllegalArgumentException e) {
-                    // Query couldn't handle extra value
-                    LOG.info("couldn't handle organism value", e);
-                }
-                addResults(resMap, unresolved, bqr, bq.getMessage(), typeCls, false,
+                    addResults(resMap, unresolved, bqr, bq.getMessage(), typeCls, false,
                             matchOnFirst, bq.matchesAreIssues());
+                }
             }
-            if (!wildcardInput.isEmpty()) {
-                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                try {
-                    Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
-                    Results res = os.execute(q, ResultsBatches.DEFAULT_BATCH_SIZE, true, true,
-                            false);
-                    for (Object rowObj : res) {
-                        ResultsRow<?> row = (ResultsRow<?>) rowObj;
-                        Integer id = (Integer) row.get(0);
-                        for (int i = 1; i < row.size(); i++) {
-                            String field = "" + row.get(i);
-                            String lowerField = field.toLowerCase();
-                            for (String wildcard : wildcardInput) {
-                                Pattern pattern = patterns.get(wildcard);
-                                if (pattern.matcher(lowerField).matches()) {
-                                    Set<Integer> ids = resMap.get(wildcard);
-                                    if (ids == null) {
-                                        ids = new LinkedHashSet<Integer>();
-                                        resMap.put(wildcard, ids);
+        }  else {
+            for (BagQuery bq : queries) {
+                if (!wildcardUnresolved.isEmpty()) {
+                    Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
+                    try {
+                        Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
+                        Results res = os.execute(q, ResultsBatches.DEFAULT_BATCH_SIZE, true, true,
+                                false);
+                        for (Object rowObj : res) {
+                            ResultsRow<?> row = (ResultsRow<?>) rowObj;
+                            Integer id = (Integer) row.get(0);
+                            for (int i = 1; i < row.size(); i++) {
+                                String field = "" + row.get(i);
+                                String lowerField = field.toLowerCase();
+                                for (String wildcard : wildcardInput) {
+                                    Pattern pattern = patterns.get(wildcard);
+                                    if (pattern.matcher(lowerField).matches()) {
+                                        Set<Integer> ids = resMap.get(wildcard);
+                                        if (ids == null) {
+                                            ids = new LinkedHashSet<Integer>();
+                                            resMap.put(wildcard, ids);
+                                        }
+                                        ids.add(id);
+                                        // we have matched at least once with wildcard
+                                        wildcardUnresolved.remove(wildcard);
                                     }
-                                    ids.add(id);
-                                    // we have matched at least once with wildcard
-                                    wildcardUnresolved.remove(wildcard);
                                 }
                             }
                         }
-                    }
-                    for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
-                        // This is a dummy issue just to give a message when running queries
-                        bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
-                                entry.getKey(), new ArrayList<Object>(entry.getValue()));
-                        if (matchOnFirst) {
-                            addResults(resMap, wildcardUnresolved, bqr, bq.getMessage(),
-                                    typeCls, true, matchOnFirst, bq.matchesAreIssues());
-                        } else {
-                            addResults(resMap, wildcardUnresolvedOriginal, bqr, bq.getMessage(),
-                                    typeCls, true, matchOnFirst, bq.matchesAreIssues());
+                        for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
+                            // This is a dummy issue just to give a message when running queries
+                            bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
+                                    entry.getKey(), new ArrayList<Object>(entry.getValue()));
+                            if (matchOnFirst) {
+                                addResults(resMap, wildcardUnresolved, bqr, bq.getMessage(),
+                                        typeCls, true, matchOnFirst, bq.matchesAreIssues());
+                            } else {
+                                addResults(resMap, wildcardUnresolvedOriginal, bqr, bq.getMessage(),
+                                        typeCls, true, matchOnFirst, bq.matchesAreIssues());
+                            }
                         }
-
+                    } catch (IllegalArgumentException e) {
+                        LOG.error("Error running bag query lookup: ", e);
+                        // Query couldn't handle extra value
                     }
-                } catch (IllegalArgumentException e) {
-                    LOG.error("Error running bag query lookup: ", e);
-                    // Query couldn't handle extra value
                 }
             }
         }
+
 
         unresolved.addAll(wildcardUnresolved);
         Map<String, ?> unresolvedMap = new HashMap<String, Object>();
