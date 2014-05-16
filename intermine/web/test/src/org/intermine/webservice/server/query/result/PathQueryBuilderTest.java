@@ -13,6 +13,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
@@ -47,7 +48,7 @@ public class PathQueryBuilderTest extends TestCase {
     "</query>";
 
 
-    private final Map<String, InterMineBag> bags = new HashMap<String, InterMineBag>();
+    private final Producer<Map<String, InterMineBag>> bags = (Producer<Map<String, InterMineBag>>) new HashMap<String, InterMineBag>();
     private PathQuery expectedGoodQuery;
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
