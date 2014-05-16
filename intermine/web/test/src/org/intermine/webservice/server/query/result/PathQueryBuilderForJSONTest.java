@@ -39,8 +39,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, savedBags);
+        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj();
         assertTrue(publicBuilder != null);
 
     }
@@ -50,8 +49,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, savedBags);
+        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj();
         PathQuery pq = publicBuilder.getQuery();
         List<String> expectedViews = Arrays.asList("Manager.id", "Manager.department.name");
         assertEquals(expectedViews, pq.getView());
