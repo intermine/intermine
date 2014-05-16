@@ -21,9 +21,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-
-
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.bio.like.Precalculate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -44,46 +43,50 @@ import org.intermine.web.search.KeywordSearch;
  *
  * @author Richard Smith
  */
-public class PostProcessOperationsTask extends DynamicAttributeTask
-{
-    private static final Logger LOGGER = Logger.getLogger(PostProcessOperationsTask.class);
+public class PostProcessOperationsTask extends DynamicAttributeTask {
+    private static final Logger LOGGER = Logger
+            .getLogger(PostProcessOperationsTask.class);
 
     protected String operation, objectStoreWriter, ensemblDb, organisms = null;
     protected File outputFile;
     protected ObjectStoreWriter osw;
 
     /**
-     * Sets the value of operation
-     *
-     * @param operation the operation to perform eg. 'Download publications'
-     */
+    * Sets the value of operation
+    *
+    * @param operation
+    *            the operation to perform eg. 'Download publications'
+    */
     public void setOperation(String operation) {
         this.operation = operation;
     }
 
     /**
-     * Sets the value of objectStoreWriter
-     *
-     * @param objectStoreWriter an objectStoreWriter alias for operations that require one
-     */
+    * Sets the value of objectStoreWriter
+    *
+    * @param objectStoreWriter
+    *            an objectStoreWriter alias for operations that require one
+    */
     public void setObjectStoreWriter(String objectStoreWriter) {
         this.objectStoreWriter = objectStoreWriter;
     }
 
     /**
-     * Sets the value of outputFile
-     *
-     * @param outputFile an output file for operations that require one
-     */
+    * Sets the value of outputFile
+    *
+    * @param outputFile
+    *            an output file for operations that require one
+    */
     public void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
     }
 
     /**
-     * Sets the value of ensemblDb
-     *
-     * @param ensemblDb a database alias
-     */
+    * Sets the value of ensemblDb
+    *
+    * @param ensemblDb
+    *            a database alias
+    */
     public void setEnsemblDb(String ensemblDb) {
         this.ensemblDb = ensemblDb;
     }
@@ -93,14 +96,15 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             throw new BuildException("objectStoreWriter attribute is not set");
         }
         if (osw == null) {
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter(objectStoreWriter);
+            osw = ObjectStoreWriterFactory
+                    .getObjectStoreWriter(objectStoreWriter);
         }
         return osw;
     }
 
     /**
-     * {@inheritDoc}
-     */
+    * {@inheritDoc}
+    */
     @Override
     public void execute() {
         if (operation == null) {
@@ -281,10 +285,13 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("modmine-metadata-cache".equals(operation)) {
                 CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
             } else if ("populate-child-features".equals(operation)) {
-            	PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
-            	jb.populateCollection();
+                PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
+                jb.populateCollection();
+            } else if ("create-like-matrices".equals(operation)) {
+                Precalculate preCal = new Precalculate(getObjectStoreWriter());
+                preCal.precalculate();
             }
-                
+
         } catch (BuildException e) {
             LOGGER.error("Failed postprocess. Operation was: " + operation, e);
             throw e;
