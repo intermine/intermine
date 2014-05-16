@@ -118,7 +118,7 @@ public class BagQueryRunner
         for (String inputString : input) {
             if (StringUtils.isNotEmpty(inputString)) {
                 // no wildcards OR single * (if single *, treat like a string)
-                if (inputString.indexOf('*') == -1 || !doWildcards || inputString.equals("*")) {
+                if (inputString.indexOf('*') == -1 || !doWildcards || ("*").equals(inputString)) {
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
                         lowerCaseInput.put(inputString.toLowerCase(), inputString);
@@ -161,7 +161,6 @@ public class BagQueryRunner
                     Query q = bq.getQuery(toProcess, extraFieldValue);
                     Results res = os.execute(q, 10000, true, true, false);
                     for (Object rowObj : res) {
-                        System.out.println("query" + q.toString());
                         ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
@@ -190,10 +189,8 @@ public class BagQueryRunner
                 }
                 addResults(resMap, unresolved, bqr, bq.getMessage(), typeCls, false,
                             matchOnFirst, bq.matchesAreIssues());
-                System.out.println("one result" + resMap.size());
             }
             if (!wildcardInput.isEmpty()) {
-                System.out.println("wildcards!");
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 try {
                     Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
@@ -246,16 +243,13 @@ public class BagQueryRunner
             unresolvedMap.put(unresolvedStr, null);
         }
         bqr.putUnresolved(unresolvedMap);
-        System.out.println("unresolved" + unresolved.size());
         return bqr;
     }
 
     private void processMatch(Map<String, Set<Integer>> resMap, Set<String> unresolved,
         Integer id, String field) {
-        System.out.println("processing match");
         Set<Integer> ids = resMap.get(field);
         if (ids == null) {
-            System.out.println("processing match2");
             ids = new LinkedHashSet<Integer>();
             resMap.put(field, ids);
         }
@@ -289,14 +283,12 @@ public class BagQueryRunner
         } catch (ObjectStoreException e) {
             throw new InterMineException("can't fetch: " + idsToFetch, e);
         }
-        System.out.println("adding results" + fetchedObjects.size());
         for (Map.Entry<String, Set<Integer>> entry : resMap.entrySet()) {
             String input = entry.getKey();
             Set<Integer> ids = entry.getValue();
             boolean resolved = true;
 
             if (!matchesAreIssues) {
-                System.out.println("matchesAreIssues" + matchesAreIssues);
                 // if matches are not issues then each entry will be a match or a duplicate
                 if (ids.size() == 1) {
                     bqr.addMatch(input, ids.iterator().next());
