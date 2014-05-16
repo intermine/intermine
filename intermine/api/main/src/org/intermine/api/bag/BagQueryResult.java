@@ -58,14 +58,14 @@ public class BagQueryResult
      */
     public static final String WILDCARD = "WILDCARD";
 
-    public static final Set<String> ISSUE_KEYS
-        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
+    public static final Set<String> ISSUE_KEYS  = Collections.unmodifiableSet(new HashSet<String>(
+                Arrays.asList(DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
 
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
 
     /**
      * A map from issueType -> Query -> Identifier -> FoundThing[]
-     * 
+     *
      * eg:<pre>
      *     { "DUPLICATE":      { "Q1": { "my-gene-id": [o1, o2] },
      *                           "Q2": { "my-gene-id": [o3, o4] }},
@@ -150,7 +150,7 @@ public class BagQueryResult
     }
 
     /**
-     * Get ids of all InterMineObjects returned that were registered as 
+     * Get ids of all InterMineObjects returned that were registered as
      * issues of this particular type for this bag query lookup.
      * @param issueKey The type of issue we want (eg "DUPLICATE").
      * @return the set of all ids that were issues
@@ -208,7 +208,8 @@ public class BagQueryResult
         }
 
         public int hashCode() {
-            return new HashCodeBuilder().append(queryDesc).append(inputIdent).append(results).hashCode();
+            return new HashCodeBuilder().append(queryDesc).append(
+                    inputIdent).append(results).hashCode();
         }
     }
 
@@ -239,10 +240,10 @@ public class BagQueryResult
      * @return a Map of from input string to null/object - null when the input doesn't match any
      * object of any type, otherwise a reference to a Set of the objects that matched
      *
-     * Changes to the returned map will not affect the information in this bag qeury result. 
+     * Changes to the returned map will not affect the information in this bag qeury result.
      */
     public Map<String, Object> getUnresolved() {
-        return new HashMap<String,Object>(unresolved);
+        return new HashMap<String, Object>(unresolved);
     }
 
     /**
