@@ -54,7 +54,7 @@ public class EnsemblSnpConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-        System.out.println("READER");
+
         BufferedReader bReader = (BufferedReader) reader;
         GFF3Record record;
         for (Iterator<?> i = GFF3Parser.parse(bReader); i.hasNext();) {
