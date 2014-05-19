@@ -19,21 +19,21 @@ public class UtilTest extends TestCase
     }
 
     public void testEquals() {
-        assertTrue(org.intermine.util.Util.equals(null, null));
-        assertTrue(org.intermine.util.Util.equals(new Integer(10), new Integer(10)));
-        assertTrue(org.intermine.util.Util.equals(new Integer(20), new Integer(10)) == false);
-        assertTrue(org.intermine.util.Util.equals(null, new Integer(10)) == false);
-        assertTrue(org.intermine.util.Util.equals(new Integer(10), null) == false);
+        assertTrue(org.intermine.metadata.Util.equals(null, null));
+        assertTrue(org.intermine.metadata.Util.equals(new Integer(10), new Integer(10)));
+        assertTrue(org.intermine.metadata.Util.equals(new Integer(20), new Integer(10)) == false);
+        assertTrue(org.intermine.metadata.Util.equals(null, new Integer(10)) == false);
+        assertTrue(org.intermine.metadata.Util.equals(new Integer(10), null) == false);
     }
 
     public void testHashCode() {
-        assertTrue(org.intermine.util.Util.hashCode(null) == 0);
-        assertTrue(org.intermine.util.Util.hashCode(new Integer(10)) != 0);
+        assertTrue(org.intermine.metadata.Util.hashCode(null) == 0);
+        assertTrue(org.intermine.metadata.Util.hashCode(new Integer(10)) != 0);
     }
 
     public void testMD5checksum() {
-        assertEquals(org.intermine.util.Util.getMd5checksum("ABC"), "902fbdd2b1df0c4f70b4a5d23525e932");
-        assertEquals(org.intermine.util.Util.getMd5checksum("MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSR"), "c4edf616cb85a80fd3939358b3f47235");
+        assertEquals(org.intermine.metadata.Util.getMd5checksum("ABC"), "902fbdd2b1df0c4f70b4a5d23525e932");
+        assertEquals(org.intermine.metadata.Util.getMd5checksum("MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSR"), "c4edf616cb85a80fd3939358b3f47235");
     }
 
 }

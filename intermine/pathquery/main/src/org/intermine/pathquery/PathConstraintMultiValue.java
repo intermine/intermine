@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /**
  * Representation of a constraint to a collection of values in a query.
@@ -27,7 +27,7 @@ public class PathConstraintMultiValue extends PathConstraint
     /** List of valid ops for this type of constraint */
     public static final Set<ConstraintOp> VALID_OPS = new HashSet<ConstraintOp>(Arrays.asList(
                 ConstraintOp.ONE_OF, ConstraintOp.NONE_OF));
-    
+
     private Collection<String> values;
 
     /**
@@ -59,7 +59,7 @@ public class PathConstraintMultiValue extends PathConstraint
                     + " collection of values.");
         }
         if (values.isEmpty()) {
-        	throw new IllegalArgumentException("at least one value must be supplied.");
+            throw new IllegalArgumentException("at least one value must be supplied.");
         }
         this.values = values;
     }

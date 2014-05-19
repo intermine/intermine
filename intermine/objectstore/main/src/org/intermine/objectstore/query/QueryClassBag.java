@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 
@@ -57,7 +58,7 @@ public class QueryClassBag implements FromElement
         }
         if (!InterMineObject.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException("Cannot create a QueryClassBag with a class that"
-                    + " is not a subclass of InterMineObject: " + DynamicUtil.getFriendlyName(
+                    + " is not a subclass of InterMineObject: " + Util.getFriendlyName(
                             clazz));
         }
         @SuppressWarnings("unchecked") Class<? extends InterMineObject> thisType = (Class) clazz;
@@ -95,7 +96,7 @@ public class QueryClassBag implements FromElement
         }
         if (!InterMineObject.class.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException("Cannot create a QueryClassBag with a class that"
-                    + " is not a subclass of InterMineObject: " + DynamicUtil.getFriendlyName(
+                    + " is not a subclass of InterMineObject: " + Util.getFriendlyName(
                             clazz));
         }
         @SuppressWarnings("unchecked") Class<? extends InterMineObject> thisType = (Class) clazz;
@@ -163,7 +164,7 @@ public class QueryClassBag implements FromElement
      */
     @Override
     public String toString() {
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(type);
+        Set<Class<?>> classes = Util.decomposeClass(type);
         StringBuffer retval = new StringBuffer();
         if (osb != null) {
             retval.append("BAG(" + osb.getBagId() + ")::");

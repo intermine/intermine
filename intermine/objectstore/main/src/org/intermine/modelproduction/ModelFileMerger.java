@@ -9,7 +9,8 @@ import java.util.Set;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.ModelParser;
+import org.intermine.metadata.ModelParser;
+import org.intermine.metadata.ModelParserException;
 
 /**
  * Methods for merging a model from a list of files.

@@ -12,7 +12,7 @@ package org.intermine.template;
 
 import java.util.List;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 
 

@@ -13,9 +13,9 @@ package org.intermine.objectstore.query;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
 
 /**
  * Represents a QueryClass field that is neither a collection or reference to
