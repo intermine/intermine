@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

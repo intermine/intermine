@@ -18,10 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.MultipleInBagConstraint;
 import org.intermine.objectstore.query.Query;
@@ -30,7 +31,6 @@ import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.util.SAXParser;
-import org.intermine.util.TypeUtil;
 import org.xml.sax.InputSource;
 
 /**

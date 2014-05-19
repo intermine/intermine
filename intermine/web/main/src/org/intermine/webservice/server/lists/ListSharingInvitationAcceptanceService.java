@@ -1,13 +1,21 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -23,7 +31,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
-import org.intermine.webservice.client.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -32,23 +40,23 @@ import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 public class ListSharingInvitationAcceptanceService extends JSONService {
 
-    private static final Logger LOG = 
+    private static final Logger LOG =
         Logger.getLogger(ListSharingInvitationAcceptanceService.class);
     private static final Set<String> acceptableAcceptances =
         new HashSet<String>(Arrays.asList("true", "false"));
-    
+
     private final SharedBagManager sbm;
-    
+
     public ListSharingInvitationAcceptanceService(InterMineAPI im) {
         super(im);
         sbm = SharedBagManager.getInstance(im.getProfileManager());
     }
-    
+
     @Override
     protected String getResultsKey() {
         return "list";
     }
-    
+
     /**
      * Parameter object, holding the storage of the parsed parameters, and the
      * logic for weedling them out of the HTTP parameters.
@@ -58,13 +66,13 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
         final SharingInvite invite;
         final Profile accepter;
         final boolean notify;
-        
+
         /**
          * Do the dance of parameter parsing and validation.
          */
         UserInput() {
             accepter = getPermission().getProfile();
-            
+
             if (!accepter.isLoggedIn()) {
                 throw new ServiceForbiddenException("You must be logged in");
             }
@@ -84,7 +92,7 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
                 throw new BadRequestException("The value of the 'accepted' parameter must be one of " + acceptableAcceptances);
             }
             accepted = Boolean.parseBoolean(isAccepted);
-            
+
             try {
                 invite = SharingInvite.getByToken(im, token);
             } catch (SQLException e) {
@@ -106,7 +114,7 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
             }
         }
     }
-    
+
     @Override
     protected void execute() throws ServiceException, NotFoundException {
         UserInput input = new UserInput();
@@ -117,7 +125,7 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
         } catch (UserNotFoundException e) {
             throw new InternalErrorException(
                 "Inconsistent state: p.isLoggedIn() but not found in DB");
-        } catch (UserAlreadyShareBagException e) {    
+        } catch (UserAlreadyShareBagException e) {
             LOG.warn("User accepted an invitation to a list they already have access to", e);
         }
 
@@ -134,7 +142,7 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
             addResultItem((Map) Collections.emptyMap(), false);
         }
     }
-    
+
     private void notifyOwner(final SharingInvite invite) {
         final ProfileManager pm = im.getProfileManager();
         final Profile receiver = getPermission().getProfile();

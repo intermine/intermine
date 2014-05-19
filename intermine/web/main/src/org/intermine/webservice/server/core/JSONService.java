@@ -76,7 +76,7 @@ public abstract class JSONService extends WebService
                 intro += "[";
                 attributes.put(JSONFormatter.KEY_OUTRO, "]");
             }
-        	attributes.put(JSONFormatter.KEY_INTRO, intro);
+            attributes.put(JSONFormatter.KEY_INTRO, intro);
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
@@ -93,7 +93,7 @@ public abstract class JSONService extends WebService
     protected void addOutputInfo(String key, String value) {
         kvPairs.put(key, value);
     }
-    
+
     /**
      * Output a map of names and values as a JSON object.
      * @param mapping the mapping of things to output.
@@ -119,7 +119,9 @@ public abstract class JSONService extends WebService
     private void addResultValueInternal(String val, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
         outputStrings.add(val);
-        if (hasMore) outputStrings.add("");
+        if (hasMore) {
+            outputStrings.add("");
+        }
         output.addResultItem(outputStrings);
     }
 

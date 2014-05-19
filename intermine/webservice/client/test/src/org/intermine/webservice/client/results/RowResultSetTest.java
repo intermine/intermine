@@ -2,11 +2,9 @@ package org.intermine.webservice.client.results;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
-
-import org.intermine.webservice.client.results.RowResultSet;
 
 import junit.framework.TestCase;
 

@@ -28,6 +28,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.sql.query.AbstractConstraint;
 import org.intermine.sql.query.AbstractTable;
@@ -49,7 +50,6 @@ import org.intermine.sql.query.Table;
 import org.intermine.util.ConsistentSet;
 import org.intermine.util.IdentityMap;
 import org.intermine.util.MappingUtil;
-import org.intermine.util.StringUtil;
 
 /**
  * A static class providing the code to optimise a query, given a database (presumably with a table

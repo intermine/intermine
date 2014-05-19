@@ -10,18 +10,19 @@ package org.intermine.dataloader;
  *
  */
 
+import static org.intermine.dataloader.IntegrationWriterAbstractImpl.SKELETON;
+
 import java.util.Comparator;
 import java.util.List;
 
-import static org.intermine.dataloader.IntegrationWriterAbstractImpl.SKELETON;
+import org.apache.log4j.Logger;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
-
-import org.apache.log4j.Logger;
 
 /**
  * Comparator, that compares two InterMineObjects, with reference to a particular
@@ -128,13 +129,13 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
                     } else {
                         if ((!o1.equals(o2)) && (!source1.getSkeleton())) {
                             String errMessage = "Duplicate objects from the same data source; "
-                                + "o1 = \"" + (o1 == defObj ? DynamicUtil.getFriendlyName(
+                                + "o1 = \"" + (o1 == defObj ? Util.getFriendlyName(
                                             o1.getClass()) + "\" (from source, being stored"
                                         : DynamicUtil.getFriendlyDesc(o1) + "\" ("
                                         + ((dbIdsStored.contains(o1.getId())
                                                 ? "stored earlier in this run"
                                                 : "in database")))
-                                + "), o2 = \"" + (o2 == defObj ? DynamicUtil.getFriendlyName(
+                                + "), o2 = \"" + (o2 == defObj ? Util.getFriendlyName(
                                         o2.getClass()) + "\" (from source, being stored"
                                     : DynamicUtil.getFriendlyDesc(o2) + "\" ("
                                     + ((dbIdsStored.contains(o2.getId())
@@ -157,18 +158,18 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
                 String errorMessage = null;
                 if (source1Priority == -1) {
                     errorMessage = "Priority configured for "
-                        + DynamicUtil.getFriendlyName(clazz) + "." + fieldName
+                        + Util.getFriendlyName(clazz) + "." + fieldName
                         + " does not include source " + source1.getName();
                 }
                 if (source2Priority == -1) {
                     if (errorMessage != null) {
                         errorMessage = "Priority configured for "
-                            + DynamicUtil.getFriendlyName(clazz) + "." + fieldName
+                            + Util.getFriendlyName(clazz) + "." + fieldName
                             + " does not include sources " + source1.getName() + " or "
                             + source2.getName();
                     } else {
                         errorMessage = "Priority configured for "
-                            + DynamicUtil.getFriendlyName(clazz) + "." + fieldName
+                            + Util.getFriendlyName(clazz) + "." + fieldName
                             + " does not include source " + source2.getName();
                     }
                 }
@@ -259,14 +260,14 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
         if (source1.equals(source2)) {
             throw new IllegalArgumentException("Merging two distinct objects from the same"
                     + " data source (" + source1.getName() + "): "
-                    + (o1 == defObj ? DynamicUtil.getFriendlyName(o1.getClass())
+                    + (o1 == defObj ? Util.getFriendlyName(o1.getClass())
                         + " (being stored)" : DynamicUtil.getFriendlyDesc(o1) + " (in database)")
-                        + " and " + (o2 == defObj ? DynamicUtil.getFriendlyName(o2.getClass())
+                        + " and " + (o2 == defObj ? Util.getFriendlyName(o2.getClass())
                                 + " (being stored)" : DynamicUtil.getFriendlyDesc(o2)
                                 + " (in database)"));
         }
         throw new IllegalArgumentException("Conflicting values for field "
-                + DynamicUtil.getFriendlyName(clazz) + "." + fieldName + " between "
+                + Util.getFriendlyName(clazz) + "." + fieldName + " between "
                 + source1.getName() + " (value \""
                 +  value1 + "\""
                 + (o1 != defObj ? " in database with ID " + o1.getId()

@@ -16,10 +16,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
