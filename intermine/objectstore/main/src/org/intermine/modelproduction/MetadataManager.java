@@ -84,15 +84,15 @@ public final class MetadataManager
      * The name of the key to use to store the search Directory.
      */
     public static final String SEARCH_INDEX_DIRECTORY = "search_directory";
-//    /**
-//     * The name of the key to use to store the search index.
-//     */
-//    public static final String SEARCH_INDEX = "search";
-//
-//    /**
-//     * The name of the key to use to store the search Directory.
-//     */
-//    public static final String SEARCH_INDEX_DIRECTORY = "search_directory";
+    /**
+     * The name of the key to use to store the like common matrix.
+     */
+    public static final String LIKE_COMMON_MATRIX = "CommonItems";
+
+    /**
+     * The name of the key to use to store the like similarity matrix.
+     */
+    public static final String LIKE_SIMILARITY_MATRIX = "SimilarityMatrix";
     /**
      * Name of the key under which to store the serialized version of the class descriptions
      */

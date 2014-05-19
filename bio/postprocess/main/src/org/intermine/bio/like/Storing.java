@@ -39,15 +39,16 @@ public class Storing {
      *
      * @param os intermine objectstore
      * @param matrix one row of one precalculated matrix
-     * @param name save with this file name
+     * @param aspectNumber save with this file name addition
      */
     public static void saveNormMatToDatabase(ObjectStore os,
-            Map<Coordinates, Integer> matrix, String name) {
+            Map<Coordinates, Integer> matrix, String aspectNumber) {
         try {
             LOG.info("Deleting previous search index dirctory blob from db...");
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            boolean blobExisted = MetadataManager.deleteLargeBinary(db, name);
+            boolean blobExisted = MetadataManager.deleteLargeBinary(db,
+                    "LIKE_SIMILARITY_MATRIX" + aspectNumber);
             if (blobExisted) {
                 LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
@@ -56,7 +57,7 @@ public class Storing {
             }
 
             LOG.debug("Saving search index information to database...");
-            writeObjectToDB(os, name, matrix);
+            writeObjectToDB(os, "LIKE_SIMILARITY_MATRIX" + aspectNumber, matrix);
             LOG.debug("Successfully saved search index information to database.");
 
         } catch (IOException e) {
@@ -69,12 +70,13 @@ public class Storing {
     }
 
     public static void saveCommonMatToDatabase(ObjectStore os,
-            Map<Coordinates, ArrayList<Integer>> matrix, String name) {
+            Map<Coordinates, ArrayList<Integer>> matrix, String aspectNumber) {
         try {
             LOG.info("Deleting previous search index dirctory blob from db...");
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            boolean blobExisted = MetadataManager.deleteLargeBinary(db, name);
+            boolean blobExisted = MetadataManager.deleteLargeBinary(db,
+                    "LIKE_COMMON_MATRIX" + aspectNumber);
             if (blobExisted) {
                 LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
@@ -83,7 +85,7 @@ public class Storing {
             }
 
             LOG.debug("Saving search index information to database...");
-            writeObjectToDB(os, name, matrix);
+            writeObjectToDB(os, "LIKE_COMMON_MATRIX" + aspectNumber, matrix);
             LOG.debug("Successfully saved search index information to database.");
 
         } catch (IOException e) {
@@ -114,13 +116,15 @@ public class Storing {
         streamOut.close();
     }
 
-    public static Map<Coordinates, Integer> loadNormMatFromDatabase(ObjectStore os, String path) {
+    public static Map<Coordinates, Integer> loadNormMatFromDatabase(ObjectStore os,
+            String aspectNumber) {
         long time = System.currentTimeMillis();
         LOG.debug("Attempting to restore search index from database...");
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             try {
-                InputStream is = MetadataManager.readLargeBinary(db, path);
+                InputStream is = MetadataManager.readLargeBinary(db,
+                        MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
 
                 if (is != null) {
                     GZIPInputStream gzipInput = new GZIPInputStream(is);
@@ -160,13 +164,15 @@ public class Storing {
         return normMat;
     }
 
-    public static Map<Coordinates, ArrayList<Integer>> loadCommonMatFromDatabase(ObjectStore os, String path) {
+    public static Map<Coordinates, ArrayList<Integer>> loadCommonMatFromDatabase(ObjectStore os,
+            String aspectNumber) {
         long time = System.currentTimeMillis();
         LOG.debug("Attempting to restore search index from database...");
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             try {
-                InputStream is = MetadataManager.readLargeBinary(db, path);
+                InputStream is = MetadataManager.readLargeBinary(db,
+                        MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
 
                 if (is != null) {
                     GZIPInputStream gzipInput = new GZIPInputStream(is);

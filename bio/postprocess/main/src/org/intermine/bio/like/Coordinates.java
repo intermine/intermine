@@ -48,7 +48,7 @@ public final class Coordinates implements Entry<Integer, Integer>, Serializable
 
     @Override
     public String toString() {
-        return String.format("Pair(%s,%s)", x, y);
+        return String.format("Coordinates(%s,%s)", x, y);
     }
 
     @Override
