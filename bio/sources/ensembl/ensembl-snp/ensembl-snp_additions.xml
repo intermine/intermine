@@ -12,6 +12,10 @@
    <class name="Insertion" extends="SequenceAlteration" is-interface="true"/>
    <class name="SNV" extends="SequenceAlteration" is-interface="true"/>
    <class name="Substitution" extends="SequenceAlteration" is-interface="true"/>
+
+   <!-- this is just a sequence feature, not an alteration -->
+   <class name="TandemRepeat" extends="SequenceAlteration" is-interface="true"/>
+
    <class name="ValidationState" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
    </class>
