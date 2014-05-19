@@ -23,7 +23,6 @@ import org.apache.log4j.Priority;
 import org.intermine.metadata.TypeUtil;
 
 
-
 /**
  * Parser for parsing constraint value.
  * @author Jakub Kulaviak
