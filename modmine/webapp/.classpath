@@ -3,11 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-tools-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-webapp"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-tasks"/>
@@ -16,7 +13,30 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/modmine-dbmodel"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ant-tasks"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-skeleton-mine"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-tools-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-webapp-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/fulldata"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/imbuild"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-pathquery"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-pathquery-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/modmine-integrate"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/modmine-postprocess-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/modmine-tools-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-dbmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-webapp-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
