@@ -25,9 +25,6 @@ import org.apache.log4j.Logger;
  */
 public class Storing {
 
-    private static Map<Coordinates, Integer> normMat;
-    private static Map<Coordinates, ArrayList<Integer>> commonMat;
-
     private static final Logger LOG = Logger.getLogger(Storing.class);
 
     private Storing() {
@@ -116,99 +113,4 @@ public class Storing {
         streamOut.close();
     }
 
-    public static Map<Coordinates, Integer> loadNormMatFromDatabase(ObjectStore os,
-            String aspectNumber) {
-        long time = System.currentTimeMillis();
-        LOG.debug("Attempting to restore search index from database...");
-        if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            try {
-                InputStream is = MetadataManager.readLargeBinary(db,
-                        MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
-
-                if (is != null) {
-                    GZIPInputStream gzipInput = new GZIPInputStream(is);
-                    ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
-
-                    try {
-                        Object object = objectInput.readObject();
-
-                        if (object instanceof Map<?, ?>) {
-                            normMat = (Map<Coordinates, Integer>) object;
-
-                            LOG.info("Successfully restored search index information"
-                                    + " from database in " + (System.currentTimeMillis() - time)
-                                    + " ms");
-                            LOG.debug("Index: " + normMat);
-                        } else {
-                            LOG.warn("Object from DB has wrong class:"
-                                    + object.getClass().getName());
-                        }
-                    } finally {
-                        objectInput.close();
-                        gzipInput.close();
-                    }
-                } else {
-                    LOG.warn("IS is null");
-                }
-            } catch (ClassNotFoundException e) {
-                LOG.error("Could not load search index", e);
-            } catch (SQLException e) {
-                LOG.error("Could not load search index", e);
-            } catch (IOException e) {
-                LOG.error("Could not load search index", e);
-            }
-        } else {
-            LOG.error("ObjectStore is of wrong type!");
-        }
-        return normMat;
-    }
-
-    public static Map<Coordinates, ArrayList<Integer>> loadCommonMatFromDatabase(ObjectStore os,
-            String aspectNumber) {
-        long time = System.currentTimeMillis();
-        LOG.debug("Attempting to restore search index from database...");
-        if (os instanceof ObjectStoreInterMineImpl) {
-            Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            try {
-                InputStream is = MetadataManager.readLargeBinary(db,
-                        MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
-
-                if (is != null) {
-                    GZIPInputStream gzipInput = new GZIPInputStream(is);
-                    ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
-
-                    try {
-                        Object object = objectInput.readObject();
-
-                        if (object instanceof Map<?, ?>) {
-                            commonMat = (Map<Coordinates, ArrayList<Integer>>) object;
-
-                            LOG.info("Successfully restored search index information"
-                                    + " from database in " + (System.currentTimeMillis() - time)
-                                    + " ms");
-                            LOG.debug("Index: " + commonMat);
-                        } else {
-                            LOG.warn("Object from DB has wrong class:"
-                                    + object.getClass().getName());
-                        }
-                    } finally {
-                        objectInput.close();
-                        gzipInput.close();
-                    }
-                } else {
-                    LOG.warn("IS is null");
-                }
-            } catch (ClassNotFoundException e) {
-                LOG.error("Could not load search index", e);
-            } catch (SQLException e) {
-                LOG.error("Could not load search index", e);
-            } catch (IOException e) {
-                LOG.error("Could not load search index", e);
-            }
-        } else {
-            LOG.error("ObjectStore is of wrong type!");
-        }
-        return commonMat;
-    }
 }
