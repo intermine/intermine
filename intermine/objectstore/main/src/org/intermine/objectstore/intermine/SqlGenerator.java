@@ -523,7 +523,7 @@ public final class SqlGenerator
                 needComma = true;
                 retval.append(osb.getBagId() + "");
             }
-            retval.append(")"); // ORDER BY " + BAGVAL_COLUMN);
+            retval.append(") ORDER BY " + BAGVAL_COLUMN);
             return retval.toString();
         } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
             StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN
@@ -2537,13 +2537,10 @@ public final class SqlGenerator
                     }
                 } else {
                     // DON'T NEED TO RE-EVALUATE FNS WE ARE ORDERING BY.
-                    if (q.getSelect().contains(node)
-                            && node instanceof QueryFunction
-                            // HACK!!! TODO: work out why this was producing screwed up
-                            // precompute queries.
-                            && ((QueryFunction) node).getOperation() != QueryFunction.COUNT) {
-                        //don't add average in the orderby because in the QueryOptimise.optimiseWith
-                        //in originalQuery = new Query(query); the originalQuery is not parsed correcty!!!
+                    if (q.getSelect().contains(node) && node instanceof QueryFunction) {
+                        //don't add average in the orderby because in the
+                        // QueryOptimise.optimiseWith in originalQuery = new Query(query);
+                        // the originalQuery is not parsed correctly!!!
                         if (((QueryFunction) node).getOperation() == QueryFunction.AVERAGE) {
                             continue;
                         }

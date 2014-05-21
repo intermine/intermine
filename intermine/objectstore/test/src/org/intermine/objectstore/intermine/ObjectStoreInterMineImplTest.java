@@ -10,7 +10,6 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,7 +57,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.sql.query.Constraint;
 
 public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCase
 {
@@ -902,7 +900,9 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         } catch (ConcurrentModificationException e) {
         }
     }
-    
+
+    // Test that running the same query multiple times hits the results cache if other
+    // parameters are set appropriately
     public void testBatchesCache() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);
@@ -910,7 +910,10 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addToSelect(qc);
         Results r1 = os.execute(q, 1000, true, true, true);
         Results r2 = os.execute(q, 1000, true, true, true);
+        // same query executed with same parameters should give a cache hit
         assertTrue(r1 == r2);
+        // prefetch is off for r3 so no results cache hit but batches (the actual results) should
+        // be the same whatever
         Results r3 = os.execute(q, 1000, true, false, false);
         assertTrue(r1 != r3);
         assertTrue(r1.getResultsBatches() == r3.getResultsBatches());
@@ -922,12 +925,12 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         Results r4 = os.execute(q, 500, true, true, true);
         assertTrue(r1.getResultsBatches() != r4.getResultsBatches());
         assertTrue(r4.isSingleBatch());
-        assertEquals(r1, r4);
+        assertEquals(new ArrayList<Object>(r1), new ArrayList<Object>(r4));
         SingletonResults r5 = os.executeSingleton(q, 400, true, true, true);
         assertTrue(r1.getResultsBatches() != r5.getResultsBatches());
         assertTrue(r5.isSingleBatch());
     }
-    
+
     public void testBatchesCacheSmallToLarge() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(Company.class);
@@ -939,7 +942,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         r2.get(0);
         assertNotNull(r2.get(1));
     }
-    
+
     public void testBatchesFavourFilled() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(CEO.class);
