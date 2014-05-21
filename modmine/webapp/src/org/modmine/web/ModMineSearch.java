@@ -44,7 +44,7 @@ import org.intermine.model.bio.Strain;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.DynamicUtil;
+import org.intermine.metadata.Util;
 import org.intermine.metadata.TypeUtil;
 
 /**
