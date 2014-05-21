@@ -1,8 +1,0 @@
-# UCSC BED format
-# Source: FlyMine
-# Genome Build: dm3
-track name=FlyMine_newtpreview_Custom_Track description="FlyMine newtpreview Custom Track" useScore=0
-chr2R   5866745 5868284 eve 0   +
-chr2R   5866745 5867058 eve:1   0   +
-chr2R   5866745 5868284 eve-RA  0   +
-chr2R   5867129 5868284 eve:2   0   +
