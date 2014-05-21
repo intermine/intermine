@@ -1,5 +1,0 @@
-##gff-version 3
-2R      FlyMine gene    5866746 5868284 .       +       .       ID=FBgn0000606
-2R      FlyMine exon    5866746 5867058 .       +       .       ID=CG2328%3A1;Parent=FBgn0000606
-2R      FlyMine mRNA    5866746 5868284 .       +       .       ID=FBtr0088390;Parent=FBgn0000606
-2R      FlyMine exon    5867130 5868284 .       +       .       ID=CG2328%3A2;Parent=FBgn0000606
