@@ -29,8 +29,8 @@ import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.session.SessionMethods;
 

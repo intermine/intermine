@@ -10,10 +10,11 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
-import org.intermine.util.Util;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Util;
 
 /**
  * Constrain a QueryClass or QueryEvaluable to be within the select list

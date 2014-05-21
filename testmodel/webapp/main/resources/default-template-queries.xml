@@ -184,6 +184,16 @@
           <constraint path="Company" op="LOOKUP" value="CompanyA" editable="true" code="A"/>
       </query>
   </template>
+  <template name="Underwater_People" title="Underwater People" longDescription="Find employees in significant debt">
+      <query name="Underwater_People" model="testmodel" view="Broke.debt Broke.interestRate Broke.owedBy.name Broke.bank.name">
+        <constraint path="Broke.debt"
+              code="A" editable="true" op="&gt;=" value="500"/>
+         <constraint path="Broke.bank.name"
+              code="B" editable="true"
+              description="Turn on this filter to find people in debt at a particular bank."
+              switchable="off" op="=" value="Gringotts"/>
+      </query>
+  </template>
   <template name="Company_Contractors" title="Company --&gt; Contractors" longDescription="Contractors who have a relationship with the given company">
       <query name="Company_Contractors" model="testmodel" view="Company.contractors.name Company.contractors.seniority Company.contractors.businessAddress.address Company.contractors.personalAddress.address">
           <constraint path="Company" op="LOOKUP" value="CompanyA" editable="true" code="A"/>
@@ -240,6 +250,7 @@
     <tag name="im:public" objectIdentifier="Company_Departments" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Employees" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Contractors" type="template"/>
+    <tag name="im:public" objectIdentifier="Underwater_People" type="template"/>
     <tag name="im:public" objectIdentifier="CEO_Rivals" type="template"/>
     <tag name="im:public" objectIdentifier="Global-List" type="bag"/>
   </tags>

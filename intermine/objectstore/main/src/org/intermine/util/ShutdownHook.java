@@ -10,9 +10,9 @@ package org.intermine.util;
  *
  */
 
-import java.lang.ref.WeakReference;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.lang.ref.WeakReference;
 import java.util.Stack;
 
 import org.apache.log4j.Logger;

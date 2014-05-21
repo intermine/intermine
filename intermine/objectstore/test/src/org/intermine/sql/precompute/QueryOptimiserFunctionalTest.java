@@ -26,7 +26,7 @@ import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.query.*;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 import org.apache.log4j.Logger;
 

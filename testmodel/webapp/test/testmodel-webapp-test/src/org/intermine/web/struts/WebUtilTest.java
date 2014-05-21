@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 import junit.framework.TestCase;
 

@@ -38,9 +38,11 @@ import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.DataChangedException;
@@ -52,7 +54,6 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
 import org.intermine.objectstore.query.ConstraintWithBag;
@@ -91,7 +92,6 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.util.TypeUtil;
 
 /**
  * An SQL-backed implementation of the ObjectStore interface. The schema is oriented towards data
@@ -201,6 +201,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         ShutdownHook.registerObject(new WeakReference<Object>(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
+        maxQueryParseTime = getMaxQueryParseTime();
+        if (maxQueryParseTime != null) {
+            limitedContext.setMaxQueryParseTime(maxQueryParseTime.longValue());
+        }
         description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 

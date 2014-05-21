@@ -9,10 +9,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
+import java.util.Properties;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -33,6 +33,7 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IteratorIterable;
+import org.intermine.web.context.InterMineContext;
 import org.json.JSONArray;
 
 /**
@@ -40,7 +41,7 @@ import org.json.JSONArray;
  * @author Alex Kalderimis
  *
  */
-public class JSONRowIteratorTest extends TestCase {
+public class JSONRowIteratorTest extends InterMineAPITestCase {
 
     private ObjectStoreDummyImpl os;
     private final InterMineAPI apiWithRedirection = new DummyAPI();
@@ -72,7 +73,7 @@ public class JSONRowIteratorTest extends TestCase {
 
 
     @Override
-    protected void setUp() {
+    public void setUp() {
         os = new ObjectStoreDummyImpl();
 
         wernhamHogg = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
@@ -185,16 +186,19 @@ public class JSONRowIteratorTest extends TestCase {
         address2.setId(new Integer(24));
         address2.setAddress("19 West Oxford St, Reading");
 
+        Properties webProperties = new Properties();
+        try {
+            webProperties.load(this.getClass().getClassLoader()
+                    .getResourceAsStream("web.properties"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        InterMineContext.initilise(im, webProperties, null);
+
     }
 
     private final Model model = Model.getInstanceByName("testmodel");
-
-    /**
-     * Empty constructor
-     */
-    public JSONRowIteratorTest() {
-        // Empty Constructor
-    }
 
     /**
      * Constructor with name.

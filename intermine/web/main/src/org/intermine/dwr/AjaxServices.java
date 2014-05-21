@@ -90,8 +90,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.Emailer;
 import org.intermine.util.MailUtils;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
@@ -726,7 +726,9 @@ public class AjaxServices
      * @param mineName mine to query
      * @param orthologues list of genes to query for
      * @return the links to friendly intermines
+     * @deprecated Josh doesn't think this is used anymore
      */
+    @Deprecated
     public static String getFriendlyMinePathways(String mineName, String orthologues) {
         if (StringUtils.isEmpty(orthologues)) {
             return null;
@@ -1229,7 +1231,7 @@ public class AjaxServices
             } else {
                 WebSearchable ws = null;
                 if (TagTypes.BAG.equals(type)) {
-                    ws = (WebSearchable) bm.getBag(profile, tagged); 
+                    ws = (WebSearchable) bm.getBag(profile, tagged);
                 } else if (TagTypes.TEMPLATE.equals(type)) {
                     ws = (WebSearchable) tm.getUserOrGlobalTemplate(profile, tagged);
                 }

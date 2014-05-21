@@ -8,6 +8,26 @@
  *
  */
 
+1.3.6
+
+#593 - CDN correctly generated JavaScript 
+
+1.3.5
+
+#633 - GFF3Converter can skip (exclude) a defined list of GFF3 terms 
+
+1.3.4
+
+#446 - Interaction Widget download only capturing 50 rows
+
+1.3.3
+
+#584 - Generated JSON omitting optional constraints 
+
+1.3.2
+
+#607 - Add JBrowse auto-configuration
+
 1.3.1
 
 #172 - Error when middle click on 'Show Results'
@@ -63,16 +83,19 @@
 #224 - Results tables not appearing on IE 8
 #228 - Query too long to run warning
 #239 - Update the JS code generator
+#272 - new Pathway Tool
 #285 - Export is failing when removing columns
 #314 - Add "getting started" tutorial for webapp config
-#355 - [ WormMine beta release ] Enable hiding specific fields from querybuilder
+#355 - Enable hiding specific fields from querybuilder
 #381 - Templates on home page are owned by the superuser only
 #382 - LOOKUP for protein ignores organism name
 #383 - Warning messages keep popping up when navigating between lists
 #392 - ConcurrentModificationException when adding to a list.
 #399 - YeastMine - external link icon is wrong
+#400 - Better UI for list upload resolve identifiers step (+ #489, #494, #497, #505)
 #424 - Removing particular columns from templates results in Oops!
 #431 - Show templates in summary section of report page
+#432 - AnnotationExtension should be in evidence
 #438 - GFF3 Download fails on non sequence features - should be disabled
 #442 - Download dialogue - suggestions
 #444 - Query results - need dropdowns when adding filters

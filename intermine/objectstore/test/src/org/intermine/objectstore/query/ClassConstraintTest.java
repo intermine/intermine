@@ -11,12 +11,15 @@ package org.intermine.objectstore.query;
  */
 
 import java.util.Collections;
+
 import junit.framework.TestCase;
+
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
-import org.intermine.model.testmodel.Manager;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.util.DynamicUtil;
 
 public class ClassConstraintTest extends TestCase {

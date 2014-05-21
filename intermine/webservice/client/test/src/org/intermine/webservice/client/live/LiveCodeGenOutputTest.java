@@ -1,16 +1,11 @@
 package org.intermine.webservice.client.live;
 
-import java.util.ArrayList;
-
-import org.intermine.webservice.client.services.TemplateService;
-
-import org.intermine.webservice.client.template.TemplateParameter;
-
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +17,8 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.QueryService;
+import org.intermine.webservice.client.services.TemplateService;
+import org.intermine.webservice.client.template.TemplateParameter;
 import org.junit.Test;
 
 public class LiveCodeGenOutputTest {

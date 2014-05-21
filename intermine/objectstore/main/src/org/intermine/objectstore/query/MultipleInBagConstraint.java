@@ -13,6 +13,8 @@ package org.intermine.objectstore.query;
 import java.util.Collection;
 import java.util.List;
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Constraint type requiring any of the given QueryEvaluables to be in a given bag.
  *
