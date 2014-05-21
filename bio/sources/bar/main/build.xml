@@ -1,4 +1,0 @@
-<project name="bar-tasks" default="default" basedir=".">
-  <description>build bar tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
