@@ -27,7 +27,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.CacheMap;
-import org.intermine.webservice.client.results.XMLTableResult;
 import org.json.JSONObject;
 
 /**
