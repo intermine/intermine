@@ -2,32 +2,24 @@ package org.intermine.webservice.client.live;
 
 import static org.junit.Assert.*;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.services.QueryService;
-import org.junit.BeforeClass;
+import org.intermine.webservice.client.util.TestUtil;
 import org.junit.Test;
 
 public class LiveServiceTest {
 
-    private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final ServiceFactory servicef = new ServiceFactory(baseUrl);
+    private static final ServiceFactory servicef = new ServiceFactory(TestUtil.getRootUrl());
 
     @Test
     public void testVersion() {
-        System.out.printf("API version: %d\n", servicef.getQueryService().getAPIVersion());
-        assertTrue(servicef.getQueryService().getAPIVersion() > 5);
+        int apiVersion = servicef.getQueryService().getAPIVersion();
+        assertTrue(apiVersion + " is > 5", apiVersion > 5);
     }
-
 
     @Test
     public void testRelease() {
-        System.out.printf("API release: %s\n", servicef.getQueryService().getRelease());
-        assertTrue(servicef.getQueryService().getRelease().contains("test"));
+        String release = servicef.getQueryService().getRelease();
+        assertTrue(release + " contains 'test'", release.contains("test"));
     }
 
 }
