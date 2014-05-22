@@ -1,5 +1,11 @@
 package org.intermine.web.context;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,6 +29,7 @@ public class InterMineContext {
     private static final ArrayBlockingQueue<MailAction> mailQueue
         = new ArrayBlockingQueue<MailAction>(10000);
     private static final ExecutorService mailService = Executors.newCachedThreadPool(new DaemonThreadFactory());
+    private static KeyStore keyStore = null;
 
     public static void initilise(final InterMineAPI imApi, Properties webProps,
             WebConfig wc) {
@@ -70,7 +77,7 @@ public class InterMineContext {
     }
 
     /** Start a number of consumer threads that poll for messages to send from the mail queue **/
-    private static void startMailerThreads(Emailer emailer) {        
+    private static void startMailerThreads(Emailer emailer) {
         for (int i = 0; i < WORKERS; i++) {
             Runnable r = new MailDaemon(mailQueue, emailer);
             mailService.submit(r);
@@ -89,4 +96,31 @@ public class InterMineContext {
         mailService.shutdown();
     }
 
+
+    private static char[] getKeyStorePassword() {
+        return getWebProperties().getProperty("security.keystore.password").toCharArray();
+    }
+
+    public static KeyStore getKeyStore()
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        checkInit();
+        if (keyStore == null ) {
+            keyStore = KeyStore.getInstance("JKS");
+            InputStream is = null;
+            try {
+                is = InterMineContext.class.getResourceAsStream("keystore.jks");
+                // Must call load, even on null values, to initialise the store.
+                keyStore.load(is, getKeyStorePassword());
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        // who honestly cares.
+                    }
+                }
+            }
+        }
+        return keyStore;
+    }
 }
