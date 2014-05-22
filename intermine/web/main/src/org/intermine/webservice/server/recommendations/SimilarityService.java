@@ -80,6 +80,7 @@ public class SimilarityService extends JSONService
 
     private void getObjectIds(String[] idsStrings, LikeRequest request) {
         ObjectStore os = im.getObjectStore();
+        // TODO add check here
         for (int i = 0; i < idsStrings.length; i++) {
             Integer givenId = Integer.parseInt(idsStrings[i]);
             try { // Check object existence.
