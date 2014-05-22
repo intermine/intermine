@@ -30,7 +30,7 @@ public class Service
 {
 
     /** The version of this client library. **/
-    public static final Version VERSION = new Version(3, 0, 0);
+    public static final Version VERSION = new Version(3, 1, 0);
 
     private static final String VERSION_HEADER = "InterMine-Version";
 
@@ -53,6 +53,8 @@ public class Service
     private String authToken;
 
     private ServiceFactory factory = null;
+
+    private int apiVersion = -1;
 
     /**
      * Get the ServiceFactory this service was constructed with.
@@ -141,6 +143,7 @@ public class Service
         request.setHeader(VERSION_HEADER, getVersion().toString());
         request.setHeader(USER_AGENT_HEADER, getApplicationName() + " "
                 + "JavaLibrary/" + getVersion().toString());
+
         applyAuthentication(request);
         HttpConnection connection = new HttpConnection(request);
         connection.setTimeout(timeout);
@@ -148,13 +151,26 @@ public class Service
         return connection;
     }
 
+    private boolean requiresAuthentication(Request request) {
+        return !(request != null && request.getServiceUrl() != null
+                && (       request.getServiceUrl().endsWith("/version")
+                        || request.getServiceUrl().endsWith("/version/release")
+                        || request.getServiceUrl().endsWith("/model")));
+    }
+
     private void applyAuthentication(Request request) {
+        if (!requiresAuthentication(request)) return;
+
         if (userName != null && password != null) {
             String authValue = userName + ":" + password;
             String encodedValue = new String(Base64.encodeBase64(authValue.getBytes()));
             request.setHeader(AUTHENTICATION_FIELD_NAME, encodedValue);
         } else if (authToken != null) {
-            request.setAuthToken(authToken);
+            if (getAPIVersion() < 14) {
+                request.setHeader(AUTHENTICATION_FIELD_NAME, "Token " + authToken);
+            } else {
+                request.setAuthToken(authToken);
+            }
         }
     }
 
@@ -303,11 +319,14 @@ public class Service
     }
 
     /**
-     * @return the server's API version.
+     * @return the server's API version. Will make at most one call, caching the response for future calls.
      */
     public int getAPIVersion() {
-        Request r = createGetRequest(getRootUrl() + "/version", ContentType.TEXT_PLAIN);
-        return getIntResponse(r);
+        if (apiVersion  == -1) {
+            Request r = createGetRequest(getRootUrl() + "/version", ContentType.TEXT_PLAIN);
+            apiVersion = getIntResponse(r);
+        }
+        return apiVersion;
     }
 
     /**

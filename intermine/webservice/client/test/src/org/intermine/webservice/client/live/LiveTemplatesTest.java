@@ -14,16 +14,17 @@ import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.results.Page;
 import org.intermine.webservice.client.services.TemplateService;
 import org.intermine.webservice.client.template.TemplateParameter;
+import org.intermine.webservice.client.util.TestUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
 public class LiveTemplatesTest {
 
-    private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "test-user-token";
-    private static TemplateService authorised = new ServiceFactory(baseUrl, authToken).getTemplateService();
-    private static TemplateService unauthorised = new ServiceFactory(baseUrl).getTemplateService();
+    private static TemplateService authorised =
+            new ServiceFactory(TestUtil.getRootUrl(), TestUtil.getToken()).getTemplateService();
+    private static TemplateService unauthorised =
+            new ServiceFactory(TestUtil.getRootUrl()).getTemplateService();
     private static final Page subset = new Page(1, 2);
 
     @Test

@@ -3,8 +3,8 @@ package org.intermine.webservice.client.live;
 import java.util.ArrayList;
 
 import org.intermine.webservice.client.services.TemplateService;
-
 import org.intermine.webservice.client.template.TemplateParameter;
+import org.intermine.webservice.client.util.TestUtil;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +40,7 @@ public class LiveCodeGenOutputTest {
          */
         class QueryClient
         {
-            private static final String ROOT = "http://localhost/intermine-test/service";
+            
             final StringWriter sw = new StringWriter();
             final PrintWriter out = new PrintWriter(sw);
 
@@ -50,7 +50,7 @@ public class LiveCodeGenOutputTest {
              * @throws IOException
              */
             public void run() throws IOException {
-                ServiceFactory factory = new ServiceFactory(ROOT);
+                ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
                 Model model = factory.getModel();
                 PathQuery query = new PathQuery(model);
 
@@ -82,7 +82,6 @@ public class LiveCodeGenOutputTest {
     public void multiView() throws Exception {
         class QueryClient
         {
-            private static final String ROOT = "http://localhost/intermine-test/service";
             final StringWriter sw = new StringWriter();
 
             /**
@@ -91,7 +90,7 @@ public class LiveCodeGenOutputTest {
              * @throws IOException
              */
             public void run() throws IOException {
-                ServiceFactory factory = new ServiceFactory(ROOT);
+                ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
                 Model model = factory.getModel();
                 PathQuery query = new PathQuery(model);
 
@@ -128,7 +127,6 @@ public class LiveCodeGenOutputTest {
     public void outerJoins() throws Exception {
         class QueryClient
         {
-            private static final String ROOT = "http://localhost/intermine-test/service";
             final StringWriter sw = new StringWriter();
             /**
              * Perform the query and print the rows of results.
@@ -136,7 +134,7 @@ public class LiveCodeGenOutputTest {
              * @throws IOException
              */
             public void run() throws IOException {
-                ServiceFactory factory = new ServiceFactory(ROOT);
+                ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
                 Model model = factory.getModel();
                 PathQuery query = new PathQuery(model);
 
@@ -180,7 +178,6 @@ public class LiveCodeGenOutputTest {
     public void eqAndNeq() throws Exception {
         class QueryClient
         {
-            private static final String ROOT = "http://localhost/intermine-test/service";
             final StringWriter sw = new StringWriter();
 
             /**
@@ -189,7 +186,7 @@ public class LiveCodeGenOutputTest {
              * @throws IOException
              */
             public void run() throws IOException {
-                ServiceFactory factory = new ServiceFactory(ROOT);
+                ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
                 Model model = factory.getModel();
                 PathQuery query = new PathQuery(model);
 
@@ -230,7 +227,6 @@ public class LiveCodeGenOutputTest {
     public void like() throws Exception {
         class QueryClient
         {
-            private static final String ROOT = "http://localhost/intermine-test/service";
             final StringWriter sw = new StringWriter();
 
             /**
@@ -239,7 +235,7 @@ public class LiveCodeGenOutputTest {
              * @throws IOException
              */
             public void run() throws IOException {
-                ServiceFactory factory = new ServiceFactory(ROOT);
+                ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
                 Model model = factory.getModel();
                 PathQuery query = new PathQuery(model);
 
@@ -281,7 +277,6 @@ public class LiveCodeGenOutputTest {
     public void complicatedTemplate() throws Exception {
         class TemplateQueryFourConstraints
         {
-            private static final String ROOT = "http://squirrel.flymine.org/intermine-test/service";
             final StringWriter sw = new StringWriter();
 
             /**
@@ -290,7 +285,7 @@ public class LiveCodeGenOutputTest {
             * @throws IOException
             */
             public void run() throws IOException {
-                ServiceFactory factory = new ServiceFactory(ROOT);
+                ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
                 // Edit the template parameter values to get different results
                 List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
                 parameters.add(new TemplateParameter("Employee.name", "CONTAINS", "Employee", null, "D"));
