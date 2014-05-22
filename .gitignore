@@ -12,6 +12,9 @@ executeLog*
 *.class
 productionLog
 *~
+.gradle
+
+
 
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png
@@ -127,37 +130,6 @@ productionLog
 /intermine/perl/registry/*pid
 /intermine/perl/registry/*META*
 
-# /intermine/python/
-/intermine/python/*.egg-info
-/intermine/python/*.zip
-/intermine/python/htmlcov
-/intermine/python/docs
-/intermine/python/.git
-
-# /intermine/python/intermine-core
-/intermine/python/intermine-core/*.egg-info
-/intermine/python/intermine-core/*.zip
-/intermine/python/intermine-core/htmlcov
-/intermine/python/intermine-core/docs
-/intermine/python/intermine-core/.git
-/intermine/python/intermine-core/.tox
-
-# /intermine/python/intermine-bio/
-/intermine/python/intermine-bio/docs
-
-# /intermine/python/intermine-core/
-/intermine/python/intermine-core/docs
-/intermine/python/intermine-core/htmlcov
-/intermine/python/intermine-core/*.zip
-
-# /intermine/ruby/intermine/
-/intermine/ruby/intermine/pkg
-/intermine/ruby/intermine/html
-
-# /intermine/ruby/intermine-bio/
-/intermine/ruby/intermine-bio/html
-/intermine/ruby/intermine-bio/pkg
-
 # /intermine/scripts/
 /intermine/scripts/_Inline
 
@@ -172,16 +144,6 @@ productionLog
 /intermine/web/main/overview-frame.html
 /intermine/web/main/stylesheet.css
 
-# /intermine/web/test
-/intermine/web/test/properties
-
-# intermine/api/test
-/intermine/api/test/properties
-
-# /intermine/web/test/src/org/intermine/webservice/server/output/
-/intermine/web/test/src/org/intermine/webservice/server/output/RowResultProcessorBenchmark.java
-/intermine/web/test/src/org/intermine/webservice/server/output/FilterBenchmarkTest.java
-
 # /intermine/webapp/main/resources/webapp/images/
 /intermine/webapp/main/resources/webapp/images/.xvpics
 
@@ -193,8 +155,3 @@ productionLog
 
 # mines
 malariamine/
-
-# IDEs
-nbproject/
-nb-build.xml
-.idea/
