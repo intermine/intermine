@@ -17,6 +17,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -443,6 +446,33 @@ public abstract class WebService {
         // No-op stub;
     }
 
+    private JWTVerifier.Verification getIdentityFromBearerToken(final String rawString) {
+        JWTVerifier verifier;
+        try {
+            verifier = new JWTVerifier(InterMineContext.getKeyStore(), webProperties);
+            return verifier.verify(rawString);
+        } catch (KeyStoreException e) {
+            throw new ServiceException("Failed to load key store.", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Key store incorrectly configured", e);
+        } catch (CertificateException e) {
+            throw new ServiceException("Key store incorrectly configured", e);
+        } catch (IOException e) {
+            throw new ServiceException("Failed to load key store.", e);
+        } catch (JWTVerifier.VerificationError e) {
+            throw new UnauthorizedException(e.getMessage());
+        }
+    }
+
+    private String getIdentityAssertion() {
+        String header = webProperties.getProperty("authentication.identity.assertion.header");
+
+        if (StringUtils.isNotBlank(header)) {
+            return request.getHeader(header);
+        }
+        return null;
+    }
+
     /**
      * If user name and password is specified in request, then it setups user
      * profile in session. User was authenticated. It uses HTTP basic access
@@ -452,6 +482,7 @@ public abstract class WebService {
     private void authenticate() {
 
         String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        JWTVerifier.Verification identity = null;
         final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
         final ProfileManager pm = im.getProfileManager();
 
@@ -459,13 +490,28 @@ public abstract class WebService {
             return; // Not Authenticated.
         }
         // Accept tokens passed in the Authorization header.
-        if (StringUtils.isEmpty(authToken) && StringUtils.startsWith(authString, "Token ")) {
-            authToken = StringUtils.removeStart(authString, "Token ");
+        if (StringUtils.isEmpty(authToken)) {
+            if (StringUtils.startsWith(authString, "Token ")) {
+                authToken = StringUtils.removeStart(authString, "Token ");
+            } else if (StringUtils.startsWith(authString, "Bearer ")) {
+                identity = getIdentityFromBearerToken(
+                    StringUtils.removeStart(authString, "Bearer "));
+            } else {
+                String identityAssertion = getIdentityAssertion();
+                if (StringUtils.isNotBlank(identityAssertion)) {
+                    identity = getIdentityFromBearerToken(identityAssertion);
+                }
+            }
         }
 
         try {
              // Use a token if provided.
-             if (StringUtils.isNotEmpty(authToken)) {
+             if (identity != null) {
+                 permission = pm.grantPermission(
+                     identity.getIssuer(),
+                     identity.getIdentity(),
+                     im.getClassKeys());
+             } else if (StringUtils.isNotEmpty(authToken)) {
                  permission = pm.getPermission(authToken, im.getClassKeys());
              } else {
                  // Try and read the authString as a basic auth header.
@@ -480,11 +526,15 @@ public abstract class WebService {
                                      + "Decoded authorization value: "
                                      + parts[0]);
                  }
-                 final String username = StringUtils.lowerCase(parts[0]);
-                 final String password = parts[1];
+                 // Allow tokens to be passed in basic auth headers.
+                 if (StringUtils.isEmpty(parts[1])) {
+                     permission = pm.getPermission(parts[0], im.getClassKeys());
+                 } else {
+                    final String username = StringUtils.lowerCase(parts[0]);
+                    final String password = parts[1];
 
-                 permission = pm.getPermission(username, password,
-                         im.getClassKeys());
+                    permission = pm.getPermission(username, password, im.getClassKeys());
+                 }
              }
         } catch (AuthenticationException e) {
             throw new UnauthorizedException(e.getMessage());
