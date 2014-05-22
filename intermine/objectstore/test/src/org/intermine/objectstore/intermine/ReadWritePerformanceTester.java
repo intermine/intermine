@@ -40,7 +40,7 @@ public class ReadWritePerformanceTester {
 
         // make sure we have verbose query logging on
         ((ObjectStoreInterMineImpl) os).setVerboseQueryLog(true);
-0
+
         int batchSize = 10000;
 
         ObjectStoreWriterInterMineImpl osw = new ObjectStoreWriterInterMineImpl(os);
