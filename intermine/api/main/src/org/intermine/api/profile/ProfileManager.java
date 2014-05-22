@@ -77,6 +77,7 @@ import org.intermine.util.PropertiesUtil;
  * Class to manage and persist user profile data such as saved bags
  * @author Mark Woodbridge
  * @author Daniela Butano
+ * @author Alex Kalderimis
  */
 public class ProfileManager
 {
@@ -644,7 +645,7 @@ public class ProfileManager
      * @param username the user name
      * @param password the password
      */
-    public synchronized void createNewProfile(String username, String password) {
+    public synchronized Profile createNewProfile(String username, String password) {
         if (this.hasProfile(username)) {
             throw new RuntimeException("Cannot create account: there already exists a user"
                     + " with that name");
@@ -656,6 +657,7 @@ public class ProfileManager
                 null, true, false);
 
         this.createProfile(p);
+        return p;
     }
 
     public Profile createAnonymousProfile() {
@@ -807,8 +809,8 @@ public class ProfileManager
     }
 
     /**
-     * Creates a profile in the userprofile database withou adding bag.
-     * Method used by the ProfielReadXml.
+     * Creates a profile in the userprofile database without adding bag.
+     * Method used by the ProfileReadXml.
      *
      * @param profile a Profile object
      */
@@ -1215,6 +1217,39 @@ ission levels.
      */
     public static ApiPermission getDefaultPermission(Profile profile) {
         return new ApiPermission(profile, ApiPermission.Level.RO);
+    }
+
+    /**
+     * Grant permission to the given identity, creating a profile for this
+     * identity if it is not already available.
+     *
+     * By this point in the process, the code calling this method is required to have
+     * validated the identity claims of the issuer.
+     *
+     * @param issuer The client claiming this identity for a user.
+     * @param identity The identity of the user.
+     * @param classKeys The class keys for this service.
+     *
+     * @return permission to use this service.
+     */
+    public ApiPermission grantPermission(String issuer, String identity,
+            Map<String, List<FieldDescriptor>> classKeys) {
+
+        String username = issuer + ":" + identity;
+        Profile profile = getProfile(username, classKeys);
+
+        if (profile != null) {
+            profile = createNewProfile(username, null);
+        }
+
+        if (!profile.prefers(UserPreferences.EMAIL)) {
+            profile.getPreferences().put(UserPreferences.EMAIL, identity);
+        }
+        if (!profile.prefers(UserPreferences.ALIAS)) {
+            profile.getPreferences().put(UserPreferences.ALIAS, identity);
+        }
+
+        return new ApiPermission(profile, ApiPermission.Level.RW);
     }
 
     /**
