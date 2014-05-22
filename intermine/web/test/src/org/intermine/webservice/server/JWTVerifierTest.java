@@ -1,6 +1,6 @@
 package org.intermine.webservice.server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
@@ -16,38 +16,45 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.oltu.oauth2.jwt.JWT;
-import org.apache.oltu.oauth2.jwt.io.JWTWriter;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.x509.X509V3CertificateGenerator;
 import org.intermine.webservice.server.JWTVerifier.VerificationError;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class JWTVerifierTest {
 
-    private KeyStore ks = null;
+    private static KeyPair testingKeyPair;
+    private static KeyPair wso2KeyPair;
+    private static KeyStore ks = null;
     private String token = null;
     private String wrongSig = null;
     private Properties options = null;
+    private static Properties defaultOptions = new Properties();
     private String expired = null;
     private String wso2Token = null;
 
-    @Before
-    public void setup() throws Exception {
-
+    @BeforeClass
+    public static void setupOnce() throws Exception {
         ks = KeyStore.getInstance("JKS");
         ks.load(null, null); // srsly - this is necessary to initialize the keystore.
-        options = new Properties();
+        testingKeyPair = generateKeyPair("testing");
+        wso2KeyPair = generateKeyPair("wso2");
+    }
+
+    @Before
+    public void setup() throws Exception {
+        options = new Properties(defaultOptions);
         // Normally "wso2.org/products/am" => "http://wso2.org/claims/emailaddress"
         options.setProperty("jwt.key.sub.wso2 issuer", "http://wso2.org/claims/emailaddress"); 
-
-        KeyPair testingKeyPair = generateKeyPair("testing");
-        KeyPair wso2KeyPair = generateKeyPair("wso2");
 
         long expirationTime = System.currentTimeMillis() + 1000L * 60 * 60;
         //System.out.println("Expires at: " + expirationTime);
@@ -58,36 +65,35 @@ public class JWTVerifierTest {
         expired = generateToken(wso2KeyPair, 0L, "testing issuer");
     }
 
-    private String generateToken(KeyPair keyPair,
-            long expirationTime, String issuer)
-            throws NoSuchAlgorithmException, InvalidKeyException,
-            SignatureException {
-        JWTWriter writer = new JWTWriter();
-        JWT.Builder builder = new JWT.Builder();
-        builder = builder.setClaimsSetIssuer(issuer)
-                        .setClaimsSetExpirationTime(expirationTime)
-                        .setHeaderAlgorithm("SHA256withRSA")
-                        .setHeaderType("JWT")
-                        .setClaimsSetCustomField("sub", "Mr Somebody")
-                        .setClaimsSetCustomField("http://wso2.org/claims/emailaddress", "somebody@somewhere.org");
+    private String generateToken(KeyPair keyPair, long expirationTime, String issuer)
+            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        Map<String, Object> header = new HashMap<String, Object>();
+        Map<String, Object> claims = new HashMap<String, Object>();
 
-        JWT unsigned = builder.build();
-        String toSign = writer.write(unsigned);
-        String[] pieces = toSign.split("\\.");
+        header.put("alg", "SHA256withRSA");
+        header.put("typ", "JWT");
+        claims.put("sub", "Mr Somebody");
+        claims.put("iss", issuer);
+        claims.put("exp", expirationTime);
+        claims.put("iat", System.currentTimeMillis());
+        claims.put("http://wso2.org/claims/emailaddress", "somebody@somewhere.org");
+
+        String toSign = String.format("%s.%s",
+                Base64.encodeBase64URLSafeString(new JSONObject(header).toString().getBytes()),
+                Base64.encodeBase64URLSafeString(new JSONObject(claims).toString().getBytes()));
+
         Signature signing = Signature.getInstance("SHA256withRSA");
 
         signing.initSign(keyPair.getPrivate());
-        signing.update(pieces[0].getBytes());
-        signing.update(".".getBytes());
-        signing.update(pieces[1].getBytes());
+        signing.update(toSign.getBytes());
 
         byte[] signature = signing.sign();
-        return writer.write(builder.setSignature(Base64.encodeBase64URLSafeString(signature)).build());
+        return toSign + "." + Base64.encodeBase64URLSafeString(signature);
     }
 
-    private KeyPair generateKeyPair(String alias)
+    private static KeyPair generateKeyPair(String alias)
             throws NoSuchAlgorithmException, Exception, KeyStoreException {
-        options.setProperty("security.keystore.alias." + alias + " issuer", alias);
+        defaultOptions.setProperty("security.keystore.alias." + alias + " issuer", alias);
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(512);
         KeyPair keyPair = keyGen.genKeyPair();
@@ -156,7 +162,9 @@ public class JWTVerifierTest {
         }
     }
 
-    private X509Certificate generateCertificate(KeyPair keyPair) throws Exception {
+    // Yes it is deprecated. It also generates self-signed certificates. So not exactly an example
+    // of great things to do in production.
+    private static X509Certificate generateCertificate(KeyPair keyPair) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         X509V3CertificateGenerator cert = new X509V3CertificateGenerator();
         cert.setSerialNumber(BigInteger.valueOf(1));   //or generate a random number  

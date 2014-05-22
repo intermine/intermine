@@ -56,10 +56,9 @@ public class JWTVerifier
             expiry = claims.getLong("exp");
             issuer = claims.getString("iss");
         } catch (JSONException e) {
-            throw new VerificationError("Could not parse token.");
+            throw new VerificationError("Could not parse token: " + e.getMessage());
         }
 
-        System.out.println(claims);
         if (expiry < System.currentTimeMillis()) {
             throw new VerificationError("This token has expired.");
         }
