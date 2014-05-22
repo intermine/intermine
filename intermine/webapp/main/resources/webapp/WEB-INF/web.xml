@@ -2994,7 +2994,7 @@ The different token types are:
   </servlet>
 
   <servlet-mapping>
-      <servlet-name>ws-data</servlet-name>
+      <servlet-name>ws-similarity-search</servlet-name>
       <url-pattern>/service/recommendations/similarity</url-pattern>
   </servlet-mapping>
 
