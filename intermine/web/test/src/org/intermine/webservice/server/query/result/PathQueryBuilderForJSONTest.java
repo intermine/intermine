@@ -16,6 +16,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.core.Producer;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -40,7 +41,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
         PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, savedBags);
+                xml, schemaUrl, constantly(savedBags));
         assertTrue(publicBuilder != null);
 
     }
@@ -51,7 +52,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
         PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, savedBags);
+                xml, schemaUrl, constantly(savedBags));
         PathQuery pq = publicBuilder.getQuery();
         List<String> expectedViews = Arrays.asList("Manager.id", "Manager.department.name");
         assertEquals(expectedViews, pq.getView());
@@ -262,6 +263,25 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         } catch (Throwable t) {
             fail("Encountered unexpected exception processing the bad path Manager.name");
         }
+    }
+
+    private static <T> Producer<T> constantly(T thing) {
+        return new ConstantProducer<T>(thing);
+    }
+
+    private static class ConstantProducer<T> implements Producer<T> {
+
+        private final T thing;
+
+        ConstantProducer(T thing) {
+            this.thing = thing;
+        }
+
+        @Override
+        public T produce() {
+            return thing;
+        }
+        
     }
 
 }
