@@ -7,8 +7,8 @@
 
   <sources>
     <source name="ensembl-snp" type="ensembl-snp" dump="true">
-     <property name="src.data.dir" location="/local-homes/julie/data/gff" />
-      <property name="ensembl-snp.includes" value="snp.gff" />
+     <property name="src.data.dir" location="/SAN_humanmine/data/variation/ensembl/current" />
+      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gff" />
     </source>
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current" />
