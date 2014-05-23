@@ -88,7 +88,6 @@ public final class MetadataManager
      * The name of the key to use to store the like common matrix.
      */
     public static final String LIKE_COMMON_MATRIX = "CommonItems";
-
     /**
      * The name of the key to use to store the like similarity matrix.
      */

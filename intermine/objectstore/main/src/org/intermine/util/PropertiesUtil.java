@@ -69,6 +69,9 @@ public final class PropertiesUtil
     /**
      * Returns all Properties in props that begin with str
      *
+     * Given properties foo.bar => 1, foo.baz => 2, bar => 3, and a prefix of "foo",
+     * produces the properties foo.bar => 1, foo.baz => 2
+     *
      * @param str the String that the returned properties should start with
      * @param props the Properties to search through
      * @return a Properties object containing the subset of props

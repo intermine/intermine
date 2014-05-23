@@ -52,7 +52,7 @@ public class SimilarityService extends JSONService
 
         String[] idsStrings = request.getParameterValues("id");
         if (idsStrings == null || idsStrings.length < 1) {
-            throw new BadRequestException("One or more ids are required.");
+            throw new BadRequestException("One or more ids are required");
         }
         LikeRequest request = new LikeRequest();
 

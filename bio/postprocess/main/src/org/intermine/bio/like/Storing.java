@@ -45,7 +45,7 @@ public class Storing {
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             boolean blobExisted = MetadataManager.deleteLargeBinary(db,
-                    "LIKE_SIMILARITY_MATRIX" + aspectNumber);
+                    MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
             if (blobExisted) {
                 LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
@@ -54,7 +54,7 @@ public class Storing {
             }
 
             LOG.debug("Saving search index information to database...");
-            writeObjectToDB(os, "LIKE_SIMILARITY_MATRIX" + aspectNumber, matrix);
+            writeObjectToDB(os, MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber, matrix);
             LOG.debug("Successfully saved search index information to database.");
 
         } catch (IOException e) {
@@ -73,7 +73,8 @@ public class Storing {
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             boolean blobExisted = MetadataManager.deleteLargeBinary(db,
-                    "LIKE_COMMON_MATRIX" + aspectNumber);
+                    MetadataManager.LIKE_COMMON_MATRIX + aspectNumber);
+
             if (blobExisted) {
                 LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
@@ -82,7 +83,7 @@ public class Storing {
             }
 
             LOG.debug("Saving search index information to database...");
-            writeObjectToDB(os, "LIKE_COMMON_MATRIX" + aspectNumber, matrix);
+            writeObjectToDB(os, MetadataManager.LIKE_COMMON_MATRIX + aspectNumber, matrix);
             LOG.debug("Successfully saved search index information to database.");
 
         } catch (IOException e) {
