@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.Coordinates;
 import org.junit.Test;
 
 /**

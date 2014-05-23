@@ -3,7 +3,7 @@ package org.intermine.bio.like;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.bio.like.Coordinates;
+import org.intermine.Coordinates;
 
 /**
  *

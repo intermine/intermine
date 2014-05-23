@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import javax.naming.ConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.like.request.LikeRequest;
 import org.intermine.like.request.LikeService;
 import org.intermine.like.request.MatrixStore;
 import org.intermine.like.response.LikeResult;
-import org.intermine.like.run.utils.Coordinates;
+import org.intermine.Coordinates;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -46,7 +48,7 @@ public class SimilarityService extends JSONService
     }
 
     @Override
-    protected void execute() throws ServiceException {
+    protected void execute() throws ServiceException, ConfigurationException {
         LikeService engine =
                 LikeService.getInstance(new OSMatrixStore(im.getObjectStore()), webProperties);
 
@@ -80,7 +82,6 @@ public class SimilarityService extends JSONService
 
     private void getObjectIds(String[] idsStrings, LikeRequest request) {
         ObjectStore os = im.getObjectStore();
-        // TODO add check here
         for (int i = 0; i < idsStrings.length; i++) {
             Integer givenId = Integer.parseInt(idsStrings[i]);
             try { // Check object existence.
@@ -156,11 +157,11 @@ public class SimilarityService extends JSONService
                         LOG.warn("IS is null");
                     }
                 } catch (ClassNotFoundException e) {
-                    LOG.error("Could not load search index", e);
+                    LOG.error("Could not load similarity matrix", e);
                 } catch (SQLException e) {
-                    LOG.error("Could not load search index", e);
+                    LOG.error("Could not load similarity matrix", e);
                 } catch (IOException e) {
-                    LOG.error("Could not load search index", e);
+                    LOG.error("Could not load similarity matrix", e);
                 }
             } else {
                 LOG.error("ObjectStore is of wrong type!");
@@ -175,8 +176,7 @@ public class SimilarityService extends JSONService
                 Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
                 try {
                     InputStream is = MetadataManager.readLargeBinary(db,
-                            MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
-
+                            MetadataManager.LIKE_COMMON_MATRIX + aspectNumber);
                     if (is != null) {
                         GZIPInputStream gzipInput = new GZIPInputStream(is);
                         ObjectInputStream objectInput = new ObjectInputStream(gzipInput);

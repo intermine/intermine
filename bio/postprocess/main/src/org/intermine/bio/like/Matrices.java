@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.Coordinates;
+
 /**
  * Matrices() is used for the pre-calculation of a matrix, that includes all items, that every
  * gene has in common with every other gene in the dataset (based on one single aspect).

@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.bio.like.Coordinates;
+import org.intermine.Coordinates;
 import org.junit.Test;
 
 /**

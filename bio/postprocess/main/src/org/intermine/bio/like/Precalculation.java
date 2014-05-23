@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.Coordinates;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -100,21 +101,21 @@ public class Precalculation
         // Filter the results with the following constraints:
         if ("Gene.goAnnotation.ontologyTerm.parents.id".equals(views.get(new Coordinates(i, 1)))) {
             pq.addConstraint(Constraints.eq("Gene.organism.name", "Drosophila melanogaster"), "A");
-//          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "B");
-//            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
             // Specify how these constraints should be combined.
             pq.addConstraint(Constraints.eq("Gene.goAnnotation.ontologyTerm.parents.namespace",
                     views.get(new Coordinates(i, 2))), "B");
+//          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "C");
+            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "C");
             // Specify how these constraints should be combined.
-//            pq.setConstraintLogic("A and B and C");
-            pq.setConstraintLogic("A and B");
+            pq.setConstraintLogic("A and B and C");
+//            pq.setConstraintLogic("A and B");
         }
         else {
             pq.addConstraint(Constraints.eq("Gene.organism.name", "Drosophila melanogaster"));
 //          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "B");
-//            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
+            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
             // Specify how these constraints should be combined.
-//            pq.setConstraintLogic("A and B");
+            pq.setConstraintLogic("A and B");
         }
 
         // Outer Joins

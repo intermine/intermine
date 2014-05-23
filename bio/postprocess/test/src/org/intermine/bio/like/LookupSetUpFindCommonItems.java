@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.Coordinates;
 import org.intermine.bio.like.LookupFindCommonItems;
-import org.intermine.bio.like.Coordinates;
 import org.junit.Test;
 
 /**

@@ -1,9 +1,11 @@
-package org.intermine.bio.like;
+package org.intermine;
 
 import java.io.Serializable;
 import java.util.Map.Entry;
 
 /**
+ * This is a duplicate of org.intermine.Coordinates.java in intermine-like-run (like-run.jar).
+ *
  * Builds a pair of coordinates. So, a matrix can be simulated in a HashMap. Where these
  * Coordinates are the key.
  *

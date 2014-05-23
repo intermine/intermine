@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.bio.like.Coordinates;
+import org.intermine.Coordinates;
 import org.intermine.model.InterMineObject;
 
 /**

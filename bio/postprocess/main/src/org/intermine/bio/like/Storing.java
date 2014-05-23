@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.intermine.Coordinates;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.modelproduction.MetadataManager.LargeObjectOutputStream;
 import org.intermine.objectstore.ObjectStore;
@@ -53,9 +54,10 @@ public class Storing {
                 LOG.debug("No previous search index blob found in db");
             }
 
-            LOG.debug("Saving search index information to database...");
+            LOG.debug("Saving matrix information to database");
             writeObjectToDB(os, MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber, matrix);
-            LOG.debug("Successfully saved search index information to database.");
+            LOG.debug("Successfully saved " + MetadataManager.LIKE_SIMILARITY_MATRIX
+                    + aspectNumber + " to database.");
 
         } catch (IOException e) {
             LOG.error(null, e);
