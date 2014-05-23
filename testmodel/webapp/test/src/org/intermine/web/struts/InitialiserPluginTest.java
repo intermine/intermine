@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.profile.SneakyTagAdder;
 import org.intermine.api.profile.TagChecker;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
@@ -156,12 +155,6 @@ public class InitialiserPluginTest extends TestCase
 
         List tags = tagManager.getTags(null, null, "class", "bob");
         assertEquals(bobsTagsClasses + 3, tags.size());
-
-        SneakyTagAdder sta = new SneakyTagAdder(tagManager);
-
-        // test that these go away
-        sta.sneakilyAddTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
-        sta.sneakilyAddTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
 
         InitialiserPlugin.cleanTags(tagManager);
 
