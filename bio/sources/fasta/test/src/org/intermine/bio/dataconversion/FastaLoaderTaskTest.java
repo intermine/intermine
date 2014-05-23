@@ -82,6 +82,7 @@ public class FastaLoaderTaskTest extends TestCase {
         }
         flt.setFileArray(files);
         flt.execute();
+
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
 
