@@ -110,9 +110,6 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         assertEquals(2, res.getUnresolved().size());
     }
 
-
-
-
     // test for the case when an identifier appears twice in the input - ignore duplicates
     public void testSearchForBagDuplicates1() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2", "EmployeeA1"});
