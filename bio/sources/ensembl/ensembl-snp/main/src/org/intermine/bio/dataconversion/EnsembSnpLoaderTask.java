@@ -15,14 +15,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.bio.io.gff3.GFF3Record;
@@ -36,13 +34,6 @@ import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceAlteration;
 import org.intermine.model.bio.Transcript;
-
-import org.intermine.model.bio.SNV;
-import org.intermine.model.bio.Deletion;
-import org.intermine.model.bio.TandemRepeat;
-import org.intermine.model.bio.Insertion;
-import org.intermine.model.bio.Substitution;
-
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.task.FileDirectDataLoaderTask;
 
@@ -53,8 +44,6 @@ import org.intermine.task.FileDirectDataLoaderTask;
  */
 public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
 {
-    private int storeCount = 0;
-
     private static final String DATASET_TITLE = "Ensembl SNP";
     private static final String DATA_SOURCE_NAME = "Ensembl";
     private static final String TAXON_ID = "9606";
@@ -63,7 +52,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
     private DataSource datasource = null;
     private Map<String, Transcript> transcripts = new HashMap<String, Transcript>();
     private Map<String, Chromosome> chromosomes = new HashMap<String, Chromosome>();
-    private static final Logger LOG = Logger.getLogger(EnsembSnpLoaderTask.class);
+
     //Set this if we want to do some testing...
     private File[] files = null;
     private static final String NAMESPACE = "org.intermine.model.bio";
@@ -72,9 +61,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
      */
     @Override
     public void process() {
-        long start = System.currentTimeMillis();
         try {
-            storeCount++;
             super.process();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().beginTransaction();
@@ -82,10 +69,6 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
         }
-        long now = System.currentTimeMillis();
-        LOG.info("Finished dataloading " + storeCount + " objects at " + ((60000L * storeCount)
-                    / (now - start)) + " objects per minute (" + (now - start)
-                + " ms total) for source " + sourceName);
     }
 
     /**
@@ -172,7 +155,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
                 // Variant_effect=upstream_gene_variant 0 transcript ENST00000519787
                 String transcriptIdentifier = getTranscriptIdentifier(effect);
 
-                Consequence consequence = getDirectDataLoader().createObject(
+                Consequence consequence = getDirectDataLoader().createSimpleObject(
                         org.intermine.model.bio.Consequence.class);
                 consequence.setDescription(effect);
                 if (StringUtils.isNotEmpty(transcriptIdentifier)) {
@@ -184,7 +167,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
                         throw new RuntimeException("Can't store transcript", e);
                     }
                 }
-                snp.setConsequences(Collections.singleton(consequence));
+                consequence.setSnp(snp);
                 try {
                     getDirectDataLoader().store(consequence);
                 } catch (ObjectStoreException e) {
