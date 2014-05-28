@@ -29,7 +29,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.TagManager;
 import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.model.userprofile.Tag;
 

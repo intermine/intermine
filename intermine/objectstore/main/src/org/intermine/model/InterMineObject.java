@@ -1,5 +1,7 @@
 package org.intermine.model;
 
+import org.intermine.objectstore.ObjectStore;
+
 /*
  * Copyright (C) 2002-2014 FlyMine
  *
@@ -10,16 +12,13 @@ package org.intermine.model;
  *
  */
 
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringConstructor;
-
 /**
  * A root interface for all objects that can be stored in a InterMine database.
  *
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public interface InterMineObject extends FastPathObject
+public interface InterMineObject extends InterMineFastPathObject
 {
     /**
      * Getter for the ID field - ensures that every object in the database has an ID.
@@ -42,6 +41,7 @@ public interface InterMineObject extends FastPathObject
      */
     StringConstructor getoBJECT();
 
+
     /**
      * Sets the values of the fields to the values in the given NotXml.
      *
@@ -57,7 +57,8 @@ public interface InterMineObject extends FastPathObject
      * @param os an ObjectStore from which to create proxies
      */
     void setoBJECT(String[] notXml, ObjectStore os);
-
+  
+    
     /**
      * Returns the element type of a collection by name.
      *

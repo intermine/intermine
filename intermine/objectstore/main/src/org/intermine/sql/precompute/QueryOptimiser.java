@@ -28,6 +28,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.sql.query.AbstractConstraint;
 import org.intermine.sql.query.AbstractTable;
@@ -41,6 +42,7 @@ import org.intermine.sql.query.InListConstraint;
 import org.intermine.sql.query.NotConstraint;
 import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.Query;
+import org.intermine.sql.query.QueryParseTimeoutException;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SubQuery;
 import org.intermine.sql.query.SubQueryConstraint;
@@ -48,7 +50,6 @@ import org.intermine.sql.query.Table;
 import org.intermine.util.ConsistentSet;
 import org.intermine.util.IdentityMap;
 import org.intermine.util.MappingUtil;
-import org.intermine.util.StringUtil;
 
 /**
  * A static class providing the code to optimise a query, given a database (presumably with a table
@@ -223,7 +224,7 @@ public final class QueryOptimiser
                 // to say optimisation is not worth it, before parsing.
                 bestQuery.add(query);
                 if (originalQuery == null) {
-                    originalQuery = new Query(query);
+                    originalQuery = new Query(query, context.getMaxQueryParseTime());
                 }
                 parseTime = new Date().getTime();
                 recursiveOptimiseCheckSubquery(precomputedTables, originalQuery, bestQuery);
@@ -235,6 +236,15 @@ public final class QueryOptimiser
                 //}
                 if (context.isVerbose()) {
                     System.out .println("QueryOptimiser: bailing out early: " + e);
+                }
+            } catch (QueryParseTimeoutException e) {
+                LOG.warn("QueryOptimiser aborted parsing query after "
+                        + context.getMaxQueryParseTime() + "ms. " + query);
+                if (context.isVerbose()) {
+                    System.out
+                            .println("QueryOptimiser: parsing SQL query took too long,"
+                                    + " bailing out early (time limit: "
+                                    + context.getMaxQueryParseTime() + ")");
                 }
             } finally {
                 if (context.isVerbose()) {

@@ -4,12 +4,11 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.io.IOUtils;
-import org.intermine.webservice.client.results.ResultRowList;
 import org.json.JSONArray;
 import org.json.JSONException;
-
-import junit.framework.TestCase;
 
 public class ResultRowListTest extends TestCase {
 

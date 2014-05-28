@@ -35,7 +35,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.logic.SpanOverlapQueryRunner;
 

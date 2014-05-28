@@ -12,7 +12,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;

@@ -23,8 +23,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,10 +35,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.api.template.ApiTemplate;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.util.CollectionUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * For a given list of input strings search for objects using default and configured queries for a
@@ -115,7 +115,7 @@ public class BagQueryRunner
         List<String> cleanInput = new ArrayList<String>();
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
-        
+
         for (String inputString : input) {
             if (StringUtils.isNotEmpty(inputString)) {
                 // no wildcards OR single * (if single *, treat like a string)

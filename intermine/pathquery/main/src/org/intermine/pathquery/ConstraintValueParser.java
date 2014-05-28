@@ -20,7 +20,9 @@ import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
+
+
 
 /**
  * Parser for parsing constraint value.

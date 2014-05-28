@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OuterJoinStatus;
@@ -23,7 +23,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 public class WebserviceRubyCodeGenerator implements WebserviceCodeGenerator
 {

@@ -23,7 +23,7 @@
     <!-- Calling standard InterMine build scripts -->
     <ant antfile="build.xml" target="library.jar" inheritall="false"></ant>
     <ant antfile="../../pathquery/main/build.xml" target="library.jar" dir="../../../pathquery/main" inheritall="false"/>
-    <ant antfile="../../objectstore/main/build.xml" target="library.jar" dir="../../../objectstore/main" inheritall="false"></ant>
+    <ant antfile="../../model/main/build.xml" target="library.jar" dir="../../../model/main" inheritall="false"></ant>
   </target>
 
   <target name="javadoc">
@@ -53,13 +53,14 @@
       <fileset file="${src.dir}/log4j.properties" />
     </jar>
     <copy file="../../../pathquery/main/dist/intermine-pathquery.jar" todir="${build.dir}/lib/"/>
-    <copy file="../../../objectstore/main/dist/intermine-objectstore.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/dist/intermine-model.jar" todir="${build.dir}/lib/"/>
     <!-- stax-api-1.0.jar and stax-ri-1.0.jar is needed when java 1.5 is used for pathquery XML serialization and deserialization -->
     <copy file="../../../pathquery/main/lib/stax-api-1.0.jar" todir="${build.dir}/lib/"/>
     <copy file="../../../pathquery/main/lib/stax-ri-1.0.jar" todir="${build.dir}/lib/"/>
-    <copy file="../../../objectstore/main/lib/commons-lang-2.6.jar" todir="${build.dir}/lib/"/>
-    <copy file="../../../objectstore/main/lib/antlr-2.7.6-caching.jar" todir="${build.dir}/lib/"/>
-    <copy file="../../../api/main/lib/json20110106.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/lib/commons-lang-2.6.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/lib/commons-io-1.2.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/lib/antlr-2.7.6-caching.jar" todir="${build.dir}/lib/"/>
+    <copy file="../../../model/main/lib/json20110106.jar" todir="${build.dir}/lib/"/>
     <copy file="compile-run.sh" todir="${build.dir}"/>
 
     <antcall target="copy-samples"/>

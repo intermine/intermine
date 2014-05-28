@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.util.XmlUtil;
 import org.apache.commons.lang.StringUtils;
 

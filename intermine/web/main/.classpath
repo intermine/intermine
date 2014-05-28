@@ -31,8 +31,9 @@
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/strutstestcase-2.1.4-1.2-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/JOpenId-1.08.jar"/>
-	<classpathentry kind="lib" path="/intermine-api-main/lib/json20110106.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="src" path="/bio-core-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

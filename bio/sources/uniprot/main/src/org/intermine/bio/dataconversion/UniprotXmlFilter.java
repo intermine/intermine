@@ -9,7 +9,7 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 import java.util.Set;
 import java.io.BufferedReader;

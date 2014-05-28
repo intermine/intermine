@@ -31,7 +31,7 @@ import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;

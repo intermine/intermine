@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.util.ConsistentSet;
+
 import antlr.Token;
 import antlr.collections.AST;
 //import antlr.debug.misc.ASTFrame;
-
-import org.intermine.util.ConsistentSet;
 
 
 /**
@@ -127,7 +127,7 @@ public class Query implements SQLStringable
      * @throws IllegalArgumentException if the SQL String is invalid
      */
     public Query(String sql) {
-        this(sql, true);
+        this(sql, true, null);
     }
 
     /**
@@ -138,6 +138,29 @@ public class Query implements SQLStringable
      * @throws IllegalArgumentException if the SQL String is invalid
      */
     public Query(String sql, boolean treeParse) {
+        this(sql, treeParse, null);
+    }
+
+    /**
+     * Construct a new parsed Query from a String.
+     *
+     * @param sql a SQL SELECT String to parse
+     * @param timeOut maximum time in milliseconds to spend parsing, can be null for no timeout
+     * @throws IllegalArgumentException if the SQL String is invalid
+     */
+    public Query(String sql, Long timeOut) {
+        this(sql, true, timeOut);
+    }
+
+    /**
+     * Construct a new parsed Query from a String.
+     *
+     * @param sql a SQL SELECT String to parse
+     * @param treeParse true if a tree-parse step is required (usually so)
+     * @param timeOut maximum time in milliseconds to spend parsing, can be null for no timeout
+     * @throws IllegalArgumentException if the SQL String is invalid
+     */
+    public Query(String sql, boolean treeParse, Long timeOut) {
         this();
 
         aliasToTable = new HashMap<String, AbstractTable>();
@@ -155,6 +178,7 @@ public class Query implements SQLStringable
             }
             if (treeParse) {
                 AST oldAst;
+                long startTime = System.currentTimeMillis();
                 do {
                     oldAst = ast;
                     SqlTreeParser treeparser = new SqlTreeParser();
@@ -162,6 +186,10 @@ public class Query implements SQLStringable
                     ast = treeparser.getAST();
                     if (ast == null) {
                         throw (new IllegalArgumentException("Invalid SQL string " + sql));
+                    }
+                    long elapsedTime = System.currentTimeMillis() - startTime;
+                    if (timeOut != null && elapsedTime > timeOut.longValue()) {
+                        throw new QueryParseTimeoutException();
                     }
                 } while (!oldAst.equalsList(ast));
             }
@@ -188,10 +216,13 @@ public class Query implements SQLStringable
             } catch (antlr.TokenStreamException e3) {
                 throw new IllegalArgumentException(e);
             }
+
         } catch (antlr.TokenStreamException e) {
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
             throw e2;
+        } catch (QueryParseTimeoutException e) {
+            throw e;
         }
     }
 

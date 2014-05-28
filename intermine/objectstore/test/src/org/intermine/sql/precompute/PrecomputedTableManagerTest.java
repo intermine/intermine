@@ -23,7 +23,7 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.*;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 public class PrecomputedTableManagerTest extends TestCase
 {

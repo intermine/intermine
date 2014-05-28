@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /**
  * Representation of a constraint to a collection of object ids in a query.

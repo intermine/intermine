@@ -1,0 +1,9 @@
+
+<project name="intermine-model" default="default" basedir=".">
+  
+  <description>build, test, package intermine-model</description>
+  <property name="generating.code" value="true"/>
+  <import file="../../../imbuild/library.xml"/>
+    
+</project>
+

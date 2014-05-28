@@ -41,7 +41,7 @@ public class OmimConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
-        converter = new OmimConverterConverter(itemWriter, model);
+        converter = new OmimConverter(itemWriter, model);
         super.setUp();
     }
 
@@ -65,9 +65,7 @@ public class OmimConverterTest extends ItemsTestCase
 
     private void process(String infoFile) throws Exception {
         File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
-
-        converter.setCurrentFile(geneInfo);
-        converter.process(new FileReader(geneInfo));
+        converter.process(geneInfo);
         converter.close();
 
         storedItems = itemWriter.getItems();

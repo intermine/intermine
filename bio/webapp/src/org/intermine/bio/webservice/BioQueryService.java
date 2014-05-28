@@ -27,7 +27,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;

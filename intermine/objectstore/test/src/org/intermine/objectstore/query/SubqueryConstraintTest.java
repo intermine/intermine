@@ -11,7 +11,9 @@ package org.intermine.objectstore.query;
  */
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.*;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Manager;
 
 public class SubqueryConstraintTest extends TestCase {
     private SubqueryConstraint constraint;

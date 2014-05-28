@@ -36,7 +36,7 @@ import org.intermine.bio.util.OrganismRepository;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
