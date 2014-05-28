@@ -35,12 +35,10 @@ public class JWTVerifierTest {
     private static KeyPair testingKeyPair;
     private static KeyPair wso2KeyPair;
     private static KeyStore ks = null;
-    private String token = null;
-    private String wrongSig = null;
+    
     private Properties options = null;
     private static Properties defaultOptions = new Properties();
-    private String expired = null;
-    private String wso2Token = null;
+    private String token, wso2Token, expired, wrongSig, unknown;
 
     @BeforeClass
     public static void setupOnce() throws Exception {
@@ -61,6 +59,7 @@ public class JWTVerifierTest {
 
         token = generateToken(testingKeyPair, expirationTime, "testing issuer");
         wso2Token = generateToken(wso2KeyPair, expirationTime, "wso2 issuer");
+        unknown = generateToken(testingKeyPair, expirationTime, "unknown issuer");
         wrongSig = generateToken(wso2KeyPair, expirationTime, "testing issuer");
         expired = generateToken(wso2KeyPair, 0L, "testing issuer");
     }
@@ -134,6 +133,17 @@ public class JWTVerifierTest {
         JWTVerifier verifier = new JWTVerifier(ks, options);
         try {
             verifier.verify(wrongSig);
+            fail();
+        } catch (VerificationError e) {
+            // This is expected.
+        }
+    }
+
+    @Test
+    public void testUnknownIssuer() throws Exception {
+        JWTVerifier verifier = new JWTVerifier(ks, options);
+        try {
+            verifier.verify(unknown);
             fail();
         } catch (VerificationError e) {
             // This is expected.
