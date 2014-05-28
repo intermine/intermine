@@ -32,6 +32,7 @@ import org.apache.tools.ant.Task;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
@@ -46,7 +47,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -60,7 +61,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * A Task for creating GFF and FASTA files for use by GBrowse.  Only those features that are
@@ -282,7 +283,7 @@ public class WriteGFFTask extends Task
 
     private String getFeatureName(SequenceFeature feature) {
         Class<?> bioEntityClass = feature.getClass();
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(bioEntityClass);
+        Set<Class<?>> classes = Util.decomposeClass(bioEntityClass);
 
         StringBuffer nameBuffer = new StringBuffer();
 

@@ -44,7 +44,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;

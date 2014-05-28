@@ -10,7 +10,7 @@ package org.intermine.web.logic.template;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import java.util.List;
 
 /**

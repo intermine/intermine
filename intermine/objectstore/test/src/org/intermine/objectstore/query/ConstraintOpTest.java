@@ -12,6 +12,8 @@ package org.intermine.objectstore.query;
 
 import junit.framework.TestCase;
 
+import org.intermine.metadata.ConstraintOp;
+
 public class ConstraintOpTest extends TestCase
 {
     public ConstraintOpTest(String arg1) {

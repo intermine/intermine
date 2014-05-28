@@ -2,7 +2,7 @@ package org.intermine.pathquery;
 
 import java.util.Collection;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
@@ -109,7 +109,7 @@ public abstract class PathConstraint
             return null;
         }
     }
-    
+
     public static Collection<Integer> getIds(PathConstraint con) {
         if (con instanceof PathConstraintIds) {
             return ((PathConstraintIds) con).getIds();

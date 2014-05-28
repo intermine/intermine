@@ -8,7 +8,6 @@ import java.util.List;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.TemplateService;
 import org.intermine.webservice.client.template.TemplateParameter;
-
 import org.junit.Test;
 
 /**

@@ -1252,4 +1252,14 @@ public class QueryTest extends TestCase
         // just check this parses, it selects a value from a single table subquery without an alias
         q1 = new Query("SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE (NOT (a1_.name IN (SELECT value FROM bag_table))) ORDER BY a1_.id");
     }
+
+    public void testTimeout() throws Exception {
+        String sql = "SELECT DISTINCT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id, a2_.intermine_start AS orderbyfield0, a1_.briefDescription AS orderbyfield1, a1_.description AS orderbyfield2, a1_.id AS orderbyfield3, a2_.intermine_end AS orderbyfield4, a3_.shortName AS orderbyfield5 FROM Gene AS a1_, Location AS a2_, Organism AS a3_, Chromosome AS a4_ WHERE a1_.chromosomeLocationId = a2_.id AND a1_.organismId = a3_.id AND ((a2_.locatedOnId = a4_.id AND a4_.primaryIdentifier = 'MAL1' AND (a2_.featureId = a2_.featureId AND bioseg_create(a2_.intermine_start, a2_.intermine_end) && bioseg_create(1, 10001))) OR (a2_.locatedOnId = a4_.id AND a4_.primaryIdentifier = 'MAL1' AND (a2_.featureId = a2_.featureId AND bioseg_create(a2_.intermine_start, a2_.intermine_end) && bioseg_create(150001, 160001)))) ORDER BY a2_.intermine_start, a1_.briefDescription, a1_.description, a1_.id, a2_.intermine_end, a3_.shortName, a2_.id, a3_.id LIMIT 5000";
+        try {
+            // set query parse timeout of 1ms, will throw timeout exception
+            Query q = new Query(sql, new Long(1));
+            fail("Expected QueryParseTimeoutException");
+        } catch (QueryParseTimeoutException e) {
+        }
+    }
 }

@@ -11,6 +11,7 @@ package org.intermine.sql.precompute;
  */
 
 import java.util.Set;
+
 import org.intermine.sql.query.Query;
 import org.intermine.util.ConsistentSet;
 

@@ -15,7 +15,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraintAttribute;

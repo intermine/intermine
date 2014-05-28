@@ -16,7 +16,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 public class PathQueryUnitTest extends TestCase
 {

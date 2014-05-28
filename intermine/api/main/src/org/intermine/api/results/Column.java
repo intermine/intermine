@@ -11,7 +11,7 @@ package org.intermine.api.results;
  */
 
 import org.intermine.pathquery.Path;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Configuration information for a column in a table
