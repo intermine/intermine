@@ -11,6 +11,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.naming.ConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.like.request.LikeRequest;
@@ -52,10 +53,11 @@ public class SimilarityService extends JSONService
         LikeService engine =
                 LikeService.getInstance(new OSMatrixStore(im.getObjectStore()), webProperties);
 
-        String[] idsStrings = request.getParameterValues("id");
-        if (idsStrings == null || idsStrings.length < 1) {
+        String id = request.getParameter("id");
+        if (StringUtils.isEmpty(id)) {
             throw new BadRequestException("One or more ids are required");
         }
+        String[] idsStrings = id.split(",");
         LikeRequest request = new LikeRequest();
 
         getObjectIds(idsStrings, request);
@@ -69,12 +71,17 @@ public class SimilarityService extends JSONService
             throw new ServiceException("I don't even");
         }
 
-        //Integer[][] totalRatingSet = result.getTotalRatingSet();
+        Integer[][] totalRatingSet = result.getTotalRatingSet();
         Map<Integer, Map<Integer, Map<Integer, Integer>>> similarGenes = result.getsimilarGenes();
-        //Map<Integer, Map<Integer, ArrayList<Integer>>> commonItems = result.getCommonItems();
+        Map<Integer, Map<Integer, ArrayList<Integer>>> commonItems = result.getCommonItems();
 
         List<Object> rets = new ArrayList<Object>();
-        rets.addAll(similarGenes.keySet());
+//        rets.addAll(similarGenes.keySet());
+        for (int i = 0; i < totalRatingSet.length; i++) {
+            for (int j = 0; j < 2; j++) {
+                rets.add(totalRatingSet[i][j]);
+            }
+        }
 
         // transmit object.
         addResultItem(rets, false);

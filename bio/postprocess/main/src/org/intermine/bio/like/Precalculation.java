@@ -2,6 +2,7 @@ package org.intermine.bio.like;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -61,17 +62,44 @@ public class Precalculation
         InputStream configStream = classLoader.getResourceAsStream(configFileName);
         prop.load(configStream);
 
-        int countViews = 0;
-        for (int i = 0; i < prop.size() / 4; i++) {
-            if (prop.getProperty("query." + i + ".required") != null) {
-                views.put(new Coordinates(countViews, 0),
-                        prop.getProperty("query." + i + ".number"));
-                views.put(new Coordinates(countViews, 1), prop.getProperty("query." + i + ".id"));
-                views.put(new Coordinates(countViews, 2),
-                        prop.getProperty("query." + i + ".constraint"));
-                views.put(new Coordinates(countViews, 3), prop.getProperty("query." + i + ".type"));
-                countViews += 1;
+        int queryNumber = 0;
+        for (int i = 0; i < 100; i++) {
+            if (prop.getProperty("query." + i + ".number") != null) {
+                queryNumber += 1;
             }
+            else {
+                break;
+            }
+        }
+        views.put(new Coordinates(0, 0), String.valueOf(queryNumber));
+
+        views.put(new Coordinates(1, 0), prop.getProperty("query.all.constraint.path"));
+        views.put(new Coordinates(1, 1), prop.getProperty("query.all.constraint.op"));
+        views.put(new Coordinates(1, 2), prop.getProperty("query.all.constraint.value"));
+
+        int countViews = 2;
+        for (int i = 0; i < queryNumber; i++) {
+            views.put(new Coordinates(countViews, 0),
+                    prop.getProperty("query." + i + ".number"));
+            views.put(new Coordinates(countViews, 1), prop.getProperty("query." + i + ".id"));
+            views.put(new Coordinates(countViews, 2), prop.getProperty("query." + i + ".type"));
+
+            if (prop.getProperty("query." + i + ".constraint.a.path") != null) {
+                views.put(new Coordinates(countViews, 3),
+                        prop.getProperty("query." + i + ".constraint.a.path"));
+                views.put(new Coordinates(countViews, 4),
+                        prop.getProperty("query." + i + ".constraint.a.op"));
+                views.put(new Coordinates(countViews, 5),
+                        prop.getProperty("query." + i + ".constraint.a.value"));
+                views.put(new Coordinates(countViews, 6),
+                        prop.getProperty("query." + i + ".constraint.b.path"));
+                views.put(new Coordinates(countViews, 7),
+                        prop.getProperty("query." + i + ".constraint.b.op"));
+                views.put(new Coordinates(countViews, 8),
+                        prop.getProperty("query." + i + ".constraint.b.value"));
+            }
+
+            countViews += 1;
         }
         return views;
     }
@@ -91,7 +119,9 @@ public class Precalculation
         Model model = os.getModel();
         PathQuery pq = new PathQuery(model);
         String relationShip = views.get(new Coordinates(i, 1));
-
+        String path = views.get(new Coordinates(1, 0));
+        String op = views.get(new Coordinates(1, 1));
+        String value = views.get(new Coordinates(1, 2));
         // add views
         pq.addViews("Gene.id", relationShip);
 
@@ -99,24 +129,25 @@ public class Precalculation
         pq.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
 
         // Filter the results with the following constraints:
-        if ("Gene.goAnnotation.ontologyTerm.parents.id".equals(views.get(new Coordinates(i, 1)))) {
-            pq.addConstraint(Constraints.eq("Gene.organism.name", "Drosophila melanogaster"), "A");
+        pq.addConstraint(Constraints.eq(path, value), "A");
+
+        if ("Gene.goAnnotation.ontologyTerm.parents.id".equals(relationShip)) {
+            pq.addConstraint(Constraints.neq(views.get(new Coordinates(i, 3)),
+                    views.get(new Coordinates(i, 5))), "B");
+            pq.addConstraint(Constraints.eq(views.get(new Coordinates(i, 6)),
+                    views.get(new Coordinates(i, 8))), "C");
+//          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "D");
+//          pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "D");
             // Specify how these constraints should be combined.
-            pq.addConstraint(Constraints.eq("Gene.goAnnotation.ontologyTerm.parents.namespace",
-                    views.get(new Coordinates(i, 2))), "B");
-//          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "C");
-            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "C");
-            // Specify how these constraints should be combined.
-            pq.setConstraintLogic("A and B and C");
+          pq.setConstraintLogic("A and B and C");
+//          pq.setConstraintLogic("A and B and C and D");
+        }
+//        else {
+//
+////          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "B");
+//            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
 //            pq.setConstraintLogic("A and B");
-        }
-        else {
-            pq.addConstraint(Constraints.eq("Gene.organism.name", "Drosophila melanogaster"));
-//          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "B");
-            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
-            // Specify how these constraints should be combined.
-            pq.setConstraintLogic("A and B");
-        }
+//        }
 
         // Outer Joins
         // Show all information about these relationships if they exist, but do not require that
