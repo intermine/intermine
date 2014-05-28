@@ -17,5 +17,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="lib" path="lib/easymock-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/objenesis-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
