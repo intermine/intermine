@@ -78,6 +78,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
             super.process();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().beginTransaction();
+            getDirectDataLoader().close();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
         }
