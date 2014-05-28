@@ -115,10 +115,14 @@ public class JWTVerifier
         } catch (NoSuchAlgorithmException e) {
             throw new VerificationError(e.getMessage());
         }
+        String keyAlias = getKeyAlias(issuer);
+        if (StringUtils.isBlank(keyAlias)) {
+            throw new VerificationError("Unknown identity issuer: " + issuer);
+        }
 
         if (algorithm.endsWith("withRSA")) {
             try {
-                Certificate cert = keyStore.getCertificate(getKeyAlias(issuer));
+                Certificate cert = keyStore.getCertificate(keyAlias);
                 PublicKey key = cert.getPublicKey();
                 signature.initVerify(key);
             } catch (InvalidKeyException e) {
