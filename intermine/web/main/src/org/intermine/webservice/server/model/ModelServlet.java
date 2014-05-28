@@ -20,8 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
 
-
-
 /**
  * Runs ModelService web service.
  *
@@ -47,7 +45,6 @@ public class ModelServlet extends HttpServlet
         throws ServletException, IOException {
         runService(req, resp);
     }
-
 
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
