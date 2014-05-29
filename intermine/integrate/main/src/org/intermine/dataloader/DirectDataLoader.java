@@ -90,7 +90,7 @@ public class DirectDataLoader extends DataLoader
      * Create a new object of the given class name and give it a unique ID.
      * @param className the class name
      * @return the new InterMineObject
-     * @throws C o.setId(new Integer(idCounter));lassNotFoundException if the given class doesn't exist
+     * @throws ClassNotFoundException if the given class doesn't exist
      */
     @SuppressWarnings("unchecked")
     public InterMineObject createObject(String className) throws ClassNotFoundException {
@@ -110,6 +110,12 @@ public class DirectDataLoader extends DataLoader
         return o;
     }
 
+    /**
+     * Create a 'simple object' which doesn't inherit from InterMineObject and doesn't have an id.
+     * @param c the class of object to create
+     * @param <C> the type of the class
+     * @return an empty simple object of the given class
+     */
     public <C extends FastPathObject> C createSimpleObject(Class<C> c) {
         C o = DynamicUtil.simpleCreateObject(c);
         return o;
