@@ -35,6 +35,7 @@ import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceAlteration;
 import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.task.FileDirectDataLoaderTask;
 
 /**
@@ -50,8 +51,8 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
     private Organism org = null;
     private DataSet dataset = null;
     private DataSource datasource = null;
-    private Map<String, Transcript> transcripts = new HashMap<String, Transcript>();
-    private Map<String, Chromosome> chromosomes = new HashMap<String, Chromosome>();
+    private Map<String, ProxyReference> transcripts = new HashMap<String, ProxyReference>();
+    private Map<String, ProxyReference> chromosomes = new HashMap<String, ProxyReference>();
 
     //Set this if we want to do some testing...
     private File[] files = null;
@@ -159,10 +160,8 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
                         org.intermine.model.bio.Consequence.class);
                 consequence.setDescription(effect);
                 if (StringUtils.isNotEmpty(transcriptIdentifier)) {
-                    Transcript transcript;
                     try {
-                        transcript = getTranscript(transcriptIdentifier);
-                        consequence.setTranscript(transcript);
+                        consequence.proxyTranscript(getTranscript(transcriptIdentifier));
                     } catch (ObjectStoreException e) {
                         throw new RuntimeException("Can't store transcript", e);
                     }
@@ -177,37 +176,45 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
         }
         snp.setLength(getLength(record));
         String chromosomeIdentifier = record.getSequenceID();
-        Chromosome chromosome = getChromosome(chromosomeIdentifier);
-        snp.setChromosome(chromosome);
-        setLocation(record, snp, chromosome);
+        ProxyReference chromosomeRef = getChromosome(chromosomeIdentifier);
+        snp.proxyChromosome(chromosomeRef);
+        setLocation(record, snp, chromosomeRef);
         snp.setOrganism(getOrganism());
         getDirectDataLoader().store(snp);
     }
 
-    private Transcript getTranscript(String identifier) throws ObjectStoreException {
-        Transcript transcript = transcripts.get(identifier);
-        if (transcript == null) {
-            transcript = getDirectDataLoader().createObject(
+    private ProxyReference getTranscript(String identifier) throws ObjectStoreException {
+        ProxyReference transcriptRef = transcripts.get(identifier);
+        if (transcriptRef == null) {
+            Transcript transcript = getDirectDataLoader().createObject(
                     org.intermine.model.bio.Transcript.class);
             transcript.setPrimaryIdentifier(identifier);
             transcript.setOrganism(getOrganism());
-            transcripts.put(identifier, transcript);
+            // we can store the transcript now...
             getDirectDataLoader().store(transcript);
+            // ...and only keep a ProxyReference, which is a holder for the id and all that's
+            // needed to store the transcript reference
+            transcriptRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    transcript.getId(), Transcript.class);
+            transcripts.put(identifier, transcriptRef);
         }
-        return transcript;
+        return transcriptRef;
     }
 
-    private Chromosome getChromosome(String identifier) throws ObjectStoreException {
-        Chromosome chromosome = chromosomes.get(identifier);
-        if (chromosome == null) {
-            chromosome = getDirectDataLoader().createObject(
+    private ProxyReference getChromosome(String identifier) throws ObjectStoreException {
+        ProxyReference chromosomeRef = chromosomes.get(identifier);
+        if (chromosomeRef == null) {
+            Chromosome chromosome = getDirectDataLoader().createObject(
                     org.intermine.model.bio.Chromosome.class);
             chromosome.setPrimaryIdentifier(identifier);
             chromosome.setOrganism(getOrganism());
-            chromosomes.put(identifier, chromosome);
             getDirectDataLoader().store(chromosome);
+
+            chromosomeRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    chromosome.getId(), Chromosome.class);
+            chromosomes.put(identifier, chromosomeRef);
         }
-        return chromosome;
+        return chromosomeRef;
     }
 
 
@@ -247,7 +254,8 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
         return length;
     }
 
-    private Location setLocation(GFF3Record record, SequenceAlteration snp, Chromosome chromosome)
+    private Location setLocation(GFF3Record record, SequenceAlteration snp,
+            ProxyReference chromosomeRef)
         throws ObjectStoreException {
         Location location = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Location.class);
@@ -267,7 +275,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
         } else {
             location.setStrand("0");
         }
-        location.setLocatedOn(chromosome);
+        location.proxyLocatedOn(chromosomeRef);
         location.setFeature(snp);
         getDirectDataLoader().store(location);
         return location;
