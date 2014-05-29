@@ -34,6 +34,9 @@ public class LookupNormalise {
             if (xCoordinate != SUBJECT_ID_ROW && yCoordinate != SUBJECT_ID_COLUMN) {
                 normMat.put(entry.getKey(), entry.getValue() * MAX_RATING / matrix.get(
                                 new Coordinates(xCoordinate, xCoordinate)));
+                normMat.put(new Coordinates(entry.getKey().getValue(), entry.getKey().getKey()),
+                        entry.getValue() * MAX_RATING
+                        / matrix.get(new Coordinates(yCoordinate, yCoordinate)));
             }
         }
         return normMat;

@@ -42,6 +42,9 @@ public final class Precalculate
         this.osw = osw;
         this.os = osw.getObjectStore();
     }
+    public Precalculate(ObjectStore os) {
+        this.os = os;
+    }
 
     /**
      * @throws Exception
@@ -63,7 +66,7 @@ public final class Precalculate
             Map<Coordinates, Integer> matrix = new HashMap<Coordinates, Integer>();
             Map<Coordinates, ArrayList<Integer>> commonMat =
                     new HashMap<Coordinates, ArrayList<Integer>>();
-            Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
+//            Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
 //            Map<Coordinates, Integer> normMat = new HashMap<Coordinates, Integer>();
             long t3 = System.currentTimeMillis();
 
@@ -85,7 +88,6 @@ public final class Precalculate
                 commonMat = Matrices.findCommonItems(matrix);
                 long t6 = System.currentTimeMillis();
                 LOG.debug((t6 - t5) + "ms to find common items " + i + "\n");
-                matrix = new HashMap<Coordinates, Integer>();
 
                 LOG.info("Storing of common items matrix " + i + " to the db.\n");
                 Storing.saveCommonMatToDatabase(os, commonMat, views.get(new Coordinates(i, 0)));
@@ -94,16 +96,16 @@ public final class Precalculate
                 LOG.debug((t7 - t6) + "ms to store common items " + i + "\n");
 
                 LOG.info("Calculate the number of common items.\n");
-                simMat = Matrices.countCommonItemsCategory(commonMat);
+                matrix = Matrices.countCommonItemsCategory(commonMat);
                 long t8 = System.currentTimeMillis();
                 LOG.debug((t8 - t7) + "ms to calculate matrix " + i + "\n");
                 commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
 
                 LOG.info("Normalise the number of common items.\n");
-                matrix = Matrices.normalise(simMat);
+                matrix = Matrices.normalise(matrix);
                 long t9 = System.currentTimeMillis();
                 LOG.debug((t9 - t8) + "ms to normalise matrix " + i + "\n");
-                simMat = new HashMap<Coordinates, Integer>();
+//                simMat = new HashMap<Coordinates, Integer>();
 
                 System.out.print("\nnormMat:\n");
                 for (int j = 0; j < 30; j++) {
@@ -118,7 +120,7 @@ public final class Precalculate
 
                 long t10 = System.currentTimeMillis();
                 LOG.debug((t10 - t9) + "ms to store similarity matrix " + i + "\n");
-                matrix = new HashMap<Coordinates, Integer>();
+//                matrix = new HashMap<Coordinates, Integer>();
             }
 
             if ("count".equals(views.get(new Coordinates(i, 2)))) {
@@ -130,38 +132,26 @@ public final class Precalculate
                 long t12 = System.currentTimeMillis();
                 LOG.debug((t12 - t11) + "ms to run query " + i + "\n");
 
-                LOG.info("Find the common items.\n");
-                commonMat = Matrices.findCommonItems(matrix);
-                long t13 = System.currentTimeMillis();
-                LOG.debug((t13 - t12) + "ms to find common items " + i + "\n");
-
-                LOG.info("Storing of common items matrix " + i + " to the db.\n");
-                Storing.saveCommonMatToDatabase(os, commonMat, views.get(new Coordinates(i, 0)));
-
-                long t14 = System.currentTimeMillis();
-                LOG.debug((t14 - t13) + "ms to store common items " + i + "\n");
-                commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
-
                 LOG.info("Find the similarity and normalise.\n");
-                simMat = Matrices.findSimilarityCount(matrix);
+                matrix = Matrices.findSimilarityCount(matrix);
                 long t15 = System.currentTimeMillis();
-                LOG.debug((t15 - t14) + "ms to calculate matrix " + i + "\n");
-                matrix = new HashMap<Coordinates, Integer>();
+                LOG.debug((t15 - t12) + "ms to calculate matrix " + i + "\n");
+//                matrix = new HashMap<Coordinates, Integer>();
 
-                System.out.print("\nsimMat:\n");
+                System.out.print("\nmatrix:\n");
                 for (int j = 0; j < 30; j++) {
                     for (int k = 0; k < 30; k++) {
-                        System.out.print(simMat.get(new Coordinates(j, k)) + " ");
+                        System.out.print(matrix.get(new Coordinates(j, k)) + " ");
                     }
                     System.out.print("\n");
                 }
 
                 LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
-                Storing.saveNormMatToDatabase(os, simMat, views.get(new Coordinates(i, 0)));
+                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
 
                 long t17 = System.currentTimeMillis();
                 LOG.debug((t17 - t15) + "ms to store similarity matrix " + i + "\n");
-                simMat = new HashMap<Coordinates, Integer>();
+//                matrix = new HashMap<Coordinates, Integer>();
             }
 
             if ("presence".equals(views.get(new Coordinates(i, 2)))) {
@@ -174,38 +164,26 @@ public final class Precalculate
                 long t19 = System.currentTimeMillis();
                 LOG.debug((t19 - t18) + "ms to run query " + i + "\n");
 
-                LOG.info("Find the common items.\n");
-                commonMat = Matrices.findCommonItemsPresence(matrix);
-                long t20 = System.currentTimeMillis();
-                LOG.debug((t20 - t19) + "ms to find common items " + i + "\n");
-
-                LOG.info("Storing of common items matrix " + i + " to the db.\n");
-                Storing.saveCommonMatToDatabase(os, commonMat, views.get(new Coordinates(i, 0)));
-
-                long t21 = System.currentTimeMillis();
-                LOG.debug((t21 - t20) + "ms to store common items " + i + "\n");
-                commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
-
                 LOG.info("Find the similarity and normalise.\n");
-                simMat = Matrices.findSimilarityPresence(matrix);
+                matrix = Matrices.findSimilarityPresence(matrix);
                 long t22 = System.currentTimeMillis();
-                LOG.debug((t22 - t21) + "ms to calculate matrix " + i + "\n");
-                matrix = new HashMap<Coordinates, Integer>();
+                LOG.debug((t22 - t18) + "ms to calculate matrix " + i + "\n");
+//                matrix = new HashMap<Coordinates, Integer>();
 
                 System.out.print("\nsimMat:\n");
                 for (int j = 0; j < 30; j++) {
                     for (int k = 0; k < 30; k++) {
-                        System.out.print(simMat.get(new Coordinates(j, k)) + " ");
+                        System.out.print(matrix.get(new Coordinates(j, k)) + " ");
                     }
                     System.out.print("\n");
                 }
 
                 LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
-                Storing.saveNormMatToDatabase(os, simMat, views.get(new Coordinates(i, 0)));
+                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
 
                 long t23 = System.currentTimeMillis();
                 LOG.debug((t23 - t22) + "ms to store similarity matrix " + i + "\n");
-                simMat = new HashMap<Coordinates, Integer>();
+//                simMat = new HashMap<Coordinates, Integer>();
             }
             t24 = System.currentTimeMillis();
         }

@@ -17,7 +17,6 @@ public final class LookupFindSimilarityPresence
     private static final int SUBJECT_ID_COLUMN = 0;
     // For rectangular matrices the gene ID is also in row zero
     private static final int SUBJECT_ID_ROW = 0;
-    private static final int MIN_RATING = 0;
     private static final int MAX_RATING = 100;
 
     private LookupFindSimilarityPresence() {
@@ -48,15 +47,6 @@ public final class LookupFindSimilarityPresence
             }
         }
 
-        System.out.print("\nsmallResult (correct result): \n");
-        for (int k = 0; k < 5; k++) {
-            for (int j = 0; j < 5; j++) {
-                Integer val = hasMat.get(new Coordinates(k, j));
-                System.out.print(val + " ");
-            }
-            System.out.print("\n");
-        }
-
         for (Map.Entry<Coordinates, Integer> entry : hasMat.entrySet()) {
             int xCoordinate = entry.getKey().getKey();
             int yCoordinate = entry.getKey().getValue();
@@ -74,10 +64,6 @@ public final class LookupFindSimilarityPresence
                         if (inner.getValue().equals(entry.getValue())) {
                             simMat.put(new Coordinates(xCoordinate + 1,
                                     inner.getKey().getKey() + 1), MAX_RATING);
-                        }
-                        else {
-                            simMat.put(new Coordinates(xCoordinate + 1,
-                                    inner.getKey().getKey() + 1), MIN_RATING);
                         }
                     }
                 }
