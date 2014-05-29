@@ -12,6 +12,7 @@ package org.intermine.dataloader;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Util;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
@@ -55,7 +56,7 @@ public class DirectDataLoader extends DataLoader
      * @param o the InterMineObject
      * @throws ObjectStoreException if there is a problem in the IntegrationWriter
      */
-    public void store(InterMineObject o) throws ObjectStoreException {
+    public void store(FastPathObject o) throws ObjectStoreException {
         Source source = getIntegrationWriter().getMainSource(sourceName, sourceType);
         Source skelSource = getIntegrationWriter().getSkeletonSource(sourceName, sourceType);
 
@@ -108,4 +109,16 @@ public class DirectDataLoader extends DataLoader
         idCounter++;
         return o;
     }
+
+    /**
+     * Create a 'simple object' which doesn't inherit from InterMineObject and doesn't have an id.
+     * @param c the class of object to create
+     * @param <C> the type of the class
+     * @return an empty simple object of the given class
+     */
+    public <C extends FastPathObject> C createSimpleObject(Class<C> c) {
+        C o = DynamicUtil.simpleCreateObject(c);
+        return o;
+    }
+
 }

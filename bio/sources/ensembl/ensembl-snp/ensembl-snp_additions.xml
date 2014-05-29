@@ -6,7 +6,7 @@
      <attribute name="type" type="java.lang.String"/>
      <attribute name="uniqueLocation" type="java.lang.Boolean"/>
      <collection name="validations" referenced-type="ValidationState" />
-     <collection name="consequences" referenced-type="Consequence"/>
+     <collection name="consequences" referenced-type="Consequence" reverse-reference="snp"/>
    </class>
    <class name="Deletion" extends="SequenceAlteration" is-interface="true"/>
    <class name="Insertion" extends="SequenceAlteration" is-interface="true"/>
@@ -19,7 +19,7 @@
    <class name="ValidationState" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
    </class>
-   <class name="Consequence" is-interface="true">
+   <class name="Consequence" is-interface="false" extends="java.lang.Object">
      <attribute name="description" type="java.lang.String"/>
      <attribute name="peptideAlleles" type="java.lang.String"/>
      <attribute name="polyphenPrediction" type="java.lang.String"/>
@@ -27,7 +27,8 @@
      <attribute name="siftPrediction" type="java.lang.String"/>
      <attribute name="siftScore" type="java.lang.Double"/>
      <reference name="transcript" referenced-type="Transcript"/>
-     <collection name="types" referenced-type="ConsequenceType"/>
+     <reference name="snp" referenced-type="SequenceAlteration" reverse-reference="consequences"/>
+     <!-- <collection name="types" referenced-type="ConsequenceType"/> -->
    </class>
    <class name="ConsequenceType" is-interface="true">
      <attribute name="type" type="java.lang.String"/>
