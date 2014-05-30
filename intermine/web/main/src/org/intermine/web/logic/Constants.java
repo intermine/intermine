@@ -204,8 +204,9 @@ public final class Constants
      *      which is now category based by default.
      *    - Added JBrowse-names, simple-data service.
      * 17 - Added jbrowse-config.
+     * 18 - Added display names to the model output.
      */
-    public static final int WEB_SERVICE_VERSION = 17;
+    public static final int WEB_SERVICE_VERSION = 18;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
