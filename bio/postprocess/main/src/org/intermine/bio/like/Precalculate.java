@@ -99,13 +99,12 @@ public final class Precalculate
                 matrix = Matrices.countCommonItemsCategory(commonMat);
                 long t8 = System.currentTimeMillis();
                 LOG.debug((t8 - t7) + "ms to calculate matrix " + i + "\n");
-                commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
+                commonMat.clear();
 
                 LOG.info("Normalise the number of common items.\n");
                 matrix = Matrices.normalise(matrix);
                 long t9 = System.currentTimeMillis();
                 LOG.debug((t9 - t8) + "ms to normalise matrix " + i + "\n");
-//                simMat = new HashMap<Coordinates, Integer>();
 
                 System.out.print("\nnormMat:\n");
                 for (int j = 0; j < 30; j++) {
@@ -120,7 +119,6 @@ public final class Precalculate
 
                 long t10 = System.currentTimeMillis();
                 LOG.debug((t10 - t9) + "ms to store similarity matrix " + i + "\n");
-//                matrix = new HashMap<Coordinates, Integer>();
             }
 
             if ("count".equals(views.get(new Coordinates(i, 2)))) {
@@ -136,7 +134,6 @@ public final class Precalculate
                 matrix = Matrices.findSimilarityCount(matrix);
                 long t15 = System.currentTimeMillis();
                 LOG.debug((t15 - t12) + "ms to calculate matrix " + i + "\n");
-//                matrix = new HashMap<Coordinates, Integer>();
 
                 System.out.print("\nmatrix:\n");
                 for (int j = 0; j < 30; j++) {
@@ -151,7 +148,6 @@ public final class Precalculate
 
                 long t17 = System.currentTimeMillis();
                 LOG.debug((t17 - t15) + "ms to store similarity matrix " + i + "\n");
-//                matrix = new HashMap<Coordinates, Integer>();
             }
 
             if ("presence".equals(views.get(new Coordinates(i, 2)))) {
@@ -168,7 +164,6 @@ public final class Precalculate
                 matrix = Matrices.findSimilarityPresence(matrix);
                 long t22 = System.currentTimeMillis();
                 LOG.debug((t22 - t18) + "ms to calculate matrix " + i + "\n");
-//                matrix = new HashMap<Coordinates, Integer>();
 
                 System.out.print("\nsimMat:\n");
                 for (int j = 0; j < 30; j++) {
@@ -183,7 +178,6 @@ public final class Precalculate
 
                 long t23 = System.currentTimeMillis();
                 LOG.debug((t23 - t22) + "ms to store similarity matrix " + i + "\n");
-//                simMat = new HashMap<Coordinates, Integer>();
             }
             t24 = System.currentTimeMillis();
         }

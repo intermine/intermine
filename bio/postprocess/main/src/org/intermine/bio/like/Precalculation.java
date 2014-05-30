@@ -137,17 +137,17 @@ public class Precalculation
             pq.addConstraint(Constraints.eq(views.get(new Coordinates(i, 6)),
                     views.get(new Coordinates(i, 8))), "C");
 //          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "D");
-//          pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "D");
+            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "D");
             // Specify how these constraints should be combined.
-          pq.setConstraintLogic("A and B and C");
-//          pq.setConstraintLogic("A and B and C and D");
+//            pq.setConstraintLogic("A and B and C");
+            pq.setConstraintLogic("A and B and C and D");
         }
-//        else {
-//
-////          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "B");
-//            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
-//            pq.setConstraintLogic("A and B");
-//        }
+        else {
+
+//          pq.addConstraint(Constraints.neq("Gene.symbol", "*a*"), "B");
+            pq.addConstraint(Constraints.eq("Gene.symbol", "*z*"), "B");
+            pq.setConstraintLogic("A and B");
+        }
 
         // Outer Joins
         // Show all information about these relationships if they exist, but do not require that
@@ -155,7 +155,7 @@ public class Precalculation
         pq.setOuterJoinStatus(relationShip.substring(0, StringUtils.ordinalIndexOf(relationShip,
                 ".", 2)), OuterJoinStatus.OUTER);
 
-        System.out.println(pq.toXml());
+//        System.out.print(pq.toXml());
         Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
 
         return os.execute(q);
