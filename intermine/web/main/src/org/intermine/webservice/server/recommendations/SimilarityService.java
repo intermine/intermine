@@ -71,7 +71,7 @@ public class SimilarityService extends JSONService
             throw new ServiceException("I don't even");
         }
 
-        Integer[][] totalRatingSet = result.getTotalRatingSet();
+        int[][] totalRatingSet = result.getTotalRatingSet();
         Map<Integer, Map<Integer, Map<Integer, Integer>>> similarGenes = result.getsimilarGenes();
         Map<Integer, Map<Integer, ArrayList<Integer>>> commonItems = result.getCommonItems();
 
