@@ -39,14 +39,20 @@ public class LookupFindSimilarityCount
     public static Map<Coordinates, Integer> findSimilarityCount(Map<Coordinates, Integer> matrix) {
         Map<Coordinates, Integer> countedItems = new HashMap<Coordinates, Integer>();
         Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
+        int xCoordinate;
+        int yCoordinate;
+        int count;
+        int rating;
+        int xCoordinateInner;
+        int yCoordinateInner;
 
         // Count the items (e.g. pathways) for each gene
         for (Map.Entry<Coordinates, Integer> entry : matrix.entrySet()) {
-            int xCoordinate = entry.getKey().getKey();
-            int yCoordinate = entry.getKey().getValue();
+            xCoordinate = entry.getKey().getKey();
+            yCoordinate = entry.getKey().getValue();
             if (yCoordinate == SUBJECT_ID_COLUMN) {
                 countedItems.put(entry.getKey(), entry.getValue());
-                int count = 0;
+                count = 0;
                 for (Map.Entry<Coordinates, Integer> entry2 : matrix.entrySet()) {
                     if (entry.getKey().getKey() == entry2.getKey().getKey()) {
                         count += 1;
@@ -59,20 +65,19 @@ public class LookupFindSimilarityCount
 
         // Build a rectangular matrix
         for (Map.Entry<Coordinates, Integer> outer : countedItems.entrySet()) {
-            int xCoordinate = outer.getKey().getKey();
-            int yCoordinate = outer.getKey().getValue();
+            xCoordinate = outer.getKey().getKey();
+            yCoordinate = outer.getKey().getValue();
             // Transfer the gene IDs
             if (yCoordinate == SUBJECT_ID_COLUMN) {
-                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
-                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
+//                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 simMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN),
                         countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }
             else { // If outer contains counted item
-                int rating;
                 for (Map.Entry<Coordinates, Integer> inner : countedItems.entrySet()) {
-                    int xCoordinateInner = inner.getKey().getKey();
-                    int yCoordinateInner = inner.getKey().getValue();
+                    xCoordinateInner = inner.getKey().getKey();
+                    yCoordinateInner = inner.getKey().getValue();
                     // Only transfer non-zero items -> makes the simMat more sparse
                     if (yCoordinateInner == 1 && outer.getValue() != SUBJECT_ID_COLUMN
                             && inner.getValue() != SUBJECT_ID_COLUMN) {

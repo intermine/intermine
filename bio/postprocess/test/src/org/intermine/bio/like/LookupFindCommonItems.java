@@ -56,7 +56,7 @@ public final class LookupFindCommonItems
             if (yCoordinate == SUBJECT_ID_COLUMN) {
                 // Transfer the gene IDs and save in ArrayLists
                 ArrayList<Integer> geneInRow = new ArrayList<Integer>();
-                commonMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN), geneInRow);
+                commonMat.put(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN), geneInRow);
                 geneInRow.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
 
                 commonToOuter.clear();
@@ -93,11 +93,11 @@ public final class LookupFindCommonItems
                 for (Map.Entry<Integer, ArrayList<Integer>> entry : commonToOuter.entrySet()) {
                     System.out.print(entry.getValue());
                     if (entry.getKey() > xCoordinate) {
-                        commonMat.put(new Coordinates(entry.getKey() + 1, xCoordinate + 1),
+                        commonMat.put(new Coordinates(entry.getKey(), xCoordinate),
                                 entry.getValue());
                     }
                     else {
-                        commonMat.put(new Coordinates(xCoordinate + 1, entry.getKey() + 1),
+                        commonMat.put(new Coordinates(xCoordinate, entry.getKey()),
                                 entry.getValue());
                     }
                 }

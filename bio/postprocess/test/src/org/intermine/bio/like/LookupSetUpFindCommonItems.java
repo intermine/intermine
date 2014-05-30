@@ -40,21 +40,22 @@ public class LookupSetUpFindCommonItems
         // do calculations on server for bigMatrix
 
         Map<Coordinates, Integer> smallMatrix = new HashMap<Coordinates, Integer>() { {
-                put(new Coordinates(0, 0), 111);
-                put(new Coordinates(0, 1), 100);
-                put(new Coordinates(0, 2), 200);
-                put(new Coordinates(1, 0), 222);
+                put(new Coordinates(0, 0), 4);
+                put(new Coordinates(1, 0), 111);
                 put(new Coordinates(1, 1), 100);
-                put(new Coordinates(2, 0), 333);
-                put(new Coordinates(2, 3), 300);
-                put(new Coordinates(3, 0), 444);
-                put(new Coordinates(3, 2), 200);
+                put(new Coordinates(1, 2), 200);
+                put(new Coordinates(2, 0), 222);
+                put(new Coordinates(2, 1), 100);
+                put(new Coordinates(3, 0), 333);
+                put(new Coordinates(3, 3), 300);
+                put(new Coordinates(4, 0), 444);
+                put(new Coordinates(4, 2), 200);
             }
         };
 
         System.out.print("\nsmallMatrix: \n");
-        for (int k = 0; k < 4; k++) {
-            for (int j = 0; j < 4; j++) {
+        for (int k = 0; k < 5; k++) {
+            for (int j = 0; j < 5; j++) {
                 Integer val = smallMatrix.get(new Coordinates(k, j));
                 System.out.print(val + " ");
             }
