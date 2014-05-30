@@ -54,6 +54,8 @@ public final class Precalculate
 
         Precalculation precalc = new Precalculation(os);
 
+        Integer[][] test = new Integer[20000][20000];
+
         // read properties
         LOG.info("Loading the properties.\n");
         Map<Coordinates, String> views = Precalculation.getProperties();
