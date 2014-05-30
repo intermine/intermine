@@ -197,15 +197,17 @@ public class PacClustersConverter extends BioDBConverter
       }
       res.close();
       // register the organism counts
+      Integer memberCount = new Integer(0);
       for( String taxonId : organismCount.keySet()) {
+        memberCount += organismCount.get(taxonId);
         Item count = createItem("ProteinFamilyOrganism");
         count.setAttribute("count", organismCount.get(taxonId).toString());
-        //count.setAttribute("primaryIdentifier",family.getAttribute("clusterId")+":"+taxonId);
         count.setReference("proteinFamily",family.getIdentifier());
         count.setReference("organism",organismMap.get(taxonId));
         family.addToCollection("proteinFamilyOrganism",count.getIdentifier());
         store(count);
       }
+      family.setAttribute("memberCount",memberCount.toString());
       return idToName;
     }
 

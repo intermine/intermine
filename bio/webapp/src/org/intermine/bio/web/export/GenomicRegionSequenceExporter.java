@@ -56,11 +56,19 @@ public class GenomicRegionSequenceExporter
     @SuppressWarnings("deprecation")
     public void export(List<GenomicRegion> grList) throws Exception {
         GenomicRegion aRegion = grList.get(0);
+
         Organism org = (Organism) DynamicUtil.createObject(Collections
                 .singleton(Organism.class));
-        org.setShortName(aRegion.getOrganism());
-
-        org = (Organism) os.getObjectByExample(org, Collections.singleton("shortName"));
+        // We normally specify the short name (text) as the key to the organism. A
+        // numerical values for the organism say we're going to use another
+        // key.
+        try {
+          org.setProteomeId(Integer.parseInt(aRegion.getOrganism()));
+          org = (Organism) os.getObjectByExample(org, Collections.singleton("proteomeId"));
+        } catch ( NumberFormatException e ) {
+          org.setShortName(aRegion.getOrganism());
+          org = (Organism) os.getObjectByExample(org, Collections.singleton("shortName"));
+        }
 
         for (GenomicRegion gr : grList) {
             Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
@@ -101,7 +109,7 @@ public class GenomicRegionSequenceExporter
             List<String> headerBits = new ArrayList<String>();
             headerBits.add(gr.getChr() + ":" + start + ".." + end);
             headerBits.add(end - start + 1 + "bp");
-            headerBits.add(gr.getOrganism());
+            headerBits.add(org.getShortName());
             String header = StringUtil.join(headerBits, " ");
 
             String seqName = "genomic_region_" + gr.getChr() + "_"
