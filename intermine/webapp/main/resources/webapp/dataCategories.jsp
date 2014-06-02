@@ -21,7 +21,7 @@
   
   <!-- ******************************************************* -->
   <tr>
-    <td rowspan="2" class="leftcol">
+    <td rowspan="3" class="leftcol">
     <h2><p>Genome</p></h2>
     </td>
     <td>
@@ -42,6 +42,18 @@
     </td>
   </tr>
 
+  <tr>
+    <td> 
+    Genes from other model organisms, including symbols, names, ids, and genome coordinates.
+    </td>
+    <td> 
+    <a href="http://www.flymine.org/" target="_new">FlyMine</a>
+    <a href="http://ratmine.mcw.edu/ratmine/begin.do" target="_new">RatMine</a>
+    <a href="http://www.wormbase.org/tools/wormmine/begin.do" target="_new">WormMine</a>
+    <a href="http://yeastmine.yeastgenome.org/yeastmine/begin.do" target="_new">YeastMine</a>
+    <a href="http://zmine.zfin.org/begin.do" target="_new">ZebrafishMine</a>
+    </td>
+  </tr>
 
   
   <!-- ******************************************************* -->
@@ -105,7 +117,8 @@
 
   <tr>
     <td> 
-    Phenotype (MP) terms annotated to specific mouse genotypes. 
+    Phenotypes (MP terms) annotated to specific mouse genotypes. 
+    From these, additional annotations are computed (derived) from phenotypes to mouse genes and alleles.
     </td>
   </tr>
 
@@ -120,7 +133,7 @@
   <tr>
     <td rowspan="3"  class="leftcol">
     	<p><h2>Disease</h2></p></td>
-    <td> Mouse disease model annotations, i.e., associations of human diseases to specific mouse models (genotypes).</td>
+    <td> Mouse disease model annotations, i.e., associations of human diseases to specific mouse models (genotypes). From these, additional annotations are computed (derived) from diseases to mouse genes and alleles. </td> 
     <td> <a href="http://www.informatics.jax.org/" target="_new">MGI</a></td>
   </tr>
   
