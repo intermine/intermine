@@ -54,7 +54,7 @@ public class ReleaseEtagFilter implements Filter {
 
         String ifNoneMatch = req.getHeader("If-None-Match"); 
         long ifModSince = req.getDateHeader("If-Modified-Since");
-        LOG.info("etag = " + etag + ", START_UP = " + START_UP + " , ifNoneMatch = " + ifNoneMatch + ", ifModSince = " + ifModSince);
+        LOG.debug("etag = " + etag + ", START_UP = " + START_UP + " , ifNoneMatch = " + ifNoneMatch + ", ifModSince = " + ifModSince);
 
         if (etag.equals(ifNoneMatch) || zipEtag.equals(ifNoneMatch) || (ifModSince == START_UP)) {
             inner.setStatus(304);
