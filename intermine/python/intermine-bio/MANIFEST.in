@@ -1,5 +1,0 @@
-include COPYING.txt
-recursive-include docs *.html *.css *.png
-recursive-include tests *.py
-recursive-include tests/data *
-recursive-include interminebio *.py
