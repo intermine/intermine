@@ -40,6 +40,10 @@ else
     createdb $PRODDB
 fi
 
+echo "Removing current webapp"
+cd $DIR/webapp/main
+ant -Ddont.minify=true remove-webapp >> $DIR/setup.log
+
 cd $DIR/dbmodel
 
 echo Loading demo data set...
@@ -52,7 +56,6 @@ ant -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     default \
-    remove-webapp \
     release-webapp >> $DIR/setup.log
 
 echo All done. Build log is available in $DIR/setup.log
