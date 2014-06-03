@@ -12,6 +12,7 @@ package org.intermine.webservice.server.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +128,14 @@ public abstract class JSONService extends WebService
         addResultEntries(entries, false);
     }
 
+    protected void addResultEntry(String key, Object value, boolean hasMore) {
+        addResultEntry(new Pair<String, Object>(key, value), hasMore);
+    }
+
+    protected void addResultEntry(Map.Entry<String, Object> entry, boolean hasMore) {
+        addResultEntries(Collections.singleton(entry), hasMore);
+    }
+
     protected void addResultEntries(
             Collection<Map.Entry<String, Object>> entries, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
@@ -134,7 +143,7 @@ public abstract class JSONService extends WebService
             String key = entry.getKey();
             Object value = entry.getValue();
             String valStr = null;
-            
+
             if (value == null) {
                 valStr = "null";
             } if (value instanceof Map) {

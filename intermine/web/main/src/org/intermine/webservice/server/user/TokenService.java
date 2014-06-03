@@ -33,7 +33,7 @@ public class TokenService extends ReadWriteJSONService {
             token = pm.generate24hrKey(profile);
         } else if ("once".equals(tokenType)) {
             token = pm.generateSingleUseKey(profile);
-        } else if ("api".equals(token)) {
+        } else if ("api".equals(tokenType)) {
             token = pm.generateApiKey(profile);
         } else if ("perm".equals(tokenType)) {
             if (profile.getUserId() == null) throw new BadRequestException("Temporary users cannot have permanent tokens");
