@@ -5,8 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -17,6 +23,8 @@ import org.intermine.modelproduction.MetadataManager.LargeObjectOutputStream;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
+import org.postgresql.largeobject.LargeObject;
+import org.postgresql.largeobject.LargeObjectManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -38,15 +46,16 @@ public class Storing {
      * @param os intermine objectstore
      * @param matrix one row of one precalculated matrix
      * @param aspectNumber save with this file name addition
+     * @param geneId save with this file name addition
      */
     public static void saveNormMatToDatabase(ObjectStore os,
-            Map<Coordinates, Integer> matrix, String aspectNumber) {
+            Map<Coordinates, Integer> matrix, String aspectNumber, String geneId) {
         try {
             LOG.info("Deleting previous search index dirctory blob from db...");
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            boolean blobExisted = MetadataManager.deleteLargeBinary(db,
-                    MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
+            boolean blobExisted = MetadataManager.deleteLargeBinary(db, aspectNumber
+                    + MetadataManager.LIKE_SIMILARITY_MATRIX + geneId);
             if (blobExisted) {
                 LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
@@ -55,9 +64,10 @@ public class Storing {
             }
 
             LOG.debug("Saving matrix information to database");
-            writeObjectToDB(os, MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber, matrix);
-            LOG.debug("Successfully saved " + MetadataManager.LIKE_SIMILARITY_MATRIX
-                    + aspectNumber + " to database.");
+            writeObjectToDB(os, aspectNumber + MetadataManager.LIKE_SIMILARITY_MATRIX
+                    + geneId, matrix);
+            LOG.debug("Successfully saved " + aspectNumber + MetadataManager.LIKE_SIMILARITY_MATRIX
+                    + geneId + " to database.");
 
         } catch (IOException e) {
             LOG.error(null, e);
@@ -69,14 +79,13 @@ public class Storing {
     }
 
     public static void saveCommonMatToDatabase(ObjectStore os,
-            Map<Coordinates, ArrayList<Integer>> matrix, String aspectNumber) {
+            Map<Coordinates, ArrayList<Integer>> matrix, String aspectNumber, String geneId) {
         try {
             LOG.info("Deleting previous search index dirctory blob from db...");
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-            boolean blobExisted = MetadataManager.deleteLargeBinary(db,
-                    MetadataManager.LIKE_COMMON_MATRIX + aspectNumber);
-
+            boolean blobExisted = MetadataManager.deleteLargeBinary(db, aspectNumber
+                    + MetadataManager.LIKE_COMMON_MATRIX + geneId);
             if (blobExisted) {
                 LOG.debug("Deleting previous search index blob from db took: "
                         + (System.currentTimeMillis() - startTime) + ".");
@@ -84,9 +93,11 @@ public class Storing {
                 LOG.debug("No previous search index blob found in db");
             }
 
-            LOG.debug("Saving search index information to database...");
-            writeObjectToDB(os, MetadataManager.LIKE_COMMON_MATRIX + aspectNumber, matrix);
-            LOG.debug("Successfully saved search index information to database.");
+            LOG.debug("Saving matrix information to database");
+            writeObjectToDB(os, aspectNumber + MetadataManager.LIKE_COMMON_MATRIX
+                    + geneId, matrix);
+            LOG.debug("Successfully saved " + aspectNumber + MetadataManager.LIKE_COMMON_MATRIX
+                    + geneId + " to database.");
 
         } catch (IOException e) {
             LOG.error(null, e);

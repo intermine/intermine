@@ -69,8 +69,8 @@ public class LookupFindSimilarityCount
             yCoordinate = outer.getKey().getValue();
             // Transfer the gene IDs
             if (yCoordinate == SUBJECT_ID_COLUMN) {
-//                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
-//                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
+                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 simMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN),
                         countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }

@@ -40,16 +40,15 @@ public class LookupSetUpFindCommonItems
         // do calculations on server for bigMatrix
 
         Map<Coordinates, Integer> smallMatrix = new HashMap<Coordinates, Integer>() { {
-                put(new Coordinates(0, 0), 4);
-                put(new Coordinates(1, 0), 111);
+                put(new Coordinates(0, 0), 111);
+                put(new Coordinates(0, 1), 100);
+                put(new Coordinates(0, 2), 200);
+                put(new Coordinates(1, 0), 222);
                 put(new Coordinates(1, 1), 100);
-                put(new Coordinates(1, 2), 200);
-                put(new Coordinates(2, 0), 222);
-                put(new Coordinates(2, 1), 100);
-                put(new Coordinates(3, 0), 333);
-                put(new Coordinates(3, 3), 300);
-                put(new Coordinates(4, 0), 444);
-                put(new Coordinates(4, 2), 200);
+                put(new Coordinates(2, 0), 333);
+                put(new Coordinates(2, 3), 300);
+                put(new Coordinates(3, 0), 444);
+                put(new Coordinates(3, 2), 200);
             }
         };
 
@@ -79,18 +78,18 @@ public class LookupSetUpFindCommonItems
 
         Map<Coordinates, ArrayList<Integer>> smallResult =
                 new HashMap<Coordinates, ArrayList<Integer>>() { {
-//                put(new Coordinates(0, 1), new ArrayList<Integer>() { { add(111); } });
-//                put(new Coordinates(0, 2), new ArrayList<Integer>() { { add(222); } });
-//                put(new Coordinates(0, 3), new ArrayList<Integer>() { { add(333); } });
-//                put(new Coordinates(0, 4), new ArrayList<Integer>() { { add(444); } });
+                put(new Coordinates(0, 1), new ArrayList<Integer>() { { add(111); } });
+                put(new Coordinates(0, 2), new ArrayList<Integer>() { { add(222); } });
+                put(new Coordinates(0, 3), new ArrayList<Integer>() { { add(333); } });
+                put(new Coordinates(0, 4), new ArrayList<Integer>() { { add(444); } });
                 put(new Coordinates(1, 0), new ArrayList<Integer>() { { add(111); } });
                 put(new Coordinates(2, 0), new ArrayList<Integer>() { { add(222); } });
                 put(new Coordinates(3, 0), new ArrayList<Integer>() { { add(333); } });
                 put(new Coordinates(4, 0), new ArrayList<Integer>() { { add(444); } });
                 put(new Coordinates(1, 1), new ArrayList<Integer>() { { add(200);
                     add(100); } });
-//                put(new Coordinates(1, 2), new ArrayList<Integer>() { { add(100); } });
-//                put(new Coordinates(1, 4), new ArrayList<Integer>() { { add(200); } });
+                put(new Coordinates(1, 2), new ArrayList<Integer>() { { add(100); } });
+                put(new Coordinates(1, 4), new ArrayList<Integer>() { { add(200); } });
                 put(new Coordinates(2, 1), new ArrayList<Integer>() { { add(100); } });
                 put(new Coordinates(2, 2), new ArrayList<Integer>() { { add(100); } });
                 put(new Coordinates(3, 3), new ArrayList<Integer>() { { add(300); } });

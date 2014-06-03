@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -129,14 +130,16 @@ public class SimilarityService extends JSONService
             return similarityRow;
         }
 
-        public Map<Coordinates, Integer> getSimilarityMatrix(String aspectNumber) {
+        public Map<Coordinates, Integer> getSimilarityMatrix(String aspectNumber,
+                String geneId) {
+
             long time = System.currentTimeMillis();
             LOG.debug("Attempting to restore search index from database...");
             if (os instanceof ObjectStoreInterMineImpl) {
                 Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
                 try {
-                    InputStream is = MetadataManager.readLargeBinary(db,
-                            MetadataManager.LIKE_SIMILARITY_MATRIX + aspectNumber);
+                    InputStream is = MetadataManager.readLargeBinary(db, aspectNumber
+                            + MetadataManager.LIKE_SIMILARITY_MATRIX + geneId);
 
                     if (is != null) {
                         GZIPInputStream gzipInput = new GZIPInputStream(is);
@@ -176,14 +179,15 @@ public class SimilarityService extends JSONService
             return normMat;
         }
 
-        public Map<Coordinates, ArrayList<Integer>> getCommonItemsMatrix(String aspectNumber) {
+        public Map<Coordinates, ArrayList<Integer>> getCommonItemsMatrix(
+                String aspectNumber, String geneId) {
             long time = System.currentTimeMillis();
             LOG.debug("Attempting to restore search index from database...");
             if (os instanceof ObjectStoreInterMineImpl) {
                 Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
                 try {
-                    InputStream is = MetadataManager.readLargeBinary(db,
-                            MetadataManager.LIKE_COMMON_MATRIX + aspectNumber);
+                    InputStream is = MetadataManager.readLargeBinary(db, aspectNumber
+                            + MetadataManager.LIKE_COMMON_MATRIX + geneId);
                     if (is != null) {
                         GZIPInputStream gzipInput = new GZIPInputStream(is);
                         ObjectInputStream objectInput = new ObjectInputStream(gzipInput);

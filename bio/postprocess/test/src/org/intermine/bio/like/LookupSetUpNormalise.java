@@ -34,17 +34,17 @@ public class LookupSetUpNormalise
 //        s1.close();
 
         Map<Coordinates, Integer> smallMatrix = new HashMap<Coordinates, Integer>() { {
-//          put(new Coordinates(0, 1), 111);
-//          put(new Coordinates(0, 2), 222);
-//          put(new Coordinates(0, 3), 333);
-//          put(new Coordinates(0, 4), 444);
+          put(new Coordinates(0, 1), 111);
+          put(new Coordinates(0, 2), 222);
+          put(new Coordinates(0, 3), 333);
+          put(new Coordinates(0, 4), 444);
           put(new Coordinates(1, 0), 111);
           put(new Coordinates(2, 0), 222);
           put(new Coordinates(3, 0), 333);
           put(new Coordinates(4, 0), 444);
           put(new Coordinates(1, 1), 2);
-//          put(new Coordinates(1, 2), 1);
-//          put(new Coordinates(1, 4), 1);
+          put(new Coordinates(1, 2), 1);
+          put(new Coordinates(1, 4), 1);
           put(new Coordinates(2, 1), 1);
           put(new Coordinates(2, 2), 1);
           put(new Coordinates(3, 3), 1);

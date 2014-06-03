@@ -54,8 +54,6 @@ public final class Precalculate
 
         Precalculation precalc = new Precalculation(os);
 
-        Integer[][] test = new Integer[20000][20000];
-
         // read properties
         LOG.info("Loading the properties.\n");
         Map<Coordinates, String> views = Precalculation.getProperties();
@@ -87,12 +85,13 @@ public final class Precalculate
                 LOG.debug((t5 - t4) + "ms to run query " + i + "\n");
 
                 LOG.info("Find the common items.\n");
-                commonMat = Matrices.findCommonItems(matrix);
+                commonMat = Matrices.findCommonItems(os, matrix, views.get(new Coordinates(i, 0)));
                 long t6 = System.currentTimeMillis();
                 LOG.debug((t6 - t5) + "ms to find common items " + i + "\n");
 
-                LOG.info("Storing of common items matrix " + i + " to the db.\n");
-                Storing.saveCommonMatToDatabase(os, commonMat, views.get(new Coordinates(i, 0)));
+//                LOG.info("Storing of common items matrix " + i + " to the db.\n");
+//                Storing.saveCommonMatToDatabase(os, commonMat, views.get(new Coordinates(i, 0)));
+
 
                 long t7 = System.currentTimeMillis();
                 LOG.debug((t7 - t6) + "ms to store common items " + i + "\n");
@@ -116,8 +115,8 @@ public final class Precalculate
                     System.out.print("\n");
                 }
 
-                LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
-                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
+//                LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
+//                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
 
                 long t10 = System.currentTimeMillis();
                 LOG.debug((t10 - t9) + "ms to store similarity matrix " + i + "\n");
@@ -137,16 +136,16 @@ public final class Precalculate
                 long t15 = System.currentTimeMillis();
                 LOG.debug((t15 - t12) + "ms to calculate matrix " + i + "\n");
 
-                System.out.print("\nmatrix:\n");
-                for (int j = 0; j < 30; j++) {
-                    for (int k = 0; k < 30; k++) {
-                        System.out.print(matrix.get(new Coordinates(j, k)) + " ");
-                    }
-                    System.out.print("\n");
-                }
+//                System.out.print("\nmatrix:\n");
+//                for (int j = 0; j < 30; j++) {
+//                    for (int k = 0; k < 30; k++) {
+//                        System.out.print(matrix.get(new Coordinates(j, k)) + " ");
+//                    }
+//                    System.out.print("\n");
+//                }
 
-                LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
-                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
+//                LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
+//                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
 
                 long t17 = System.currentTimeMillis();
                 LOG.debug((t17 - t15) + "ms to store similarity matrix " + i + "\n");
@@ -167,16 +166,16 @@ public final class Precalculate
                 long t22 = System.currentTimeMillis();
                 LOG.debug((t22 - t18) + "ms to calculate matrix " + i + "\n");
 
-                System.out.print("\nsimMat:\n");
-                for (int j = 0; j < 30; j++) {
-                    for (int k = 0; k < 30; k++) {
-                        System.out.print(matrix.get(new Coordinates(j, k)) + " ");
-                    }
-                    System.out.print("\n");
-                }
+//                System.out.print("\nsimMat:\n");
+//                for (int j = 0; j < 30; j++) {
+//                    for (int k = 0; k < 30; k++) {
+//                        System.out.print(matrix.get(new Coordinates(j, k)) + " ");
+//                    }
+//                    System.out.print("\n");
+//                }
 
-                LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
-                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
+//                LOG.info("Storing of the normalised similarity matrix " + i + " to the db.\n");
+//                Storing.saveNormMatToDatabase(os, matrix, views.get(new Coordinates(i, 0)));
 
                 long t23 = System.currentTimeMillis();
                 LOG.debug((t23 - t22) + "ms to store similarity matrix " + i + "\n");
