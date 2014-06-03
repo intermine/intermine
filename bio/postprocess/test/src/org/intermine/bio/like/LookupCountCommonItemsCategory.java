@@ -33,7 +33,7 @@ public class LookupCountCommonItemsCategory {
             // Transfer the gene IDs
             int xCoordinate = entry.getKey().getKey();
             int yCoordinate = entry.getKey().getValue();
-            if (xCoordinate == SUBJECT_ID_ROW || yCoordinate == SUBJECT_ID_COLUMN) {
+            if (yCoordinate == SUBJECT_ID_ROW) {
                 simMat.put(entry.getKey(), entry.getValue().get(0));
             }
             else {

@@ -25,8 +25,8 @@ public class LookupNormalise {
             int xCoordinate = entry.getKey().getKey();
             int yCoordinate = entry.getKey().getValue();
             if (yCoordinate == SUBJECT_ID_COLUMN) {
-                normMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate),
-                        matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                normMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate),
+//                        matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 normMat.put(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN),
                         matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }

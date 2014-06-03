@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.intermine.Coordinates;
 import org.intermine.bio.like.Matrices.MatrixOperation;
+import org.intermine.objectstore.ObjectStore;
 
 /**
  *
@@ -64,6 +65,7 @@ public final class LookupFindCommonItems
                         }
                     }
                 }
+
                 // Transfer the information to the commonMat in the outer loop
                 for (Map.Entry<Integer, ArrayList<Integer>> entry : commonToOuter.entrySet()) {
                     newMatrix.put(new Coordinates(xCoordinateOuter + 1, entry.getKey() + 1),
@@ -145,16 +147,49 @@ public final class LookupFindCommonItems
             int yCoordinate = outer.getKey().getValue();
             if (yCoordinate == SUBJECT_ID_COLUMN) {
                 // Transfer the gene IDs and save in ArrayLists
-                ArrayList<Integer> geneInColumn = new ArrayList<Integer>();
+//                ArrayList<Integer> geneInColumn = new ArrayList<Integer>();
                 ArrayList<Integer> geneInRow = new ArrayList<Integer>();
-                commonMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1), geneInColumn);
+//                commonMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1), geneInColumn);
                 commonMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN), geneInRow);
-                geneInColumn.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                geneInColumn.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 geneInRow.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
 
                 // Perform the loopAction to find common items (e.g. pathways) for each subject
                 // (gene) of the outer loop
                 operation.loopAction(commonMat, matrix, outer.getKey());
+                String geneId = Integer.toString(outer.getValue());
+//                Storing.saveCommonMatToDatabase(os, commonMat, aspectNumber, geneId);
+
+//                // Calculate the similarity rating
+//                Map<Coordinates, Integer> countCommonMat = countCommonItemsCategory(commonMat);
+////                if (outer.getValue() == 1112303) {
+////                    System.out.print("\nnormMat:\n");
+////                    for (int j = 0; j < 30; j++) {
+////                        for (int k = 0; k < 30; k++) {
+////                            System.out.print(commonMat.get(new Coordinates(j, k)) + " ");
+////                        }
+////                        System.out.print("\n");
+////                    }
+////                }
+
+
+//                commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
+
+
+
+//
+//                countCommonMat = normalise(countCommonMat);
+//                Storing.saveNormMatToDatabase(os, countCommonMat, aspectNumber, geneId);
+//
+////                if (outer.getValue() == 1112303) {
+////                    System.out.print("\nnormMat:\n");
+////                    for (int j = 0; j < 30; j++) {
+////                        for (int k = 0; k < 30; k++) {
+////                            System.out.print(countCommonMat.get(new Coordinates(j, k)) + " ");
+////                        }
+////                        System.out.print("\n");
+////                    }
+////                }
             }
         }
         return commonMat;

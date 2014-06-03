@@ -34,10 +34,10 @@ public class LookupSetUpNormalise
 //        s1.close();
 
         Map<Coordinates, Integer> smallMatrix = new HashMap<Coordinates, Integer>() { {
-          put(new Coordinates(0, 1), 111);
-          put(new Coordinates(0, 2), 222);
-          put(new Coordinates(0, 3), 333);
-          put(new Coordinates(0, 4), 444);
+//          put(new Coordinates(0, 1), 111);
+//          put(new Coordinates(0, 2), 222);
+//          put(new Coordinates(0, 3), 333);
+//          put(new Coordinates(0, 4), 444);
           put(new Coordinates(1, 0), 111);
           put(new Coordinates(2, 0), 222);
           put(new Coordinates(3, 0), 333);
@@ -77,10 +77,10 @@ public class LookupSetUpNormalise
         }
 
         Map<Coordinates, Integer> smallResult = new HashMap<Coordinates, Integer>() { {
-                put(new Coordinates(0, 1), 111);
-                put(new Coordinates(0, 2), 222);
-                put(new Coordinates(0, 3), 333);
-                put(new Coordinates(0, 4), 444);
+//                put(new Coordinates(0, 1), 111);
+//                put(new Coordinates(0, 2), 222);
+//                put(new Coordinates(0, 3), 333);
+//                put(new Coordinates(0, 4), 444);
                 put(new Coordinates(1, 0), 111);
                 put(new Coordinates(2, 0), 222);
                 put(new Coordinates(3, 0), 333);

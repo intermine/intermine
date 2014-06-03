@@ -78,10 +78,10 @@ public class LookupSetUpFindCommonItems
 
         Map<Coordinates, ArrayList<Integer>> smallResult =
                 new HashMap<Coordinates, ArrayList<Integer>>() { {
-                put(new Coordinates(0, 1), new ArrayList<Integer>() { { add(111); } });
-                put(new Coordinates(0, 2), new ArrayList<Integer>() { { add(222); } });
-                put(new Coordinates(0, 3), new ArrayList<Integer>() { { add(333); } });
-                put(new Coordinates(0, 4), new ArrayList<Integer>() { { add(444); } });
+//                put(new Coordinates(0, 1), new ArrayList<Integer>() { { add(111); } });
+//                put(new Coordinates(0, 2), new ArrayList<Integer>() { { add(222); } });
+//                put(new Coordinates(0, 3), new ArrayList<Integer>() { { add(333); } });
+//                put(new Coordinates(0, 4), new ArrayList<Integer>() { { add(444); } });
                 put(new Coordinates(1, 0), new ArrayList<Integer>() { { add(111); } });
                 put(new Coordinates(2, 0), new ArrayList<Integer>() { { add(222); } });
                 put(new Coordinates(3, 0), new ArrayList<Integer>() { { add(333); } });

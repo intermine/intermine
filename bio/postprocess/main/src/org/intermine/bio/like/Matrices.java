@@ -29,7 +29,6 @@ public final class Matrices
     private static final int SUBJECT_ID_COLUMN = 0;
     // For rectangular matrices the gene ID is also in row zero
     private static final int SUBJECT_ID_ROW = 0;
-    private static final int MIN_RATING = 0;
     private static final int MAX_RATING = 100;
 
     private Matrices() {
@@ -165,11 +164,11 @@ public final class Matrices
             int yCoordinate = outer.getKey().getValue();
             if (yCoordinate == SUBJECT_ID_COLUMN) {
                 // Transfer the gene IDs and save in ArrayLists
-                ArrayList<Integer> geneInColumn = new ArrayList<Integer>();
+//                ArrayList<Integer> geneInColumn = new ArrayList<Integer>();
                 ArrayList<Integer> geneInRow = new ArrayList<Integer>();
-                commonMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1), geneInColumn);
+//                commonMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1), geneInColumn);
                 commonMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN), geneInRow);
-                geneInColumn.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                geneInColumn.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 geneInRow.add(matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
 
                 // Perform the loopAction to find common items (e.g. pathways) for each subject
@@ -178,7 +177,31 @@ public final class Matrices
                 String geneId = Integer.toString(outer.getValue());
                 Storing.saveCommonMatToDatabase(os, commonMat, aspectNumber, geneId);
 
+                // Calculate the similarity rating
+                Map<Coordinates, Integer> countCommonMat = countCommonItemsCategory(commonMat);
+//                if (outer.getValue() == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 30; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(commonMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
                 commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
+
+                countCommonMat = normalise(countCommonMat);
+                Storing.saveNormMatToDatabase(os, countCommonMat, aspectNumber, geneId);
+
+//                if (outer.getValue() == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 30; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(countCommonMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
             }
         }
         return commonMat;
@@ -200,7 +223,7 @@ public final class Matrices
             // Transfer the gene IDs
             int xCoordinate = entry.getKey().getKey();
             int yCoordinate = entry.getKey().getValue();
-            if (xCoordinate == SUBJECT_ID_ROW || yCoordinate == SUBJECT_ID_COLUMN) {
+            if (yCoordinate == SUBJECT_ID_ROW) {
                 simMat.put(entry.getKey(), entry.getValue().get(0));
             }
             else {
@@ -214,11 +237,12 @@ public final class Matrices
     /**
      * Calculates the similarity ratings pairwise and for one aspect for the type "count".
      *
+     * @param os object store
      * @param matrix containing all genes and their related items.
-     * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
-     * gene IDs and pairwise similarity ratings between the genes.
+     * @param aspectNumber
      */
-    public static Map<Coordinates, Integer> findSimilarityCount(Map<Coordinates, Integer> matrix) {
+    public static void findSimilarityCount(ObjectStore os, Map<Coordinates, Integer> matrix,
+            String aspectNumber) {
         Map<Coordinates, Integer> countedItems = new HashMap<Coordinates, Integer>();
         Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
         int xCoordinate;
@@ -251,8 +275,8 @@ public final class Matrices
             yCoordinate = outer.getKey().getValue();
             // Transfer the gene IDs
             if (yCoordinate == SUBJECT_ID_COLUMN) {
-                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
-                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
+//                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 simMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN),
                         countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }
@@ -270,11 +294,24 @@ public final class Matrices
                         }
                         simMat.put(new Coordinates(xCoordinate + 1,
                                 xCoordinateInner + 1), rating);
+
                     }
                 }
+//                if (countedItems.get(new Coordinates(xCoordinate, 0)) == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 30; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(simMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
+
+                String geneId = Integer.toString(countedItems.get(new Coordinates(xCoordinate, 0)));
+                Storing.saveNormMatToDatabase(os, simMat, aspectNumber, geneId);
+                simMat = new HashMap<Coordinates, Integer>();
             }
         }
-        return simMat;
     }
 
     /**
@@ -284,8 +321,8 @@ public final class Matrices
      * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
      * gene IDs and pairwise similarity ratings between the genes.
      */
-    public static Map<Coordinates, Integer> findSimilarityPresence(
-            Map<Coordinates, Integer> matrix) {
+    public static void findSimilarityPresence(ObjectStore os, Map<Coordinates, Integer> matrix,
+            String aspectNumber) {
         Map<Coordinates, Integer> hasMat = new HashMap<Coordinates, Integer>();
         Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
 
@@ -307,8 +344,8 @@ public final class Matrices
             int xCoordinate = entry.getKey().getKey();
             int yCoordinate = entry.getKey().getValue();
             if (yCoordinate == 0) {
-                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
-                        hasMat.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
+//                        hasMat.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 simMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN),
                         hasMat.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }
@@ -323,9 +360,22 @@ public final class Matrices
                         }
                     }
                 }
+
+//                if (hasMat.get(new Coordinates(xCoordinate, 0)) == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 30; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(simMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
+
+                String geneId = Integer.toString(hasMat.get(new Coordinates(xCoordinate, 0)));
+                Storing.saveNormMatToDatabase(os, simMat, aspectNumber, geneId);
+                simMat = new HashMap<Coordinates, Integer>();
             }
         }
-        return simMat;
     }
 
     /**
@@ -346,8 +396,8 @@ public final class Matrices
             int xCoordinate = entry.getKey().getKey();
             int yCoordinate = entry.getKey().getValue();
             if (yCoordinate == SUBJECT_ID_COLUMN) {
-                normMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate),
-                        matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                normMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate),
+//                        matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 normMat.put(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN),
                         matrix.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }

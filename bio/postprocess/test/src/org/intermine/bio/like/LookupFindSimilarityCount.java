@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.Coordinates;
+import org.intermine.objectstore.ObjectStore;
 import org.junit.Test;
 
 /**
@@ -69,8 +70,8 @@ public class LookupFindSimilarityCount
             yCoordinate = outer.getKey().getValue();
             // Transfer the gene IDs
             if (yCoordinate == SUBJECT_ID_COLUMN) {
-                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
-                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
+//                simMat.put(new Coordinates(SUBJECT_ID_ROW, xCoordinate + 1),
+//                        countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
                 simMat.put(new Coordinates(xCoordinate + 1, SUBJECT_ID_COLUMN),
                         countedItems.get(new Coordinates(xCoordinate, SUBJECT_ID_COLUMN)));
             }
@@ -88,8 +89,22 @@ public class LookupFindSimilarityCount
                         }
                         simMat.put(new Coordinates(xCoordinate + 1,
                                 xCoordinateInner + 1), rating);
+
                     }
                 }
+//                if (countedItems.get(new Coordinates(xCoordinate, 0)) == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 30; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(simMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
+
+                String geneId = Integer.toString(countedItems.get(new Coordinates(xCoordinate, 0)));
+//                Storing.saveNormMatToDatabase(os, simMat, aspectNumber, geneId);
+//                simMat = new HashMap<Coordinates, Integer>();
             }
         }
         return simMat;
