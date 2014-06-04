@@ -159,6 +159,7 @@ public final class Matrices
         // The rectangular matrix to return
         Map<Coordinates, ArrayList<Integer>> commonMat =
                 new HashMap<Coordinates, ArrayList<Integer>>();
+        Map<Coordinates, Integer> allGeneIds = new HashMap<Coordinates, Integer>();
         for (final Map.Entry<Coordinates, Integer> outer : matrix.entrySet()) {
             int xCoordinate = outer.getKey().getKey();
             int yCoordinate = outer.getKey().getValue();
@@ -181,7 +182,7 @@ public final class Matrices
                 Map<Coordinates, Integer> countCommonMat = countCommonItemsCategory(commonMat);
 //                if (outer.getValue() == 1112303) {
 //                    System.out.print("\nnormMat:\n");
-//                    for (int j = 0; j < 30; j++) {
+//                    for (int j = 0; j < 20; j++) {
 //                        for (int k = 0; k < 30; k++) {
 //                            System.out.print(commonMat.get(new Coordinates(j, k)) + " ");
 //                        }
@@ -195,13 +196,17 @@ public final class Matrices
 
 //                if (outer.getValue() == 1112303) {
 //                    System.out.print("\nnormMat:\n");
-//                    for (int j = 0; j < 30; j++) {
+//                    for (int j = 0; j < 20; j++) {
 //                        for (int k = 0; k < 30; k++) {
 //                            System.out.print(countCommonMat.get(new Coordinates(j, k)) + " ");
 //                        }
 //                        System.out.print("\n");
 //                    }
 //                }
+
+                // get a list of all gene Ids
+                allGeneIds.put(new Coordinates(yCoordinate, xCoordinate + 1), outer.getValue());
+                Storing.saveNormMatToDatabase(os, allGeneIds, aspectNumber, "ALL");
             }
         }
         return commonMat;
