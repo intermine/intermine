@@ -685,7 +685,7 @@ public class ProfileManager
         userProfile.setUsername(profile.getUsername());
         userProfile.setLocalAccount(profile.isLocal());
 
-        if (profile.isLocal()) {
+        if (profile.isLocal() && profile.getPassword() != null) {
             userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
         }
         userProfile.setSuperuser(profile.isSuperUser);
@@ -1238,15 +1238,12 @@ ission levels.
         String username = issuer + ":" + identity;
         Profile profile = getProfile(username, classKeys);
 
-        if (profile != null) {
+        if (profile == null) {
             profile = createNewProfile(username, null);
         }
 
         if (!profile.prefers(UserPreferences.EMAIL)) {
             profile.getPreferences().put(UserPreferences.EMAIL, identity);
-        }
-        if (!profile.prefers(UserPreferences.ALIAS)) {
-            profile.getPreferences().put(UserPreferences.ALIAS, identity);
         }
 
         return new ApiPermission(profile, ApiPermission.Level.RW);
