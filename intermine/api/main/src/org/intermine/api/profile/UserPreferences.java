@@ -23,6 +23,7 @@ public class UserPreferences extends AbstractMap<String, String> {
 //    public static final String HIDDEN = "hidden"; // If this key is set at all, then we should not let other users discover this one.
 
     public static final String ALIAS = "alias"; // The alias of this user.
+    public static final String AKA = "aka"; // What we should call the user.
 
     // This is known to the API as the Profile needs to read this to provide getEmailAddress().
     public static final String EMAIL = "email"; // The preferred address to send emails to.
@@ -55,7 +56,7 @@ public class UserPreferences extends AbstractMap<String, String> {
          */
         bools.add("do_not_spam");
         bools.add("hidden");
-        uniques.add("alias");
+        uniques.add(ALIAS);
         all.addAll(bools);
         all.addAll(uniques);
         /* END OF HACK */
