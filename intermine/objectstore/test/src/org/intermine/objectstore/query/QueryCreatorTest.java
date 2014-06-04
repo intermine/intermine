@@ -12,6 +12,7 @@ package org.intermine.objectstore.query;
 
 import junit.framework.Test;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;

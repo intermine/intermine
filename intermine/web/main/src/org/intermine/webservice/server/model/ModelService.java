@@ -26,7 +26,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;

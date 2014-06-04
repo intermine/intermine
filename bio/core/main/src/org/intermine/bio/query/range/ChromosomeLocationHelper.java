@@ -1,12 +1,22 @@
 package org.intermine.bio.query.range;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.regex.Pattern;
 
 import org.intermine.api.query.RangeHelper;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.OverlapConstraint;
@@ -26,7 +36,7 @@ public class ChromosomeLocationHelper implements RangeHelper
 {
     private final QueryClass chromosome;
     private final QueryField chrIdField;
-    
+
     public ChromosomeLocationHelper() {
         Model model = Model.getInstanceByName("genomic");
         if (model == null) {
@@ -36,20 +46,20 @@ public class ChromosomeLocationHelper implements RangeHelper
         if (chr == null) {
             throw new RuntimeException("This genomic model does not contain Chromosomes");
         }
-        
+
         chromosome = new QueryClass(chr.getType());
         chrIdField = new QueryField(chromosome, "primaryIdentifier");
     }
-    
+
     @Override
     public Constraint createConstraint(Queryable q, QueryNode n, PathConstraintRange pcr) {
-        
+
         if (q instanceof Query) {
             ((Query) q).addFrom(chromosome);
         } else if (q instanceof QueryCollectionPathExpression) {
             ((QueryCollectionPathExpression) q).addFrom(chromosome);
         }
-        
+
         QueryField leftA = new QueryField((QueryClass) n, "start");
         QueryField leftB = new QueryField((QueryClass) n, "end");
         QueryObjectReference qor = new QueryObjectReference((QueryClass) n, "feature");
@@ -62,24 +72,30 @@ public class ChromosomeLocationHelper implements RangeHelper
         } else if (op == ConstraintOp.OUTSIDE) {
             rangeOp = ConstraintOp.NOT_IN;
         }
-        
-        ConstraintOp mainOp = (op == ConstraintOp.WITHIN || op == ConstraintOp.CONTAINS || op == ConstraintOp.OVERLAPS)
+
+        ConstraintOp mainOp = (op == ConstraintOp.WITHIN || op == ConstraintOp.CONTAINS
+                || op == ConstraintOp.OVERLAPS)
                 ? ConstraintOp.OR : ConstraintOp.AND;
         ConstraintSet mainSet = new ConstraintSet(mainOp);
         for (String range: pcr.getValues()) {
             GenomicInterval interval = new GenomicInterval(range);
             String chrId = interval.getChr();
-            
+
             ConstraintSet rangeSet = new ConstraintSet(ConstraintOp.AND);
-            
-            rangeSet.addConstraint(new ContainsConstraint(chrOR, ConstraintOp.CONTAINS, chromosome));
-            rangeSet.addConstraint(new SimpleConstraint(chrIdField, ConstraintOp.EQUALS, new QueryValue(chrId)));
-            
+
+            rangeSet.addConstraint(
+                    new ContainsConstraint(chrOR, ConstraintOp.CONTAINS, chromosome));
+            rangeSet.addConstraint(
+                    new SimpleConstraint(chrIdField, ConstraintOp.EQUALS, new QueryValue(chrId)));
+
             if (interval.getEnd() != null) {
-                OverlapRange right = new OverlapRange(new QueryValue(interval.getStart()), new QueryValue(interval.getEnd()), qor);
+                OverlapRange right = new OverlapRange(
+                        new QueryValue(interval.getStart()),
+                        new QueryValue(interval.getEnd()), qor);
                 rangeSet.addConstraint(new OverlapConstraint(left, rangeOp, right));
             } else if (interval.getStart() != null) {
-                OverlapRange right = new OverlapRange(new QueryValue(interval.getStart()), new QueryValue(interval.getStart()), qor);
+                OverlapRange right = new OverlapRange(new QueryValue(interval.getStart()),
+                        new QueryValue(interval.getStart()), qor);
                 rangeSet.addConstraint(new OverlapConstraint(left, rangeOp, right));
             } else {
                 // Chromosome only - no action needed.
@@ -92,10 +108,11 @@ public class ChromosomeLocationHelper implements RangeHelper
     static class GenomicInterval {
 
         private final Integer start, end;
-        
+
         private final String chr;
-      
-        private static final Pattern GFF3 = Pattern.compile("^[^\\t]+\\t[^\\t]+\\t[^\\t]+\\d+\\t\\d+");
+
+        private static final Pattern GFF3 = Pattern.compile(
+                "^[^\\t]+\\t[^\\t]+\\t[^\\t]+\\d+\\t\\d+");
         private static final Pattern BED = Pattern.compile("^[^\\t]+\\t\\d+\\t\\d+");
         private static final Pattern COLON_DASH = Pattern.compile("^[^:]+:\\d+-\\d+");
         private static final Pattern COLON_DOTS = Pattern.compile("^[^:]+:\\d+\\.\\.\\d+");
@@ -141,7 +158,8 @@ public class ChromosomeLocationHelper implements RangeHelper
                 throw new IllegalArgumentException("Illegal range: " + range);
             }
             if (start != null && end != null && start > end) {
-                throw new IllegalArgumentException("Illegal range - start is greater than end: " + range);
+                throw new IllegalArgumentException(
+                        "Illegal range - start is greater than end: " + range);
             }
         }
 
@@ -152,7 +170,7 @@ public class ChromosomeLocationHelper implements RangeHelper
         public Integer getEnd() {
             return end;
         }
-        
+
         public String getChr() {
             return chr;
         }

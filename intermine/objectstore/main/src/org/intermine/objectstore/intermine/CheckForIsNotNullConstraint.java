@@ -10,11 +10,11 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import org.intermine.objectstore.query.QueryNode;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
+import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.SimpleConstraint;
 
 
 /**

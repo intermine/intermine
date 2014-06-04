@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import org.intermine.bio.dataconversion.UniprotXmlFilter;
-import  org.intermine.util.StringUtil;
+import  org.intermine.metadata.StringUtil;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;

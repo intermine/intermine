@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraint;
@@ -26,7 +26,7 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 import static java.lang.String.format;
 

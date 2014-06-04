@@ -76,6 +76,11 @@
     <create-indexes alias="${objectstore.name}" attributeIndexes="true"/>
   </target>
 
+<!-- RUN AN ARBITRARY IQL QUERY -->
+  <target name="run-iql-query" depends="-init-properties, init, -init-deps, -init-task-xml">
+    <run-iql-query alias="${objectstore.name}" query="${query}"/>
+  </target>
+
   <!-- GENERATE (FETCH) -->
 
   <target name="-init-generate" depends="model.-init-generate">
@@ -139,11 +144,11 @@
     <property name="extra.model.paths.end" value=""/>
   </target>
 
-  <target name="-merge-models" 
+  <target name="-merge-models"
           depends="-init-merge, -init-extra-models-start, -init-extra-models-end"
           if="core.model.path">
     <merge-source-models
-       projectXml="../project.xml" 
+       projectXml="../project.xml"
        basedir="${library.xml.basedir}/.."
        classpathref="task.class.path"
        modelFile="${build.model.dir}/${model.name}_model.xml"

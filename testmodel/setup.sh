@@ -9,6 +9,12 @@
 set -e # Errors are fatal.
 
 USERPROFILEDB=userprofile-demo
+# Build and deploy the testmodel webapp
+# This script requires the standard InterMine dependencies:
+#  * psql (createdb, psql) - your user should have a postgres
+#    role with password authentication set up.
+#  * ant
+#  * a deployment container (tomcat).
 PRODDB=objectstore-demo
 MINENAME=demomine
 DIR="$(cd $(dirname "$0"); pwd)"
@@ -36,6 +42,7 @@ if test -z $TOMCAT_PWD; then
     TOMCAT_PWD=manager
 fi
 
+
 cd $HOME
 
 if test ! -d $IMDIR; then
@@ -58,7 +65,7 @@ if test ! -f $PROP_FILE; then
     sed -i "s/USER/$USER/g" $PROP_FILE
 fi
 
-echo Checking databases.
+echo "------> Checking databases..."
 for db in $USERPROFILEDB $PRODDB; do
     if psql --list | egrep -q '\s'$db'\s'; then
         echo $db exists.
@@ -68,14 +75,17 @@ for db in $USERPROFILEDB $PRODDB; do
     fi
 done
 
+cd $DIR/webapp/main
+ant -Drelease=demo remove-webapp >> $LOG 
+
 cd $DIR/dbmodel
 
-echo Loading demo data set...
+echo "------> Loading demo data set..."
 ant -Drelease=demo loadsadata >> $LOG
 
 cd $DIR/webapp/main
 
-echo Building and releasing web-app...
+echo "------> Building and releasing web-app..."
 ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
@@ -83,5 +93,5 @@ ant -Drelease=demo -Ddont.minify=true \
     remove-webapp \
     release-webapp >> $LOG
 
-echo All done. Build log is available in $LOG
+echo "------> All done. Build log is available in $LOG"
 

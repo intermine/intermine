@@ -10,10 +10,11 @@ package org.intermine.sql.logging;
  *
  */
 
-import org.intermine.sql.query.Query;
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
+
+import org.intermine.sql.query.Query;
 
 /**
  * Provides a logging facility for a Query

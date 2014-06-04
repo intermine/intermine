@@ -10,18 +10,19 @@ package org.intermine.task;
  *
  */
 
+import static org.intermine.objectstore.intermine.TorqueModelOutput.FORMAT_VERSION;
+
 import java.util.Properties;
 import java.util.Random;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ModelFactory;
 import org.intermine.modelproduction.MetadataManager;
-import static org.intermine.objectstore.intermine.TorqueModelOutput.FORMAT_VERSION;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.PropertiesUtil;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 /**
  * Store model metadata to a database
@@ -65,7 +66,7 @@ public class StoreMetadataTask extends Task
         try {
             Database db = DatabaseFactory.getDatabase(database);
 
-            Model model = MetadataManager.loadModel(modelName);
+            Model model = ModelFactory.loadModel(modelName);
             MetadataManager.store(db, MetadataManager.MODEL, model.toString());
 
             Properties keys = MetadataManager.loadKeyDefinitions(modelName);

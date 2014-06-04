@@ -10,11 +10,10 @@ package org.intermine.task;
  *
  */
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.BuildException;
-
 import java.io.File;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.intermine.codegen.JavaModelOutput;
 import org.intermine.metadata.Model;
 

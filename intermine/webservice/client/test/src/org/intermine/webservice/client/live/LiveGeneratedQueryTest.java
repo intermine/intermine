@@ -12,7 +12,6 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.QueryService;
-
 import org.junit.Test;
 
 /**

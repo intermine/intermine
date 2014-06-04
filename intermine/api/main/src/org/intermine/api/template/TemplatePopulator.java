@@ -21,8 +21,9 @@ import java.util.Set;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -35,7 +36,6 @@ import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
-import org.intermine.util.DynamicUtil;
 
 
 /**
@@ -140,7 +140,7 @@ public final class TemplatePopulator
         if (!PathUtil.canAssignObjectToType(path.getEndType(), obj)) {
             throw new TemplatePopulatorException("The constraint of type " + path.getEndType()
                     + " can't be set to object of type "
-                    + DynamicUtil.getFriendlyName(obj.getClass())
+                    + Util.getFriendlyName(obj.getClass())
                     + " in template query " + template.getName() + ".");
         }
 
@@ -174,13 +174,13 @@ public final class TemplatePopulator
         }
         Set<String> allClasses = new HashSet<String>();
         allClasses.add(bag.getType());
-        for (ClassDescriptor cld : bag.getClassDescriptors()) {            
+        for (ClassDescriptor cld : bag.getClassDescriptors()) {
             allClasses.add(cld.getUnqualifiedName());
         }
         PathConstraint constraint = template.getEditableConstraints().get(0);
         Path path = getPathOfClass(template, constraint.getPath());
         ClassDescriptor cld = path.getLastClassDescriptor();
-        if (!cld.getUnqualifiedName().equals(bag.getType()) && 
+        if (!cld.getUnqualifiedName().equals(bag.getType()) &&
                 !allClasses.contains(cld.getUnqualifiedName())) {
             throw new TemplatePopulatorException("The constraint of type "
                     + path.getNoConstraintsString()
