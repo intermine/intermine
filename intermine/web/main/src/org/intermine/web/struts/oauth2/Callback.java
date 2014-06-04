@@ -144,6 +144,7 @@ public class Callback extends LoginHandler {
             break;
         case QUERY:
             clientReq = requestBuilder.buildQueryMessage();
+            break;
         default:
             throw new RuntimeException("Unknown message format");
         }
