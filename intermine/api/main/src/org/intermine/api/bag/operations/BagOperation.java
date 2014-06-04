@@ -1,5 +1,15 @@
 package org.intermine.api.bag.operations;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +37,8 @@ public abstract class BagOperation implements BagProducer {
     private final Profile profile;
     private Collection<InterMineBag> bags;
     private String nameFormat = "%s List (%tc)";
-    private Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
+    private Map<String, List<FieldDescriptor>> classKeys
+        = new HashMap<String, List<FieldDescriptor>>();
     private String newBagName = null;
     protected final Model model;
     private InterMineBag combined;
@@ -76,7 +87,7 @@ public abstract class BagOperation implements BagProducer {
      * nouns" method, and I apologise for the horror of it all. This operation will run at most
      * once. Subsequent calls to operate will always return the same created list.
      * @return The new bag. Guaranteed to not be null.
-     * @throws BagOperationException
+     * @throws BagOperationException somethings gone wrong
      */
     public synchronized InterMineBag operate() throws BagOperationException {
         if (combined != null) {
@@ -94,8 +105,7 @@ public abstract class BagOperation implements BagProducer {
         return combined;
     }
 
-    private void checkSize() throws BagOperationException,
-            InternalBagOperationException {
+    private void checkSize() throws BagOperationException {
         try {
             if (combined.size() < 1) {
                 cleanUp();
@@ -111,7 +121,9 @@ public abstract class BagOperation implements BagProducer {
         boolean allAreCurrent = true;
         for (InterMineBag bag: bags) {
             allAreCurrent = bag.isCurrent();
-            if (!allAreCurrent) break;
+            if (!allAreCurrent) {
+                break;
+            }
         }
         if (!allAreCurrent) {
             throw new NotCurrent();
@@ -131,6 +143,9 @@ public abstract class BagOperation implements BagProducer {
         }
     }
 
+    /**
+     * @return combined list
+     */
     protected ObjectStoreBagCombination combineBags() {
         ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(getOperationCode());
         for (InterMineBag bag : bags) {

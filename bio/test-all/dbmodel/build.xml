@@ -12,7 +12,7 @@
        soTermListFile="${so.termlist.file}"
        soFile="${so.obo.file}"
        outputFile="${so.output.file}"/>
-  </target>   
+  </target>
 
   <target name="-pre-init-merge" depends="create-so-model"/>
 
@@ -57,6 +57,7 @@
     <merge-additions file="bio/sources/orthodb/orthodb_additions.xml"/>
     <merge-additions file="bio/sources/human/ncbi-gene/ncbi-gene_additions.xml"/>
     <merge-additions file="bio/sources/human/hpo-annotation/hpo-annotation_additions.xml"/>
+    <merge-additions file="modmine/dbmodel/resources/modencode-metadata_additions.xml"/>
   </target>
 
 </project>
