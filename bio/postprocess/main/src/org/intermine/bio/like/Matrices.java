@@ -206,9 +206,9 @@ public final class Matrices
 
                 // get a list of all gene Ids
                 allGeneIds.put(new Coordinates(yCoordinate, xCoordinate + 1), outer.getValue());
-                Storing.saveNormMatToDatabase(os, allGeneIds, aspectNumber, "ALL");
             }
         }
+        Storing.saveNormMatToDatabase(os, allGeneIds, aspectNumber, "ALL");
         return commonMat;
     }
 
