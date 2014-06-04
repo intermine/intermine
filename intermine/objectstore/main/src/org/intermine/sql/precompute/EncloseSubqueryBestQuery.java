@@ -10,8 +10,9 @@ package org.intermine.sql.precompute;
  *
  */
 
-import org.intermine.sql.query.Query;
 import java.sql.SQLException;
+
+import org.intermine.sql.query.Query;
 
 /**
  * This object is a BestQuery tracker that encloses all added queries into a surrounding query as a

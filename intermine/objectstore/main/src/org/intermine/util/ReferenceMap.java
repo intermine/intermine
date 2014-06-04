@@ -10,8 +10,8 @@ package org.intermine.util;
  *
  */
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;

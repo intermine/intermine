@@ -14,11 +14,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.util.PropertiesUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Produce ObjectStoreWriters

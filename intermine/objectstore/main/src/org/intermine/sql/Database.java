@@ -29,9 +29,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.StringUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.util.StringUtil;
 import org.postgresql.util.PSQLException;
 
 /**

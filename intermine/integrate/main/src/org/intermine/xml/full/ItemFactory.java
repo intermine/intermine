@@ -12,15 +12,16 @@ package org.intermine.xml.full;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.util.TypeUtil;
 import org.intermine.xml.XmlHelper;
 
 /**
@@ -187,7 +188,7 @@ public class ItemFactory
                         if (value instanceof ClobAccess) {
                             item.setAttribute(fieldname, ((ClobAccess) value).toString());
                         } else {
-                            item.setAttribute(fieldname, TypeUtil.objectToString(value));
+                            item.setAttribute(fieldname, objectToString(value));
                         }
                     }
                 }
@@ -196,6 +197,22 @@ public class ItemFactory
             // TODO
         }
         return item;
+    }
+
+    /**
+     * Returns a String for a given object
+     *
+     * @param value the value to convert
+     * @return the string representation
+     */
+    private static String objectToString(Object value) {
+        if (value instanceof Date) {
+            return "" + ((Date) value).getTime();
+        } else if (value instanceof ClobAccess) {
+            return ((ClobAccess) value).getDbDescription();
+        } else {
+            return value.toString();
+        }
     }
 
     /**

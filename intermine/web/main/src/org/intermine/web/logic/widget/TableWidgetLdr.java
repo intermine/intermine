@@ -30,7 +30,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -115,7 +115,7 @@ public class TableWidgetLdr extends WidgetLdr
 
         List<?> results;
         try {
-            results = os.execute(q, 0, 50, true, true, ObjectStore.SEQUENCE_IGNORE);
+            results = os.execute(q, 0, 5000, true, true, ObjectStore.SEQUENCE_IGNORE);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }

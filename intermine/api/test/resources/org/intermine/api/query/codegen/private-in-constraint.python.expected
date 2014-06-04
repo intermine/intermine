@@ -11,7 +11,7 @@
 
 # The following two lines will be needed in every python script:
 from intermine.webservice import Service
-service = Service("TEST_SERVICE_ROOT", "YOUR-API-KEY")
+service = Service("TEST_SERVICE_ROOT/service", token = "YOUR-API-KEY")
 
 # Get a new query on the class (table) you will be querying:
 query = service.new_query("Gene")

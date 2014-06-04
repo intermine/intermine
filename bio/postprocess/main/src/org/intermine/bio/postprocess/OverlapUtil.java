@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
@@ -26,7 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -179,8 +180,8 @@ public abstract class OverlapUtil
                                         "overlappingFeatures", lsf.getId());
 
                                 // Log it, for the summary.
-                                String classname1 = DynamicUtil.getFriendlyName(lsf.getClass());
-                                String classname2 = DynamicUtil.getFriendlyName(currLsf
+                                String classname1 = Util.getFriendlyName(lsf.getClass());
+                                String classname2 = Util.getFriendlyName(currLsf
                                         .getClass());
 
                                 String summaryLine = classname1.compareTo(classname2) > 0
