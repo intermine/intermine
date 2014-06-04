@@ -344,6 +344,13 @@
       <forward name="login" path="login.page"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>
+    <action path="/oauth2authenticator" type="org.intermine.web.struts.oauth2.Authenticator">
+      <forward name="login" path="login.page"/>
+    </action>
+    <action path="/oauth2callback" type="org.intermine.web.struts.oauth2.Callback">
+      <forward name="login" path="login.page"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+    </action>
     <action path="/requestPasswordAction" name="requestPasswordForm" type="org.intermine.web.struts.RequestPasswordAction" input="login" parameter="action">
       <forward name="login" path="login.page"/>
     </action>
