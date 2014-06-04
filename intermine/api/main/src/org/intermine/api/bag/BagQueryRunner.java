@@ -189,7 +189,7 @@ public class BagQueryRunner
                 addResults(resMap, unresolved, bqr, bq.getMessage(), typeCls, false,
                             matchOnFirst, bq.matchesAreIssues());
             }
-            if (!wildcardInput.isEmpty()) {
+            if (!wildcardInput.isEmpty() && !wildcardUnresolved.isEmpty()) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 try {
                     Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
