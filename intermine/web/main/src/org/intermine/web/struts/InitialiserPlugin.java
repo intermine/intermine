@@ -147,6 +147,7 @@ public class InitialiserPlugin implements PlugIn
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
+        loadOAuth2Providers(servletContext, webProperties);
 
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
@@ -656,6 +657,17 @@ public class InitialiserPlugin implements PlugIn
         SessionMethods.setOpenIdProviders(context, providers);
     }
 
+    private void loadOAuth2Providers(ServletContext context, Properties webProperties) {
+        Set<String> providers = new HashSet<String>();
+
+        // Is this the best way...? Not so sure.
+        String oauth2Providers = webProperties.getProperty("oauth2.providers", "");
+        for (String provider: oauth2Providers.split(",")) {
+            providers.add(provider.trim().toUpperCase());
+        }
+
+        SessionMethods.setOAuth2Providers(context, providers);
+    }
 
     private LinkRedirectManager getLinkRedirector(Properties webProperties) {
         final String err = "Initialisation of link redirector failed: ";

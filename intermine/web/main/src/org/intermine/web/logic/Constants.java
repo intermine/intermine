@@ -249,4 +249,6 @@ public final class Constants
 
     /** The preference set if the user does not want to be found */
     public static final String HIDDEN = "hidden";
+
+    public static final String OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS";
 }
