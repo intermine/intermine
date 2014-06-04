@@ -150,6 +150,17 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
             snp.setReferenceSequence(referenceSeqs.get(0));
         }
 
+
+        snp.setLength(getLength(record));
+        String chromosomeIdentifier = record.getSequenceID();
+        ProxyReference chromosomeRef = getChromosome(chromosomeIdentifier);
+        snp.proxyChromosome(chromosomeRef);
+        setLocation(record, snp, chromosomeRef);
+        snp.setOrganism(getOrganism());
+        getDirectDataLoader().store(snp);
+
+        // store consequences after snps because they have a reference to snp, storing referenced
+        // objects first is faster.
         List<String> variantEffects = record.getAttributes().get("Variant_effect");
         if (variantEffects != null && !variantEffects.isEmpty()) {
             for (String effect : variantEffects) {
@@ -174,13 +185,6 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
                 }
             }
         }
-        snp.setLength(getLength(record));
-        String chromosomeIdentifier = record.getSequenceID();
-        ProxyReference chromosomeRef = getChromosome(chromosomeIdentifier);
-        snp.proxyChromosome(chromosomeRef);
-        setLocation(record, snp, chromosomeRef);
-        snp.setOrganism(getOrganism());
-        getDirectDataLoader().store(snp);
     }
 
     private ProxyReference getTranscript(String identifier) throws ObjectStoreException {
