@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,9 +31,13 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.StringUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.postgresql.util.PSQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Class that represents a physical SQL database
@@ -62,6 +67,13 @@ public class Database implements Shutdownable
         // empty
     }
 
+//    connectionTestQuery=SELECT 1
+//            dataSourceClassName=org.postgresql.ds.PGSimpleDataSource
+//            dataSource.user=test
+//            dataSource.password=test
+//            dataSource.databaseName=mydb
+//            dataSource.serverName=localhost
+
     /**
      * Constructs a Database object from a set of properties
      *
@@ -70,7 +82,27 @@ public class Database implements Shutdownable
      */
     protected Database(Properties props) throws ClassNotFoundException {
         settings = props;
-        configure(props);
+        // {platform=PostgreSQL, datasource.dataSourceClassName=org.postgresql.ds.PGSimpleDataSource, datasource.dataSourceName=db.production, datasource.maxConnections=50, datasource.databaseName=malariamine, datasource.class=com.zaxxer.hikari.HikariDataSource, datasource.password=richard, datasource.user=richard, driver=org.postgresql.Driver, datasource.serverName=localhost}
+
+        if (props.containsKey("datasource.class")
+                && props.get("datasource.class").equals("com.zaxxer.hikari.HikariDataSource")) {
+            // get data source subproperties
+            Properties dsProps = PropertiesUtil.getPropertiesStartingWith("datasource", props);
+            dsProps = PropertiesUtil.stripStart("datasource", dsProps);
+            HashSet<String> hikariPropNames = new HashSet<String>(Arrays.asList(
+                    new String[] {"user", "password", "serverName", "port", "databaseName"}));
+            HikariConfig conf = new HikariConfig();
+            for (Map.Entry<Object, Object> e : dsProps.entrySet()) {
+                if (hikariPropNames.contains(e.getKey())) {
+                    conf.addDataSourceProperty((String) e.getKey(), e.getValue());
+                }
+            }
+            conf.setDataSourceClassName((String) props.get("dataSourceClassName"));
+            datasource = new HikariDataSource(conf);
+        } else {
+            configure(props);
+        //HikariDataSource hds = new HikariDataSource();
+        }
         try {
             LOG.info("Creating new Database " + getURL() + "(" + toString() + ") with ClassLoader "
                     + getClass().getClassLoader() + " and parallelism " + parallel);
@@ -330,6 +362,15 @@ public class Database implements Shutdownable
                                         new Class[] {String.class});
                     if (m != null) {
                         m.invoke(field.get(this), new Object [] {propertyValue});
+                    } else {
+                        LOG.info("Looking for addDataSourceProperty for " + subAttribute);
+                        // TODO this is temporary for Hikari data source
+                        m = clazz.getMethod("addDataSourceProperty",
+                                new Class[] {String.class, Object.class});
+                        if (m != null) {
+                            System.out.println("Found addDataSourceProperty() method");
+                        }
+                        m.invoke(field.get(this), new Object [] {subAttribute, propertyValue});
                     }
                     // now integers
                 } catch (Exception e) {
