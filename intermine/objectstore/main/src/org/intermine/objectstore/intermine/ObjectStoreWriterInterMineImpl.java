@@ -405,8 +405,15 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             LOG.debug("Notified or timed out");
             loops++;
         }
+
+        // if the connection has been closed by the backend replace it with a new connection
+        if (!conn.isValid(1)) {
+            conn = this.os.getConnection();
+        }
+
         connInUse = true;
 
+        // //
         //Exception trace = new Exception();
         //trace.fillInStackTrace();
         //StringWriter message = new StringWriter();
