@@ -35,7 +35,7 @@ import org.intermine.objectstore.ObjectStoreException;
  */
 public final class BagOperations
 {
-    private static final Logger LOG = Logger.getLogger(BagOperations.class);
+//    private static final Logger LOG = Logger.getLogger(BagOperations.class);
 
     private BagOperations() {
         // don't
@@ -67,8 +67,11 @@ public final class BagOperations
      * @param bags the bags to operate on
      * @param newBagName name of the new bag to create
      * @param profile the user that will own the new bag
+     * @param model the data model
+     * @param classKeys the class keys
      * @return the size of the new bag or 0 if no bag created
-     * @throws ObjectStoreException if problems storing bag
+     * @throws BagOperationException if problems merging list
+     * @throws MetaDataException if problems storing bag
      */
     public static int union(
             Model model, Collection<InterMineBag> bags, String newBagName,
@@ -110,23 +113,23 @@ public final class BagOperations
         return performBagOperation(operation, newBagName, classKeys);
     }
 
-    public static int asymmetricSubtract(
-        Model model,
-        Collection<InterMineBag> include,
-        Collection<InterMineBag> exclude,
-        String newBagName,
+    public static int asymmetricSubtract(Model model, Collection<InterMineBag> include,
+        Collection<InterMineBag> exclude, String newBagName,
         Profile profile, Map<String, List<FieldDescriptor>> classKeys)
         throws BagOperationException, MetaDataException {
-
-        BagOperation op= new RelativeComplement(model, profile, include, exclude);
+        BagOperation op = new RelativeComplement(model, profile, include, exclude);
         return performBagOperation(op, newBagName, classKeys);
     }
 
     private static int performBagOperation(
         BagOperation operation, String newBagName, Map<String, List<FieldDescriptor>> classKeys)
         throws BagOperationException, MetaDataException {
-        if (StringUtils.isNotBlank(newBagName)) operation.setNewBagName(newBagName);
-        if (classKeys != null) operation.setClassKeys(classKeys);
+        if (StringUtils.isNotBlank(newBagName)) {
+            operation.setNewBagName(newBagName);
+        }
+        if (classKeys != null) {
+            operation.setClassKeys(classKeys);
+        }
         return performBagOperation(operation);
     }
 

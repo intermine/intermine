@@ -32,7 +32,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
@@ -54,6 +53,8 @@ import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 import org.jfree.util.Log;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * New objectDetails.
  *
@@ -68,9 +69,9 @@ public class ReportController extends InterMineAction
      */
     @SuppressWarnings("unused")
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         long startTime = System.currentTimeMillis();
 
@@ -247,6 +248,9 @@ public class ReportController extends InterMineAction
     private InterMineObject getRequestedObject(InterMineAPI im, HttpServletRequest request) {
 
         String idString = request.getParameter("id");
+        if (!StringUtils.isNumeric(idString) || StringUtils.isBlank(idString)) {
+            return null;
+        }
         Integer id = new Integer(Integer.parseInt(idString));
         ObjectStore os = im.getObjectStore();
         InterMineObject requestedObject = null;
