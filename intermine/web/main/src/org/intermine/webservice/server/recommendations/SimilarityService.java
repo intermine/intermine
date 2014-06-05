@@ -77,12 +77,32 @@ public class SimilarityService extends JSONService
         Map<Integer, Map<Integer, ArrayList<Integer>>> commonItems = result.getCommonItems();
 
         List<Object> rets = new ArrayList<Object>();
+        // get result gene Ids
 //        rets.addAll(similarGenes.keySet());
-        for (int i = 0; i < totalRatingSet.length; i++) {
-            for (int j = 0; j < 2; j++) {
-                rets.add(totalRatingSet[i][j]);
-            }
-        }
+
+     // get result gene Ids with ordered total ratings
+      for (int i = 0; i < totalRatingSet.length; i++) {
+          for (int j = 0; j < 2; j++) {
+              rets.add(totalRatingSet[i][j]);
+          }
+      }
+
+        // get result gene Ids with total rating with searched Ids with pairwise rating
+//        for (Map.Entry<Integer, Map<Integer, Map<Integer, Integer>>> entry : similarGenes.entrySet()) {
+//            Map<Integer, Map<Integer, Integer>> val = entry.getValue();
+//            rets.add(entry.getKey());
+//            for (Map.Entry<Integer, Map<Integer, Integer>> entry2 : val.entrySet()) {
+//                rets.add(entry2.getKey());
+//                rets.add(entry2.getValue());
+//            }
+//        }
+
+        // get result gene Ids with searched Ids with common items
+//        for (Map.Entry<Integer, Map<Integer, ArrayList<Integer>>> entry : commonItems.entrySet()) {
+//            Map<Integer, ArrayList<Integer>> val = entry.getValue();
+//            rets.add(entry.getKey());
+//            rets.add(entry.getValue());
+//        }
 
         // transmit object.
         addResultItem(rets, false);
@@ -164,8 +184,11 @@ public class SimilarityService extends JSONService
                             gzipInput.close();
                         }
                     } else {
-                        LOG.warn("IS is null");
+//                        LOG.warn("IS is null");
+                        throw new ConfigurationException("IS is null");
                     }
+                } catch (ConfigurationException e) {
+                    LOG.error("IS is null?");
                 } catch (ClassNotFoundException e) {
                     LOG.error("Could not load similarity matrix", e);
                 } catch (SQLException e) {
