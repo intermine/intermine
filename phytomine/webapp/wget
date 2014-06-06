@@ -1,2 +1,2 @@
 #!/bin/csh
-wget -q -O /dev/stdout "http://beta.phytozome.net/phytomine/service/regions/sequence?query=%7B%22regions%22:[%22Chr12\t3437090\t3439401%22],%22organism%22:%22P.+trichocarpa%22%7D"
+wget -q -O /dev/stdout "http://phytozome.jgi.doe.gov/phytomine/service/regions/sequence?query=%7B%22regions%22:[%22Chr12\t3437090\t3439401%22],%22organism%22:%22P.+trichocarpa%22%7D"

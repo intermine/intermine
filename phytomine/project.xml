@@ -747,11 +747,11 @@
     </source>
   </sources>
   <post-processing>
-    <!--post-process name="create-references" /-->
-    <post-process name="transfer-sequences" />
+    <post-process name="create-references" />
+    <!-- post-process name="transfer-sequences" / -->
     <!-- this runs the postprocessing steps in all sources -->
     <!-- post-process name="do-sources" / -->
-    <!--post-process name="create-gene-flanking-features" /-->
+    <post-process name="create-gene-flanking-features" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
     <post-process name="create-search-index" />

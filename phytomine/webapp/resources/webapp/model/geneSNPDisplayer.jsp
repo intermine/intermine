@@ -18,21 +18,41 @@
     <table>
       <thead>
        <tr>
-         <th> Sample Name(s) </th>
          <th> Position  </th>
-         <th> Reference </th>
          <th> Alternate </th>
+         <th> Reference </th>
          <th> Substitution </th>
          <th> Classification </th>
+         <th> Transcript(s) </th>
+         <th> Genotype </th>
+         <th> Sample Name(s) </th>
        </tr>
     </thead>
     <tbody>
 	  <c:forEach var="row" items="${list}">
 	     <tr>
-	       <c:forEach var="column" items="${row}" varStatus="columnStatus">
-	            <td>${column}</td>
-	        </c:forEach>
+           <td rowspan=${row.genoSampleCount} > ${row.position} </td>
+           <td rowspan=${row.genoSampleCount} > ${row.alternate} </td>
+           <td rowspan=${row.genoSampleCount} > ${row.reference} </td>
+           <td rowspan=${row.genoSampleCount} > ${row.substitution} </td>
+           <td rowspan=${row.genoSampleCount} > ${row.classification} </td>
+           <td rowspan=${row.genoSampleCount} > ${row.transcripts} </td>
+           <c:set var="ctr" value="1" scope="page" />
+                <c:forEach var="genoSample" items="${row.genoSamples}">
+                     <td> ${genoSample.genotype} </td>
+                     <td> ${genoSample.samples} </td>
+                  <c:if test="${ctr < row.genoSampleCount}">
+                    </tr> <tr>
+                  </c:if>
+                  <c:set var="ctr" value="${ctr + 1}" scope="page" />
+                </c:forEach>
 	      </tr>
+          <!-- whenever we have an even number of genotypes, we    -->
+          <!-- want to put in an empty row in order to get the    -->
+          <!-- alternating coloring of the rows to be consistent. -->
+          <c:if test="${row.genoSampleCount %2 == 0}" >
+            <tr></tr>
+          </c:if>
 	    </c:forEach>
       </tbody>
     </table>

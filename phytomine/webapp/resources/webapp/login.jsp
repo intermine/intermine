@@ -70,7 +70,7 @@
       </c:if>
       <c:if test="${WEB_PROPERTIES['caliban.enabled']}">
         Sign on using <em>JGI Single Sign On</cm>
-        <a class="jgi" href="/${WEB_PROPERTIES['webapp.path']}/caliban"></a>
+        <a class="jgi" href="/${WEB_PROPERTIES['webapp.path']}/caliban?provider=JGI"></a>
       </c:if>
     </div>
 

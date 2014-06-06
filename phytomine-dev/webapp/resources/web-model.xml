@@ -124,3 +124,20 @@
   <servlet-name>genomic-region-sequence-export</servlet-name>
   <url-pattern>/service/regions/sequence</url-pattern>
 </servlet-mapping>
+
+
+<servlet>
+  <servlet-name>caliban-auth</servlet-name>
+  <servlet-class>org.intermine.web.logic.login.CalibanAuthenticator</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>caliban-auth</servlet-name>
+  <url-pattern>/caliban</url-pattern>
+</servlet-mapping>
+
+

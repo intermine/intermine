@@ -209,7 +209,7 @@ public class AddUniProtIds {
     }
     osw.store(dataSet);
     LOG.info("Added UniProt Ids for " + added + " of " + count + " proteins.");
-    osw.abortTransaction();
+    osw.commitTransaction();
     
     
   }
