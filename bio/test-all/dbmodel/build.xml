@@ -21,7 +21,6 @@
     <merge-additions file="bio/test-all/dbmodel/build/model/so_additions.xml"/>
     <merge-additions file="bio/core/genomic_additions.xml"/>
     <merge-additions file="bio/sources/human/ncbi-gene/ncbi-gene_additions.xml"/>
-    <merge-additions file="bio/sources/ensembl/ensembl-snp-db/ensembl-snp-db_additions.xml"/>
     <merge-additions file="bio/sources/human/huge-gwas/huge-gwas_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/sources/fly/rnai/rnai_additions.xml"/>
