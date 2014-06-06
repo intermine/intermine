@@ -135,6 +135,8 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
         SequenceAlteration snp
             = (SequenceAlteration) getDirectDataLoader().createObject(imClass);
 
+        snp.setType(type);
+
         List<String> dbxrefs = record.getAttributes().get("Dbxref");
         String identifier = getIdentifier(dbxrefs);
         if (identifier != null) {
