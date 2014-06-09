@@ -24,14 +24,14 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Consequence;
 import org.intermine.model.bio.Deletion;
 import org.intermine.model.bio.Insertion;
-import org.intermine.model.bio.SequenceAlteration;
+import org.intermine.model.bio.SequenceVariant;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.SingletonResults;
 
@@ -69,6 +69,10 @@ public class EnsembSnpLoaderTaskTest extends TestCase
             InterMineObject o = (InterMineObject) resIter.next();
             osw.delete(o);
         }
+
+        qc = new QueryClass(Consequence.class);
+        osw.delete(qc, null);
+
         osw.commitTransaction();
         osw.close();
     }
