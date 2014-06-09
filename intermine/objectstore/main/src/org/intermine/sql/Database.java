@@ -200,7 +200,11 @@ public class Database implements Shutdownable
         }
         LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
                 + " connections, of which " + activeConnections + " are active");*/
-        if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
+        if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
+            LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((com.zaxxer.hikari.HikariDataSource) datasource).close();
+        } else if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
             ((org.postgresql.ds.PGPoolingDataSource) datasource).close();
@@ -221,7 +225,11 @@ public class Database implements Shutdownable
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
+        if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
+            LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((com.zaxxer.hikari.HikariDataSource) datasource).close();
+        } else if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
             ((org.postgresql.ds.PGPoolingDataSource) datasource).close();
