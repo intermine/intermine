@@ -81,7 +81,7 @@ public class SimilarityService extends JSONService
 //        rets.addAll(similarGenes.keySet());
 
      // get result gene Ids with ordered total ratings
-      for (int i = 0; i < totalRatingSet.length; i++) {
+      for (int i = 0; i < 20; i++) {
           for (int j = 0; j < 2; j++) {
               rets.add(totalRatingSet[i][j]);
           }
