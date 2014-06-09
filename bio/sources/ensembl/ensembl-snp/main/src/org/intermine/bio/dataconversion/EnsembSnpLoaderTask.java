@@ -171,7 +171,9 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
 
                 Consequence consequence = getDirectDataLoader().createSimpleObject(
                         org.intermine.model.bio.Consequence.class);
-                consequence.setDescription(effect);
+
+                String description = getDescription(effect);
+                consequence.setDescription(description);
                 if (StringUtils.isNotEmpty(transcriptIdentifier)) {
                     try {
                         consequence.proxyTranscript(getTranscript(transcriptIdentifier));
@@ -249,6 +251,17 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
             if (word != null && word.startsWith("ENST")) {
                 return word;
             }
+        }
+        return null;
+    }
+
+    private String getDescription(String effect) {
+        if (StringUtils.isNotEmpty(effect)) {
+            return null;
+        }
+        String[] bits = effect.split(" ");
+        if (StringUtils.isNotEmpty(bits[0])) {
+            return bits[0];
         }
         return null;
     }
