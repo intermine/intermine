@@ -1,8 +1,13 @@
 package org.intermine.webservice.server.recommendations;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,15 +55,21 @@ public class SimilarityService extends JSONService
     }
 
     @Override
-    protected void execute() throws ServiceException, ConfigurationException {
+    protected void execute() throws ServiceException, ConfigurationException, IOException, ClassNotFoundException {
         LikeService engine =
                 LikeService.getInstance(new OSMatrixStore(im.getObjectStore()), webProperties);
 
         String id = request.getParameter("id");
-        if (StringUtils.isEmpty(id)) {
-            throw new BadRequestException("One or more ids are required");
-        }
-        String[] idsStrings = id.split(",");
+//        if (StringUtils.isEmpty(id)) {
+//            throw new BadRequestException("One or more ids are required");
+//        }
+//        String[] idsStrings = id.split(",");
+        File file2 = new File(id);
+        FileInputStream f = new FileInputStream(file2);
+        ObjectInputStream s = new ObjectInputStream(f);
+        String[] idsStrings = (String[]) s.readObject();
+        s.close();
+
         LikeRequest request = new LikeRequest();
 
         getObjectIds(idsStrings, request);
