@@ -60,15 +60,15 @@ public class SimilarityService extends JSONService
                 LikeService.getInstance(new OSMatrixStore(im.getObjectStore()), webProperties);
 
         String id = request.getParameter("id");
-//        if (StringUtils.isEmpty(id)) {
-//            throw new BadRequestException("One or more ids are required");
-//        }
-//        String[] idsStrings = id.split(",");
-        File file2 = new File(id);
-        FileInputStream f = new FileInputStream(file2);
-        ObjectInputStream s = new ObjectInputStream(f);
-        String[] idsStrings = (String[]) s.readObject();
-        s.close();
+        if (StringUtils.isEmpty(id)) {
+            throw new BadRequestException("One or more ids are required");
+        }
+        String[] idsStrings = id.split(",");
+//        File file2 = new File(id);
+//        FileInputStream f = new FileInputStream(file2);
+//        ObjectInputStream s = new ObjectInputStream(f);
+//        String[] idsStrings = (String[]) s.readObject();
+//        s.close();
 
         LikeRequest request = new LikeRequest();
 
