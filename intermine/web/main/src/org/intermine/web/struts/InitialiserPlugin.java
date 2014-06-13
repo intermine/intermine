@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -658,12 +659,16 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void loadOAuth2Providers(ServletContext context, Properties webProperties) {
-        Set<String> providers = new HashSet<String>();
+        Set<String> providers = new LinkedHashSet<String>();
 
-        // Is this the best way...? Not so sure.
+        // All all the providers found in oauth2.providers that have at least 
+        // a client-id configured.
         String oauth2Providers = webProperties.getProperty("oauth2.providers", "");
         for (String provider: oauth2Providers.split(",")) {
-            providers.add(provider.trim().toUpperCase());
+            String providerName = provider.trim().toUpperCase();
+            if (webProperties.containsKey("oauth2." + providerName + ".client-id")) {
+                providers.add(providerName);
+            }
         }
 
         SessionMethods.setOAuth2Providers(context, providers);
