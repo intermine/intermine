@@ -42,7 +42,10 @@ public class LiveExamplesTest {
             "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0300689\tFBgn0031208:3\n" +
             "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0300690\tFBgn0031208:1\n" +
             "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0300690\tFBgn0031208:2\n" +
-            "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0300690\tFBgn0031208:4\n";
+            "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0300690\tFBgn0031208:5\n" +
+            "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0330654\tFBgn0031208:1\n" + 
+            "2L\tDrosophila melanogaster\tFBgn0031208\tFBtr0330654\tFBgn0031208:4\n";
+
     private static final String EXPECTED_QUERY_RESULTS =
             "There are 1 results for this query\n" +
             "zen\t1331\tZEN1_DROME\n";
@@ -124,7 +127,5 @@ public class LiveExamplesTest {
 
        assertEquals(EXPECTED_QUERY_RESULTS, sw.toString());
     }
-
-
 
 }

@@ -23,7 +23,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
-import org.intermine.webservice.client.exceptions.InternalErrorException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -88,9 +87,9 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
             try {
                 invite = SharingInvite.getByToken(im, token);
             } catch (SQLException e) {
-                throw new InternalErrorException("Error retrieving invitation", e);
+                throw new ServiceException("Error retrieving invitation", e);
             } catch (ObjectStoreException e) {
-                throw new InternalErrorException("Corrupt invitation", e);
+                throw new ServiceException("Corrupt invitation", e);
             } catch (NotFoundException e) {
                 throw new ResourceNotFoundException("invitation does not exist", e);
             }
@@ -115,7 +114,7 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
         try {
             sbm.resolveInvitation(input.invite, input.accepter, input.accepted);
         } catch (UserNotFoundException e) {
-            throw new InternalErrorException(
+            throw new ServiceException(
                 "Inconsistent state: p.isLoggedIn() but not found in DB");
         } catch (UserAlreadyShareBagException e) {    
             LOG.warn("User accepted an invitation to a list they already have access to", e);

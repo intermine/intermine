@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -147,6 +148,7 @@ public class InitialiserPlugin implements PlugIn
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
+        loadOAuth2Providers(servletContext, webProperties);
 
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
@@ -656,6 +658,21 @@ public class InitialiserPlugin implements PlugIn
         SessionMethods.setOpenIdProviders(context, providers);
     }
 
+    private void loadOAuth2Providers(ServletContext context, Properties webProperties) {
+        Set<String> providers = new LinkedHashSet<String>();
+
+        // All all the providers found in oauth2.providers that have at least 
+        // a client-id configured.
+        String oauth2Providers = webProperties.getProperty("oauth2.providers", "");
+        for (String provider: oauth2Providers.split(",")) {
+            String providerName = provider.trim().toUpperCase();
+            if (webProperties.containsKey("oauth2." + providerName + ".client-id")) {
+                providers.add(providerName);
+            }
+        }
+
+        SessionMethods.setOAuth2Providers(context, providers);
+    }
 
     private LinkRedirectManager getLinkRedirector(Properties webProperties) {
         final String err = "Initialisation of link redirector failed: ";

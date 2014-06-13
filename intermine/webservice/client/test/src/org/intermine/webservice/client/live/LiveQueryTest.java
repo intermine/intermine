@@ -14,6 +14,7 @@ import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.results.Page;
 import org.intermine.webservice.client.services.QueryService;
 import org.intermine.webservice.client.services.QueryService.NumericSummary;
+import org.intermine.webservice.client.util.TestUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,10 +26,11 @@ public class LiveQueryTest {
     private static final String EMP_NAME_2 = "Madge Madsen";
     private static final String EMP_NAME_1 = "EmployeeA1";
     static Map<String, PathQuery> queries;
-    private static final String baseUrl = "http://localhost/intermine-test/service";
     private static final String authToken = "test-user-token";
-    private static final QueryService authorised = new ServiceFactory(baseUrl, authToken).getQueryService();
-    private static final QueryService unauthorised = new ServiceFactory(baseUrl).getQueryService();
+    private static final QueryService authorised =
+            new ServiceFactory(TestUtil.getRootUrl(), authToken).getQueryService();
+    private static final QueryService unauthorised =
+            new ServiceFactory(TestUtil.getRootUrl()).getQueryService();
     private static final Page middle = new Page(5, 5);
     private static final int EXP_COUNT_1 = 9;
     private static final int EXP_COUNT_2 = 4;

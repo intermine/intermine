@@ -12,7 +12,7 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.QueryService;
-
+import org.intermine.webservice.client.util.TestUtil;
 import org.junit.Test;
 
 /**
@@ -24,8 +24,6 @@ import org.junit.Test;
  */
 public class LiveGeneratedQueryTest
 {
-    private static final String ROOT = "http://squirrel.flymine.org/intermine-test/service";
-
     /**
      * Perform the query and print the rows of results.
      * @param args command line arguments
@@ -33,7 +31,7 @@ public class LiveGeneratedQueryTest
      */
     @Test
     public void run() throws IOException {
-        ServiceFactory factory = new ServiceFactory(ROOT);
+        ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
         Model model = factory.getModel();
         PathQuery query = new PathQuery(model);
 

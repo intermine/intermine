@@ -9,10 +9,10 @@ import org.intermine.api.bag.SharingInvite;
 import org.intermine.api.bag.SharingInvite.NotFoundException;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.webservice.client.exceptions.InternalErrorException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 public class ListSharingInvitationDeletionService extends JSONService {
@@ -56,9 +56,9 @@ public class ListSharingInvitationDeletionService extends JSONService {
             try {
                 invite = SharingInvite.getByToken(im, token);
             } catch (SQLException e) {
-                throw new InternalErrorException("Error retrieving invitation", e);
+                throw new ServiceException("Error retrieving invitation", e);
             } catch (ObjectStoreException e) {
-                throw new InternalErrorException("Corrupt invitation", e);
+                throw new ServiceException("Corrupt invitation", e);
             } catch (NotFoundException e) {
                 throw new ResourceNotFoundException("invitation does not exist", e);
             }
