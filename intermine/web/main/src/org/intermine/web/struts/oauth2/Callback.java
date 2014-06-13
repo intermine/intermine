@@ -229,18 +229,39 @@ public class Callback extends LoginHandler {
     private DelegatedIdentity getSaneProviderUserInfo(String provider, String accessToken)
             throws OAuthSystemException, OAuthProblemException, JSONException {
         Properties webProperties = InterMineContext.getWebProperties();
-        String identityEndpoint = webProperties.getProperty("oauth2." + provider + ".identity-resource");
-        String nameKey = webProperties.getProperty("oauth2." + provider + ".name-key", "name");
+        String prefix = "oauth2." + provider;
 
-        OAuthClientRequest bearerClientRequest =
-                new OAuthBearerClientRequest(identityEndpoint).setAccessToken(accessToken).buildQueryMessage();
+        String identityEndpoint = webProperties.getProperty(prefix + ".identity-resource");
+        String envelopeKey = webProperties.getProperty(prefix + ".identity-envelope");
+        String idKey = webProperties.getProperty(prefix + ".id-key", "id");
+        String nameKey = webProperties.getProperty(prefix + ".name-key", "name");
+        String emailKey = webProperties.getProperty(prefix + ".email-key", "email");
+        String authMechanism = webProperties.getProperty(prefix + ".resource-auth-mechanism", "queryparam");
+
+        OAuthBearerClientRequest requestBuilder =
+                new OAuthBearerClientRequest(identityEndpoint).setAccessToken(accessToken);
+
+        OAuthClientRequest bearerClientRequest;
+        if ("queryparam".equals(authMechanism)) {
+            bearerClientRequest = requestBuilder.buildQueryMessage();
+        } else if ("header".equals(authMechanism)) {
+            bearerClientRequest = requestBuilder.buildHeaderMessage();
+        } else if ("body".equals(authMechanism)) {
+            bearerClientRequest = requestBuilder.buildBodyMessage();
+        } else {
+            throw new OAuthSystemException("Unknown authorisation mechanism: " + authMechanism);
+        }
+                
         bearerClientRequest.setHeader("Accept", "application/json");
         OAuthClient oauthClient = new OAuthClient(new URLConnectionClient());
         OAuthResourceResponse resourceResponse = oauthClient.resource(bearerClientRequest,
                 OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
         JSONObject result = new JSONObject(resourceResponse.getBody());
-        String id = result.get("id").toString();
+        if (StringUtils.isNotBlank(envelopeKey)) {
+            result = result.getJSONObject(envelopeKey);
+        }
+        String id = result.get(idKey).toString();
         String[] nameKeyParts = nameKey.split(",");
         String[] nameParts = new String[nameKeyParts.length];
         for (int i = 0; i < nameKeyParts.length; i++) {
@@ -251,7 +272,7 @@ public class Callback extends LoginHandler {
         // either {emails: {preferred}} or {email}
         JSONObject emails = result.optJSONObject("emails");
         if (emails == null) {
-            email = result.optString("email");
+            email = result.optString(emailKey);
         } else {
             email = emails.optString("preferred");
             if (email == null) email = emails.optString("account");
