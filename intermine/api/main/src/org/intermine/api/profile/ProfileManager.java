@@ -54,7 +54,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -110,6 +110,7 @@ public class ProfileManager
         superuserProfile.setUsername(superUserName);
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
+
         try {
             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
             if (superuserProfile != null) {
@@ -177,7 +178,7 @@ public class ProfileManager
             QueryClass tokens = new QueryClass(PermanentToken.class);
             q.addFrom(tokens);
             q.addToSelect(tokens);
-    
+
             List<?> results = uosw.executeSingleton(q);
             Set<PermanentToken> badTokens = new HashSet<PermanentToken>();
             for (Object o: results) {
@@ -323,7 +324,12 @@ public class ProfileManager
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
         return getProfile(username, classKeys);
     }
-    
+
+    /**
+     * Get a user's Profile using an ID
+     * @param id userprofile ID
+     * @return user's profile
+     */
     public Profile getProfile(int id) {
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
         UserProfile up;
@@ -383,7 +389,7 @@ public class ProfileManager
             }
 
             for (PermanentToken token: userProfile.getPermanentTokens()) {
-            	removePermanentToken(token);
+                removePermanentToken(token);
             }
 
             TagManager tagManager = getTagManager();
@@ -445,10 +451,10 @@ public class ProfileManager
             }
             return null;
         }
-        
+
         return wrapUserProfile(userProfile, classKeys);
     }
-    
+
     private synchronized Profile wrapUserProfile(UserProfile userProfile,
             Map<String, List<FieldDescriptor>> classKeys) {
         if (userProfile == null) {
@@ -478,7 +484,8 @@ public class ProfileManager
                         SavedBag savedBag = (SavedBag) row.get(1);
                         String bagName = savedBag.getName();
                         if (StringUtils.isBlank(bagName)) {
-                            LOG.warn("Failed to load bag with blank name on login for user: " + userProfile.getUsername());
+                            LOG.warn("Failed to load bag with blank name on login for user: "
+                                    + userProfile.getUsername());
                         } else {
                             try {
                                 InterMineBag bag = new InterMineBag(os, bagId, uosw);
@@ -486,11 +493,13 @@ public class ProfileManager
                                                      classKeys, bag.getType()));
                                 savedBags.put(bagName, bag);
                             } catch (UnknownBagTypeException e) {
-                                LOG.warn("The bag '" + bagName + "' for user '" +
-                                        userProfile.getUsername() + "'"
+                                LOG.warn("The bag '" + bagName + "' for user '"
+                                        + userProfile.getUsername() + "'"
                                         + " with type: " + savedBag.getType()
-                                        + " is not in the model. It will be saved into invalidBags", e);
-                                InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
+                                        + " is not in the model. It will be saved into invalidBags"
+                                        , e);
+                                InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(),
+                                        os, uosw);
                                 savedInvalidBags.put(bagName, bag);
                             }
                         }
@@ -553,7 +562,8 @@ public class ProfileManager
             }
         }
         BagSet bags = new BagSet(savedBags, savedInvalidBags);
-        Profile profile = new Profile(this, userProfile.getUsername(), userProfile.getId(), userProfile.getPassword(),
+        Profile profile = new Profile(this, userProfile.getUsername(), userProfile.getId(),
+                userProfile.getPassword(),
                 savedQueries, bags, savedTemplates, userProfile.getApiKey(),
                 userProfile.getLocalAccount(), userProfile.getSuperuser());
         profileCache.put(userProfile.getUsername(), profile);
@@ -624,7 +634,8 @@ public class ProfileManager
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();
                     }
-                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template, pathQueryFormat));
+                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template,
+                            pathQueryFormat));
                     savedTemplate.setUserProfile(userProfile);
                     uosw.store(savedTemplate);
                     template.setSavedTemplateQuery(savedTemplate);
@@ -660,6 +671,10 @@ public class ProfileManager
         return p;
     }
 
+    /**
+     * Create a profile not tied to an entry in the user db. For web services users.
+     * @return anon profile
+     */
     public Profile createAnonymousProfile() {
         String username = null;
         Integer id = null;
@@ -737,6 +752,11 @@ public class ProfileManager
         return key;
     }
 
+    /**
+     * Remove auth tokens for a specified users.
+     *
+     * @param profile users profile
+     */
     public void removeTokensForProfile(Profile profile) {
         if (profile == null) {
             throw new NullPointerException("profile should not be null.");
@@ -783,15 +803,18 @@ public class ProfileManager
 
     /**
      * Return a permanent user access token, with ReadOnly permission.
-     * 
-     * @param profile
+     *
+     * @param profile a users profile
+     * @param message a message
      * @return A token granting read-only access to resources.
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException oops
      */
-    public String generateReadOnlyAccessToken(Profile profile, String message) throws ObjectStoreException {
+    public String generateReadOnlyAccessToken(Profile profile, String message)
+        throws ObjectStoreException {
         UserProfile up;
         if (profile.getUserId() == null) {
-            throw new IllegalArgumentException("This profile does not have an associated user-profile");
+            throw new IllegalArgumentException("This profile does not have an associated "
+                    + "user-profile");
         }
         up = (UserProfile) uosw.getObjectById(profile.getUserId());
         PermanentToken token = new PermanentToken();
@@ -890,9 +913,9 @@ public class ProfileManager
 
     /**
      * Return the name of the user with the given internal DB id.
-     * 
-     * If no user with that name exists, returns null.
      *
+     * If no user with that name exists, returns null.
+     * @param profileId the id of the profile.
      * @return the name of the user, or null.
      */
     public synchronized String getProfileUserName(int profileId) {
@@ -1021,6 +1044,10 @@ public class ProfileManager
         }
     }
 
+    /**
+     * Remove a profile from the cache
+     * @param profile the profile to remove
+     */
     public void evictFromCache(Profile profile) {
         profileCache.remove(profile.getUsername());
     }
@@ -1029,7 +1056,7 @@ public class ProfileManager
      * Abstract class for API access keys.
      * @author Alex Kalderimis
      */
-    private static abstract class LimitedAccessToken
+    private abstract static class LimitedAccessToken
     {
         private final Profile profile;
 
@@ -1136,7 +1163,7 @@ public class ProfileManager
     public static final class ApiPermission implements Principal
     {
         /**
-         * The possible 
+         * The possible
 ission levels.
          */
         public enum Level { RO, RW };
@@ -1291,7 +1318,8 @@ ission levels.
         return permission;
     }
 
-    public ApiPermission getPermission(PermanentToken token, Map<String, List<FieldDescriptor>> classKeys) {
+    public ApiPermission getPermission(PermanentToken token, Map<String,
+            List<FieldDescriptor>> classKeys) {
         if (token.getUserProfile() == null) {
             // Remove it, as it is clearly invalid.
             removePermanentToken(token);
@@ -1315,9 +1343,9 @@ ission levels.
 
     public void removePermanentToken(PermanentToken token) {
         try {
-        	permanentTokens.remove(UUID.fromString(token.getToken()));
+            permanentTokens.remove(UUID.fromString(token.getToken()));
         } catch (Exception e) {
-        	// Ignore.
+            // Ignore.
         }
         try {
             uosw.delete(token);

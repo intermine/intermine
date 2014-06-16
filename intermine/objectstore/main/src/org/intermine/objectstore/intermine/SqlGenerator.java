@@ -45,8 +45,11 @@ import org.apache.torque.engine.platform.PlatformFactory;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -55,7 +58,6 @@ import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
@@ -96,7 +98,6 @@ import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.AlwaysMap;
 import org.intermine.util.CombinedIterator;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Code to generate an sql statement from a Query object.
@@ -523,7 +524,7 @@ public final class SqlGenerator
                 needComma = true;
                 retval.append(osb.getBagId() + "");
             }
-            retval.append(")"); // ORDER BY " + BAGVAL_COLUMN);
+            retval.append(") ORDER BY " + BAGVAL_COLUMN);
             return retval.toString();
         } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
             StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN
@@ -679,7 +680,7 @@ public final class SqlGenerator
         findTableNamesInConstraint(tablenames, q.getConstraint(), schema, individualOsbs);
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
-                for (Class<?> cls : DynamicUtil.decomposeClass(((QueryClass) fromElement)
+                for (Class<?> cls : Util.decomposeClass(((QueryClass) fromElement)
                         .getType())) {
                     ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
                     if (cld == null) {
@@ -816,7 +817,7 @@ public final class SqlGenerator
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
                 String baseAlias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(qc));
-                Set<Class<?>> classes = DynamicUtil.decomposeClass(qc.getType());
+                Set<Class<?>> classes = Util.decomposeClass(qc.getType());
                 List<ClassDescriptorAndAlias> aliases = new ArrayList<ClassDescriptorAndAlias>();
                 int sequence = 0;
                 String lastAlias = "";
@@ -1158,9 +1159,9 @@ public final class SqlGenerator
                 for (Object bagItem : bc.getBag()) {
                     if (!(ProxyReference.class.equals(bagItem.getClass())
                                 || DynamicUtil.isInstance(bagItem, type))) {
-                        throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
+                        throw new ObjectStoreException("Bag<" + Util.getFriendlyName(type)
                                 + "> contains element of wrong type ("
-                                + DynamicUtil.getFriendlyName(bagItem.getClass()) + ")");
+                                + Util.getFriendlyName(bagItem.getClass()) + ")");
                     }
                     empty = false;
                 }
@@ -1223,9 +1224,9 @@ public final class SqlGenerator
                 for (Object bagItem : bc.getBag()) {
                     if (!(bagItem == null || ProxyReference.class.equals(bagItem.getClass())
                                 || DynamicUtil.isInstance(bagItem, type))) {
-                        throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
+                        throw new ObjectStoreException("Bag<" + Util.getFriendlyName(type)
                                 + "> contains element of wrong type ("
-                                + DynamicUtil.getFriendlyName(bagItem.getClass()) + ")");
+                                + Util.getFriendlyName(bagItem.getClass()) + ")");
                     }
                     empty = false;
                 }
@@ -2537,13 +2538,10 @@ public final class SqlGenerator
                     }
                 } else {
                     // DON'T NEED TO RE-EVALUATE FNS WE ARE ORDERING BY.
-                    if (q.getSelect().contains(node)
-                            && node instanceof QueryFunction
-                            // HACK!!! TODO: work out why this was producing screwed up
-                            // precompute queries.
-                            && ((QueryFunction) node).getOperation() != QueryFunction.COUNT) {
-                        //don't add average in the orderby because in the QueryOptimise.optimiseWith
-                        //in originalQuery = new Query(query); the originalQuery is not parsed correcty!!!
+                    if (q.getSelect().contains(node) && node instanceof QueryFunction) {
+                        //don't add average in the orderby because in the
+                        // QueryOptimise.optimiseWith in originalQuery = new Query(query);
+                        // the originalQuery is not parsed correctly!!!
                         if (((QueryFunction) node).getOperation() == QueryFunction.AVERAGE) {
                             continue;
                         }

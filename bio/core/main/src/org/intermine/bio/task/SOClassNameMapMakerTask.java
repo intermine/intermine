@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.bio.ontology.OboParser;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * A Task that reads a SO OBO files and writes a file mapping SO term names to FlyMine class names.

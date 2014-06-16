@@ -13,6 +13,8 @@ package org.intermine.objectstore.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Static methods to assist with query generation from front end.
  *

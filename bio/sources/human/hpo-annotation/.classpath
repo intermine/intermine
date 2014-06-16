@@ -12,5 +12,5 @@
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 </classpath>

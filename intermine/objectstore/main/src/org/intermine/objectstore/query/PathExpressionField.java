@@ -10,7 +10,7 @@ package org.intermine.objectstore.query;
  *
  */
 
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be

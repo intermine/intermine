@@ -31,7 +31,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.logic.ModMineUtil;
 

@@ -19,8 +19,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.SAXParser;
+import org.intermine.metadata.StringUtil;
 import org.xml.sax.InputSource;
 
 /**

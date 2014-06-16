@@ -27,7 +27,7 @@ import org.intermine.model.bio.Lab;
 import org.intermine.model.bio.Project;
 import org.intermine.model.bio.Submission;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 
 /**

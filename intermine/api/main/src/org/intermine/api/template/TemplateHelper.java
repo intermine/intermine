@@ -150,7 +150,7 @@ public final class TemplateHelper
         Iterator<String> keys = templates.keySet().iterator();
         while (keys.hasNext()) {
             String name = keys.next();
-            sb.append("\"" + name + "\":" + templates.get(name).toJSON());
+            sb.append("\"" + name + "\":" + templates.get(name).toJson(false));
             if (keys.hasNext()) {
                 sb.append(",");
             }

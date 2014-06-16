@@ -19,10 +19,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -39,7 +39,7 @@ import org.intermine.objectstore.query.ResultsRow;
  */
 public final class BioUtil
 {
-	protected static final Logger LOG = Logger.getLogger(BioUtil.class);
+    protected static final Logger LOG = Logger.getLogger(BioUtil.class);
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     private BioUtil() {
@@ -272,7 +272,7 @@ public final class BioUtil
         }
         return new Integer(od.getTaxonId());
     }
-    
+
     /**
      * Returns strains for given taxon Id
      *
@@ -284,14 +284,14 @@ public final class BioUtil
         if (strain == null) {
             return taxonId;
         }
-        return strain; 
+        return strain;
     }
-    
+
     /**
      * Returns strains for given collection of taxon Ids
      *
-     * @param taxonIdCol a collection of original taxon ID 
-     * @return strainMap for strain or original taxon if no strain exists in a map 
+     * @param taxonIdSet a collection of original taxon ID
+     * @return strainMap for strain or original taxon if no strain exists in a map
      *         (key:strain, value:original taxon)
      */
     public static Map<String, String> getStrain(Set<String> taxonIdSet) {
@@ -303,8 +303,8 @@ public final class BioUtil
             } else {
                 strainMap.put(strain, taxonId);
             }
-    	}
-        
-        return strainMap; 
+        }
+
+        return strainMap;
     }
 }

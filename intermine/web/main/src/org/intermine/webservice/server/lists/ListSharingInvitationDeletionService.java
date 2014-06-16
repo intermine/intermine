@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,35 +21,38 @@ import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 public class ListSharingInvitationDeletionService extends JSONService {
-    
+
     @SuppressWarnings("unused")
     private final SharedBagManager sbm;
-    
+
     public ListSharingInvitationDeletionService(InterMineAPI im) {
         super(im);
         // Needs getting, as this ensures the tables are all set up.
         sbm = SharedBagManager.getInstance(im.getProfileManager());
     }
-    
+
     /**
      * Parameter object, holding the storage of the parsed parameters, and the
      * logic for weedling them out of the HTTP parameters.
      */
-    private final class UserInput {
+    private final class UserInput
+
+    {
         final SharingInvite invite;
         final Profile accepter;
-        
+
         /**
          * Do the dance of parameter parsing and validation.
          */
         UserInput() {
             accepter = getPermission().getProfile();
-            
+
             if (!accepter.isLoggedIn()) {
                 throw new ServiceForbiddenException("You must be logged in");
             }
@@ -52,7 +65,7 @@ public class ListSharingInvitationDeletionService extends JSONService {
             if (StringUtils.isBlank(token)) {
                 throw new BadRequestException("Missing required parameter: 'uid'");
             }
-            
+
             try {
                 invite = SharingInvite.getByToken(im, token);
             } catch (SQLException e) {
@@ -64,14 +77,14 @@ public class ListSharingInvitationDeletionService extends JSONService {
             }
             if (invite == null) {
                 throw new ResourceNotFoundException("Could not find invitation");
-            }    
+            }
         }
     }
 
     @Override
     protected void execute() throws Exception {
         UserInput input = new UserInput();
-        
+
         try {
             input.invite.delete();
         } catch (NotFoundException e) {

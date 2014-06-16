@@ -47,22 +47,23 @@ public final class FriendlyMineQueryRunner
     private static final String RELEASE_VERSION_URL = "/version/release";
     private static final boolean DEBUG = false;
     private static final int CONNECT_TIMEOUT = 20000; // 20 seconds
-    
+
     private FriendlyMineQueryRunner() {
         // don't
     }
 
     /**
      * Query a mine and recieve map of results.  only processes first two columns set as id and
-     * name
+     * name.
      *
      * @param mine mine to query
      * @param xmlQuery query to run
      * @return map of results
      * @throws IOException if something goes wrong
+     * @throws JSONException bad JSON
      */
     public static JSONObject runJSONWebServiceQuery(Mine mine, String xmlQuery)
-        throws IOException {
+        throws IOException, JSONException {
         MultiKey key = new MultiKey(mine, xmlQuery);
         JSONObject jsonMine = queryResultsCache.get(key);
         if (jsonMine != null) {
@@ -133,7 +134,7 @@ public final class FriendlyMineQueryRunner
             BufferedReader reader = runWebServiceQuery(url);
             final String msg = "Unable to retrieve release version for " + mine.getName();
             String newReleaseVersion = null;
-            
+
             if (reader != null) {
                 try {
                     newReleaseVersion = IOUtils.toString(reader);

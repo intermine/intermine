@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -29,10 +28,9 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
@@ -516,26 +514,7 @@ public final class MetadataManager
         }
     }
 
-    /**
-     * Load a named model from the classpath
-     * @param name the model name
-     * @return the model
-     */
-    public static Model loadModel(String name) {
-        String filename = getFilename(MODEL, name);
-        InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
-        if (is == null) {
-            throw new IllegalArgumentException("Model definition file '" + filename
-                                               + "' cannot be found");
-        }
-        Model model = null;
-        try {
-            model = new InterMineModelParser().process(new InputStreamReader(is));
-        } catch (Exception e) {
-            throw new RuntimeException("Error parsing model definition file '" + filename + "'", e);
-        }
-        return model;
-    }
+
 
     /**
      * Save a model, in serialized form, to the specified directory
