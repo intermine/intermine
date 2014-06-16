@@ -34,7 +34,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
     String schemaUrl;
     Map<String, InterMineBag> savedBags;
 
-    Producer<Map<String, InterMineBag>> noBags = constantly(new HashMap<String, InterMineBag>());
+    Producer<Map<String, InterMineBag>> noBags = new BagProducer();
 
     protected void setUp() {
         builder = new PathQueryBuilderForJSONObj();
@@ -46,7 +46,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
 
         PathQueryBuilderForJSONObj publicBuilder
-            = new PathQueryBuilderForJSONObj(xml, schemaUrl, constantly(savedBags));
+            = new PathQueryBuilderForJSONObj(xml, schemaUrl, new BagProducer(savedBags));
         assertTrue(publicBuilder != null);
     }
 
@@ -266,21 +266,22 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         }
     }
 
-    private static <T> Producer<T> constantly(T thing) {
-        return new ConstantProducer<T>(thing);
-    }
+    // Java's type system prevents us from genericising this more elegantly.
+    private static class BagProducer implements Producer<Map<String, InterMineBag>> {
 
-    private static class ConstantProducer<T> implements Producer<T> {
+        private final Map<String, InterMineBag> bags;
 
-        private final T thing;
+        BagProducer() {
+            this.bags = Collections.emptyMap();
+        }
 
-        ConstantProducer(T thing) {
-            this.thing = thing;
+        BagProducer(Map<String, InterMineBag> bags) {
+            this.bags = bags;
         }
 
         @Override
-        public T produce() {
-            return thing;
+        public Map<String, InterMineBag> produce() {
+            return bags;
         }
         
     }
