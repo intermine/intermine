@@ -13,8 +13,8 @@ package org.intermine.objectstore.query;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.TypeUtil;
 
 /**
  * Represents a field of a QueryClass that is a business object

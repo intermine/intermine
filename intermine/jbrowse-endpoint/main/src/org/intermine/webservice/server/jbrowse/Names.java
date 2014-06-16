@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.FastPathObject;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;

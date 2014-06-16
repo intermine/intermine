@@ -17,9 +17,9 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
 	<classpathentry kind="lib" path="/intermine-api-main/lib/json20110106.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-150.jar"/>
-	<classpathentry kind="lib" path="/intermine-web/lib/commons-codec-1.9.jar" sourcepath="/intermine-web/lib/commons-codec-1.9-sources.jar"/>
-	<classpathentry kind="lib" path="lib/org.apache.oltu.oauth2.jwt-1.0.0.jar" sourcepath="lib/org.apache.oltu.oauth2.jwt-1.0.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.oltu.commons.json-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.oltu.commons.encodedtoken-1.0.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

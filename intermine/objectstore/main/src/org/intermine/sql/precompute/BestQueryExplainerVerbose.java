@@ -10,10 +10,11 @@ package org.intermine.sql.precompute;
  *
  */
 
-import org.intermine.sql.query.Query;
-import org.intermine.sql.query.ExplainResult;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.intermine.sql.query.ExplainResult;
+import org.intermine.sql.query.Query;
 
 /**
  * Gets the database to explain each Query added and keeps hold of the best one, logging all

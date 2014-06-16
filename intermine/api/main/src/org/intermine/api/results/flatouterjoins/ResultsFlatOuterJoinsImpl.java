@@ -26,7 +26,7 @@ import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * Provides an implementation of List that encapsulates another List (like a Results object), and

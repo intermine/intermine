@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
@@ -32,10 +34,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.util.AlwaysSet;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.PseudoSet;
-
-import org.apache.log4j.Logger;
 
 /**
  * Object for holding hint data for the getEquivalentObjects method in IntegrationWriters.
@@ -149,7 +148,7 @@ public class EquivalentObjectHints
             return true;
         }
         ClassAndFieldName cafn = new ClassAndFieldName(clazz, fieldName);
-        String summaryName = DynamicUtil.getFriendlyName(clazz) + "." + fieldName;
+        String summaryName = Util.getFriendlyName(clazz) + "." + fieldName;
         Set<Object> values = classAndFieldNameValues.get(cafn);
         if (values == null) {
             try {

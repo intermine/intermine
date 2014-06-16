@@ -1,6 +1,6 @@
 package org.intermine.webservice.client.live;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.util.TestUtil;

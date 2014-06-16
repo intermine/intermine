@@ -14,7 +14,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

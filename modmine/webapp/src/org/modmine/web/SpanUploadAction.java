@@ -35,7 +35,7 @@ import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.modmine.web.logic.SpanOverlapQueryRunner;

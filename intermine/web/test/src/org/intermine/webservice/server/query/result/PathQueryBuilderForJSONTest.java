@@ -7,6 +7,7 @@ package org.intermine.webservice.server.query.result;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,29 +31,29 @@ public class PathQueryBuilderForJSONTest extends TestCase {
     private final Model model = Model.getInstanceByName("testmodel");
 
     PathQueryBuilderForJSONObj builder;
+    String schemaUrl;
+    Map<String, InterMineBag> savedBags;
+
+    Producer<Map<String, InterMineBag>> noBags = constantly(new HashMap<String, InterMineBag>());
+
     protected void setUp() {
         builder = new PathQueryBuilderForJSONObj();
+        savedBags = new HashMap<String, InterMineBag>();
+        schemaUrl = getClass().getResource("webservice/query.xsd").toString();
     }
 
     public void testPublicConstructor() {
-        System.out.println("classpath=" + System.getProperty("java.class.path"));
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
-        String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
-        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, constantly(savedBags));
+        PathQueryBuilderForJSONObj publicBuilder
+            = new PathQueryBuilderForJSONObj(xml, schemaUrl, constantly(savedBags));
         assertTrue(publicBuilder != null);
-
     }
 
     public void testPublicGetQuery() {
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
-        String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
-        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, constantly(savedBags));
+        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(xml, schemaUrl, noBags);
         PathQuery pq = publicBuilder.getQuery();
         List<String> expectedViews = Arrays.asList("Manager.id", "Manager.department.name");
         assertEquals(expectedViews, pq.getView());

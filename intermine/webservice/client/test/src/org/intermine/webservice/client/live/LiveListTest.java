@@ -1,6 +1,11 @@
 package org.intermine.webservice.client.live;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.lists.ItemList;
 import org.intermine.webservice.client.results.Item;
 import org.intermine.webservice.client.services.ListService;

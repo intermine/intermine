@@ -1,7 +1,0 @@
-<project name="metabolicmine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for metabolicmine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>

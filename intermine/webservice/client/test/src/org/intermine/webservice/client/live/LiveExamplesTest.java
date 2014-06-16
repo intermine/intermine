@@ -1,5 +1,5 @@
 package org.intermine.webservice.client.live;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

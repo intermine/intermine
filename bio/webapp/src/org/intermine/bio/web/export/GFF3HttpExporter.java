@@ -36,7 +36,7 @@ import org.intermine.bio.web.struts.GFF3ExportForm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;

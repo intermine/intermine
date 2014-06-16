@@ -10,14 +10,16 @@ package org.intermine.task;
  *
  */
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import junit.framework.Test;
 
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -26,17 +28,13 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.intermine.TestParallelPrecomputer;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryTestCase;
 import org.intermine.objectstore.query.iql.IqlQuery;
-
-import java.io.InputStream;
-
-import junit.framework.Test;
 
 /**
  * Tests for PrecomputeTask.
@@ -104,17 +102,17 @@ public class PrecomputeTaskTest extends QueryTestCase
         };
 
         String[] expectedSql = new String[] {
-            "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name FROM Company AS a1_, Department AS a2_, Employee AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
-            "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.companyId AS a3_companyId, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name, a3_.salary AS a3_salary, a3_.seniority AS a3_seniority, a3_.title AS a3_title FROM Company AS a1_, Department AS a2_, CEO AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
-            "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name, a3_.seniority AS a3_seniority, a3_.title AS a3_title FROM Company AS a1_, Department AS a2_, Manager AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
+            "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.employmentPeriodId AS a3_employmentPeriodId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name FROM Company AS a1_, Department AS a2_, Employee AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
+            "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.companyId AS a3_companyId, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.employmentPeriodId AS a3_employmentPeriodId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name, a3_.salary AS a3_salary, a3_.seniority AS a3_seniority, a3_.title AS a3_title FROM Company AS a1_, Department AS a2_, CEO AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
+            "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.employmentPeriodId AS a3_employmentPeriodId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name, a3_.seniority AS a3_seniority, a3_.title AS a3_title FROM Company AS a1_, Department AS a2_, Manager AS a3_ WHERE a1_.id = a2_.companyId AND a2_.id = a3_.departmentId ORDER BY a1_.id, a2_.id, a3_.id",
             "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.companyId AS a2_companyId, a2_.id AS a2_id, a2_.managerId AS a2_managerId, a2_.name AS a2_name FROM Company AS a1_, Department AS a2_ WHERE a1_.id = a2_.companyId ORDER BY a1_.id, a2_.id",
             "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber, a2_.address AS a2_address, a2_.id AS a2_id FROM Company AS a1_, Address AS a2_ WHERE a1_.addressId = a2_.id ORDER BY a1_.id, a2_.id",
-            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id",
-            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.companyId AS a2_companyId, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.seniority AS a2_seniority, a2_.title AS a2_title FROM Department AS a1_, CEO AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id",
-            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name, a2_.seniority AS a2_seniority, a2_.title AS a2_title FROM Department AS a1_, Manager AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id",
+            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.employmentPeriodId AS a2_employmentPeriodId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id",
+            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.companyId AS a2_companyId, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.employmentPeriodId AS a2_employmentPeriodId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.seniority AS a2_seniority, a2_.title AS a2_title FROM Department AS a1_, CEO AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id",
+            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.employmentPeriodId AS a2_employmentPeriodId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name, a2_.seniority AS a2_seniority, a2_.title AS a2_title FROM Department AS a1_, Manager AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id",
             "SELECT a1_.id AS a1_id, a2_.id AS a2_id, a2_.name AS a2_name FROM HasSecretarys AS a1_, Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a1_.id = indirect0.HasSecretarys AND indirect0.Secretarys = a2_.id ORDER BY a1_.id, a2_.id",
-            "SELECT emp.addressId AS empaddressId, emp.age AS empage, emp.departmentId AS empdepartmentId, emp.departmentThatRejectedMeId AS empdepartmentThatRejectedMeId, emp.fullTime AS empfullTime, emp.id AS empid, emp.intermine_end AS empintermine_end, emp.name AS empname, intermine_add.address AS intermine_addaddress, intermine_add.id AS intermine_addid FROM Employee AS emp, Address AS intermine_add WHERE emp.addressId = intermine_add.id ORDER BY emp.id, intermine_add.id",
-            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id"
+            "SELECT emp.addressId AS empaddressId, emp.age AS empage, emp.departmentId AS empdepartmentId, emp.departmentThatRejectedMeId AS empdepartmentThatRejectedMeId, emp.employmentPeriodId AS empemploymentPeriodId, emp.fullTime AS empfullTime, emp.id AS empid, emp.intermine_end AS empintermine_end, emp.name AS empname, intermine_add.address AS intermine_addaddress, intermine_add.id AS intermine_addid FROM Employee AS emp, Address AS intermine_add WHERE emp.addressId = intermine_add.id ORDER BY emp.id, intermine_add.id",
+            "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.employmentPeriodId AS a2_employmentPeriodId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId ORDER BY a1_.id, a2_.id"
         };
 
         List<Query> testQueries = ((TestParallelPrecomputer) task.getPrecomputer((ObjectStoreInterMineImpl) os)).testQueries;

@@ -22,6 +22,7 @@ import java.util.WeakHashMap;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
@@ -30,7 +31,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.DynamicUtil;
 
 /**
  * ObjectStore that transparently translates incoming queries and outgoing objects
@@ -248,7 +248,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             Exception e = new Exception();
             e.fillInStackTrace();
             LOG.warn("Probable inefficiency: internalGetObjectById called "
-                    + (retval == null ? "" : "to fetch a " + DynamicUtil.getFriendlyName(retval
+                    + (retval == null ? "" : "to fetch a " + Util.getFriendlyName(retval
                             .getClass())) + " with id " + id + ", clazz " + clazz.toString()
                     + ", cache size = " + cache.size() + " - maybe you should use"
                     + " ObjectStoreFastCollectionsForTranslatorImpl", e);

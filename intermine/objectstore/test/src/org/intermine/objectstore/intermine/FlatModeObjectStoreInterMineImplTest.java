@@ -12,8 +12,6 @@ package org.intermine.objectstore.intermine;
 
 import junit.framework.Test;
 
-import java.util.List;
-
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
@@ -23,8 +21,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
-
-import org.intermine.model.testmodel.Employee;
 
 public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
 {

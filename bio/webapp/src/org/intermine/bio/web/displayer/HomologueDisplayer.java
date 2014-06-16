@@ -34,7 +34,7 @@ import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;

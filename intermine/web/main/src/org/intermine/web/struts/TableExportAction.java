@@ -41,7 +41,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
