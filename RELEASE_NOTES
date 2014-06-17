@@ -8,6 +8,35 @@
  *
  */
 
+
+1.3.8
+
+#692 - Parse the UniProt config correctly.
+
+1.3.7
+
+#665 - Fix for python code generator. Now produces code for logged in users which is actually correct.
+
+1.3.6
+
+#593 - If you have a local CDN, this will make sure your CDN is correct in generated JavaScript code.
+
+1.3.5
+
+#633 - GFF3Converter can skip (exclude) a defined list of GFF3 terms. Thanks to @vivekkrish!
+
+1.3.4
+
+#446 - The Interaction Widget download only captured the first 50 rows instead of the full result set.
+
+1.3.3
+
+#584 - Generated JSON omitting optional constraints
+
+1.3.2
+
+#607 - Added the ability to generate configuration for JBrowse
+
 1.3.1
 
 #172 - Error when middle click on 'Show Results'
