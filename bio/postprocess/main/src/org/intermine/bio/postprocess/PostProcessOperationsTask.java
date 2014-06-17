@@ -285,9 +285,12 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
               task.execute();
             } else if ("transfer-go-terms".equals(operation)) {
               TransferGOAnnotations task = new TransferGOAnnotations(getObjectStoreWriter());
+              task.execute();           
+            } else if ("create-crossreference-ontologyterms".equals(operation)) {
+              AddCrossReferenceOntology task = new AddCrossReferenceOntology(getObjectStoreWriter());
               task.execute();
             } else {
-                throw new BuildException("unknown operation: " + operation);
+              throw new BuildException("unknown operation: " + operation);
             }
             LOGGER.info("PP - " + operation + " took "
                      + (System.currentTimeMillis() - startTime) + " ms.");

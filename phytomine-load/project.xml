@@ -822,16 +822,16 @@
     </source>
   </sources>
   <post-processing>
-    <post-process name="create-references" />
+    <!-- post-process name="create-references" /-->
     <!-- post-process name="transfer-sequences" / -->
     <!-- this runs the postprocessing steps in all sources -->
     <!-- post-process name="do-sources" / -->
-    <post-process name="create-gene-flanking-features" />
+    <!-- post-process name="create-gene-flanking-features" /-->
     <post-process name="add-uniprot-ids" />
-    <post-process name="summarise-objectstore" />
-    <post-process name="create-autocomplete-index" />
-    <post-process name="create-search-index" />
-    <post-process name="rename-ontologies" />
-    <post-process name="transfer-go-terms" />
+    <!-- post-process name="summarise-objectstore" /-->
+    <!-- post-process name="create-autocomplete-index" /-->
+    <!-- post-process name="create-search-index" /-->
+    <!-- post-process name="rename-ontologies" /-->
+    <!-- post-process name="transfer-go-terms" /-->
   </post-processing>
 </project>
