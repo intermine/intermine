@@ -18,7 +18,7 @@
 jQuery(document).ready(function () {
     var feature_count = parseInt(${FeatureCount});
     var organism_count = parseInt(${OrganismCount});
-    if (feature_count > 100 || $organism_count > 1) {
+    if (feature_count > 100 || organism_count > 1) {
         jQuery("#heatmapGraph").hide();
     } else {
         jQuery("#heatmapGraph").show();

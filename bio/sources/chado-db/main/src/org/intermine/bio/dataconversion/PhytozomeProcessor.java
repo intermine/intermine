@@ -310,6 +310,7 @@ public class PhytozomeProcessor extends ChadoProcessor
       return false;
     }
     // (re)compute sequence length. CHADO may be out-of-sync
+    // do not trust seqlen field.
     if (residues != null) {
       seqlen = residues.length();
     }

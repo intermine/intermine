@@ -144,10 +144,7 @@ public class HeatMapController extends TilesAction
         String CufflinksScoreJSONCount =
             getJSONString(model, bag, executor, expressionType,COUNT);
 
-        
-        LOG.info("Count json string is "+CufflinksScoreJSONCount);
-        LOG.info("Count min and max are "+countCufflinksScoreMin + " and " +
-            countCufflinksScoreMax);
+       
         
         // set the attributes
         request.setAttribute("cufflinksScoreJSONFpkm",

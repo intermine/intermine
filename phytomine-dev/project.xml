@@ -5,24 +5,26 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <property name="source.location" location="../bio/sources/"/>
   <sources>
-    <source name="phytozome-chado-B.distachyon" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Brachypodium"/>
-      <property name="species" value="distachyon"/>
-      <property name="dbxrefId" value="3455684"/>
-      <property name="organisms" value="15368"/>
-      <property name="dataSourceName" value="phytozome-B.distachyon"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
     <source name="phytozome-chado-A.coerulea" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
       <property name="genus" value="Aquilegia"/>
       <property name="species" value="coerulea"/>
       <property name="dbxrefId" value="7371494"/>
-      <property name="organisms" value="218851"/>
+      <property name="organism" value="218851"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-A.coerulea"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-A.halleri" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Arabidopsis"/>
+      <property name="species" value="halleri"/>
+      <property name="organism" value="81970"/>
+      <property name="dbxrefId" value="7079025" />
+      <property name="version" value="early-release"/>
+      <property name="dataSourceName" value="phytozome-A.halleri"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -32,7 +34,8 @@
       <property name="genus" value="Arabidopsis"/>
       <property name="species" value="lyrata"/>
       <property name="dbxrefId" value="3455682"/>
-      <property name="organisms" value="59689"/>
+      <property name="organism" value="59689"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-A.lyrata"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -43,8 +46,33 @@
       <property name="genus" value="Arabidopsis"/>
       <property name="species" value="thaliana"/>
       <property name="dbxrefId" value="3455683"/>
-      <property name="organisms" value="3702"/>
+      <property name="organism" value="3702"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-A.thaliana"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-A.trichopoda" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Amborella"/>
+      <property name="species" value="trichopoda"/>
+      <property name="dbxrefId" value="7414414"/>
+      <property name="organism" value="13333"/>
+      <property name="version" value="early-release"/>
+      <property name="dataSourceName" value="phytozome-A.trichopoda"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-B.distachyon" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Brachypodium"/>
+      <property name="species" value="distachyon"/>
+      <property name="dbxrefId" value="7371495"/>
+      <property name="organism" value="15368"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-B.distachyon"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -54,7 +82,8 @@
       <property name="genus" value="Brassica"/>
       <property name="species" value="rapa"/>
       <property name="dbxrefId" value="7271521"/>
-      <property name="organisms" value="3711"/>
+      <property name="organism" value="3711"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-B.rapa"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -65,8 +94,21 @@
       <property name="genus" value="Boechera"/>
       <property name="species" value="stricta"/>
       <property name="dbxrefId" value="7271518"/>
-      <property name="organisms" value="72658"/>
+      <property name="organism" value="72658"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-B.stricta"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-C.clementina" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Citrus"/>
+      <property name="species" value="clementina"/>
+      <property name="dbxrefId" value="4399346"/>
+      <property name="organism" value="85681"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-C.clementina"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -76,19 +118,9 @@
       <property name="genus" value="Capsella"/>
       <property name="species" value="grandiflora"/>
       <property name="dbxrefId" value="7271520"/>
-      <property name="organisms" value="264402"/>
+      <property name="organism" value="264402"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-C.grandiflora"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-    <source name="phytozome-chado-C.rubella" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Capsella"/>
-      <property name="species" value="rubella"/>
-      <property name="dbxrefId" value="3455688"/>
-      <property name="organisms" value="81985"/>
-      <property name="dataSourceName" value="phytozome-C.rubella"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -98,7 +130,8 @@
       <property name="genus" value="Carica"/>
       <property name="species" value="papaya"/>
       <property name="dbxrefId" value="3455687"/>
-      <property name="organisms" value="3649"/>
+      <property name="organism" value="3649"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-C.papaya"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -109,19 +142,33 @@
       <property name="genus" value="Chlamydomonas"/>
       <property name="species" value="reinhardtii"/>
       <property name="dbxrefId" value="7251957"/>
-      <property name="organisms" value="3055"/>
+      <property name="organism" value="3055"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-C.reinhardtii"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
     </source>
-    <source name="phytozome-chado-C.clementina" type="chado-db">
+    <source name="phytozome-chado-C.rubella" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Citrus"/>
-      <property name="species" value="clementina"/>
-      <property name="dbxrefId" value="4399346"/>
-      <property name="organisms" value="85681"/>
-      <property name="dataSourceName" value="phytozome-C.clementina"/>
+      <property name="genus" value="Capsella"/>
+      <property name="species" value="rubella"/>
+      <property name="dbxrefId" value="3455688"/>
+      <property name="organism" value="81985"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-C.rubella"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-C.sativus" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Cucumis"/>
+      <property name="species" value="sativus"/>
+      <property name="dbxrefId" value="3455689"/>
+      <property name="organism" value="3659"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-C.sativus"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -131,7 +178,8 @@
       <property name="genus" value="Citrus"/>
       <property name="species" value="sinensis"/>
       <property name="dbxrefId" value="3455690"/>
-      <property name="organisms" value="2711"/>
+      <property name="organism" value="2711"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-C.sinensis"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -142,19 +190,9 @@
       <property name="genus" value="Coccomyxa"/>
       <property name="species" value="subellipsoidea C-169"/>
       <property name="dbxrefId" value="3506186"/>
-      <property name="organisms" value="574566"/>
+      <property name="organism" value="574566"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-C.subellipsoidea_C-169"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-    <source name="phytozome-chado-C.sativus" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Cucumis"/>
-      <property name="species" value="sativus"/>
-      <property name="dbxrefId" value="3455689"/>
-      <property name="organisms" value="3659"/>
-      <property name="dataSourceName" value="phytozome-C.sativus"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -164,7 +202,8 @@
       <property name="genus" value="Eucalyptus"/>
       <property name="species" value="grandis"/>
       <property name="dbxrefId" value="3455691"/>
-      <property name="organisms" value="71139"/>
+      <property name="organism" value="71139"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-E.grandis"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -175,7 +214,8 @@
       <property name="genus" value="Eutrema"/>
       <property name="species" value="salsugineum"/>
       <property name="dbxrefId" value="6656197"/>
-      <property name="organisms" value="72664"/>
+      <property name="organism" value="72664"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-E.salsugineum"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -186,7 +226,8 @@
       <property name="genus" value="Fragaria"/>
       <property name="species" value="vesca"/>
       <property name="dbxrefId" value="3455705"/>
-      <property name="organisms" value="57918"/>
+      <property name="organism" value="57918"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-F.vesca"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -197,7 +238,8 @@
       <property name="genus" value="Glycine"/>
       <property name="species" value="max"/>
       <property name="dbxrefId" value="7132375"/>
-      <property name="organisms" value="3847"/>
+      <property name="organism" value="3847"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-G.max"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -208,7 +250,8 @@
       <property name="genus" value="Gossypium"/>
       <property name="species" value="raimondii"/>
       <property name="dbxrefId" value="3505788"/>
-      <property name="organisms" value="29730"/>
+      <property name="organism" value="29730"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-G.raimondii"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -219,7 +262,8 @@
       <property name="genus" value="Linum"/>
       <property name="species" value="usitatissimum"/>
       <property name="dbxrefId" value="3455692"/>
-      <property name="organisms" value="4006"/>
+      <property name="organism" value="4006"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-L.usitatissimum"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -230,7 +274,8 @@
       <property name="genus" value="Malus"/>
       <property name="species" value="domestica"/>
       <property name="dbxrefId" value="3455693"/>
-      <property name="organisms" value="3750"/>
+      <property name="organism" value="3750"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-M.domestica"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -241,19 +286,21 @@
       <property name="genus" value="Manihot"/>
       <property name="species" value="esculenta"/>
       <property name="dbxrefId" value="3455694"/>
-      <property name="organisms" value="3983"/>
+      <property name="organism" value="3983"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-M.esculenta"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
     </source>
-    <source name="phytozome-chado-M.truncatula" type="chado-db">
+    <source name="phytozome-chado-M.guttatus" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Medicago"/>
-      <property name="species" value="truncatula"/>
-      <property name="dbxrefId" value="7016636"/>
-      <property name="organisms" value="3880"/>
-      <property name="dataSourceName" value="phytozome-M.truncatula"/>
+      <property name="genus" value="Mimulus"/>
+      <property name="species" value="guttatus"/>
+      <property name="dbxrefId" value="4504158"/>
+      <property name="organism" value="4155"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-M.guttatus"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -263,7 +310,8 @@
       <property name="genus" value="Micromonas"/>
       <property name="species" value="pusilla CCMP1545"/>
       <property name="dbxrefId" value="3506185"/>
-      <property name="organisms" value="564608"/>
+      <property name="organism" value="564608"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-M.pusilla_CCMP1545"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -274,30 +322,21 @@
       <property name="genus" value="Micromonas"/>
       <property name="species" value="pusilla RCC299"/>
       <property name="dbxrefId" value="3506184"/>
-      <property name="organisms" value="296587"/>
+      <property name="organism" value="296587"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-M.pusilla_RCC299"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
     </source>
-    <source name="phytozome-chado-M.guttatus" type="chado-db">
+    <source name="phytozome-chado-M.truncatula" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Mimulus"/>
-      <property name="species" value="guttatus"/>
-      <property name="dbxrefId" value="4504158"/>
-      <property name="organisms" value="4155"/>
-      <property name="dataSourceName" value="phytozome-M.guttatus"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-    <source name="phytozome-chado-O.sativa" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Oryza"/>
-      <property name="species" value="sativa"/>
-      <property name="dbxrefId" value="3455679"/>
-      <property name="organisms" value="4530"/>
-      <property name="dataSourceName" value="phytozome-O.sativa"/>
+      <property name="genus" value="Medicago"/>
+      <property name="species" value="truncatula"/>
+      <property name="dbxrefId" value="7016636"/>
+      <property name="organism" value="3880"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-M.truncatula"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -307,8 +346,69 @@
       <property name="genus" value="Ostreococcus"/>
       <property name="species" value="lucimarinus"/>
       <property name="dbxrefId" value="3506187"/>
-      <property name="organisms" value="436017"/>
+      <property name="organism" value="436017"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-O.lucimarinus"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-O.sativa" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Oryza"/>
+      <property name="species" value="sativa"/>
+      <property name="dbxrefId" value="3455679"/>
+      <property name="organism" value="4530"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-O.sativa"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-P.hallii" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Panicum"/>
+      <property name="species" value="hallii"/>
+      <property name="organism" value="206008"/>
+      <property name="dbxrefId" value="7079024" />
+      <property name="version" value="early-release"/>
+      <property name="dataSourceName" value="phytozome-P.hallii"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-P.patens" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Physcomitrella"/>
+      <property name="species" value="patens"/>
+      <property name="dbxrefId" value="4417255"/>
+      <property name="organism" value="3218"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-P.patens"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-P.persica" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Prunus"/>
+      <property name="species" value="persica"/>
+      <property name="dbxrefId" value="6581333"/>
+      <property name="organism" value="3760"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-P.persica"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-P.trichocarpa" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Populus"/>
+      <property name="species" value="trichocarpa"/>
+      <property name="dbxrefId" value="3496333"/>
+      <property name="organism" value="3694"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-P.trichocarpa"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -318,7 +418,8 @@
       <property name="genus" value="Panicum"/>
       <property name="species" value="virgatum"/>
       <property name="dbxrefId" value="6788273"/>
-      <property name="organisms" value="38727"/>
+      <property name="organism" value="38727"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-P.virgatum"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -329,67 +430,9 @@
       <property name="genus" value="Phaseolus"/>
       <property name="species" value="vulgaris"/>
       <property name="dbxrefId" value="6197692"/>
-      <property name="organisms" value="3885"/>
+      <property name="organism" value="3885"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-P.vulgaris"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-
-    <source name="phytozome-chado-P.patens" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Physcomitrella"/>
-      <property name="species" value="patens"/>
-      <property name="dbxrefId" value="4417255"/>
-      <property name="organisms" value="3218"/>
-      <property name="dataSourceName" value="phytozome-P.patens"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-
-    <source name="phytozome-chado-analysis-P.patens" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Physcomitrella"/>
-      <property name="species" value="patens"/>
-      <property name="dbxrefId" value="4417255"/>
-      <property name="organisms" value="3218"/>
-      <property name="dataSourceName" value="phytozome-P.patens"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeAnalysisProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-
-    <source name="phytozome-chado-chromosome-sequence-P.patens" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Physcomitrella"/>
-      <property name="species" value="patens"/>
-      <property name="dbxrefId" value="4417255"/>
-      <property name="organisms" value="3218"/>
-      <property name="dataSourceName" value="phytozome-P.patens"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeChromosomeSequenceProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-
-    <source name="phytozome-chado-P.trichocarpa" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Populus"/>
-      <property name="species" value="trichocarpa"/>
-      <property name="dbxrefId" value="3496333"/>
-      <property name="organisms" value="3694"/>
-      <property name="dataSourceName" value="phytozome-P.trichocarpa"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-    <source name="phytozome-chado-P.persica" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Prunus"/>
-      <property name="species" value="persica"/>
-      <property name="dbxrefId" value="6581333"/>
-      <property name="organisms" value="3760"/>
-      <property name="dataSourceName" value="phytozome-P.persica"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -399,19 +442,21 @@
       <property name="genus" value="Ricinus"/>
       <property name="species" value="communis"/>
       <property name="dbxrefId" value="3455698"/>
-      <property name="organisms" value="3988"/>
+      <property name="organism" value="3988"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-R.communis"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
     </source>
-    <source name="phytozome-chado-S.moellendorffii" type="chado-db">
+    <source name="phytozome-chado-S.bicolor" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Selaginella"/>
-      <property name="species" value="moellendorffii"/>
-      <property name="dbxrefId" value="3455701"/>
-      <property name="organisms" value="88036"/>
-      <property name="dataSourceName" value="phytozome-S.moellendorffii"/>
+      <property name="genus" value="Sorghum"/>
+      <property name="species" value="bicolor"/>
+      <property name="dbxrefId" value="4417257"/>
+      <property name="organism" value="4558"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-S.bicolor"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -421,7 +466,8 @@
       <property name="genus" value="Setaria"/>
       <property name="species" value="italica"/>
       <property name="dbxrefId" value="3455700"/>
-      <property name="organisms" value="4555"/>
+      <property name="organism" value="4555"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-S.italica"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
@@ -432,30 +478,57 @@
       <property name="genus" value="Solanum"/>
       <property name="species" value="lycopersicum"/>
       <property name="dbxrefId" value="3492328"/>
-      <property name="organisms" value="4081"/>
+      <property name="organism" value="4081"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-S.lycopersicum"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
     </source>
+    <source name="phytozome-chado-S.moellendorffii" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Selaginella"/>
+      <property name="species" value="moellendorffii"/>
+      <property name="dbxrefId" value="3455701"/>
+      <property name="organism" value="88036"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-S.moellendorffii"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <source name="phytozome-chado-S.polyrhiza" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Spirodela"/>
+      <property name="species" value="polyrhiza"/>
+      <property name="dbxrefId" value="7414415"/>
+      <property name="organism" value="29656"/>
+      <property name="version" value="early-release"/>
+      <property name="dataSourceName" value="phytozome-S.polyrhiza"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
+    <!--source name="phytozome-chado-S.purpurea" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Salix"/>
+      <property name="species" value="purpurea"/>
+      <property name="dbxrefId" value="7460889"/>
+      <property name="organism" value="77065"/>
+      <property name="version" value="early-release"/>
+      <property name="dataSourceName" value="phytozome-S.purpurea"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source-->
     <source name="phytozome-chado-S.tuberosum" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
       <property name="genus" value="Solanum"/>
       <property name="species" value="tuberosum"/>
       <property name="dbxrefId" value="950457"/>
-      <property name="organisms" value="4113"/>
+      <property name="organism" value="4113"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-S.tuberosum"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-    <source name="phytozome-chado-S.bicolor" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Sorghum"/>
-      <property name="species" value="bicolor"/>
-      <property name="dbxrefId" value="4417257"/>
-      <property name="organisms" value="4558"/>
-      <property name="dataSourceName" value="phytozome-S.bicolor"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -465,19 +538,9 @@
       <property name="genus" value="Theobroma"/>
       <property name="species" value="cacao"/>
       <property name="dbxrefId" value="950421"/>
-      <property name="organisms" value="3641"/>
+      <property name="organism" value="3641"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-T.cacao"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-      <property name="dataSetTitle" value="Phytozome v10"/>
-    </source>
-    <source name="phytozome-chado-V.vinifera" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Vitis"/>
-      <property name="species" value="vinifera"/>
-      <property name="dbxrefId" value="3455704"/>
-      <property name="organisms" value="29760"/>
-      <property name="dataSourceName" value="phytozome-V.vinifera"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
@@ -487,148 +550,152 @@
       <property name="genus" value="Volvox"/>
       <property name="species" value="carteri"/>
       <property name="dbxrefId" value="3455703"/>
-      <property name="organisms" value="3067"/>
+      <property name="organism" value="3067"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-V.carteri"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
       <property name="dataSetTitle" value="Phytozome v10"/>
     </source>
-
+    <source name="phytozome-chado-V.vinifera" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Vitis"/>
+      <property name="species" value="vinifera"/>
+      <property name="dbxrefId" value="3455704"/>
+      <property name="organism" value="29760"/>
+      <property name="version" value="current"/>
+      <property name="dataSourceName" value="phytozome-V.vinifera"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome v10"/>
+    </source>
     <source name="phytozome-chado-Z.mays" type="chado-db">
       <property name="source.db.name" value="phytozome"/>
       <property name="genus" value="Zea"/>
       <property name="species" value="mays"/>
       <property name="dbxrefId" value="6927874"/>
-      <property name="organisms" value="4577"/>
+      <property name="organism" value="4577"/>
+      <property name="version" value="current"/>
       <property name="dataSourceName" value="phytozome-Z.mays"/>
       <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
     </source>
-    <source name="phytozome-chado-Z.mays-redo" type="chado-db">
-      <property name="source.db.name" value="phytozome"/>
-      <property name="genus" value="Zea"/>
-      <property name="species" value="mays"/>
-      <property name="dbxrefId" value="6927874"/>
-      <property name="organisms" value="4577"/>
-      <property name="dataSourceName" value="phytozome-Z.mays-redo"/>
-      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
-      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-    </source>
-
     <source name="gene-deflines" type="gene-defline">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/deflines"/>
-      <property name="src.data.file" value="desc_and_defline.tsv"/>
+      <property name="src.data.file" value="desc_and_defline_dev.tsv"/>
     </source>
-    <source name="tsv-synonyms" type="tsv-synonyms">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms"/>
-      <property name="src.data.file" value="dev_synonyms.tsv"/>
-    </source>
-    <source name="transcript-protein-link" type="transcript-protein">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/transcript_protein"/>
-      <property name="src.data.file" value="transcript_protein.tsv"/>
-    </source>
-    <source name="pac-clusters" type="pac-clusters">
+    <source name="pac-clusters-redo" type="pac-clusters">
       <property name="source.db.name" value="pac-clusters" />
       <property name="dataSourceName" value="pac-clusters"/>
-      <property name="organisms" value="218851 59689 3702 15368 3711 85681 3649 3055 81985 3659 2711 574566 71139 72664 57918 3847 29730 180498 4006 3750 3983 4155 564608 296587 3880 436017 4530 3218 3760 3694 38727 3885 3988 4558 4555 4081 88036 4113 3641 3067 29760 4577"/>
-      <property name="methodIds" value="2289,4758" />
+      <property name="organisms" value="81970 4577 4558 4530 38727 15368"/>
+      <property name="methodIds" value="2304,3301,3451,3467,4431,4759,4842" />
       <property name="dataSetTitle" value="Phytozome Clusters"/>
       <property name="createrelations" value="false"/>
-    </source>
-    <source name="method-names" type="method-names">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/methodnames"/>
-      <property name="src.data.file" value="fillmethodnames.tsv"/>
+      <!--property name="organisms" value="15368 218851 59689 3702 3711 72658 264402 81985 3649 3055 85681 2711 574566 3659 71139 72664 57918 3847 29730 4006 3750 3983 3880 564608 296587 4155 4530 436017 38727 3885 3218 3218 3218 3694 3760 3988 88036 4555 4081 4113 4558 3641 29760 3067 4577"/-->
+      <!--property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3119,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4614,4761,4762,4763,4764,4765,4766,4767,4768,4769,4770,4771,4772,4773" /-->
     </source>
     <source name="diversity-P.trichocarpa" type="gatkvcf">
-      <property name="organisms" value="3694"/>
+      <property name="organism" value="3694"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/"/>
       <property name="dataSourcename" value="diversity-P.trichocarpa"/>
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity"/>
     </source>
     <source name="diversity-B.distachyon" type="gatkvcf">
-      <property name="organisms" value="15368"/>
+      <property name="organism" value="15368"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/"/>
       <property name="dataSourcename" value="diversity-B.distachyon"/>
       <property name="dataSetTitle" value="B.distachyon Natural Diversity"/>
     </source>
     <source name="diversity-E.grandis" type="gatkvcf">
-      <property name="organisms" value="71139"/>
+      <property name="organism" value="71139"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/"/>
       <property name="dataSourcename" value="diversity-E.grandis"/>
       <property name="dataSetTitle" value="E.grandis Natural Diversity"/>
     </source>
     <source name="diversity-M.esculenta" type="gatkvcf">
-      <property name="organisms" value="3983"/>
+      <property name="organism" value="3983"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/"/>
       <property name="dataSourcename" value="diversity-M.esculenta"/>
       <property name="dataSetTitle" value="M.esculenta Natural Diversity"/>
     </source>
-    <source name="diversity-P.trichocarpa-samples-redo" type="vcfsampleinfo">
-      <property name="organism" value="3694" />
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
-      <property name="dataSourceName" value="diversity-P.trichocarpa-samples"/>
-      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity Sample Info"/>
-    </source>
     <source name="diversity-B.distachyon-samples" type="vcfsampleinfo">
       <property name="organism" value="15368"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/"/>
       <property name="dataSourcename" value="diversity-B.distachyo-samplesn"/>
       <property name="dataSetTitle" value="B.distachyon Natural Diversity Sample Info"/>
     </source>
     <source name="diversity-E.grandis-samples" type="vcfsampleinfo">
       <property name="organism" value="71139"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/"/>
       <property name="dataSourcename" value="diversity-E.grandis"/>
       <property name="dataSetTitle" value="E.grandis Natural Diversity Sample Info"/>
     </source>
     <source name="diversity-M.esculenta-samples" type="vcfsampleinfo">
       <property name="organism" value="3983"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/"/>
       <property name="dataSourcename" value="diversity-M.esculenta"/>
       <property name="dataSetTitle" value="M.esculenta Natural Diversity Sample Info"/>
     </source>
     <source name="cufflinks-P.vulgaris-info" type="rnaseq-experiment-info">
       <property name="organism" value="3885" />
+      <property name="version" value="current"/>
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Pvulgaris/" />
       <property name="dataSourceName" value="rnaseq-P.vulgaris"/>
       <property name="dataSetTitle" value="P.vulgaris RNA-seq Info"/>
     </source>
     <source name="cufflinks-C.reinhardtii-info" type="rnaseq-experiment-info">
       <property name="organism" value="3055" />
+      <property name="version" value="current"/>
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii/" />
       <property name="dataSourceName" value="rnaseq-C.reinhardtii"/>
       <property name="dataSetTitle" value="C.reinhardtii RNA-seq Info"/>
     </source>
     <source name="cufflinks-G.max-info" type="rnaseq-experiment-info">
       <property name="organism" value="3847"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Gmax/" />
       <property name="dataSourceName" value="rnaseq-G.max"/>
       <property name="dataSetTitle" value="G.max RNA-seq Info"/>
     </source>
     <source name="cufflinks-P.vulgaris" type="cufflinks">
-      <property name="organisms" value="3885" />
+      <property name="organism" value="3885" />
+      <property name="version" value="current"/>
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Pvulgaris/" />
       <property name="dataSourceName" value="rnaseq-P.vulgaris"/>
       <property name="dataSetTitle" value="P.vulgaris RNA-seq"/>
     </source>
     <source name="cufflinks-C.reinhardtii" type="cufflinks">
-      <property name="organisms" value="3055" />
+      <property name="organism" value="3055" />
+      <property name="version" value="current"/>
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii/" />
       <property name="dataSourceName" value="rnaseq-C.reinhardtii"/>
       <property name="dataSetTitle" value="C.reinhardtii RNA-seq"/>
     </source>
     <source name="cufflinks-G.max" type="cufflinks">
-      <property name="organisms" value="3847"/>
+      <property name="organism" value="3847"/>
+      <property name="version" value="current"/>
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Gmax/" />
       <property name="dataSourceName" value="rnaseq-G.max"/>
       <property name="dataSetTitle" value="G.max RNA-seq"/>
     </source>
-
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro/"/>
+    </source>
+    <source name="go3" type="go">
+      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo"/>
+    </source>
+    <source name="go2" type="go">
+      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo"/>
     </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo"/>
@@ -764,15 +831,29 @@
       <property name="dataSetURL" value="http://www.ebi.ac.uk/interpro"/>
       <property name="converter.class" value="org.intermine.bio.dataconversion.OntologyTermsXMLConverter"/>
     </source>
+    <source name="tsv-synonyms" type="tsv-synonyms">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms"/>
+      <property name="src.data.file" value="dev_synonyms.tsv"/>
+    </source>
+    <source name="organism-version" type="organism-version">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/organism-version"/>
+      <property name="src.data.file" value="organism-version.tsv"/>
+    </source>
+    <source name="organism-version-repeat" type="organism-version">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/organism-version"/>
+      <property name="src.data.file" value="organism-version.tsv"/>
+    </source>
   </sources>
   <post-processing>
-    <!-- post-process name="create-references" / -->
+    <!--post-process name="create-references" /-->
     <!-- post-process name="transfer-sequences" / -->
     <!-- this runs the postprocessing steps in all sources -->
     <!-- post-process name="do-sources" / -->
     <!--post-process name="create-gene-flanking-features" /-->
-    <!--post-process name="summarise-objectstore" /-->
+    <post-process name="summarise-objectstore" />
     <!--post-process name="create-autocomplete-index" /-->
-    <post-process name="create-search-index" />
+    <!--post-process name="create-search-index" /-->
+    <!--post-process name="add-uniprot-ids" /-->
+    <!--post-process name="transfer-go-terms" /-->
   </post-processing>
 </project>

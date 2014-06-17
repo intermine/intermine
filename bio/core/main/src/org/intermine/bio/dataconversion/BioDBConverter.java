@@ -180,6 +180,13 @@ public abstract class BioDBConverter extends DBConverter
         }
         return organism;
     }
+    /**
+     * Add an organism stored by other means.
+     * @param A stored organism.
+     */
+    public void addOrganism(Item organism) {
+      organisms.put(organism.getAttribute("taxonId").getValue(), organism);
+    }
 
     /**
      * Return a DataSet item for the given title

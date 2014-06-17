@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
+import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.CrossReference;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -31,8 +31,6 @@ import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.ProteinDomain;
 import org.intermine.model.bio.ProteinAnalysisFeature;
-import org.intermine.model.bio.Publication;
-import org.intermine.model.bio.Transcript;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -46,7 +44,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.postprocess.PostProcessor;
 import org.intermine.util.DynamicUtil;
 
 /**
@@ -125,44 +122,100 @@ public class TransferGOAnnotations {
 
         osw.beginTransaction();
 
-        Iterator<?> resIter = findProteinDomains(false);
+        Iterator<?> resIter = findProteinDomains();
 
         int count = 0;
         Map<OntologyTerm, GOAnnotation> annotations = new HashMap<OntologyTerm, GOAnnotation>();
 
-        while (resIter.hasNext()) {
+        Gene lastGene = null;
+        GOTerm lastGOTerm = null;
+        HashSet<GOAnnotation> annotationSet = new HashSet<GOAnnotation>();
+        while (resIter.hasNext()  ) {
           ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
           Gene thisGene = (Gene) rr.get(0);
-          ProteinDomain thisDomain = (ProteinDomain) rr.get(1);
-          GOTerm thisTerm = (GOTerm) rr.get(2);
+          Protein thisProtein = (Protein) rr.get(1);
+          ProteinDomain thisDomain = (ProteinDomain) rr.get(2);
+          GOTerm thisGOTerm = (GOTerm) rr.get(3);
 
-          LOG.debug("Store gene " + thisGene.getPrimaryIdentifier() + " with "
-              + thisDomain.getPrimaryIdentifier()+" with term "+thisTerm.getName());
-          // store if not known already
-          if (!knownGO.containsKey(thisGene.getOrganism().getId()) ||
-              !knownGO.get(thisGene.getOrganism().getId()).containsKey(thisGene.getPrimaryIdentifier()) ||
-              !knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).contains(thisTerm.getIdentifier()) ){
+          LOG.debug("store gene " + thisGene.getPrimaryIdentifier() + " with "
+              + thisDomain.getPrimaryIdentifier()+" with term "+thisGOTerm.getName());
+          // look at the gene if not already processed for this GO term
+          if ((lastGene == null) ||
+              (lastGOTerm == null) ||
+              (lastGene.getId() != thisGene.getId()) ||
+              (lastGOTerm.getId() != thisGOTerm.getId()) ) {
+            // special case: this is a new gene. Store the annotationSet from the last one
+            if (lastGene != null &&
+                annotationSet.size() > 0 &&
+                lastGene.getId() != thisGene.getId() ) {
+              lastGene.setGoAnnotation(annotationSet);
+              osw.store(lastGene);
+              //TODO: do I need to see if there is something in the goAnnotation
+              // collection before adding to it? Or will the new ones be added
+              // on top? If we need to save the old, then figure out how to get this to work.
+              //annotationSet = (HashSet<GOAnnotation>) thisGene.getGoAnnotation();
+              //if (annotationSet == null) {
+                annotationSet = new HashSet<GOAnnotation>();
+              //}
+            }
+            lastGene = thisGene;
+            lastGOTerm = thisGOTerm;
 
-              LOG.debug("There is a new annotation for "+thisGene.getPrimaryIdentifier() + 
-                  " organism "+thisGene.getOrganism().getId() + " to " + thisTerm.getIdentifier());
-                  GOEvidence thisEvidence = (GOEvidence)DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
-                  thisEvidence.setCode(gEC);
-                  thisEvidence.setWithText(thisDomain.getName());
-                  osw.store(thisEvidence);
-                  HashSet<GOEvidence> thisEvidenceSet = new HashSet<GOEvidence>();
-                  thisEvidenceSet.add(thisEvidence);
-                  GOAnnotation thisAnnotation = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
-                  thisAnnotation.setEvidence(thisEvidenceSet);
-                  thisAnnotation.setSubject(thisGene);
-                  thisAnnotation.setOntologyTerm(thisTerm);
-                  osw.store(thisAnnotation);
-                  count++;
-                }
+            // store if not known already
+            if (!knownGO.containsKey(thisGene.getOrganism().getId()) ||
+                !knownGO.get(thisGene.getOrganism().getId()).containsKey(thisGene.getPrimaryIdentifier()) ||
+                !knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).contains(thisGOTerm.getIdentifier()) ){
+
+              LOG.debug("There is a new annotation for the gene "+thisGene.getPrimaryIdentifier() + 
+                  " organism "+thisGene.getOrganism().getId() + " to " + thisGOTerm.getIdentifier());
+              GOEvidence thisEvidence = (GOEvidence)DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
+              thisEvidence.setCode(gEC);
+              thisEvidence.setWithText(thisDomain.getName());
+              osw.store(thisEvidence);
+              HashSet<GOEvidence> thisEvidenceSet = new HashSet<GOEvidence>();
+              thisEvidenceSet.add(thisEvidence);
+              GOAnnotation thisAnnotation = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+              thisAnnotation.setEvidence(thisEvidenceSet);
+              thisAnnotation.setSubject(thisGene);
+              thisAnnotation.setOntologyTerm(thisGOTerm);
+              osw.store(thisAnnotation);
+              annotationSet.add(thisAnnotation);
+              count++;
+            }
+          }
+          // now process the protein
+          if (!knownGO.containsKey(thisProtein.getOrganism().getId()) ||
+              !knownGO.get(thisProtein.getOrganism().getId()).containsKey(thisProtein.getPrimaryIdentifier()) ||
+              !knownGO.get(thisProtein.getOrganism().getId()).get(thisProtein.getPrimaryIdentifier()).contains(thisGOTerm.getIdentifier()) ){
+
+            LOG.debug("There is a new annotation for the protein "+thisProtein.getPrimaryIdentifier() + 
+                " organism "+thisProtein.getOrganism().getId() + " to " + thisGOTerm.getIdentifier());
+            GOEvidence thisEvidence = (GOEvidence)DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
+            thisEvidence.setCode(gEC);
+            thisEvidence.setWithText(thisDomain.getName());
+            osw.store(thisEvidence);
+            HashSet<GOEvidence> thisEvidenceSet = new HashSet<GOEvidence>();
+            thisEvidenceSet.add(thisEvidence);
+            GOAnnotation thisAnnotation = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
+            thisAnnotation.setEvidence(thisEvidenceSet);
+            thisAnnotation.setSubject(thisProtein);
+            thisAnnotation.setOntologyTerm(thisGOTerm);
+            osw.store(thisAnnotation);
+            count++;
+          }
+          
+          if (count%1000 == 0 ) {
+            LOG.info("Created "+count+" gene/protein records...");
+          }
+        }
+        
+        // clean up goannotation
+        if (annotationSet != null && lastGene != null && annotationSet.size() > 0) {
+          lastGene.setGoAnnotation(annotationSet);
+          osw.store(lastGene);
         }
 
-       
-
-        LOG.info("Created " + count + " new GOAnnotation objects for Genes"
+        LOG.info("Created " + count + " new GOAnnotation objects for Genes/Proteins"
                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
         osw.commitTransaction();
     }
@@ -174,10 +227,10 @@ public class TransferGOAnnotations {
 
       q.setDistinct(true);
 
-      QueryClass qcGene = new QueryClass(Gene.class);
-      q.addFrom(qcGene);
-      q.addToSelect(qcGene);
-      q.addToOrderBy(qcGene);
+      QueryClass qcBio = new QueryClass(BioEntity.class);
+      q.addFrom(qcBio);
+      q.addToSelect(qcBio);
+      q.addToOrderBy(qcBio);
 
       QueryClass qcGOAnnotation = new QueryClass(GOAnnotation.class);
       q.addFrom(qcGOAnnotation);
@@ -189,7 +242,7 @@ public class TransferGOAnnotations {
       ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
       QueryObjectReference goAnnotRef = new QueryObjectReference(qcGOAnnotation, "subject");
-      cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcGene));
+      cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcBio));
 
       QueryObjectReference goTermRef = new QueryObjectReference(qcGOAnnotation, "ontologyTerm");
       cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcGoTerm));
@@ -200,17 +253,19 @@ public class TransferGOAnnotations {
       Iterator<?>  res = os.execute(q, 5000, true, true, true).iterator();
       while(res.hasNext()) {
         ResultsRow<?> rr = (ResultsRow<?>) res.next();
-        Gene thisGene = (Gene) rr.get(0);
+        BioEntity thisBio = (BioEntity) rr.get(0);
         GOTerm thisTerm = (GOTerm) rr.get(1);
-        LOG.debug("There is a known annotation for "+thisGene.getPrimaryIdentifier() + 
-            " organism "+thisGene.getOrganism() + " to " + thisTerm.getIdentifier());
-        if ( ! knownGO.containsKey(thisGene.getOrganism().getId())) {
-          knownGO.put(thisGene.getOrganism().getId(),new HashMap<String,HashSet<String>>());
+        if (thisBio.getOrganism() != null ) {
+          LOG.info("There is a known annotation for "+thisBio.getPrimaryIdentifier() + 
+              " organism "+thisBio.getOrganism() + " to " + thisTerm.getIdentifier());
+          if ( ! knownGO.containsKey(thisBio.getOrganism().getId())) {
+            knownGO.put(thisBio.getOrganism().getId(),new HashMap<String,HashSet<String>>());
+          }
+          if ( ! knownGO.get(thisBio.getOrganism().getId()).containsKey(thisBio.getPrimaryIdentifier())) {
+            knownGO.get(thisBio.getOrganism().getId()).put(thisBio.getPrimaryIdentifier(),new HashSet<String>());
+          }
+          knownGO.get(thisBio.getOrganism().getId()).get(thisBio.getPrimaryIdentifier()).add(thisTerm.getIdentifier());
         }
-        if ( ! knownGO.get(thisGene.getOrganism().getId()).containsKey(thisGene.getPrimaryIdentifier())) {
-          knownGO.get(thisGene.getOrganism().getId()).put(thisGene.getPrimaryIdentifier(),new HashSet<String>());
-        }
-        knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).add(thisTerm.getIdentifier());
       }
       return;
       
@@ -219,10 +274,8 @@ public class TransferGOAnnotations {
      * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene
      *  and GOTerm.
      *
-     * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
-     *  and the go term.
      */
-    private Iterator<?> findProteinDomains(boolean restrictToPrimaryGoTermsOnly)
+    private Iterator<?> findProteinDomains()
         throws ObjectStoreException {
         Query q = new Query();
 
@@ -235,6 +288,7 @@ public class TransferGOAnnotations {
         
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
+        q.addToSelect(qcProtein);
         
         QueryClass qcPAF = new QueryClass(ProteinAnalysisFeature.class);
         q.addFrom(qcPAF);
@@ -252,6 +306,7 @@ public class TransferGOAnnotations {
         QueryClass qcGoTerm = new QueryClass(GOTerm.class);
         q.addFrom(qcGoTerm);
         q.addToSelect(qcGoTerm);
+        q.addToOrderBy(qcGoTerm);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 

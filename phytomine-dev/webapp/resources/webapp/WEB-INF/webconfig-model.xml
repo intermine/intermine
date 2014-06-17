@@ -60,7 +60,7 @@
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.shortName" />
+      <fieldconfig fieldExpr="organism.shortName" label="Organism Name"/>
     </fields>
    <bagdisplayers>
       <displayer src="heatMap.tile" showOnLeft="true"/>
@@ -161,9 +161,11 @@
   <class className="org.intermine.model.bio.Protein">
     <inlinelist>
       <table path="synonyms.value" showLinksToObjects="true" />
+      <table path="dataSets.name" />
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="primaryAccession" label="UniProt Accession" />
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name" label="Organism Name" />
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -321,26 +323,16 @@
                      placement="summary"
                      types="MSA"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAnalysisDisplayer"
+                     jspName="model/proteinAnalysisDisplayer.jsp"
+                     replacesFields="proteinAnalysisFeatures,locatedFeatures"
+                     placement="summary"
+                     types="Protein" />
+
   </reportdisplayers>
 
 <!-- widgets -->
 <widgets>
-      <graphdisplayer id="chromosome_distribution_for_gene"
-                      title="Chromosome Distribution"
-                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
-                      graphType="ColumnChart"
-                      rangeLabel="Count"
-                      domainLabel="Chromosome"
-                      filterLabel="Organism"
-                      filters="organism.name=[list]"
-                      startClass="Gene"
-                      typeClass="Gene"
-                      categoryPath="chromosome.primaryIdentifier"
-                      seriesLabels="Actual,Expected"
-                      seriesPath="ActualExpectedCriteria"
-                      constraints="organism.name=[Organism]"
-                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
-                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
       <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
@@ -361,7 +353,8 @@
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="go_enrichment_for_protein"
                                  title="Gene Ontology Enrichment"
@@ -383,6 +376,23 @@
                                        genes.goAnnotation.ontologyTerm.identifier, genes.goAnnotation.ontologyTerm.name,
                                        genes.goAnnotation.ontologyTerm.parents.identifier,genes.goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+
+      <graphdisplayer id="chromosome_distribution_for_gene"
+                      title="Chromosome Distribution"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="ColumnChart"
+                      rangeLabel="Count"
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath="ActualExpectedCriteria"
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
+                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
       <!-- enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"

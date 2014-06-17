@@ -63,6 +63,8 @@ public class CufflinksConverter extends BioFileConverter
   // organism records we will refer to
   private HashMap<Integer, Item> organismMap = new HashMap<Integer, Item>();
   // for now, this can only process files of 1 organism
+  private String organismVersion = "current";
+  private Integer taxonId = null;
   private Item organism;
   // bioentities we record data about
   private HashMap<String,HashMap<String,Item> > bioentityMap = new HashMap<String, HashMap<String, Item> >();
@@ -94,7 +96,7 @@ public class CufflinksConverter extends BioFileConverter
     scoreMap.put("MRNA", new HashMap<String,HashMap<String,Item>>());
   }
 
-  public void setOrganisms(String organisms) {
+  /*public void setOrganisms(String organisms) {
     String[] bits = StringUtil.split(organisms, " ");
     //for (int i = 0; i < bits.length; i++) {
     for (String organismIdString: bits) {
@@ -121,6 +123,19 @@ public class CufflinksConverter extends BioFileConverter
       }
       organismsToProcess.put(taxonId,od);
     }
+  }*/
+  public void setVersion(String version) {
+    organismVersion = version;
+  }
+  public String getVersion() {
+    return organismVersion;
+  }
+  public void setOrganism(String organism) {
+    try {
+      taxonId = Integer.valueOf(organism);
+    } catch (NumberFormatException e) {
+      throw new RuntimeException("can't find taxon id for: " + organism);
+    }
   }
   /**
    * 
@@ -131,7 +146,25 @@ public class CufflinksConverter extends BioFileConverter
   public void process(Reader reader) throws Exception {
     File theFile = getCurrentFile();                 
     LOG.info("Processing file "+theFile.getName()+"...");
-
+    
+    if (organism==null) {
+      // we need to register the organism
+      if (taxonId != null ) {
+        organism = createItem("Organism");
+        organism.setAttribute("taxonId", taxonId.toString());
+        if (organismVersion != null) {
+          organism.setAttribute("version",organismVersion);
+        }
+        try {
+          store(organism);
+        } catch (ObjectStoreException e) {
+          throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+        }
+      } else {
+        throw new BuildException("No taxonId specified.");
+      }
+    }
+    
     if (theFile.getName().endsWith("genes.fpkm_tracking")) {
       processCufflinksFile(reader,"FPKM","Gene");
     } else if (theFile.getName().endsWith("isoforms.fpkm_tracking")) {

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="Organism" is-interface="true">
+    <attribute name="version" type="java.lang.String" />
+    <attribute name="assemblyVersion" type="java.lang.String" />
+    <attribute name="annotationVersion" type="java.lang.String" />
+    <attribute name="proteomeId" type="java.lang.Integer" />
+  </class>
+</classes>

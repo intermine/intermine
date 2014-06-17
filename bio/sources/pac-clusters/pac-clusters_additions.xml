@@ -12,6 +12,7 @@
     <attribute name="methodId" type="java.lang.Integer" />
     <attribute name="methodName" type="java.lang.String" />
     <attribute name="clusterName" type="java.lang.String" />
+    <attribute name="memberCount" type="java.lang.Integer" />
     <reference name="msa" referenced-type="MSA" />
     <reference name="consensus" referenced-type="Sequence" />
     <collection name="protein" referenced-type="Protein" reverse-reference="proteinFamily" /> 
