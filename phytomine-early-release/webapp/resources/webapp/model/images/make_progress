@@ -1,1 +1,0 @@
-convert -transparent white -crop 310x310+1590x40 PhytozomeLogoDarkTransparent.svg progress.png

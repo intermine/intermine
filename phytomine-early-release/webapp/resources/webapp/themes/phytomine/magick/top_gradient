@@ -1,1 +1,0 @@
-convert -size 1x45 xc:#FAFAFA -stroke black -draw "line 0,44 0,44" top_gradient.png
