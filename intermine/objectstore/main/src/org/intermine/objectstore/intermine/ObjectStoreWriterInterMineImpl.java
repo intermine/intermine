@@ -406,8 +406,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             loops++;
         }
 
-        // if the connection has been closed by the backend replace it with a new connection
-        if (!conn.isValid(1)) {
+        // If the connection has been closed by the backend replace it with a new connection.
+        // NOTE this has a really long timeout (60 seconds) as during the build we sometimes need
+        // to wait for a flush to complete before the connection can be checked.
+        if (!conn.isValid(60)) {
+            LOG.info("ObjectStoreWriter connection was closed, fetching new connection");
             conn = this.os.getConnection();
         }
 
