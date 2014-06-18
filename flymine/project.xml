@@ -5,7 +5,6 @@
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-
     <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
       <property name="source.db.name" value="flybase"/>
       <property name="organisms" value="7227"/>
@@ -36,10 +35,10 @@
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
-   <source name="ncbi-gene" type="ncbi-gene">
+<source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
-    </source>
+</source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
@@ -167,8 +166,8 @@
     </source>
 
     <source name="fly-fish" type="fly-fish">
-      <property name="src.data.dir" location="/micklem/data/flymine/flyfish"/>
-      <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/flyfish/current"/>
+      <property name="src.data.dir.includes" value="annotation_matrix.csv"/>
     </source>
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
@@ -565,9 +564,20 @@
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
      </source>
-    <source name="panther" type="panther">
-          <property name="src.data.dir" location="/micklem/data/panther/current"/>
-          <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    <source name="homologene" type="homologene">
+          <property name="src.data.dir" location="/micklem/data/homologene/current"/>
+          <property name="homologene.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>    
+<!--
+   <source name="orthodb" type="orthodb" dump="true">
+      <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
+      <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>
+-->
+
+   <source name="panther" type="panther" dump="true">
+      <property name="src.data.dir" location="/micklem/data/panther/current"/>
+      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
@@ -599,12 +609,16 @@
   </sources>
 
   <post-processing>
+
     <post-process name="create-utr-references"/>
+    <post-process name="populate-located-features"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
+
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
+    <post-process name="populate-child-features"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources" />
     <post-process name="create-intron-features">

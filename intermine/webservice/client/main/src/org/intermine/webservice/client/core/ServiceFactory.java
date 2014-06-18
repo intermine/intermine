@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.core;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,15 @@ import org.intermine.webservice.client.services.WidgetService;
  *
  *      ...
  * </pre>
+ * 
+ * <h2>Proxy settings:</h2>
+ * 
+ * To configure access through a proxy, ensure that the following Java system
+ * properties have been set:
+ * <ul>
+ * <li><code>http.proxyServer</code> (eg: "123.456.78.90")</li>
+ * <li><code>http.proxyPort</code> (eg: "8080", Optional)</li>
+ * </ul>
  *
  * @author Jakub Kulaviak
  *
@@ -38,7 +47,7 @@ public class ServiceFactory
 {
 
     private final String rootUrl;
-    private String applicationName = "InterMine-WS-Client-Java-0.96";
+    private String applicationName = "InterMine-WS-Client-Java-2.0";
     private final String userName;
     private final String userPass;
     private final String authToken;

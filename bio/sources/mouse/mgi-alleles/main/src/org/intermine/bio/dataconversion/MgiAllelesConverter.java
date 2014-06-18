@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
 
 /**
  * Read Alleles and Genotypes with associated Mammalian Phenotype ontology terms from MGI files.
@@ -54,7 +52,6 @@ public class MgiAllelesConverter extends BioFileConverter
 
     }
 
-
     @Override
     public void close() throws Exception {
         for (Item allele : alleles.values()) {
@@ -62,7 +59,6 @@ public class MgiAllelesConverter extends BioFileConverter
         }
         super.close();
     }
-
 
     /**
      * {@inheritDoc}
@@ -89,7 +85,7 @@ public class MgiAllelesConverter extends BioFileConverter
 
         String lastGenotypeName = null;
         Item currentGenotype = null;
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String genotypeName = line[0];
@@ -153,7 +149,7 @@ public class MgiAllelesConverter extends BioFileConverter
             store(ontology);
         }
 
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String alleleIdentifier = line[0];
@@ -174,7 +170,10 @@ public class MgiAllelesConverter extends BioFileConverter
             Item allele = getAlleleItem(alleleSymbol);
             allele.setAttribute("primaryIdentifier", alleleIdentifier);
             allele.setAttribute("name", alleleName);
-            allele.setAttribute("type", alleleType);
+
+            if (!StringUtils.isBlank(alleleType)) {
+                allele.setAttribute("type", alleleType);
+            }
 
             if (!StringUtils.isBlank(pubmed)) {
                 String pubItemId = getPubItemId(pubmed);
@@ -222,7 +221,7 @@ public class MgiAllelesConverter extends BioFileConverter
         String geneItemId = genes.get(geneIdentifier);
         if (geneItemId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("secondaryIdentifier", geneIdentifier);
+            gene.setAttribute("primaryIdentifier", geneIdentifier);
             gene.setReference("organism", organismIdentifier);
             store(gene);
             geneItemId = gene.getIdentifier();

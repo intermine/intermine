@@ -1,0 +1,4 @@
+<project name="hpo-annotation-tasks" default="default" basedir=".">
+  <description>build hpo-annotation tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

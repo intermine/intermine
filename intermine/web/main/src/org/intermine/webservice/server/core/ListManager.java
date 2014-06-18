@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,8 +12,10 @@ package org.intermine.webservice.server.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
@@ -24,7 +26,7 @@ import org.intermine.api.profile.Profile;
  * Manager of public lists used by web service.
  * @author Jakub Kulaviak
  **/
-public class ListManager
+public class ListManager implements Producer<Map<String, InterMineBag>>
 {
     private static final long MAX_WAIT = 0;
     private final BagManager bagManager;
@@ -73,6 +75,14 @@ public class ListManager
     }
 
     /**
+     * Returns the lists available to the current user in a Map.
+     * @return An unmodifiable map from list name to list.
+     */
+    public Map<String, InterMineBag> getListMap() {
+        return Collections.unmodifiableMap(bagManager.getBags(profile));
+    }
+
+    /**
      * Return true if there is at least one bag  in the 'to_upgrade' state.
      * @return true if there are any bags to upgrade
      */
@@ -88,5 +98,11 @@ public class ListManager
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {
         return bagManager.getCurrentBagsContainingId(profile, objectId);
+    }
+
+
+    @Override
+    public Map<String, InterMineBag> produce() {
+        return getListMap();
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,7 +101,7 @@ public class WebserviceCodeGenAction extends InterMineAction
                         projectTitle,
                         perlWSModuleVer,
                         templateIsPublic(template, im, profile),
-                        profile.getUsername());
+                        profile);
 
             } else if ("pathQuery".equals(source)) {
                 PathQuery pq = getPathQuery(session);
@@ -111,7 +111,7 @@ public class WebserviceCodeGenAction extends InterMineAction
                         projectTitle,
                         perlWSModuleVer,
                         pathQueryIsPublic(pq, im, profile),
-                        profile.getUsername());
+                        profile);
             }
             WebserviceCodeGenerator codeGen = getCodeGenerator(method);
             String sc = codeGen.generate(info);
@@ -219,7 +219,7 @@ public class WebserviceCodeGenAction extends InterMineAction
      */
     private WebserviceCodeGenInfo getWebserviceCodeGenInfo(PathQuery query,
             String serviceRootURL, String projectTitle, String perlWSModuleVer,
-            boolean isPublic, String user) {
+            boolean isPublic, Profile user) {
 
         WebserviceCodeGenInfo wsCodeGenInfo = new WebserviceCodeGenInfo(query,
                 serviceRootURL, projectTitle, perlWSModuleVer, isPublic, user);

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,12 +10,14 @@ package org.intermine.webservice.server.core;
  *
  */
 
-import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.metadata.Model;
@@ -24,7 +26,6 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONWriter;
 
 /**
  * A Service that has specialisations for supplying JSON.
@@ -55,9 +56,13 @@ public abstract class JSONService extends WebService
     }
 
     protected String getResultsKey() {
-    	return null;
+        return null;
     }
-    
+
+    protected boolean lazyList() {
+        return false;
+    }
+
     /**
      * Get the header attributes to apply to the formatter.
      * @return A map from string to object.
@@ -66,7 +71,12 @@ public abstract class JSONService extends WebService
         Map<String, Object> attributes = new HashMap<String, Object>();
         String resultsKey = getResultsKey();
         if (resultsKey != null) {
-        	attributes.put(JSONFormatter.KEY_INTRO, "\"" + resultsKey + "\":");
+            String intro = "\"" + resultsKey + "\":";
+            if (lazyList()) {
+                intro += "[";
+                attributes.put(JSONFormatter.KEY_OUTRO, "]");
+            }
+        	attributes.put(JSONFormatter.KEY_INTRO, intro);
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
@@ -94,7 +104,7 @@ public abstract class JSONService extends WebService
         addResultItemInternal(jo, hasMore);
     }
 
-    protected void addResultValue(String str, boolean hasMore) {
+    protected void addResultValue(CharSequence str, boolean hasMore) {
         addResultItemInternal("\"" + String.valueOf(str) + "\"", hasMore);
     }
 
@@ -113,6 +123,47 @@ public abstract class JSONService extends WebService
         output.addResultItem(outputStrings);
     }
 
+    protected void addResultEntries(
+            Collection<Map.Entry<String, Object>> entries) {
+        addResultEntries(entries, false);
+    }
+
+    protected void addResultEntry(String key, Object value, boolean hasMore) {
+        addResultEntry(new Pair<String, Object>(key, value), hasMore);
+    }
+
+    protected void addResultEntry(Map.Entry<String, Object> entry, boolean hasMore) {
+        addResultEntries(Collections.singleton(entry), hasMore);
+    }
+
+    protected void addResultEntries(
+            Collection<Map.Entry<String, Object>> entries, boolean hasMore) {
+        List<String> outputStrings = new ArrayList<String>();
+        for (Map.Entry<String, Object> entry: entries) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String valStr = null;
+
+            if (value == null) {
+                valStr = "null";
+            } if (value instanceof Map) {
+                valStr = new JSONObject((Map) value).toString();
+            } else if (value instanceof List) {
+                valStr = new JSONArray((List) value).toString();
+            } else if (value instanceof CharSequence) {
+                valStr = String.format("\"%s\"",
+                        StringEscapeUtils.escapeJava(String.valueOf(value)));
+            } else if (value instanceof Number || value instanceof Boolean) {
+                valStr = String.valueOf(value);
+            }
+            outputStrings.add(String.format("\"%s\":%s", key, valStr));
+        }
+        if (hasMore) {
+            outputStrings.add("");
+        }
+        output.addResultItem(outputStrings);
+    }
+
     /**
      * Output a list of objects as a JSON array.
      * @param listing The list of things to output.
@@ -122,7 +173,7 @@ public abstract class JSONService extends WebService
         JSONArray ja = new JSONArray(listing);
         addResultItemInternal(ja, hasMore);
     }
-    
+
     private void addResultItemInternal(Object obj, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
         outputStrings.add(String.valueOf(obj));

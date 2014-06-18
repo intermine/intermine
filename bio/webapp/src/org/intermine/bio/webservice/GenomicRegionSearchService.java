@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -126,9 +126,9 @@ public class GenomicRegionSearchService extends ListMakerService
     }
 
     @Override
-    protected ListInput getInput(final HttpServletRequest req) {
+    protected ListInput getInput() {
         try {
-            return new GenomicRegionSearchListInput(req, bagManager, getPermission().getProfile(), im);
+            return new GenomicRegionSearchListInput(request, bagManager, getPermission().getProfile(), im);
         } catch (JSONException e) {
             String msg = e.getMessage();
             if (msg == null) {

@@ -19,7 +19,7 @@ template = service.get_template('TEMP_NAME')
 # A    Employee
 
 rows = template.rows(
-    A = {"op": "LOOKUP", "value": "EmployeeA1", "extra_value": "null"}
+    A = {"op": "LOOKUP", "value": "EmployeeA1"}
 )
 for row in rows:
     print row["name"]

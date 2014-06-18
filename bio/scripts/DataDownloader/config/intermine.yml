@@ -28,9 +28,12 @@ default_sources:
   - "SGDIdentifiers"
   - "ZFINIdentifiers"
   - "MousePheno"
+  - "HumanGeneIdentifiers"
+  - "HPO"
 
 UniProt:
     organisms:
+        - 3702
         - 6239
         - 7165
         - 7217
@@ -54,7 +57,7 @@ UniProt:
         - 31234
         - 135651
         - 281687
-    excluded_organisms:
+     excluded_organisms:
         - 10091
         - 10092
         - 35531
@@ -64,10 +67,11 @@ UniProt:
         - 63221
         - 116058
         - 180454
-        - 377270
+	- 377270
         - 377271
         - 377586
         - 377587
+	- 741158
         - 943925
         - 943926
 

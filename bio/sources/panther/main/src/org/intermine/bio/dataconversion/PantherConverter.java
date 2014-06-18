@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,23 +54,11 @@ public class PantherConverter extends BioFileConverter
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
     private OrganismRepository or;
     private Set<String> databasesNamesToPrepend = new HashSet<String>();
-    private Map<String, Map<String, String>> geneIdPolymorphism = 
+    private Map<String, Map<String, String>> geneIdPolymorphism =
             new HashMap<String, Map<String, String>>();
 
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-    // PANTHER publication pubmed ids, refer to http://www.pantherdb.org/publications.jsp
-    private static ArrayList<String> PUBLICATIONS = new ArrayList<String>() {
-        private static final long serialVersionUID = 1L;
-    {
-        add("12520017");
-        add("20015972");
-        add("16912992");
-        add("19597783");
-        add("20534164");
-        add("15492219");
-    }};
-
     private IdResolver rslv;
 
     /**
@@ -90,6 +78,8 @@ public class PantherConverter extends BioFileConverter
         TYPES.put("LDO", "least diverged orthologue");
         TYPES.put("O", "orthologue");
         TYPES.put("P", "paralogue");
+        TYPES.put("X", "homologue");
+        TYPES.put("LDX", "least diverged homologue");
     }
 
     /**
@@ -131,22 +121,7 @@ public class PantherConverter extends BioFileConverter
                 }
                 continue;
             }
-            
-            if (key.contains("geneid.polymorphism")) {
-                String[] attributes = key.split("\\.");
-                if (attributes.length == 4) {
-                    String taxonId = attributes[0];
-                    if (geneIdPolymorphism.isEmpty() || geneIdPolymorphism.get(taxonId).isEmpty()) {
-                        Map<String, String> patternMap = new HashMap<String, String>();
-                        patternMap.put(attributes[3].trim(), value);
-                        geneIdPolymorphism.put(taxonId, patternMap);
-                    } else {
-                        geneIdPolymorphism.get(taxonId).put(attributes[3].trim(), value);
-                    }
-                }
-                continue;
-            }
-            
+
             String[] attributes = key.split("\\.");
             if (attributes.length == 0) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
@@ -172,48 +147,23 @@ public class PantherConverter extends BioFileConverter
 
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
-            Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            
-            if (geneIdPolymorphism.containsKey(taxonId)) {
-                Map<String, String> patternMap = geneIdPolymorphism.get(taxonId);
-                for (String key : patternMap.keySet()) {
-                    if (geneId.startsWith(key)) {
-                        identifierType = patternMap.get(key);
-                        if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                            if ("crossReferences".equals(identifierType)) {
-                                gene.addToCollection(identifierType,
-                                        createCrossReference(gene.getIdentifier(), geneId,
-                                                DATA_SOURCE_NAME, true));
-                            } else {
-                                gene.setAttribute(identifierType, geneId);
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                    if ("crossReferences".equals(identifierType)) {
-                        gene.addToCollection(identifierType,
-                                createCrossReference(gene.getIdentifier(), geneId,
-                                        DATA_SOURCE_NAME, true));
-                    } else {
-                        gene.setAttribute(identifierType, geneId);
-                    }
-                }
-            }
-            
-            gene.setReference("organism", getOrganism(taxonId));
-            refId = gene.getIdentifier();
-            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
-            store(gene);
+        	Item gene = createItem("Gene");
+        	gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+
+        	if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+        		gene.setAttribute(identifierType, geneId);
+        	}
+        	gene.setReference("organism", getOrganism(taxonId));
+        	refId = gene.getIdentifier();
+        	identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
+        	store(gene);
         }
         return refId;
     }
 
     private String parseIdentifier(String ident) {
-        String[] identifierString = ident.split("=");
-        String dbName = identifierString[0];
+    	String[] identifierString = ident.split("=");
+    	String dbName = identifierString[0];
         String identifier = identifierString[identifierString.length-1];
         if (databasesNamesToPrepend.contains(dbName)) {
             identifier = dbName + ":" + identifier;
@@ -271,6 +221,11 @@ public class PantherConverter extends BioFileConverter
                 continue;
             }
             String type = bits[2];
+            if (TYPES.get(type)== null) {
+            	LOG.warn("Type " + type + " is not recognised, record not loaded.");
+            	continue;
+            }
+
             String pantherId = bits[4];
 
             String gene1 = getGene(gene1IdentifierString[1], taxonId1);
@@ -290,7 +245,11 @@ public class PantherConverter extends BioFileConverter
             homologue.setReference("gene", gene1);
             homologue.setReference("homologue", gene2);
             homologue.addToCollection("evidence", getEvidence());
-            homologue.setAttribute("type", TYPES.get(type));
+            if (StringUtils.isEmpty(TYPES.get(type))) {
+            	homologue.setAttribute("type", type);            	
+            } else {
+            	homologue.setAttribute("type", TYPES.get(type));
+            }
             homologue.addToCollection("crossReferences",
                 createCrossReference(homologue.getIdentifier(), pantherId,
                         DATA_SOURCE_NAME, true));
@@ -335,40 +294,24 @@ public class PantherConverter extends BioFileConverter
 
     private String getEvidence()
         throws ObjectStoreException {
-
         if (evidenceRefId == null) {
-            Item eviCode = createItem("OrthologueEvidenceCode");
-            eviCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
-            eviCode.setAttribute("name", EVIDENCE_CODE_NAME);
+            Item evidenceCode = createItem("OrthologueEvidenceCode");
+            evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+            evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
             try {
-                store(eviCode);
+                store(evidenceCode);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-            String eviCodeRefId = eviCode.getIdentifier();
-
-            List<String> pubRefIds = new ArrayList<String>();
-            for (String pubmed : PUBLICATIONS) {
-                Item pub = createItem("Publication");
-                pub.setAttribute("pubMedId", pubmed);
-                String pubRefId = pub.getIdentifier();
-                pubRefIds.add(pubRefId);
-                try {
-                    store(pub);
-                } catch (ObjectStoreException e) {
-                    throw new ObjectStoreException(e);
-                }
-            }
+            String refId = evidenceCode.getIdentifier();
 
             Item evidence = createItem("OrthologueEvidence");
-            evidence.setReference("evidenceCode", eviCodeRefId);
-            evidence.setCollection("publications", pubRefIds);
+            evidence.setReference("evidenceCode", refId);
             try {
                 store(evidence);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-
             evidenceRefId = evidence.getIdentifier();
         }
         return evidenceRefId;

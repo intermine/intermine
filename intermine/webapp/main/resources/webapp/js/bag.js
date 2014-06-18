@@ -12,7 +12,7 @@ jQuery(function() {
 
         var $line = jQuery(this);
         var $input = $line.find('input');
-        $input.attr('checked', !$input.attr('checked'));
+        $input.prop('checked', !$input.prop('checked'));
         return false;
     });
 });

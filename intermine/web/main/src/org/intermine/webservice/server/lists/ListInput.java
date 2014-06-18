@@ -144,11 +144,22 @@ public class ListInput
     }
 
     protected void populateList(List<String> list, String param) {
+        populateList(list, param, false);
+    }
+
+    protected void populateNormedList(List<String> list, String param) {
+        populateList(list, param, true);
+    }
+
+    private void populateList(List<String> list, String param, boolean lowerCase) {
         String[] paramValues = request.getParameterValues(param);
         if (paramValues != null) {
             for (String value: paramValues) {
                 String[] subvalues = StringUtils.split(value, ";");
-                Collections.addAll(list, subvalues);
+                for (String s: subvalues) {
+                    if (lowerCase) s = s.toLowerCase();
+                    list.add(s);
+                }
             }
         }
     }

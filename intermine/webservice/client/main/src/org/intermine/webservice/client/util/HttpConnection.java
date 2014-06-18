@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.util;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,11 +15,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -39,9 +41,8 @@ import org.intermine.webservice.client.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.client.exceptions.ServiceUnavailableException;
-
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * The HttpConnection is class wrapping implementation details of http connection and the
@@ -117,6 +118,7 @@ public class HttpConnection
     private void executeMethod() {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(timeout);
+        setProxy(client);
         String url = request.getEncodedUrl();
         if (request.getType() == RequestType.GET) {
             executedMethod = new GetMethod(url);
@@ -148,6 +150,16 @@ public class HttpConnection
             throw new RuntimeException("Fatal protocol violation.", e);
         } catch (IOException e) {
             throw new RuntimeException("Fatal transport error connecting to " + url, e);
+        }
+    }
+
+    private void setProxy(HttpClient client) {
+        Properties systemProps = System.getProperties();
+        if (systemProps.containsKey("http.proxyHost")) {
+            String server = systemProps.getProperty("http.proxyHost");
+            Integer port = Integer.valueOf(systemProps.getProperty("http.proxyPort", "-1"));
+            ProxyHost ph = new ProxyHost(server, port);
+            client.getHostConfiguration().setProxyHost(ph);
         }
     }
 

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,9 +38,9 @@ import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.intermine.web.logic.template.TemplateResultInput;
+import org.intermine.web.logic.template.Templates;
+import org.intermine.web.logic.template.Templates.TemplateValueParseException;
 
 /**
  * Implementation of <strong>Action</strong> that runs a template
@@ -56,7 +57,7 @@ public class LoadTemplateAction extends DispatchAction
         TemplateResultInput input = new TemplateResultInput();
         // parse constraints from request
         try {
-            input.setConstraints(TemplateHelper.parseConstraints(request));
+            input.setConstraints(Templates.parseConstraints(request));
         } catch (TemplateValueParseException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -70,7 +71,7 @@ public class LoadTemplateAction extends DispatchAction
 
         Map<String, List<TemplateValue>> templateValues;
         try {
-            templateValues = TemplateHelper.getValuesFromInput(template, input);
+            templateValues = Templates.getValuesFromInput(template, input);
         } catch (TemplateValueParseException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -104,10 +105,9 @@ public class LoadTemplateAction extends DispatchAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TemplateQuery template = parseTemplate(request, im);
         SessionMethods.loadQuery(template, session, response);
-        String qid = SessionMethods.startQueryWithTimeout(request, false, template);
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-        return new ForwardParameters(mapping.findForward("waiting"))
-            .addParameter("qid", qid).forward();
+        SessionMethods.logQuery(request.getSession());
+        return new ForwardParameters(mapping.findForward("results"))
+            .forward();
     }
 
     /**

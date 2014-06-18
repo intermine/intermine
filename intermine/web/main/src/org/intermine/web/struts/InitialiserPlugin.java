@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +64,7 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -90,6 +92,8 @@ import org.intermine.web.logic.aspects.AspectBinding;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.query.result.XMLValidator;
 import org.jfree.util.Log;
@@ -128,119 +132,176 @@ public class InitialiserPlugin implements PlugIn
         // NOTE throwing exceptions other than a ServletException from this class causes the
         // webapp to fail to deploy with no error message.
 
+        final long start = System.currentTimeMillis();
+
         final ServletContext servletContext = servlet.getServletContext();
         initBlockingErrors(servletContext);
 
         // initialise properties
-        Properties webProperties = loadWebProperties(servletContext);
+        final Properties webProperties = loadWebProperties(servletContext);
+        if (webProperties == null) {
+            throw new ServletException("webProperties is null");
+        }
 
         // read in additional webapp specific information and put in servletContext
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
 
-        // get link redirector
-        LinkRedirectManager redirect = getLinkRedirector(webProperties);
-
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
-        WebConfig webConfig = null;
-        if (os != null) {
-            webConfig = loadWebConfig(servletContext, os);
+        if (os == null) {
+            throw new ServletException("Production object store is null");
+        }
+        final WebConfig webConfig = loadWebConfig(servletContext, os);
+        if (webConfig == null) {
+            throw new ServletException("webConfig is null");
         }
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
-
-        if (userprofileOSW != null) {
-            //verify all table mapping classes exist in the userprofile db
-            if (!verifyTablesExist(userprofileOSW)) {
-                return;
-            }
-            if (!verifySuperUserExist(userprofileOSW)) {
-                return;
-            }
-            //verify if intermine_state exists in the savedbag table and if it has the right type
-            if (!verifyListTables(userprofileOSW)) {
-                return;
-            }
-            //verify if we the webapp needs to upgrade the lists
-            verifyListUpgrade(userprofileOSW);
+        if (userprofileOSW == null) {
+            throw new ServletException("userprofileOSW is null");
         }
+
+        verifyUserProfile(userprofileOSW);
 
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
 
-        if (webProperties != null && userprofileOSW != null) {
-            trackerDelegate = initTrackers(webProperties, userprofileOSW);
+        if (oss != null) {
+            setupClassSummaryInformation(servletContext, oss, os.getModel());
         }
 
-        if (os != null && webProperties != null) {
-            final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
-            final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
+        trackerDelegate = initTrackers(webProperties, userprofileOSW);
 
-            if (userprofileOSW != null) {
-                final InterMineAPI im;
-                try {
-                    im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                                          oss, trackerDelegate, redirect);
-                } catch (UserNotFoundException unfe) {
-                    blockingErrorKeys.put("errors.init.superuser", null);
-                    return;
+        final InterMineAPI im = loadInterMineAPI(
+                servletContext, webProperties, webConfig, userprofileOSW, oss);
+
+        // need a global reference to ProfileManager so it can be closed cleanly on destroy
+        profileManager = im.getProfileManager();
+        LOG.debug("LOADED PROFILE MANAGER");
+
+        // Verify that the superuser found in the DB matches the user set in the properties file.
+        final Profile superProfile = profileManager.getSuperuserProfile();
+        initSuperUser(im, superProfile);
+
+        initSearch(servletContext, superProfile);
+
+        servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
+
+        loadAutoCompleter(servletContext, os);
+        LOG.debug("LOADED AUTO COMPLETER");
+
+        cleanTags(im.getTagManager());
+
+        initKeylessClasses(servletContext, webConfig);
+
+        doRegistration(webProperties);
+
+        LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    protected void initSearch(final ServletContext servletContext,
+            final Profile superProfile) {
+        // index global webSearchables
+        SearchRepository searchRepository = new GlobalRepository(superProfile);
+        List<String> users = profileManager.getSuperUsers();
+        for (String su : users) {
+            new GlobalRepository(profileManager.getProfile(su));
+        }
+        SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
+        LOG.debug("LOADED SEARCH REPOSITORY");
+    }
+
+    protected void initSuperUser(final InterMineAPI im,
+            final Profile superProfile) {
+        if (!superProfile.getUsername()
+            .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
+            blockingErrorKeys.put("errors.init.superuser", null);
+        }
+
+        if (!im.getBagManager().isAnyBagInState(superProfile, BagState.UPGRADING)) {
+            UpgradeBagList upgrade = new UpgradeBagList(superProfile, im.getBagQueryRunner());
+            LoginHandler.runBagUpgrade(upgrade, im, superProfile);
+        }
+
+        LOG.debug("CHECKED SUPER PROFILE");
+    }
+
+    protected void initKeylessClasses(final ServletContext servletContext,
+            final WebConfig webConfig) {
+        Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
+        for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
+            boolean keyless = true;
+            for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig,
+                                                                         cld)) {
+                if ((fc.getDisplayer() == null) && fc.getShowInSummary()) {
+                    keyless = false;
+                    break;
                 }
-                SessionMethods.setInterMineAPI(servletContext, im);
-
-                InterMineContext.initilise(im, webProperties, webConfig);
-
-                // need a global reference to ProfileManager so it can be closed cleanly on destroy
-                profileManager = im.getProfileManager();
-
-                //verify superuser setted in the db matches with the user in the properties file
-                final Profile superProfile = profileManager.getSuperuserProfile();
-                if (!superProfile.getUsername()
-                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account")
-                    .trim())) {
-                    blockingErrorKeys.put("errors.init.superuser", null);
-                }
-
-                // index global webSearchables
-                SearchRepository searchRepository = new GlobalRepository(superProfile);
-                List<String> users = profileManager.getSuperUsers();
-                for (String su : users) {
-                    new GlobalRepository(profileManager.getProfile(su));
-                }
-                SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
-
-                servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
-
-                loadAutoCompleter(servletContext, os);
-
-                cleanTags(im.getTagManager());
-
-                if (webConfig != null) {
-                    Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
-                    for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
-                        boolean keyless = true;
-                        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig,
-                                                                                     cld)) {
-                            if ((fc.getDisplayer() == null) && fc.getShowInSummary()) {
-                                keyless = false;
-                                break;
-                            }
-                        }
-                        if (keyless) {
-                            keylessClasses.put(TypeUtil.unqualifiedName(cld.getName()),
-                                                                        Boolean.TRUE);
-                        }
-                    }
-                    servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
-                }
-
-                if (oss != null) {
-                    setupClassSummaryInformation(servletContext, oss, os.getModel());
-                }
-
-                doRegistration(webProperties);
+            }
+            if (keyless) {
+                keylessClasses.put(TypeUtil.unqualifiedName(cld.getName()),
+                                                            Boolean.TRUE);
             }
         }
+        servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
+    }
+
+    protected InterMineAPI loadInterMineAPI(
+            final ServletContext servletContext,
+            final Properties webProperties, final WebConfig webConfig,
+            final ObjectStoreWriter userprofileOSW, final ObjectStoreSummary oss) throws ServletException {
+        final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
+        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
+        final LinkRedirectManager redirector = getLinkRedirector(webProperties);
+
+        final InterMineAPI im;
+        try {
+            im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
+                                  oss, trackerDelegate, redirector);
+        } catch (UserNotFoundException unfe) {
+            blockingErrorKeys.put("errors.init.superuser", null);
+            throw new ServletException("Super user not found");
+        }
+        SessionMethods.setInterMineAPI(servletContext, im);
+
+        InterMineContext.initilise(im, webProperties, webConfig);
+        return im;
+    }
+
+    protected void verifyUserProfile(final ObjectStoreWriter userprofileOSW) throws ServletException {
+        if (userprofileOSW != null) {
+            //verify all table mapping classes exist in the userprofile db
+            if (!verifyTablesExist(userprofileOSW)) {
+                throw new ServletException("Userprofile is missing required tables.");
+            }
+            if (!verifySuperUserExist(userprofileOSW)) {
+                throw new ServletException("Userprofile does not have a super user.");
+            }
+            //verify if intermine_state exists in the savedbag table and if it has the right type
+            if (!verifyListTables(userprofileOSW)) {
+                throw new ServletException("Userprofile is missing list tables.");
+            }
+            //verify if we the webapp needs to upgrade the lists
+            checkSerialNumber(userprofileOSW);
+
+        }
+    }
+
+    private void createPermaTokenTable(ObjectStore os, Connection con) throws SQLException, ObjectStoreException, ClassNotFoundException {
+        ClassDescriptor cd = os.getModel().getClassDescriptorByName("PermanentToken");
+        Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+        if (cd == null) {
+            throw new IllegalStateException("Expected model to containt PermanentToken");
+        }
+        String tableDef = DatabaseUtil.getTableDefinition(db, cd);
+        LOG.info("Adding table for " + cd.getName());
+        LOG.debug(tableDef);
+        // It might be worthwhile at some point adding an index, but
+        // a) the data set is expected to be reasonably small, and
+        // b) the profile manager manages an in memory index of its own.
+        Statement s = con.createStatement();
+        s.execute(tableDef);
     }
 
     private void initBlockingErrors(ServletContext servletContext) {
@@ -306,24 +367,6 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private boolean validateXML(String xml, String schemaUrl, String errorCode) {
-/*        Source xmlFile = new StreamSource(xmlInputStream);
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        try {
-            Schema schema = schemaFactory.newSchema(new StreamSource(xsdInputStream));
-            Validator validator = schema.newValidator();
-            try {
-                validator.validate(xmlFile);
-                return true;
-            } catch (SAXException se) {
-                LOG.error(xmlFile.getSystemId() + " is NOT valid");
-                blockingErrorKeys.put(errorCode, se.getMessage());
-            } catch (IOException ioe) {
-                LOG.error("Problems find file ", ioe);
-            }
-        } catch (SAXException se) {
-            LOG.error("Problems parsing xsd file", se);
-        }
-        return false;*/
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
@@ -534,7 +577,7 @@ public class InitialiserPlugin implements PlugIn
 
         Collection<String> otherResources = finder.findResourcesMatching(pattern);
         for (String resource : otherResources) {
-            LOG.info("Loading extra resources from " + resource);
+            LOG.debug("Loading extra resources from " + resource);
             InputStream otherResourceStream =
                 servletContext.getResourceAsStream(resource);
             try {
@@ -584,7 +627,7 @@ public class InitialiserPlugin implements PlugIn
         InputStream is = getClass().getClassLoader()
             .getResourceAsStream("openid-providers.properties");
         if (is == null) {
-            LOG.info("couldn't find openid providers, using system class-loader");
+            LOG.debug("couldn't find openid providers, using system class-loader");
             is = ClassLoader.getSystemClassLoader()
                 .getResourceAsStream("openid-properties.properties");
         }
@@ -606,7 +649,7 @@ public class InitialiserPlugin implements PlugIn
             String keyString = (String) key;
             if (!keyString.endsWith(".alias")) {
                 providers.add(keyString);
-                LOG.info("Added " + keyString);
+                LOG.debug("Added " + keyString);
             }
         }
 
@@ -730,9 +773,23 @@ public class InitialiserPlugin implements PlugIn
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
             }
+
+            // Create the permatoken table, if it does not exist
+            ClassDescriptor ptCld = osw.getModel().getClassDescriptorByName("PermanentToken");
+            if (!DatabaseUtil.tableExists(con, DatabaseUtil.getTableName(ptCld))) {
+                createPermaTokenTable(osw, con);
+            }
+
+            LOG.debug("SUCCESSFULLY APPLIED ALL UPGRADES");
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
             blockingErrorKeys.put("errors.init.userprofileconnection", sqle.getMessage());
+        } catch (ObjectStoreException e) {
+            LOG.error("Problem upgrading database", e);
+            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
+        } catch (ClassNotFoundException e) {
+            LOG.error("Problem upgrading database", e);
+            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
         }
@@ -767,9 +824,11 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Destroy method called at Servlet destroy. Close connection pool
+     * Destroy method called at Servlet destroy. Close connection pools
+     * and the mail queue thread pool.
      */
     public void destroy() {
+        InterMineContext.shutdown();
         if (profileManager != null) {
             ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
                 .getDatabase().shutdown();
@@ -873,12 +932,12 @@ public class InitialiserPlugin implements PlugIn
     @SuppressWarnings("resource")
     private boolean verifyTablesExist(ObjectStore uos) {
         Connection con = null;
-        Set<ClassDescriptor> classDescritpors = uos.getModel().getClassDescriptors();
+        Set<ClassDescriptor> classDescriptors = uos.getModel().getClassDescriptors();
         try {
             con = ((ObjectStoreInterMineImpl) uos).getConnection();
-            for (ClassDescriptor cd : classDescritpors) {
+            for (ClassDescriptor cd : classDescriptors) {
                 if (!cd.isInterface()) {
-                    String tableNameToVerify = cd.getSimpleName().toLowerCase();
+                    String tableNameToVerify = DatabaseUtil.getTableName(cd);
                     if (!DatabaseUtil.tableExists(con, tableNameToVerify)) {
                         LOG.error("In the userprofile database, the table " + tableNameToVerify
                             + " doesn't exist.");
@@ -888,7 +947,7 @@ public class InitialiserPlugin implements PlugIn
                 }
             }
         } catch (SQLException sqle) {
-            LOG.error("Probelm retrieving connection", sqle);
+            LOG.error("Problem retrieving connection", sqle);
         } finally {
             ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
         }
@@ -919,8 +978,9 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Verify if we need to upgrade the list
+     * @throws ServletException 
      */
-    private void verifyListUpgrade(ObjectStore uosw) {
+    private void checkSerialNumber(ObjectStore uosw) throws ServletException {
         try {
             boolean listUpgrade = false;
             String productionSerialNumber = MetadataManager.retrieve(((ObjectStoreInterMineImpl) os)
@@ -939,8 +999,7 @@ public class InitialiserPlugin implements PlugIn
                 listUpgrade = true;
             }
             if (listUpgrade) {
-                LOG.warn("Serial numbers not equal: list upgrate needed");
-                //set current attribute to false
+                LOG.debug("Serial numbers not equal: list upgrade needed");
                 Connection conn = null;
                 try {
                     conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
@@ -965,7 +1024,7 @@ public class InitialiserPlugin implements PlugIn
                         MetadataManager.SERIAL_NUMBER, productionSerialNumber);
             }
         } catch (SQLException sqle) {
-            throw new IllegalStateException("Error verifying list upgrading", sqle);
+            throw new ServletException("Error verifying list upgrading", sqle);
         }
     }
 }

@@ -1,0 +1,2 @@
+<query name="Find all the objects" model="testmodel" view="InterMineObject.id" >
+</query>

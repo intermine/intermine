@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -72,8 +72,12 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         String featureType = "";
 
         //=== Get Interaction information ===
-        Map<String, Set<String>> interactionInfoMap = CytoscapeNetworkUtil
-                .getInteractionInfo(model, executor);
+        Map<String, Set<String>> interactionInfoMap;
+        try {
+            interactionInfoMap = CytoscapeNetworkUtil.getInteractionInfo(model, executor);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
 
         if (interactionInfoMap == null) {
             request.setAttribute("dataNotIncludedMessage", DATA_NOT_INTEGRATED);
@@ -130,8 +134,13 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
 
         //=== Query a full set of interacting genes ===
         CytoscapeNetworkDBQueryRunner queryRunner = new CytoscapeNetworkDBQueryRunner();
-        Set<Integer> fullInteractingGeneSet = queryRunner.getInteractingGenes(
-                featureType, startingFeatureSet, model, executor);
+        Set<Integer> fullInteractingGeneSet;
+        try {
+            fullInteractingGeneSet =
+                    queryRunner.getInteractingGenes(featureType, startingFeatureSet, model, executor);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
 
         // set fullInteractingGeneSet in request
         request.setAttribute("fullInteractingGeneSet",

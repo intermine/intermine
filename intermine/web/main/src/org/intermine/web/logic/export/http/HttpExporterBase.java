@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export.http;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
@@ -47,6 +48,10 @@ public abstract class HttpExporterBase
 
         executor = im.getPathQueryExecutor(profile);
         executor.setBatchSize(BATCH_SIZE);
-        return executor.execute(pathQuery);
+        try {
+            return executor.execute(pathQuery);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

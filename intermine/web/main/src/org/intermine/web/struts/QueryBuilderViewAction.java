@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -47,26 +48,9 @@ public class QueryBuilderViewAction extends InterMineAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        //ChangeTableSizeForm resultsForm =
-        //    (ChangeTableSizeForm) session.getAttribute("changeTableForm");
-        //if (resultsForm != null) {
-        //    resultsForm.reset(mapping, request);
-        //}
-
-        PathQuery pathQuery = SessionMethods.getQuery(session).clone();
-        String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);
-
-        Thread.sleep(200); // slight pause in the hope of avoiding holding page
-
-        //track the query execution
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = SessionMethods.getProfile(session);
-        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, session.getId());
-
-        return new ForwardParameters(mapping.findForward("waiting"))
-                            .addParameter("trail", "|query")
-                            .addParameter("qid", qid)
+        SessionMethods.logQuery(request.getSession());
+        return new ForwardParameters(mapping.findForward("results"))
+                            .addParameter("trail", "|query|results.0")
                             .addParameter("queryBuilder", "true").forward();
     }
 }

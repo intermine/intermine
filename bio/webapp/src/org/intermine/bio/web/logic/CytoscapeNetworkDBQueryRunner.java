@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 
@@ -42,9 +43,10 @@ public class CytoscapeNetworkDBQueryRunner
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return a set of genes
+     * @throws ObjectStoreException
      */
     public Set<Integer> getInteractingGenes(String featureType, Set<Integer> startingFeatureSet,
-            Model model, PathQueryExecutor executor) {
+            Model model, PathQueryExecutor executor) throws ObjectStoreException {
 
         Set<Integer> fullInteractingGeneSet = new LinkedHashSet<Integer>();
         Set<Integer> startingGeneSet = new LinkedHashSet<Integer>();
@@ -102,9 +104,10 @@ public class CytoscapeNetworkDBQueryRunner
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return raw query results
+     * @throws ObjectStoreException 
      */
     public ExportResultsIterator getInteractions(Set<Integer> keys, Model model,
-            PathQueryExecutor executor) {
+            PathQueryExecutor executor) throws ObjectStoreException {
 
         PathQuery q = new PathQuery(model);
 
@@ -139,15 +142,18 @@ public class CytoscapeNetworkDBQueryRunner
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return raw query results
+     * @throws ObjectStoreException If the underlying queries cannot be run.
      */
     public ExportResultsIterator extendNetwork(String geneId,
-            Set<Integer> keys, Model model, PathQueryExecutor executor) {
+            Set<Integer> keys, Model model, PathQueryExecutor executor) throws ObjectStoreException {
 
-        Set<Integer> startingGeneSet = new HashSet<Integer>(Integer.valueOf(geneId));
+        Set<Integer> startingGeneSet = new HashSet<Integer>();
+        startingGeneSet.add(Integer.valueOf(geneId));
 
-        Set<Integer> fullInteractingGeneSet = getInteractingGenes("Gene",
-                startingGeneSet, model, executor);
-        ExportResultsIterator results = getInteractions(fullInteractingGeneSet, model, executor);
+        Set<Integer> fullInteractingGeneSet =
+                getInteractingGenes("Gene", startingGeneSet, model, executor);
+        ExportResultsIterator results =
+                getInteractions(fullInteractingGeneSet, model, executor);
 
         return results;
     }

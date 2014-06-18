@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,21 +12,18 @@ package org.intermine.webservice.server.user;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.Emailer;
-import org.intermine.util.MailUtils;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.context.MailAction;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.core.RateLimitHistory;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -44,6 +41,7 @@ import org.json.JSONObject;
 public class NewUserService extends JSONService
 {
 
+
     private static final Logger LOG = Logger.getLogger(NewUserService.class);
     private int maxNewUsersPerAddressPerHour = 1000;
     private static RateLimitHistory requestHistory = null;
@@ -51,6 +49,7 @@ public class NewUserService extends JSONService
     /**
      * Constructor.
      * @param im The InterMine API object.
+     * @param mailQueue 
      */
     public NewUserService(InterMineAPI im) {
         super(im);
@@ -67,6 +66,7 @@ public class NewUserService extends JSONService
             }
             requestHistory = new RateLimitHistory((60 * 60), maxNewUsersPerAddressPerHour);
         }
+        
     }
 
     @Override
@@ -90,19 +90,22 @@ public class NewUserService extends JSONService
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
         
-        Emailer emailer = InterMineContext.getEmailer();
-
-        try {
-            emailer.welcome(input.getUsername());
-            String mailingList = null;
-            if (input.subscribeToList()) {
-            	mailingList = emailer.subscribeToList(input.getUsername());
-            }
-            user.put("subscribedToList", mailingList != null);
-            user.put("mailingList", mailingList);
-        } catch (Exception e) {
-            LOG.error("Failed to send confirmation email", e);
+        MailAction welcomeMessage = new WelcomeAction(input.getUsername());
+        if (!InterMineContext.queueMessage(welcomeMessage)) {
+            LOG.error("Mail queue capacity exceeded. Not sending welcome message");
         }
+
+        String mailingList = null;
+        if (input.subscribeToList()) {
+            mailingList = getProperty("mail.mailing-list");
+            MailAction subscribe = new SubscribeAction(input.getUsername());
+            if (!InterMineContext.queueMessage(subscribe)) {
+                LOG.error("Mail queue capacity exceeded. Not sending subscription message");
+            }
+        }
+        user.put("subscribedToList", mailingList != null);
+        user.put("mailingList", mailingList);
+        
         Profile p = pm.getProfile(input.getUsername());
         if (p == null) {
             throw new InternalErrorException("Creating profile failed");
@@ -117,6 +120,36 @@ public class NewUserService extends JSONService
         Map<String, Object> retval = super.getHeaderAttributes();
         retval.put(JSONFormatter.KEY_INTRO, "\"user\":");
         return retval;
+    }
+
+    private class WelcomeAction implements MailAction {
+
+        private final String to;
+
+        WelcomeAction(String to) {
+            this.to = to;
+        }
+
+        @Override
+        public void act(Emailer emailer) throws Exception {
+            emailer.welcome(to);
+        }
+        
+    }
+
+    private class SubscribeAction implements MailAction {
+
+        private final String to;
+
+        SubscribeAction(String to) {
+            this.to = to;
+        }
+
+        @Override
+        public void act(Emailer emailer) throws Exception {
+            emailer.subscribeToList(to);
+        }
+        
     }
 
     private class NewUserInput

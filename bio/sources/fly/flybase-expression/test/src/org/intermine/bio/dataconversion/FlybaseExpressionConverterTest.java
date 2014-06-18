@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,10 +40,7 @@ public class FlybaseExpressionConverterTest extends ItemsTestCase
     }
 
     public void testProcess() throws Exception {
-        File srcFile = new File(getClass().getClassLoader().getResource("BinLOOKUP_modENCODE_FlyAtlas.txt").toURI());
-        converter.setFlybaseExpressionLevelsFile(srcFile);
-
-        srcFile = new File(getClass().getClassLoader().getResource("HTD_modENCODE_BinData_2010-10-05.txt").toURI());
+        File srcFile = new File(getClass().getClassLoader().getResource("HTD_modENCODE_BinData_2010-10-05.txt").toURI());
         File stages = new File(getClass().getClassLoader().getResource("stages.txt").toURI());
         converter.setFlybaseStagesFile(stages);
 

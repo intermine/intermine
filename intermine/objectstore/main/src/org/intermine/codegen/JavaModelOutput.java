@@ -1,7 +1,7 @@
 package org.intermine.codegen;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -706,6 +706,8 @@ public class JavaModelOutput
                         .getType())) {
                     sb.append(fieldName + " = org.intermine.objectstore.query.ClobAccess"
                             + ".decodeDbDescription(os, notXml[i]);\n");
+                } else if ("java.util.UUID".equals(attribute.getType())) {
+                    sb.append(fieldName + " = java.util.UUID.fromString(notXml[i]);\n");
                 } else if ("java.lang.String".equals(attribute.getType())) {
                     sb.append("StringBuilder string = null;\n")
                         .append(INDENT + INDENT + INDENT + INDENT)

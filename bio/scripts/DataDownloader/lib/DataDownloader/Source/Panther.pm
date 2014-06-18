@@ -11,7 +11,7 @@ use constant {
     SOURCES => [
         {
             HOST => 'ftp.pantherdb.org',
-            REMOTE_DIR => '/ortholog/current/',
+            REMOTE_DIR => '/ortholog/current_release/',
             FILE => 'RefGenomeOrthologs.tar.gz',
             EXTRACT => 1,
         },

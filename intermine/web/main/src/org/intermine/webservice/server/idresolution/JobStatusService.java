@@ -1,13 +1,21 @@
 package org.intermine.webservice.server.idresolution;
 
-import java.util.Arrays;
-import java.util.Map;
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.idresolution.IDResolver;
+import org.intermine.api.idresolution.Job;
+import org.intermine.api.idresolution.Job.JobStatus;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-import org.intermine.webservice.server.idresolution.Job.JobStatus;
-import org.intermine.webservice.server.output.JSONFormatter;
 
 public class JobStatusService extends JSONService
 {
@@ -21,7 +29,7 @@ public class JobStatusService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        Job job = Job.getJobById(jobId);
+        Job job = IDResolver.getInstance().getJobById(jobId);
         if (job != null) {
             if (job.getStatus() == JobStatus.ERROR) {
                 this.addOutputInfo("message", job.getError().getMessage());

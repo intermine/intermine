@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -155,12 +155,10 @@ public class ModifyBagDetailsAction extends InterMineAction
                     TypeUtil.instantiate(model.getPackageName() + "." + type2), imBag);
             q.setTitle(type2 + "s from list '" + imBag.getName() + "'");
             SessionMethods.loadQuery(q, session, response);
-            String qid = SessionMethods.startQueryWithTimeout(request, false, q);
-            Thread.sleep(200); // slight pause in the hope of avoiding holding page
             final String trail = "|bag." + imBag.getName();
-            return new ForwardParameters(mapping.findForward("waiting"))
+            return new ForwardParameters(mapping.findForward("results"))
                                .addParameter("trail", trail)
-                               .addParameter("qid", qid).forward();
+                               .forward();
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();

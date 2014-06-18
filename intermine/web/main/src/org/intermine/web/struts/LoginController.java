@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -50,7 +50,7 @@ public class LoginController extends TilesAction
 
         Properties webprops = SessionMethods.getWebProperties(request);
         String ourPath = webprops.getProperty("webapp.baseurl");
-        boolean isLocal = Pattern.compile("\\w+\\.\\w+:\\d{4}").matcher(ourPath).find();
+        boolean isLocal = Pattern.compile(":\\d+").matcher(ourPath).find();
         request.setAttribute("isExternallyAccessible", !isLocal);
 
         return null;

@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.api.bag;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -106,7 +107,7 @@ public class BagQueryRunner
      * @throws ClassNotFoundException if the type isn't in the model
      * @throws InterMineException if there is any other exception
      */
-    public BagQueryResult search(String type, List<String> input, String extraFieldValue,
+    public BagQueryResult search(String type, Collection<String> input, String extraFieldValue,
             boolean doWildcards, boolean caseSensitive)
         throws ClassNotFoundException, InterMineException {
 
@@ -114,13 +115,16 @@ public class BagQueryRunner
         List<String> cleanInput = new ArrayList<String>();
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
+        
         for (String inputString : input) {
             if (StringUtils.isNotEmpty(inputString)) {
-                if (inputString.indexOf('*') == -1 || !doWildcards) {
+                // no wildcards OR single * (if single *, treat like a string)
+                if (inputString.indexOf('*') == -1 || !doWildcards || inputString.equals("*")) {
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
                         lowerCaseInput.put(inputString.toLowerCase(), inputString);
                     }
+                // wildcard + a string
                 } else {
                     wildcardInput.add(inputString);
                     patterns.put(inputString, Pattern.compile(inputString.toLowerCase()
@@ -153,24 +157,17 @@ public class BagQueryRunner
             // OR all identifiers if matchOnFirst = FALSE
             if (!unresolved.isEmpty() || !matchOnFirst) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
-                Query q = null;
                 try {
-                    if (matchOnFirst) {
-                        q = bq.getQuery(unresolved, extraFieldValue);
-                    } else {
-                        q = bq.getQuery(unresolvedOriginal, extraFieldValue);
-                    }
+                    Set<String> toProcess = (matchOnFirst) ? unresolved : unresolvedOriginal;
+                    Query q = bq.getQuery(toProcess, extraFieldValue);
                     Results res = os.execute(q, 10000, true, true, false);
                     for (Object rowObj : res) {
                         ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
-                            Object fieldObject = row.get(i);
+                            final Object fieldObject = row.get(i);
                             if (fieldObject != null) {
-                                if (!(fieldObject instanceof String)) {
-                                    fieldObject = fieldObject.toString();
-                                }
-                                String field = (String) fieldObject;
+                                String field = String.valueOf(fieldObject);
                                 String lowerField = field.toLowerCase();
                                 if (caseSensitive) {
                                     if (cleanInput.contains(field)) {
@@ -244,7 +241,7 @@ public class BagQueryRunner
         for (String unresolvedStr : unresolved) {
             unresolvedMap.put(unresolvedStr, null);
         }
-        bqr.getUnresolved().putAll(unresolvedMap);
+        bqr.putUnresolved(unresolvedMap);
 
         return bqr;
     }

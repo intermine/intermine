@@ -53,7 +53,7 @@ h2 { margin-bottom:10px; }
 /* 'floating' menu */
 #headercontainer, #header_wrap, #navtrail { z-index:2; position:relative; }
 #navtrail { display:inline-block; float:right; background:inherit; width:96.4%; }
-#headercontainer { background:inherit; display:inline-block; }
+#headercontainer { background:inherit; /*display:inline-block;*/ }
 #fixed-menu { position:fixed; top:0; width:100%; z-index:1; box-shadow: 0px 1px 4px #A9A9A9; -moz-box-shadow: 0px 1px 4px #A9A9A9;
   -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { border-bottom-width:1px; border-bottom-style:solid; }

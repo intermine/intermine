@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,6 +34,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -61,7 +62,7 @@ import org.intermine.webservice.server.output.JSONSummaryProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.ResultsIterator;
+import org.intermine.webservice.server.output.FilteringResultIterator;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
 
@@ -313,10 +314,17 @@ public class QueryResultService extends AbstractQueryService
             try {
                 String filterTerm = getOptionalParameter("filterTerm");
                 Results r = executor.summariseQuery(pq, summaryPath, filterTerm, occurancesOnly);
+                try {
+                    r.range(0,  0); // causes query to be strictly evaluated, and errors to surface here.
+                } catch (IndexOutOfBoundsException e) {
+                    // Ignore, it just means it's empty.
+                }
                 if (filterTerm != null) {
                     attributes.put("filteredCount", r.size());
                 }
-                it = new ResultsIterator(r, firstResult, maxResults, filterTerm);
+                it = new FilteringResultIterator(r, firstResult, maxResults, filterTerm);
+            } catch (ObjectStoreQueryDurationException e) {
+                throw new ServiceException("Query would take too long to run");
             } catch (ObjectStoreException e) {
                 throw new ServiceException("Problem getting summary.", e);
             }
@@ -324,7 +332,13 @@ public class QueryResultService extends AbstractQueryService
             // Going faster means writing to the DB. Don't do this if it is pointless.
             canGoFaster = firstResult > BATCH_SIZE || maxResults > BATCH_SIZE;
             executor.setBatchSize(BATCH_SIZE);
-            it = executor.execute(pq, firstResult, maxResults);
+            try {
+                it = executor.execute(pq, firstResult, maxResults);
+            } catch (ObjectStoreQueryDurationException e) {
+                throw new ServiceException("Query would take too long to run");
+            } catch (ObjectStoreException e) {
+                throw new ServiceException("Problem getting summary.", e);
+            }
         }
 
         ResultProcessor processor = makeResultProcessor();

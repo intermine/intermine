@@ -1,7 +1,7 @@
 package org.intermine.sql.writebatch;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -109,6 +109,7 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         return 0;
     }
 
+    // TODO: Add support for UUID.
     private static void writeObject(PostgresDataOutputStream dos, Object o) throws IOException {
         if (o == null) {
             dos.writeInt(-1);

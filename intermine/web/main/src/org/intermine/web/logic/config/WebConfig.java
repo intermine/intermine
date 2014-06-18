@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -124,6 +124,7 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "name", "name");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "displayer", "displayer");
+        digester.addSetProperties("webconfig/class/fields/fieldconfig", "showInQB", "showInQB");
         digester.addSetProperties("webconfig/class/fields/fieldconfig",
                 "showInListAnalysisPreviewTable", "showInListAnalysisPreviewTable");
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
@@ -340,6 +341,7 @@ public class WebConfig
                     fc.setShowInSummary(false);
                     fc.setShowInInlineCollection(false);
                     fc.setShowInResults(false);
+                    fc.setShowInQB(true);
                     classConfig.addFieldConfig(fc);
                 }
                 if (fc.getLabel() == null) {

@@ -44,7 +44,7 @@ public class DeletingProfileManager extends ProfileManager {
                 SharedBagManager sbm = SharedBagManager.getInstance(this);
                 sbm.removeAllSharesInvolving(userId);
                 sbm.removeAllInvitesBy(userId);
-                
+
                 uosw.delete(userProfile);
             }
         } catch (ObjectStoreException e) {

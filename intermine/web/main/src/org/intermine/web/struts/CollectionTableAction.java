@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,11 +20,16 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.web.logic.results.PagedTable;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.config.WebConfig;
+
+import static org.intermine.web.logic.pathqueryresult.PathQueryResultHelper.makePathQueryForCollection;
 
 /**
  * Action that creates a table of collection elements for display in a table widget.
@@ -50,39 +55,37 @@ public class CollectionTableAction extends Action
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
-        HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ObjectStore os = im.getObjectStore();
 
-        Integer id = new Integer(request.getParameter("id"));
-        String field = request.getParameter("field");
-        String trail = request.getParameter("trail");
-        String path = request.getParameter("pathString");
+        final HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        final ObjectStore os = im.getObjectStore();
+        final WebConfig webConfig = SessionMethods.getWebConfig(request);
+        final Integer id = new Integer(request.getParameter("id"));
+        final String field = request.getParameter("field");
 
         InterMineObject o = os.getObjectById(id);
+        String referencedClassName = getReferencedCD(os.getModel(), o, field).getUnqualifiedName();
 
-        ReferenceDescriptor refDesc = null;
-        for (ClassDescriptor cld : os.getModel().getClassDescriptorsForClass(o.getClass())) {
-            refDesc = (ReferenceDescriptor) cld.getFieldDescriptorByName(field);
-            if (refDesc != null) {
-                break;
-            }
-        }
-        String referencedClassName = refDesc.getReferencedClassDescriptor().getUnqualifiedName();
+        PathQuery collectionQuery = makePathQueryForCollection(webConfig, os,
+                o, referencedClassName, field);
 
-        PagedTable pagedTable = SessionMethods.doQueryGetPagedTable(request, o, field,
-                                                                    referencedClassName);
-
-        // add results table to trail
-        if (trail != null) {
-            trail += "|results." + pagedTable.getTableid();
-        } else {
-            trail = "|results." + pagedTable.getTableid();
-        }
-        request.setAttribute("noSelect","true");
-        request.setAttribute("table",pagedTable.getTableid());
-        request.setAttribute("trail",trail);
+        request.setAttribute("collectionQuery", collectionQuery);
 
         return mapping.findForward("table");
+    }
+
+    private ClassDescriptor getReferencedCD(Model m, InterMineObject imo, String fieldName) {
+        for (ClassDescriptor cld : m.getClassDescriptorsForClass(imo.getClass())) {
+            FieldDescriptor fd = cld.getFieldDescriptorByName(fieldName);
+            if (fd != null) {
+                if (!(fd instanceof ReferenceDescriptor)) {
+                    throw new RuntimeException("Fields submitted for display in collection tables "
+                            + " must be references, not attributes. BAD FIELD: " + fieldName);
+                }
+                return ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
+            }
+        }
+        throw new RuntimeException("Could not find a field named " + fieldName
+                + " for an object of type: " + imo.getClass());
     }
 }

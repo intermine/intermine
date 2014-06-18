@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,7 +43,7 @@ public class ListDeletionService extends AuthenticatedListService
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        ListInput input = getInput(request);
+        ListInput input = getInput();
         addOutputInfo(LIST_NAME_KEY, input.getListName());
         ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
     }

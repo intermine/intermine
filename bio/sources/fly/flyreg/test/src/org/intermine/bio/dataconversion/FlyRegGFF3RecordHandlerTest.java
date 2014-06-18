@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -72,9 +72,27 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         converter.storeAll();
 
         // uncomment to write a new target items files
-        //writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
+        // writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
 
         Set<Item> expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
+
+        assertEquals(expected, writer.getItems());
+    }
+
+    public void testFlyRegHandlerNewFormat() throws Exception {
+        String gff =
+            "2L\tREDfly\tregulatory_region\t2456365\t2456372\t.\t.\t.\tID=\"Unspecified_dpp:REDFLY:TF000068\"; Dbxref=\"Flybase:FBgn0000490, PMID:8543160, REDfly:644, FlyBase:\"; Evidence=footprint/binding assay; factor=Unspecified; target=dpp\n"
+            + "2L\tREDfly\tregulatory_region\t2456352\t2456369\t.\t.\t.\tID=\"dl_dpp:REDFLY:TF000069\"; Dbxref=\"Flybase:FBgn0000490, PMID:8458580, REDfly:645, FlyBase:FBgn0000463\"; Evidence=footprint/binding assay; factor=dl; target=dpp\n"
+            + "2L\tREDfly\tregulatory_region\t2456423\t2456433\t.\t.\t.\tID=\"Unspecified_dpp:REDFLY:TF000067\"; Dbxref=\"Flybase:FBgn0000490, PMID:8543160, REDfly:643, FlyBase:\"; Evidence=footprint/binding assay; factor=Unspecified; target=dpp\n";
+
+        BufferedReader srcReader = new BufferedReader(new StringReader(gff));
+        converter.parse(srcReader);
+        converter.storeAll();
+
+        // uncomment to write a new target items files
+        // writeItemsFile(writer.getItems(), "flyreg-tgt-items-newformat.xml");
+
+        Set<Item> expected = readItemSet("FlyRegGFF3RecordHandlerNewFormatTest.xml");
 
         assertEquals(expected, writer.getItems());
     }

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 
 /**
@@ -115,7 +116,12 @@ public class ListsService extends AvailableListsService
 
         final Profile profile = getPermission().getProfile();
         final PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        final Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
+        Iterator<? extends List<ResultElement>> it;
+        try {
+            it = executor.execute(pathQuery);
+        } catch (ObjectStoreException e) {
+            throw new ServiceException("Error resolving external id.", e);
+        }
         if (it.hasNext()) {
             final List<ResultElement> row = it.next();
             if (it.hasNext()) {

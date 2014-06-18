@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -84,36 +85,41 @@ public class CuratedProteinsDisplayer extends ReportDisplayer
             // Execute the query.
             Profile profile = SessionMethods.getProfile(session);
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-            ExportResultsIterator values = executor.execute(query);
+            ExportResultsIterator values;
+            try {
+                values = executor.execute(query);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException(e);
+            }
 
-            // Listize.
+             // Listize.
             Map<String, Map<String, Object>> results = new LinkedHashMap<String, Map<String, Object>>();
             while (values.hasNext()) {
-            	List<ResultElement> row = values.next();
-            	// Build the internal map.
-            	Map<String, Object> map = new HashMap<String, Object>();
-            	for (String column : columns) {
-            		map.put(column, row.get(columns.indexOf(column)).getField());
-            	}
-            	
-            	// Is this SwissProt curate?
-            	if (map.get("dataSetsName").equals("Swiss-Prot data set")) {
-            		map.put("isSwissProtCurate", true);
-            	} else {
-            		map.put("isSwissProtCurate", false);
-            	}            	
-            	
-            	// Find in map.
-            	String key = (String) map.get("primaryIdentifier");
-            	Map<String, Object> mapObj = results.get(key);
-            	
-            	if (mapObj != null) {
-            		if (!(Boolean) mapObj.get("isSwissProtCurate") && (Boolean) map.get("isSwissProtCurate")) {
-            			results.put(key, map);
-            		}
-            	} else {
-            		results.put(key, map);
-            	}
+               List<ResultElement> row = values.next();
+               // Build the internal map.
+               Map<String, Object> map = new HashMap<String, Object>();
+               for (String column : columns) {
+                  map.put(column, row.get(columns.indexOf(column)).getField());
+               }
+
+               // Is this SwissProt curate?
+               if (map.get("dataSetsName").equals("Swiss-Prot data set")) {
+                  map.put("isSwissProtCurate", true);
+               } else {
+                  map.put("isSwissProtCurate", false);
+               }
+
+               // Find in map.
+               String key = (String) map.get("primaryIdentifier");
+               Map<String, Object> mapObj = results.get(key);
+               
+               if (mapObj != null) {
+                  if (!(Boolean) mapObj.get("isSwissProtCurate") && (Boolean) map.get("isSwissProtCurate")) {
+                     results.put(key, map);
+                  }
+               } else {
+                  results.put(key, map);
+               }
             }
 
             // Set.
@@ -121,16 +127,16 @@ public class CuratedProteinsDisplayer extends ReportDisplayer
         }
     }
     
-	/**
-	 * Build PathQuery.    
-	 * @param genePrimaryID
-	 * @param query
-	 * @return
-	 */
+   /**
+    * Build PathQuery.    
+    * @param genePrimaryID
+    * @param query
+    * @return
+    */
     private PathQuery buildQuery(String genePrimaryID, PathQuery query) {
         // Select the output columns:
         query.addViews("Gene.proteins.primaryIdentifier",
-        		"Gene.proteins.id",
+              "Gene.proteins.id",
                 "Gene.proteins.primaryAccession",
                 "Gene.proteins.organism.name",
                 "Gene.proteins.isUniprotCanonical",

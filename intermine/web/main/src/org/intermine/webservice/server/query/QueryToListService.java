@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,10 +53,6 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  */
 public class QueryToListService extends AbstractQueryService
 {
-
-    private static final String XML_PARAM = "query";
-    private static final String NAME_PARAM = "listName";
-    private static final String DESC_PARAM = "description";
 
     private static final String TEMP = "_temp";
 

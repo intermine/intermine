@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,6 +12,7 @@ package org.intermine.api.query.codegen;
 
 import java.util.Properties;
 
+import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 
@@ -28,11 +29,13 @@ public class WebserviceCodeGenInfo
     private String projectTitle;
     private String perlWSModuleVer;
     private boolean isPublic;
-    private String userName;
+    private Profile user;
     private String resultTablesLib = null;
     private String baseUrl = null;
+    private String lineBreak;
+    private Properties properties = new Properties();
 
-	/**
+    /**
      * Constructor.
      *
      * @param query a PathQuery to copy
@@ -44,32 +47,45 @@ public class WebserviceCodeGenInfo
      *
      */
     public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL,
-            String projectTitle, String perlWSModuleVer, boolean isPubliclyAccessible, String user) {
+            String projectTitle, String perlWSModuleVer, boolean isPubliclyAccessible, Profile user) {
         this.query = query;
         this.serviceBaseURL = serviceBaseURL;
         this.projectTitle = projectTitle;
         this.perlWSModuleVer = perlWSModuleVer;
         this.isPublic = isPubliclyAccessible;
-        this.userName = user;
+        this.user = user;
+        this.lineBreak = System.getProperty("line.separator");
     }
 
-    /**
-     * Default Constructor.
-     */
-    public WebserviceCodeGenInfo() {
-        this.query = null;
-        this.serviceBaseURL = null;
-        this.projectTitle = null;
-        this.perlWSModuleVer = null;
-        this.isPublic = true;
-        this.userName = null;
+    public WebserviceCodeGenInfo(PathQuery pq, String serviceBaseURL,
+            String projectTitle, String perlWSModuleVer,
+            boolean pathQueryIsPublic, Profile profile, String lineBreak) {
+        this.query = pq;
+        this.serviceBaseURL = serviceBaseURL;
+        this.projectTitle = projectTitle;
+        this.perlWSModuleVer = perlWSModuleVer;
+        this.isPublic = pathQueryIsPublic;
+        this.user = profile;
+        this.lineBreak = lineBreak;
     }
 
     public void readWebProperties(Properties properties) {
+        this.properties.putAll(properties);
         if (properties != null) {
             resultTablesLib = (String) properties.get("ws.imtables.provider");
             baseUrl = properties.get("webapp.baseurl") + "/" + properties.get("webapp.path") + "/";
         }
+    }
+
+    /**
+     * Get a configured property for which an accessor does not exist.
+     *
+     * @param key The key for this property.
+     * @param defaultValue The value to return if this property is not configured.
+     * @return The value of the property.
+     */
+    public String getProperty(String key, String defaultValue) {
+        return properties.getProperty(key, defaultValue);
     }
 
     public String getResultsTablesLib() {
@@ -85,10 +101,10 @@ public class WebserviceCodeGenInfo
      * @return a file name
      */
     public String getFileName() {
-    	if (query instanceof TemplateQuery) {
-    		return "template_query";
-    	}
-    	return "query";
+        if (query instanceof TemplateQuery) {
+            return "template_query";
+        }
+        return "query";
     }
 
     /**
@@ -125,14 +141,30 @@ public class WebserviceCodeGenInfo
      * @return Whether the query is public.
      */
     public boolean isPublic() {
-		return isPublic;
-	}
+        return isPublic;
+    }
 
-	/**
-	 * The name of the user logged in when this info was generated
-	 * @return The name of the user
-	 */
-	public String getUserName() {
-		return userName;
-	}
+    /**
+     * The name of the user logged in when this info was generated
+     * @return The name of the user
+     */
+    public String getUserName() {
+        return user.getUsername();
+    }
+
+    public String getLineBreak() {
+        return lineBreak;
+    }
+
+    /**
+     * A token for the user. The permanent token is preferred, but a temporary one
+     * is generated if that is not available.
+     * @return A token for the the user
+     */
+    public String getUserToken() {
+        if (user.getApiKey() != null) {
+            return user.getApiKey();
+        }
+        return user.getDayToken();
+    }
 }

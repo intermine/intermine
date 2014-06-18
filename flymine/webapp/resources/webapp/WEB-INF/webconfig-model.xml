@@ -197,12 +197,20 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Interaction">
+    <fields>
+      <fieldconfig fieldExpr="gene1.symbol" />
+      <fieldconfig fieldExpr="gene2.symbol" />
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.InteractionExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
+  
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -222,7 +230,7 @@
   <class className="org.intermine.model.bio.SequenceFeature">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
-      <fieldconfig fieldExpr="organism.name" name="Organism"/>
+      <fieldconfig fieldExpr="organism.name" name="Organism" label="Organism Name"/>
     </fields>
   </class>
 
@@ -387,7 +395,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="primaryAccession"/>
-      <fieldconfig fieldExpr="organism.name" outerInSummary="true"/>
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
@@ -899,7 +907,7 @@
                                  typeClass="Protein"
                                  views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
                                        proteinDomains.name"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+                                 externalLink="http://www.ebi.ac.uk/interpro/entry/"/>
 
 
       <enrichmentwidgetdisplayer id="bdgp_enrichment"

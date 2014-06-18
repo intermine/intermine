@@ -1,7 +1,7 @@
 package org.intermine.modelproduction.xml;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,7 +51,7 @@ public class InterMineModelParser implements ModelParser
     	try {
 	        ModelHandler handler = new ModelHandler();
 	        SAXParser.parse(new InputSource(reader), handler);
-	        Model model = new Model(handler.modelName, handler.packageName, handler.classes);
+	        Model model = new Model(handler.modelName, handler.packageName, handler.version, handler.classes);
 	        return model;
     	} catch (Exception e) {
     		throw new ModelParserException(e);
@@ -86,6 +86,7 @@ public class InterMineModelParser implements ModelParser
     {
         String modelName;
         String packageName;
+        int version = 0;
         Set<ClassDescriptor> classes = new LinkedHashSet<ClassDescriptor>();
         SkeletonClass cls;
 
@@ -98,6 +99,15 @@ public class InterMineModelParser implements ModelParser
             if ("model".equals(qName)) {
                 modelName = attrs.getValue("name");
                 packageName = attrs.getValue("package");
+                String versionString = attrs.getValue("version");
+                if (versionString != null) {
+                	try {
+                	    version = Integer.parseInt(versionString);
+                	} catch (NumberFormatException e) {
+                		throw new IllegalArgumentException("Error - version = "
+                				+ versionString + " is not a valid version");
+                	}
+                }
                 if (packageName == null) {
                     throw new IllegalArgumentException("Error - package name of model is not "
                             + "defined");

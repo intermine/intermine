@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -163,7 +163,12 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             }
         }
 
-        ExportResultsIterator qResults = executor.execute((PathQuery) q);
+        ExportResultsIterator qResults;
+        try {
+            qResults = executor.execute((PathQuery) q);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
         // traverse so we get a nice map from homologue symbol to a map of allele term names (and
         //  some extras)
         HashMap<String, HashMap<String, Object>> counts = new HashMap<String, HashMap<String,

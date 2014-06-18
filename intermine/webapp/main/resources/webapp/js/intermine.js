@@ -24,7 +24,7 @@ im.exists = function(e) {
 
 // (on all IE only), will apply .odd/.even classes to "known" tables (see Wiki for those)
 im.alternatingColors = function() {
-  if (jQuery.browser.msie) {
+  if (jQuery.browser && jQuery.browser.msie) { // removed in 1.9.1
     jQuery.each(['collection-table'], function(index, imTable) {
       jQuery('div.' + imTable + ' table tbody tr:nth-child(2n)').addClass('odd');
       jQuery('div.' + imTable + '.column-border table tbody tr td:nth-child(n+2)').addClass('left-column-border');

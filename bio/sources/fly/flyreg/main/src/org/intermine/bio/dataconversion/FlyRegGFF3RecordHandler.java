@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import org.intermine.bio.dataconversion.IdResolver;
 import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -84,11 +87,32 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         String pmid = null;
 
         for (String dbxref: dbxrefs) {
-            if (dbxref.startsWith("PMID:")) {
-                pmid = dbxref.substring(5);
+            // NB: format changed, the individual refs in DBxref used to be quoted, now they just
+            // have quotes around the whole lot.
+            if (dbxref.contains(",")) {
+                List<String> refList = new ArrayList<String>(
+                        Arrays.asList(StringUtil.split(dbxref, ",")));
+                for (String ref : refList) {
+                    ref = ref.trim();
+                    
+                    int colonIndex = ref.indexOf(":");
+                    if (colonIndex == -1) {
+                        throw new RuntimeException("external reference not understood: " + ref);
+                    }
+  
+                    if (ref.startsWith("PMID:")) {
+                        pmid = ref.substring(colonIndex + 1);
+                    } else {
+                        if (ref.startsWith("REDfly:")) {
+                            redflyID = ref.substring(colonIndex + 1);
+                        }
+                    }
+                }
+            } else if (dbxref.startsWith("PMID:")) {
+                pmid = dbxref.substring(dbxref.indexOf(":") + 1);
             } else {
                 if (dbxref.startsWith("REDfly:")) {
-                    redflyID = dbxref.substring(7);
+                    redflyID = dbxref.substring(dbxref.indexOf(":") + 1);
                 }
             }
         }
@@ -114,7 +138,14 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 
         addPublication(pubmedItem);
 
-        String factorGeneName = record.getAttributes().get("Factor").get(0);
+        String factorGeneName = record.getAttributes().get("Factor") == null ? record
+                .getAttributes().get("factor").get(0)
+                : record.getAttributes().get("Factor").get(0);
+        if (factorGeneName.contains(":")) {
+            int colonIndex = factorGeneName.lastIndexOf(":");
+            factorGeneName = factorGeneName.substring(colonIndex + 1);
+        }
+
         if (!("unknown").equals(factorGeneName.toLowerCase())
                     && !("unspecified").equals(factorGeneName.toLowerCase())) {
             Item gene = getGene(factorGeneName);
@@ -123,7 +154,13 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
             }
         }
 
-        String targetGeneName = record.getAttributes().get("Target").get(0);
+        String targetGeneName = record.getAttributes().get("Target") == null ? record
+                .getAttributes().get("target").get(0)
+                : record.getAttributes().get("Target").get(0);
+        if (targetGeneName.contains(":")) {
+            int colonIndex = targetGeneName.lastIndexOf(":");
+            targetGeneName = targetGeneName.substring(colonIndex + 1);
+        }
 
         if (!("unknown").equals(targetGeneName.toLowerCase())
                 && !("unspecified").equals(targetGeneName.toLowerCase())) {

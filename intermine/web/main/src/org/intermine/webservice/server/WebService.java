@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,6 +43,7 @@ import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
@@ -207,6 +208,10 @@ public abstract class WebService {
             return profile;
         }
         throw new ServiceForbiddenException("You must be logged in to use this service");
+    }
+
+    protected ListManager getListManager() {
+        return new ListManager(im, getPermission().getProfile());
     }
 
     /**
@@ -383,6 +388,7 @@ public abstract class WebService {
     private void setHeaders() {
         Properties headerProps = PropertiesUtil.getPropertiesStartingWith(
                 WS_HEADERS_PREFIX, webProperties);
+
         for (Object o : headerProps.values()) {
             String h = o.toString();
             String[] parts = StringUtils.split(h, ":", 2);
@@ -391,6 +397,11 @@ public abstract class WebService {
             } else {
                 response.setHeader(parts[0].trim(), parts[1].trim());
             }
+        }
+
+        String origin = request.getHeader("Origin");
+        if (StringUtils.isNotBlank(origin)) {
+            response.setHeader("Access-Control-Allow-Origin", origin);
         }
     }
 
@@ -514,26 +525,47 @@ public abstract class WebService {
         }
         if (output != null) {
             output.setError(msg, code);
+            LOG.debug("Set error to : " + msg + "," + code);
         }
-        LOG.debug("Set error to : " + msg + "," + code);
     }
 
     private void logError(Throwable t, String msg, int code) {
 
         // Stack traces for all!
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(b);
-        t.printStackTrace(ps);
-        ps.flush();
+        String truncatedStackTrace = getTruncatedStackTrace(t);
 
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
             LOG.error("Service failed by internal error. Request parameters: \n"
-                    + requestParametersToString() + b.toString());
+                    + requestParametersToString() + t + "\n" + truncatedStackTrace);
         } else {
             LOG.debug("Service didn't succeed. It's not an internal error. "
                     + "Reason: " + getErrorDescription(msg, code) + "\n"
-                    + b.toString());
+                    + truncatedStackTrace);
         }
+    }
+
+    private String getTruncatedStackTrace(Throwable t) {
+        StackTraceElement[] stack = t.getStackTrace();
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(b);
+        boolean tooDeep = false;
+
+        for (int i = 0; !tooDeep && i < stack.length; i++) {
+            StackTraceElement element = stack[i];
+            if (element.getClassName().contains("catalina")) {
+                // We have descended as far as is useful. stop here.
+                tooDeep = true;
+                ps.print("\n ...");
+            } else {
+                ps.print("\n  at ");
+                ps.print(element);
+            }
+        }
+        if (t.getCause() != null) {
+            ps.print("\n caused by: " + t.getCause() + "\n" + getTruncatedStackTrace(t.getCause()));
+        }
+        ps.flush();
+        return b.toString();
     }
 
     private String requestParametersToString() {
@@ -660,6 +692,8 @@ public abstract class WebService {
     }
 
     private PrintWriter out = null;
+
+    private String lineBreak = null;
  
     /**
      * Get access to the underlying print-writer.
@@ -672,12 +706,8 @@ public abstract class WebService {
     }
 
     private void initOutput() {
-        final String separator;
-        if (RequestUtil.isWindowsClient(request)) {
-            separator = Exporter.WINDOWS_SEPARATOR;
-        } else {
-            separator = Exporter.UNIX_SEPARATOR;
-        }
+        final String separator = getLineBreak();
+        
         Format format = getFormat();
 
         OutputStream os;
@@ -775,6 +805,17 @@ public abstract class WebService {
         }
     }
 
+    public String getLineBreak() {
+        if (lineBreak == null && request != null) {
+            if (RequestUtil.isWindowsClient(request)) {
+                lineBreak = Exporter.WINDOWS_SEPARATOR;
+            } else {
+                lineBreak = Exporter.UNIX_SEPARATOR;
+            }
+        }
+        return lineBreak;
+    }
+
     /**
      * @return The default file name for this service. (default = "result.tsv")
      */
@@ -807,8 +848,13 @@ public abstract class WebService {
     public boolean wantsColumnHeaders() {
         String wantsCols = request
                 .getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
-        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0"
-                .equals(wantsCols));
+                      // Assume none wanted if empty
+        boolean no = (wantsCols == null || wantsCols.isEmpty()
+                      // interpret standard falsy values as false
+                || "0".equals(wantsCols) || "false".equalsIgnoreCase(wantsCols)
+                      // but none is what we really expect.
+                || "none".equalsIgnoreCase(wantsCols));
+        // All other values, including "true", "True", 1, and foo-bar are yes
         return !no;
     }
 

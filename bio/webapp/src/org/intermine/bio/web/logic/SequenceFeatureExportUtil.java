@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -211,7 +211,7 @@ public final class SequenceFeatureExportUtil
                         summaryPath);
 
                 for (ResultsRow row : results) {
-                    organismTaxonIds.add((String) row.get(0));
+                    organismTaxonIds.add(String.valueOf(row.get(0)));
                 }
             } catch (ObjectStoreException e) {
                 LOG.error("Failed to summarise path: " + summaryPath + " when retrieving organism"

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,11 +15,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
+import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
@@ -46,6 +49,14 @@ public abstract class AbstractQueryService extends WebService
      * @return The XML Schema url.
      */
     protected String getXMLSchemaUrl() {
+        return AbstractQueryService.getSchemaLocation(request);
+    }
+
+    /**
+     * @param request A request for a mine, so we can work out where the schema probably is.
+     * @return The XML Schema url.
+     */
+    public static String getSchemaLocation(HttpServletRequest request) {
         try {
             String relPath = request.getContextPath() + "/"
                     + XML_SCHEMA_LOCATION;
@@ -63,18 +74,12 @@ public abstract class AbstractQueryService extends WebService
      * @return A builder for this query.
      */
     protected PathQueryBuilder getQueryBuilder(String xml) {
-        ListManager listManager = new ListManager(im, getPermission().getProfile());
-
-        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
-        for (InterMineBag bag: listManager.getLists()) {
-            savedBags.put(bag.getName(), bag);
-        }
+        final ListManager listManager = new ListManager(im, getPermission().getProfile());
 
         if (formatIsJsonObj()) {
-            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(),
-                    savedBags);
+            return new PathQueryBuilderForJSONObj(xml, getXMLSchemaUrl(), listManager);
         } else {
-            return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
+            return new PathQueryBuilder(xml, getXMLSchemaUrl(), listManager);
         }
     }
 

@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,13 +11,19 @@ package org.intermine.api.bag;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.intermine.model.InterMineObject;
 
 
@@ -52,10 +58,24 @@ public class BagQueryResult
      */
     public static final String WILDCARD = "WILDCARD";
 
+    public static final Set<String> ISSUE_KEYS
+        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
+
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
+
+    /**
+     * A map from issueType -> Query -> Identifier -> FoundThing[]
+     * 
+     * eg:<pre>
+     *     { "DUPLICATE":      { "Q1": { "my-gene-id": [o1, o2] },
+     *                           "Q2": { "my-gene-id": [o3, o4] }},
+     *       "TYPE_CONVERTED": { "Q3": { "my-prot-id": [pair]   }}}
+     * </pre>
+     **/
     private Map<String, Map<String, Map<String, List>>> issues =
         new LinkedHashMap<String, Map<String, Map<String, List>>>();
-    private Map<String, Object> unresolved = new HashMap<String, Object>();
+
+    private final Map<String, Object> unresolved = new HashMap<String, Object>();
 
     /**
      * Get any results that require some user input before adding to the bag.
@@ -112,24 +132,93 @@ public class BagQueryResult
     public Set<Integer> getMatchAndIssueIds() {
         Set<Integer> ids = new HashSet<Integer>();
         ids.addAll(matches.keySet());
-        for (Map<String, Map<String, List>> issueTypes : issues.values()) {
-            for (Map<String, List> issue : issueTypes.values()) {
-                for (List objects : issue.values()) {
-                    for (Object obj : objects) {
-                        if (obj instanceof InterMineObject) {
-                            ids.add(((InterMineObject) obj).getId());
-                        } else if (obj instanceof ConvertedObjectPair) {
-                            ids.add(((ConvertedObjectPair) obj).getNewObject().getId());
-                        } else if (obj instanceof Integer) {
-                            ids.add((Integer) obj);
-                        }
-                    }
+        ids.addAll(getIssueIds());
+        return ids;
+    }
+
+    /**
+     * Get ids of all InterMineObjects returned that were issues for this
+     * bag query lookup.
+     * @return the set of all ids that were issues
+     */
+    public Set<Integer> getIssueIds() {
+        Set<Integer> ids = new HashSet<Integer>();
+        for (String issueKey: issues.keySet()) {
+            ids.addAll(getIssueIds(issueKey));
+        }
+        return ids;
+    }
+
+    /**
+     * Get ids of all InterMineObjects returned that were registered as 
+     * issues of this particular type for this bag query lookup.
+     * @param issueKey The type of issue we want (eg "DUPLICATE").
+     * @return the set of all ids that were issues
+     */
+    public Set<Integer> getIssueIds(String issueKey) {
+        Set<Integer> ids = new HashSet<Integer>();
+        for (IssueResult issue : getIssueResults(issueKey)) {
+            // Don't care about the input identifier itself, just the matches.
+            for (Object obj : issue.results) {
+                if (obj instanceof InterMineObject) {
+                    ids.add(((InterMineObject) obj).getId());
+                } else if (obj instanceof ConvertedObjectPair) {
+                    ids.add(((ConvertedObjectPair) obj).getNewObject().getId());
+                } else if (obj instanceof Integer) {
+                    ids.add((Integer) obj);
                 }
             }
         }
         return ids;
     }
 
+    public Set<IssueResult> getIssueResults(String issueKey) {
+        Set<IssueResult> result = new HashSet<IssueResult>();
+        Map<String, Map<String, List>> issueTypes = issues.get(issueKey);
+        if (issueTypes == null) {
+            if (ISSUE_KEYS.contains(issueKey)) {
+                return result;
+            } else {
+                throw new IllegalArgumentException(issueKey + " is not a valid issue type");
+            }
+        }
+        for (Entry<String, Map<String, List>> issuesForQuery: issueTypes.entrySet()) {
+            String queryDesc = issuesForQuery.getKey();
+            for (Entry<String, List> issueSet: issuesForQuery.getValue().entrySet()) {
+                result.add(new IssueResult(queryDesc, issueSet.getKey(), issueSet.getValue()));
+            }
+        }
+        return result;
+    }
+
+    // Simple struct to hold three pieces of information together.
+    public static class IssueResult {
+
+        public final String queryDesc, inputIdent;
+        public final List results;
+
+        IssueResult(String queryDesc, String inputIdent, List results) {
+            this.queryDesc = queryDesc;
+            this.inputIdent = inputIdent;
+            this.results = Collections.unmodifiableList(results);
+        }
+
+        public boolean equals(Object o) {
+            return EqualsBuilder.reflectionEquals(this, o);
+        }
+
+        public int hashCode() {
+            return new HashCodeBuilder().append(queryDesc).append(inputIdent).append(results).hashCode();
+        }
+    }
+
+    public Set<String> getInputIdentifiersForIssue(String issueKey) {
+        Set<String> ids = new HashSet<String>();
+        for (IssueResult issue : getIssueResults(issueKey)) {
+            ids.add(issue.inputIdent);
+        }
+        return ids;
+    }
 
     /**
      * Add a new match from an input string to an InterMineObject id.
@@ -149,18 +238,28 @@ public class BagQueryResult
      * Get a Map of any input Strings for which objects of the right type could not be found.
      * @return a Map of from input string to null/object - null when the input doesn't match any
      * object of any type, otherwise a reference to a Set of the objects that matched
+     *
+     * Changes to the returned map will not affect the information in this bag qeury result. 
      */
     public Map<String, Object> getUnresolved() {
-        return unresolved;
+        return new HashMap<String,Object>(unresolved);
+    }
+
+    /**
+     * Get all the unresolved identifiers.
+     * @return a collection of unresolved identifiers.
+     */
+    public Collection<String> getUnresolvedIdentifiers() {
+        return unresolved.keySet();
     }
 
     /**
      * Set the Map of unresolved input strings.  It is Map from input string to null/object - null
      * when the input doesn't match any object of any type, otherwise a reference to the object
      * that matched.
-     * @param unresolved the new unresolved Map
+     * @param unresolved the unresolved identifiers to add to this result.
      */
-    public void setUnresolved(Map<String, Object> unresolved) {
-        this.unresolved = unresolved;
+    public void putUnresolved(Map<String, ? extends Object> unresolved) {
+        this.unresolved.putAll(unresolved);
     }
 }

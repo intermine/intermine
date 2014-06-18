@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -408,8 +408,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
      */
     public void testPathQueryCodeGenerationWithConstraintLookup() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene\" op=\"LOOKUP\" value=\"zen\" extraValue=\"C. elegans\"/>" +
+                "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
+                "sortOrder=\"Gene.primaryIdentifier asc\">" +
+                "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"zen\" extraValue=\"C. elegans\"/>" +
+                "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"eve\"/>" +
         "</query>";
         doComparison(queryXml, "lookup-constraint");
     }

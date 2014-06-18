@@ -9,8 +9,8 @@ use constant {
     SOURCE_LINK => "http://www.flybase.net/",
     SOURCE_DIR => 'ontologies/fly-anatomy',
     SOURCES => [{
-        FILE   => 'fly_anatomy.obo',
-        SERVER => 'http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/anatomy/gross_anatomy/animal_gross_anatomy/fly',
+        FILE   => 'fbbt.obo',
+        SERVER => 'http://svn.code.sf.net/p/fbbtdv/code/fbbt/releases',
     }],
 };
 

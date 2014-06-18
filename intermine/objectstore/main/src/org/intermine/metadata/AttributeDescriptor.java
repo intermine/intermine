@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,7 +30,7 @@ public class AttributeDescriptor extends FieldDescriptor
     public static final Set<String> VALID_TYPES = new LinkedHashSet<String>(Arrays.asList("short",
             "int", "long", "float", "double", "boolean", "java.lang.Short", "java.lang.Integer",
             "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean",
-            "java.lang.String", "java.util.Date", "java.math.BigDecimal",
+            "java.lang.String", "java.util.Date", "java.math.BigDecimal", "java.util.UUID",
             "org.intermine.objectstore.query.ClobAccess"));
 
     /**

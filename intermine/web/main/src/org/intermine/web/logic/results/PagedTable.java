@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -64,6 +64,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Andrew Varley
  * @author Kim Rutherford
  */
+@Deprecated
 public class PagedTable
 {
     private static final int FIRST_SELECTED_FIELDS_COUNT = 25;

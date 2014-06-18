@@ -1,13 +1,28 @@
 package org.intermine.webservice.server.idresolution;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.idresolution.IDResolver;
+import org.intermine.api.idresolution.Job;
+import org.intermine.api.idresolution.JobInput;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -29,9 +44,9 @@ public class IdResolutionService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        final Input in;
+        final WebserviceJobInput in;
         try {
-            in = new Input();
+            in = new WebserviceJobInput();
         } catch (JSONException e) {
             throw new BadRequestException("Invalid JSON object", e);
         } catch (IOException e) {
@@ -40,11 +55,9 @@ public class IdResolutionService extends JSONService
 
         final BagQueryRunner runner = im.getBagQueryRunner();
 
-        Job job = new Job(runner, in);
+        Job job = IDResolver.getInstance().submit(runner, in);
 
         addResultValue(job.getUid(), false);
-
-        new Thread(job).run(); // Run job in the background.
     }
 
     @Override
@@ -52,7 +65,7 @@ public class IdResolutionService extends JSONService
         return "uid";
     }
 
-    public class Input
+    public class WebserviceJobInput implements JobInput
     {
         private final List<String> ids;
         private final String extraValue;
@@ -60,7 +73,7 @@ public class IdResolutionService extends JSONService
         private final Boolean caseSensitive;
         private final Boolean wildCards;
 
-        Input() throws JSONException, IOException {
+        WebserviceJobInput() throws JSONException, IOException {
             JSONObject requestDetails
                 = new JSONObject(new JSONTokener(request.getReader()));
             JSONArray identifiers = requestDetails.getJSONArray("identifiers");
@@ -70,7 +83,7 @@ public class IdResolutionService extends JSONService
             }
             type = requestDetails.getString("type");
             caseSensitive = requestDetails.optBoolean("caseSensitive", false);
-            wildCards = requestDetails.optBoolean("wildCards", true);
+            wildCards = requestDetails.optBoolean("wildCards", false);
             extraValue = requestDetails.optString("extra", null);
         }
 
@@ -99,18 +112,7 @@ public class IdResolutionService extends JSONService
          */
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result
-                    + ((caseSensitive == null) ? 0 : caseSensitive.hashCode());
-            result = prime * result
-                    + ((extraValue == null) ? 0 : extraValue.hashCode());
-            result = prime * result + ((ids == null) ? 0 : ids.hashCode());
-            result = prime * result + ((type == null) ? 0 : type.hashCode());
-            result = prime * result
-                    + ((wildCards == null) ? 0 : wildCards.hashCode());
-            return result;
+            return HashCodeBuilder.reflectionHashCode(this);
         }
 
         /* (non-Javadoc)
@@ -118,59 +120,7 @@ public class IdResolutionService extends JSONService
          */
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (!(obj instanceof Input)) {
-                return false;
-            }
-            Input other = (Input) obj;
-            if (!getOuterType().equals(other.getOuterType())) {
-                return false;
-            }
-            if (caseSensitive == null) {
-                if (other.caseSensitive != null) {
-                    return false;
-                }
-            } else if (!caseSensitive.equals(other.caseSensitive)) {
-                return false;
-            }
-            if (extraValue == null) {
-                if (other.extraValue != null) {
-                    return false;
-                }
-            } else if (!extraValue.equals(other.extraValue)) {
-                return false;
-            }
-            if (ids == null) {
-                if (other.ids != null) {
-                    return false;
-                }
-            } else if (!ids.equals(other.ids)) {
-                return false;
-            }
-            if (type == null) {
-                if (other.type != null) {
-                    return false;
-                }
-            } else if (!type.equals(other.type)) {
-                return false;
-            }
-            if (wildCards == null) {
-                if (other.wildCards != null) {
-                    return false;
-                }
-            } else if (!wildCards.equals(other.wildCards)) {
-                return false;
-            }
-            return true;
-        }
-
-        private IdResolutionService getOuterType() {
-            return IdResolutionService.this;
+            return EqualsBuilder.reflectionEquals(this, obj);
         }
     }
 

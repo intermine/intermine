@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 import org.intermine.metadata.Model;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -187,6 +187,12 @@ public class PathQueryUnmarshalTest extends  TestCase
         Collection<PathQuery> pqlist = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values();
 
         assertEquals(pqlist.size(), 2);
+    }
+
+    public void testInterMineObjectQuery() {
+        PathQuery query = createQuery("IMObj.xml");
+        assertEquals(Collections.EMPTY_LIST, query.verifyQuery());
+        assertEquals("InterMineObject.id", query.getView().get(0));
     }
 
     public void testMultipleQueriesWithSameName() {

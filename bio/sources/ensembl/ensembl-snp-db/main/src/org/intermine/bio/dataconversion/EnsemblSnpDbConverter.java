@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -119,8 +119,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     + " set the 'organism' property in project.xml");
         }
 
-        Connection connection = getDatabase().getConnection();
-
         List<String> chrNames = new ArrayList<String>();
         for (int i = MIN_CHROMOSOME; i <= 22; i++) {
             chrNames.add("" + i);
@@ -134,18 +132,21 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         for (String chrName : chrNames) {
             System. out.println("Starting to process chromosome " + chrName);
             LOG.info("Starting to process chromosome " + chrName);
+            Connection connection = getDatabase().getConnection();
             ResultSet res = queryVariation(connection, chrName);
             process(res, chrName);
             createSynonyms(connection, chrName);
+            connection.close();
         }
         storeFinalSnps();
 
         if (PLANT == this.taxonId.intValue()) {
+            Connection connection = getDatabase().getConnection();
             processGenotypes(connection);
             processPopulations(connection);
             processStrainPopulationReferences(connection);
+            connection.close();
         }
-        connection.close();
     }
 
     /**
@@ -521,13 +522,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             String strainIdentifier) throws Exception {
         // One table contains SNPs and once contains bigger indels, etc.
         ResultSet res = queryGenotypesForStrainSingleBp(connection, strainId);
-        createGeneotypesForStrain(res, strainId, strainIdentifier);
+        createGenotypesForStrain(res, strainId, strainIdentifier);
 
         res = queryGenotypesForStrainMultipleBp(connection, strainId);
-        createGeneotypesForStrain(res, strainId, strainIdentifier);
+        createGenotypesForStrain(res, strainId, strainIdentifier);
     }
 
-    private void createGeneotypesForStrain(ResultSet res, Integer strainId, String strainIdentifier)
+    private void createGenotypesForStrain(ResultSet res, Integer strainId, String strainIdentifier)
         throws Exception {
         int snpReferenceCount = 0;
         int ignoredCount = 0;
@@ -868,10 +869,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
          *
          * 2) CREATE TABLE mM_snp_tmp_ordered_chr_all SELECT * FROM
          * mM_snp_tmp_no_order_chr_all ORDER BY seq_region_name, variation_id;
+         *
+         * 3) ALTER TABLE `mM_snp_tmp_ordered_chr_all` ADD INDEX (`seq_region_name`);
          */
 
         // in mysql, string comparisons are case insensitive by default, use BINARY
         // we had a loading issue with "MT" and "Mt", a snp was created twice
+
+        // Close connection after query
         String query = "SELECT *"
                 + " FROM mM_snp_tmp_ordered_chr_all"
                 + " WHERE BINARY seq_region_name = '" + chrName + "'";

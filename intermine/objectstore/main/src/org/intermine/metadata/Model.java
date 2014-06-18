@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,8 +40,10 @@ public class Model
 {
     private static Map<String, Model> models = new HashMap<String, Model>();
     protected static final String ENDL = System.getProperty("line.separator");
+    private static final String DEFAULT_PACKAGE = "org.intermine.model";
     private final String modelName;
     private final String packageName;
+    private final int version;
     private final Map<String, ClassDescriptor> cldMap = new LinkedHashMap<String,
             ClassDescriptor>();
     private final Map<ClassDescriptor, Set<ClassDescriptor>> subMap
@@ -89,11 +91,11 @@ public class Model
      *
      * @param name name of model
      * @param packageName the package name of the model
+     * @param version 
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, String packageName,
-            Set<ClassDescriptor> clds) throws MetaDataException {
+    public Model(String name, String packageName, int version, Set<ClassDescriptor> clds) throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
@@ -109,6 +111,7 @@ public class Model
 
         this.modelName = name;
         this.packageName = packageName;
+        this.version = version;
 
         LinkedHashSet<ClassDescriptor> orderedClds = new LinkedHashSet<ClassDescriptor>(clds);
 
@@ -158,7 +161,11 @@ public class Model
         }
     }
 
-    /**
+    public Model(String name, String namespace, Set<ClassDescriptor> classes) throws MetaDataException {
+		this(name, namespace, 0, classes);
+	}
+
+	/**
      * Return name of the model's package.
      * @return package name
      */
@@ -178,7 +185,7 @@ public class Model
     /**
      * Get the ClassDescriptors for the all subclasses of a class
      * @param cld the parent ClassDescriptor
-     * @return the ClassDescriptors of all decedents
+     * @return the ClassDescriptors of all descedents
      */
     public Set<ClassDescriptor> getAllSubs(ClassDescriptor cld) {
         Set<ClassDescriptor> returnSubs = new TreeSet<ClassDescriptor>();
@@ -198,10 +205,12 @@ public class Model
     public ClassDescriptor getClassDescriptorByName(String name) {
         ClassDescriptor cd = cldMap.get(name);
         if (cd == null) {
-            return cldMap.get(getPackageName() + "." + name);
-        } else {
-            return cd;
+            cd = cldMap.get(getPackageName() + "." + name);
         }
+        if (cd == null) { // still, maybe it's in the default package?
+            cd = cldMap.get(DEFAULT_PACKAGE + "." + name);
+        }
+        return cd;
     }
 
     /**
@@ -275,7 +284,11 @@ public class Model
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("<model name=\"" + modelName + "\" package=\"" + packageName + "\">" + ENDL);
+        sb.append("<model"
+        		+ " name=\"" + modelName + "\""
+        		+ " package=\"" + packageName + "\""
+        		+ ((version == 0) ? "" : " version=\"" + version + "\"")
+        		+ ">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
@@ -295,7 +308,9 @@ public class Model
           .append(modelName)
           .append("\",\"package\":\"")
           .append(packageName)
-          .append("\",\"classes\":{");
+          .append("\",\"version\":")
+          .append(version)
+          .append(",\"classes\":{");
         boolean needsComma = false;
         for (ClassDescriptor cld: getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
@@ -587,4 +602,8 @@ public class Model
     public boolean hasProblems() {
         return !problems.isEmpty();
     }
+
+	public int getVersion() {
+		return version;
+	}
 }

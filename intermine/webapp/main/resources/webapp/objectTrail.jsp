@@ -14,8 +14,7 @@
     <c:forEach items="${trailElements}" var="item" varStatus="status">
       <c:choose>
         <c:when test="${item.type == 'results'}">
-          <html:link action="/results?table=${item.elementId}&amp;trail=${item.trail}"
-                     styleClass="objectTrailLinkResults">Results</html:link>
+          <html>Results</html>
         </c:when>
         <c:when test="${item.type == 'query'}">
           <c:choose>

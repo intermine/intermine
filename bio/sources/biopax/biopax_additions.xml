@@ -3,7 +3,7 @@
   <class name="Protein" is-interface="true">
      <collection name="pathways" referenced-type="Pathway" reverse-reference="proteins"/>
   </class>
-  <!-- populated by postprocess -->
+  <!-- populated by do-sources postprocess -->
   <class name="Gene" is-interface="true">
      <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
   </class>

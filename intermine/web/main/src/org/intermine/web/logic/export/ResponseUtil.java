@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -200,7 +200,7 @@ public final class ResponseUtil
      * @param response response
      */
     public static void setXMLContentType(HttpServletResponse  response) {
-        response.setContentType("text/xml");
+        response.setContentType("application/xml");
         response.setCharacterEncoding("UTF-8");
     }
 

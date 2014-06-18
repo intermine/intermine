@@ -1,7 +1,7 @@
 package org.intermine.web.logic.querybuilder;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
@@ -44,6 +46,9 @@ import org.intermine.web.logic.query.MetadataNode;
  */
 public final class ModelBrowserHelper
 {
+
+    private static final Logger LOG = Logger.getLogger(ModelBrowserHelper.class);
+
     private ModelBrowserHelper() {
     }
 
@@ -187,7 +192,7 @@ public final class ModelBrowserHelper
             Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
             ObjectStoreSummary oss, WebConfig webConfig) {
 
-        // null atrtributes, references and collections
+        // null attributes, references and collections
         Set<String> nullAttr = oss.getNullAttributes(cld.getName());
         Set<String> nullRefsCols = oss.getNullReferencesAndCollections(cld.getName());
 
@@ -206,8 +211,8 @@ public final class ModelBrowserHelper
         Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(comparator);
         for (Iterator<FieldDescriptor> i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
             FieldDescriptor fd = i.next();
-            FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, fd);
-            if (fc == null || !fc.isHideInQueryBuilder()) {
+            FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
+            if (fc == null || fc.getShowInQB()) {
                 if (!fd.isReference() && !fd.isCollection()) {
                     attributeNodes.add(fd);
                 } else {

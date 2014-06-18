@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -35,13 +36,16 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -76,6 +80,7 @@ public class ListUploadService extends ListMakerService
      * The maximum number of ids to query for each batch.
      */
     public static final int BAG_QUERY_MAX_BATCH_SIZE = 10000;
+    public static final Logger LOG = Logger.getLogger(ListUploadService.class);
 
     private final BagQueryRunner runner;
     protected static final String PLAIN_TEXT = "text/plain";
@@ -138,17 +143,23 @@ public class ListUploadService extends ListMakerService
      * @param bagManager The bag manager that we are using.
      * @return A parsed representation of the parameters.
      */
-    protected ListInput getInput(final HttpServletRequest request, final BagManager bagManager) {
+    @Override
+    protected ListCreationInput getInput() {
         return new ListCreationInput(request, bagManager, getPermission().getProfile());
     }
 
     @Override
-    protected void makeList(final ListInput input, final String type, final Profile profile,
-        final Set<String> temporaryBagNamesAccumulator) throws Exception {
+    protected void makeList(
+            final ListInput listInput,
+            final String type,
+            final Profile profile,
+            final Set<String> temporaryBagNamesAccumulator) throws Exception {
 
         if (StringUtils.isBlank(type)) {
             throw new BadRequestException("No list type provided");
         }
+
+        ListCreationInput input = (ListCreationInput) listInput;
 
         if (input.doReplace()) {
             ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
@@ -159,31 +170,12 @@ public class ListUploadService extends ListMakerService
                 + input.getListName() + "'");
         }
 
-        final StrMatcher matcher = getMatcher();
-
-        final BufferedReader r = getReader(request);
         final Set<String> ids = new LinkedHashSet<String>();
         final Set<String> unmatchedIds = new HashSet<String>();
+        final InterMineBag tempBag = profile.createBag(input.getTemporaryListName(),
+                type, input.getDescription(), im.getClassKeys());
 
-        final InterMineBag tempBag = profile.createBag(
-                input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
-        String line;
-        while ((line = r.readLine()) != null) {
-            final StrTokenizer st =
-                new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
-            while (st.hasNext()) {
-                final String token = st.nextToken();
-                ids.add(token);
-            }
-            if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
-                addIdsToList(ids, tempBag, type, input.getExtraValue(),
-                        unmatchedIds);
-                ids.clear();
-            }
-        }
-        if (ids.size() > 0) {
-            addIdsToList(ids, tempBag, type, input.getExtraValue(), unmatchedIds);
-        }
+        processIdentifiers(type, input, ids, unmatchedIds, tempBag);
 
         setListSize(tempBag.size());
 
@@ -199,6 +191,35 @@ public class ListUploadService extends ListMakerService
             im.getBagManager().addTagsToBag(input.getTags(), tempBag, profile);
         }
         profile.renameBag(input.getTemporaryListName(), input.getListName());
+    }
+
+    protected void processIdentifiers(
+            final String type,
+            ListCreationInput input,
+            final Set<String> ids,
+            final Set<String> unmatchedIds,
+            final InterMineBag tempBag) throws IOException,
+            ClassNotFoundException, InterMineException, ObjectStoreException {
+        final Collection<String> addIssues = input.getAddIssues();
+        String line;
+        final BufferedReader r = getReader(request);
+        final StrMatcher matcher = getMatcher();
+        while ((line = r.readLine()) != null) {
+            final StrTokenizer st =
+                new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
+            while (st.hasNext()) {
+                final String token = st.nextToken();
+                ids.add(token);
+            }
+            if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
+                addIdsToList(ids, tempBag, type, input.getExtraValue(),
+                        unmatchedIds, addIssues);
+                ids.clear();
+            }
+        }
+        if (ids.size() > 0) {
+            addIdsToList(ids, tempBag, type, input.getExtraValue(), unmatchedIds, addIssues);
+        }
     }
 
     /**
@@ -265,22 +286,27 @@ public class ListUploadService extends ListMakerService
      * @throws InterMineException If something goes wrong building the bag.
      * @throws ObjectStoreException If there is a problem on the database level.
      */
-    protected void addIdsToList(final Collection<? extends String> ids, final InterMineBag bag,
-        final String type, final String extraFieldValue, final Set<String> unmatchedIds)
+    protected void addIdsToList(
+            final Collection<? extends String> ids,
+            final InterMineBag bag,
+            final String type,
+            final String extraFieldValue,
+            final Set<String> unmatchedIds,
+            final Collection<String> acceptableIssues)
         throws ClassNotFoundException, InterMineException, ObjectStoreException {
         final BagQueryResult result = runner.searchForBag(
-                type, new ArrayList<String>(ids), extraFieldValue, false);
+                type, new ArrayList<String>(ids), extraFieldValue,
+                acceptableIssues.contains(BagQueryResult.WILDCARD));
         bag.addIdsToBag(result.getMatches().keySet(), type);
 
         for (final String issueType: result.getIssues().keySet()) {
-            @SuppressWarnings("rawtypes")
-            final
-            Map<String, Map<String, List>> issueMap = result.getIssues().get(issueType);
-            for (final String query: issueMap.keySet()) {
-                unmatchedIds.addAll(issueMap.get(query).keySet());
+            if (acceptableIssues.contains(issueType)) {
+                bag.addIdsToBag(result.getIssueIds(issueType), type);
+            } else {
+                unmatchedIds.addAll(result.getInputIdentifiersForIssue(issueType));
             }
         }
-        unmatchedIds.addAll(result.getUnresolved().keySet());
+        unmatchedIds.addAll(result.getUnresolvedIdentifiers());
     }
 
 }

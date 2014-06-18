@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -23,6 +24,7 @@ import org.intermine.bio.dataconversion.IdResolver;
 import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
@@ -73,15 +75,17 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             feature.setAttribute("evidenceMethod", elementEvidence);
         }
 
-        List<String> ontologyTermIds = record.getAttributes().get("Ontology_term");
-
-        if (ontologyTermIds != null) {
-            Iterator<String> ontologyTermIdsIter = ontologyTermIds.iterator();
+        // unlikely to be more than one but I am leaving this
+        List<String> ontologyTerm = record.getAttributes().get("Ontology_term");
+        if (ontologyTerm != null) {
             List<String> anatomyItems = new ArrayList<String>();
-
-            while (ontologyTermIdsIter.hasNext()) {
-                String ontologyTermId = ontologyTermIdsIter.next();
-                anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
+            // string is a quoted list
+            for (String commaListOfIds : ontologyTerm) {
+            	List<String> ontologyTermIds = new ArrayList<String>(
+            			Arrays.asList(StringUtil.split(commaListOfIds, ",")));
+                for (String ontologyTermId : ontologyTermIds) {
+                	anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
+                }
             }
 
             feature.setCollection("anatomyOntology", anatomyItems);
@@ -93,30 +97,38 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         List<String> dbxrefs = record.getDbxrefs();
 
+        //Format changed. Ref to FlyReg.
         if (dbxrefs != null) {
             Iterator<String> dbxrefsIter = dbxrefs.iterator();
 
             while (dbxrefsIter.hasNext()) {
-                String dbxref = dbxrefsIter.next();
-                int colonIndex = dbxref.indexOf(":");
-                if (colonIndex == -1) {
-                    throw new RuntimeException("external reference not understood: " + dbxref);
-                }
+            	String dbxref = dbxrefsIter.next();
 
-                if (dbxref.startsWith("Flybase:")) {
-                    geneName = dbxref.substring(colonIndex + 1);
-                } else {
-                    if (dbxref.startsWith("PMID:")) {
-                        pubmedId = dbxref.substring(colonIndex + 1);
-                    } else {
-                        if (dbxref.startsWith(REDFLY_PREFIX)) {
-                            redflyID = dbxref.substring(colonIndex + 1);
-                        } else {
-                            throw new RuntimeException("unknown external reference type: "
-                                    + dbxref);
-                        }
-                    }
-                }
+            	List<String> refList = new ArrayList<String>(
+            			Arrays.asList(StringUtil.split(dbxref, ",")));
+            	for (String ref : refList) {
+            		ref = ref.trim();
+            		int colonIndex = ref.indexOf(":");
+            		if (colonIndex == -1) {
+            			throw new RuntimeException("external reference not understood: " + ref);
+            		}
+
+            		if (ref.startsWith("FB:")) {
+            			geneName = ref.substring(colonIndex + 1);
+            		} else {
+            			if (ref.startsWith("PMID:")) {
+            				pubmedId = ref.substring(colonIndex + 1);
+            			} else {
+            				if (ref.startsWith(REDFLY_PREFIX)) {
+            					redflyID = ref.substring(colonIndex + 1);
+            				} else {
+            					throw new RuntimeException("unknown external reference type: "
+            							+ ref);
+            				}
+            			}
+            		}
+            	}
+
             }
         }
 

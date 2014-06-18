@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,9 +12,9 @@ package org.intermine.webservice.server.template.result;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.intermine.web.logic.template.TemplateResultInput;
+import org.intermine.web.logic.template.Templates;
+import org.intermine.web.logic.template.Templates.TemplateValueParseException;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.result.QueryResultRequestParser;
@@ -53,7 +53,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
         super.parseRequest(request, input);
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
         try {
-            input.setConstraints(TemplateHelper.parseConstraints(request));
+            input.setConstraints(Templates.parseConstraints(request));
         } catch (TemplateValueParseException e) {
             throw new BadRequestException(e.getMessage(), e);
         }

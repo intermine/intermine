@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -193,7 +193,7 @@ public class Path
         String clsName = parts[0];
         ClassDescriptor cld = null;
         if (!("".equals(clsName))) {
-            cld = model.getClassDescriptorByName(model.getPackageName() + "." + clsName);
+            cld = model.getClassDescriptorByName(clsName);
             if (cld == null) {
                 throw new PathException("Unable to resolve path '" + path + "': class '" + clsName
                                     + "' not found in model '" + model.getName() + "'", path);

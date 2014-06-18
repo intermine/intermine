@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -49,6 +49,7 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.util.NameUtil;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
 import org.intermine.util.StringUtil;
@@ -186,7 +187,7 @@ public class TemplateAction extends InterMineAction
                     webProperties.getProperty("project.title"),
                     webProperties.getProperty("perl.wsModuleVer"),
                     WebserviceCodeGenAction.templateIsPublic(template, im, profile),
-                    profile.getUsername());
+                    profile);
             WebserviceCodeGenerator codeGen = new WebserviceJavaScriptCodeGenerator();
             String code = codeGen.generate(info);
             session.setAttribute("realCode", code);
@@ -261,9 +262,6 @@ public class TemplateAction extends InterMineAction
         }
         form.reset(mapping, request);
 
-        String qid = SessionMethods.startQueryWithTimeout(request, saveQuery, populatedTemplate);
-        Thread.sleep(200);
-
         //tracks the template execution
         im.getTrackerDelegate().trackTemplate(populatedTemplate.getName(), profile,
                                               session.getId());
@@ -280,8 +278,13 @@ public class TemplateAction extends InterMineAction
             // session.removeAttribute(Constants.QUERY);
         }
 
-        return new ForwardParameters(mapping.findForward("waiting"))
-                .addParameter("qid", qid).addParameter("trail", trail)
+        String queryName = NameUtil.findNewQueryName(
+        		profile.getHistory().keySet());
+        SessionMethods.saveQueryToHistory(session, queryName, 
+        		populatedTemplate.getQueryToExecute());
+        
+        return new ForwardParameters(mapping.findForward("results"))
+                .addParameter("trail", trail)
                 .forward();
     }
 

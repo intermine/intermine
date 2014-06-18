@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,9 +33,12 @@ import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.idresolution.IDResolver;
+import org.intermine.api.idresolution.Job;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
+import org.intermine.web.logic.bag.WebJobInput;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -172,9 +175,10 @@ public class BuildBagAction extends InterMineAction
                 }
             }
         }
-        BagQueryResult bagQueryResult = bagRunner.search(type, list,
-                buildBagForm.getExtraFieldValue(), false, buildBagForm.getCaseSensitive());
-        session.setAttribute("bagQueryResult", bagQueryResult);
+        WebJobInput input = new WebJobInput(type, list, buildBagForm);
+        Job job = IDResolver.getInstance().submit(bagRunner, input);
+
+        session.setAttribute("idresolutionjobid", job.getUid());
         request.setAttribute("bagType", type);
         request.setAttribute("bagExtraFilter", buildBagForm.getExtraFieldValue());
         //buildNewBag used by jsp to set editable the bag name field

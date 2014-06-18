@@ -34,7 +34,7 @@
         jQuery("#dbkey").val("");
         jQuery("#URL").val("${tableURL}");
         jQuery("#size").val("${size}");
-        jQuery("input[name='exportOptions']").filter("[value='view']").attr('checked', true);
+        jQuery("input[name='exportOptions']").filter("[value='view']").prop('checked', true);
     }
 
     if (jQuery(this).val() == "feature") {
@@ -43,7 +43,7 @@
         jQuery("#dbkey").val("${dbkey}");
         jQuery("#URL").val("${bedURL}");
         jQuery("#size").val("");
-        jQuery("input[name='exportOptions']").filter("[value='feature']").attr('checked', true);
+        jQuery("input[name='exportOptions']").filter("[value='feature']").prop('checked', true);
     }
   }
 
@@ -57,10 +57,10 @@
     jQuery("#dbkey").val("");
 
     if ("${canExportAsBED}" == "false") {
-        jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', true);
+        jQuery("input[name='exportOptions']").filter("[value='feature']").prop('disabled', true);
     }
 
-    jQuery("input[name='exportOptions']").filter("[value='view']").attr('checked', true);
+    jQuery("input[name='exportOptions']").filter("[value='view']").prop('checked', true);
   }
 
   function updatePathQueryView()

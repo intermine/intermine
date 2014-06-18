@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,8 +26,6 @@ import java.util.Stack;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,7 +38,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
 
 /**
  * DataConverter to parse psi data into items
@@ -60,21 +57,16 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String> regions = new HashMap<String, String>();
     private String termId = null;
     private static final String INTERACTION_TYPE = "physical";
-    private static final String ENSEMBL = "ensembl";
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
-    private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     private static final String ALIAS_TYPE = "gene name";
     private static final String SPOKE_MODEL = "prey";   // don't store if all roles prey
     private static final String DEFAULT_IDENTIFIER = "symbol";
     private static final String DEFAULT_DATASOURCE = "";
     private static final String BINDING_SITE = "MI:0117";
     private static final Set<String> INTERESTING_COMMENTS = new HashSet<String>();
-
-    private static final String HUMAN_TAXON = "9606";
-    private static final String FLY_TAXON = "7227";
 
     protected IdResolver rslv;
 
@@ -112,11 +104,8 @@ public class PsiConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
 
         // init reslover
-        Set<String> resolveTaxonIds = new HashSet<String>();
-        resolveTaxonIds.add(HUMAN_TAXON);
-        resolveTaxonIds.add(FLY_TAXON);
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(resolveTaxonIds);
+            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
         }
 
         PsiHandler handler = new PsiHandler();
@@ -403,7 +392,6 @@ public class PsiConverter extends BioFileConverter
                     experimentHolder.setHostOrganism(hostOrganism);
                 }
 
-
              // ----------------- interactors ----------------------- //
 
             // <interactorList><interactor id="4"><names><fullName>
@@ -683,65 +671,19 @@ public class PsiConverter extends BioFileConverter
         }
 
         private String resolveGeneIdentifier(String taxonId, String datasource, String id) {
-            if (FLY_TAXON.equals(taxonId) && rslv.hasTaxon(taxonId)) {
-                if (rslv != null) {
-                    String identifier = id;
-                    int resCount = rslv.countResolutions(taxonId, identifier);
-                    if (resCount != 1) {
-                        LOG.info("RESOLVER: failed to resolve gene to one identifier, "
-                                + "ignoring gene: " + identifier + " count: " + resCount + " FBgn: "
-                                + rslv.resolveId(taxonId, identifier));
-                        return null;
-                    }
-                    identifier = rslv.resolveId(taxonId, identifier).iterator().next();
-                    return identifier;
-                }
-            }
-            if (ENSEMBL.equals(datasource)) {
-                Integer taxonInt = null;
-                try {
-                    taxonInt = Integer.valueOf(taxonId);
-                } catch (NumberFormatException e) {
-                    throw new NumberFormatException("invalid taxon ID " + taxonId);
-                }
-                OrganismData od = OR.getOrganismDataByTaxon(taxonInt);
-                if (od == null) {
-                    throw new RuntimeException("Add taxon ID " + taxonId
-                            + " to organism repository");
-                }
-                final String ensemblPrefix = od.getEnsemblPrefix();
-                if (ensemblPrefix == null) {
-                    throw new RuntimeException("Add ensemblPrefix for " + taxonId
-                            + " to organism repository");
-                }
-                if (id.startsWith(ensemblPrefix)) {
-                    if (HUMAN_TAXON.equals(taxonId) && rslv.hasTaxon(taxonId)) {
-                        if (rslv != null) {
-                            String identifier = id;
-                            int resCount = rslv.countResolutions(taxonId, identifier);
-                            if (resCount != 1) {
-                                LOG.info("RESOLVER: failed to resolve gene to one identifier, "
-                                        + "ignoring gene: " + identifier + " count: " + resCount
-                                        + " results: " + rslv.resolveId(taxonId, identifier));
-                                return null;
-                            }
-                            identifier = rslv.resolveId(taxonId, identifier).iterator().next();
-                            return identifier;
-                        }
-                    }
-                    return id;
-                } else {
-                    LOG.info("gene for taxon ID had invalid ensembl identifier:" + id
-                            + ", was expecting prefix of " + ensemblPrefix);
+            if (rslv != null) {
+                String identifier = id;
+                int resCount = rslv.countResolutions(taxonId, identifier);
+                if (resCount != 1) {
+                    LOG.info("RESOLVER: failed to resolve gene to one identifier, "
+                            + "ignoring gene: " + identifier + " count: " + resCount + " : "
+                            + rslv.resolveId(taxonId, identifier));
                     return null;
                 }
+                identifier = rslv.resolveId(taxonId, identifier).iterator().next();
+                return identifier;
             }
-            // everyone not using the resolver should have an identifier
-            if (id == null) {
-                LOG.error("no identifier found for organism:" + taxonId + " interactor "
-                        + interactorId);
-                return null;
-            }
+
             return id;
         }
 

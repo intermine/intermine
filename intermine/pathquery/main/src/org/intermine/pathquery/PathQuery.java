@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,7 +48,17 @@ public class PathQuery implements Cloneable
 {
     /** A Pattern that finds spaces in a String. */
     protected static final Pattern SPACE_SPLITTER = Pattern.compile(" ", Pattern.LITERAL);
-    /** Version number for the userprofile and PathQuery XML format. */
+    /**
+     * Version number for the userprofile and PathQuery XML format.
+     * This should be incremented each time the PathQuery serialisation
+     * format changes.
+     * <dl>
+     *   <dt>2</dt>
+     *   <dd>Changed PathQuery format.</dd>
+     *   <dt>1</dt>
+     *   <dd>Original format.</dd>
+     * </dl>
+     **/
     public static final int USERPROFILE_VERSION = 2;
 
     /** The lowest code value a constraint may be assigned. **/
@@ -2154,7 +2164,12 @@ public class PathQuery implements Cloneable
         return true;
     }
 
-    private static final Pattern PATH_MATCHER = Pattern.compile("([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+");
+    // A Path name is the same as a valid java qualified identifier.
+    private static final String JAVA_IDENT_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+    // Zero or more dot-suffixed prefixes + an identifier
+    private static final String PATH_PATTERN =
+            "(" + JAVA_IDENT_PATTERN + "\\.)*" + JAVA_IDENT_PATTERN;
+    private static final Pattern PATH_MATCHER = Pattern.compile(PATH_PATTERN);
 
     /**
      * Verifies the format of a path for a query. Paths must fully match the regular expression
@@ -2171,7 +2186,7 @@ public class PathQuery implements Cloneable
         }
         if (!PATH_MATCHER.matcher(path).matches()) {
             throw new IllegalArgumentException("Path \"" + path + "\" does not match regular "
-                    + "expression \"([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+\"");
+                    + "expression " + PATH_PATTERN);
         }
     }
 

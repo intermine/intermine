@@ -65,7 +65,7 @@
         <xsd:attribute name="showInInlineCollection" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInListAnalysisPreviewTable" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInResults" type="xsd:boolean"></xsd:attribute>
-        <xsd:attribute name="hideInQueryBuilder" type="xsd:boolean"></xsd:attribute>
+        <xsd:attribute name="showInQB" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="label" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="doNotTruncate" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="fieldExporter" type="xsd:string"></xsd:attribute>

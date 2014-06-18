@@ -10,12 +10,24 @@
 <c:if test="${empty templateQuery}">
     <c:set var="templateQuery" value="${QUERY}"/>
 </c:if>
+<c:if test="${empty clickable}">
+    <c:set var="clickable" value="false"/>
+</c:if>
 
 <html:xhtml/>
 
 <!-- templateTitle.jsp -->
 <h2 class="templateTitle">
-    <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
+    <c:choose>
+      <c:when test="${clickable}">
+        <html:link action="/template?name=${templateQuery.name}">
+            <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
+        </html:link>
+      </c:when>
+      <c:otherwise>
+        <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
+      </c:otherwise>
+    </c:choose>
     <tiles:insert name="setFavourite.tile">
         <tiles:put name="name" value="${templateQuery.name}"/>
         <tiles:put name="type" value="template"/>

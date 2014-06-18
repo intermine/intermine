@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,6 +51,8 @@ public class HugeGwasConverter extends BioFileConverter
 
     private static final Logger LOG = Logger.getLogger(HugeGwasConverter.class);
 
+    protected IdResolver rslv;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -64,6 +66,11 @@ public class HugeGwasConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+
+        if (rslv == null) {
+            rslv = IdResolverService.getHumanIdResolver();
+        }
+
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         boolean doneHeader = false;
 
@@ -253,6 +260,12 @@ public class HugeGwasConverter extends BioFileConverter
             if (invalidGenes.contains(symbol.toLowerCase())) {
                 continue;
             }
+
+            symbol = resolveGene(symbol);
+            if (symbol == null) {
+                continue;
+            }
+
             String geneIdentifier = genes.get(symbol);
             if (geneIdentifier == null) {
                 Item gene = createItem("Gene");
@@ -266,5 +279,27 @@ public class HugeGwasConverter extends BioFileConverter
             geneIdentifiers.add(geneIdentifier);
         }
         return geneIdentifiers;
+    }
+
+    /**
+     * resolve old human symbol
+     * @param taxonId id of organism for this gene
+     * @param ih interactor holder
+     * @throws ObjectStoreException
+     */
+    private String resolveGene(String identifier) {
+        String id = identifier;
+
+        if (rslv != null && rslv.hasTaxon(HUMAN_TAXON)) {
+            int resCount = rslv.countResolutions(HUMAN_TAXON, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " Human identifier: "
+                         + rslv.resolveId(HUMAN_TAXON, identifier));
+                return null;
+            }
+            id = rslv.resolveId(HUMAN_TAXON, identifier).iterator().next();
+        }
+        return id;
     }
 }

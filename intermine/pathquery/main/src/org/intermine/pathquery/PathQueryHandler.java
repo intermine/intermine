@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,14 +30,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Extension of DefaultHandler to handle parsing PathQuery objects
- *
+ * 
  * @author Mark Woodbridge
  * @author Kim Rutherford
  * @author Thomas Riley
  * @author Matthew Wakeling
  */
-public class PathQueryHandler extends DefaultHandler
-{
+public class PathQueryHandler extends DefaultHandler {
     private final Map<String, PathQuery> queries;
     private String queryName;
     protected PathQuery query;
@@ -47,9 +46,10 @@ public class PathQueryHandler extends DefaultHandler
     protected int version;
     private List<PathConstraintSubclass> questionableSubclasses;
     /** This is a list of String type descriptions that are attribute types */
-    public static final Set<String> ATTRIBUTE_TYPES = new HashSet<String>(Arrays.asList("boolean",
-                "float", "double", "short", "int", "long", "Boolean", "Float", "Double", "Short",
-                "Integer", "Long", "BigDecimal", "Date", "String"));
+    public static final Set<String> ATTRIBUTE_TYPES = new HashSet<String>(
+            Arrays.asList("boolean", "float", "double", "short", "int", "long",
+                    "Boolean", "Float", "Double", "Short", "Integer", "Long",
+                    "BigDecimal", "Date", "String"));
     private StringBuilder valueBuffer = null;
     protected String constraintPath = null;
     protected Map<String, String> constraintAttributes = null;
@@ -58,15 +58,19 @@ public class PathQueryHandler extends DefaultHandler
     private static final Logger LOG = Logger.getLogger(PathQueryHandler.class);
 
     /**
-     * Collection of models used for lookup before resorting to Model.getInstanceByName(). This
-     * enables multiple models to be used with the same name.
+     * Collection of models used for lookup before resorting to
+     * Model.getInstanceByName(). This enables multiple models to be used with
+     * the same name.
      */
     private final Map<String, Model> models = new HashMap<String, Model>();
 
     /**
      * Constructor
-     * @param queries Map from query name to PathQuery
-     * @param version the version of the xml, an attribute on the profile manager
+     * 
+     * @param queries
+     *            Map from query name to PathQuery
+     * @param version
+     *            the version of the xml, an attribute on the profile manager
      */
     public PathQueryHandler(Map<String, PathQuery> queries, int version) {
         this.queries = queries;
@@ -81,13 +85,16 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    @Override public void startElement(String uri, String localName, String qName, Attributes attrs)
-        throws SAXException {
+    @Override
+    public void startElement(String uri, String localName, String qName,
+            Attributes attrs) throws SAXException {
         if (valueBuffer != null) {
             throw new SAXException("Cannot have any tags inside a value tag");
         }
-        if ((constraintPath != null) && !("value".equals(qName) || "nullValue".equals(qName))) {
-            throw new SAXException("Cannot have anything other than value tag inside a constraint");
+        if ((constraintPath != null)
+                && !("value".equals(qName) || "nullValue".equals(qName))) {
+            throw new SAXException(
+                    "Cannot have anything other than value tag inside a constraint");
         }
         if ("query-list".equals(qName)) {
             // Do nothing
@@ -105,19 +112,23 @@ public class PathQueryHandler extends DefaultHandler
             }
             query = new PathQuery(model);
 
-            if (attrs.getValue("title") != null && !attrs.getValue("title").isEmpty()) {
+            if (attrs.getValue("title") != null
+                    && !attrs.getValue("title").isEmpty()) {
                 query.setTitle(attrs.getValue("title"));
             }
 
-            if (attrs.getValue("longDescription") != null) {
-                query.setDescription(attrs.getValue("longDescription"));
+            final String longDescription = attrs.getValue("longDescription");
+            if (StringUtils.isNotBlank(longDescription)) {
+                query.setDescription(longDescription);
             }
-            if (attrs.getValue("view") != null) {
-                String view = attrs.getValue("view");
+            String view = attrs.getValue("view");
+            if (view != null) { 
                 if (view.contains(":")) {
-                    // This is an old style query, and we need to convert the colons into outer
+                    // This is an old style query, and we need to convert the
+                    // colons into outer
                     // joins
-                    String[] viewPathArray = PathQuery.SPACE_SPLITTER.split(view.trim());
+                    String[] viewPathArray = PathQuery.SPACE_SPLITTER
+                            .split(view.trim());
                     for (String viewPath : viewPathArray) {
                         setOuterJoins(query, viewPath);
                     }
@@ -136,7 +147,8 @@ public class PathQueryHandler extends DefaultHandler
             constraintLogic = attrs.getValue("constraintLogic");
             questionableSubclasses = new ArrayList<PathConstraintSubclass>();
         } else if ("node".equals(qName)) {
-            // There's a node tag, so all constraints inside must inherit this path. Set it in a
+            // There's a node tag, so all constraints inside must inherit this
+            // path. Set it in a
             // variable, and reset the variable to null when we see the end tag.
 
             currentNodePath = attrs.getValue("path");
@@ -145,9 +157,12 @@ public class PathQueryHandler extends DefaultHandler
                 currentNodePath = currentNodePath.replace(':', '.');
             }
             String type = attrs.getValue("type");
-            if ((type != null) && (!ATTRIBUTE_TYPES.contains(type))
-                    && (currentNodePath.contains(".") || currentNodePath.contains(":"))) {
-                PathConstraintSubclass subclass = new PathConstraintSubclass(currentNodePath, type);
+            if ((type != null)
+                    && (!ATTRIBUTE_TYPES.contains(type))
+                    && (currentNodePath.contains(".") || currentNodePath
+                            .contains(":"))) {
+                PathConstraintSubclass subclass = new PathConstraintSubclass(
+                        currentNodePath, type);
                 query.addConstraint(subclass);
                 questionableSubclasses.add(subclass);
             }
@@ -155,7 +170,8 @@ public class PathQueryHandler extends DefaultHandler
             String path = attrs.getValue("path");
             if (currentNodePath != null) {
                 if (path != null) {
-                    throw new SAXException("Cannot set path in a constraint inside a node");
+                    throw new SAXException(
+                            "Cannot set path in a constraint inside a node");
                 }
                 path = currentNodePath;
             }
@@ -168,7 +184,8 @@ public class PathQueryHandler extends DefaultHandler
                 constraintPath = path;
                 constraintAttributes = new HashMap<String, String>();
                 for (int i = 0; i < attrs.getLength(); i++) {
-                    constraintAttributes.put(attrs.getQName(i), attrs.getValue(i));
+                    constraintAttributes.put(attrs.getQName(i),
+                            attrs.getValue(i));
                 }
                 constraintValues = new LinkedHashSet<String>();
                 constraintCode = code;
@@ -177,13 +194,16 @@ public class PathQueryHandler extends DefaultHandler
             String pathString = attrs.getValue("pathString");
             String description = attrs.getValue("description");
 
-            // Descriptions should only refer to classes that appear in the view, which we have
-            // already read.  This check makes sure the description is for a class that has
-            // attributes on the view list before adding it.  We ignore invalid descriptions to
-            // cope with legacy bad validation of qyery XML.
+            // Descriptions should only refer to classes that appear in the
+            // view, which we have
+            // already read. This check makes sure the description is for a
+            // class that has
+            // attributes on the view list before adding it. We ignore invalid
+            // descriptions to
+            // cope with legacy bad validation of query XML.
             if (pathString.endsWith(".")) {
-                throw new SAXException("Invalid path '" + pathString + "' for description: "
-                        + description);
+                throw new SAXException("Invalid path '" + pathString
+                        + "' for description: " + description);
             }
             String pathToCheck = pathString + ".";
             for (String viewString : query.getView()) {
@@ -200,7 +220,8 @@ public class PathQueryHandler extends DefaultHandler
             } else if ("OUTER".equals(type.toUpperCase())) {
                 query.setOuterJoinStatus(pathString, OuterJoinStatus.OUTER);
             } else {
-                throw new SAXException("Unknown join style " + type + " for path " + pathString);
+                throw new SAXException("Unknown join style " + type
+                        + " for path " + pathString);
             }
         } else if ("value".equals(qName)) {
             valueBuffer = new StringBuilder();
@@ -209,28 +230,37 @@ public class PathQueryHandler extends DefaultHandler
 
     /**
      * Process a constraint from the xml attributes.
-     *
-     * @param q the PathQuery, to enable creating Path objects
-     * @param path the path of the constraint to create
-     * @param attrs the XML attributes
-     * @param values the enclosed values
+     * 
+     * @param q
+     *            the PathQuery, to enable creating Path objects
+     * @param path
+     *            the path of the constraint to create
+     * @param attrs
+     *            the XML attributes
+     * @param values
+     *            the enclosed values
      * @return a PathConstraint object
-     * @throws SAXException if something is wrong
+     * @throws SAXException
+     *             if something is wrong
      */
     public PathConstraint processConstraint(PathQuery q, String path,
-            Map<String, String> attrs, Collection<String> values) throws SAXException {
+            Map<String, String> attrs, Collection<String> values)
+            throws SAXException {
 
         if (path == null) {
-            throw new SAXException("Bad constraint: Path is null. " + q.toString());
+            throw new SAXException("Bad constraint: Path is null. "
+                    + q.toString());
         }
 
-        ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
+        ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs
+                .get("op"));
         if (constraintOp == null) {
             // Handle any allowed synonyms.
             String origOp = attrs.get("op");
             if ("IS EMPTY".equals(origOp)) { // Synonym for IS NULL
                 constraintOp = ConstraintOp.IS_NULL;
-            } else if ("IS NOT EMPTY".equals(origOp)) { // Synonym for IS NOT NULL
+            } else if ("IS NOT EMPTY".equals(origOp)) { // Synonym for IS NOT
+                                                        // NULL
                 constraintOp = ConstraintOp.IS_NOT_NULL;
             }
         }
@@ -240,20 +270,23 @@ public class PathQueryHandler extends DefaultHandler
         }
         if (ConstraintOp.DOES_NOT_CONTAIN.equals(constraintOp)) {
             constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
-        } 
-        
-        if (PathConstraintRange.VALID_OPS.contains(constraintOp) && !values.isEmpty()) {
-        	Collection<String> valuesCollection = new LinkedHashSet<String>();
+        }
+
+        if (PathConstraintRange.VALID_OPS.contains(constraintOp)
+                && !values.isEmpty()) {
+            Collection<String> valuesCollection = new LinkedHashSet<String>();
             for (String value : values) {
                 valuesCollection.add(value.trim());
             }
             return new PathConstraintRange(path, constraintOp, valuesCollection);
-        } else if (PathConstraintMultitype.VALID_OPS.contains(constraintOp) && !values.isEmpty()) {
+        } else if (PathConstraintMultitype.VALID_OPS.contains(constraintOp)
+                && !values.isEmpty()) {
             Collection<String> typesCollection = new LinkedHashSet<String>();
             for (String value : values) {
                 typesCollection.add(value.trim());
             }
-            return new PathConstraintMultitype(path, constraintOp, typesCollection);
+            return new PathConstraintMultitype(path, constraintOp,
+                    typesCollection);
         } else if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
             boolean isLoop = (attrs.get("loopPath") != null);
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
@@ -265,10 +298,12 @@ public class PathQueryHandler extends DefaultHandler
                 } catch (PathException e) {
                     if (isLoop) {
                         // A genuine error - rethrow
-                        throw new SAXException("Illegal loop constraint definition", e);
+                        throw new SAXException(
+                                "Illegal loop constraint definition", e);
                     } else {
                         // Not actually a loop constraint. Ignore.
-                        LOG.error("Cannot recognise path in constraint: " + path, e);
+                        LOG.error("Cannot recognise path in constraint: "
+                                + path, e);
                     }
                 }
             }
@@ -281,7 +316,8 @@ public class PathQueryHandler extends DefaultHandler
                 return new PathConstraintLoop(path, constraintOp, loopPath);
             } else {
                 String constraintValue = attrs.get("value");
-                return new PathConstraintAttribute(path, constraintOp, constraintValue);
+                return new PathConstraintAttribute(path, constraintOp,
+                        constraintValue);
             }
         } else if (PathConstraintNull.VALID_OPS.contains(constraintOp)) {
             return new PathConstraintNull(path, constraintOp);
@@ -297,38 +333,46 @@ public class PathQueryHandler extends DefaultHandler
                     try {
                         idsCollection.add(Integer.valueOf(id.trim()));
                     } catch (NumberFormatException e) {
-                        throw new SAXException("List of IDs contains invalid integer: " + id, e);
+                        throw new SAXException(
+                                "List of IDs contains invalid integer: " + id,
+                                e);
                     }
                 }
                 return new PathConstraintIds(path, constraintOp, idsCollection);
             } else {
-                throw new SAXException("Invalid query: operation was: " + constraintOp
+                throw new SAXException("Invalid query: operation was: "
+                        + constraintOp
                         + " but no bag or ids were provided (from text \""
                         + attrs.get("op") + "\", attributes: " + attrs + ")");
             }
-        
-        	
+
         } else if (PathConstraintMultiValue.VALID_OPS.contains(constraintOp)) {
             Collection<String> valuesCollection = new LinkedHashSet<String>();
             for (String value : values) {
                 valuesCollection.add(value == null ? value : value.trim());
             }
-            return new PathConstraintMultiValue(path, constraintOp, valuesCollection);
+            return new PathConstraintMultiValue(path, constraintOp,
+                    valuesCollection);
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
             String lookup = attrs.get("value");
             String extraValue = attrs.get("extraValue");
+            if (StringUtils.isBlank(extraValue)) {
+                extraValue = null;
+            }
             return new PathConstraintLookup(path, lookup, extraValue);
         } else {
             throw new SAXException("Invalid operation type: " + constraintOp
-                    + " (from text \"" + attrs.get("op") + "\", attributes: " + attrs + ")");
+                    + " (from text \"" + attrs.get("op") + "\", attributes: "
+                    + attrs + ")");
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override public void endElement(String uri, String localName, String qName)
-        throws SAXException {
+    @Override
+    public void endElement(String uri, String localName, String qName)
+            throws SAXException {
         if ("query".equals(qName)) {
             if (constraintLogic != null) {
                 query.setConstraintLogic(constraintLogic);
@@ -338,12 +382,13 @@ public class PathQueryHandler extends DefaultHandler
                 try {
                     Map<String, String> subClasses = query.getSubclasses();
                     for (PathConstraintSubclass subclass : questionableSubclasses) {
-                        Map<String, String> trimmedSubclasses =
-                            new HashMap<String, String>(subClasses);
+                        Map<String, String> trimmedSubclasses = new HashMap<String, String>(
+                                subClasses);
                         trimmedSubclasses.remove(subclass.getPath());
-                        Path path = new Path(model, subclass.getPath(), trimmedSubclasses);
-                        if (path.getEndClassDescriptor().getUnqualifiedName().equals(subclass
-                                .getType())) {
+                        Path path = new Path(model, subclass.getPath(),
+                                trimmedSubclasses);
+                        if (path.getEndClassDescriptor().getUnqualifiedName()
+                                .equals(subclass.getType())) {
                             query.removeConstraint(subclass);
                         }
                     }
@@ -356,8 +401,8 @@ public class PathQueryHandler extends DefaultHandler
         } else if ("node".equals(qName)) {
             currentNodePath = null;
         } else if ("constraint".equals(qName) && (constraintPath != null)) {
-            PathConstraint constraint = processConstraint(query, constraintPath,
-                    constraintAttributes, constraintValues);
+            PathConstraint constraint = processConstraint(query,
+                    constraintPath, constraintAttributes, constraintValues);
             if (constraintCode == null) {
                 query.addConstraint(constraint);
             } else {
@@ -366,9 +411,10 @@ public class PathQueryHandler extends DefaultHandler
             constraintPath = null;
         } else if ("value".equals(qName)) {
             if (valueBuffer == null || valueBuffer.length() < 1) {
-                throw new NullPointerException("No value provided in value tag."
-                        + " Failed for template query: " + queryName + " on constraint: "
-                        + constraintPath);
+                throw new NullPointerException(
+                        "No value provided in value tag."
+                                + " Failed for template query: " + queryName
+                                + " on constraint: " + constraintPath);
             }
             constraintValues.add(valueBuffer.toString());
             valueBuffer = null;
@@ -390,7 +436,9 @@ public class PathQueryHandler extends DefaultHandler
 
     /**
      * Convert a List of Objects to a List of Strings using toString
-     * @param list the Object List
+     * 
+     * @param list
+     *            the Object List
      * @return the String list
      */
     protected List<String> toStrings(List<Object> list) {
@@ -402,9 +450,11 @@ public class PathQueryHandler extends DefaultHandler
     }
 
     /**
-     * Checks that the query has a name and that there's no name duplicates
-     * and appends a number to the name if there is.
-     * @param name the query name
+     * Checks that the query has a name and that there's no name duplicates and
+     * appends a number to the name if there is.
+     * 
+     * @param name
+     *            the query name
      * @return the validated query name
      */
     protected String validateName(String name) {
@@ -426,19 +476,22 @@ public class PathQueryHandler extends DefaultHandler
     }
 
     /**
-     * Given a path that may contain ':' characters to represent outer joins, find each : separated
-     * segment and set the status for that join to OUTER.  NOTE this method will change the
-     * query parameter handed to it.
-     * @param query the query to set join styles
-     * @param path a path that may contain outer joins represented by ':'
+     * Given a path that may contain ':' characters to represent outer joins,
+     * find each : separated segment and set the status for that join to OUTER.
+     * NOTE this method will change the query parameter handed to it.
+     * 
+     * @param query
+     *            the query to set join styles
+     * @param path
+     *            a path that may contain outer joins represented by ':'
      */
     protected void setOuterJoins(PathQuery query, String path) {
         int from = 0;
         while (path.indexOf(':', from) != -1) {
             int colonPos = path.indexOf(':', from);
             int nextDot = path.replace(':', '.').indexOf('.', colonPos + 1);
-            String outerJoin = nextDot == -1 ? path
-                : path.substring(0, nextDot);
+            String outerJoin = nextDot == -1 ? path : path
+                    .substring(0, nextDot);
             query.setOuterJoinStatus(outerJoin.replace(':', '.'),
                     OuterJoinStatus.OUTER);
             from = colonPos + 1;

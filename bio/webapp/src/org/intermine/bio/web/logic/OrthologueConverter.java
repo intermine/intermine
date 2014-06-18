@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +26,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -70,9 +71,10 @@ public class OrthologueConverter extends BagConverter
      * @param bagList list of intermine object IDs
      * @param organismName name of homologue's organism
      * @return list of intermine IDs
+     * @throws ObjectStoreException 
      */
     public List<Integer> getConvertedObjectIds(Profile profile, String bagType,
-            List<Integer> bagList, String organismName) {
+            List<Integer> bagList, String organismName) throws ObjectStoreException {
         PathQuery pathQuery = constructPathQuery(organismName);
         pathQuery.addConstraint(Constraints.inIds("Gene", bagList));
         pathQuery.addView("Gene.homologues.homologue.id");
@@ -88,8 +90,9 @@ public class OrthologueConverter extends BagConverter
 
     /**
      * {@inheritDoc}
+     * @throws ObjectStoreException if the query cannot be run.
      */
-    public Map<String, String> getCounts(Profile profile, InterMineBag bag) {
+    public Map<String, String> getCounts(Profile profile, InterMineBag bag) throws ObjectStoreException {
         PathQuery pathQuery = constructPathQuery(null);
         pathQuery.addConstraint(Constraints.inIds("Gene", bag.getContentsAsIds()));
         pathQuery.addView("Gene.homologues.homologue.organism.shortName");

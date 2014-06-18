@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,7 +42,7 @@ public class ConverterTask extends DynamicAttributeTask
 
     /**
      * Sets the list of classes to NOT try and convert
-     * @param excludeList the suitably formatted list of classs to exclude.
+     * @param excludeList the suitably formatted list of classes to exclude.
      */
     public void setExcludeList(String excludeList) {
         this.excludeList = excludeList;

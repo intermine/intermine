@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -189,8 +189,12 @@ public class HeatMapController extends TilesAction
         PathQuery query = new PathQuery(model);
         query = queryExpressionScore(bag, conditionType, query);
 
-
-        ExportResultsIterator result = executor.execute(query);
+        ExportResultsIterator result;
+        try {
+            result = executor.execute(query);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving data.", e);
+        }
         LOG.debug("GGS QUERY: -->" + query + "<--");
 
         List<String> conditions = getConditionsList(conditionType);

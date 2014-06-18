@@ -3,6 +3,9 @@ org.intermine.metadata
 org.intermine.pathquery
 org.intermine.webservice.client.core
 org.intermine.webservice.client.exceptions
+org.intermine.webservice.client.lists
+org.intermine.webservice.client.results
 org.intermine.webservice.client.services
 org.intermine.webservice.client.template
 org.intermine.webservice.client.util
+org.intermine.webservice.client.widget

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String DATASET_TITLE = "OMIM diseases";
     private static final String DATA_SOURCE_NAME = "Online Mendelian Inheritance in Man";
     private static final String HUMAN_TAXON = "9606";
+    private static final String OMIM_PREFIX = "OMIM:";
 
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
@@ -81,7 +82,7 @@ public class OmimConverter extends BioDirectoryConverter
 
         organism = getOrganism(HUMAN_TAXON);
 
-        rslv = IdResolverService.getIdResolverByOrganism(HUMAN_TAXON);
+        rslv = IdResolverService.getHumanIdResolver();
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -160,7 +161,7 @@ public class OmimConverter extends BioDirectoryConverter
                     String title = text.substring(0, terminateAt);
 
                     Item disease = getDisease(mimNumber);
-                    disease.setAttribute("name", title);
+                    disease.setAttribute("name", title.replace("@", ""));
                 }
 
                 sb = new StringBuilder();
@@ -227,15 +228,15 @@ public class OmimConverter extends BioDirectoryConverter
             // String symbolFromFile = symbols[0].trim();
 
             String mimId = bits[2];
-            String entrezId = resolveGene(mimId);
-            if (entrezId != null) {
+            String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
+            if (geneSymbol != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);
                 if (geneMapType != null) {
                     counts.get(geneMapType).resolved++;
                 }
             }
-            String geneItemId = getGeneItemId(entrezId);
+            String geneItemId = getGeneItemId(geneSymbol);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
@@ -328,7 +329,7 @@ public class OmimConverter extends BioDirectoryConverter
         Item disease = diseases.get(mimNumber);
         if (disease == null) {
             disease = createItem("Disease");
-            disease.setAttribute("identifier", mimNumber);
+            disease.setAttribute("identifier", OMIM_PREFIX + mimNumber);
             diseases.put(mimNumber, disease);
         }
         return disease;
@@ -346,18 +347,18 @@ public class OmimConverter extends BioDirectoryConverter
         return pubId;
     }
 
-    private String getGeneItemId(String entrezId) throws ObjectStoreException {
+    private String getGeneItemId(String geneSymbol) throws ObjectStoreException {
         String geneItemId = null;
         // String entrezGeneNumber = resolveGene(symbol);
-        if (entrezId != null) {
-            geneItemId = genes.get(entrezId);
+        if (geneSymbol != null) {
+            geneItemId = genes.get(geneSymbol);
             if (geneItemId == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("primaryIdentifier", entrezId);
+                gene.setAttribute("symbol", geneSymbol);
                 gene.setReference("organism", organism);
                 store(gene);
                 geneItemId = gene.getIdentifier();
-                genes.put(entrezId, geneItemId);
+                genes.put(geneSymbol, geneItemId);
             }
         }
         return geneItemId;

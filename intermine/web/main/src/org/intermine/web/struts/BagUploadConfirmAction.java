@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -59,6 +60,10 @@ public class BagUploadConfirmAction extends InterMineAction
         String bagName = (!"".equals(confirmForm.getNewBagName()))
                          ? confirmForm.getNewBagName()
                          : request.getParameter("upgradeBagName");
+        if (StringUtils.isBlank(bagName)) {
+            recordError(new ActionMessage("bagUploadConfirm.noName"), request);
+            return mapping.findForward("error");
+        }
 
         String idsString = confirmForm.getMatchIDs().trim();
         String[] ids = StringUtil.split(idsString, " ");
@@ -85,7 +90,7 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        //if upgradeBagName is null we are creating a new bag,
+        // if upgradeBagName is null we are creating a new bag,
         // otherwise we are upgrading an existing bag
         if (request.getParameter("upgradeBagName") == null) {
             InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
@@ -96,10 +101,15 @@ public class BagUploadConfirmAction extends InterMineAction
             session.removeAttribute("bagQueryResult");
         } else {
             InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
+            if (bagToUpgrade == null) {
+                recordError(new ActionMessage("bagUploadConfirm.notFound"), request);
+                return mapping.findForward("error");
+            }       
             bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
         }
         confirmForm.reset(mapping, request);
+        
         ForwardParameters forwardParameters = new ForwardParameters(
                 mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);

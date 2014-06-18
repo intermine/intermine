@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,6 +25,8 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreQueryDurationException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -35,6 +37,7 @@ import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebServiceRequestParser;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.Output;
@@ -61,6 +64,10 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
         // Allow anyone to use this service, as it doesn't use a list, but 
         // an id-list query.
         return true;
+    }
+
+    @Override
+    protected void validateState() {
     }
 
     @Override
@@ -119,6 +126,10 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
             iter = executor.execute(pq, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
             iter.goFaster();
             exporter.export(iter);
+        } catch (ObjectStoreQueryDurationException e) {
+            throw new ServiceException("Query would take too long to run.", e);
+        } catch (ObjectStoreException e) {
+            throw new ServiceException("Could not run query.", e);
         } finally {
             if (iter != null) {
                 iter.releaseGoFaster();

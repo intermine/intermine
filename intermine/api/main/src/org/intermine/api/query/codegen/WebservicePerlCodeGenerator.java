@@ -25,7 +25,7 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,11 +42,13 @@ import org.intermine.util.TypeUtil;
  */
 public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 {
-    protected static final String TEST_STRING = "This is a Java test string...";
-    protected static final String INVALID_QUERY 
-        = "# Invalid query.\n"
-        + "# ==============\n"
-        + "# The code to run this query could not be generated for the following reasons:\n";
+    protected String endl = System.getProperty("line.separator");
+
+    protected String getInvalidQuery() {
+        return "# Invalid query." + endl
+                + "# ==============" + endl
+                + "# The code to run this query could not be generated for the following reasons:" + endl;
+    }
     protected static final String PATH_BAG_CONSTRAINT = "This query contains a list constraint, "
         + "which is currently not supported...";
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
@@ -56,57 +58,62 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
     protected static final String INDENT = "    ";
     protected static final String SPACE = " ";
-    protected static final String ENDL = System.getProperty("line.separator");
 
     private static final String SUBCLASS_EXPLANATION 
         = "Type constraints must come before all mentions of the paths they constrain";
     private static final String INTERNAL_USE_CONSTRAINT 
         = "This query makes use of a constraint type that can only be used internally";
 
-    private static final String SEPARATOR_CONSTANT
-        = "# Set the output field separator as tab" + ENDL
-        + "$, = \"\\t\";" + ENDL;
+    private String getSetFieldSeparator() {
+        return "# Set the output field separator as tab" + endl
+                + "$, = \"\\t\";" + endl;
+    }
 
-    private static final String NO_WARNINGS_UNDEF
-        = "# Silence warnings when printing null fields" + ENDL
-        + "no warnings ('uninitialized');" + ENDL;
+    private String getNoWarningsUndef() {
+        return "# Silence warnings when printing null fields" + endl
+                + "no warnings ('uninitialized');" + endl;
+    }
 
-    private static final String UNICODE_OUTPUT
-        = "# Print unicode to standard out" + ENDL
-        + "binmode(STDOUT, 'utf8');" + ENDL;
+    private String getUnicodeOutput() {
+        return "# Print unicode to standard out" + endl + "binmode(STDOUT, 'utf8');" + endl;
+    }
 
-    private static final String SHEBANG = "#!/usr/bin/perl" + ENDL + ENDL;
+    private String getSheBang() {
+        return "#!/usr/bin/perl" + endl + endl;
+    }
 
-    protected static final String BOILERPLATE 
-        = "use strict;" + ENDL
-        + "use warnings;" + ENDL + ENDL;
+    protected String getBoilerPlate() {
+        return "use strict;" + endl + "use warnings;" + endl + endl;
+    }
 
-    protected static final String INTRO =
-          "######################################################################" + ENDL
-        + "# This is an automatically generated script to run your query." + ENDL
-        + "# To use it you will require the InterMine Perl client libraries." + ENDL
-        + "# These can be installed from CPAN, using your preferred client, eg:" + ENDL
-        + "#" + ENDL
-        + "#" + INDENT + "sudo cpan Webservice::InterMine" + ENDL
-        + "#" + ENDL
-        + "# For help using these modules, please see these resources:" + ENDL
-        + "#" + ENDL
-        + "#  * http://search.cpan.org/perldoc?Webservice::InterMine" + ENDL
-        + "#       - API reference" + ENDL
-        + "#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook" + ENDL
-        + "#       - A How-To manual" + ENDL
-        + "#  * http://www.intermine.org/wiki/PerlWebServiceAPI" + ENDL
-        + "#       - General Usage" + ENDL
-        + "#  * http://www.intermine.org/wiki/WebService" + ENDL
-        + "#       - Reference documentation for the underlying REST API" + ENDL
-        + "#" + ENDL
-        + "######################################################################" + ENDL
-        + ENDL;
+    protected String getIntro() {
+        StringBuffer intro = new StringBuffer()
+          .append("######################################################################").append(endl)
+          .append("# This is an automatically generated script to run your query.").append(endl)
+          .append("# To use it you will require the InterMine Perl client libraries.").append(endl)
+          .append("# These can be installed from CPAN, using your preferred client, eg:").append(endl)
+          .append("#").append(endl)
+          .append("#").append(INDENT).append("sudo cpan Webservice::InterMine").append(endl)
+          .append("#").append(endl)
+          .append("# For help using these modules, please see these resources:").append(endl)
+          .append("#").append(endl)
+          .append("#  * https://metacpan.org/pod/Webservice::InterMine").append(endl)
+          .append("#       - API reference").append(endl)
+          .append("#  * https://metacpan.org/pod/Webservice::InterMine::Cookbook").append(endl)
+          .append("#       - A How-To manual").append(endl)
+          .append("#  * http://www.intermine.org/wiki/PerlWebServiceAPI").append(endl)
+          .append("#       - General Usage").append(endl)
+          .append("#  * http://www.intermine.org/wiki/WebService").append(endl)
+          .append("#       - Reference documentation for the underlying REST API").append(endl)
+          .append("#").append(endl)
+          .append("######################################################################").append(endl + endl);
+        return intro.toString();
+    }
 
     private String formatProblems(Collection<String> problems) {
         StringBuffer sb = new StringBuffer();
         for (String s: problems) {
-            sb.append("#  * " + s + ENDL);
+            sb.append("#  * " + s + endl);
         }
         return sb.toString();
     }
@@ -121,6 +128,8 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     @Override
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
+        endl = wsCodeGenInfo.getLineBreak();
+
         PathQuery query = wsCodeGenInfo.getQuery();
         String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
         String projectTitle = wsCodeGenInfo.getProjectTitle();
@@ -128,39 +137,41 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         // query is null
         if (query == null) {
-            return INVALID_QUERY + formatProblems(Arrays.asList("The query is null"));
+            return getInvalidQuery() + formatProblems(Arrays.asList("The query is null"));
         }
 
         if (!query.isValid()) {
-            return INVALID_QUERY + formatProblems(query.verifyQuery());
+            return getInvalidQuery() + formatProblems(query.verifyQuery());
         }
 
-        StringBuffer sb = new StringBuffer(SHEBANG)
-                                  .append(INTRO)
-                                  .append(BOILERPLATE)
-                                  .append(SEPARATOR_CONSTANT)
-                                  .append(UNICODE_OUTPUT)
-                                  .append(NO_WARNINGS_UNDEF)
-                                  .append(ENDL);
+        StringBuffer sb = new StringBuffer(getSheBang())
+                                  .append(getIntro())
+                                  .append(getBoilerPlate())
+                                  .append(getSetFieldSeparator())
+                                  .append(getUnicodeOutput())
+                                  .append(getNoWarningsUndef())
+                                  .append(endl);
 
+        sb.append("# This code makes use of the Webservice::InterMine library."
+                + endl);
         sb.append("# The following import statement sets " + projectTitle + " as your default"
-                + ENDL);
+                + endl);
         if (wsCodeGenInfo.isPublic()) {
-            sb.append("use Webservice::InterMine " 
-                    + perlWSModuleVer 
-                    + " '" + serviceBaseURL + "';" + ENDL);
+            sb.append("use Webservice::InterMine" 
+                    + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer)
+                    + " '" + serviceBaseURL + "';" + endl);
         } else {
-            sb.append("# You must also supply your login details here to access this query" + ENDL);
-            sb.append("use Webservice::InterMine " 
-                    + perlWSModuleVer 
+            sb.append("# You must also supply your login details here to access this query" + endl);
+            sb.append("use Webservice::InterMine"
+                    + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer) 
                     + " '" + serviceBaseURL + "', "
-                    + "'YOUR-API-TOKEN';" + ENDL);
+                    + "'YOUR-API-TOKEN';" + endl);
         }
-        sb.append(ENDL);
+        sb.append(endl);
 
         if (StringUtils.isNotBlank(query.getDescription())) {
             printLine(sb, "# ", "Description: " + query.getDescription());
-            sb.append(ENDL);
+            sb.append(endl);
         }
 
         try {
@@ -170,7 +181,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 generatePathQueryCode(query, sb);
             }
         } catch (InvalidQueryException e) {
-            return INVALID_QUERY + formatProblems(e.getProblems());
+            return getInvalidQuery() + formatProblems(e.getProblems());
         }
 
         return sb.toString();
@@ -209,11 +220,11 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             throw new InvalidQueryException("This template has no editable constraints");
         }
 
-        sb.append("my $template = Webservice::InterMine->template(" + q(name) + ")" + ENDL)
-            .append(INDENT + "or die 'Could not find a template called " + name + "';" + ENDL)
-            .append(ENDL)
-            .append("# Use an iterator to avoid having all rows in memory at once." + ENDL)
-            .append("my $it = $template->results_iterator_with(" + ENDL);
+        sb.append("my $template = Webservice::InterMine->template(" + q(name) + ")" + endl)
+            .append(INDENT + "or die 'Could not find a template called " + name + "';" + endl)
+            .append(endl)
+            .append("# Use an iterator to avoid having all rows in memory at once." + endl)
+            .append("my $it = $template->results_iterator_with(" + endl);
 
         List<String> constraintProblems = new ArrayList<String>();
         for (PathConstraint pc : editableConstraints) {
@@ -238,8 +249,8 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             throw new InvalidQueryException(constraintProblems);
         }
 
-        sb.append(");" + ENDL);
-        sb.append(ENDL);
+        sb.append(");" + endl);
+        sb.append(endl);
         printResults(template, sb);
     }
 
@@ -252,7 +263,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             throw new InvalidQueryException(e.getMessage());
         }
 
-        sb.append("my $query = new_query(class => " + q(rootClass) + ");" + ENDL + ENDL);
+        sb.append("my $query = new_query(class => " + q(rootClass) + ");" + endl + endl);
 
         List<String> uncodedConstraints = new ArrayList<String>();
         List<String> codedConstraints = new ArrayList<String>();
@@ -276,20 +287,20 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if (!uncodedConstraints.isEmpty()) {
-            sb.append("# " + SUBCLASS_EXPLANATION + ENDL);
+            sb.append("# " + SUBCLASS_EXPLANATION + endl);
             // Subclass constraints must come first or the query will break
             for (String text: uncodedConstraints) {
                 sb.append(text);
             }
         }
 
-        sb.append("# The view specifies the output columns" + ENDL)
-            .append("$query->add_view(qw/" + ENDL);
+        sb.append("# The view specifies the output columns" + endl)
+            .append("$query->add_view(qw/" + endl);
         for (String pathString : query.getView()) {
-            sb.append(INDENT + decapitate(pathString) + ENDL);
+            sb.append(INDENT + decapitate(pathString) + endl);
         }
-        sb.append("/);" + ENDL);
-        sb.append(ENDL);
+        sb.append("/);" + endl);
+        sb.append(endl);
 
         // Add orderBy
         if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
@@ -297,56 +308,56 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 query.getOrderBy().size() == 1
                     && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
                     && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
-                sb.append("# edit the line below to change the sort order:" + ENDL);
+                sb.append("# edit the line below to change the sort order:" + endl);
                 sb.append("# ");
             } else {
                 sb.append("# Your custom sort order is specified with the following code:"
-                        + ENDL);
+                        + endl);
             }
             for (OrderElement oe : query.getOrderBy()) {
                 sb.append("$query->add_sort_order(");
                 sb.append(q(decapitate(oe.getOrderPath())) + ", " + q(oe.getDirection().toString()));
-                sb.append(");" + ENDL);
+                sb.append(");" + endl);
             }
-            sb.append(ENDL);
+            sb.append(endl);
         }
 
         // Add join status
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
-            sb.append("# Outer Joins" + ENDL);
-            sb.append("# (Show attributes of these relations if they exist, but do not require them to exist.)" + ENDL);
+            sb.append("# Outer Joins" + endl);
+            sb.append("# (Show attributes of these relations if they exist, but do not require them to exist.)" + endl);
             for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
                 // Only outer joins need to be declared.
                 if (entry.getValue() == OuterJoinStatus.OUTER) {
-                    sb.append("$query->add_outer_join(" + q(decapitate(entry.getKey())) + ");" + ENDL);
+                    sb.append("$query->add_outer_join(" + q(decapitate(entry.getKey())) + ");" + endl);
                 }
             }
-            sb.append(ENDL);
+            sb.append(endl);
         }
 
         for (String text: codedConstraints) {
             sb.append(text);
         }
-        sb.append(ENDL);
+        sb.append(endl);
 
         // Add constraintLogic
         if (codedConstraints.size() > 1 && StringUtils.isNotBlank(query.getConstraintLogic())) {
             String logic = query.getConstraintLogic();
             if (logic.indexOf("or") == -1) {
-                sb.append("# Edit the code below to specify your own custom logic:" + ENDL
+                sb.append("# Edit the code below to specify your own custom logic:" + endl
                         + "# ");
             } else {
-                sb.append("# Your custom logic is specified with the code below:" + ENDL);
+                sb.append("# Your custom logic is specified with the code below:" + endl);
             }
-            sb.append("$query->set_logic(" + q(logic) + ");" + ENDL + ENDL);
+            sb.append("$query->set_logic(" + q(logic) + ");" + endl + endl);
         }
-        sb.append("# Use an iterator to avoid having all rows in memory at once." + ENDL);
-        sb.append("my $it = $query->iterator();" + ENDL);
+        sb.append("# Use an iterator to avoid having all rows in memory at once." + endl);
+        sb.append("my $it = $query->iterator();" + endl);
         printResults(query, sb);
     }
 
     private void printResults(PathQuery pq, StringBuffer sb) {
-        sb.append("while (my $row = <$it>) {" + ENDL);
+        sb.append("while (my $row = <$it>) {" + endl);
         StringBuffer currentLine = new StringBuffer(INDENT + "print");
         Iterator<String> it = pq.getView().iterator();
         while (it.hasNext()) {
@@ -355,7 +366,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 toPrint += ",";
             }
             if (currentLine.length() + toPrint.length() > 100) {
-                sb.append(currentLine.toString() + ENDL);
+                sb.append(currentLine.toString() + endl);
                 currentLine = new StringBuffer(INDENT + INDENT);
             }
             if (StringUtils.isNotBlank(currentLine.toString())) {
@@ -363,14 +374,14 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             }
             currentLine.append(toPrint);
         }
-        sb.append(currentLine + ", " + qq("\\n") + ";" + ENDL);
-        sb.append("}").append(ENDL);
+        sb.append(currentLine + ", " + qq("\\n") + ";" + endl);
+        sb.append("}").append(endl);
     }
 
     /*
      * Nicely format long lines
      */
-    private static void printLine(StringBuffer sb, String prefix, String line) {
+    private void printLine(StringBuffer sb, String prefix, String line) {
         String lineToPrint;
         if (prefix != null) {
             lineToPrint = prefix + line;
@@ -379,11 +390,11 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
         if (lineToPrint.length() > 80 && lineToPrint.lastIndexOf(' ', 80) != -1) {
             int lastCutPoint = lineToPrint.lastIndexOf(' ', 80);
-            sb.append(lineToPrint.substring(0, lastCutPoint) + ENDL);
+            sb.append(lineToPrint.substring(0, lastCutPoint) + endl);
             String nextLine = lineToPrint.substring(lastCutPoint + 1);
             printLine(sb, prefix, nextLine);
         } else {
-            sb.append(lineToPrint + ENDL);
+            sb.append(lineToPrint + endl);
         }
     }
 
@@ -403,23 +414,23 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintAttribute".equals(className)
                 || "PathConstraintBag".equals(className)) {
             return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path  => '" + path + "'," + ENDL
-                + INDENT + "op    => '" + op.toString() + "'," + ENDL
-                + INDENT + "value => '" + value + "'," + ENDL
-                + INDENT + "code  => '" + code + "'," + ENDL
-                + ");" + ENDL;
+                "$query->add_constraint(" + endl
+                + INDENT + "path  => '" + path + "'," + endl
+                + INDENT + "op    => '" + op.toString() + "'," + endl
+                + INDENT + "value => '" + value + "'," + endl
+                + INDENT + "code  => '" + code + "'," + endl
+                + ");" + endl;
         }
 
         if ("PathConstraintLookup".equals(className)) {
             return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path        => '" + path + "'," + ENDL
-                + INDENT + "op          => 'LOOKUP'," + ENDL
-                + INDENT + "value       => '" + value + "'," + ENDL
-                + INDENT + "extra_value => '" + extraValue + "'," + ENDL
-                + INDENT + "code        => '" + code + "'," + ENDL
-                + ");" + ENDL;
+                "$query->add_constraint(" + endl
+                + INDENT + "path        => '" + path + "'," + endl
+                + INDENT + "op          => 'LOOKUP'," + endl
+                + INDENT + "value       => '" + value + "'," + endl
+                + INDENT + "extra_value => '" + extraValue + "'," + endl
+                + INDENT + "code        => '" + code + "'," + endl
+                + ");" + endl;
         }
 
         if ("PathConstraintIds".equals(className)) {
@@ -429,35 +440,35 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintMultiValue".equals(className)) {
             StringBuffer values = new StringBuffer();
             for (String aValue : ((PathConstraintMultiValue) pc).getValues()) {
-                values.append(INDENT + INDENT + q(aValue) + "," + ENDL);
+                values.append(INDENT + INDENT + q(aValue) + "," + endl);
             }
             return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path   => '" + path + "'," + ENDL
-                + INDENT + "op     => '" + op.toString() + "'," + ENDL
-                + INDENT + "values => [" + ENDL
+                "$query->add_constraint(" + endl
+                + INDENT + "path   => '" + path + "'," + endl
+                + INDENT + "op     => '" + op.toString() + "'," + endl
+                + INDENT + "values => [" + endl
                 + values.toString()
-                + INDENT + "]," + ENDL
-                + INDENT + "code  => '" + code + "'," + ENDL
-                + ");" + ENDL;
+                + INDENT + "]," + endl
+                + INDENT + "code  => '" + code + "'," + endl
+                + ");" + endl;
         }
 
         if ("PathConstraintNull".equals(className)) {
             return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path => '" + path + "'," + ENDL
-                + INDENT + "op   => '" + op.toString() + "'," + ENDL
-                + INDENT + "code => '" + code + "'," + ENDL
-                + ");" + ENDL;
+                "$query->add_constraint(" + endl
+                + INDENT + "path => '" + path + "'," + endl
+                + INDENT + "op   => '" + op.toString() + "'," + endl
+                + INDENT + "code => '" + code + "'," + endl
+                + ");" + endl;
         }
 
         if ("PathConstraintSubclass".equals(className)) {
             String type = ((PathConstraintSubclass) pc).getType();
             return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path => '" + path + "'," + ENDL
-                + INDENT + "type => '" + type + "'," + ENDL
-                + ");" + ENDL;
+                "$query->add_constraint(" + endl
+                + INDENT + "path => '" + path + "'," + endl
+                + INDENT + "type => '" + type + "'," + endl
+                + ");" + endl;
         }
 
         if ("PathConstraintLoop".equals(className)) {
@@ -468,12 +479,12 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 opStr = "IS NOT";
             }
             return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path      => '" + path + "'," + ENDL
-                + INDENT + "op        => '" + opStr + "'," + ENDL
-                + INDENT + "loop_path => '" + value + "'," + ENDL
-                + INDENT + "code      => '" + code + "'," + ENDL
-                + ");" + ENDL;
+                "$query->add_constraint(" + endl
+                + INDENT + "path      => '" + path + "'," + endl
+                + INDENT + "op        => '" + opStr + "'," + endl
+                + INDENT + "loop_path => '" + value + "'," + endl
+                + INDENT + "code      => '" + code + "'," + endl
+                + ");" + endl;
         }
 
         throw new UnhandledFeatureException("Unknown constraint type (" + className + ")");
@@ -495,16 +506,16 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintAttribute".equals(className)
                 || "PathConstraintBag".equals(className)) {
             return
-                INDENT + "op" + opCode + "    => '" + op + "'," + ENDL
-                + INDENT + "value" + opCode + " => '" + value + "'," + ENDL;
+                INDENT + "op" + opCode + "    => '" + op + "'," + endl
+                + INDENT + "value" + opCode + " => '" + value + "'," + endl;
         }
 
         if ("PathConstraintLookup".equals(className)) {
             String ret =
-                INDENT + "op" + opCode + "    => 'LOOKUP'," + ENDL
-                + INDENT + "value" + opCode + " => '" + value + "'," + ENDL;
+                INDENT + "op" + opCode + "    => 'LOOKUP'," + endl
+                + INDENT + "value" + opCode + " => '" + value + "'," + endl;
             if (extraValue != null && !"".equals(extraValue)) {
-                ret += INDENT + "extra_value" + opCode + " => '" + extraValue + "'," + ENDL;
+                ret += INDENT + "extra_value" + opCode + " => '" + extraValue + "'," + endl;
             }
             return ret;
         }
@@ -517,18 +528,18 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         if ("PathConstraintMultiValue".equals(className)) {
             StringBuffer values = new StringBuffer();
             for (String aValue : ((PathConstraintMultiValue) pc).getValues()) {
-                values.append(INDENT + INDENT + "'" + aValue + "'," + ENDL);
+                values.append(INDENT + INDENT + "'" + aValue + "'," + endl);
             }
             return
-                INDENT + "op" + opCode + "    => '" + op + "'," + ENDL
-                + INDENT + "value" + opCode + " => [" + ENDL
+                INDENT + "op" + opCode + "    => '" + op + "'," + endl
+                + INDENT + "value" + opCode + " => [" + endl
                 + values.toString()
-                + INDENT + "]," + ENDL;
+                + INDENT + "]," + endl;
         }
 
         if ("PathConstraintNull".equals(className)) {
             return
-                INDENT + "op" + opCode + "    => '" + op + "'," + ENDL;
+                INDENT + "op" + opCode + "    => '" + op + "'," + endl;
         }
 
         if ("PathConstraintSubclass".equals(className)) {

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.Gene;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -50,8 +51,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class MinePathwaysDisplayer extends ReportDisplayer
 {
-    private static Map<ReportObject, Map<Mine, String>> minePathwayCache
-        = new CacheMap<ReportObject, Map<Mine, String>>();
+    private static Map<ReportObject, Map<Mine, String>> minePathwayCache = new CacheMap<ReportObject, Map<Mine, String>>();
+    private static Map<ReportObject, Mine> localMineCache = new CacheMap<ReportObject, Mine>();
     protected static final Logger LOG = Logger.getLogger(MinePathwaysDisplayer.class);
 
     /**
@@ -70,8 +71,11 @@ public class MinePathwaysDisplayer extends ReportDisplayer
         Gene gene = (Gene) reportObject.getObject();
         request.setAttribute("gene", gene);
         Map<Mine, String> mineToOrthologues = null;
+        //Mine localMine = null;
+        Mine localMine = null;
         if (minePathwayCache.get(reportObject) != null) {
             mineToOrthologues = minePathwayCache.get(reportObject);
+
         } else {
             Map<String, Set<String>> orthologues = getLocalHomologues(gene);
             HttpSession session = request.getSession();
@@ -80,10 +84,34 @@ public class MinePathwaysDisplayer extends ReportDisplayer
             final FriendlyMineManager linkManager
                 = FriendlyMineManager.getInstance(im, webProperties);
             Collection<Mine> mines = linkManager.getFriendlyMines();
+
+
             mineToOrthologues = buildHomologueMap(mines, orthologues);
+            localMine = linkManager.getLocalMine();
+            
             minePathwayCache.put(reportObject, mineToOrthologues);
         }
+
+        if (localMineCache.get(reportObject) != null) {
+            localMine = localMineCache.get(reportObject);
+
+        } else {
+            Map<String, Set<String>> orthologues = getLocalHomologues(gene);
+            HttpSession session = request.getSession();
+            ServletContext servletContext = session.getServletContext();
+            final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+            final FriendlyMineManager linkManager
+                = FriendlyMineManager.getInstance(im, webProperties);
+            localMine = linkManager.getLocalMine();
+            
+            localMineCache.put(reportObject, localMine);
+        }
+
+
+
         request.setAttribute("minesForPathways", mineToOrthologues);
+        request.setAttribute("localMine", localMine);
+
     }
 
     /* Using the provided list of organisms available in this mine, build list of genes to query
@@ -140,7 +168,12 @@ public class MinePathwaysDisplayer extends ReportDisplayer
         if (!q.isValid()) {
             return Collections.emptyMap();
         }
-        ExportResultsIterator it = executor.execute(q);
+        ExportResultsIterator it;
+        try {
+            it = executor.execute(q);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String identifier = (String) row.get(0).getField();

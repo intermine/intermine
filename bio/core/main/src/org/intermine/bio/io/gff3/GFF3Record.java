@@ -1,7 +1,7 @@
 package org.intermine.bio.io.gff3;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 
 import org.intermine.util.StringUtil;
 import org.intermine.util.XmlUtil;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A class that represents one line of a GFF3 file.  Some of this code is
@@ -146,6 +147,9 @@ public class GFF3Record
 
     private void parseAttribute(String argAttributeString, String line) throws IOException {
         String attributeString = argAttributeString;
+        attributeString = StringUtils.replaceEach(attributeString,
+                new String[] { "&amp;", "&quot;", "&lt;", "&gt;" },
+                new String[] { "&", "\"", "<", ">" });
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
         while (sTok.hasMoreTokens()) {

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.biojavax.ga.Organism;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
@@ -384,25 +385,15 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     public static Map<String, Integer> getTaxonInfo(InterMineAPI im, Profile profile) {
 
         Map<String, Integer> orgTaxonIdMap = new HashMap<String, Integer>();
+        Query q = new Query();
+        QueryClass organisms = new QueryClass(org.intermine.model.bio.Organism.class);
+        q.addFrom(organisms);
+        q.addToSelect(organisms);
 
-        PathQuery query = new PathQuery(im.getModel());
-
-        // Add views
-        query.addViews("Organism.shortName",
-                "Organism.taxonId");
-
-        // Add orderby
-        query.addOrderBy("Organism.shortName", OrderDirection.ASC);
-
-        ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
-
-        while (results.hasNext()) {
-            List<ResultElement> row = results.next();
-
-            String orgName = (String) row.get(0).getField();
-            Integer orgTaxonId = (Integer) row.get(1).getField();
-
-            orgTaxonIdMap.put(orgName, orgTaxonId);
+        List<?> orgs = im.getObjectStore().executeSingleton(q);
+        for (Object o: orgs) {
+            org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
+            orgTaxonIdMap.put(org.getName(), org.getTaxonId());
         }
         return orgTaxonIdMap;
     }

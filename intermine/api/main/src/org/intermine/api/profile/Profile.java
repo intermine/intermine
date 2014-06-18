@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2013 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.api.profile;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -403,7 +404,10 @@ public class Profile
     }
 
     /**
-     * Save a query
+     * Save or update a query.
+     *
+     * If a query with the given name exists in this profile, that query will be overwritten.
+     *
      * @param name the query name
      * @param query the query
      */
@@ -417,11 +421,12 @@ public class Profile
     /**
      * Save the map of queries as given to the user's profile, avoiding all possible name
      * collisions. This method will not overwrite any existing user data.
-     * @param toSave
+     *
+     * @param toSave The queries to save.
+     * @return successes The queries as they were saved.
      */
-    public void saveQueries(
-            Map<? extends String, ? extends PathQuery> toSave,
-            Set<? super String> successes) {
+    public Map<String, String> saveQueries(Map<? extends String, ? extends PathQuery> toSave) {
+        Map<String, String> successes = new HashMap<String, String>();
         Date now = new Date();
         for (Entry<? extends String, ? extends PathQuery> pair: toSave.entrySet()) {
             String name = pair.getKey();
@@ -429,13 +434,25 @@ public class Profile
             while (savedQueries.containsKey(name)) {
                 name = pair.getKey() + "_"  + c++; 
             }
-            SavedQuery sq = new SavedQuery(pair.getKey(), now, pair.getValue());
+            SavedQuery sq = new SavedQuery(name, now, pair.getValue());
             savedQueries.put(name, sq);
-            successes.add(name);
+            successes.put(pair.getKey(), name);
         }
-        if (manager != null && !savingDisabled) {
-            manager.saveProfile(this);
+        try {
+            if (manager != null && !savingDisabled) {
+                manager.saveProfile(this);
+            }
+        } catch (Exception e) {
+            // revert all changes.
+            savedQueries.entrySet().removeAll(successes.keySet());
+            try {
+                manager.saveProfile(this);
+            } catch (Exception e2) {
+                // Ignore.
+            }
+            throw new RuntimeException("Could not save queries.", e);
         }
+        return successes;
     }
 
     /**
@@ -802,7 +819,7 @@ public class Profile
      * @return A token for web-service use.
      */
     public String getDayToken() {
-        if (!manager.tokenHasMoreUses(dayToken)) {
+        if (dayToken == null || !manager.tokenHasMoreUses(dayToken)) {
             dayToken = getProfileManager().generate24hrKey(this);
         }
         return dayToken;
