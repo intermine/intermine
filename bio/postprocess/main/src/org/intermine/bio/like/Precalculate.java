@@ -1,6 +1,6 @@
 package org.intermine.bio.like;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.intermine.Coordinates;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 
 /**
@@ -38,14 +39,21 @@ public final class Precalculate
         this.osw = osw;
         this.os = osw.getObjectStore();
     }
+
+    /**
+     *
+     * @param os InterMine object store
+     */
     public Precalculate(ObjectStore os) {
         this.os = os;
     }
 
     /**
-     * @throws Exception
+     *
+     * @throws IOException if the properties can't be read
+     * @throws ObjectStoreException if the query build fails
      */
-    public static void precalculate() throws Exception {
+    public static void precalculate() throws IOException, ObjectStoreException {
         long t1 = System.currentTimeMillis();
 
         Precalculation precalc = new Precalculation(os);

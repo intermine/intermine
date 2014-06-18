@@ -2,19 +2,10 @@ package org.intermine.bio.like;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.intermine.Coordinates;
@@ -23,8 +14,6 @@ import org.intermine.modelproduction.MetadataManager.LargeObjectOutputStream;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
-import org.postgresql.largeobject.LargeObject;
-import org.postgresql.largeobject.LargeObjectManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -32,7 +21,8 @@ import org.apache.log4j.Logger;
  * @author selma
  *
  */
-public class Storing {
+public final class Storing
+{
 
     private static final Logger LOG = Logger.getLogger(Storing.class);
 
@@ -78,6 +68,15 @@ public class Storing {
         }
     }
 
+    /**
+     *
+     * @param os InterMine object store
+     * @param matrix : is actually a row of the matrix. This row is saved to the database
+     * @param aspectNumber of the corresponding aspect to the row (matrix). Will be added to the
+     * storing name of the row.
+     * @param geneId of the corresponding gene to the row (matrix). Will be added to the
+     * storing name of the row.
+     */
     public static void saveCommonMatToDatabase(ObjectStore os,
             Map<Coordinates, ArrayList<Integer>> matrix, String aspectNumber, String geneId) {
         try {
@@ -108,8 +107,16 @@ public class Storing {
         }
     }
 
+    /**
+     *
+     * @param os InterMine object store
+     * @param key it is stored with this name
+     * @param object the row, that will be stored in the database
+     * @throws IOException
+     * @throws SQLException
+     */
     private static void writeObjectToDB(ObjectStore os, String key, Object object)
-            throws IOException, SQLException {
+        throws SQLException, IOException {
         LOG.debug("Saving stream to database...");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         LargeObjectOutputStream streamOut = MetadataManager.storeLargeBinary(db, key);
