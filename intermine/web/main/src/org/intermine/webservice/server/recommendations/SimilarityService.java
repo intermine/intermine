@@ -120,6 +120,21 @@ public class SimilarityService extends JSONService
         Map<String, Object> similarGeneDetails = getObjectDetails(entry.getKey());
         similarGeneDetails.put("id", entry.getKey());
 
+        // Get the score for this gene:
+        Map<Integer, Map<Integer, Integer>> val = similarGenes.get(entry.getKey());
+        Map.Entry<Integer, Map<Integer, Integer>> firstEntry = val.entrySet().iterator().next();
+
+
+
+
+        similarGeneDetails.put("totalscore", firstEntry.getKey());
+
+
+
+
+
+        Object singleGene = similarGenes.get(entry.getKey());
+
         // Now get the original search genes:
         Map<Integer, ArrayList<Integer>> originalSearchGenes = entry.getValue();
 
@@ -153,6 +168,9 @@ public class SimilarityService extends JSONService
         rets.add(similarGeneDetails);
 
       }
+
+      // rets = new ArrayList<Object>();
+      // rets.add(similarGenes);
 
         // transmit object.
         addResultItem(rets, false);
