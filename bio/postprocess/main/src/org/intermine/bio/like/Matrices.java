@@ -39,7 +39,10 @@ public final class Matrices
      * Overrides interface MatrixOperation.
      * Finds common related items between all genes.
      *
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
      * gene IDs and the ArrayLists of related items, that genes have in common.
      */
@@ -71,11 +74,11 @@ public final class Matrices
                                 if (!commonToOuter.containsKey(xCoordinate2)) {
                                     // if "no": create new list
                                     commonItems = new ArrayList<Integer>();
-                                    commonToOuter.put(inner2.getKey().getKey(), commonItems);
+                                    commonToOuter.put(xCoordinate2, commonItems);
                                     commonItems.add(inner2.getValue());
                                 } else {
                                     // if "yes": add the common item to the list
-                                    commonItems = commonToOuter.get(inner2.getKey().getKey());
+                                    commonItems = commonToOuter.get(xCoordinate2);
                                     commonItems.add(inner2.getValue());
                                 }
                             }
@@ -97,7 +100,10 @@ public final class Matrices
      * Overrides interface MatrixOperation.
      * Does the same like method findCommonItems but for the type "presence".
      *
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
      * gene IDs and the ArrayLists of related items, that genes have in common.
      */
@@ -114,7 +120,7 @@ public final class Matrices
                     int xCoordinate = inner.getKey().getKey();
                     // if inner is not a gene ID and
                     // and if inner is in the same row than the current outer gene ID
-                    // -> save the items, they are common
+                    // -> save the items, they are in common
                     if (xCoordinate != SUBJECT_ID_COLUMN && xCoordinate == xCoordinateOuter) {
                         ArrayList<Integer> commonItems;
                         // check, if the corresponding gene ID is already saved
@@ -143,9 +149,12 @@ public final class Matrices
      * Calculates the result for findCommonItems and findCommonItemsPresence.
      * Performs the outer loop and saves the gene IDs in the first column and row.
      *
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
      * Format: Its first column contains
      * the gene IDs, the other columns contain the related items (1 column for each unique item).
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      * @param operation containing the overridden loopAction code
      * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
      * gene IDs and the ArrayLists of related items, that genes have in common.
@@ -242,8 +251,10 @@ public final class Matrices
     /**
      * Calculates the similarity ratings pairwise and for one aspect for the type "count".
      *
-     * @param os object store
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      * @param aspectNumber
      */
     public static void findSimilarityCount(ObjectStore os, Map<Coordinates, Integer> matrix,
@@ -290,8 +301,7 @@ public final class Matrices
                     xCoordinateInner = inner.getKey().getKey();
                     yCoordinateInner = inner.getKey().getValue();
                     // Only transfer non-zero items -> makes the simMat more sparse
-                    if (yCoordinateInner == 1 && outer.getValue() != SUBJECT_ID_COLUMN
-                            && inner.getValue() != SUBJECT_ID_COLUMN) {
+                    if (yCoordinateInner == 1 && outer.getValue() != 0 && inner.getValue() != 0) {
                         // Row-wise normalisation
                         rating = Math.abs(MAX_RATING * inner.getValue()) / outer.getValue();
                         if (rating > MAX_RATING) {
@@ -322,9 +332,10 @@ public final class Matrices
     /**
      * Calculates the similarity ratings pairwise and for one aspect for the type "presence".
      *
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
-     * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
-     * gene IDs and pairwise similarity ratings between the genes.
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      */
     public static void findSimilarityPresence(ObjectStore os, Map<Coordinates, Integer> matrix,
             String aspectNumber) {
@@ -430,7 +441,6 @@ public final class Matrices
         * containing gene IDs and the ArrayLists of related items, that genes have in common.
         * @param matrix containing all genes and their related items.
         * @param relationShip coordinates of a gene ID
-        * @param value value of the same gene ID
         */
         void loopAction(Map<Coordinates, ArrayList<Integer>> newMatrix,
                 Map<Coordinates, Integer> matrix, Coordinates relationShip);

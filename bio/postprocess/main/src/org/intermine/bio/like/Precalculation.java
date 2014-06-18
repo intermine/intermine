@@ -51,7 +51,7 @@ public class Precalculation
      *
      * @return a list of all aspects, which shall be calculated with their additional information
      * (how to calculate and which number to save with)
-     * @throws IOException
+     * @throws IOException if the properties can't load the configStream
      */
     public static Map<Coordinates, String> getProperties() throws IOException {
         Map<Coordinates, String> views = new HashMap<Coordinates, String>();
@@ -111,7 +111,7 @@ public class Precalculation
      * @param views list of aspects
      * @param i gives information which aspect in the list (views) is looked at
      * @return List of Genes with their related items (e.g. pathways)
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException if MainHelper.makeQuery fails
      */
     public List<Object> fetchDMelGenes(Map<Coordinates, String> views, int i)
         throws ObjectStoreException {
@@ -155,7 +155,7 @@ public class Precalculation
         pq.setOuterJoinStatus(relationShip.substring(0, StringUtils.ordinalIndexOf(relationShip,
                 ".", 2)), OuterJoinStatus.OUTER);
 
-        System.out.println(pq.toXml());
+        System.out.print("\n" + pq.toXml());
         Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
 
         return os.execute(q);
@@ -295,7 +295,7 @@ public class Precalculation
      * @param rows a query result
      * @return map of gene object ID to list of annotations, e.g. the matrix
      */
-    public Map<Coordinates, Integer> runQueryPresence(List<Object> rows){
+    public Map<Coordinates, Integer> runQueryPresence(List<Object> rows) {
         Map<Coordinates, Integer> matrix = new HashMap<Coordinates, Integer>();
         int currentRow = 0;
         int highestIndex = -1;
