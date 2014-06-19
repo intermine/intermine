@@ -30,6 +30,13 @@ import org.intermine.model.InterMineObject;
  */
 public class ContainsConstraint extends Constraint
 {
+    /** List of possible operations */
+    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
+    /** List of possible null operations */
+    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
+
     protected QueryReference ref;
     protected QueryClass cls;
     protected InterMineObject obj;
@@ -128,6 +135,31 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
+     * Constrain a collection to be NULL or NOT NULL.
+     *
+     * @param ref the target QueryObjectReference
+     * @param op specify IS_NULL or IS_NOT_NULL
+     */
+    public ContainsConstraint(QueryCollectionReference ref, ConstraintOp op) {
+        if (ref == null) {
+            throw new NullPointerException("ref cannot be null");
+        }
+
+        if (op == null) {
+            throw new NullPointerException("op cannot be null");
+        }
+
+        if (!VALID_OPS_NULL.contains(op)) {
+            throw new IllegalArgumentException("op cannot be " + op);
+        }
+
+        this.ref = ref;
+        this.op = op;
+        this.cls = null;
+        this.obj = null;
+    }
+
+    /**
      * Returns the QueryReference of the constraint.
      *
      * @return the QueryReference
@@ -184,11 +216,4 @@ public class ContainsConstraint extends Constraint
             + 7 * (cls == null ? 0 : cls.hashCode())
             + 11 * (obj == null ? 0 : obj.hashCode());
     }
-
-    /** List of possible operations */
-    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
-        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
-    /** List of possible null operations */
-    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
-        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
 }
