@@ -1,16 +1,10 @@
 package org.intermine.webservice.server.recommendations;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -36,6 +30,7 @@ import org.intermine.webservice.server.exceptions.ServiceException;
 
 /**
  * A service that returns the result of similarity calculations.
+ *
  * @author selma
  *
  */
@@ -55,7 +50,8 @@ public class SimilarityService extends JSONService
     }
 
     @Override
-    protected void execute() throws ServiceException, ConfigurationException, IOException, ClassNotFoundException {
+    protected void execute() throws ConfigurationException, IOException,
+    ClassNotFoundException {
         LikeService engine =
                 LikeService.getInstance(new OSMatrixStore(im.getObjectStore()), webProperties);
 
@@ -64,11 +60,6 @@ public class SimilarityService extends JSONService
             throw new BadRequestException("One or more ids are required");
         }
         String[] idsStrings = id.split(",");
-//        File file2 = new File(id);
-//        FileInputStream f = new FileInputStream(file2);
-//        ObjectInputStream s = new ObjectInputStream(f);
-//        String[] idsStrings = (String[]) s.readObject();
-//        s.close();
 
         LikeRequest request = new LikeRequest();
 
@@ -92,11 +83,11 @@ public class SimilarityService extends JSONService
 //        rets.addAll(similarGenes.keySet());
 
      // get result gene Ids with ordered total ratings
-      for (int i = 0; i < 20; i++) {
-          for (int j = 0; j < 2; j++) {
-              rets.add(totalRatingSet[i][j]);
-          }
-      }
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 2; j++) {
+                rets.add(totalRatingSet[i][j]);
+            }
+        }
 
         // get result gene Ids with total rating with searched Ids with pairwise rating
 //        for (Map.Entry<Integer, Map<Integer, Map<Integer, Integer>>> entry : similarGenes.entrySet()) {
@@ -119,6 +110,12 @@ public class SimilarityService extends JSONService
         addResultItem(rets, false);
     }
 
+    /**
+     * Attache the searched Ids to the LikeRequest request
+     *
+     * @param idsStrings searched Ids
+     * @param request LikeRequest
+     */
     private void getObjectIds(String[] idsStrings, LikeRequest request) {
         ObjectStore os = im.getObjectStore();
         for (int i = 0; i < idsStrings.length; i++) {
@@ -134,6 +131,12 @@ public class SimilarityService extends JSONService
         }
     }
 
+    /**
+     * Loading objects (rows) from the database.
+     *
+     * @author selma
+     *
+     */
     private static class OSMatrixStore implements MatrixStore
     {
         private ObjectStore os;
@@ -147,20 +150,7 @@ public class SimilarityService extends JSONService
             this.os = os;
         }
 
-        public List<Integer> getSimilarityRow(String aspectNumber, int index) {
-            List<Integer> similarityRow = new ArrayList<Integer>();
-            // not used atm
-
-            return similarityRow;
-        }
-
-        public List<List<Integer>> getCommonItemsRow(String aspectNumber, int index) {
-            List<List<Integer>> similarityRow = new ArrayList<List<Integer>>();
-            // not used atm
-
-            return similarityRow;
-        }
-
+        @Override
         public Map<Coordinates, Integer> getSimilarityMatrix(String aspectNumber,
                 String geneId) {
 
@@ -213,6 +203,7 @@ public class SimilarityService extends JSONService
             return normMat;
         }
 
+        @Override
         public Map<Coordinates, ArrayList<Integer>> getCommonItemsMatrix(
                 String aspectNumber, String geneId) {
             long time = System.currentTimeMillis();

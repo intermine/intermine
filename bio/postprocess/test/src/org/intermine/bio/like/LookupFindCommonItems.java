@@ -23,9 +23,6 @@ public final class LookupFindCommonItems
     private static final int MIN_RATING = 0;
     private static final int MAX_RATING = 100;
 
-    private LookupFindCommonItems() {
-        // Don't.
-    }
     public static Map<Coordinates, ArrayList<Integer>> findCommonItems(
             final Map<Coordinates, Integer> matrix) {
         return commonMatrixLoop(matrix, new MatrixOperation() {
@@ -54,11 +51,11 @@ public final class LookupFindCommonItems
                                 if (!commonToOuter.containsKey(xCoordinate2)) {
                                     // if "no": create new list
                                     commonItems = new ArrayList<Integer>();
-                                    commonToOuter.put(inner2.getKey().getKey(), commonItems);
+                                    commonToOuter.put(xCoordinate2, commonItems);
                                     commonItems.add(inner2.getValue());
                                 } else {
                                     // if "yes": add the common item to the list
-                                    commonItems = commonToOuter.get(inner2.getKey().getKey());
+                                    commonItems = commonToOuter.get(xCoordinate2);
                                     commonItems.add(inner2.getValue());
                                 }
                             }
@@ -80,13 +77,16 @@ public final class LookupFindCommonItems
      * Overrides interface MatrixOperation.
      * Does the same like method findCommonItems but for the type "presence".
      *
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
      * gene IDs and the ArrayLists of related items, that genes have in common.
      */
     public static Map<Coordinates, ArrayList<Integer>> findCommonItemsPresence(
             final Map<Coordinates, Integer> matrix) {
-        return commonMatrixLoop(matrix, new MatrixOperation() {
+        return commonMatrixLoop( matrix, new MatrixOperation() {
 
             @Override
             public void loopAction(Map<Coordinates, ArrayList<Integer>> newMatrix,
@@ -97,7 +97,7 @@ public final class LookupFindCommonItems
                     int xCoordinate = inner.getKey().getKey();
                     // if inner is not a gene ID and
                     // and if inner is in the same row than the current outer gene ID
-                    // -> save the items, they are common
+                    // -> save the items, they are in common
                     if (xCoordinate != SUBJECT_ID_COLUMN && xCoordinate == xCoordinateOuter) {
                         ArrayList<Integer> commonItems;
                         // check, if the corresponding gene ID is already saved
@@ -124,11 +124,14 @@ public final class LookupFindCommonItems
 
     /**
      * Calculates the result for findCommonItems and findCommonItemsPresence.
-     * Performs the outer loop and saves the gene IDs in the first column and row.
+     * Performs the outer loop.
      *
+     * @param os InterMine object store
      * @param matrix containing all genes and their related items.
      * Format: Its first column contains
      * the gene IDs, the other columns contain the related items (1 column for each unique item).
+     * @param aspectNumber Which aspect are we looking at? Add this number to the name of the stored
+     * object/row
      * @param operation containing the overridden loopAction code
      * @return a rectangular matrix (HashMap with x- and y-coordinates as keys) containing all
      * gene IDs and the ArrayLists of related items, that genes have in common.
@@ -142,6 +145,7 @@ public final class LookupFindCommonItems
         // The rectangular matrix to return
         Map<Coordinates, ArrayList<Integer>> commonMat =
                 new HashMap<Coordinates, ArrayList<Integer>>();
+        Map<Coordinates, Integer> allGeneIds = new HashMap<Coordinates, Integer>();
         for (final Map.Entry<Coordinates, Integer> outer : matrix.entrySet()) {
             int xCoordinate = outer.getKey().getKey();
             int yCoordinate = outer.getKey().getValue();
@@ -160,38 +164,37 @@ public final class LookupFindCommonItems
                 String geneId = Integer.toString(outer.getValue());
 //                Storing.saveCommonMatToDatabase(os, commonMat, aspectNumber, geneId);
 
-//                // Calculate the similarity rating
+                // Calculate the similarity rating
 //                Map<Coordinates, Integer> countCommonMat = countCommonItemsCategory(commonMat);
-////                if (outer.getValue() == 1112303) {
-////                    System.out.print("\nnormMat:\n");
-////                    for (int j = 0; j < 30; j++) {
-////                        for (int k = 0; k < 30; k++) {
-////                            System.out.print(commonMat.get(new Coordinates(j, k)) + " ");
-////                        }
-////                        System.out.print("\n");
-////                    }
-////                }
-
-
+//                if (outer.getValue() == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 20; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(commonMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
 //                commonMat = new HashMap<Coordinates, ArrayList<Integer>>();
 
-
-
-//
 //                countCommonMat = normalise(countCommonMat);
 //                Storing.saveNormMatToDatabase(os, countCommonMat, aspectNumber, geneId);
-//
-////                if (outer.getValue() == 1112303) {
-////                    System.out.print("\nnormMat:\n");
-////                    for (int j = 0; j < 30; j++) {
-////                        for (int k = 0; k < 30; k++) {
-////                            System.out.print(countCommonMat.get(new Coordinates(j, k)) + " ");
-////                        }
-////                        System.out.print("\n");
-////                    }
-////                }
+
+//                if (outer.getValue() == 1112303) {
+//                    System.out.print("\nnormMat:\n");
+//                    for (int j = 0; j < 20; j++) {
+//                        for (int k = 0; k < 30; k++) {
+//                            System.out.print(countCommonMat.get(new Coordinates(j, k)) + " ");
+//                        }
+//                        System.out.print("\n");
+//                    }
+//                }
+
+                // get a list of all gene Ids
+                allGeneIds.put(new Coordinates(yCoordinate, xCoordinate + 1), outer.getValue());
             }
         }
+//        Storing.saveNormMatToDatabase(os, allGeneIds, aspectNumber, "ALL");
         return commonMat;
     }
 }

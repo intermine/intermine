@@ -13,18 +13,9 @@ import org.intermine.Coordinates;
  */
 public class LookupCountCommonItemsCategory {
 
-    // The gene ID is always in column zero
-    private static final int SUBJECT_ID_COLUMN = 0;
     // For rectangular matrices the gene ID is also in row zero
     private static final int SUBJECT_ID_ROW = 0;
-    private static final int MIN_RATING = 0;
-    private static final int MAX_RATING = 100;
 
-    /**
-     *
-     * @param commonMat
-     * @return
-     */
     public static Map<Coordinates, Integer> countCommonItemsCategory(
             Map<Coordinates, ArrayList<Integer>> commonMat) {
         Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();

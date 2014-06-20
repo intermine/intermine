@@ -23,7 +23,7 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 
 /**
- * Precalculation() is used to set up the foundation for later calculations made in Matrices().
+ * Precalculation() is used to set up the foundation for later calculations made with Matrices().
  * It reads in the property file and the data (genes with related items).
  * It arranges this information well in matrices (1 matrix per aspect).
  *
@@ -167,7 +167,7 @@ public class Precalculation
     * information about the gene. So, one row contains one gene ID and all its related items.
     * Also, each unique related item ID has its own column.
     *
-    * Is called for each aspect separately.
+    * Is called for each aspect once.
     *
     * @param rows a query result
     * @return map of gene object ID to list of annotations, e.g. the matrix

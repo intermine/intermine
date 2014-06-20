@@ -25,18 +25,12 @@ public class LookupFindSimilarityCount
     // The gene ID is always in column zero
     private static final int SUBJECT_ID_COLUMN = 0;
     // For rectangular matrices the gene ID is also in row zero
-    private static final int SUBJECT_ID_ROW = 0;
     private static final int MAX_RATING = 100;
 
     private LookupFindSimilarityCount() {
         // Don't.
     }
 
-    /**
-     *
-     * @param matrix
-     * @return
-     */
     public static Map<Coordinates, Integer> findSimilarityCount(Map<Coordinates, Integer> matrix) {
         Map<Coordinates, Integer> countedItems = new HashMap<Coordinates, Integer>();
         Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
@@ -80,8 +74,7 @@ public class LookupFindSimilarityCount
                     xCoordinateInner = inner.getKey().getKey();
                     yCoordinateInner = inner.getKey().getValue();
                     // Only transfer non-zero items -> makes the simMat more sparse
-                    if (yCoordinateInner == 1 && outer.getValue() != SUBJECT_ID_COLUMN
-                            && inner.getValue() != SUBJECT_ID_COLUMN) {
+                    if (yCoordinateInner == 1 && outer.getValue() != 0 && inner.getValue() != 0) {
                         // Row-wise normalisation
                         rating = Math.abs(MAX_RATING * inner.getValue()) / outer.getValue();
                         if (rating > MAX_RATING) {

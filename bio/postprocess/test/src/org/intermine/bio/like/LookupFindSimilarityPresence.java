@@ -24,13 +24,7 @@ public final class LookupFindSimilarityPresence
         //Don't.
     }
 
-    /**
-     *
-     * @param matrix
-     * @return
-     */
-    public static Map<Coordinates, Integer> findSimilarityPresence(
-            Map<Coordinates, Integer> matrix) {
+    public static Map<Coordinates, Integer> findSimilarityPresence(Map<Coordinates, Integer> matrix) {
         Map<Coordinates, Integer> hasMat = new HashMap<Coordinates, Integer>();
         Map<Coordinates, Integer> simMat = new HashMap<Coordinates, Integer>();
 
@@ -61,12 +55,12 @@ public final class LookupFindSimilarityPresence
                 for (Map.Entry<Coordinates, Integer> inner : hasMat.entrySet()) {
                     int xCoordinateInner = inner.getKey().getKey();
                     int yCoordinateInner = inner.getKey().getValue();
-                    if (inner.getKey().getValue() == 1) {
+//                    if (inner.getKey().getValue() == 1) {
                         if (inner.getValue().equals(entry.getValue())) {
                             simMat.put(new Coordinates(xCoordinate + 1,
                                     inner.getKey().getKey() + 1), MAX_RATING);
                         }
-                    }
+//                    }
                 }
 
 //                if (hasMat.get(new Coordinates(xCoordinate, 0)) == 1112303) {

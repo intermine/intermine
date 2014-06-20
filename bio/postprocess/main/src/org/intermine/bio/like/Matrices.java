@@ -10,9 +10,10 @@ import org.intermine.objectstore.ObjectStore;
 /**
  * Matrices() is used for the pre-calculation of a matrix, that includes all items, that every
  * gene has in common with every other gene in the dataset (based on one single aspect).
- * Out of this another matrix is calculated, that contains the similarity between every gene.
+ * With this matrix another matrix is calculated, that contains the similarity between every gene.
  * The similarity is a rating from 0 to 100, where 0 (null) means "nothing in common"
- * and 100 means "these are the most similar genes in the dataset".
+ * and 100 means "totally alike (in this aspect)".
+ * For the aspect types "count" and "presence" there is no matrix calculated with the common items.
  *
  * The matrices are rectangular, where both the first row and the first column contains
  * all gene IDs. That is to simplify the run time calculations: If you want to get the
@@ -37,7 +38,7 @@ public final class Matrices
 
     /**
      * Overrides interface MatrixOperation.
-     * Finds common related items between all genes.
+     * Finds common related items between all genes. Stores these row-wise in the database.
      *
      * @param os InterMine object store
      * @param matrix containing all genes and their related items.
@@ -147,7 +148,7 @@ public final class Matrices
 
     /**
      * Calculates the result for findCommonItems and findCommonItemsPresence.
-     * Performs the outer loop and saves the gene IDs in the first column and row.
+     * Performs the outer loop.
      *
      * @param os InterMine object store
      * @param matrix containing all genes and their related items.
@@ -369,12 +370,12 @@ public final class Matrices
                 for (Map.Entry<Coordinates, Integer> inner : hasMat.entrySet()) {
                     int xCoordinateInner = inner.getKey().getKey();
                     int yCoordinateInner = inner.getKey().getValue();
-                    if (inner.getKey().getValue() == 1) {
+//                    if (inner.getKey().getValue() == 1) {
                         if (inner.getValue().equals(entry.getValue())) {
                             simMat.put(new Coordinates(xCoordinate + 1,
                                     inner.getKey().getKey() + 1), MAX_RATING);
                         }
-                    }
+//                    }
                 }
 
 //                if (hasMat.get(new Coordinates(xCoordinate, 0)) == 1112303) {

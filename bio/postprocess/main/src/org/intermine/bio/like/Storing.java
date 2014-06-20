@@ -17,6 +17,7 @@ import org.intermine.sql.Database;
 import org.apache.log4j.Logger;
 
 /**
+ * Stores object in the database.
  *
  * @author selma
  *
@@ -31,7 +32,8 @@ public final class Storing
     }
 
     /**
-     * writes index and associated directory to the database using the metadatamanager.
+     * Writes index and associated directory to the database using the metadatamanager.
+     * For similarity rating matrices.
      *
      * @param os intermine objectstore
      * @param matrix one row of one precalculated matrix
@@ -69,6 +71,8 @@ public final class Storing
     }
 
     /**
+     * Writes index and associated directory to the database using the metadatamanager.
+     * For common items matrices.
      *
      * @param os InterMine object store
      * @param matrix : is actually a row of the matrix. This row is saved to the database

@@ -12,13 +12,14 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 
 /**
- * This class contains the main method to pre-calculate the similarity matrices.
+ * This class contains the main method (precalculate()) to pre-calculate the similarity matrices.
  * It calls all methods of the classes in org.intermine.like.prcalcultion and in
  * org.intermine.like.precalculation.utils.
  *
  * result:
  * for each aspect: 1 HashMap containing the similarity rating between genes
  *                & 1 HashMap containing the common items between genes
+ *                & 1 2D array with the similarity rating ordered from highest to lowest
  *
  * @author selma
  *
@@ -49,6 +50,7 @@ public final class Precalculate
     }
 
     /**
+     * Run for the pre-calculation.
      *
      * @throws IOException if the properties can't be read
      * @throws ObjectStoreException if the query build fails
