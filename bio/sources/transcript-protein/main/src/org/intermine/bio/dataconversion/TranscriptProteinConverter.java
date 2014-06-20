@@ -71,8 +71,8 @@ public class TranscriptProteinConverter extends BioFileConverter
       while (tsvIter.hasNext()) {
         String[] fields = (String[]) tsvIter.next();
         String organismId = fields[0];
-        String transcriptName = fields[1];
-        String proteinName = fields[2];
+        String geneName = fields[1];
+        String mrnaName = fields[2];
         if (!organismMap.containsKey(organismId)) {
           Item o = createItem("Organism");
           o.setAttribute("taxonId", organismId);
@@ -83,24 +83,24 @@ public class TranscriptProteinConverter extends BioFileConverter
           }
           organismMap.put(organismId, o.getIdentifier());
         }
-        if (StringUtils.isEmpty(transcriptName) || StringUtils.isEmpty(proteinName)) {
+        if (StringUtils.isEmpty(mrnaName) || StringUtils.isEmpty(geneName)) {
           break;
         }
 
-        Item p = createItem("Protein");
-        p.setAttribute("primaryIdentifier", proteinName);
+        Item p = createItem("Gene");
+        p.setAttribute("primaryIdentifier", geneName);
         p.setReference("organism", organismMap.get(organismId));
 
         Item t = createItem("MRNA");
-        t.setAttribute("primaryIdentifier", transcriptName);
+        t.setAttribute("primaryIdentifier", mrnaName);
         t.setReference("organism", organismMap.get(organismId));
-        t.setReference("protein",p.getIdentifier());
+        t.setReference("gene",p.getIdentifier());
 
         try {
           store(t);
           store(p);
         } catch (ObjectStoreException e) {
-          throw new BuildException("Trouble storing transcript/protein link: "+e.getMessage());
+          throw new BuildException("Trouble storing transcript/gene link: "+e.getMessage());
         }
         lineNumber++;
       }
