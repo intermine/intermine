@@ -27,6 +27,18 @@ import org.intermine.sql.Database;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.web.logic.config.WebConfig;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.FieldConfigHelper;
+import org.intermine.api.util.PathUtil;
+import org.intermine.util.DynamicUtil;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * A service that returns the result of similarity calculations.
@@ -36,6 +48,8 @@ import org.intermine.webservice.server.exceptions.ServiceException;
  */
 public class SimilarityService extends JSONService
 {
+
+    private static final Logger LOG = Logger.getLogger(SimilarityService.class);
 
     /** there you go
      * @param im The injected parameter.
@@ -83,28 +97,71 @@ public class SimilarityService extends JSONService
 //        rets.addAll(similarGenes.keySet());
 
      // get result gene Ids with ordered total ratings
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 2; j++) {
-                rets.add(totalRatingSet[i][j]);
+      for (int i = 0; i < 3; i++) {
+          for (int j = 0; j < 2; j++) {
+              //rets.add(totalRatingSet[i][j]);
+          }
+      }
+
+      Logger LOG = Logger.getLogger(SimilarityService.class);
+
+      for (Map.Entry<Integer, Map<Integer, ArrayList<Integer>>> entry : commonItems.entrySet()) {
+
+        // Get ID of the next similar gene
+        Map<String, Object> similarGeneDetails = getObjectDetails(entry.getKey());
+        similarGeneDetails.put("id", entry.getKey());
+
+        // Get the score for this gene:
+        Map<Integer, Map<Integer, Integer>> val = similarGenes.get(entry.getKey());
+        Map.Entry<Integer, Map<Integer, Integer>> firstEntry = val.entrySet().iterator().next();
+
+
+
+
+        similarGeneDetails.put("totalscore", firstEntry.getKey());
+
+
+
+
+
+        Object singleGene = similarGenes.get(entry.getKey());
+
+        // Now get the original search genes:
+        Map<Integer, ArrayList<Integer>> originalSearchGenes = entry.getValue();
+
+        // Get the details of the original search genes:
+
+        ArrayList originalGenesCollection = new ArrayList();
+
+        for (Map.Entry<Integer, ArrayList<Integer>> originalGene : originalSearchGenes.entrySet()) {
+
+            Map<String, Object> originalGeneDetails = getObjectDetails(originalGene.getKey());
+            originalGeneDetails.put("id", originalGene.getKey());
+
+            // Now loop through the items that make them common
+            ArrayList commonItemsCollection = new ArrayList();
+            ArrayList<Integer> commonItemIds = originalGene.getValue();
+            for (Integer commonItemId : commonItemIds) {
+                Map<String, Object> commonItemDetails = getObjectDetails(commonItemId);
+                commonItemDetails.put("id", commonItemId);
+                commonItemsCollection.add(commonItemDetails);
+
             }
+
+            originalGeneDetails.put("commonItems", commonItemsCollection);
+            originalGenesCollection.add(originalGeneDetails);
+            
         }
 
-        // get result gene Ids with total rating with searched Ids with pairwise rating
-//        for (Map.Entry<Integer, Map<Integer, Map<Integer, Integer>>> entry : similarGenes.entrySet()) {
-//            Map<Integer, Map<Integer, Integer>> val = entry.getValue();
-//            rets.add(entry.getKey());
-//            for (Map.Entry<Integer, Map<Integer, Integer>> entry2 : val.entrySet()) {
-//                rets.add(entry2.getKey());
-//                rets.add(entry2.getValue());
-//            }
-//        }
 
-        // get result gene Ids with searched Ids with common items
-//        for (Map.Entry<Integer, Map<Integer, ArrayList<Integer>>> entry : commonItems.entrySet()) {
-//            Map<Integer, ArrayList<Integer>> val = entry.getValue();
-//            rets.add(entry.getKey());
-//            rets.add(entry.getValue());
-//        }
+        similarGeneDetails.put("originalGenes", originalGenesCollection);
+
+        rets.add(similarGeneDetails);
+
+      }
+
+      // rets = new ArrayList<Object>();
+      // rets.add(similarGenes);
 
         // transmit object.
         addResultItem(rets, false);
@@ -129,6 +186,40 @@ public class SimilarityService extends JSONService
             }
             request.addID(givenId);
         }
+    }
+
+    private Map<String, Object> getObjectDetails(Integer objId) {
+        InterMineObject imo;
+        if (objId == null) throw new IllegalArgumentException("obj cannot be null");
+        try {
+            imo = im.getObjectStore().getObjectById(objId);
+        } catch (ObjectStoreException e) {
+            throw new IllegalStateException("Could not retrieve object reported as match", e);
+        }
+        return getObjectDetails(imo);
+        //return imo;
+    }
+
+    private Map<String, Object> getObjectDetails(InterMineObject imo) {
+        WebConfig webConfig = InterMineContext.getWebConfig();
+        Model m = im.getModel();
+        Map<String, Object> objectDetails = new HashMap<String, Object>();
+        String className = DynamicUtil.getSimpleClassName(imo.getClass());
+        ClassDescriptor cd = m.getClassDescriptorByName(className);
+        objectDetails.put("class", cd.getUnqualifiedName());
+        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
+            try {
+                Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
+                if (p.endIsAttribute() && fc.getShowInSummary()) {
+                    objectDetails.put(
+                            p.getNoConstraintsString().replaceAll("^[^.]*\\.", ""),
+                            PathUtil.resolvePath(p, imo));
+                }
+            } catch (PathException e) {
+                LOG.error("Configuration error", e);
+            }
+        }
+        return objectDetails;
     }
 
     /**
