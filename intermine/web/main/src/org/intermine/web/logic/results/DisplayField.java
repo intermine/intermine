@@ -18,7 +18,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.query.Results;
@@ -72,10 +71,24 @@ public class DisplayField
         this.classKeys = classKeys;
     }
 
-    public DisplayField(Collection<?> collection, FieldDescriptor fd,
-                        WebConfig webConfig, Properties webProperties,
+    /**
+     * Create a new DisplayField object.
+     * @param collection the List the holds the object(s) to display
+     * @param fd metadata for the referenced object
+     * @param webConfig the WebConfig object for this webapp
+     * @param webProperties telling us how many Collection rows to show
+     * @param classKeys Map of class name to set of keys
+     * @param listOfTypes as determined using PathQueryResultHelper on a Collection
+     * @param objectType the type of the object.
+     * @throws Exception if an error occurs
+     */
+    public DisplayField(Collection<?> collection,
+                        FieldDescriptor fd,
+                        WebConfig webConfig,
+                        Properties webProperties,
                         Map<String, List<FieldDescriptor>> classKeys,
-                        List<Class<?>> listOfTypes, String objectType) throws Exception {
+                        List<Class<?>> listOfTypes,
+                        String objectType) throws Exception {
         this(collection, fd, webConfig, webProperties, classKeys, listOfTypes);
         this.parentClass = objectType;
     }
@@ -113,8 +126,15 @@ public class DisplayField
                 tableSize = collection.size();
             }
 
-            table = new InlineResultsTable(collection, fd.getClassDescriptor().getModel(),
-                                        webConfig, classKeys, tableSize, false, listOfTypes, parentClass, fd);
+            table = new InlineResultsTable(collection,
+                    fd.getClassDescriptor().getModel(),
+                    webConfig,
+                    classKeys,
+                    tableSize,
+                    false,
+                    listOfTypes,
+                    parentClass,
+                    fd);
         }
         return table;
     }

@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,23 +27,35 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.json.JSONObject;
 
-public class JSONListFormatter implements ListFormatter {
+/** @author Alex Kalderimis **/
+public class JSONListFormatter implements ListFormatter
+{
 
     private final InterMineAPI im;
     private final Profile profile;
 
+    /**
+     * Construct a list formatter.
+     * @param im The InterMine state object.
+     * @param profile The current user.
+     * @param jsDates Format dates suitable for JavaScript.
+     */
     public JSONListFormatter(InterMineAPI im, Profile profile, boolean jsDates) {
         super();
         this.im = im;
         this.profile = profile;
     }
 
-    private final boolean hasCallback = false;
     private int rowsLeft = 0;
     private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-    public Map<String, Object> bagToMap(InterMineBag list) {
-    	Map<String, Object> listMap = new HashMap<String, Object>();
+    /**
+     * Transform a bag into a mapping of its properties, for easy serialisation
+     * @param list The bag to read
+     * @return Its properties
+     **/
+    Map<String, Object> bagToMap(InterMineBag list) {
+        Map<String, Object> listMap = new HashMap<String, Object>();
         listMap.put("name", list.getName());
         listMap.put("type", list.getType());
         listMap.put("title", list.getTitle());

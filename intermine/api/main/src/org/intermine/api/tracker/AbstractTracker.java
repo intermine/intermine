@@ -24,9 +24,9 @@ import org.intermine.sql.DatabaseUtil;
  * @author dbutano
  *
  */
-public abstract class TrackerAbstract implements Tracker
+public abstract class AbstractTracker implements Tracker
 {
-    private static final Logger LOG = Logger.getLogger(TrackerAbstract.class);
+    private static final Logger LOG = Logger.getLogger(AbstractTracker.class);
     protected Queue<Track> trackQueue = null;
     protected String trackTableName;
     protected TrackerLogger trackerLogger = null;
@@ -36,7 +36,7 @@ public abstract class TrackerAbstract implements Tracker
      * @param trackQueue the queue where the tracks are temporary stored
      * @param trackTableName the table where store the tracks
      */
-    protected TrackerAbstract(Queue<Track> trackQueue, String trackTableName) {
+    protected AbstractTracker(Queue<Track> trackQueue, String trackTableName) {
         this.trackQueue = trackQueue;
         this.trackTableName = trackTableName;
     }

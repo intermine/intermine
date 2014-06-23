@@ -41,7 +41,7 @@ public class MetadataNode extends Node
     Map<String, List<FieldDescriptor>> classKeys;
     BagManager bagManager;
     Profile profile;
-	private Boolean isNullNode = false;
+    private Boolean isNullNode = false;
 
     /**
      * Constructor for a root node
@@ -74,12 +74,12 @@ public class MetadataNode extends Node
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
-     * @param is the field null or empty? (OSS determined)
+     * @param isNull is the field null or empty? (OS-Summary determined)
      */
     public MetadataNode(MetadataNode parent, String fieldName, String button,
             List<String> structure, PathQuery query, Map<String, List<FieldDescriptor>> classKeys,
             BagManager bagManager, Profile profile, Boolean isNull) {
-    	
+
         super(parent, fieldName, false);
         this.button = button;
         this.structure = structure;
@@ -250,13 +250,13 @@ public class MetadataNode extends Node
     }
 
     /**
-     * 
+     *
      * @return a boolean is this Node is null or empty as determined by OSS
      */
     public boolean getIsNull() {
-    	return isNullNode;
+        return isNullNode;
     }
-    
+
     /**
      * {@inheritDoc}
      */

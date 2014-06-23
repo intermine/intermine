@@ -49,7 +49,7 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  * @author Daniela Butano
  *
  */
-public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
+public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
 {
     private WidgetConfig config;
     private ObjectStore os;
@@ -60,10 +60,10 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
     private static final String PERCENTAGE_GENE_LENGTH_NOT_NULL = "percentage_gene_length_not_null";
     private static final String PATH_QUERY_GENE_LENGTH_NULL = "pathQueryGeneLengthNull";
 
-    public GeneLenghtCorrectionCoefficient() {
+    public GeneLengthCorrectionCoefficient() {
     }
 
-    public GeneLenghtCorrectionCoefficient(WidgetConfig config, ObjectStore os, InterMineBag bag) {
+    public GeneLengthCorrectionCoefficient(WidgetConfig config, ObjectStore os, InterMineBag bag) {
         this.config = config;
         this.os = os;
         this.bag = bag;
@@ -149,11 +149,12 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void apply(Map<String, BigDecimal> pValuesPerTerm, PopulationInfo population, 
-            Map<String, PopulationInfo> annotatedPopulationInfo, Double maxValue) {
+    @Override
+    public void apply(
+            Map<String, BigDecimal> pValuesPerTerm,
+            PopulationInfo population,
+            Map<String, PopulationInfo> annotatedPopulationInfo,
+            Double maxValue) {
         BigDecimal pValue, pValueCorrected;
         BigDecimal maxDecimal = new BigDecimal(maxValue);
         String term;
@@ -168,7 +169,7 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
             if (pi != null) {
                 float geneLengthPerTerm = (Float) pi.getExtraAttribute();
                 int populationPerTerm = pi.getSize();
-                float geneLength = ((BigDecimal) population.getExtraAttribute()).floatValue();
+                float geneLength = population.getExtraAttribute();
                 float geneLenghtProbability = (geneLengthPerTerm / geneLength);
                 float populationCountProbability = (float) populationPerTerm / population.getSize();
                 float correctionCoefficient =  geneLenghtProbability / populationCountProbability;
@@ -192,7 +193,7 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
      * {@inheritDoc}
      */
     public Map<String, Map<String, Object>> getOutputInfo(String geneLengthCorrectionInput) {
-        Map<String, Object> geneLenghtAttributes = new HashMap<String, Object>();
+        Map<String, Object> geneLengthAttributes = new HashMap<String, Object>();
         Map<String, Map<String, Object>> extraAttributes = new HashMap<String,
                 Map<String, Object>>();
         if (isApplicable()) {
@@ -201,33 +202,33 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
                 if (percentageGeneWithLengthNull != 0) {
                     DecimalFormat df = new DecimalFormat("##.##");
                     df.setRoundingMode(RoundingMode.DOWN);
-                    geneLenghtAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL,
+                    geneLengthAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL,
                         df.format(percentageGeneWithLengthNull) + "%");
-                    geneLenghtAttributes.put(PATH_QUERY_GENE_LENGTH_NULL,
+                    geneLengthAttributes.put(PATH_QUERY_GENE_LENGTH_NULL,
                         getPathQueryForGenesWithLengthNull(
                             InterMineContext.getWebConfig()).toJson());
                 } else {
-                    geneLenghtAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
-                    geneLenghtAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
+                    geneLengthAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+                    geneLengthAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
                 }
             } catch (ObjectStoreException os) {
-                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, null);
-                geneLenghtAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
-                geneLenghtAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
-                extraAttributes.put(GENE_LENGTH, geneLenghtAttributes);
+                geneLengthAttributes.put(GENE_LENGTH_CORRECTION, null);
+                geneLengthAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+                geneLengthAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
+                extraAttributes.put(GENE_LENGTH, geneLengthAttributes);
             }
             if (geneLengthCorrectionInput == null) {
-                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, false);
+                geneLengthAttributes.put(GENE_LENGTH_CORRECTION, false);
             } else {
-                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION,
+                geneLengthAttributes.put(GENE_LENGTH_CORRECTION,
                     new Boolean(geneLengthCorrectionInput));
             }
         } else {
-            geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, null);
-            geneLenghtAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
-            geneLenghtAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
+            geneLengthAttributes.put(GENE_LENGTH_CORRECTION, null);
+            geneLengthAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+            geneLengthAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
         }
-        extraAttributes.put(GENE_LENGTH, geneLenghtAttributes);
+        extraAttributes.put(GENE_LENGTH, geneLengthAttributes);
         return extraAttributes;
     }
 

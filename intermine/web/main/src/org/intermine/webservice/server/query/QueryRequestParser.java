@@ -20,10 +20,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
-import org.intermine.api.query.KeyFormatException;
-import org.intermine.api.query.NotPresentException;
 import org.intermine.api.query.QueryStore;
 import org.intermine.api.query.QueryStoreException;
 import org.intermine.webservice.server.WebServiceRequestParser;
@@ -38,7 +35,6 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  **/
 public class QueryRequestParser extends WebServiceRequestParser
 {
-    private static Logger logger = Logger.getLogger(QueryRequestParser.class);
 
     protected HttpServletRequest request;
 
@@ -47,6 +43,7 @@ public class QueryRequestParser extends WebServiceRequestParser
     /**
      * RequestProcessor constructor.
      * @param request request
+     * @param queryStore a place to retrieve queries by qid.
      */
     public QueryRequestParser(QueryStore queryStore, HttpServletRequest request) {
         this.queryStore = queryStore;
@@ -126,30 +123,34 @@ public class QueryRequestParser extends WebServiceRequestParser
      * Decompress a list of output ks to a string.
      *
      * Gratefully nicked from Stack-Overflow.
+     * @param compressed A query compressed to a list of bytes.
+     * @return The decompressed query.
      **/
     public static String decompressLZW(List<Integer> compressed) {
         // Build the dictionary.
         int dictSize = 256;
-        Map<Integer,String> dictionary = new HashMap<Integer,String>();
-        for (int i = 0; i < 256; i++)
-            dictionary.put(i, "" + (char)i);
- 
-        String w = "" + (char)(int)compressed.remove(0);
+        Map<Integer, String> dictionary = new HashMap<Integer, String>();
+        for (int i = 0; i < 256; i++) {
+            dictionary.put(i, "" + (char) i);
+        }
+
+        String w = "" + (char) (int) compressed.remove(0);
         String result = w;
         for (int k : compressed) {
             String entry;
-            if (dictionary.containsKey(k))
+            if (dictionary.containsKey(k)) {
                 entry = dictionary.get(k);
-            else if (k == dictSize)
+            } else if (k == dictSize) {
                 entry = w + w.charAt(0);
-            else
+            } else {
                 throw new IllegalArgumentException("Bad compressed k: " + k);
- 
+            }
+
             result += entry;
- 
+
             // Add w+entry[0] to the dictionary.
             dictionary.put(dictSize++, w + entry.charAt(0));
- 
+
             w = entry;
         }
         return result;
@@ -157,6 +158,8 @@ public class QueryRequestParser extends WebServiceRequestParser
 
     /**
      * Take in a LZW encoded string and return a decoded plain-text string.
+     * @return the decompressed query.
+     * @param encoded The compressed and encoded representation of the query.
      */
     public static String decodeLZWString(String encoded) {
         List<Integer> codes = new ArrayList<Integer>();
@@ -171,7 +174,6 @@ public class QueryRequestParser extends WebServiceRequestParser
 
     /**
      * Get query XML from a request.
-     * @param req The request to get the XML from.
      * @return The XML string version of the query, in the correct encoding.
      */
     public String getQueryXml() {
@@ -179,7 +181,7 @@ public class QueryRequestParser extends WebServiceRequestParser
         qid = request.getParameter(QID);
         xmlQuery = request.getParameter(QUERY_PARAMETER);
         lzwQuery = request.getParameter(QLZW_PARAMETER);
-        
+
         if (StringUtils.isNotBlank(qid)) {
             try {
                 return queryStore.getQuery(qid);

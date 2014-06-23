@@ -114,7 +114,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
         if (StringUtils.isEmpty(trail)) {
-        	trail = "|query|results";
+            trail = "|query|results";
         }
         return new ForwardParameters(mapping.findForward("results"))
                     .addParameter("trail", trail)

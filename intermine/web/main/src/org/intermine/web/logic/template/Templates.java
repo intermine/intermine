@@ -1,5 +1,15 @@
 package org.intermine.web.logic.template;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -24,8 +34,14 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
 import org.intermine.webservice.server.CodeTranslator;
 
-public final class Templates {
-    
+/**
+ * A utility class with static methods for dealing with templates.
+ * @author Alex Kalderimis
+ *
+ */
+public final class Templates
+{
+
     private Templates() {
         // Don't.
     }
@@ -35,8 +51,9 @@ public final class Templates {
     private static final String VALUE_PARAMETER = "value";
     private static final String ID_PARAMETER = "constraint";
     private static final String CODE_PARAMETER = "code";
-    
-    private static ConstraintOp getConstraintOp(String parName, String parValue) throws TemplateValueParseException {
+
+    private static ConstraintOp getConstraintOp(String parName, String parValue)
+        throws TemplateValueParseException {
         ConstraintOp ret = ConstraintOp.getConstraintOp(CodeTranslator.getCode(parValue));
         if (parValue != null && ret == null) {
             throw new TemplateValueParseException (
@@ -56,7 +73,7 @@ public final class Templates {
 
     /**
      * Given a HTTP request, parse out the template values.
-     * 
+     *
      * A template value is expected to be encoded such as:
      * <pre><code>
      *   constraintX=Gene
@@ -71,7 +88,8 @@ public final class Templates {
      * @return map of constraints and values to be used to populate template.
      * @throws TemplateValueParseException if the request parameters are bad.
      */
-    public static Map<String, List<ConstraintInput>> parseConstraints(HttpServletRequest request)  throws TemplateValueParseException {
+    public static Map<String, List<ConstraintInput>> parseConstraints(HttpServletRequest request)
+        throws TemplateValueParseException {
         // Maximum number of constraints is determined by the valid code range
         // on PathQueries.
         Map<String, List<ConstraintInput>> ret = new HashMap<String, List<ConstraintInput>>();
@@ -154,7 +172,8 @@ public final class Templates {
         // Use the id parameters (eg. constraint1, constraint2, ...) as a proxy
         // for the whole constraint.
         Set<String> allIdParameters = new HashSet<String>();
-        for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+        for (@SuppressWarnings("unchecked")
+        Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
             String next = e.nextElement();
             if (next.startsWith("constraint")) {
                 allIdParameters.add(next);
@@ -171,14 +190,24 @@ public final class Templates {
         return ret;
     }
 
-    public static class TemplateValueParseException extends Exception {
+    /**
+     * An exception that we throw when we can't parse a template.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class TemplateValueParseException extends Exception
+    {
         private static final long serialVersionUID = -6128402589193631537L;
-        
+
+        /**
+         * Construct an exception with a message
+         * @param message The message, obvs.
+         */
         public TemplateValueParseException(String message) {
             super(message);
         }
     }
-    
+
 
     /**
      * Creates a map from input to be used later to populate the template.
@@ -246,7 +275,11 @@ public final class Templates {
     }
 
     private static void checkAndAddValue(Map<String, List<TemplateValue>> values,
-            TemplateQuery template, PathConstraint con, ConstraintInput conInput, String code) throws TemplateValueParseException {
+                                           TemplateQuery template,
+                                           PathConstraint con,
+                                           ConstraintInput conInput,
+                                           String code)
+        throws TemplateValueParseException {
         if (conInput != null) {
             if (template.isRequired(con)) {
                 addToValuesMap(values, createTemplateValue(con, conInput, SwitchOffAbility.LOCKED));

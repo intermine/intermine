@@ -12,7 +12,6 @@ package org.intermine.webservice.server.idresolution;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,16 +38,25 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 
-public class BagResultCategoryKeyFormatter implements BagResultFormatter {
-    
+/**
+ * Format a bag query result, grouping by category of issue.
+ * @author Alex Kalderimis
+ */
+public class BagResultCategoryKeyFormatter implements BagResultFormatter
+{
+
     private static final Logger LOG = Logger.getLogger(BagResultCategoryKeyFormatter.class);
 
     private static final String[] ISSUES = new String[] {
-        BagQueryResult.DUPLICATE, BagQueryResult.WILDCARD, BagQueryResult.OTHER, BagQueryResult.TYPE_CONVERTED
+        BagQueryResult.DUPLICATE,
+        BagQueryResult.WILDCARD,
+        BagQueryResult.OTHER,
+        BagQueryResult.TYPE_CONVERTED
     };
 
     private final InterMineAPI im;
 
+    /** @param api The InterMine state object **/
     public BagResultCategoryKeyFormatter(InterMineAPI api) {
         this.im = api;
     }
@@ -120,7 +128,7 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
         for (IssueResult issue: bqr.getIssueResults(issueType)) {
             final Map<String, Object> obj = new HashMap<String, Object>();
             final List<Map<String, Object>> matches = new ArrayList<Map<String, Object>>();
-            
+
             obj.put("input", issue.inputIdent);
             obj.put("reason", issue.queryDesc);
             obj.put("matches", matches);
@@ -176,7 +184,8 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
 
     private List<Map<String, Object>> getMatches(BagQueryResult bqr) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        for (Entry<Integer, List> match: bqr.getMatches().entrySet()) {
+        for (@SuppressWarnings("rawtypes") Entry<Integer, List> match
+                :bqr.getMatches().entrySet()) {
             Map<String, Object> obj = new HashMap<String, Object>();
             obj.put("id", match.getKey());
             obj.put("input", match.getValue());
@@ -188,7 +197,9 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
 
     private Map<String, Object> getObjectDetails(Integer objId) {
         InterMineObject imo;
-        if (objId == null) throw new IllegalArgumentException("obj cannot be null");
+        if (objId == null) {
+            throw new IllegalArgumentException("obj cannot be null");
+        }
         try {
             imo = im.getObjectStore().getObjectById(objId);
         } catch (ObjectStoreException e) {

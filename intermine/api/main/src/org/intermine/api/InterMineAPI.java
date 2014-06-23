@@ -115,7 +115,6 @@ public class InterMineAPI
     }
 
     /**
-     * @return 
      * @return The ObjectStore that represents a connection to the userprofile store.
      */
     public ObjectStoreWriter getUserProfile() {

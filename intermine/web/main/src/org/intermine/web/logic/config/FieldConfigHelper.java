@@ -23,8 +23,13 @@ import org.intermine.metadata.FieldDescriptor;
  * @author Kim Rutherford
  */
 
-public class FieldConfigHelper
+public final class FieldConfigHelper
 {
+
+    private FieldConfigHelper() {
+        // Hidden constructor.
+    }
+
     /**
      * Find the FieldConfig objects for the the given ClassDescriptor (or generate them).
      * @param webConfig the WebConfig object for this webapp
@@ -61,12 +66,28 @@ public class FieldConfigHelper
         return fieldConfigs;
     }
 
+    /**
+     * Get a field config object for a particular descriptor.
+     * @param webConfig The configuration.
+     * @param fd The field metadata.
+     * @return The configuration for this field.
+     */
     public static FieldConfig getFieldConfig(WebConfig webConfig, FieldDescriptor fd) {
         ClassDescriptor cld = fd.getClassDescriptor();
         return getFieldConfig(webConfig, cld, fd);
     }
 
-    public static FieldConfig getFieldConfig(WebConfig webConfig, ClassDescriptor cld, FieldDescriptor fd) {
+    /**
+     * Get a field config object for a particular descriptor.
+     * @param webConfig The configuration.
+     * @param fd The field metadata.
+     * @param cld The class this field belongs to.
+     * @return The configuration for this field.
+     */
+    public static FieldConfig getFieldConfig(
+            WebConfig webConfig,
+            ClassDescriptor cld,
+            FieldDescriptor fd) {
         List<FieldConfig> fcs = getClassFieldConfigs(webConfig, cld);
         for (FieldConfig fc: fcs) {
             if (fc == null) {

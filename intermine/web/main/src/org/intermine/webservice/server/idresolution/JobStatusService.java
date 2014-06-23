@@ -17,11 +17,17 @@ import org.intermine.api.idresolution.Job.JobStatus;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
+/** @author Alex Kalderimis **/
 public class JobStatusService extends JSONService
 {
 
     private final String jobId;
 
+    /**
+     * Construct a handler for this request.
+     * @param im The InterMine state object.
+     * @param jobId The id of the job.
+     */
     public JobStatusService(InterMineAPI im, String jobId) {
         super(im);
         this.jobId = jobId;

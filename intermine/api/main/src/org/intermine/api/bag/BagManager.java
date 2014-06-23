@@ -320,7 +320,9 @@ public class BagManager
      */
     public void shareBagWithUser(InterMineBag bag, Profile recipient)
             throws UserNotFoundException, UserAlreadyShareBagException {
-        if (recipient == null) throw new UserNotFoundException("recipient is null");
+        if (recipient == null) {
+            throw new UserNotFoundException("recipient is null");
+        }
         sharedBagManager.shareBagWithUser(bag, recipient.getUsername());
     }
 
@@ -343,7 +345,7 @@ public class BagManager
     }
 
     /**
-     * Unshare the bag with the user given in input
+     * Un-share the bag with the user given in input
      * @param bag the bag to un-share
      * @param profile the user sharing the bag
      * @throws UserNotFoundException if the user does't exist

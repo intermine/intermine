@@ -136,7 +136,8 @@ public class TypeConverterTest extends StoreDataTestCase
         expected.put(((List) r.get(0)).get(0), Collections.singletonList(((List) r.get(0)).get(1)));
         expected.put(((List) r.get(1)).get(0), Collections.singletonList(((List) r.get(1)).get(1)));
 
-        Map<InterMineObject, List<InterMineObject>> got = TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
+        Map<InterMineObject, List<InterMineObject>> got =
+                TypeConverter.getConvertedObjectMap(conversionTemplates, Employee.class, Address.class, imb, os);
 
         assertEquals(expected, got);
     }

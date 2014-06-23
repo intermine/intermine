@@ -21,6 +21,11 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
 
+/**
+ * A servlet for routing requests to do with deregistration.
+ * @author Alex Kalderimis.
+ *
+ */
 public class DeregistrationTokenServlet  extends WebServiceServlet
 {
     /**
@@ -29,8 +34,10 @@ public class DeregistrationTokenServlet  extends WebServiceServlet
     private static final long serialVersionUID = -3933431561522570728L;
 
     @Override
-    protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void respond(
+            Method method,
+            HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         String uid = getUid(request);
         WebService service = null;
         if (Method.GET == method && uid != null) {
@@ -64,9 +71,11 @@ public class DeregistrationTokenServlet  extends WebServiceServlet
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case POST: return new NewDeletionTokenService(api);
-            default: throw new NoServiceException();
+            case POST:
+                return new NewDeletionTokenService(api);
+            default:
+                throw new NoServiceException();
         }
     }
-    
+
 }

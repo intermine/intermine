@@ -14,14 +14,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.Vector;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,21 +36,19 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.lucene.KeywordSearch;
+import org.intermine.api.lucene.KeywordSearchFacet;
+import org.intermine.api.lucene.KeywordSearchFacetData;
+import org.intermine.api.lucene.ResultsWithFacets;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.search.KeywordSearch;
-import org.intermine.web.search.KeywordSearchFacetData;
-import org.intermine.web.search.KeywordSearchHit;
 import org.intermine.web.search.KeywordSearchResult;
+import org.intermine.web.search.SearchUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.browseengine.bobo.api.BrowseHit;
-import com.browseengine.bobo.api.BrowseResult;
 
 /**
  * Controller for keyword search.
@@ -67,13 +65,13 @@ public class KeywordSearchResultsController extends TilesAction
      */
     @Override
     public ActionForward execute(ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
+            ActionMapping mapping,
+            ActionForm form,
             HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         long time = System.currentTimeMillis();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        javax.servlet.ServletContext servletContext = request.getSession().getServletContext();
+        ServletContext servletContext = request.getSession().getServletContext();
         String contextPath = servletContext.getRealPath("/");
         synchronized (this) {
             // if this decreases performance too much we might have to change it
@@ -92,6 +90,7 @@ public class KeywordSearchResultsController extends TilesAction
         Profile profile = SessionMethods.getProfile(request.getSession());
         im.getTrackerDelegate().trackKeywordSearch(searchTerm, profile,
                 request.getSession().getId());
+        WebConfig wc = SessionMethods.getWebConfig(request);
 
         // search in bag (list)
         String searchBag = request.getParameter("searchBag");
@@ -108,28 +107,15 @@ public class KeywordSearchResultsController extends TilesAction
             searchTerm = "*:*";
         }
 
-        //TODO remove - just  for performance testing
-        // KeywordSearch.runLuceneSearch(searchTerm);
-
         long searchTime = System.currentTimeMillis();
-        BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetValues,
-                ids);
-        searchTime = System.currentTimeMillis() - searchTime;
-        Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
-        Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
-        Set<Integer> objectIds = new HashSet<Integer>();
 
-        if (result != null) {
-            totalHits = result.getNumHits();
-            LOG.debug("Browse found " + result.getNumHits() + " hits");
-            BrowseHit[] browseHits = result.getHits();
-            objectIds = KeywordSearch.getObjectIds(browseHits);
-            Map<Integer, InterMineObject> objMap = KeywordSearch.getObjects(im, objectIds);
-            Vector<KeywordSearchHit> searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
-            WebConfig wc = SessionMethods.getWebConfig(request);
-            searchResultsParsed = KeywordSearch.parseResults(im, wc, searchHits);
-            searchResultsFacets = KeywordSearch.parseFacets(result, facets, facetValues);
-        }
+        ResultsWithFacets results =
+                KeywordSearch.runBrowseWithFacets(im, searchTerm, offset, facetValues, ids);
+
+        Collection<KeywordSearchResult> searchResultsParsed =
+                SearchUtils.parseResults(im, wc, results.getHits());
+
+        Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
 
         logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());
@@ -203,6 +189,7 @@ public class KeywordSearchResultsController extends TilesAction
         return ids;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, String> getFacetValues(HttpServletRequest request,
             Vector<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
@@ -212,8 +199,8 @@ public class KeywordSearchResultsController extends TilesAction
                 || !StringUtils.isBlank(request.getParameter("searchSubmitRestricted"))) {
             // find all parameters that begin with facet_ and have a
             // value, add them to map
-            for (Entry<String, String[]> requestParameter : ((Map<String, String[]>) request
-                    .getParameterMap()).entrySet()) {
+            for (Entry<String, String[]> requestParameter
+                    : ((Map<String, String[]>) request.getParameterMap()).entrySet()) {
                 if (requestParameter.getKey().startsWith("facet_")
                         && requestParameter.getValue().length > 0
                         && !StringUtils.isBlank(requestParameter.getValue()[0])) {

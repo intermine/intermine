@@ -21,7 +21,6 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
-import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
 
 

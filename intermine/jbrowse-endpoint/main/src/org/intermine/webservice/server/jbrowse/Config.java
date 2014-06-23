@@ -20,7 +20,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
