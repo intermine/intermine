@@ -580,21 +580,20 @@ public final class KeywordSearch
         return searchResultsFacets;
     }
 
-    
-
-    public static Vector<KeywordSearchHit> getSearchHits(BrowseHit[] browseHits,
+    public static Vector<KeywordSearchHit> getSearchHits(
+            BrowseHit[] browseHits,
             Map<Integer, InterMineObject> objMap) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
         for (BrowseHit browseHit : browseHits) {
             try {
                 Document doc = browseHit.getStoredFields();
-                if (doc != null) {
-                    InterMineObject obj = objMap.get(Integer.valueOf(doc.getFieldable("id")
-                            .stringValue()));
-                    searchHits.add(new KeywordSearchHit(browseHit.getScore(), doc, obj));
-                } else {
+                if (doc == null) {
                     LOG.error("doc is null for browseHit " + browseHit);
+                } else {
+                    Integer id          = Integer.valueOf(doc.getFieldable("id").stringValue());
+                    InterMineObject obj = objMap.get(id);
+                    searchHits.add(new KeywordSearchHit(browseHit.getScore(), doc, obj));
                 }
             } catch (NumberFormatException e) {
                 // ignore
@@ -623,6 +622,16 @@ public final class KeywordSearch
         return objectIds;
     }
 
+    /**
+     * Run a browse search and get back both search results and facet information.
+     * @param im The InterMine state object.
+     * @param searchString The search input.
+     * @param offset An offset.
+     * @param facetValues The facets selected.
+     * @param ids A collection of objects to restrict the search to.
+     * @return An object which provides access to hits and facets.
+     * @throws ObjectStoreException If we can't fetch objects.
+     */
     public static ResultsWithFacets runBrowseWithFacets(
             InterMineAPI im,
             String searchString,
@@ -633,15 +642,14 @@ public final class KeywordSearch
         BrowseResult results = runBrowseSearch(searchString, offset, facetValues, ids);
         Collection<KeywordSearchFacet> searchResultsFacets = Collections.emptySet();
         Collection<KeywordSearchHit> searchHits = Collections.emptySet();
-        Set<Integer> objectIds = new HashSet<Integer>();
 
         if (results != null) {
             LOG.debug("Browse found " + results.getNumHits() + " hits");
             BrowseHit[] browseHits = results.getHits();
-            objectIds = KeywordSearch.getObjectIds(browseHits);
+            Set<Integer> objectIds = getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = Objects.getObjects(im, objectIds);
-            searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
-            searchResultsFacets = KeywordSearch.parseFacets(results, facets, facetValues);
+            searchHits = getSearchHits(browseHits, objMap);
+            searchResultsFacets = parseFacets(results, facets, facetValues);
         }
         return new ResultsWithFacets(searchHits, searchResultsFacets);
     }
