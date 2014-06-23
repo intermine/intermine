@@ -1,5 +1,15 @@
 package org.intermine.web.struts.oauth2;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -21,9 +31,20 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.struts.InterMineAction;
 
-public class Authenticator extends InterMineAction {
+/**
+ * The action that bounces the user off to their respective authentication
+ * provider when they want to use them to log-in with OAuth2.
+ *
+ * This controller just generates the appropriate link, and redirects the user to
+ * that location.
+ *
+ * @author Alex Kalderimis
+ *
+ */
+public class Authenticator extends InterMineAction
+{
 
-    private static Logger LOG = Logger.getLogger(Authenticator.class);
+    private static final Logger LOG = Logger.getLogger(Authenticator.class);
 
     /**
      * Method called for login in
@@ -41,19 +62,16 @@ public class Authenticator extends InterMineAction {
             ActionForm form,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+
         OAuthClientRequest authRequest;
         OAuthProviderType provider;
-        
-        Properties webProperties = InterMineContext.getWebProperties();
 
+        Properties webProperties = InterMineContext.getWebProperties();
 
         // Suitable values are: GOOGLE, GITHUB, FACEBOOK, etc.
         String providerName = request.getParameter("provider");
 
-        List<String> redirectParts = new ArrayList<String>();
-        redirectParts.add(webProperties.getProperty("webapp.baseurl"));
-        redirectParts.add(webProperties.getProperty("webapp.path"));
-        redirectParts.add("oauth2callback.do?provider=" + providerName);
+        String redirectUri = getRedirectUri(webProperties, providerName);
         String state = UUID.randomUUID().toString();
         request.getSession().setAttribute("oauth2.state", state);
 
@@ -64,28 +82,41 @@ public class Authenticator extends InterMineAction {
                 authorisationUrl = provider.getAuthzEndpoint();
             } catch (IllegalArgumentException e) {
                 ActionErrors errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("oauth2.error.unknown-provider"));
+                errors.add(ActionErrors.GLOBAL_MESSAGE,
+                        new ActionMessage("oauth2.error.unknown-provider"));
                 saveErrors(request, errors);
                 return mapping.findForward("login");
             }
         }
         try {
             authRequest = OAuthClientRequest
-                           .authorizationLocation(authorisationUrl)
-                           .setClientId(webProperties.getProperty("oauth2." + providerName + ".client-id"))
-                           .setRedirectURI(StringUtils.join(redirectParts, "/"))
-                           .setScope(webProperties.getProperty("oauth2." + providerName + ".scopes"))
-                           .setState(state)
-                           .buildQueryMessage();
+                   .authorizationLocation(authorisationUrl)
+                   .setClientId(webProperties.getProperty("oauth2." + providerName + ".client-id"))
+                   .setRedirectURI(redirectUri)
+                   .setScope(webProperties.getProperty("oauth2." + providerName + ".scopes"))
+                   .setState(state)
+                   .setParameter("response_type", "code")
+                   .buildQueryMessage();
+            String goHere = authRequest.getLocationUri();
             // various providers require the response_type parameter.
-            LOG.info("Redirecting to " + authRequest.getLocationUri() + "&response_type=code");
-            response.sendRedirect(authRequest.getLocationUri() + "&response_type=code");
+            LOG.debug("Redirecting to " + goHere);
+            response.sendRedirect(goHere);
             return null;
         } catch (OAuthSystemException e) {
             ActionErrors errors = new ActionErrors();
-            errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("oauth2.error.system-exception", e));
+            errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("oauth2.error.system-exception", e));
             saveErrors(request, errors);
             return mapping.findForward("login");
         }
+    }
+
+    private String getRedirectUri(Properties webProperties, String providerName) {
+        List<String> redirectParts = new ArrayList<String>();
+        redirectParts.add(webProperties.getProperty("webapp.baseurl"));
+        redirectParts.add(webProperties.getProperty("webapp.path"));
+        redirectParts.add("oauth2callback.do?provider=" + providerName);
+        String redirectUri = StringUtils.join(redirectParts, "/");
+        return redirectUri;
     }
 }

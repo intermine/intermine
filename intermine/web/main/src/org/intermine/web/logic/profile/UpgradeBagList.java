@@ -49,6 +49,7 @@ public class UpgradeBagList implements Runnable
         this.bagQueryRunner = bagQueryRunner;
     }
 
+    @Override
     public void run() {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
@@ -60,6 +61,7 @@ public class UpgradeBagList implements Runnable
                     if (result.getUnresolved().isEmpty()
                         && (result.getIssues().isEmpty()
                             || onlyOtherIssuesAlreadyContained(result))) {
+                        @SuppressWarnings("rawtypes")
                         Map<Integer, List> matches = result.getMatches();
                         //we don't need to update the extra field added later
                         bag.upgradeOsb(matches.keySet(), false);
@@ -100,21 +102,24 @@ public class UpgradeBagList implements Runnable
             && result.getIssues().get(BagQueryResult.TYPE_CONVERTED) == null
             && result.getIssues().get(BagQueryResult.WILDCARD) == null) {
 
+            @SuppressWarnings("rawtypes")
             Map<String, Map<String, List>> otherMatchMap = result.getIssues()
                 .get(BagQueryResult.OTHER);
             Set<Integer> matchesIds = result.getMatches().keySet();
             if (otherMatchMap != null) {
-                Map<String, ArrayList<Object>> lowQualityMatches = new LinkedHashMap<String,
-                ArrayList<Object>>();
-                Iterator otherMatchesIter = otherMatchMap.values().iterator();
+                @SuppressWarnings("rawtypes")
+                Map<String, List> lowQualityMatches = new LinkedHashMap<String, List>();
+                @SuppressWarnings("rawtypes")
+                Iterator<Map<String, List>> otherMatchesIter = otherMatchMap.values().iterator();
                 while (otherMatchesIter.hasNext()) {
-                    Map<String, ArrayList<Object>> inputToObjectsMap =
-                        (Map<String, ArrayList<Object>>) otherMatchesIter.next();
-                    Map<String, ArrayList<Object>> inputToObjectsMapUpdated =
-                        new LinkedHashMap<String, ArrayList<Object>>();
+                    @SuppressWarnings("rawtypes")
+                    Map<String, List> inputToObjectsMap = otherMatchesIter.next();
+                    @SuppressWarnings("rawtypes")
+                    Map<String, List> inputToObjectsMapUpdated = new LinkedHashMap<String, List>();
                     for (String key : inputToObjectsMap.keySet()) {
-                        ArrayList<Object> listObjects = inputToObjectsMap.get(key);
-                        ArrayList<Object> listObjectsUpdated = new ArrayList<Object>();
+                        @SuppressWarnings("rawtypes")
+                        List listObjects = inputToObjectsMap.get(key);
+                        List<Object> listObjectsUpdated = new ArrayList<Object>();
                         for (Object obj : listObjects) {
                             InterMineObject intermineObj = (InterMineObject) obj;
                             if (matchesIds.isEmpty()

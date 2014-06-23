@@ -43,8 +43,10 @@ public class GetAttributeAsFileAction extends Action
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+    public ActionForward execute(
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -57,12 +59,12 @@ public class GetAttributeAsFileAction extends Action
 
         FieldExporter fieldExporter = null;
 
-        Set classes = Util.decomposeClass(object.getClass());
+        Set<Class<?>> classes = Util.decomposeClass(object.getClass());
 
-        Iterator classIter = classes.iterator();
+        Iterator<Class<?>> classIter = classes.iterator();
 
         while (classIter.hasNext()) {
-            Class c = (Class) classIter.next();
+            Class<?> c = classIter.next();
 
             Type thisTypeConfig = webConfig.getTypes().get(c.getName());
 

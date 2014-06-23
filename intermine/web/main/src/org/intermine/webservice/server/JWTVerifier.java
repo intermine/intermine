@@ -1,5 +1,15 @@
 package org.intermine.webservice.server;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -27,6 +37,11 @@ public class JWTVerifier
     private final Properties options;
     private final KeyStore keyStore;
 
+    /**
+     * Construct a verifier.
+     * @param keyStore All our trusted keys.
+     * @param options Configurable options.
+     */
     public JWTVerifier(KeyStore keyStore, Properties options) {
         this.keyStore = keyStore;
         this.options = options;
@@ -37,6 +52,7 @@ public class JWTVerifier
      *
      * @param rawString The string representation of the token.
      * @return The verification result.
+     * @throws VerificationError if this claim cannot be verified.
      */
     public Verification verify(final String rawString) throws VerificationError {
         Base64 decoder = new Base64();
@@ -62,7 +78,11 @@ public class JWTVerifier
         if (expiry < System.currentTimeMillis()) {
             throw new VerificationError("This token has expired.");
         }
-        if (!verifySignature(header, claims, pieces[0] + "." + pieces[1], decoder.decode(pieces[2]))) {
+        if (!verifySignature(
+                header,
+                claims,
+                pieces[0] + "." + pieces[1],
+                decoder.decode(pieces[2]))) {
             throw new VerificationError("Could not verify signature.");
         }
         return new Verification(issuer, getPrincipal(claims));
@@ -92,7 +112,12 @@ public class JWTVerifier
     }
 
     /* A veritable cornucopia of trying and catching */
-    private boolean verifySignature(JSONObject header, JSONObject claims, String signed, byte[] toVerify) throws VerificationError {
+    private boolean verifySignature(
+            JSONObject header,
+            JSONObject claims,
+            String signed,
+            byte[] toVerify)
+        throws VerificationError {
 
         if (toVerify == null || toVerify.length == 0) {
             throw new VerificationError("Cannot verify an unsigned token");
@@ -106,7 +131,7 @@ public class JWTVerifier
             throw new VerificationError("Missing required property.");
         }
 
-        KeyStore keyStore = getKeyStore();
+        KeyStore ks = getKeyStore();
 
         // algorithm should be something like "SHA256withRSA"
         Signature signature;
@@ -122,7 +147,7 @@ public class JWTVerifier
 
         if (algorithm.endsWith("withRSA")) {
             try {
-                Certificate cert = keyStore.getCertificate(keyAlias);
+                Certificate cert = ks.getCertificate(keyAlias);
                 PublicKey key = cert.getPublicKey();
                 signature.initVerify(key);
             } catch (InvalidKeyException e) {
@@ -184,7 +209,7 @@ public class JWTVerifier
 
         /**
          * Initialise a new verification error with a message detailing the problem.
-         * @param problem
+         * @param problem The problem we are reporting.
          */
         public VerificationError(String problem) {
             super(problem);

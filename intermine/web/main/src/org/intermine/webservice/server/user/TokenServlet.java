@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
 
+/** @author Alex Kalderimis **/
 public class TokenServlet extends HttpServlet
 {
     private static final long serialVersionUID = -9048566938927177723L;

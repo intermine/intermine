@@ -47,6 +47,7 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Mark Woodbridge
  */
+@SuppressWarnings("deprecation")
 public class ModifyDetails extends DispatchAction
 {
     private static final Logger LOG = Logger.getLogger(ModifyDetails.class);
@@ -259,42 +260,50 @@ public class ModifyDetails extends DispatchAction
         return mapping.findForward("reportTemplateTable");
     }
 
+    /**
+     * Show a displayer in response to an AJAX request.
+     * @param mapping The mapping.
+     * @param form The form.
+     * @param request The request.
+     * @param response The response.
+     * @return An action forward, possibly null.
+     */
     public ActionForward ajaxShowDisplayer(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
-		// fetch params from request
-		String displayerName = request.getParameter("name");
-        String reportObjectID = request.getParameter("id");    	
-    	
-    	// get ReportObject
+        // fetch params from request
+        String displayerName = request.getParameter("name");
+        String reportObjectID = request.getParameter("id");
+
+        // get ReportObject
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
-        
-		try {
-			InterMineObject o = os.getObjectById(new Integer(reportObjectID));
-			
-	        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
-	        ReportObject reportObject = reportObjects.get(o);			
-			
-	    	// get ReportDisplayer
-	    	ReportDisplayer d = reportObject.getReportDisplayer(displayerName);
-	    	
-	    	// forward
-	    	ComponentContext cc = new ComponentContext();
-	    	cc.putAttribute("reportObject", reportObject);
-	    	cc.putAttribute("displayer", d);
-	    	
-	        new ReportDisplayerController().execute(cc, mapping, form, request, response);
-	        request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
-	    	
-	    	return mapping.findForward("reportDisplayer");
-		
-		} catch (ObjectStoreException e) {
-			e.printStackTrace();
-		}
-		return null;
+
+        try {
+            InterMineObject o = os.getObjectById(new Integer(reportObjectID));
+
+            ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
+            ReportObject reportObject = reportObjects.get(o);
+
+            // get ReportDisplayer
+            ReportDisplayer d = reportObject.getReportDisplayer(displayerName);
+
+            // forward
+            ComponentContext cc = new ComponentContext();
+            cc.putAttribute("reportObject", reportObject);
+            cc.putAttribute("displayer", d);
+
+            new ReportDisplayerController().execute(cc, mapping, form, request, response);
+            request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+
+            return mapping.findForward("reportDisplayer");
+
+        } catch (ObjectStoreException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-    
+
     /**
      * Construct an ActionForward to the object details page.
      */

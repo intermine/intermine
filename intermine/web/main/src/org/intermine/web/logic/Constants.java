@@ -196,7 +196,7 @@ public final class Constants
      * Current version of the InterMine WebService.
      * This constant must changed every time the API changes, either by addition
      * or deletion of features.
-     * 
+     *
      * 12 - Added ability to filter lists from AvailableListsService
      * 13 - Added ability to serve characterish subsequences
      * 15 - Added jbrowse endpoint.
@@ -250,5 +250,6 @@ public final class Constants
     /** The preference set if the user does not want to be found */
     public static final String HIDDEN = "hidden";
 
+    /** The key under which OAuth2 providers are stored **/
     public static final String OAUTH2_PROVIDERS = "OAUTH2_PROVIDERS";
 }

@@ -14,7 +14,13 @@ import java.util.List;
 
 import org.intermine.webservice.server.exceptions.ServiceException;
 
-public class JSONCountFormatter extends JSONFormatter {
+/**
+ * A formatter that presents count results as JSON.
+ * @author Alex Kalderimis
+ *
+ */
+public class JSONCountFormatter extends JSONFormatter
+{
 
     @Override
     public String formatResult(List<String> resultRow) {

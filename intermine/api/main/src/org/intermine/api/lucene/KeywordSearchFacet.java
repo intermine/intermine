@@ -1,4 +1,4 @@
-package org.intermine.web.struts;
+package org.intermine.api.lucene;
 
 /*
  * Copyright (C) 2002-2014 FlyMine

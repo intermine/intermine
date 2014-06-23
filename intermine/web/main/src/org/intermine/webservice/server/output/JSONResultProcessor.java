@@ -42,7 +42,8 @@ public abstract class JSONResultProcessor extends ResultProcessor
      * @param it The ExportResultsIterator this iterator will use to process its data.
      * @return An iterator of objects.
      */
-    protected abstract Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it);
+    protected abstract Iterator<? extends Object> getResultsIterator(
+            Iterator<List<ResultElement>> it);
 
     @SuppressWarnings("unchecked")
     @Override
@@ -56,7 +57,7 @@ public abstract class JSONResultProcessor extends ResultProcessor
             Object next = objIter.next();
             List<String> outputLine = new ArrayList<String>(
                     Arrays.asList(next.toString()));
-            if (objIter.hasNext()) { 
+            if (objIter.hasNext()) {
                 outputLine.add("");
                 lastHasComma = true;
             } else {

@@ -358,7 +358,7 @@ public class QueryBuilderConstraintForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
+    public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
 
@@ -413,7 +413,7 @@ public class QueryBuilderConstraintForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
+    public void reset(ActionMapping mapping,
                       HttpServletRequest request) {
         bagOp = null;
         bagValue = null;

@@ -71,7 +71,6 @@ public class ImportQueriesAction extends InterMineAction
         }
         try {
             profile.disableSaving();
-            StringBuffer sb = new StringBuffer();
             int imported = 0;
             boolean validNameQuery = true;
             for (String queryName : queries.keySet()) {

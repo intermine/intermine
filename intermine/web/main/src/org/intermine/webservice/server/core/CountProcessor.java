@@ -14,12 +14,23 @@ import java.util.Arrays;
 
 import org.intermine.webservice.server.output.Output;
 
+/**
+ * A class that processes counts.
+ * @author Alex Kalderimis
+ *
+ */
 public class CountProcessor
 {
+    /** Constructor **/
     public CountProcessor() {
         // Empty constructor
     }
 
+    /**
+     * Write the count to the output.
+     * @param count The count
+     * @param output The output.
+     */
     public void writeCount(int count, Output output) {
         output.addResultItem(Arrays.asList(String.valueOf(count)));
     }

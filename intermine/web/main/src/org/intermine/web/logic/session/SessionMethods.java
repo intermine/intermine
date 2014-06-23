@@ -26,23 +26,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
-import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -78,6 +74,7 @@ import org.intermine.web.struts.TemplateAction;
  *
  * @author  Thomas Riley
  */
+@SuppressWarnings("deprecation")
 public final class SessionMethods
 {
     private SessionMethods() {
@@ -381,6 +378,7 @@ public final class SessionMethods
      * @param message The message to store
      */
     private static void recordMessage(String message, String attrib, HttpSession session) {
+        @SuppressWarnings("unchecked")
         Set<String> set = (Set<String>) session.getAttribute(attrib);
         if (set == null) {
             set = Collections.synchronizedSet(new LinkedHashSet<String>());
@@ -471,7 +469,6 @@ public final class SessionMethods
      * @param pathQuery query to start
      * @return the new query id created
      */
-    @Deprecated
     public static String startQueryWithTimeout(
             final HttpServletRequest request,
             final boolean saveQuery,
@@ -495,7 +492,6 @@ public final class SessionMethods
      * @param pathQuery query to start
      * @return the new query id created
      */
-    @Deprecated
     public static String startQuery(final QueryMonitor monitor,
                                     final HttpSession session,
                                     final MessageResources messages,
@@ -515,7 +511,7 @@ public final class SessionMethods
                     try {
 
                         final PathQueryExecutor pqe = im.getPathQueryExecutor(profile);
-                        
+
                         Action action = new Action() {
                             @Override
                             public void process() {
@@ -570,18 +566,18 @@ public final class SessionMethods
      * Before running a query via web services, add to query history
      * and add a track
      * @param session User's session
+     * @throws PathException if the path query is borked.
      */
     public static void logQuery(final HttpSession session) throws PathException {
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         PathQuery pathQuery = SessionMethods.getQuery(session).clone();
-        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, 
-        		session.getId());
+        im.getTrackerDelegate().trackQuery(pathQuery.getRootClass(), profile, session.getId());
         String queryName = NameUtil.findNewQueryName(
-        		profile.getHistory().keySet());
+                profile.getHistory().keySet());
         SessionMethods.saveQueryToHistory(session, queryName, pathQuery);
     }
-    
+
     /**
      * Start a query running in the background that will return the row count of the collection.
      * A new query id will be created and added to the RUNNING_QUERIES session attribute.
@@ -593,7 +589,6 @@ public final class SessionMethods
      * @param messages messages resources (for messages and errors)
      * @return the new query id
      */
-    @Deprecated
     public static String startPagedTableCount(final PageTableQueryMonitor monitor,
                                               final HttpSession session,
                                               final MessageResources messages) {
@@ -666,7 +661,6 @@ public final class SessionMethods
      * @param messages messages resources (for messages and errors)
      * @return the new query id created
      */
-    @Deprecated
     public static String startQueryCount(final QueryCountQueryMonitor monitor,
                                          final HttpSession session,
                                          final MessageResources messages) {
@@ -724,7 +718,6 @@ public final class SessionMethods
      * @param session the users session
      * @return QueryMonitor registered to the query id
      */
-    @Deprecated
     public static QueryMonitor getRunningQueryController(String qid, HttpSession session) {
         synchronized (session) {
             Map<String, QueryMonitor> queries = getRunningQueries(session);
@@ -740,7 +733,6 @@ public final class SessionMethods
      * @param identifier table identifier
      * @return PagedTable identified by identifier
      */
-    @Deprecated
     public static PagedTable getResultsTable(HttpSession session, String identifier) {
         Map<?, ?> tables = (Map<?, ?>) session.getAttribute(Constants.TABLE_MAP);
         if (tables != null) {
@@ -940,6 +932,7 @@ public final class SessionMethods
      * @param servletContext a ServletContext object
      * @return a Map
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Aspect> getAspects(ServletContext servletContext) {
         return (Map<String, Aspect>) servletContext.getAttribute(Constants.ASPECTS);
     }
@@ -990,9 +983,8 @@ public final class SessionMethods
      * @param servletContext The context of the web application.
      * @param origins A map tracing the origin of each property.
      */
-    public static void setPropertiesOrigins(
-            ServletContext servletContext,
-            Map<String, List<String>> origins ) {
+    public static void setPropertiesOrigins(ServletContext servletContext,
+                                              Map<String, List<String>> origins) {
         servletContext.setAttribute(Constants.PROPERTIES_ORIGINS, origins);
     }
 
@@ -1003,9 +995,10 @@ public final class SessionMethods
      *
      * @return A map from each property to its origins.
      */
-    public static Map<String, List<String>> getPropertiesOrigins(
-            HttpSession session) {
-        return (Map<String, List<String>>) session.getServletContext().getAttribute(Constants.PROPERTIES_ORIGINS);
+    @SuppressWarnings("unchecked")
+    public static Map<String, List<String>> getPropertiesOrigins(HttpSession session) {
+        return (Map<String, List<String>>) session.getServletContext()
+                                                   .getAttribute(Constants.PROPERTIES_ORIGINS);
     }
 
     /**
@@ -1130,6 +1123,7 @@ public final class SessionMethods
      * @param servletContext the ServletContext
      * @return a Set of aspect names
      */
+    @SuppressWarnings("unchecked")
     public static Set<String> getCategories(ServletContext servletContext) {
         return (Set<String>) servletContext.getAttribute(Constants.CATEGORIES);
     }
@@ -1161,10 +1155,12 @@ public final class SessionMethods
      * @param servletContext the ServletContext
      * @return a Map of blocking error codes and replacement value
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, String> getErrorOnInitialiser(ServletContext servletContext) {
-        return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null)
-               ? (Map<String, String>) servletContext
-                 .getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
+        String key = Constants.INITIALISER_KEY_ERROR;
+        return (servletContext.getAttribute(key) == null)
+               ? null
+               : (Map<String, String>) servletContext.getAttribute(key);
     }
 
     /**
@@ -1194,6 +1190,7 @@ public final class SessionMethods
      * @param session The session to use for lookups
      * @return The set of open-id providers.
      */
+    @SuppressWarnings("unchecked")
     public static Set<String> getOpenIdProviders(HttpSession session) {
         ServletContext ctx = session.getServletContext();
         return (Set<String>) ctx.getAttribute(Constants.OPENID_PROVIDERS);
@@ -1213,6 +1210,7 @@ public final class SessionMethods
      * @param session The session to use for lookups
      * @return The set of open-id providers.
      */
+    @SuppressWarnings("unchecked")
     public static Set<String> getOAuth2Providers(HttpSession session) {
         ServletContext ctx = session.getServletContext();
         return (Set<String>) ctx.getAttribute(Constants.OAUTH2_PROVIDERS);

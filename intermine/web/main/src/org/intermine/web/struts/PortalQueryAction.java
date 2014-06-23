@@ -50,7 +50,6 @@ import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -65,7 +64,6 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class PortalQueryAction extends InterMineAction
 {
-    private static int index = 0;
 
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -79,6 +77,7 @@ public class PortalQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {

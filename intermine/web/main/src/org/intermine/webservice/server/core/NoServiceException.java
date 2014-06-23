@@ -11,13 +11,14 @@ package org.intermine.webservice.server.core;
  */
 
 /**
- * Exception to throw to signal that there is no service bound to a 
+ * Exception to throw to signal that there is no service bound to a
  * particular method on a particular endpoint.
  * @author Alex Kalderimis
  *
  */
-public class NoServiceException extends Exception {
+public class NoServiceException extends Exception
+{
 
-	private static final long serialVersionUID = 2281163438869810119L;
+    private static final long serialVersionUID = 2281163438869810119L;
 
 }

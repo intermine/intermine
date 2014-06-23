@@ -12,7 +12,9 @@ package org.intermine.web.logic.widget.config;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.Widget;
+import org.intermine.web.logic.widget.WidgetOptions;
 
 
 /**
@@ -102,15 +105,18 @@ public abstract class WidgetConfig
     }
 
     /**
+     * @param os The database to look in for dynamically defined values.
+     * @param bag The bag to constrain by for sensible dynamic filters.
      * @return the filter values
      */
-    public String getFiltersValues(ObjectStore os, InterMineBag bag) {
+    public List<String> getFiltersValues(ObjectStore os, InterMineBag bag) {
         if (filters == null) {
-            return null;
+            return Collections.emptyList();
         }
         if (!filters.contains("[list]")) {
-            return filters;
+            return Arrays.asList(filters.split("\\,"));
         } else {
+            List<String> ret = new ArrayList<String>();
             String filterPath = filters.substring(0, filters.indexOf("=")).trim();
             Query q = new Query();
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -157,19 +163,17 @@ public abstract class WidgetConfig
             cs.addConstraint(bc);
 
             Results r = os.execute(q);
-            Iterator<ResultsRow> it = (Iterator) r.iterator();
-            StringBuffer filterValuesFromDB = new StringBuffer();
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            Iterator<ResultsRow<?>> it = (Iterator) r.iterator();
+
             while (it.hasNext()) {
-                ResultsRow rr = it.next();
-                Object org =  rr.get(0);
-                if (org != null) {
-                    filterValuesFromDB.append(org.toString() + ",");
+                ResultsRow<?> rr = it.next();
+                Object value =  rr.get(0);
+                if (value != null) {
+                    ret.add(value.toString());
                 }
             }
-            if (filterValuesFromDB.length() == 0) {
-                return null;
-            }
-            return filterValuesFromDB.substring(0, filterValuesFromDB.length() - 1);
+            return ret;
         }
     }
 
@@ -195,10 +199,12 @@ public abstract class WidgetConfig
         this.filterLabel = filterLabel;
     }
 
+    /** @return the start class **/
     public String getStartClass() {
         return startClass;
     }
 
+    /** @param startClass the start class **/
     public void setStartClass(String startClass) {
         this.startClass = startClass;
     }
@@ -226,19 +232,28 @@ public abstract class WidgetConfig
         this.typeClass = typeClass;
     }
 
+    /** @return the views as a comma-separated string **/
     public String getViews() {
         return views;
     }
 
+    /** @param views The views as a comma-separated string **/
     public void setViews(String views) {
         this.views = views;
     }
 
+    /** @param constraints The constraints **/
     public void setConstraints(String constraints) {
         setPathConstraints(constraints, pathConstraints);
     }
 
-    protected void setPathConstraints(String constraints, List<PathConstraint> pathConstraints) {
+    /**
+     * Turn a string representing a set of constraints into a list of constraints.
+     * @param constraints A string representing constraints.
+     * @param pathConstraints An accumulator into which constraints are put.
+     */
+    protected static void setPathConstraints(String constraints,
+                                  List<? super PathConstraint> pathConstraints) {
         String[] constraintsList = constraints.split("\\s*,\\s*");
         String path = null;
         String value = null;
@@ -267,6 +282,9 @@ public abstract class WidgetConfig
         }
     }
 
+    /**
+     * @return the path constraints for this widget.
+     */
     public List<PathConstraint> getPathConstraints() {
         return pathConstraints;
     }
@@ -274,12 +292,15 @@ public abstract class WidgetConfig
     /**
      * @param imBag the bag for this widget
      * @param populationBag the population bag
-     * @param os objectstore
-     * @param attributes extra attribute - like organism or gene length correction coefficient
+     * @param os The objectstore where all the data is.
+     * @param options the options for this widget.
      * @return the widget
      */
-    public abstract Widget getWidget(InterMineBag imBag, InterMineBag populationBag,ObjectStore os,
-                                     List<String> attributes);
+    public abstract Widget getWidget(
+            InterMineBag imBag,
+            InterMineBag populationBag,
+            ObjectStore os,
+            WidgetOptions options);
 
 
 }

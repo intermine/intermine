@@ -15,7 +15,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
-	<classpathentry kind="lib" path="/intermine-api-main/lib/json20110106.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-150.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.oltu.commons.json-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.oltu.commons.encodedtoken-1.0.0.jar"/>

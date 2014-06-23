@@ -17,27 +17,50 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.WebService;
-import org.jfree.util.Log;
 
-public abstract class WebServiceServlet extends HttpServlet {
+/**
+ * A servlet which can be easily configured to define how to route requests, using
+ * standard RESTful semantics.
+ * @author Alex Kalderimis
+ *
+ */
+public abstract class WebServiceServlet extends HttpServlet
+{
 
-    private static final Logger LOG = Logger.getLogger(WebServiceServlet.class);
     private static final long serialVersionUID = 3419034521176834088L;
 
     protected final InterMineAPI api;
 
-    public static enum Method { GET, POST, PUT, DELETE };
+    public static enum Method {
+        /** GET **/
+        GET,
+        /** POST **/
+        POST,
+        /** PUT **/
+        PUT,
+        /** DELETE **/
+        DELETE
+    };
 
+    /** Constructor **/
     public WebServiceServlet() {
         super();
         api = InterMineContext.getInterMineAPI();
     }
 
-    protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Respond to a request.
+     * @param method The current method.
+     * @param request The request.
+     * @param response The response.
+     * @throws ServletException Well it could I suppose.
+     * @throws IOException Entirely possible really.
+     */
+    protected void respond(
+            Method method, HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         try {
             WebService service = getService(method);
@@ -65,11 +88,17 @@ public abstract class WebServiceServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Implement this to route requests.
+     * @param method The current method.
+     * @return A webservice handler.
+     * @throws NoServiceException If no handler matches the method.
+     */
     protected abstract WebService getService(Method method) throws NoServiceException;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         String tunnelledMethod = request.getParameter("method");
         if (tunnelledMethod != null && !"".equals(tunnelledMethod.trim())) {
             // This a fake tunnelled request, probably from IE, but possibly json-p
@@ -88,7 +117,7 @@ public abstract class WebServiceServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         if ("PUT".equals(request.getParameter("method"))) {
             // This a fake tunnelled request, probably from IE.
             doPut(request, response);
@@ -96,16 +125,16 @@ public abstract class WebServiceServlet extends HttpServlet {
             respond(Method.POST, request, response);
         }
     }
-    
+
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response)
-             throws ServletException, IOException {
+        throws ServletException, IOException {
         respond(Method.PUT, request, response);
     }
-    
+
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
-             throws ServletException, IOException {
+        throws ServletException, IOException {
         respond(Method.DELETE, request, response);
     }
 

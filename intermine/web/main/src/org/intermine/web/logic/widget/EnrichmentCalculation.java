@@ -74,8 +74,8 @@ public final class EnrichmentCalculation
         Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
                 rawResults, maxValue, input.getTestCount());
         if (extraCorrectionCoefficient && correctionCoefficient.isApplicable()) {
-            correctionCoefficient.apply(correctedResults, population, annotatedPopulationInfo, 
-                    maxValue);
+            correctionCoefficient.apply(
+                    correctedResults, population, annotatedPopulationInfo, maxValue);
         }
         Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
         // record the number of items in the sample that had any values for the attribute

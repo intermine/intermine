@@ -357,6 +357,11 @@ public class BagQueryRunner
     private void convertObjects(BagQueryResult bqr, String msg, Class<?> type,
             Map<String, Set<Object>> objsOfWrongType)
         throws InterMineException {
+        if (!InterMineObject.class.isAssignableFrom(type)) {
+            return; // Cannot convert to non-InterMine objects.
+        }
+        @SuppressWarnings("unchecked") // I just checked it actually.
+        Class<InterMineObject> targetType = (Class<InterMineObject>) type;
         if (!objsOfWrongType.isEmpty()) {
             // group objects by class
             Map<InterMineObject, Set<String>> objectToInput =
@@ -378,6 +383,11 @@ public class BagQueryRunner
                 CollectionUtil.groupByClass(objectToInput.keySet(), true);
 
             for (Class<?> fromClass : objTypes.keySet()) {
+                if (!InterMineObject.class.isAssignableFrom(fromClass)) {
+                    continue;
+                }
+                @SuppressWarnings("unchecked") // Checked just above.
+                Class<InterMineObject> fromType = (Class<InterMineObject>) fromClass;
                 List<InterMineObject> candidateObjs = objTypes.get(fromClass);
 
                 // we may have already converted some of these types, remove any that have been.
@@ -395,8 +405,10 @@ public class BagQueryRunner
 
                 // try to convert objects to target type
                 Map<InterMineObject, List<InterMineObject>> convertedObjsMap =
-                    TypeConverter.getConvertedObjectMap(getConversionTemplates(),
-                            fromClass, type, idsToConvert, os);
+                    TypeConverter.getConvertedObjectMap(
+                            getConversionTemplates(),
+                            fromType, targetType,
+                            idsToConvert, os);
                 if (convertedObjsMap == null) {
                     // no conversion found
                     continue;

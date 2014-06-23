@@ -1,4 +1,5 @@
 package org.intermine.web.logic.widget;
+
 /*
  * Copyright (C) 2002-2014 FlyMine
  *

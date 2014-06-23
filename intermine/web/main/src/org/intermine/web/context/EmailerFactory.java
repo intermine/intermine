@@ -14,12 +14,18 @@ import java.util.Properties;
 
 import org.intermine.util.Emailer;
 
-public class EmailerFactory {
+/** @author Alex Kalderimis **/
+public final class EmailerFactory
+{
 
     private EmailerFactory() {
         // don't!
     }
 
+    /**
+     * @param webProperties Email configuration options.
+     * @return an Emailer
+     **/
     public static Emailer getEmailer(Properties webProperties) {
         if ("none".equals(webProperties.getProperty("mail.policy"))) {
             return new NullMailer();

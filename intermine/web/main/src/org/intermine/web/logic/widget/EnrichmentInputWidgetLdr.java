@@ -43,9 +43,6 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     private static CacheMap<String, Map<String, PopulationInfo>> populationCountsCache =
         new CacheMap<String, Map<String, PopulationInfo>>();
 
-    private static CacheMap<String, Map<String, Long>> annotatedGeneLengthAverageInPopulation =
-            new CacheMap<String, Map<String, Long>>();
-
     // TODO population counts and sizes are no longer cached
 
     // TODO make a static cache from populate query to size and populationCounts maps,
@@ -74,8 +71,9 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
                 populationCounts = new HashMap<String, PopulationInfo>();
 
                 Results results = os.execute(query, BATCH_SIZE, true, true, true);
-                Iterator iter = results.iterator();
+                Iterator<?> iter = results.iterator();
                 while (iter.hasNext()) {
+                    @SuppressWarnings("rawtypes")
                     ResultsRow row =  (ResultsRow) iter.next();
 
                     // an identifier for an attribute value, e.g. a department name
@@ -109,8 +107,9 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
             Query query = ldr.getSampleQuery(false);
 
             Results results = os.execute(query, BATCH_SIZE, true, true, true);
-            Iterator iter = results.iterator();
+            Iterator<?> iter = results.iterator();
             while (iter.hasNext()) {
+                @SuppressWarnings("rawtypes")
                 ResultsRow row =  (ResultsRow) iter.next();
 
                 // an identifier for an attribute value, e.g. a department name
@@ -142,13 +141,14 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
         PopulationInfo populationInfo = populationCache.get(q.toString());
         if (populationInfo == null) {
             int size = 0;
-            Object extraAttribute = 0;
+            float extraAttribute = 0;
             Results res = os.execute(q);
+            @SuppressWarnings("unchecked")
             List<Object> info = (List<Object>) res.get(0);
             size = ((Long) info.get(0)).intValue();
             if (info.size() > 1) {
                 if (info.get(1) != null) {
-                    extraAttribute = info.get(1);
+                    extraAttribute = (Float) info.get(1);
                 }
             }
             populationInfo = new PopulationInfo(size, extraAttribute);

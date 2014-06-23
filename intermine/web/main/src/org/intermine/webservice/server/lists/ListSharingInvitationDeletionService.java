@@ -21,16 +21,21 @@ import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class ListSharingInvitationDeletionService extends JSONService {
+/** @author Alex Kalderimis **/
+public class ListSharingInvitationDeletionService extends JSONService
+{
 
     @SuppressWarnings("unused")
     private final SharedBagManager sbm;
 
+    /**
+     * Construct a service handler.
+     * @param im The InterMine state object.
+     */
     public ListSharingInvitationDeletionService(InterMineAPI im) {
         super(im);
         // Needs getting, as this ensures the tables are all set up.

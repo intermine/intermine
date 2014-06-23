@@ -40,16 +40,17 @@ public class QueryBuilderSummaryController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        populateRequest(request, response);
+    public ActionForward execute(ComponentContext context,
+                                ActionMapping mapping,
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response)
+        throws Exception {
+        populateRequest(request);
         return null;
     }
 
-    private static void populateRequest(HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+    private static void populateRequest(HttpServletRequest request) {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         try {

@@ -4,7 +4,6 @@
 package org.intermine.webservice.server.query.result;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.AssertionFailedError;

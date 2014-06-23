@@ -12,7 +12,6 @@ package org.intermine.webservice.server.query;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -24,7 +23,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 /**
@@ -81,7 +80,7 @@ public class QueryListAppendService extends QueryToListService
         try {
             path = pq.makePath(view);
         } catch (PathException e) {
-            throw new InternalErrorException(e);
+            throw new ServiceException(e);
         }
         ClassDescriptor queryClass = path.getLastClassDescriptor();
         String type = list.getQualifiedType();

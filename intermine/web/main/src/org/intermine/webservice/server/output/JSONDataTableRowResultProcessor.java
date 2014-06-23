@@ -26,14 +26,13 @@ public class JSONDataTableRowResultProcessor extends JSONResultProcessor
 {
     /**
      * Constructor.
-     * @param im The API settings bundle
      */
     public JSONDataTableRowResultProcessor() {
     }
 
     @Override
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
-        Iterator<? extends Object> jsonIter 
+        Iterator<? extends Object> jsonIter
             = new JSONDataTableRowIterator((ExportResultsIterator) it);
         return jsonIter;
     }

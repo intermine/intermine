@@ -16,19 +16,17 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import javax.servlet.ServletContext;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Collection;
 import java.util.Collection;
 
 /**
  * A class for finding resources in the WEB-INF directory at run-time based on patterns.
- * The purpose of this is to allow resources, particularly configuration files to be 
+ * The purpose of this is to allow resources, particularly configuration files to be
  * found and used by giving them a name with a certain pattern, or by placing them in a certain
  * directory.
  *
  * @author Alex Kalderimis
  */
-public class ResourceFinder 
+public class ResourceFinder
 {
     private ServletContext context;
     private static final String WEB_INF = "WEB-INF";
@@ -36,7 +34,7 @@ public class ResourceFinder
     /**
      * Constructor. Makes a ResourceFinder with reference to the current servlet context,
      * meaning that it knows were to look to find the WEB-INF directory.
-     * @param context
+     * @param context The servlet context.
      */
     public ResourceFinder(ServletContext context) {
         this.context = context;
@@ -61,18 +59,18 @@ public class ResourceFinder
         final Pattern pattern) {
         final ArrayList<String> retval = new ArrayList<String>();
         final File[] fileList = directory.listFiles();
-        for(final File file : fileList){
-            if(file.isDirectory()){
+        for (final File file : fileList) {
+            if (file.isDirectory()) {
                 retval.addAll(getResourcesFromDirectory(file, pattern));
-            } else{
-                try{
+            } else {
+                try {
                     final String fileName = file.getCanonicalPath();
                     Matcher m = pattern.matcher(fileName);
-                    final boolean accept = m.find(); 
-                    if(accept){
+                    final boolean accept = m.find();
+                    if (accept) {
                         retval.add(m.group());
                     }
-                } catch(final IOException e){
+                } catch (final IOException e) {
                     throw new Error(e);
                 }
             }

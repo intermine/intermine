@@ -34,7 +34,6 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
@@ -50,7 +49,8 @@ public class EnrichmentWidget extends Widget
     private InterMineBag populationBag;
     private String filter;
     private EnrichmentResults results;
-    private String errorCorrection, max;
+    private String errorCorrection;
+    private double max = 0.05d;
     private boolean extraCorrectionCoefficient = false;
     private CorrectionCoefficient correctionCoefficient = null;
     private EnrichmentWidgetImplLdr ldr;
@@ -63,23 +63,22 @@ public class EnrichmentWidget extends Widget
      * @param interMineBag bag for this widget
      * @param populationBag the reference population
      * @param os object storegene
-     * @param errorCorrection which error correction to use (Bonferroni, etc)
-     * @param extraCorrectionCoefficient if true correction coefficient has been selected
-     * @param max maximum value to display (0 - 1)
-     * @param filter filter to use (ie Ontology)
+     * @param options the options for this widget.
+     *
      */
-    public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
-                            InterMineBag populationBag, ObjectStore os,
-                            String filter, String max, String errorCorrection,
-                            String extraCorrectionCoefficient) {
+    public EnrichmentWidget(EnrichmentWidgetConfig config,
+                            InterMineBag interMineBag,
+                            InterMineBag populationBag,
+                            ObjectStore os,
+                            EnrichmentOptions options) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
         this.os = os;
         this.typeDescriptor = os.getModel().getClassDescriptorByName(config.getTypeClass());
-        this.errorCorrection = errorCorrection;
-        this.max = max;
-        this.filter = filter;
+        this.errorCorrection = options.getCorrection();
+        this.max = options.getMaxPValue();
+        this.filter = options.getFilter();
 
         validateBagType();
         String correctionCoefficientClassName = (config.getCorrectionCoefficient() != null)
@@ -93,14 +92,32 @@ public class EnrichmentWidget extends Widget
                 correctionCoefficient =  (CorrectionCoefficient) c.newInstance(new Object[] {
                     config, os, bag});
                 this.extraCorrectionCoefficient = correctionCoefficient
-                    .isSelected(extraCorrectionCoefficient);
+                    .isSelected(options.getExtraCorrectionCoefficient());
             } catch (ClassNotFoundException cnfe) {
                 LOG.error(cnfe);
             } catch (Exception e) {
                 LOG.error(e);
             }
         }
-        process();
+    }
+
+
+    /** @param filter Set the filter to something else **/
+    public void setFilter(String filter) {
+        checkNotProcessed();
+        this.filter = filter;
+    }
+
+    private void checkProcessed() {
+        if (ldr == null) {
+            throw new IllegalStateException("This widget has not been processed yet.");
+        }
+    }
+
+    private void checkNotProcessed() {
+        if (ldr != null) {
+            throw new IllegalStateException("This widget has already been processed.");
+        }
     }
 
     /**
@@ -130,13 +147,13 @@ public class EnrichmentWidget extends Widget
      */
     @Override
     public void process() {
+        checkNotProcessed();
         try {
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
                   (EnrichmentWidgetConfig) config, filter, extraCorrectionCoefficient,
                   correctionCoefficient);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
-            Double maxValue = Double.parseDouble(max);
-            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection,
+            results = EnrichmentCalculation.calculate(input, max, errorCorrection,
                                            extraCorrectionCoefficient, correctionCoefficient);
             setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
@@ -167,17 +184,20 @@ public class EnrichmentWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
+        checkProcessed();
         return results.getPValues().size() > 0;
     }
 
     private Map<String, List<String>> getTermsToIdsForExport(List<String> selectedIds)
         throws Exception {
+        checkProcessed();
         Query q = ldr.getExportQuery(selectedIds);
 
         Results res = os.execute(q);
-        Iterator iter = res.iterator();
-        HashMap<String, List<String>> termsToIds = new HashMap();
+        Iterator<?> iter = res.iterator();
+        HashMap<String, List<String>> termsToIds = new HashMap<String, List<String>>();
         while (iter.hasNext()) {
+            @SuppressWarnings("rawtypes")
             ResultsRow resRow = (ResultsRow) iter.next();
             String termId = resRow.get(0).toString();
             String id = resRow.get(1).toString();
@@ -190,35 +210,9 @@ public class EnrichmentWidget extends Widget
         return termsToIds;
     }
 
-    private Map<String, List<Map<String, Object>>> getTermsToIds(List<String> selectedIds)
-        throws Exception {
-        Query q = ldr.getExportQuery(selectedIds);
-
-        Results res = os.execute(q);
-        Iterator iter = res.iterator();
-        HashMap<String, List<Map<String, Object>>> termsToIds = new HashMap();
-        while (iter.hasNext()) {
-            ResultsRow resRow = (ResultsRow) iter.next();
-            String termId = resRow.get(0).toString();
-            Map<String, Object> map = new HashMap<String, Object>();
-            String displayed = (resRow.get(1) != null) ? resRow.get(1).toString() : "";
-            String id = (resRow.get(2) != null) ? resRow.get(2).toString() : "";
-            map.put("displayed", displayed);
-            map.put("id", id);
-            if (!termsToIds.containsKey(termId)) {
-                termsToIds.put(termId, new ArrayList<Map<String, Object>>());
-            }
-            termsToIds.get(termId).add(map);
-        }
-
-        return termsToIds;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public List<List<String>> getExportResults(String[] selected) throws Exception {
-
+        checkProcessed();
         Map<String, BigDecimal> pValues = results.getPValues();
         Map<String, String> labels = results.getLabels();
         List<List<String>> exportResults = new ArrayList<List<String>>();
@@ -229,7 +223,7 @@ public class EnrichmentWidget extends Widget
         for (String id : selectedIds) {
             if (labels.get(id) != null) {
 
-                List row = new LinkedList();
+                List<String> row = new LinkedList<String>();
                 row.add(id);
                 String label = labels.get(id);
                 if (!label.equals(id)) {
@@ -237,7 +231,7 @@ public class EnrichmentWidget extends Widget
                 }
 
                 BigDecimal bd = pValues.get(id);
-                row.add(new Double(bd.doubleValue()));
+                row.add(new Double(bd.doubleValue()).toString());
 
                 List<String> ids = termsToIds.get(id);
                 StringBuffer sb = new StringBuffer();
@@ -257,6 +251,7 @@ public class EnrichmentWidget extends Widget
 
     @Override
     public List<List<Object>> getResults() throws Exception {
+        checkProcessed();
         List<List<Object>> exportResults = new LinkedList<List<Object>>();
         if (results != null) {
             Map<String, BigDecimal> pValues = results.getPValues();
@@ -381,8 +376,7 @@ public class EnrichmentWidget extends Widget
     }
 
     /**
-     * Return the correction coefficient used by the widget
-     * @return
+     * @return the correction coefficient used by the widget
      */
     public CorrectionCoefficient getExtraCorrectionCoefficient() {
         return correctionCoefficient;

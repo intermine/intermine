@@ -23,13 +23,13 @@ public class ResourceNotFoundException extends ServiceException
 {
 
     private static final long serialVersionUID = 1L;
+    private static final int ERROR_CODE = Output.SC_NOT_FOUND;
 
     /**
      * @param message message
      */
     public ResourceNotFoundException(String message) {
-        super(message);
-        initErrorCode();
+        super(message, ERROR_CODE);
     }
 
     /**
@@ -37,19 +37,14 @@ public class ResourceNotFoundException extends ServiceException
      * @param cause cause
      */
     public ResourceNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-        initErrorCode();
+        super(message, cause, ERROR_CODE);
     }
 
     /**
      * @param cause cause
      */
     public ResourceNotFoundException(Throwable cause) {
-        super(cause);
-        initErrorCode();
+        super(cause, ERROR_CODE);
     }
 
-    private void initErrorCode() {
-        setHttpErrorCode(Output.SC_NOT_FOUND);
-    }
 }

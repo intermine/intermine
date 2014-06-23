@@ -22,6 +22,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 
 /**
  * Controller for the bagUploadConfirm; retrieve an IDResolutionService job id
+ * @author Alex Kalderimis
  */
 public class BagUploadConfirmController extends TilesAction
 {
