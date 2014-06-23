@@ -1,5 +1,15 @@
 package org.intermine.api.bag;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +20,6 @@ import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -19,58 +28,90 @@ import org.intermine.api.util.TextUtil;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.intermine.SQLOperation;
 
-public class SharingInvite {
+/**
+ * A representation of an invitation to share a resource.
+ * @author Alex Kalderimis
+ *
+ */
+public class SharingInvite
+{
 
-    private static final Logger LOG = Logger.getLogger(SharingInvite.class);
+    private static final class FetchInviteData extends SQLOperation<IntermediateRepresentation>
+    {
+        private final String token;
 
-    public static class NotFoundException extends Exception {
+        private FetchInviteData(String token) {
+            this.token = token;
+        }
+
+        @Override
+        public IntermediateRepresentation run(PreparedStatement stm) throws SQLException {
+            stm.setString(1, token);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                return toIntermediateReps(rs);
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Exception thrown when we can't find a shared invitation.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class NotFoundException extends Exception
+    {
 
         private static final long serialVersionUID = 4508741600952344965L;
 
-        public NotFoundException(String msg) {
+        /** @param msg the reason it could not be found **/
+        NotFoundException(String msg) {
             super(msg);
         }
     }
 
+    /** The DB table that holds the invitations **/
     public static final String TABLE_NAME = "baginvites";
 
     private static final String TABLE_DEFINITION =
-        "CREATE TABLE " + TABLE_NAME + " (" +
-          "bagid integer NOT NULL, " +
-          "inviterid integer NOT NULL, " +
-          "token char(20) UNIQUE NOT NULL, " +
-          "createdat timestamp DEFAULT NOW(), " +
-          "acceptedat timestamp," +
-          "accepted boolean, " +
-          "invitee text NOT NULL)";
+        "CREATE TABLE " + TABLE_NAME + " ("
+                + "bagid integer NOT NULL, "
+                + "inviterid integer NOT NULL, "
+                + "token char(20) UNIQUE NOT NULL, "
+                + "createdat timestamp DEFAULT NOW(), "
+                + "acceptedat timestamp,"
+                + "accepted boolean, "
+                + "invitee text NOT NULL)";
 
+    /** @return the SQL needed to create the table **/
     public static String getTableDefinition() {
         return TABLE_DEFINITION;
     }
 
-    private static final String FETCH_ALL_SQL = 
-        "SELECT bagid, inviterid, createdat, accepted, acceptedat, invitee, token FROM " + TABLE_NAME;
+    private static final String FETCH_ALL_SQL =
+        "SELECT bagid, inviterid, createdat, accepted, acceptedat, invitee, token FROM "
+                + TABLE_NAME;
 
     private static final String FETCH_MINE_SQL =
         FETCH_ALL_SQL + " WHERE inviterid = ?";
 
     private static final String FETCH_SQL = FETCH_ALL_SQL + " WHERE token = ?";
-    
+
     private static final String SAVE_SQL =
-        "INSERT INTO " + TABLE_NAME + " (bagid, inviterid, token, invitee) " +
-        "VALUES (?, ?, ?, ?)";
+        "INSERT INTO " + TABLE_NAME + " (bagid, inviterid, token, invitee) "
+                + "VALUES (?, ?, ?, ?)";
 
     private static final String FULL_SAVE_SQL =
-        "INSERT INTO " + TABLE_NAME +
-        " (bagid, inviterid, token, invitee, createdat, acceptedat, accepted) " +
-        " VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
+        "INSERT INTO " + TABLE_NAME
+            +   " (bagid, inviterid, token, invitee, createdat, acceptedat, accepted) "
+            +   " VALUES (?, ?, ?, ?, ?, ?, ?)";
+
     private static final String DELETE_SQL = "DELETE FROM " + TABLE_NAME + " WHERE token = ?";
-    
+
     private static final String RECORD_ACCEPTANCE_SQL =
         "UPDATE " + TABLE_NAME + " SET acceptedat = ?, accepted = ? WHERE token = ?";
 
@@ -84,10 +125,9 @@ public class SharingInvite {
     private Date createdAt = null;
     private Date acceptedAt = null;
     private Boolean accepted = null;
-    
+
     private boolean inDB = false;
 
-    
     protected SharingInvite(InterMineBag bag, String invitee) {
         this(bag, invitee, TextUtil.generateRandomUniqueString(20));
     }
@@ -102,7 +142,7 @@ public class SharingInvite {
     protected SharingInvite(
             InterMineBag bag, String invitee, String token,
             Date createdAt, Date acceptedAt, Boolean accepted) {
-        
+
         if (invitee == null) {
             throw new IllegalArgumentException("the invitee may not be null");
         }
@@ -145,7 +185,7 @@ public class SharingInvite {
             }
         });
     }
-    
+
     protected void setAccepted(final Boolean wasAccepted) throws SQLException {
         if (acceptedAt != null) {
             throw new IllegalStateException("This invitation has already been accepted");
@@ -164,7 +204,7 @@ public class SharingInvite {
             }
         });
     }
-    
+
     protected void unaccept() throws SQLException {
         if (acceptedAt == null) {
             throw new IllegalStateException("This invitation has not been accepted");
@@ -178,7 +218,7 @@ public class SharingInvite {
             }
         });
     }
-    
+
     protected void save() throws SQLException {
         if (inDB) {
             return;
@@ -278,7 +318,7 @@ public class SharingInvite {
         }
         return retval;
     }
-    
+
     private static SharingInvite restoreFromRow(
             ProfileManager pm, BagManager bm,
             IntermediateRepresentation rep) throws ObjectStoreException {
@@ -286,11 +326,17 @@ public class SharingInvite {
         Profile inviter = pm.getProfile(rep.inviterId);
         SavedBag savedBag = (SavedBag) os.getObjectById(rep.bagId, SavedBag.class);
         InterMineBag bag = bm.getBag(inviter, savedBag.getName());
-        return new SharingInvite( bag, rep.invitee, rep.token,
-                rep.createdAt, rep.acceptedAt, rep.accepted);
+        return new SharingInvite(bag,
+                rep.invitee, rep.token, rep.createdAt, rep.acceptedAt, rep.accepted);
     }
 
-    public static class IntermediateRepresentation {
+    /**
+     * A structure for holding data we read from the DB.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class IntermediateRepresentation
+    {
         int bagId;
         int inviterId;
         String token;
@@ -298,9 +344,7 @@ public class SharingInvite {
         Date acceptedAt;
         Date createdAt;
         Boolean accepted;
-        IntermediateRepresentation() {
-            
-        }
+
         public int getBagId() {
             return bagId;
         }
@@ -323,9 +367,9 @@ public class SharingInvite {
             return accepted;
         }
     }
-    
+
     private static IntermediateRepresentation toIntermediateReps(final ResultSet rs)
-            throws SQLException {
+        throws SQLException {
         IntermediateRepresentation rep = new IntermediateRepresentation();
         rep.bagId = rs.getInt("bagid");
         rep.inviterId = rs.getInt("inviterid");
@@ -336,7 +380,7 @@ public class SharingInvite {
         rep.accepted = rs.getBoolean("accepted");
         return rep;
     }
-    
+
     public static SharingInvite getByToken(final InterMineAPI im, final String token)
         throws SQLException, ObjectStoreException, NotFoundException {
         // Unpack what we want from the API.
@@ -345,40 +389,31 @@ public class SharingInvite {
         ObjectStoreWriterInterMineImpl osw = (ObjectStoreWriterInterMineImpl)
             pm.getProfileObjectStoreWriter();
 
-        IntermediateRepresentation row =  osw.performUnsafeOperation(FETCH_SQL, new SQLOperation<IntermediateRepresentation>() {
-            @Override
-            public IntermediateRepresentation run(PreparedStatement stm) throws SQLException {
-                stm.setString(1, token);
-                ResultSet rs = stm.executeQuery();
-                while (rs.next()) {
-                    return toIntermediateReps(rs);
-                };
-                return null;
-            }
-        });
+        IntermediateRepresentation row =
+                osw.performUnsafeOperation(FETCH_SQL, new FetchInviteData(token));
 
         if (row == null) {
             throw new NotFoundException("token not found");
         }
         SharingInvite invite = restoreFromRow(pm, bm, row);
-        
+
         invite.inDB = true;
-        
+
         return invite;
     }
-    
+
     public String getToken() {
         return token;
     }
-    
+
     public InterMineBag getBag() {
         return bag;
     }
-    
+
     public String getInvitee() {
         return invitee;
     }
-    
+
     public Date getCreatedAt() {
         return createdAt;
     }
