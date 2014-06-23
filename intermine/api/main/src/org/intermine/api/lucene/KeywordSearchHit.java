@@ -34,6 +34,15 @@ public class KeywordSearchHit
         this.score = score;
         this.document = document;
         this.object = object;
+        if (score < 0) {
+            throw new IllegalArgumentException("score must be >= 0, got: " + score);
+        }
+        if (document == null) {
+            throw new NullPointerException("document must not be null.");
+        }
+        if (object == null) {
+            throw new NullPointerException("object must not be null.");
+        }
     }
 
     /**
