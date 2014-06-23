@@ -3036,7 +3036,7 @@ The different token types are:
 
   <filter>
       <filter-name>SessionlessRequests</filter-name>
-      <filter-class>org.intermine.webservice.filter.RequestSubClassFilter</filter-class>
+      <filter-class>org.intermine.webservice.server.filter.RequestSubClassFilter</filter-class>
   </filter>
 
   <filter-mapping>
