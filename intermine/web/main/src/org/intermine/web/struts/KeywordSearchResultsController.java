@@ -57,6 +57,7 @@ import org.json.JSONObject;
  */
 public class KeywordSearchResultsController extends TilesAction
 {
+    private static final String QUERY_TERM_ALL = "*:*";
     private static final Logger LOG = Logger.getLogger(KeywordSearchResultsController.class);
     private static Logger searchLog = null;
 
@@ -104,7 +105,7 @@ public class KeywordSearchResultsController extends TilesAction
 
         // show overview by default
         if (StringUtils.isBlank(searchTerm)) {
-            searchTerm = "*:*";
+            searchTerm = QUERY_TERM_ALL;
         }
 
         long searchTime = System.currentTimeMillis();
@@ -117,11 +118,12 @@ public class KeywordSearchResultsController extends TilesAction
 
         Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
 
+        totalHits = searchResultsParsed.size();
         logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
-        LOG.debug("SEARCH RESULTS: " + searchResultsParsed.size());
+        LOG.debug("SEARCH RESULTS FOR " + searchTerm  + ": " + totalHits);
 
         // don't display *:* in search box
-        if ("*:*".equals(searchTerm)) {
+        if (QUERY_TERM_ALL.equals(searchTerm)) {
             searchTerm = "";
         }
 
@@ -141,9 +143,9 @@ public class KeywordSearchResultsController extends TilesAction
         context.putAttribute("jsonFacets", request.getAttribute("jsonFacets"));
 
         // pagination
-        context.putAttribute("searchOffset", new Integer(offset));
-        context.putAttribute("searchPerPage", new Integer(KeywordSearch.PER_PAGE));
-        context.putAttribute("searchTotalHits", new Integer(totalHits));
+        context.putAttribute("searchOffset", Integer.valueOf(offset));
+        context.putAttribute("searchPerPage", Integer.valueOf(KeywordSearch.PER_PAGE));
+        context.putAttribute("searchTotalHits", Integer.valueOf(totalHits));
 
         // facet lists
         context.putAttribute("searchFacets", searchResultsFacets);
