@@ -42,6 +42,12 @@ public final class ClassKeyHelper
 
     private static final Map<Model, ClassKeys> CLASS_KEYS = new HashMap<Model, ClassKeys>();
 
+    private static class ClassKeysImpl
+        extends HashMap<String, List<FieldDescriptor>>
+        implements ClassKeys
+    {
+    };
+
     /**
      * Read class keys from a properties into a map from classname to set of
      * available keys.
@@ -54,7 +60,7 @@ public final class ClassKeyHelper
      */
     public static ClassKeys readKeys(Model model, Properties props) {
         if (!CLASS_KEYS.containsKey(model)) {
-            ClassKeys theseKeys = (ClassKeys) new HashMap<String, List<FieldDescriptor>>();
+            ClassKeys theseKeys = new ClassKeysImpl();
             for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
                 String clsName = cld.getUnqualifiedName();
                 if (props.containsKey(cld.getUnqualifiedName())) {
