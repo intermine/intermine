@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.intermine.api.profile.InterMineBag;
 
-public class SymmetricDifferenceTest extends BagOperationTest {
+public class SymmetricDifferenceTest extends AbstractBagOperationTestCase {
 
     public SymmetricDifferenceTest(String arg) {
         super(arg);

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.intermine.api.profile.InterMineBag;;
 
-public class IntersectionTest extends BagOperationTest {
+public class IntersectionTest extends AbstractBagOperationTestCase {
 
     public IntersectionTest(String name) {
         super(name);
