@@ -10,8 +10,6 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.intermine.api.InterMineAPI;
@@ -26,7 +24,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -122,14 +120,12 @@ public class DummyAPI extends InterMineAPI {
     }
 
     @Override
-    public Map<String, List<FieldDescriptor>> getClassKeys() {
-        // TODO Auto-generated method stub
+    public ClassKeys getClassKeys() {
         return null;
     }
 
     @Override
     public BagQueryConfig getBagQueryConfig() {
-        // TODO Auto-generated method stub
         return null;
     }
 

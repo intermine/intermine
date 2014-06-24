@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -39,8 +40,7 @@ public final class ClassKeyHelper
 
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
 
-    private static final Map<Model, Map<String, List<FieldDescriptor>>> classKeys =
-        new HashMap<Model, Map<String, List<FieldDescriptor>>>();
+    private static final Map<Model, ClassKeys> CLASS_KEYS = new HashMap<Model, ClassKeys>();
 
     /**
      * Read class keys from a properties into a map from classname to set of
@@ -52,9 +52,9 @@ public final class ClassKeyHelper
      *            a properties object describing class keys
      * @return map from class name to set of available keys
      */
-    public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
-        if (!classKeys.containsKey(model)) {
-            Map<String, List<FieldDescriptor>> theseKeys = new HashMap<String, List<FieldDescriptor>>();
+    public static ClassKeys readKeys(Model model, Properties props) {
+        if (!CLASS_KEYS.containsKey(model)) {
+            ClassKeys theseKeys = (ClassKeys) new HashMap<String, List<FieldDescriptor>>();
             for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
                 String clsName = cld.getUnqualifiedName();
                 if (props.containsKey(cld.getUnqualifiedName())) {
@@ -76,10 +76,10 @@ public final class ClassKeyHelper
                 } else {
                     LOG.warn("No key defined for " + clsName);
                 }
-                classKeys.put(model, theseKeys);
+                CLASS_KEYS.put(model, theseKeys);
             }
         }
-        return classKeys.get(model);
+        return CLASS_KEYS.get(model);
     }
 
     /**

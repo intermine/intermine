@@ -28,6 +28,7 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -45,7 +46,7 @@ public class InterMineAPI
 {
     protected ObjectStore objectStore;
     protected Model model;
-    protected Map<String, List<FieldDescriptor>> classKeys;
+    protected ClassKeys classKeys;
     protected BagQueryConfig bagQueryConfig;
     protected ProfileManager profileManager;
     protected TemplateManager templateManager;
@@ -84,7 +85,7 @@ public class InterMineAPI
      * @param linkRedirector class that builds URLs that replace report links
      */
     public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
-            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
+            ClassKeys classKeys, BagQueryConfig bagQueryConfig,
             ObjectStoreSummary oss, TrackerDelegate trackerDelegate, LinkRedirectManager
             linkRedirector) {
         this.objectStore = objectStore;
@@ -214,7 +215,7 @@ public class InterMineAPI
      * "symbol".
      * @return the classKeys
      */
-    public Map<String, List<FieldDescriptor>> getClassKeys() {
+    public ClassKeys getClassKeys() {
         return classKeys;
     }
 
