@@ -11,6 +11,9 @@ package org.intermine.web.logic.pathqueryresult;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -132,6 +135,9 @@ public final class PathQueryResultHelper
             Model model,
             WebConfig webConfig) {
         ClassDescriptor cld = model.getClassDescriptorByName(type);
+        if (cld == null) {
+            throw new IllegalArgumentException(type + " is not in the data model");
+        }
 
         try {
             return getConfiguredView(cld, webConfig);
@@ -157,49 +163,62 @@ public final class PathQueryResultHelper
      * @param model The data model
      * @param webConfig The web-configuration.
      * @param fieldConfigs
-     * @return
-     * @throws UnconfiguredException
+     * @return The list of paths that we can use to construct a query.
+     * @throws UnconfiguredException if the class has not configured view.
      */
     private static List<String> getConfiguredView(
             ClassDescriptor cld,
-            WebConfig webConfig) throws UnconfiguredException {
-        List<FieldConfig> fieldConfigs = getClassFieldConfigs(webConfig, cld);
-        List<String> view = new ArrayList<String>();
+            WebConfig webConfig)
+        throws UnconfiguredException {
+        Collection<String> view = new LinkedHashSet<String>(); // Preserve order and uniqueness.
         Model m = cld.getModel();
-        for (FieldConfig fieldConfig : fieldConfigs) {
-            String relPath = fieldConfig.getFieldExpr();
-            // only add attributes, don't follow references, following references can be problematic
-            // when subclasses get involved.
-            if (fieldConfig.getShowInResults()) {
-                try {
-                    Path path = new Path(m, cld.getUnqualifiedName() + "." + relPath);
-                    String basePath = path.toStringNoConstraints() + ".";
-                    List<FieldConfig> subconfs =
-                            getClassFieldConfigs(webConfig, path.getEndClassDescriptor());
-                    // add references
-                    if (path.isRootPath() || path.endIsReference()) {
-                        for (FieldConfig fc : subconfs) {
-                            String pathString = basePath + fc.getFieldExpr();
-                            Path pathToAdd = new Path(m, pathString);
-                            if (pathToAdd.endIsAttribute()
-                                    && (!view.contains(pathToAdd.getNoConstraintsString()))
-                                    && (fc.getDisplayer() == null && fc.getShowInSummary())) {
-                                view.add(pathToAdd.getNoConstraintsString());
-                            }
-                        }
-                    // add collections
-                    } else if (!path.endIsCollection()) {
-                        view.add(path.getNoConstraintsString());
-                    }
-                } catch (PathException e) {
-                    LOG.error("Invalid path configured in webconfig for class: " + cld);
+        for (FieldConfig fieldConfig : resultConfigs(webConfig, cld)) {
+            try {
+                Path p = new Path(m, cld.getUnqualifiedName() + "." + fieldConfig.getFieldExpr());
+                // add subpaths of references and roots, attrs themselves, ignore collections.
+                if (p.isRootPath() || p.endIsReference()) {
+                    view.addAll(getSubview(webConfig, m, p));
+                } else if (p.endIsAttribute()) {
+                    view.add(p.getNoConstraintsString());
                 }
+            } catch (PathException e) {
+                LOG.error("Invalid path configured in webconfig for class: " + cld);
             }
         }
         if (view.isEmpty()) {
             throw new UnconfiguredException();
         }
-        return view;
+        return new ArrayList<String>(view);
+    }
+
+    private static List<String> getSubview(WebConfig webConfig, Model m,
+            Path path) throws PathException {
+        List<String> subview = new ArrayList<String>();
+        String basePath = path.toStringNoConstraints() + ".";
+        List<FieldConfig> subconfs =
+                getClassFieldConfigs(webConfig, path.getEndClassDescriptor());
+        for (FieldConfig fc : subconfs) {
+            String pathString = basePath + fc.getFieldExpr();
+            Path pathToAdd = new Path(m, pathString);
+            if (pathToAdd.endIsAttribute()
+                    && (fc.getDisplayer() == null && fc.getShowInSummary())) {
+                subview.add(pathToAdd.getNoConstraintsString());
+            }
+        }
+        return subview;
+    }
+
+    // In a future Java8 world, this should produce a Stream<FieldConfig>, to avoid the double loop.
+    private static Collection<FieldConfig> resultConfigs(WebConfig webConfig, ClassDescriptor cld) {
+        final List<FieldConfig> fieldConfigs = getClassFieldConfigs(webConfig, cld);
+        Iterator<FieldConfig> it = fieldConfigs.iterator();
+        while (it.hasNext()) {
+            FieldConfig f = it.next();
+            if (!f.getShowInResults()) {
+                it.remove();
+            }
+        }
+        return fieldConfigs;
     }
 
     /**
