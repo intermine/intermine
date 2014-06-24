@@ -37,6 +37,12 @@ public final class FieldConfigHelper
      * @return the FieldConfig objects for the the given ClassDescriptor
      */
     public static List<FieldConfig> getClassFieldConfigs(WebConfig webConfig, ClassDescriptor cd) {
+        if (webConfig == null) {
+            throw new NullPointerException("webConfig must not be null");
+        }
+        if (cd == null) {
+            throw new NullPointerException("class descriptor 'cd' must not be null");
+        }
         Type type = webConfig.getTypes().get(cd.getName());
         List<FieldConfig> fieldConfigs = null;
 
