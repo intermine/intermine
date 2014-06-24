@@ -51,7 +51,6 @@ public class BagQueryRunner
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryConfig bagQueryConfig;
     private TemplateManager templateManager;
-    private static final boolean MATCHES_ARE_ISSUES_DEFAULT = true;
 
     /**
      * Construct with configured bag queries and a map of type -&gt; key fields.
@@ -119,7 +118,7 @@ public class BagQueryRunner
         for (String inputString : input) {
             if (StringUtils.isNotEmpty(inputString)) {
                 // no wildcards OR single * (if single *, treat like a string)
-                if (inputString.indexOf('*') == -1 || !doWildcards || inputString.equals("*")) {
+                if (!doWildcards || "*".equals(inputString) || inputString.indexOf('*') == -1) {
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
                         lowerCaseInput.put(inputString.toLowerCase(), inputString);

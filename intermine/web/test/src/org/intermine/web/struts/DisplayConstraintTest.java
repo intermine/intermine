@@ -31,7 +31,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -69,7 +69,7 @@ public class DisplayConstraintTest extends TestCase
     protected ProfileManager pm;
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
-    protected Map<String, List<FieldDescriptor>> classKeys;
+    protected ClassKeys classKeys;
     protected Profile superUser, testUser, emptyUser;
     protected DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass,
     dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;

@@ -319,7 +319,7 @@ public class BagManager
      * @throws UserAlreadyShareBagException if the bag is already shared by the user
      */
     public void shareBagWithUser(InterMineBag bag, Profile recipient)
-            throws UserNotFoundException, UserAlreadyShareBagException {
+        throws UserNotFoundException, UserAlreadyShareBagException {
         if (recipient == null) {
             throw new UserNotFoundException("recipient is null");
         }

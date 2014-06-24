@@ -65,8 +65,8 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
@@ -256,7 +256,7 @@ public class InitialiserPlugin implements PlugIn
             final WebConfig webConfig,
             final ObjectStoreWriter userprofileOSW,
             final ObjectStoreSummary oss) throws ServletException {
-        final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
+        final ClassKeys classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
         final LinkRedirectManager redirector = getLinkRedirector(webProperties);
 
@@ -485,7 +485,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private Map<String, List<FieldDescriptor>> loadClassKeys(Model model) {
+    private ClassKeys loadClassKeys(Model model) {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(InitialiserPlugin.class.getClassLoader()
@@ -494,8 +494,7 @@ public class InitialiserPlugin implements PlugIn
             LOG.error("Error loading class descriptions", e);
             blockingErrorKeys.put("errors.init.classkeys", null);
         }
-        Map<String, List<FieldDescriptor>>  classKeys =
-            ClassKeyHelper.readKeys(model, classKeyProps);
+        ClassKeys  classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         return classKeys;
     }
 
