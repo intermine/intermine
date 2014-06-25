@@ -45,9 +45,11 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
@@ -55,9 +57,11 @@ import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.util.ConsistentSet;
 import org.intermine.metadata.StringUtil;
 
 /**
@@ -255,28 +259,28 @@ public class MainHelperTest extends TestCase {
     }
 
     public void testRangeConstraint() throws Exception {
-    	QueryClass qc = new QueryClass(EmploymentPeriod.class);
-    	
+        QueryClass qc = new QueryClass(EmploymentPeriod.class);
+
         Constraint exp = new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
-        
+
         List<String> ranges = Arrays.asList("2008-11-17");
         PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", ConstraintOp.WITHIN, ranges);
-        
+
         MainHelper.RangeConfig.reset(); // Call to avoid setup conflict.
-        
+
         try {
-        	MainHelper.makeRangeConstraint(null, qc, con);
+            MainHelper.makeRangeConstraint(null, qc, con);
         } catch (RuntimeException e) {
-        	assertTrue(e.getMessage().contains("No range constraints are possible"));
+            assertTrue(e.getMessage().contains("No range constraints are possible"));
         }
-        
+
         MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
-        
+
         org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(null, qc, con);
         assertEquals(exp, got);
     }
 
-	public void testMakeQueryDateConstraint() throws Exception {
+    public void testMakeQueryDateConstraint() throws Exception {
         // 11:02:39am Sun Nov 16, 2008
         QueryClass qc = new QueryClass(Types.class);
         QueryField qn = new QueryField(qc, "dateObjType");
@@ -363,6 +367,124 @@ public class MainHelperTest extends TestCase {
         String iql = "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_, org.intermine.model.testmodel.Department AS a2_ WHERE (a1_.departments CONTAINS a2_ AND a2_.company CONTAINS a1_) ORDER BY a1_.name";
         assertEquals("Expected: " + iql + ", got: " + got, iql, got);
     }
+
+
+    // Test that IS_NULL and IS_NOT_NULL queries are generated correctly, the referenced clas
+    // should not appear on from FROM list
+    public void testNullReference() throws Exception {
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addView("Department.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NULL));
+
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        expected.addFrom(qc);
+        expected.addToSelect(qc);
+        QueryObjectReference ref = new QueryObjectReference(qc, "company");
+        ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.IS_NULL);
+        expected.setConstraint(cc);
+        expected.addToOrderBy(new QueryField(qc, "name"));
+
+        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+
+        // Same test for IS_NOT_NULL
+        pq = new PathQuery(os.getModel());
+        pq.addView("Department.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NOT_NULL));
+
+        cc = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
+        expected.setConstraint(cc);
+        actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+    }
+
+    // Test that IS_NULL and IS_NOT_NULL queries are generated correctly for collections. It doesn't
+    // matter if the collection is 1:N or N:M for the ObjectStore query
+    public void testNullCollection() throws Exception {
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addView("Company.name");
+        pq.addConstraint(new PathConstraintNull("Company.contractors", ConstraintOp.IS_NULL));
+
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        expected.addFrom(qc);
+        expected.addToSelect(qc);
+        QueryCollectionReference col = new QueryCollectionReference(qc, "contractors");
+        ContainsConstraint cc = new ContainsConstraint(col, ConstraintOp.IS_NULL);
+        expected.setConstraint(cc);
+        expected.addToOrderBy(new QueryField(qc, "name"));
+
+        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+
+        // Same test for IS_NOT_NULL
+        pq = new PathQuery(os.getModel());
+        pq.addView("Company.name");
+        pq.addConstraint(new PathConstraintNull("Company.contractors", ConstraintOp.IS_NOT_NULL));
+
+        cc = new ContainsConstraint(col, ConstraintOp.IS_NOT_NULL);
+        expected.setConstraint(cc);
+        actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+    }
+
+
+    // Test NULL/NOT NULL references where there are other constraints in the query, this means
+    // the null referenced class SHOULD be in the FROM list and joined. The code allows creation
+    // of daft queries that will never produce results.
+    public void testNullReferenceOtherPaths() throws Exception {
+        // the IS_NOT_NULL constraint doesn't actually do anything because we have a normal join
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addView("Department.company.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NOT_NULL));
+
+        Query expected = new Query();
+        QueryClass qcDep = new QueryClass(Department.class);
+        QueryClass qcCom = new QueryClass(Company.class);
+        expected.addFrom(qcDep);
+        expected.addFrom(qcCom);
+        expected.addToSelect(qcCom);
+        QueryObjectReference ref = new QueryObjectReference(qcDep, "company");
+        ContainsConstraint cc1 = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcCom);
+        ContainsConstraint cc2 = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(cc1);
+        cs.addConstraint(cc2);
+        expected.setConstraint(cs);
+        expected.addToOrderBy(new QueryField(qcCom, "name"));
+
+        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        String e = expected.toString();
+        String a = actual.toString();
+        assertEquals(expected.toString(), actual.toString());
+
+        // This time other occurrence of path is in a constraint not the view and op is IS_NULL
+        pq = new PathQuery(os.getModel());
+        pq.addView("Department.company.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NULL));
+        pq.addConstraint(new PathConstraintAttribute("Department.company.name", ConstraintOp.EQUALS, "Com1"));
+
+        cc2 = new ContainsConstraint(ref, ConstraintOp.IS_NULL);
+        SimpleConstraint sc = new SimpleConstraint(
+                new QueryExpression(QueryExpression.LOWER, new QueryField(qcCom, "name")),
+                ConstraintOp.MATCHES, new QueryValue("com1"));
+        cs = new ConstraintSet(ConstraintOp.AND);
+        cs.addConstraint(cc1);
+        cs.addConstraint(cc2);
+        cs.addConstraint(sc);
+        expected.setConstraint(cs);
+        actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+    }
+
+
+
+    // TODO test null/not null collection with other constraints/view
+
+    // TODO test null/not null reference constraints with outer join
+
+    // TODO test null/not null collection constraints with outer join
 
 
     private Map<String, PathQuery> readQueries() throws Exception {
@@ -600,7 +722,7 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_ ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
-    
+
     public void testRangeConstraintToSQL() throws Exception {
         MainHelper.RangeConfig.reset();
         MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
@@ -609,7 +731,7 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar') ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar')) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
-    
+
     public void testMultiTypeToSQL() throws Exception {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" sortOrder=\"Employee.name asc\"><constraint path=\"Employee\" op=\"ISA\"><value>CEO</value><value>Manager</value></constraint></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.class IN ? ORDER BY a1_.name 1: [class org.intermine.model.testmodel.Manager, class org.intermine.model.testmodel.CEO]",
@@ -649,7 +771,7 @@ public class MainHelperTest extends TestCase {
             for (String summary : summaries) {
                 try {
                     summaryPath = pq.getView().get(columnNo);
-                    Query q = MainHelper.makeSummaryQuery(pq, summaryPath, 
+                    Query q = MainHelper.makeSummaryQuery(pq, summaryPath,
                             new HashMap(), new HashMap(), bagQueryRunner);
                     String got = q.toString();
                     assertEquals("Failed for summaryPath " + summaryPath + ". Expected: " + summary + ", but was; " + got, summary, got);
