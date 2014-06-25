@@ -204,8 +204,9 @@ public final class MainHelper
             // from the Query to the path that represents both paths.
             Map<String, String> loops = makeLoopsMap(participatingLoops);
 
-            // Get any paths in the query that are constrained to be NULL/NOT NULL collections,
-            // these will only be accessed in an EXISTS subquery and shouldn't be add to the FROM
+            // Get any paths in the query that are constrained to be NULL/NOT NULL references or
+            // collections AND don't appear in other constraints or the query view. These will only
+            // be accessed in an EXISTS subquery and shouldn't be add to the FROM.
             Set<String> pathConstraintNullOnly = getPathConstraintNullOnly(model, pathQuery);
 
             // Set up queue system. We don't know what order we want to process these entries in,
