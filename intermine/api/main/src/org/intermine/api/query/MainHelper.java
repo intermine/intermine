@@ -204,6 +204,10 @@ public final class MainHelper
             // from the Query to the path that represents both paths.
             Map<String, String> loops = makeLoopsMap(participatingLoops);
 
+            // Get any paths in the query that are constrained to be NULL/NOT NULL collections,
+            // these will only be accessed in an EXISTS subquery and shouldn't be add to the FROM
+            Set<String> pathConstraintNullOnly = getPathConstraintNullOnly(model, pathQuery);
+
             // Set up queue system. We don't know what order we want to process these entries in,
             // so a queue allows us to put one we can't process yet to the back of the queue to
             // process later
@@ -269,22 +273,18 @@ public final class MainHelper
                                 }
                             } else {
                                 qc = new QueryClass(path.getEndType());
-                                if (q instanceof Query) {
-                                    ((Query) q).addFrom(qc);
-                                } else {
-                                    ((QueryCollectionPathExpression) q).addFrom(qc);
-                                }
-                            }
-                            boolean isNull = false;
-                            for (PathConstraint pc: pathQuery.getConstraintsForPath(stringPath)) {
-                                if (pc instanceof PathConstraintNull) {
-                                    if (pc.getOp() == ConstraintOp.IS_NULL) {
-                                        isNull = true;
-                                        break;
+                                if (!pathConstraintNullOnly.contains(path.toString())) {
+                                    if (q instanceof Query) {
+                                        ((Query) q).addFrom(qc);
+                                    } else {
+                                        ((QueryCollectionPathExpression) q).addFrom(qc);
                                     }
                                 }
                             }
-                            if (!isNull) {
+
+                            // unless there is ONLY a null constraint on this ref/col path we need
+                            // to add a contains constraint to make the join
+                            if (!pathConstraintNullOnly.contains(stringPath)) {
                                 if (path.endIsReference()) {
                                     andCs.addConstraint(new ContainsConstraint(
                                                 new QueryObjectReference(parentQc,
@@ -389,7 +389,6 @@ public final class MainHelper
                         // as the mere presence of the constraint has caused the class to make it
                         // into the FROM list above.
 
-                        // TODO - make IS NULL also work on references and collections.
                         if (path.endIsAttribute()) {
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
                                         constraint.getOp()));
@@ -696,6 +695,46 @@ public final class MainHelper
             }
         }
         return retval;
+    }
+
+    // find any reference or collection paths in query that ONLY have a NULL/NOT_NULL
+    // constraint, these will be used in a subquery so won't be added to the from list of
+    // generated objectstore query
+    private static Set<String> getPathConstraintNullOnly(Model model, PathQuery pq) {
+        Set<String> nullCollectionsOnly = new HashSet<String>();
+        for (PathConstraint constraint : pq.getConstraints().keySet()) {
+            if (constraint instanceof PathConstraintNull) {
+                try {
+                    Path constraintPath = new Path(model, constraint.getPath());
+                    if (constraintPath.endIsReference() || constraintPath.endIsCollection()) {
+                        boolean isNullOnly = true;
+                        // look for any view elements starting with this path
+                        for (String viewPath : pq.getView()) {
+                            if (viewPath.startsWith(constraintPath.toString())) {
+                                isNullOnly = false;
+                            }
+                        }
+
+                        // look for any other constraints starting with this path
+                        for (PathConstraint otherCon : pq.getConstraints().keySet()) {
+                            if (otherCon != constraint
+                                    && otherCon.getPath().startsWith(constraintPath.toString())) {
+                                isNullOnly = false;
+                            }
+                        }
+
+                        // constraint path wasn't found elsewhere so it's a null collection only
+                        if (isNullOnly) {
+                            nullCollectionsOnly.add(constraintPath.toString());
+                        }
+                    }
+                } catch (PathException e) {
+                    // this shouldn't happen because the query is already verified
+                    LOG.warn("Error finding paths constrainted to null only:" + e);
+                }
+            }
+        }
+        return nullCollectionsOnly;
     }
 
     private static String shorterPath(String path1, String path2) {
