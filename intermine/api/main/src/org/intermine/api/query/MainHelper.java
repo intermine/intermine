@@ -78,6 +78,7 @@ import org.intermine.objectstore.query.WidthBucketFunction;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -182,7 +183,11 @@ public final class MainHelper
             // the default class which was set up in the parent group and add it to the queryBits
             if (q instanceof QueryObjectPathExpression) {
                 queryBits.put(root, ((QueryObjectPathExpression) q).getDefaultClass());
+                //Path path = new Path(model, root);
+                //queryBits.put(path.getPrefix().toString(), ((QueryObjectPathExpression) q).getQueryClass());
             } else if (q instanceof QueryCollectionPathExpression) {
+                //Path path = new Path(model, root);
+                //queryBits.put(path.getPrefix().toString(), ((QueryCollectionPathExpression) q).getQueryClass());
                 queryBits.put(root, ((QueryCollectionPathExpression) q).getDefaultClass());
             }
 
@@ -196,6 +201,48 @@ public final class MainHelper
             Set<String> relevantCodes = pathQuery.getConstraintGroups().get(root);
             LogicExpression logic = pathQuery.getConstraintLogicForGroup(root);
 
+            // This is complicated - for NULL/NOT NULL constraints on refs/cols that span an outer
+            // join boundary we need the constraint to be on the left side of the boundary, i.e.
+            // in the main part of the query rather than subquery on the select.
+            // We may need to move a constraint code from another outer join group.
+
+            // TODO find outer join boundaries
+
+            // TODO find PathConstraintNulls on refs/cols
+            Map<String, String> nullRefColConstraints = getPathConstraintNulls(model, pathQuery,
+                    false);
+            // TODO loop through nullRefColConstraints and check outer join status
+            for (String constraintPath : nullRefColConstraints.keySet()) {
+                OuterJoinStatus ojs = pathQuery.getOuterJoinStatus(constraintPath);
+                if (ojs == OuterJoinStatus.OUTER) {
+                    // which side of outer join are we on?
+                    if (root.split("\\.").length < constraintPath.split("\\.").length) {
+                        // we're on the left side of the outer join so we want to add this
+                        // constraint to the relevant codes now
+
+                        // TODO there may be more than one constraint per path
+                        String code = nullRefColConstraints.get(constraintPath);
+                        if (!relevantCodes.contains(code)) {
+                            System.out.println("On left of outer join, adding constraint: " + code);
+                            relevantCodes.add(code);
+                        }
+                    } else {
+                        // we've recursed into an outer join so we don't want to process this
+                        // constraint now, remove it if it's in the relevant codes
+                        String code = nullRefColConstraints.get(constraintPath);
+                        if (relevantCodes.contains(code)) {
+                            System.out.println("On right of outer join, removing constraint: " + code);
+                            relevantCodes.remove(code);
+                        }
+                    }
+                }
+            }
+
+            // TODO if the constraint spans an outer join work out which side we're on
+
+            // TODO add or remove constraint from relevant constraints as appropriate
+
+
             // This is the set of loop constraints that participate in the class collapsing
             // mechanism. All others must have a ClassConstraint generated for them.
             Set<PathConstraintLoop> participatingLoops = findParticipatingLoops(logic, pathQuery
@@ -207,7 +254,7 @@ public final class MainHelper
             // Get any paths in the query that are constrained to be NULL/NOT NULL references or
             // collections AND don't appear in other constraints or the query view. These will only
             // be accessed in an EXISTS subquery and shouldn't be add to the FROM.
-            Set<String> pathConstraintNullOnly = getPathConstraintNullOnly(model, pathQuery);
+            Map<String, String> pathConstraintNullOnly = getPathConstraintNulls(model, pathQuery, true);
 
             // Set up queue system. We don't know what order we want to process these entries in,
             // so a queue allows us to put one we can't process yet to the back of the queue to
@@ -274,7 +321,7 @@ public final class MainHelper
                                 }
                             } else {
                                 qc = new QueryClass(path.getEndType());
-                                if (!pathConstraintNullOnly.contains(path.toString())) {
+                                if (!pathConstraintNullOnly.containsKey(path.toString())) {
                                     if (q instanceof Query) {
                                         ((Query) q).addFrom(qc);
                                     } else {
@@ -285,7 +332,7 @@ public final class MainHelper
 
                             // unless there is ONLY a null constraint on this ref/col path we need
                             // to add a contains constraint to make the join
-                            if (!pathConstraintNullOnly.contains(stringPath)) {
+                            if (!pathConstraintNullOnly.containsKey(stringPath)) {
                                 if (path.endIsReference()) {
                                     andCs.addConstraint(new ContainsConstraint(
                                                 new QueryObjectReference(parentQc,
@@ -386,10 +433,6 @@ public final class MainHelper
                         }
 
                     } else if (constraint instanceof PathConstraintNull) {
-                        // This is a null constraint. If it is on a class, then we need do nothing,
-                        // as the mere presence of the constraint has caused the class to make it
-                        // into the FROM list above.
-
                         if (path.endIsAttribute()) {
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
                                         constraint.getOp()));
@@ -698,12 +741,15 @@ public final class MainHelper
         return retval;
     }
 
-    // find any reference or collection paths in query that ONLY have a NULL/NOT_NULL
-    // constraint, these will be used in a subquery so won't be added to the from list of
-    // generated objectstore query
-    private static Set<String> getPathConstraintNullOnly(Model model, PathQuery pq) {
-        Set<String> nullCollectionsOnly = new HashSet<String>();
-        for (PathConstraint constraint : pq.getConstraints().keySet()) {
+    // find any reference or collection paths in query that have NULL/NOT NULL constraints.
+    // If nullOnly then return those that have a NULL/NOT NULL constraint that otherwise don't
+    // appear in the view or other constraints
+    private static Map<String, String> getPathConstraintNulls(Model model, PathQuery pq,
+            boolean nullOnly) {
+        Map<String, String> nullRefsAndCols = new HashMap<String, String>();
+        for (Map.Entry<PathConstraint, String> entry : pq.getConstraints().entrySet()) {
+            PathConstraint constraint = entry.getKey();
+            String code = entry.getValue();
             if (constraint instanceof PathConstraintNull) {
                 try {
                     Path constraintPath = new Path(model, constraint.getPath());
@@ -725,8 +771,10 @@ public final class MainHelper
                         }
 
                         // constraint path wasn't found elsewhere so it's a null collection only
-                        if (isNullOnly) {
-                            nullCollectionsOnly.add(constraintPath.toString());
+                        if (nullOnly && isNullOnly) {
+                            nullRefsAndCols.put(constraintPath.toString(), code);
+                        } else if (!nullOnly) {
+                            nullRefsAndCols.put(constraintPath.toString(), code);
                         }
                     }
                 } catch (PathException e) {
@@ -735,7 +783,7 @@ public final class MainHelper
                 }
             }
         }
-        return nullCollectionsOnly;
+        return nullRefsAndCols;
     }
 
     private static String shorterPath(String path1, String path2) {
