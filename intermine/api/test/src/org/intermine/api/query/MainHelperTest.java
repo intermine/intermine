@@ -51,11 +51,13 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.LogicExpression;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintRange;
@@ -478,11 +480,56 @@ public class MainHelperTest extends TestCase {
         assertEquals(expected.toString(), actual.toString());
     }
 
+    public void testTrialOuterJoin() throws Exception {
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addViews("Department.name", "Department.company.name");
+        pq.addConstraint(new PathConstraintAttribute("Department.company.name", ConstraintOp.EQUALS, "Com1"));
+        pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
 
+
+        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        String a = actual.toString();
+    }
 
     // TODO test null/not null collection with other constraints/view
 
-    // TODO test null/not null reference constraints with outer join
+    // Test that a null reference constraint works when the reference has been set as an outer
+    // join. This isn't particularly useful but needs to generate a valid query.
+    public void testNullReferenceOuterJoin() throws Exception {
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addViews("Department.company.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NOT_NULL));
+        pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
+
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        expected.addFrom(qc);
+        expected.addToSelect(qc);
+
+        // outer join to select Department.company.name
+        QueryObjectPathExpression comOuter = new QueryObjectPathExpression(qc, "company");
+        //comOuter.addToSelect(new QueryField(comOuter.getDefaultClass(), "name"));
+        expected.addToSelect(comOuter);
+        // Company IS_NOT_NULL
+        QueryObjectReference ref = new QueryObjectReference(qc, "company");
+        ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
+        expected.setConstraint(cc);
+        expected.addToOrderBy(new QueryField(qc, "name"));
+
+        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+
+        // Same test for IS_NOT_NULL
+        pq = new PathQuery(os.getModel());
+        pq.addView("Department.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NOT_NULL));
+
+        cc = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
+        expected.setConstraint(cc);
+        actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+    }
+
 
     // TODO test null/not null collection constraints with outer join
 
