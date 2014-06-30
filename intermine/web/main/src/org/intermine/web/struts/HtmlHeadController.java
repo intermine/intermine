@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -107,6 +108,18 @@ public class HtmlHeadController extends TilesAction
 
         /* report page */
         } else if ("report".equals(pageName) && objectId != null) {
+            if (!StringUtils.isNumeric(objectId)) {
+                LOG.warn("object ID not a number! " + objectId);
+                htmlPageTitle = "invalid id - " + objectId;
+                request.setAttribute("htmlPageTitle", htmlPageTitle);
+                return null;
+            }
+            if (StringUtils.isBlank(objectId)) {
+                LOG.warn("object ID null! ");
+                htmlPageTitle = "no id provided";
+                request.setAttribute("htmlPageTitle", htmlPageTitle);
+                return null;
+            }
             Integer id = null;
             try {
                 id = new Integer(Integer.parseInt(objectId));
@@ -134,14 +147,14 @@ public class HtmlHeadController extends TilesAction
             request.setAttribute("userTrackingMessage", userTrackingMessage);
             request.setAttribute("userTracking", canWeUserTrack(request));
         } else {
-        	request.setAttribute("userTracking", 1);
+            request.setAttribute("userTracking", 1);
         }
 
         return null;
     }
 
     /**
-     * Determone if we can employ user tracking
+     * Determine if we can employ user tracking
      * @param request HTTP Servlet Request
      * @return Integer 0/1/2 - "[no]/[yes]/[not yet]"
      */

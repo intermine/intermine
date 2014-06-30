@@ -297,33 +297,66 @@ public class Model
     }
 
     /**
-     * Returns the JSON serialisation of the model.
-     * @return A JSON formatted string.
+     * Returns a data structure suitable for serialisation, eg. as JSON.
+     * @return Information about this model.
      */
-    public String toJSONString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("\"name\":\"")
-          .append(modelName)
-          .append("\",\"package\":\"")
-          .append(packageName)
-          .append("\",\"version\":")
-          .append(version)
-          .append(",\"classes\":{");
-        boolean needsComma = false;
+    public Map<String, Object> toJsonAST() {
+        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> classes = new HashMap<String, Object>();
+        data.put("name", modelName);
+        data.put("package", packageName);
+        data.put("version", version);
+        data.put("classes", classes);
+
         for (ClassDescriptor cld: getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                if (needsComma) {
-                    sb.append(",");
+                Map<String, Object> classData = new HashMap<String, Object>();
+                List<String> parents = new ArrayList<String>();
+                Map<String, Object> attrs = new HashMap<String, Object>();
+                Map<String, Object> refs = new HashMap<String, Object>();
+                Map<String, Object> colls = new HashMap<String, Object>();
+                
+                classes.put(cld.getUnqualifiedName(), classData);
+                classData.put("name", cld.getUnqualifiedName());
+                classData.put("extends", parents);
+                for (String parent: cld.getSuperclassNames()) {
+                    parents.add(parent.substring(parent.lastIndexOf(".") + 1));
                 }
-                sb.append("\"")
-                  .append(cld.getUnqualifiedName())
-                  .append("\":")
-                  .append(cld.toJSONString());
-                needsComma = true;
+                classData.put("isInterface", cld.isInterface());
+                classData.put("attributes", attrs);
+                classData.put("references", refs);
+                classData.put("collections", colls);
+                for (AttributeDescriptor a: cld.getAllAttributeDescriptors()) {
+                    Map<String, Object> attr = new HashMap<String, Object>();
+                    attrs.put(a.getName(), attr);
+                    attr.put("name", a.getName());
+                    attr.put("type", a.getType());
+                }
+                for (ReferenceDescriptor r: cld.getAllReferenceDescriptors()) {
+                    Map<String, Object> ref = new HashMap<String, Object>();
+                    refs.put(r.getName(), ref);
+                    ref.put("name", r.getName());
+                    String type = r.getReferencedClassName();
+                    ref.put("referencedType", type.substring(type.lastIndexOf(".") + 1));
+                    String revref = r.getReverseReferenceFieldName();
+                    if (revref != null) {
+                        ref.put("reverseReference", revref);
+                    }
+                }
+                for (CollectionDescriptor c: cld.getAllCollectionDescriptors()) {
+                    Map<String, Object> col = new HashMap<String, Object>();
+                    colls.put(c.getName(), col);
+                    col.put("name", c.getName());
+                    String type = c.getReferencedClassName();
+                    col.put("referencedType", type.substring(type.lastIndexOf(".") + 1));
+                    String revref = c.getReverseReferenceFieldName();
+                    if (revref != null) {
+                        col.put("reverseReference", revref);
+                    }
+                }
             }
         }
-        sb.append("}");
-        return sb.toString();
+        return data;
     }
 
 

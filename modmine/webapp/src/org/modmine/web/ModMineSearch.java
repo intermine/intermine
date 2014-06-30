@@ -38,14 +38,14 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.bio.Antibody;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Strain;
 import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.metadata.Util;
-import org.intermine.metadata.TypeUtil;
 
 /**
  * allows for full-text searches over all metadata using the apache lucene

@@ -39,6 +39,7 @@ import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
+import org.json.JSONObject;
 
 /**
  * Web service that returns a serialised representation of the data model. The currently
@@ -124,10 +125,9 @@ public class ModelService extends WebService
                 attributes.put(JSONFormatter.KEY_CALLBACK, callback);
             }
             if (node == null) {
-                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":{");
-                attributes.put(JSONFormatter.KEY_OUTRO, "}");
+                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":");
                 output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(model.toJSONString()));
+                output.addResultItem(Arrays.asList(new JSONObject(getAnnotatedModel(model)).toString()));
             } else {
                 Map<String, String> kvPairs = new HashMap<String, String>();
                 kvPairs.put("name", getNodeName(node));
@@ -143,6 +143,17 @@ public class ModelService extends WebService
         } else {
             output.addResultItem(Arrays.asList(model.toString()));
         }
+    }
+
+    private Map<String, Object> getAnnotatedModel(Model model) {
+        Map<String, Object> modelData = model.toJsonAST();
+        WebConfig config = InterMineContext.getWebConfig();
+        Map<String, Map<String, Object>> classes = (Map<String, Map<String, Object>>) modelData.get("classes");
+        for (Map<String, Object> classData: classes.values()) {
+            classData.put("displayName", WebUtil.formatClass(model.getClassDescriptorByName((String) classData.get("name")), config));
+            // Might be a good idea to add in field names as well, but these have sharper edge cases.
+        }
+        return modelData;
     }
 
     private String getNodeName(Path node) {

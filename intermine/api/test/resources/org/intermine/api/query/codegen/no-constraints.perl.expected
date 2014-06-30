@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-use strict;
-use warnings;
-
 ######################################################################
 # This is an automatically generated script to run your query.
 # To use it you will require the InterMine Perl client libraries.
@@ -23,6 +20,16 @@ use warnings;
 #
 ######################################################################
 
+use strict;
+use warnings;
+
+# Set the output field separator as tab
+$, = "\t";
+# Print unicode to standard out
+binmode(STDOUT, 'utf8');
+# Silence warnings when printing null fields
+no warnings ('uninitialized');
+
 # The following import statement sets TEST_PROJECT_TITLE as your default
 use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
 
@@ -30,14 +37,20 @@ my $query = Webservice::InterMine->new_query;
 
 # The view specifies the output columns
 $query->add_view(qw/
-    Gene.primaryIdentifier
-    Gene.secondaryIdentifier
-    Gene.symbol
-    Gene.name
-    Gene.organism.shortName
+    primaryIdentifier
+    secondaryIdentifier
+    symbol
+    name
+    organism.shortName
 /);
 
 # edit the line below to change the sort order:
 # $query->add_sort_order('Gene.primaryIdentifier', 'ASC');
 
-$query->show;
+
+# Use an iterator to avoid having all rows in memory at once.
+my $it = $query->iterator();
+while (my $row = <$it>) {
+    print $row->{'primaryIdentifier'}, $row->{'secondaryIdentifier'}, $row->{'symbol'},
+        $row->{'name'}, $row->{'organism.shortName'}, "\n";
+}
