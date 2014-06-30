@@ -368,19 +368,33 @@ public final class KeywordSearch
         throws IOException, SQLException {
         LOG.debug("Saving stream to database...");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
-        LargeObjectOutputStream streamOut = MetadataManager.storeLargeBinary(db, key);
 
-        GZIPOutputStream gzipStream = new GZIPOutputStream(new BufferedOutputStream(streamOut));
-        ObjectOutputStream objectStream = new ObjectOutputStream(gzipStream);
+        LargeObjectOutputStream streamOut = null;
+        GZIPOutputStream gzipStream = null;
+        ObjectOutputStream objectStream = null;
 
-        LOG.debug("GZipping and serializing object...");
-        objectStream.writeObject(object);
+        try {
+            streamOut = MetadataManager.storeLargeBinary(db, key);
+            gzipStream = new GZIPOutputStream(new BufferedOutputStream(streamOut));
+            objectStream = new ObjectOutputStream(gzipStream);
 
-        objectStream.flush();
-        gzipStream.finish();
-        gzipStream.flush();
+            LOG.debug("GZipping and serializing object...");
+            objectStream.writeObject(object);
+        } finally {
+            if (objectStream != null) {
+                objectStream.flush();
+                objectStream.close();
+            }
+            if (gzipStream != null) {
+                gzipStream.finish();
+                gzipStream.flush();
+                gzipStream.close();
+            }
+            if (streamOut != null) {
+                streamOut.close();
+            }
+        }
 
-        streamOut.close();
     }
 
     /**
@@ -396,7 +410,7 @@ public final class KeywordSearch
                 createIndex(os, classKeys);
             }
 
-            LOG.info("Deleting previous search index dirctory blob from db...");
+            LOG.debug("Deleting previous search index dirctory blob from db...");
             long startTime = System.currentTimeMillis();
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
             boolean blobExisted = MetadataManager.deleteLargeBinary(db,
@@ -414,40 +428,39 @@ public final class KeywordSearch
 
             // if we have a FSDirectory we need to zip and save that separately
             if ("FSDirectory".equals(index.getDirectoryType())) {
+                ZipOutputStream zipOut = null;
                 final int bufferSize = 2048;
 
                 try {
-                    LOG.info("Zipping up FSDirectory...");
+                    LOG.debug("Zipping up FSDirectory...");
 
-                    LOG.info("Deleting previous search index dirctory blob from db...");
+                    LOG.debug("Deleting previous search index dirctory blob from db...");
                     startTime = System.currentTimeMillis();
                     blobExisted = MetadataManager.deleteLargeBinary(db,
                             MetadataManager.SEARCH_INDEX_DIRECTORY);
                     if (blobExisted) {
-                        LOG.info("Deleting previous search index directory blob from db took: "
+                        LOG.debug("Deleting previous search index directory blob from db took: "
                                 + (System.currentTimeMillis() - startTime) + ".");
                     } else {
-                        LOG.info("No previous search index directory blob found in db");
+                        LOG.debug("No previous search index directory blob found in db");
                     }
                     LargeObjectOutputStream streamOut =
                             MetadataManager.storeLargeBinary(db,
                                     MetadataManager.SEARCH_INDEX_DIRECTORY);
 
-                    ZipOutputStream zipOut =
-                            new ZipOutputStream(streamOut);
+                    zipOut = new ZipOutputStream(streamOut);
 
                     byte[] data = new byte[bufferSize];
 
                     // get a list of files from current directory
-                    File fsDirectory = ((FSDirectory) index.getDirectory()).getFile();
-                    String[] files = fsDirectory.list();
+                    File dir = ((FSDirectory) index.getDirectory()).getFile();
+                    String[] files = dir.list();
 
                     for (int i = 0; i < files.length; i++) {
-                        File file =
-                                new File(fsDirectory.getAbsolutePath() + File.separator + files[i]);
-                        LOG.info("Getting length of file: " + file.getName());
+                        File file = new File(dir.getAbsolutePath() + File.separator + files[i]);
+                        LOG.debug("Getting length of file: " + file.getName());
                         long fileLength = file.length();
-                        LOG.info("Zipping file: " + file.getName() + " (" + file.length() / 1024
+                        LOG.debug("Zipping file: " + file.getName() + " (" + file.length() / 1024
                                 / 1024 + " MB)");
 
                         FileInputStream fi = new FileInputStream(file);
@@ -473,17 +486,19 @@ public final class KeywordSearch
                             LOG.debug("Closing file: " + file.getName() + "...");
                             fileInput.close();
                         }
-                        LOG.info("Finished storing file: " + file.getName());
+                        LOG.debug("Finished storing file: " + file.getName());
                     }
-
-                    zipOut.close();
                 } catch (IOException e) {
-                    LOG.error(null, e);
+                    LOG.error("Error storing index", e);
+                } finally {
+                    if (zipOut != null) {
+                        zipOut.close();
+                    }
                 }
             } else if ("RAMDirectory".equals(index.getDirectoryType())) {
                 LOG.debug("Saving RAM directory to database...");
                 writeObjectToDB(os, MetadataManager.SEARCH_INDEX_DIRECTORY, index.getDirectory());
-                LOG.info("Successfully saved RAM directory to database.");
+                LOG.debug("Successfully saved RAM directory to database.");
             }
         } catch (IOException e) {
             LOG.error(null, e);

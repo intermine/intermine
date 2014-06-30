@@ -51,6 +51,7 @@ public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
             }
         }
         if (fileCount == 0) {
+            System.out.println(fileCount);
             StringBuffer sb = new StringBuffer();
             String lookedIn = null;
             for (FileSet fileSet : fileSets) {

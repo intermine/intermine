@@ -244,7 +244,7 @@ public class KeywordSearchResultsController extends TilesAction
         }
         searchLogLine.append("; ");
         searchLogLine.append("bag=").append(searchBag).append(";");
-        searchLog.info(searchLogLine);
+        searchLog.debug(searchLogLine);
     }
 
     private void intialiseLogging(String projectName) throws IOException {
