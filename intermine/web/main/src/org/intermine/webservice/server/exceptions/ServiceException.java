@@ -21,7 +21,7 @@ import org.intermine.webservice.server.output.Output;
 public class ServiceException extends RuntimeException
 {
 
-    private int httpErrorCode = Output.SC_INTERNAL_SERVER_ERROR;
+    private final int httpErrorCode; //  = Output.SC_INTERNAL_SERVER_ERROR;
 
     private static final long serialVersionUID = 1L;
 
@@ -30,6 +30,16 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(String message) {
         super(message);
+        httpErrorCode = Output.SC_INTERNAL_SERVER_ERROR;
+    }
+
+    /**
+     * @param message message
+     * @param code The error code.
+     */
+    public ServiceException(String message, int code) {
+        super(message);
+        httpErrorCode = code;
     }
 
     /**
@@ -38,6 +48,17 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
+        httpErrorCode = Output.SC_INTERNAL_SERVER_ERROR;
+    }
+
+    /**
+     * @param message message
+     * @param cause cause
+     * @param code the error code.
+     */
+    public ServiceException(String message, Throwable cause, int code) {
+        super(message, cause);
+        httpErrorCode = code;
     }
 
     /**
@@ -45,6 +66,16 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(Throwable cause) {
         super(cause);
+        httpErrorCode = Output.SC_INTERNAL_SERVER_ERROR;
+    }
+
+    /**
+     * @param cause cause
+     * @param code the error code.
+     */
+    public ServiceException(Throwable cause, int code) {
+        super(cause);
+        httpErrorCode = code;
     }
 
      /**
@@ -64,10 +95,4 @@ public class ServiceException extends RuntimeException
         return httpErrorCode;
     }
 
-    /**
-     * @param httpErrorCode http error code
-     */
-    public void setHttpErrorCode(int httpErrorCode) {
-        this.httpErrorCode = httpErrorCode;
-    }
 }

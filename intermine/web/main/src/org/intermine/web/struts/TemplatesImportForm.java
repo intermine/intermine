@@ -12,7 +12,6 @@ package org.intermine.web.struts;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateHelper;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
@@ -138,7 +136,9 @@ public class TemplatesImportForm extends ImportXMLForm
 
     /**
      * Return a Map from template name to Template object.
-     * @return the Map
+     * @param bagManager An object capable of getting bags for a profile.
+     * @param profile The current user's profile.
+     * @return a Map from template name to Template object.
      * @throws Exception if a problem parsing query XML
      */
     public Map<String, TemplateQuery> getQueryMap(BagManager bagManager, Profile profile)

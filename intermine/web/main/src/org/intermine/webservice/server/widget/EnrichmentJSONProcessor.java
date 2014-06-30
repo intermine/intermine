@@ -19,16 +19,19 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EnrichmentJSONProcessor implements WidgetResultProcessor {
+/** @author Alex Kalderimis **/
+public final class EnrichmentJSONProcessor implements WidgetResultProcessor
+{
 
-    private static final WidgetResultProcessor instance = new EnrichmentJSONProcessor();
+    private static final WidgetResultProcessor INSTANCE = new EnrichmentJSONProcessor();
 
     private EnrichmentJSONProcessor() {
         // Not to be instantiated.
     }
 
+    /** @return A widget result processor **/
     public static WidgetResultProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -48,9 +51,9 @@ public class EnrichmentJSONProcessor implements WidgetResultProcessor {
     /**
      * Format the value of extraAttribute. E.g.
      * "{"gene_length":{"percentage_gene_length_not_null":"22.58%","gene_length_correction":"false"
-     * @param extraAttributes
-     * @return
-     * @throws JSONException
+     * @param extraAttributes The attributes to format.
+     * @return A string with all the extra attributes.
+     * @throws JSONException if we can't serialise them
      */
     public String formatExtraAttributes(Map<String, Map<String, Object>> extraAttributes)
         throws JSONException {

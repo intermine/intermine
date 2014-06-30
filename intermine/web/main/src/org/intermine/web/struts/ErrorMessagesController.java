@@ -48,10 +48,12 @@ public class ErrorMessagesController extends TilesAction
      *                if an error occurs
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(
+            ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         ActionMessages messages = (ActionMessages) session.getAttribute(Constants.LOOKUP_MSG);
         if (messages != null) {

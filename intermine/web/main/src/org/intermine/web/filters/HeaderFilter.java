@@ -37,6 +37,7 @@ public class HeaderFilter implements Filter
         throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
 
+        @SuppressWarnings("unchecked")
         Enumeration<String> e = fc.getInitParameterNames();
         while (e.hasMoreElements()) {
             String headerName = e.nextElement();

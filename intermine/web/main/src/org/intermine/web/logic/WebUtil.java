@@ -184,8 +184,14 @@ public abstract class WebUtil
         }
         return StringUtil.split(prop, ":");
     }
-    
-    public final static class HeadResource {
+
+    /**
+     * A bean encapsulating a resource (js or css).
+     * @author Alex Kalderimis
+     *
+     */
+    public static final class HeadResource
+    {
         private final String type;
         private final String url;
         private final String key;
@@ -196,43 +202,48 @@ public abstract class WebUtil
             this.url = url;
         }
 
+        /** @return the key **/
         public String getKey() {
             return key;
         }
-        
+
+        /** @return the type **/
         public String getType() {
             return type;
         }
 
+        /** @return the url **/
         public String getUrl() {
             return url;
         }
-        
+
+        /** @return whether this resource is relative **/
         public boolean getIsRelative() {
             return url.startsWith("/");
         }
-        
+
         @Override
         public String toString() {
             return String.format("HeadResouce [type = %s, url = %s]", type, url);
         }
     }
-    
+
     /**
      * Returns the resources for a particular section of the head element.
-     * 
+     *
      * @param section The section this resource belongs in.
-     * 
-     * @return A list of page resources, which are the urls for these resources. 
+     * @param userPreferences The preferences of the current user.
+     *
+     * @return A list of page resources, which are the urls for these resources.
      */
-    public static List<HeadResource> getHeadResources(
-            String section, Map<String, String> userPreferences) {
+    public static List<HeadResource> getHeadResources(String section,
+                                           Map<String, String> userPreferences) {
         Properties webProperties = InterMineContext.getWebProperties();
         String cdnLocation = webProperties.getProperty("head.cdn.location");
         boolean allowUserOverrides =
             "true".equals(webProperties.getProperty("head.allow.user.overrides"));
         List<HeadResource> ret = new ArrayList<HeadResource>();
-        for (String type: new String[]{ "css", "js" }) {
+        for (String type: new String[] {"css", "js" }) {
             String key = String.format("head.%s.%s.", type, section);
             Properties userProps = new Properties();
             userProps.putAll(webProperties);

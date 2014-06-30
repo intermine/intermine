@@ -44,13 +44,13 @@
 <c:when test="${id == 'template'}">
 <input type="radio" name="timeRange${id}" value="LAST2WEEKS" onChange="drawPieAndTableChart(this.value, '${id}','${mainColumn}')"/> Last 2 weeks
 <input type="radio" name="timeRange${id}" value="LASTMONTH" checked onChange="drawPieAndTableChart(this.value, '${id}','${mainColumn}')"/> Last month
-<input type="radio" name="timeRange${id}" value="LAST3MONTHES" onChange="drawPieAndTableChart(this.value, '${id}','${mainColumn}')"/> Last 3 months
+<input type="radio" name="timeRange${id}" value="LAST_90_DAYS" onChange="drawPieAndTableChart(this.value, '${id}','${mainColumn}')"/> Last 3 months
 <input type="radio" name="timeRange${id}" value="LASTYEAR" onChange="drawPieAndTableChart(this.value, '${id}','${mainColumn}')"/> Last year
 </c:when>
 <c:otherwise>
 <input type="radio" name="timeRange${id}" value="LAST2WEEKS" onChange="drawTableChart(this.value, '${id}','${mainColumn}')"/> Last 2 weeks
 <input type="radio" name="timeRange${id}" value="LASTMONTH" checked onChange="drawTableChart(this.value, '${id}','${mainColumn}')"/> Last month
-<input type="radio" name="timeRange${id}" value="LAST3MONTHES" onChange="drawTableChart(this.value, '${id}','${mainColumn}')"/> Last 3 months
+<input type="radio" name="timeRange${id}" value="LAST_90_DAYS" onChange="drawTableChart(this.value, '${id}','${mainColumn}')"/> Last 3 months
 <input type="radio" name="timeRange${id}" value="LASTYEAR" onChange="drawTableChart(this.value, '${id}','${mainColumn}')"/> Last year
 </c:otherwise>
 </c:choose>

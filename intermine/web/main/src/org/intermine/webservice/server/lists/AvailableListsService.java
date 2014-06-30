@@ -60,7 +60,7 @@ public class AvailableListsService extends WebService
         }
     }
 
-    private enum Filter{ PREFIX, SUFFIX, CONTAINS, EXACT };
+    private enum Filter { PREFIX, SUFFIX, CONTAINS, EXACT };
 
     /**
      * Get the lists for this request.
@@ -90,7 +90,15 @@ public class AvailableListsService extends WebService
         }
     }
 
-    protected Collection<InterMineBag> getListsMatching(ListManager listManager, String nameFilter) {
+    /**
+     * Get the lists that match the current filter.
+     * @param listManager The list manager which has all the lists.
+     * @param nameFilter Filter over the names.
+     * @return The lists that match the filter.
+     */
+    protected Collection<InterMineBag> getListsMatching(
+            ListManager listManager,
+            String nameFilter) {
         if (nameFilter == null) {
             throw new IllegalArgumentException("nameFilter must not be null");
         }
@@ -105,18 +113,20 @@ public class AvailableListsService extends WebService
             if (bag != null) {
                 String bagName = StringUtils.defaultString(bag.getName(), "");
                 switch (type) {
-                case EXACT:
-                    suitable = term.equals(bagName);
-                    break;
-                case PREFIX:
-                    suitable = bagName.startsWith(term);
-                    break;
-                case SUFFIX:
-                    suitable = bagName.endsWith(term);
-                    break;
-                case CONTAINS:
-                    suitable = bagName.contains(term);
-                    break;
+                    case EXACT:
+                        suitable = term.equals(bagName);
+                        break;
+                    case PREFIX:
+                        suitable = bagName.startsWith(term);
+                        break;
+                    case SUFFIX:
+                        suitable = bagName.endsWith(term);
+                        break;
+                    case CONTAINS:
+                        suitable = bagName.contains(term);
+                        break;
+                    default:
+                        throw new IllegalStateException("someone has gone and expanded this enum");
                 }
             }
             if (suitable) {
@@ -136,7 +146,10 @@ public class AvailableListsService extends WebService
 
     @Override
     protected boolean canServe(Format format) {
-        return format == Format.JSON || format == Format.HTML || format == Format.TEXT || Format.FLAT_FILES.contains(format);
+        return format == Format.JSON
+                || format == Format.HTML
+                || format == Format.TEXT
+                || Format.FLAT_FILES.contains(format);
     }
 
     private Map<String, Object> getHeaderAttributes() {
@@ -147,7 +160,7 @@ public class AvailableListsService extends WebService
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
-        } if (getFormat() == Format.HTML) {
+        } else if (getFormat() == Format.HTML) {
             attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
                 Arrays.asList("Name", "Type", "Description", "Size"));
         }

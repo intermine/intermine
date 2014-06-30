@@ -1,24 +1,35 @@
 package org.intermine.webservice.server.clob;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.NotImplementedException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.AbstractQueryService;
 import org.intermine.webservice.server.query.QueryRequestParser;
@@ -28,19 +39,26 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  * <p>A service to provide access to substrings of <code>ClobAccess</code> data. Ideally this
  * could be replaced by enhancing path queries to provide access to functions
  * such as <code>SUBSTR</code>.</p>
- * 
+ *
  * <p>This service expects the following parameters:</p>
  * <ul>
- *   <li><em>query</em>: A query with a single selected path, which must resolve to a string or clob.</li>
+ *   <li><em>query</em>: A query with a single selected path,
+ *       which must resolve to a string or clob.
+ *   </li>
  *   <li><em>start</em>: The index of the first character of the string or clob to return.</li>
  *   <li><em>end</em>: The index of the first character not to return.</li>
  * </ul>
- * 
+ *
  * @author Alex Kalderimis
  *
  */
-public class SequenceService extends JSONService {
+public class SequenceService extends JSONService
+{
 
+    private static final String EXPECTED_CHAR_SEQUENCE
+        = "Expected the column to provide a CharSequence value, got: ";
+
+    /** @param im The InterMine state object. **/
     public SequenceService(InterMineAPI im) {
         super(im);
     }
@@ -50,6 +68,7 @@ public class SequenceService extends JSONService {
      * "results", say. Well, this it just seemed sensible to make this service
      * directly consumable by <em>jbrowse</em>, which is obviously the whole point of this
      * service. <em>Sigh</em>.
+     * @return The header attributes.
      */
     @Override
     protected Map<String, Object> getHeaderAttributes() {
@@ -69,7 +88,7 @@ public class SequenceService extends JSONService {
         PathQuery pq = getQuery();
 
         Iterator<CharSequence> sequences = getSequences(pq);
-        while(sequences.hasNext()) {
+        while (sequences.hasNext()) {
             CharSequence chars = sequences.next();
             addResultItem(makeFeature(chars, start, end), sequences.hasNext());
         }
@@ -80,9 +99,14 @@ public class SequenceService extends JSONService {
         BagQueryRunner bqr = im.getBagQueryRunner();
         final Query q;
         try {
-            q = MainHelper.makeQuery(pq, getListManager().getListMap(), new HashMap(), bqr, new HashMap());
+            q = MainHelper.makeQuery(
+                    pq,
+                    getListManager().getListMap(),
+                    new HashMap<String, QuerySelectable>(),
+                    bqr,
+                    new HashMap<String, BagQueryResult>());
         } catch (ObjectStoreException e) {
-            throw new InternalErrorException(e);
+            throw new ServiceException(e);
         }
 
         final Iterator<Object> results = im.getObjectStore().executeSingleton(q).iterator();
@@ -100,18 +124,19 @@ public class SequenceService extends JSONService {
 
                 CharSequence chars;
                 try {
-                    chars = (CharSequence) obj.getFieldValue(pq.makePath(pq.getView().get(0)).getEndFieldDescriptor().getName());
+                    chars = (CharSequence) obj.getFieldValue(
+                            pq.makePath(pq.getView().get(0)).getEndFieldDescriptor().getName());
                 } catch (IllegalAccessException e) {
-                    throw new InternalErrorException(e);
+                    throw new ServiceException(e);
                 } catch (PathException e) {
-                    throw new InternalErrorException(e);
+                    throw new ServiceException(e);
                 }
                 return chars;
             }
 
             @Override
             public void remove() {
-                throw new NotImplementedException("remove is not a valid operation for this iterator.");
+                throw new NotImplementedException(getClass(), "remove");
             }
         };
 
@@ -129,7 +154,7 @@ public class SequenceService extends JSONService {
             throw new BadRequestException(e);
         }
         if (!CharSequence.class.isAssignableFrom(column.getEndType())) {
-            throw new BadRequestException("Expected the column to provide a CharSequence value, got: " + column.getEndType());
+            throw new BadRequestException(EXPECTED_CHAR_SEQUENCE + column.getEndType());
         }
     }
 
@@ -147,17 +172,18 @@ public class SequenceService extends JSONService {
         Map<String, Object> feat = new HashMap<String, Object>();
         feat.put("start", start);
         feat.put("end", subSequence.length() + start);
-        feat.put("seq", String.valueOf(subSequence)); // Have to do this, otherwise json.org goes insane.
+        // Have to do this, otherwise json.org goes insane.
+        feat.put("seq", String.valueOf(subSequence));
 
         return feat;
     }
 
     private PathQuery getQuery() {
-        String xml                     = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
-        String schemaUrl               = AbstractQueryService.getSchemaLocation(request);
-        PathQueryBuilder builder       = new PathQueryBuilder(xml, schemaUrl, getListManager());
+        String xml           = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
+        String schemaUrl     = AbstractQueryService.getSchemaLocation(request);
+        PathQueryBuilder bdr = new PathQueryBuilder(xml, schemaUrl, getListManager());
 
-        return builder.getQuery();
+        return bdr.getQuery();
     }
 
 }

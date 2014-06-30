@@ -24,6 +24,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
+@SuppressWarnings("deprecation")
 public class ChangeTableSizeForm extends ActionForm
 {
     /**  */

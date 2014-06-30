@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.output;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,11 +17,15 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.results.ResultCell;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.PortalHelper;
 import org.json.JSONObject;
 
+/**
+ * A formatter that will render a table cell.
+ * @author Alex Kalderimis
+ *
+ */
 public class TableCellFormatter
 {
 
@@ -24,14 +38,20 @@ public class TableCellFormatter
     private final LinkRedirectManager redirector;
     private final InterMineAPI im;
     private Integer maxCellLength;
-    
+
+    /** @param im The InterMine state object **/
     public TableCellFormatter(InterMineAPI im) {
         this.im = im;
-        this.maxCellLength = Integer.valueOf(String.valueOf(InterMineContext.getWebProperties().getProperty(
-                "webservice.tablecellformatter.cell.length.max", "200")));
+        this.maxCellLength = Integer.valueOf(
+                InterMineContext.getWebProperties().getProperty(
+                        "webservice.tablecellformatter.cell.length.max", "200"));
         this.redirector = im.getLinkRedirector();
     }
-    
+
+    /**
+     * @param cell The thing we are rendering.
+     * @return A data structure we can easily jsonify.
+     */
     public Map<String, Object> toMap(ResultCell cell) {
         final Map<String, Object> mapping = new HashMap<String, Object>();
         if (cell == null) {

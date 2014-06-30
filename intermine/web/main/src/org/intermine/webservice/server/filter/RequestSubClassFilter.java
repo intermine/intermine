@@ -20,15 +20,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.intermine.webservice.server.core.Request;
+import org.intermine.webservice.server.core.SessionlessRequest;
 
 /**
  * Filter to wrap all web service requests in a custom delegating wrapper that
  * prevents sessions being created. Any attempts to create a session on such a wrapped
  * object will cause a runtime exception.
- * 
- * @see org.intermine.webservice.server.core.Request
- * 
+ *
+ * @see org.intermine.webservice.server.core.SessionlessRequest
+ *
  * @author Alex Kalderimis
  */
 public class RequestSubClassFilter implements Filter
@@ -42,7 +42,7 @@ public class RequestSubClassFilter implements Filter
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         // It only makes sense to use this filter on HTTP requests.
-        Request wrapped = new Request((HttpServletRequest) request);
+        SessionlessRequest wrapped = new SessionlessRequest((HttpServletRequest) request);
         chain.doFilter(wrapped, response);
     }
 

@@ -62,7 +62,6 @@ public class KeywordSearchResult
     public KeywordSearchResult(WebConfig webconfig, InterMineObject object,
             Map<String, List<FieldDescriptor>> classKeys, ClassDescriptor classDescriptor,
             float score, Map<String, TemplateQuery> templates, String linkRedirect) {
-        super();
 
         List<FieldConfig> fieldConfigList = FieldConfigHelper.getClassFieldConfigs(webconfig,
                 classDescriptor);
@@ -180,7 +179,7 @@ public class KeywordSearchResult
 
     /**
      * URL set in web.properties.
-     * 
+     *
      * @return the URL the search result will link to. if NULL, link to report page
      */
     public String getLinkRedirect() {

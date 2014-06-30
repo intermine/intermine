@@ -50,8 +50,8 @@ public class PasswordResetAction extends LoginHandler
      */
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
-            HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();

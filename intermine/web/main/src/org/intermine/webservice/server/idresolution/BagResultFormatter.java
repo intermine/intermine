@@ -14,8 +14,15 @@ import java.util.Map;
 
 import org.intermine.api.idresolution.Job;
 
-public interface BagResultFormatter {
+/** @author Alex Kalderimis **/
+public interface BagResultFormatter
+{
 
-    public abstract Map<String, Object> format(Job job);
+    /**
+     * Turn a job into a serialisable structure.
+     * @param job The job to serialise.
+     * @return A simple serialisable data structure.
+     */
+    Map<String, Object> format(Job job);
 
 }

@@ -70,7 +70,7 @@ public final class ResponseUtil
         setPlainTextContentType(response);
         setFileName(response, fileName);
     }
-    
+
     /**
      * Sets response header and content type for gzipped output.
      *
@@ -110,6 +110,11 @@ public final class ResponseUtil
         }
     }
 
+    /**
+     * Set the header for a JSON-schema response.
+     * @param response The response.
+     * @param filename The file-name.
+     */
     public static void setJSONSchemaHeader(HttpServletResponse response,
             String filename) {
         setJSONSchemaContentType(response);

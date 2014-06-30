@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,7 +18,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.bag.BagQueryUpgrade;
 import org.intermine.api.idresolution.IDResolver;
@@ -61,12 +58,12 @@ public class BagUpgradeAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         InterMineBag savedBag = profile.getSavedBags().get(bagName);
-        
+
         BagQueryRunner bagRunner = im.getBagQueryRunner();
         BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagRunner, savedBag);
         Job job = IDResolver.getInstance().submit(bagQueryUpgrade);
         session.setAttribute(WS_JOB_ID_KEY, job.getUid());
-        
+
         request.setAttribute("newBagName", bagName);
         request.setAttribute("bagType", savedBag.getType());
         return mapping.findForward("bagUploadConfirm");

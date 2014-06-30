@@ -15,9 +15,10 @@ package org.intermine.webservice.server.core;
  * @author Alex Kalderimis
  *
  * @param <L> The type of an individual leaf.
- * @param <R> The return type.
  */
-public abstract class TreeWalker<L> extends EitherVisitor<L, DisjointRecursiveList<L>, Void> {
+public abstract class TreeWalker<L>
+    extends EitherVisitor<L, DisjointRecursiveList<L>, Void>
+{
 
     @Override
     public Void visitLeft(L a) {

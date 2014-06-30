@@ -8,6 +8,7 @@ import java.util.List;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.TemplateService;
 import org.intermine.webservice.client.template.TemplateParameter;
+import org.intermine.webservice.client.util.TestUtil;
 import org.junit.Test;
 
 /**
@@ -19,8 +20,6 @@ import org.junit.Test;
  */
 public class LiveGeneratedTemplateTest
 {
-    private static final String ROOT = "http://squirrel.flymine.org/intermine-test/service";
-
     /**
      * Perform the query and print the rows of results.
      * @param args command line arguments
@@ -28,7 +27,7 @@ public class LiveGeneratedTemplateTest
      */
     @Test
     public void run() throws IOException {
-        ServiceFactory factory = new ServiceFactory(ROOT);
+        ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl());
         // Edit the template parameter values to get different results
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
         parameters.add(new TemplateParameter("Employee.name", "CONTAINS", "Employee", null, "D"));

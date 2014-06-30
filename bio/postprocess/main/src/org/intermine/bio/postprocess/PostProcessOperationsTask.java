@@ -21,9 +21,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-
-
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -37,7 +36,6 @@ import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
-import org.intermine.web.search.KeywordSearch;
 
 /**
  * Run operations on genomic model database after DataLoading

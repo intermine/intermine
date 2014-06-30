@@ -13,15 +13,17 @@ package org.intermine.webservice.server.user;
 import java.util.HashMap;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
-import org.intermine.webservice.server.exceptions.ServiceException;
-import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class ReadPreferencesService extends ReadWriteJSONService {
+/**
+ * A service for reading the current state of a user's preferences.
+ * @author Alex Kalderimis
+ *
+ */
+public class ReadPreferencesService extends ReadWriteJSONService
+{
 
-    public static final String DENIAL_MSG = "All requests to read and manage preferences must be authenticated";
-
+    /** @param im The InterMine state object **/
     public ReadPreferencesService(InterMineAPI im) {
         super(im);
     }
@@ -32,8 +34,9 @@ public class ReadPreferencesService extends ReadWriteJSONService {
     }
 
     @Override
-    protected void execute() throws ServiceException {
-        addResultItem(new HashMap<String, Object>(getPermission().getProfile().getPreferences()), false);
+    protected void execute() {
+        addResultItem(new HashMap<String, Object>(
+                getPermission().getProfile().getPreferences()), false);
     }
 
 }

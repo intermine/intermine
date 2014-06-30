@@ -28,7 +28,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
  * Class for tracking when the users log into their accounts.
  * @author dbutano
  */
-public class LoginTracker extends TrackerAbstract
+public class LoginTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(LoginTracker.class);
     private static LoginTracker loginTracker = null;

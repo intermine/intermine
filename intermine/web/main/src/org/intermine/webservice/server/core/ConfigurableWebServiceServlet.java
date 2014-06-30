@@ -21,7 +21,13 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.webservice.server.WebService;
 
-public class ConfigurableWebServiceServlet extends WebServiceServlet {
+/**
+ * A servlet that can be configured entirely in XML.
+ * @author Alex Kalderimis
+ *
+ */
+public class ConfigurableWebServiceServlet extends WebServiceServlet
+{
 
     private static final long serialVersionUID = 1943972842080907136L;
 
