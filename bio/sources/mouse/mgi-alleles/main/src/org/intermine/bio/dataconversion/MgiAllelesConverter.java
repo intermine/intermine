@@ -155,10 +155,12 @@ public class MgiAllelesConverter extends BioFileConverter
             String alleleIdentifier = line[0];
             String alleleSymbol = line[1];
             String alleleName = line[2];
-            String alleleType = line[3];
 
-            String pubmed = line[4];
-            String geneIdentifier = line[5];
+            String alleleType = line[3] + ", " + line[4];
+
+
+            String pubmed = line[5];
+            String geneIdentifier = line[6];
 
             String termsStr = null;
             if (line.length >= 10) {
