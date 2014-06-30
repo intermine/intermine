@@ -20,10 +20,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.Constants;
 
 /**
  * Return responses tagged with the release version.
@@ -45,11 +47,27 @@ public class ReleaseEtagFilter implements Filter
     public void doFilter(
             ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
+        String etag = getRelease();
+        String zipEtag = etag + "-gzip";
+
         HttpServletResponse inner = (HttpServletResponse) response;
-        inner.setHeader("ETag", getRelease());
-        inner.setHeader("Cache-Control", "public");
-        inner.setDateHeader("Last-Modified", START_UP.getTime());
-        chain.doFilter(request, new EtagIgnorer(inner));
+        HttpServletRequest req = ((HttpServletRequest) request);
+
+        String ifNoneMatch = req.getHeader("If-None-Match"); 
+        long ifModSince = req.getDateHeader("If-Modified-Since");
+        LOG.debug("etag = " + etag
+                + ", START_UP = " + START_UP
+                + ", ifNoneMatch = " + ifNoneMatch
+                + ", ifModSince = " + ifModSince);
+
+        if (etag.equals(ifNoneMatch) || zipEtag.equals(ifNoneMatch) || (ifModSince == START_UP.getTime())) {
+            inner.setStatus(304);
+        } else {
+            inner.setHeader("ETag", etag);
+            inner.setHeader("Cache-Control", "public,max-age=600");
+            inner.setDateHeader("Last-Modified", START_UP.getTime());
+            chain.doFilter(request, new EtagIgnorer(inner));
+        }
     }
 
     private String getRelease() {
@@ -78,12 +96,13 @@ public class ReleaseEtagFilter implements Filter
 
         @Override
         public void setHeader(String name, String value) {
-            if (!"etag".equalsIgnoreCase(name)
-                    || !"cache-control".equalsIgnoreCase(name)
-                    || !"Last-Modified".equalsIgnoreCase(name)) {
-                super.setHeader(name, value);
-            } else {
+            if ("etag".equalsIgnoreCase(name)
+                || "cache-control".equalsIgnoreCase(name)
+                || ("pragma".equalsIgnoreCase(name) && "no-cache".equals(value))
+                || "Last-Modified".equalsIgnoreCase(name)) {
                 LOG.debug("Ignoring cache header: " + name + " " + value);
+            } else {
+                super.setHeader(name, value);
             }
         }
     }

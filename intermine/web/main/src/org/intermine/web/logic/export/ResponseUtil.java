@@ -157,7 +157,7 @@ public final class ResponseUtil
         // http://www.phord.com/experiment/cache/
         // http://support.microsoft.com/kb/243717
         response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "must-revalidate, max-age=0");
+        response.setHeader("Cache-Control", "private, no-cache, must-revalidate, max-age=0");
     }
 
     /**
