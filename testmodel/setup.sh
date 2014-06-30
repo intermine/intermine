@@ -9,12 +9,6 @@
 set -e # Errors are fatal.
 
 USERPROFILEDB=userprofile-demo
-# Build and deploy the testmodel webapp
-# This script requires the standard InterMine dependencies:
-#  * psql (createdb, psql) - your user should have a postgres
-#    role with password authentication set up.
-#  * ant
-#  * a deployment container (tomcat).
 PRODDB=objectstore-demo
 MINENAME=demomine
 DIR="$(cd $(dirname "$0"); pwd)"
@@ -75,8 +69,9 @@ for db in $USERPROFILEDB $PRODDB; do
     fi
 done
 
+echo "------> Removing current webapp"
 cd $DIR/webapp/main
-ant -Drelease=demo remove-webapp >> $LOG 
+ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
 
 cd $DIR/dbmodel
 
@@ -90,7 +85,6 @@ ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     default \
-    remove-webapp \
     release-webapp | tee -a $LOG | grep tomcat-deploy
 
 echo "------> All done. Build log is available in $LOG"
