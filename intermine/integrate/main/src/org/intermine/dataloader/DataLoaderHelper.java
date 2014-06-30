@@ -40,8 +40,8 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Class providing utility methods to help with primary key and data source priority configuration

@@ -46,7 +46,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
@@ -93,8 +93,8 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 
 /**
  * Helper methods for main controller and main action
@@ -378,19 +378,19 @@ public final class MainHelper
                         } else {
                             // Use simple forms of operators when not dealing with strings.
                             ConstraintOp simpleOp = ConstraintOp.EXACT_MATCH == pca.getOp()
-                                    ? ConstraintOp.EQUALS :
-                                        ConstraintOp.STRICT_NOT_EQUALS == pca.getOp()
+                                    ? ConstraintOp.EQUALS
+                                            : ConstraintOp.STRICT_NOT_EQUALS == pca.getOp()
                                                 ? ConstraintOp.NOT_EQUALS : pca.getOp();
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
                                         simpleOp, new QueryValue(TypeUtil.stringToObject(
                                                 fieldType, pca.getValue()))));
                         }
-                    
+
                     } else if (constraint instanceof PathConstraintNull) {
                         // This is a null constraint. If it is on a class, then we need do nothing,
                         // as the mere presence of the constraint has caused the class to make it
                         // into the FROM list above.
-                        
+
                         // TODO - make IS NULL also work on references and collections.
                         if (path.endIsAttribute()) {
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
@@ -399,8 +399,10 @@ public final class MainHelper
                             String parent = path.getPrefix().getNoConstraintsString();
                             QueryClass parentQc = (QueryClass) ((queryBits.get(parent)
                                         instanceof QueryClass) ? queryBits.get(parent) : null);
-                            QueryObjectReference qr = new QueryObjectReference(parentQc, path.getLastElement());
-                            codeToConstraint.put(code, new ContainsConstraint(qr, constraint.getOp()));
+                            QueryObjectReference qr = new QueryObjectReference(parentQc,
+                                    path.getLastElement());
+                            codeToConstraint.put(code, new ContainsConstraint(qr,
+                                    constraint.getOp()));
                         } else if (path.endIsCollection()) {
                             String parent = path.getPrefix().getNoConstraintsString();
                             QueryClass parentQC = (QueryClass) ((queryBits.get(parent)
@@ -416,16 +418,17 @@ public final class MainHelper
                             } else {
                                 subQ.alias(parentQC, "default");
                             }
-                            
+
                             QueryClass pathFrom = new QueryClass(path.getEndType());
                             subQ.addFrom(pathFrom);
                             subQ.addToSelect(new QueryValue(1));
-                            subQ.setConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, pathFrom));
-                            
+                            subQ.setConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
+                                    pathFrom));
+
                             codeToConstraint.put(code, new SubqueryExistsConstraint(
-                                    ((constraint.getOp() == ConstraintOp.IS_NULL) ? ConstraintOp.DOES_NOT_EXIST : ConstraintOp.EXISTS),
-                                    subQ
-                                ));
+                                    ((constraint.getOp() == ConstraintOp.IS_NULL)
+                                            ? ConstraintOp.DOES_NOT_EXIST : ConstraintOp.EXISTS),
+                                            subQ));
                         }
                     } else if (constraint instanceof PathConstraintLoop) {
                         // We need to act if this is not a participating constraint - otherwise
@@ -461,7 +464,8 @@ public final class MainHelper
                         codeToConstraint.put(code, makeRangeConstraint(q, (QueryNode) field, pcr));
                     } else if (constraint instanceof PathConstraintMultitype) {
                         PathConstraintMultitype pcmt = (PathConstraintMultitype) constraint;
-                        codeToConstraint.put(code, makeMultiTypeConstraint(pathQuery.getModel(), (QueryNode) field, pcmt));
+                        codeToConstraint.put(code, makeMultiTypeConstraint(pathQuery.getModel(),
+                                (QueryNode) field, pcmt));
                     } else if (constraint instanceof PathConstraintMultiValue) {
                         Class<?> fieldType = path.getEndType();
                         if (String.class.equals(fieldType)) {
@@ -623,7 +627,7 @@ public final class MainHelper
     }
 
     /**
-     * Construct a new multi-type constraint. 
+     * Construct a new multi-type constraint.
      * @param model The model to look for types within.
      * @param field The subject of the constraint.
      * @param pcmt The constraint itself.
@@ -640,9 +644,9 @@ public final class MainHelper
         Set<Class<?>> classes = new HashSet<Class<?>>();
         for (String name: pcmt.getValues()) {
             ClassDescriptor cd = model.getClassDescriptorByName(name);
-            if (cd == null) { // PathQueries should take care of this, but you know. 
-              throw new ObjectStoreException(
-                  String.format("%s is not a class in the %s model", name, model.getName()));
+            if (cd == null) { // PathQueries should take care of this, but you know.
+                throw new ObjectStoreException(
+                        String.format("%s is not a class in the %s model", name, model.getName()));
             }
             classes.add(cd.getType());
         }
@@ -998,7 +1002,7 @@ public final class MainHelper
         return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,
                 bagQueryRunner, occurancesOnly);
     }
-    
+
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
      *
@@ -1038,8 +1042,7 @@ public final class MainHelper
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner,
-            boolean occurancesOnly)
-            throws ObjectStoreException {
+            boolean occurancesOnly) throws ObjectStoreException {
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap<String, QuerySelectable>();
         Query subQ = null;
         subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, bagQueryRunner, null);
@@ -1187,7 +1190,8 @@ public final class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qcpe.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode, occurancesOnly);
+                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode,
+                                occurancesOnly);
                     }
                 } catch (IllegalArgumentException e2) {
                     // Ignore it - we are searching for a working branch of the query
@@ -1205,7 +1209,7 @@ public final class MainHelper
 
         QueryField origQf = (QueryField) origPathToQueryNode.get(summaryPath);
         String fieldName = origQf.getFieldName();
-        String className = DynamicUtil.getFriendlyName(((QueryClass) origQf.getFromElement())
+        String className = Util.getFriendlyName(((QueryClass) origQf.getFromElement())
                 .getType());
 
         if (!occurancesOnly && isNumeric(summaryType) && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
@@ -1228,7 +1232,7 @@ public final class MainHelper
         }
         return q;
     }
-    
+
     private static boolean isNumeric(Class<?> summaryType) {
         return (summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
@@ -1238,10 +1242,10 @@ public final class MainHelper
 
     /**
      * Produce a histogram query for a numerical column.
-     * 
+     *
      * In addition to the bucket number and the count for each bucket, each row also includes
      * the general statistics previously supplied for backwards compatibility.
-     * 
+     *
      * BASIC IDEA:
      * <pre>
      * select bq.max, bq.min, sum(bq.c) as total, bq.bucket, from (
@@ -1253,11 +1257,11 @@ public final class MainHelper
      *     from (select v.value from values as v) as vals,
      *          (select max(v.value) as max, min(v.value) as min from values as v) as stats
      *     group by vals.value, stats.min, stats.max order by bucket, vals.value
-     * ) as bq 
+     * ) as bq
      * group by bq.bucket, bq.max, bq.min
      * order by bq.bucket;
      * </pre>
-     *  
+     *
      * @param subq The source of the data.
      * @param qf The field that contains the numerical information we are interested in.
      * @param pathToQueryNode The map to update with names of columns.
@@ -1325,7 +1329,7 @@ public final class MainHelper
         bucketq.addToSelect(devval);
         bucketq.addToSelect(bucket);
         bucketq.addToSelect(noOfBuckets);
-        
+
         bucketq.addToGroupBy(val);
         bucketq.addToGroupBy(maxval);
         bucketq.addToGroupBy(minval);
@@ -1374,27 +1378,27 @@ public final class MainHelper
 
         return q;
     }
-    
+
     public static void loadHelpers(Properties props) {
         RangeConfig.loadHelpers(props);
     }
-    
+
     protected static final class RangeConfig
     {
         private RangeConfig() {
             // Restricted constructor.
         }
-        
+
         protected static Map<Class<?>, RangeHelper> rangeHelpers;
-        
+
         static {
             init();
         }
-        
+
         protected static void reset() {
             init();
         }
-        
+
         private static void init() {
             rangeHelpers = new HashMap<Class<?>, RangeHelper>();
             // Default basic helpers.
@@ -1403,7 +1407,7 @@ public final class MainHelper
             rangeHelpers.put(String.class, new StringHelper());
             loadHelpers(PropertiesUtil.getProperties());
         }
-        
+
         protected static void loadHelpers(Properties allProps) {
             Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.", allProps);
             for (String key: props.stringPropertyNames()) {
@@ -1439,11 +1443,11 @@ public final class MainHelper
                 LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName() + ")");
             }
         }
-        
+
         public static boolean hasHelperForType(Class<?> type) {
             return rangeHelpers.containsKey(type);
         }
-        
+
         public static RangeHelper getHelper(Class<?> type) {
             return rangeHelpers.get(type);
         }
@@ -1510,10 +1514,11 @@ public final class MainHelper
 
         if (RangeConfig.hasHelperForType(type)) {
             RangeHelper helper = RangeConfig.getHelper(type);
-            
+
             return helper.createConstraint(q, node, con);
         }
-        throw new RuntimeException("No range constraints are possible for paths of type " + type.getName());
+        throw new RuntimeException("No range constraints are possible for paths of type "
+                + type.getName());
     }
 
 }

@@ -10,35 +10,31 @@ package org.intermine.task;
  *
  */
 
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
 import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Project;
-
-import org.apache.torque.task.TorqueSQLExec;
-import org.apache.torque.task.TorqueSQLTask;
-
-import java.io.File;
-import java.io.PrintWriter;
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.apache.torque.task.TorqueSQLExec;
+import org.apache.torque.task.TorqueSQLTask;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-
-import org.apache.log4j.Logger;
 
 /**
  * Generates and inserts SQL given database name, schema and temporary directory

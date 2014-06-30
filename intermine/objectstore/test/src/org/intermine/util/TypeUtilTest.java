@@ -19,10 +19,16 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Manager;
+import org.intermine.objectstore.query.Clob;
+import org.intermine.objectstore.query.ClobAccess;
 
+
+
+// TODO move to intermine.model test package
 public class TypeUtilTest extends TestCase
 {
     public TypeUtilTest(String arg) {
@@ -36,7 +42,7 @@ public class TypeUtilTest extends TestCase
     public void testSetFieldValue() throws Exception {
         Manager m = new Manager();
         String fieldValue = "Accountant";
-        TypeUtil.setFieldValue(m, "title", fieldValue);
+        DynamicUtil.setFieldValue(m, "title", fieldValue);
         assertEquals(fieldValue, m.getTitle());
     }
 
@@ -44,7 +50,7 @@ public class TypeUtilTest extends TestCase
         Manager m = new Manager();
         String fieldValue = "Accountant";
         try {
-            TypeUtil.setFieldValue(m, "fieldThatDoesntExists", fieldValue);
+            DynamicUtil.setFieldValue(m, "fieldThatDoesntExists", fieldValue);
             fail("should have throw an IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // correct

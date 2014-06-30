@@ -7,6 +7,7 @@ package org.intermine.webservice.server.query.result;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.core.Producer;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -37,10 +39,8 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         System.out.println("classpath=" + System.getProperty("java.class.path"));
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
         String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
-        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, savedBags);
+        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(xml, schemaUrl, new ConstantProducer());
         assertTrue(publicBuilder != null);
 
     }
@@ -48,10 +48,8 @@ public class PathQueryBuilderForJSONTest extends TestCase {
     public void testPublicGetQuery() {
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
         String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
-        Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(
-                xml, schemaUrl, savedBags);
+        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(xml, schemaUrl, new ConstantProducer());
         PathQuery pq = publicBuilder.getQuery();
         List<String> expectedViews = Arrays.asList("Manager.id", "Manager.department.name");
         assertEquals(expectedViews, pq.getView());
@@ -262,6 +260,25 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         } catch (Throwable t) {
             fail("Encountered unexpected exception processing the bad path Manager.name");
         }
+    }
+
+    private class ConstantProducer implements Producer<Map<String, InterMineBag>> {
+
+        private Map<String, InterMineBag> bags;
+
+        ConstantProducer(Map<String, InterMineBag> bags) {
+            this.bags = bags;
+        }
+
+        ConstantProducer() {
+            this(new HashMap<String, InterMineBag>());
+        }
+
+        @Override
+        public Map<String, InterMineBag> produce() {
+            return bags;
+        }
+        
     }
 
 }

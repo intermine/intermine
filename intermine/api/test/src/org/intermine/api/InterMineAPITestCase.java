@@ -52,6 +52,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
 
+
 /**
  * A TestCase that sets up a working InterMineAPI for use in TestCases that extend this class.  The
  * setUp() method creates a new InterMineAPI instance for each test with a superuser account called
@@ -60,8 +61,8 @@ import org.intermine.util.PropertiesUtil;
  *
  */
 public class InterMineAPITestCase extends TestCase {
-	
-	private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
+
+    private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
 
     protected InterMineAPI im;
     protected ObjectStore os;
@@ -78,11 +79,11 @@ public class InterMineAPITestCase extends TestCase {
 
     public void setUp() throws Exception {
 
-	    // When we construct the InterMineAPI it expects to have superuser account already created
+        // When we construct the InterMineAPI it expects to have superuser account already created
         // and the superuser.account property set.  This would be the normal application state.
         Properties props = PropertiesUtil.getProperties();
         props.put("superuser.account", "superUser");
-        
+
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
@@ -116,15 +117,22 @@ public class InterMineAPITestCase extends TestCase {
                 "org.intermine.api.tracker.KeySearchTracker"};
         trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
 
+
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
 
     public void tearDown() throws Exception {
-        trackerDelegate.close();
-        trackerDelegate.finalize();
-        clearDatabase();
-        clearUserprofile();
-        uosw.close();
+        if (trackerDelegate != null) {
+            trackerDelegate.close();
+            trackerDelegate.finalize();
+        }
+        if (os != null) {
+            clearDatabase();
+        }
+        if (uosw != null) {
+            clearUserprofile();
+            uosw.close();
+        }
     }
 
     private void clearDatabase() throws Exception {
@@ -156,35 +164,35 @@ public class InterMineAPITestCase extends TestCase {
             pm.deleteProfile(userProfile.getId());
         }
         Connection con = null;
-		PreparedStatement stm1 = null, stm2 = null;
+        PreparedStatement stm1 = null, stm2 = null;
         try {
-        	// Horrible, I know, but necessary.
-        	con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-			
-        	if (DatabaseUtil.tableExists(con, SharedBagManager.SHARED_BAGS)) {
-			    stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);			
-			    stm1.executeUpdate();
-        	}
-			
-        	if (DatabaseUtil.tableExists(con, SharingInvite.TABLE_NAME)) {
-			    stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);			
-			    stm2.executeUpdate();
-        	}
+            // Horrible, I know, but necessary.
+            con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+
+            if (DatabaseUtil.tableExists(con, SharedBagManager.SHARED_BAGS)) {
+                stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);
+                stm1.executeUpdate();
+            }
+
+            if (DatabaseUtil.tableExists(con, SharingInvite.TABLE_NAME)) {
+                stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);
+                stm2.executeUpdate();
+            }
         } catch (Exception e) {
-        	LOG.error("Error dropping extra tables", e);
+            LOG.error("Error dropping extra tables", e);
         } finally {
-        	for (Statement stm: new Statement[]{stm1, stm2}) {
-        		if (stm != null) {
+            for (Statement stm: new Statement[]{stm1, stm2}) {
+                if (stm != null) {
                     try {
                         stm.close();
                     } catch (SQLException e) {
                         throw new RuntimeException("Problem closing resources", e);
                     }
                 }
-        	}
-			((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
+            }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
         }
-        
+
     }
 
     private Map<String, List<FieldDescriptor>> getClassKeys(Model model) {

@@ -58,12 +58,13 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         }
 
         final String url = wsCodeGenInfo.getServiceBaseURL();
+        final String cdnLocation = wsCodeGenInfo.getProperty("head.cdn.location", "http://cdn.intermine.org");
         final String json = query.getJson();
         final String token = wsCodeGenInfo.getUserToken();
 
         StringBuffer sb = new StringBuffer()
           .append(JSStrings.getString("PRELUDE"))
-          .append(JSStrings.getString("IMPORTS"))
+          .append(String.format(JSStrings.getString("IMPORTS"), cdnLocation))
           .append(JSStrings.getString("PLACEHOLDER"))
           .append(JSStrings.getString("SCRIPT", new StringLiteral(url), new StringLiteral(token), json));
 

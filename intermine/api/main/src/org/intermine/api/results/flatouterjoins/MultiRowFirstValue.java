@@ -10,7 +10,7 @@ package org.intermine.api.results.flatouterjoins;
  *
  */
 
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * An object representing an entry in a MultiRow - the first instance of this value in a rowspan.

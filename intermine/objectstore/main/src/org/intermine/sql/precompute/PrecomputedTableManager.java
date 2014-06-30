@@ -10,6 +10,13 @@ package org.intermine.sql.precompute;
  *
  */
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,14 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
+import org.apache.log4j.Logger;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.AbstractTable;
@@ -35,8 +36,6 @@ import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.Query;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.Table;
-
-import org.apache.log4j.Logger;
 
 /**
  * Manages all the Precomputed tables in a given database.

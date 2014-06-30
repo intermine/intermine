@@ -17,12 +17,13 @@ import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Utility methods for Paths
@@ -50,7 +51,7 @@ public final class PathUtil
             if (!clds.contains(path.getStartClassDescriptor())) {
                 throw new PathException("ClassDescriptor from the start of path: " + path
                         + " is not a superclass of the class: "
-                        + DynamicUtil.getFriendlyName(o.getClass()) + " while resolving object: "
+                        + Util.getFriendlyName(o.getClass()) + " while resolving object: "
                         + o, path.toString());
             }
         }
@@ -97,7 +98,7 @@ public final class PathUtil
             if (!clds.contains(path.getStartClassDescriptor())) {
                 throw new PathException("ClassDescriptor from the start of path: " + path
                         + " is not a superclass of the class: "
-                        + DynamicUtil.getFriendlyName(o.getClass()) + " while resolving object: "
+                        + Util.getFriendlyName(o.getClass()) + " while resolving object: "
                         + o, path.toString());
             }
         }
@@ -173,7 +174,7 @@ public final class PathUtil
      * @return a boolean
      */
     public static boolean canAssignObjectToType(Class<?> cls, InterMineObject obj) {
-        for (Class<?> c : DynamicUtil.decomposeClass(obj.getClass())) {
+        for (Class<?> c : Util.decomposeClass(obj.getClass())) {
             if (cls.isAssignableFrom(c)) {
                 return true;
             }

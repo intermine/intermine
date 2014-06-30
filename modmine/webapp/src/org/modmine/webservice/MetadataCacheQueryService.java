@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONObject;
 import org.modmine.web.DisplayExperiment;

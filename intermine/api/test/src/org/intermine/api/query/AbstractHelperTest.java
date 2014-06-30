@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.intermine.model.testmodel.EmploymentPeriod;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryEvaluable;
@@ -19,7 +19,7 @@ import org.intermine.pathquery.PathConstraintRange;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.intermine.objectstore.query.ConstraintOp.*;
+import static org.intermine.metadata.ConstraintOp.*;
 
 /**
  * Tests for RangeHelpers constructed using the AbstractHelper pattern.
@@ -29,8 +29,8 @@ import static org.intermine.objectstore.query.ConstraintOp.*;
 public class AbstractHelperTest {
 
     private final QueryClass empPeriod = new QueryClass(EmploymentPeriod.class);
-    private final QueryField start = new QueryField(empPeriod, "startPeriod");
-    private final QueryField end = new QueryField(empPeriod, "endPeriod");
+    private final QueryField start = new QueryField(empPeriod, "startDate");
+    private final QueryField end = new QueryField(empPeriod, "endDate");
     
     private final QueryValue startOf17May2008 = new QueryValue(new Date(1226880000000L));
     private final QueryValue endOf17May2008 = new QueryValue(new Date(1226966400000L));

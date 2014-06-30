@@ -14,13 +14,14 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.Request;
 import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
+import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 

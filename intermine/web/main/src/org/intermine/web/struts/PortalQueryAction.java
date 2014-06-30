@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -41,16 +41,15 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -93,6 +92,8 @@ public class PortalQueryAction extends InterMineAction
             extId = request.getParameter("externalids");
         }
 
+        String extraFieldValue = request.getParameter("extraValue");
+
         // Add a message to welcome the user
         Properties properties = SessionMethods.getWebProperties(servletContext);
         String welcomeMsg = properties.getProperty("portal.welcome." + origin);
@@ -116,7 +117,8 @@ public class PortalQueryAction extends InterMineAction
             String defaultClass = properties.getProperty("webapp.portal.defaultClass");
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
-                = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), null, false);
+                = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), extraFieldValue,
+                        false);
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
@@ -169,7 +171,7 @@ public class PortalQueryAction extends InterMineAction
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.addViews(PathQueryResultHelper.getDefaultViewForClass(className, model,
                 webConfig, null));
-        pathQuery.addConstraint(Constraints.lookup(className, extId, null));
+        pathQuery.addConstraint(Constraints.lookup(className, extId, extraFieldValue));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
         Profile profile = SessionMethods.getProfile(session);
