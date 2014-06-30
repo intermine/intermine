@@ -256,7 +256,7 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
     }
 
     private String getDescription(String effect) {
-        if (StringUtils.isNotEmpty(effect)) {
+        if (StringUtils.isEmpty(effect)) {
             return null;
         }
         String[] bits = effect.split(" ");
