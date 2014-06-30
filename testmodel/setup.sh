@@ -69,7 +69,7 @@ for db in $USERPROFILEDB $PRODDB; do
     fi
 done
 
-echo "Removing current webapp"
+echo "------> Removing current webapp"
 cd $DIR/webapp/main
 ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
 
@@ -85,7 +85,7 @@ ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     default \
-    release-webapp >> $DIR/setup.log
+    release-webapp | tee -a $LOG | grep tomcat-deploy
 
 echo "------> All done. Build log is available in $LOG"
 
