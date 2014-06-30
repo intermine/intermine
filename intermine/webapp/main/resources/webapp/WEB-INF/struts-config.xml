@@ -123,8 +123,6 @@
     </action>
     <action path="/dataCategories" forward="dataCategories.page">
     </action>
-    <action path="/loadTmpImg" type="org.intermine.web.struts.TempImageLoader">
-    </action>
     <action path="/customQuery" forward="customQuery.page">
     </action>
     <action path="/showStatic" forward="showStatic.page">
@@ -134,8 +132,6 @@
     <action path="/linkPreview" forward="/linkPreview.jsp">
     </action>
     <action path="/exportOptions" forward="exportOptions.page"/>
-    <action path="/tabLinkPreview" type="org.intermine.web.struts.TabLinkPreviewAction">
-    </action>
     <action path="/pollQuery" type="org.intermine.web.struts.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>
@@ -341,6 +337,13 @@
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/loginAction" name="loginForm" type="org.intermine.web.struts.LoginAction" input="login" parameter="action">
+      <forward name="login" path="login.page"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+    </action>
+    <action path="/oauth2authenticator" type="org.intermine.web.struts.oauth2.Authenticator">
+      <forward name="login" path="login.page"/>
+    </action>
+    <action path="/oauth2callback" type="org.intermine.web.struts.oauth2.Callback">
       <forward name="login" path="login.page"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>

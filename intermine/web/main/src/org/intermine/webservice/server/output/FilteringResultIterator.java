@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.output;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,30 +21,51 @@ import org.apache.commons.lang.ObjectUtils;
 import org.intermine.api.results.ResultElement;
 import org.intermine.objectstore.query.Results;
 
-public class FilteringResultIterator implements Iterator<List<ResultElement>> {
-    
+/**
+ * A result iterator that skips things we aren't interested in.
+ * @author Alex Kalderimis
+ *
+ */
+public class FilteringResultIterator implements Iterator<List<ResultElement>>
+{
+
     private static Logger logger = Logger.getLogger(FilteringResultIterator.class);
-    
+
     private int counter = 0;
     private int start = 0;
     private Integer end = null;
     private String filterTerm = null;
     private List<ResultElement> nextRow = null;
-    
+
     private final Iterator<Object> subIter;
-    
+
+    /**
+     * Construct a new iterator which does no filtering.
+     * @param res The results to wrap.
+     */
     public FilteringResultIterator(Results res) {
         this.subIter = res.iterator();
     }
-    
+
+    /**
+     * Construct a new iterator which filters to things that match a filter term
+     * and only returns results in a given window.
+     * @param res The results to wrap.
+     * @param start The index of the first result to return.
+     * @param size The maximum number of results to return.
+     * @param filterTerm A filter term.
+     */
     public FilteringResultIterator(Results res, int start, int size, String filterTerm) {
         this(res);
         this.start = start;
         this.end = start + size;
         this.filterTerm = ObjectUtils.toString(filterTerm).toLowerCase();
-        logger.debug("START: "  + start + ", END: " + (start + size) + ", FILTER: " + this.filterTerm);
+        logger.debug(
+                "START: " + start
+                + ", END: " + (start + size)
+                + ", FILTER: " + this.filterTerm);
     }
-    
+
     @Override
     public boolean hasNext() {
         scrollToStart();
@@ -67,7 +98,7 @@ public class FilteringResultIterator implements Iterator<List<ResultElement>> {
         if (end != null && counter > end) {
             throw new NoSuchElementException();
         }
-        
+
         List<Object> l = null;
         while (l == null) {
             l = getNextInternal();
@@ -82,7 +113,6 @@ public class FilteringResultIterator implements Iterator<List<ResultElement>> {
         return ret;
     }
 
-    
     @SuppressWarnings("unchecked")
     private void scrollToStart() {
         while (counter < start && subIter.hasNext()) {
@@ -97,10 +127,10 @@ public class FilteringResultIterator implements Iterator<List<ResultElement>> {
                     if (StringUtils.contains(n, filterTerm)) {
                         contained = true;
                     }
-                } 
+                }
                 if (contained) {
                     counter++;
-                } 
+                }
             }
         }
     }

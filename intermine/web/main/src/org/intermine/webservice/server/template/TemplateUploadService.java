@@ -50,7 +50,7 @@ public class TemplateUploadService extends WebService
     public TemplateUploadService(InterMineAPI im) {
         super(im);
     }
-    
+
     @Override
     protected void validateState() {
         if (!isAuthenticated()) {
@@ -69,7 +69,8 @@ public class TemplateUploadService extends WebService
             case HTML:
             case XML:
                 return true;
-            default: return false;
+            default:
+                return false;
         }
     }
 

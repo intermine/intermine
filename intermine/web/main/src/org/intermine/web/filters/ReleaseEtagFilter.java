@@ -30,17 +30,18 @@ import org.intermine.web.logic.Constants;
 /**
  * Return responses tagged with the release version.
  *
- * This class is designed to aid caching of resources that do not change between releases (specifically
- * model based ones).
+ * This class is designed to aid caching of resources that do not change
+ * between releases (specifically model based ones).
  *
  * @author Alex Kalderimis
  *
  */
-public class ReleaseEtagFilter implements Filter {
+public class ReleaseEtagFilter implements Filter
+{
 
-    private final static Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
-    private static String RELEASE = null;
-    protected final static long START_UP = System.currentTimeMillis();
+    private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
+    private static final Date START_UP = new Date();
+    private static String release = null;
 
     @Override
     public void doFilter(
@@ -54,45 +55,45 @@ public class ReleaseEtagFilter implements Filter {
 
         String ifNoneMatch = req.getHeader("If-None-Match"); 
         long ifModSince = req.getDateHeader("If-Modified-Since");
-        LOG.debug("etag = " + etag + ", START_UP = " + START_UP + " , ifNoneMatch = " + ifNoneMatch + ", ifModSince = " + ifModSince);
+        LOG.debug("etag = " + etag
+                + ", START_UP = " + START_UP
+                + ", ifNoneMatch = " + ifNoneMatch
+                + ", ifModSince = " + ifModSince);
 
-        if (etag.equals(ifNoneMatch) || zipEtag.equals(ifNoneMatch) || (ifModSince == START_UP)) {
+        if (etag.equals(ifNoneMatch) || zipEtag.equals(ifNoneMatch) || (ifModSince == START_UP.getTime())) {
             inner.setStatus(304);
         } else {
             inner.setHeader("ETag", etag);
             inner.setHeader("Cache-Control", "public,max-age=600");
-            inner.setDateHeader("Last-Modified", START_UP);
+            inner.setDateHeader("Last-Modified", START_UP.getTime());
             chain.doFilter(request, new EtagIgnorer(inner));
         }
     }
-    
-    public static String getRelease() {
-        if (RELEASE == null) {
-            RELEASE = String.format("%s-%s",
-                    InterMineContext.getWebProperties().getProperty("project.releaseVersion"),
-                    Constants.WEB_SERVICE_VERSION);
+
+    private String getRelease() {
+        if (release == null) {
+            release = InterMineContext.getWebProperties().getProperty("project.releaseVersion");
         }
-        return RELEASE;
+        return release;
     }
-    
+
     @Override
     public void destroy() {
         // Nothing to do
     }
-    
+
     @Override
     public void init(FilterConfig arg0) throws ServletException {
         // Nothing to do.
-        
     }
-    
+
     private class EtagIgnorer extends HttpServletResponseWrapper
     {
 
         public EtagIgnorer(HttpServletResponse response) {
             super(response);
         }
-        
+
         @Override
         public void setHeader(String name, String value) {
             if ("etag".equalsIgnoreCase(name)
@@ -104,7 +105,6 @@ public class ReleaseEtagFilter implements Filter {
                 super.setHeader(name, value);
             }
         }
-        
     }
 
 }

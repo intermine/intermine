@@ -11,7 +11,6 @@ package org.intermine.webservice.server.user;
  */
 
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,19 +20,25 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.DuplicateMappingException;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.ServiceException;
 
-public class SetPreferencesService extends ReadPreferencesService {
+/**
+ * A service to set one or more preferences for a user.
+ * @author alex
+ *
+ */
+public class SetPreferencesService extends ReadPreferencesService
+{
 
+    /** @param im The InterMine state object. **/
     public SetPreferencesService(InterMineAPI im) {
         super(im);
     }
 
-    private static final Set<String> BLACKLISTED_NAMES = new HashSet<String>(Arrays.asList("token", "format"));
+    private static final Set<String> BLACKLISTED_NAMES
+        = new HashSet<String>(Arrays.asList("token", "format"));
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected void execute() throws ServiceException {
+    protected void execute() {
         Map<String, String> newPrefs = new HashMap<String, String>();
         for (Object key: request.getParameterMap().keySet()) {
             String pname = String.valueOf(key);
@@ -42,7 +47,7 @@ public class SetPreferencesService extends ReadPreferencesService {
                 // If you want to delete a key, delete it instead.
                 newPrefs.put(pname, getRequiredParameter(pname));
             }
-        } 
+        }
         Profile p = getPermission().getProfile();
         try {
             p.getPreferences().putAll(newPrefs);

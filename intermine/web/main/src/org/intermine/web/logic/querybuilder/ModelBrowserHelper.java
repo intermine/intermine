@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
-
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
@@ -47,7 +45,224 @@ import org.intermine.web.logic.query.MetadataNode;
 public final class ModelBrowserHelper
 {
 
-    private static final Logger LOG = Logger.getLogger(ModelBrowserHelper.class);
+    /**
+     * An object that will descend through the model and build a tree of metadata nodes.
+     * This class partly exists so that we don't have static methods with 14 parameters.
+     *
+     * @author Alex Kalderimis
+     */
+    protected static final class NodeBuilder
+    {
+        private final class FieldNameComparator implements
+                Comparator<FieldDescriptor>
+        {
+            public int compare(FieldDescriptor a, FieldDescriptor b) {
+                String fieldName1 = a.getName().toLowerCase();
+                String fieldName2 = b.getName().toLowerCase();
+                return fieldName1.compareTo(fieldName2);
+            }
+        }
+
+        final Map<String, MetadataNode> nodes;
+        final boolean isSuperUser;
+        final Model model;
+        final Map<String, String> subclasses;
+        final PathQuery query;
+        final Map<String, List<FieldDescriptor>> classKeys;
+        final BagManager bagManager;
+        final Profile profile;
+        final ObjectStoreSummary oss;
+        final WebConfig webConfig;
+
+        /**
+         * Construct a NodeBuilder
+         * @param isSuperUser true if the user is the superuser
+         * @param webConfig the web configuration.
+         * @param query a PathQuery, for working out possible loops
+         * @param classKeys a Map of class keys, for working out if a path has any
+         * @param bagManager a BagManager object, for working out if it is possible to
+         *                    constrain by bag.
+         * @param profile the profile of the current user, for fetching bags from the BagManager
+         * @param oss to determine which nodes are null
+         * @throws PathException if the path-query is invalid.
+         */
+        protected NodeBuilder(
+                boolean isSuperUser,
+                PathQuery query,
+                Map<String, List<FieldDescriptor>> classKeys,
+                BagManager bagManager,
+                Profile profile,
+                ObjectStoreSummary oss,
+                WebConfig webConfig) throws PathException {
+            this.isSuperUser = isSuperUser;
+            this.query = query;
+            this.model = query.getModel();
+            this.classKeys = classKeys;
+            this.bagManager = bagManager;
+            this.profile = profile;
+            this.oss = oss;
+            this.webConfig = webConfig;
+            this.nodes = new LinkedHashMap<String, MetadataNode>();
+            if (!query.isEmpty()) {
+                subclasses = query.getSubclasses();
+            } else {
+                this.subclasses = Collections.emptyMap();
+            }
+        }
+
+        /** Recurse through the model and build a tree of metadata nodes based on this
+         * @param path The starting point for the tree.
+         */
+        protected void buildTree(String path) {
+            String className, subPath;
+            if (path.indexOf(".") == -1) {
+                className = path;
+                subPath = "";
+            } else {
+                className = path.substring(0, path.indexOf("."));
+                subPath = path.substring(path.indexOf(".") + 1);
+            }
+            List<String> empty = Collections.emptyList();
+            nodes.put(className, new MetadataNode(
+                    className, empty, query, classKeys, bagManager, profile));
+
+            makeLeaves(model.getClassDescriptorByName(className), subPath, className);
+        }
+
+        private void makeLeaves(ClassDescriptor cld, String subPath, String className) {
+            makeLeaves(cld, subPath, className, new ArrayList<String>(), null);
+        }
+
+        private void makeLeaves(
+                ClassDescriptor cld,
+                String path,
+                String currentPath,
+                List<String> structure,
+                String reverseFieldName) {
+            // null attributes, references and collections
+            Set<String> nullAttrs = oss.getNullAttributes(cld.getName());
+            Set<String> nullRefsCols = oss.getNullReferencesAndCollections(cld.getName());
+
+            List<FieldDescriptor> filteredNodes = makeFilteredNodes(cld, reverseFieldName);
+
+            Iterator<FieldDescriptor> nodeIter = filteredNodes.iterator();
+            while (nodeIter.hasNext()) {
+                FieldDescriptor fd = nodeIter.next();
+                boolean hasMore = nodeIter.hasNext();
+                addNodeAndChildren(cld, path, currentPath, structure,
+                        nullAttrs, nullRefsCols, nodeIter, fd, hasMore);
+            }
+        }
+
+        private void addNodeAndChildren(ClassDescriptor cld, String path,
+                String currentPath, List<String> structure,
+                Set<String> nullAttrs, Set<String> nullRefsCols,
+                Iterator<FieldDescriptor> nodeIter, FieldDescriptor fd,
+                boolean hasMore) {
+            String fieldName = fd.getName();
+
+            String head, tail;
+            if (path.indexOf(".") != -1) {
+                head = path.substring(0, path.indexOf("."));
+                tail = path.substring(path.indexOf(".") + 1);
+            } else {
+                head = path;
+                tail = "";
+            }
+
+            String button;
+            if (fieldName.equals(head)) {
+                button = "-";
+            } else if (fd.isReference() || fd.isCollection()) {
+                button = "+";
+            } else {
+                button = " ";
+            }
+
+            List<String> newStructure = new ArrayList<String>(structure);
+            if (hasMore) {
+                newStructure.add("tee");
+            } else {
+                newStructure.add("ell");
+            }
+            MetadataNode parent = nodes.get(currentPath);
+
+            MetadataNode node = new MetadataNode(
+                    parent,
+                    fieldName,
+                    button,
+                    newStructure,
+                    query,
+                    classKeys, bagManager, profile,
+                    (nullAttrs.contains(fieldName) || nullRefsCols.contains(fieldName)));
+            node.setModel(cld.getModel());
+
+            String subclass = subclasses.get(node.getPathString());
+            if (subclass != null) {
+                node.setType(subclass);
+            }
+
+            nodes.put(node.getPathString(), node);
+            if (fieldName.equals(head)) {
+                newStructure = new ArrayList<String>(structure);
+                if (nodeIter.hasNext()) {
+                    newStructure.add("straight");
+                } else {
+                    newStructure.add("blank");
+                }
+                ClassDescriptor refCld;
+                if (subclass == null) {
+                    refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
+                } else {
+                    refCld = cld.getModel().getClassDescriptorByName(subclass);
+                }
+                String reverse = null;
+                if (fd instanceof ReferenceDescriptor) {
+                    reverse = ((ReferenceDescriptor) fd).getReverseReferenceFieldName();
+                }
+                makeLeaves(refCld, tail, currentPath + "." + head, newStructure, reverse);
+            }
+        }
+
+        private List<FieldDescriptor> makeFilteredNodes(ClassDescriptor cld,
+                String reverseFieldName) {
+            List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
+
+            // compare FieldDescriptors by name
+            Comparator<FieldDescriptor> cmp = new FieldNameComparator();
+
+            Set<FieldDescriptor> attributeNodes = new TreeSet<FieldDescriptor>(cmp);
+            Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(cmp);
+            for (FieldDescriptor fd : cld.getAllFieldDescriptors()) {
+                FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
+                if (fc == null || fc.getShowInQB()) {
+                    if (!fd.isReference() && !fd.isCollection()) {
+                        attributeNodes.add(fd);
+                    } else {
+                        if (fd.getName().equals(reverseFieldName)) {
+                            sortedNodes.add(fd);
+                        } else {
+                            referenceAndCollectionNodes.add(fd);
+                        }
+                    }
+                }
+            }
+
+            sortedNodes.addAll(attributeNodes);
+            sortedNodes.addAll(referenceAndCollectionNodes);
+
+            List<FieldDescriptor> filteredNodes = new ArrayList<FieldDescriptor>();
+            for (FieldDescriptor fd : sortedNodes) {
+                String fieldName = fd.getName();
+                if ("id".equals(fieldName) && !isSuperUser) {
+                    continue;
+                }
+
+                filteredNodes.add(fd);
+            }
+            return filteredNodes;
+        }
+    }
 
     private ModelBrowserHelper() {
     }
@@ -125,182 +340,34 @@ public final class ModelBrowserHelper
      * @param path of form Gene.organism.name
      * @param model the model used to resolve class names
      * @param isSuperUser true if the user is the superuser
-     * @return an ordered Set of nodes
-     * @param subclasses a Map from path in the query to class name if there is a subclass
-     * constraint
+     * @param webConfig the web configuration.
      * @param query a PathQuery, for working out possible loops
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
      * @param oss to determine which nodes are null
+     *
+     * @return an ordered Set of nodes
      * @throws PathException if the query is invalid.
      */
-    public static Collection<MetadataNode> makeNodes(String path, Model model, boolean isSuperUser,
-            PathQuery query, WebConfig webConfig, Map<String,
-            List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
+    public static Collection<MetadataNode> makeNodes(
+            String path,
+            Model model,
+            boolean isSuperUser,
+            PathQuery query,
+            WebConfig webConfig,
+            Map<String, List<FieldDescriptor>> classKeys,
+            BagManager bagManager,
+            Profile profile,
             ObjectStoreSummary oss)
         throws PathException {
 
-        Map<String, String> subclasses;
-        if (query.isEmpty()) {
-            subclasses = Collections.EMPTY_MAP;
-        } else {
-            subclasses = query.getSubclasses();
-        }
+        NodeBuilder builder = new NodeBuilder(
+                isSuperUser, query, classKeys, bagManager, profile, oss, webConfig);
 
-        String className, subPath;
-        if (path.indexOf(".") == -1) {
-            className = path;
-            subPath = "";
-        } else {
-            className = path.substring(0, path.indexOf("."));
-            subPath = path.substring(path.indexOf(".") + 1);
-        }
+        builder.buildTree(path);
 
-        Map<String, MetadataNode> nodes = new LinkedHashMap<String, MetadataNode>();
-        List<String> empty = Collections.emptyList();
-        nodes.put(className, new MetadataNode(className, empty, query, classKeys, bagManager,
-                profile));
-        makeNodes(model.getClassDescriptorByName(className), subPath, className, nodes,
-                isSuperUser, empty, subclasses, null, query, classKeys, bagManager,
-                profile, oss, webConfig);
-        return nodes.values();
+        return builder.nodes.values();
     }
 
-    /**
-     * Recursive method used to add nodes to a set representing a path from a given ClassDescriptor.
-     *
-     * @param cld the root ClassDescriptor
-     * @param path current path prefix (eg Gene)
-     * @param currentPath current path suffix (eg organism.name)
-     * @param nodes the current Node set
-     * @param isSuperUser true if the user is the superuser
-     * @param structure a List of Strings - for definition, see MetadataNode.getStructure()
-     * @param subclasses a Map from path in the query to class name if there is a subclass
-     * constraint
-     * @param reverseFieldName the name of the field that is the reverse reference back onto the
-     * parent, so that it can be sorted to the top of the list
-     * @param query a PathQuery, for working out possible loops
-     * @param classKeys a Map of class keys, for working out if a path has any
-     * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
-     * @param profile the profile of the current user, for fetching bags from the BagManager
-     * @param oss to determine which nodes are null
-     */
-    protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
-            Map<String, MetadataNode> nodes, boolean isSuperUser, List<String> structure,
-            Map<String, String> subclasses, String reverseFieldName, PathQuery query,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
-            ObjectStoreSummary oss, WebConfig webConfig) {
-
-        // null attributes, references and collections
-        Set<String> nullAttr = oss.getNullAttributes(cld.getName());
-        Set<String> nullRefsCols = oss.getNullReferencesAndCollections(cld.getName());
-
-        List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
-
-        // compare FieldDescriptors by name
-        Comparator<FieldDescriptor> comparator = new Comparator<FieldDescriptor>() {
-            public int compare(FieldDescriptor o1, FieldDescriptor o2) {
-                String fieldName1 = o1.getName().toLowerCase();
-                String fieldName2 = o2.getName().toLowerCase();
-                return fieldName1.compareTo(fieldName2);
-            }
-        };
-
-        Set<FieldDescriptor> attributeNodes = new TreeSet<FieldDescriptor>(comparator);
-        Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(comparator);
-        for (Iterator<FieldDescriptor> i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
-            FieldDescriptor fd = i.next();
-            FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, cld, fd);
-            if (fc == null || fc.getShowInQB()) {
-                if (!fd.isReference() && !fd.isCollection()) {
-                    attributeNodes.add(fd);
-                } else {
-                    if (fd.getName().equals(reverseFieldName)) {
-                        sortedNodes.add(fd);
-                    } else {
-                        referenceAndCollectionNodes.add(fd);
-                    }
-                }
-            }
-        }
-
-        sortedNodes.addAll(attributeNodes);
-        sortedNodes.addAll(referenceAndCollectionNodes);
-
-        List<FieldDescriptor> filteredNodes = new ArrayList<FieldDescriptor>();
-        for (FieldDescriptor fd : sortedNodes) {
-            String fieldName = fd.getName();
-            if ("id".equals(fieldName) && !isSuperUser) {
-                continue;
-            }
-
-            filteredNodes.add(fd);
-        }
-
-        Iterator<FieldDescriptor> nodeIter = filteredNodes.iterator();
-        while (nodeIter.hasNext()) {
-            FieldDescriptor fd = nodeIter.next();
-            String fieldName = fd.getName();
-
-            String head, tail;
-            if (path.indexOf(".") != -1) {
-                head = path.substring(0, path.indexOf("."));
-                tail = path.substring(path.indexOf(".") + 1);
-            } else {
-                head = path;
-                tail = "";
-            }
-
-            String button;
-            if (fieldName.equals(head)) {
-                button = "-";
-            } else if (fd.isReference() || fd.isCollection()) {
-                button = "+";
-            } else {
-                button = " ";
-            }
-
-            List<String> newStructure = new ArrayList<String>(structure);
-            if (nodeIter.hasNext()) {
-                newStructure.add("tee");
-            } else {
-                newStructure.add("ell");
-            }
-            MetadataNode parent = nodes.get(currentPath);
-
-            // is the field null/empty
-            Boolean isNull = (nullAttr.contains(fieldName) || nullRefsCols.contains(fieldName));
-
-            MetadataNode node = new MetadataNode(parent, fieldName, button, newStructure, query,
-                    classKeys, bagManager, profile, isNull);
-            node.setModel(cld.getModel());
-            String subclass = subclasses.get(node.getPathString());
-            if (subclass != null) {
-                node.setType(subclass);
-            }
-
-            nodes.put(node.getPathString(), node);
-            if (fieldName.equals(head)) {
-                newStructure = new ArrayList<String>(structure);
-                if (nodeIter.hasNext()) {
-                    newStructure.add("straight");
-                } else {
-                    newStructure.add("blank");
-                }
-                ClassDescriptor refCld;
-                if (subclass == null) {
-                    refCld = ((ReferenceDescriptor) fd).getReferencedClassDescriptor();
-                } else {
-                    refCld = cld.getModel().getClassDescriptorByName(subclass);
-                }
-                String reverse = null;
-                if (fd instanceof ReferenceDescriptor) {
-                    reverse = ((ReferenceDescriptor) fd).getReverseReferenceFieldName();
-                }
-                makeNodes(refCld, tail, currentPath + "." + head, nodes, isSuperUser, newStructure,
-                        subclasses, reverse, query, classKeys, bagManager, profile, oss, webConfig);
-            }
-        }
-    }
 }

@@ -1194,6 +1194,65 @@ public class QueryTest extends TestCase
         }
     }
 
+    public void testOrderByAlias() throws Exception {
+        // referring to an alias in the order by should sort by the field
+        q1 = new Query("SELECT field1 AS alias1 FROM table1 ORDER BY alias1");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        SelectValue sv1 = new SelectValue(f1, "alias1");
+        q2.addSelect(sv1);
+        q2.addFrom(t1);
+        q2.addOrderBy(f1);
+        assertEquals(q2, q1);
+    }
+
+    public void testOrderByAliasedFunction() throws Exception {
+        // count(*) in select is aliased, we are sorting by count(*) but referring to it by alias in order by
+        q1 = new Query("SELECT field1 AS alias1, COUNT(*) as alias2 FROM table1 GROUP BY field1 ORDER BY alias2");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        Function func1 = new Function(Function.COUNT);
+        SelectValue sv1 = new SelectValue(f1, "alias1");
+        SelectValue sv2 = new SelectValue(func1, "alias2");
+        q2.addSelect(sv1);
+        q2.addSelect(sv2);
+        q2.addFrom(t1);
+        q2.addGroupBy(f1);
+        q2.addOrderBy(func1);
+        assertEquals(q2, q1);
+    }
+
+    public void testOrderByUnaliasedFieldSingleTable() throws Exception {
+        // if a field (not an alias) appears in order by without a table name and there's only one
+        // table then we can set a table name
+        q1 = new Query("SELECT field1 FROM table1 ORDER BY field1");
+        q2 = new Query();
+        Table t1 = new Table("table1");
+        Field f1 = new Field("field1", t1);
+        q2.addSelect(new SelectValue(f1, null));
+        q2.addFrom(t1);
+        q2.addOrderBy(f1);
+        assertEquals(q2, q1);
+    }
+
+    public void testOrderByUnaliasedFieldMultiTable() throws Exception {
+        // if a field (not an alias) appears in order by without a table name we shouldn't add a
+        // table name to it
+        try {
+            q1 = new Query("SELECT field1 FROM table1, table2 WHERE table1.k = table2.fk ORDER BY field1");
+            fail("Expected an IllegalArgumentExcption");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    public void testSingleTableSubqueryNoAlias() throws Exception {
+        // just check this parses, it selects a value from a single table subquery without an alias
+        q1 = new Query("SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE (NOT (a1_.name IN (SELECT value FROM bag_table))) ORDER BY a1_.id");
+    }
+
     public void testTimeout() throws Exception {
         String sql = "SELECT DISTINCT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id, a2_.intermine_start AS orderbyfield0, a1_.briefDescription AS orderbyfield1, a1_.description AS orderbyfield2, a1_.id AS orderbyfield3, a2_.intermine_end AS orderbyfield4, a3_.shortName AS orderbyfield5 FROM Gene AS a1_, Location AS a2_, Organism AS a3_, Chromosome AS a4_ WHERE a1_.chromosomeLocationId = a2_.id AND a1_.organismId = a3_.id AND ((a2_.locatedOnId = a4_.id AND a4_.primaryIdentifier = 'MAL1' AND (a2_.featureId = a2_.featureId AND bioseg_create(a2_.intermine_start, a2_.intermine_end) && bioseg_create(1, 10001))) OR (a2_.locatedOnId = a4_.id AND a4_.primaryIdentifier = 'MAL1' AND (a2_.featureId = a2_.featureId AND bioseg_create(a2_.intermine_start, a2_.intermine_end) && bioseg_create(150001, 160001)))) ORDER BY a2_.intermine_start, a1_.briefDescription, a1_.description, a1_.id, a2_.intermine_end, a3_.shortName, a2_.id, a3_.id LIMIT 5000";
         try {
@@ -1203,5 +1262,4 @@ public class QueryTest extends TestCase
         } catch (QueryParseTimeoutException e) {
         }
     }
-
 }

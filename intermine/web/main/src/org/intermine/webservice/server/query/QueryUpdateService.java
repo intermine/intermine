@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.query;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +27,10 @@ import org.intermine.webservice.server.exceptions.ServiceException;
  * @author Alex Kalderimis
  *
  */
-public class QueryUpdateService extends QueryUploadService {
+public class QueryUpdateService extends QueryUploadService
+{
 
+    /** @param im The InterMine state object **/
     public QueryUpdateService(InterMineAPI im) {
         super(im);
     }
@@ -40,7 +52,7 @@ public class QueryUpdateService extends QueryUploadService {
                 } catch (Exception e2) {
                     // Ignore;
                 }
-                throw new ServiceException("Could not save query " + pair.getKey(), e); 
+                throw new ServiceException("Could not save query " + pair.getKey(), e);
             }
         }
         return retval;

@@ -15,12 +15,23 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.apache.log4j.Logger;
 import org.intermine.util.Emailer;
 
-public class MailDaemon implements Runnable {
+/**
+ * An runnable that will send emails delivered over a concurrent queue.
+ * @author Alex Kalderimis
+ *
+ */
+public final class MailDaemon implements Runnable
+{
 
     private static final Logger LOG = Logger.getLogger(MailDaemon.class);
     private final ArrayBlockingQueue<MailAction> mailQueue;
     private final Emailer emailer;
 
+    /**
+     * Create a MailDaemon
+     * @param mailQueue The source for mail actions.
+     * @param emailer The emailer to fob them off onto.
+     */
     public MailDaemon(ArrayBlockingQueue<MailAction> mailQueue, Emailer emailer) {
         this.mailQueue = mailQueue;
         this.emailer = emailer;

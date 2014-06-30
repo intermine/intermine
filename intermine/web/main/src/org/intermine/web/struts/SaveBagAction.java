@@ -21,11 +21,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -36,6 +34,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Thomas Riley
  * @author Kim Rutherford
  */
+@SuppressWarnings("deprecation")
 public class SaveBagAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(SaveBagAction.class);
@@ -74,7 +73,7 @@ public class SaveBagAction extends InterMineAction
     public ActionForward saveBag(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+                                 HttpServletResponse response) {
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));

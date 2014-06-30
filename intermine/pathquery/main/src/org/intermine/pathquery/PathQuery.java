@@ -751,6 +751,9 @@ public class PathQuery implements Cloneable
         return retval;
     }
 
+    /**
+     * @return the constraints that are relevant to the query.
+     */
     public synchronized Map<PathConstraint, String> getRelevantConstraints() {
         return getConstraints(); // Simple alias. All constraints are relevant.
     }
@@ -818,6 +821,7 @@ public class PathQuery implements Cloneable
         return (logic == null ? "" : logic.toString());
     }
 
+    /** @return the logic expression **/
     public synchronized LogicExpression getLogicExpression() {
         return logic;
     }
@@ -1372,6 +1376,7 @@ public class PathQuery implements Cloneable
         return new Path(model, path, lSubclasses);
     }
 
+    /** @assert that the query is dirty and needs to be re-checked. **/
     public synchronized void deVerify() {
         isVerified = false;
     }
@@ -2166,7 +2171,8 @@ public class PathQuery implements Cloneable
     }
 
     // A Path name is the same as a valid java qualified identifier.
-    private static final String JAVA_IDENT_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+    private static final String JAVA_IDENT_PATTERN =
+            "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
     // Zero or more dot-suffixed prefixes + an identifier
     private static final String PATH_PATTERN =
             "(" + JAVA_IDENT_PATTERN + "\\.)*" + JAVA_IDENT_PATTERN;
@@ -2257,6 +2263,12 @@ public class PathQuery implements Cloneable
         return this.toXml(PathQuery.USERPROFILE_VERSION);
     }
 
+    /**
+     * Add a JSON property when serialising
+     * @param sb The buffer we are serialing to.
+     * @param key the property name.
+     * @param value the property value.
+     **/
     protected void addJsonProperty(StringBuffer sb, String key, Object value) {
         if (value != null) {
             if (!sb.toString().endsWith("{")) {
@@ -2266,6 +2278,12 @@ public class PathQuery implements Cloneable
         }
     }
 
+    /**
+     * Format a key-value pair in a JSON compatible way.
+     * @param key The key
+     * @param value The value
+     * @return A string, all nicely formatted
+     */
     protected String formatKVPair(String key, Object value) {
         if (value instanceof List) {
             StringBuffer sb = new StringBuffer("[");
@@ -2296,6 +2314,7 @@ public class PathQuery implements Cloneable
         return toJson();
     }
 
+    /** @return the attributes that should go in the head of a JSON object. **/
     protected Map<String, Object> getHeadAttributes() {
         Map<String, Object> ret = new LinkedHashMap<String, Object>();
         ret.put("title", getTitle());
@@ -2325,7 +2344,7 @@ public class PathQuery implements Cloneable
 
     /**
      * Convert this PathQuery to a JSON serialisation.
-     *
+     * @param onlyRelevant  whether to only return relevant, active constraints.
      * @return This query as json.
      */
     public synchronized String toJson(boolean onlyRelevant) {
@@ -2374,7 +2393,8 @@ public class PathQuery implements Cloneable
         }
 
         // CONSTRAINTS
-        Map<PathConstraint, String> cons = onlyRelevant ? getRelevantConstraints() : getConstraints();
+        Map<PathConstraint, String> cons =
+                onlyRelevant ? getRelevantConstraints() : getConstraints();
         if (!cons.isEmpty()) {
             sb.append(",\"where\":[");
             Iterator<Entry<PathConstraint, String>> it = cons.entrySet().iterator();
@@ -2393,12 +2413,23 @@ public class PathQuery implements Cloneable
         return sb.toString();
     }
 
+    /**
+     * format a type constraint to a JSON representation.
+     * @param constraint the constraint to format.
+     * @return The JSONification.
+     */
     protected String typeConstraintToJson(final PathConstraint constraint) {
         String path = constraint.getPath();
         String type = PathConstraint.getType(constraint);
         return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
     }
 
+    /**
+     * Get the JSON prefix common to all constraints.
+     * @param constraint the constraint to format.
+     * @param code The constraint code.
+     * @return The prefix
+     */
     protected String getCommonJsonConstraintPrefix(String code, PathConstraint constraint) {
         String path = constraint.getPath();
         String op = constraint.getOp().toString();
@@ -2407,6 +2438,12 @@ public class PathQuery implements Cloneable
                               + code + "\"";
     }
 
+    /**
+     * Format a value constraint to a JSON representation.
+     * @param code The constraint code.
+     * @param constraint constraint.
+     * @return The stringification.
+     */
     protected String valueConstraintToJson(final String code, final PathConstraint constraint) {
 
         String commonPrefix = getCommonJsonConstraintPrefix(code, constraint);

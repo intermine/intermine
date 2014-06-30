@@ -79,6 +79,8 @@ public class DisplayConstraint
     private PathQuery query;
     private String code;
     private boolean editableInTemplate;
+
+
     private SwitchOffAbility switchOffAbility;
     private boolean isBagSelected;
     private String selectedBagValue;
@@ -97,41 +99,16 @@ public class DisplayConstraint
      * @param classKeys identifier field config, needed for LOOKUP constraints
      * @param bagManager provides access to saved bags
      */
-    protected DisplayConstraint(Path path, Profile profile, PathQuery query, AutoCompleter ac,
-            ObjectStoreSummary oss, BagQueryConfig bagQueryConfig,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager) {
+    protected DisplayConstraint(
+            Path path,
+            Profile profile,
+            PathQuery query,
+            AutoCompleter ac,
+            ObjectStoreSummary oss,
+            BagQueryConfig bagQueryConfig,
+            Map<String, List<FieldDescriptor>> classKeys,
+            BagManager bagManager) {
         init(path, profile, query, ac, oss, bagQueryConfig, classKeys, bagManager);
-    }
-
-    /**
-     * Construct for an existing constraint that is being edited.
-     * @param path The path that is being constrained
-     * @param con the constraint being edited
-     * @param label text associated with this constraint, if a template query
-     * @param code the code of this constraint in the query
-     * @param editableInTemplate true if this is a template query and this constraint is editable
-     * @param switchOffAbility if the contraint is on, off, locked
-     * @param profile user editing the query, used to fetch available bags
-     * @param query the PathQuery, in order to provide information on candidate loops
-     * @param ac auto completer
-     * @param oss summary data for the ObjectStore contents
-     * @param bagQueryConfig addition details for needed for LOOKUP constraints
-     * @param classKeys identifier field config, needed for LOOKUP constraints
-     * @param bagManager provides access to saved bags
-     */
-    protected DisplayConstraint(Path path, PathConstraint con, String label, String code,
-            boolean editableInTemplate, SwitchOffAbility switchOffAbility, Profile profile,
-            PathQuery query, AutoCompleter ac,
-            ObjectStoreSummary oss, BagQueryConfig bagQueryConfig,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager,
-            List<Object> templateSummary) {
-        init(path, profile, query, ac, oss, bagQueryConfig, classKeys, bagManager);
-        this.con = con;
-        this.constraintLabel = label;
-        this.code = code;
-        this.editableInTemplate = editableInTemplate;
-        this.switchOffAbility = switchOffAbility;
-        this.templateSummary = templateSummary;
     }
 
     private void init(Path path, Profile profile, PathQuery query, AutoCompleter ac,
@@ -230,7 +207,7 @@ public class DisplayConstraint
     }
 
     /**
-     * 
+     * @return the value property of the underlying constraint, if any.
      */
     public String getOriginalValue() {
         if (con != null) {
@@ -346,6 +323,7 @@ public class DisplayConstraint
         return endCls + (fieldName == null ? "" : " " + fieldName);
     }
 
+    /** @return the name of the last class in the path of this constraint **/
     public String getEndClassName() {
         return endCls;
     }
@@ -589,14 +567,17 @@ public class DisplayConstraint
         }
     }
 
+    /** @return whether we should show the extra constraint. **/
     public boolean isShowExtraConstraint() {
         return showExtraConstraint;
     }
 
+    /** @param showExtraConstraint whether we should show the extra constraint. **/
     public void setShowExtraConstraint(boolean showExtraConstraint) {
         this.showExtraConstraint = showExtraConstraint;
     }
 
+    /** @return the name of the class that the extra value represents **/
     public String getExtraValueFieldClass() {
         if (isExtraConstraint()) {
             return bagQueryConfig.getExtraConstraintClassName();
@@ -604,6 +585,7 @@ public class DisplayConstraint
         return null;
     }
 
+    /** @return the path for the extra value connection field. **/
     public String getExtraConnectFieldPath() {
         if (isExtraConstraint()) {
             return path.toStringNoConstraints() + "." + bagQueryConfig.getConnectField();
@@ -789,6 +771,7 @@ public class DisplayConstraint
         this.switchOffAbility = switchOffAbility;
     }
 
+
     /**
      * Return true if the input field can be displayed, method for use in JSP
      * @return true if the input is displayed
@@ -904,5 +887,37 @@ public class DisplayConstraint
         public Integer getProperty() {
             return property;
         }
+    }
+
+    /* Setter methods for template and existing constraint attributes.
+     * These methods are called in the DisplayConstraintFactory.
+     */
+
+    /** @param editableInTemplate whether this should be editable in a template. **/
+    protected void setEditableInTemplate(boolean editableInTemplate) {
+        this.editableInTemplate = editableInTemplate;
+    }
+
+    /**
+     * Set the label of the constraint.
+     * @param label The new label.
+     */
+    protected void setLabel(String label) {
+        this.constraintLabel = label;
+    }
+
+    /** @param con the original underlying constraint. **/
+    protected void setOriginalConstraint(PathConstraint con) {
+        this.con = con;
+    }
+
+    /** @param code the constraint identifier. **/
+    protected void setCode(String code) {
+        this.code = code;
+    }
+
+    /** @param templateSummary the template summary. **/
+    protected void setTemplatesummary(List<Object> templateSummary) {
+        this.templateSummary = templateSummary;
     }
 }

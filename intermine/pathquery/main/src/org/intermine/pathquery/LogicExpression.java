@@ -364,7 +364,7 @@ public class LogicExpression
     /**
      * Produce an expression for this branch of the tree displaying only the children containing
      * the variable in input
-     * @param variables
+     * @param variables The variables to display.
      * @return expression representing this branch
      */
     public String getPartialString(List<String> variables) {

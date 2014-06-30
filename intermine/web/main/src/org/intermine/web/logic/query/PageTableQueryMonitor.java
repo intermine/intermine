@@ -17,6 +17,7 @@ import org.intermine.web.logic.results.PagedTable;
  * monitoring
  * @author Kim Rutherford
  */
+@SuppressWarnings("deprecation")
 public class PageTableQueryMonitor extends QueryMonitorTimeout
 {
     private final PagedTable pt;

@@ -38,7 +38,7 @@ public class ResultProcessor
      * Constructor.
      */
     public ResultProcessor() {
-        // don't instantiate
+        // Nothing to do.
     }
 
     /**
@@ -47,11 +47,9 @@ public class ResultProcessor
      * @param output output
      */
     public void write(Iterator<List<ResultElement>> resultIt, Output output) {
-        int writtenCount = 0;
         while (resultIt.hasNext())  {
             List<ResultElement> row = resultIt.next();
             output.addResultItem(convertResultElementsToStrings(row));
-            writtenCount++;
         }
     }
 

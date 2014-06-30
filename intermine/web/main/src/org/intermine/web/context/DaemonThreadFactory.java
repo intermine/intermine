@@ -12,7 +12,15 @@ package org.intermine.web.context;
 
 import java.util.concurrent.ThreadFactory;
 
-class DaemonThreadFactory implements ThreadFactory {
+/**
+ * A thread factory that automatically sets threads it creates to be
+ * daemonic.
+ * @author Alex Kalderimis
+ *
+ */
+class DaemonThreadFactory implements ThreadFactory
+{
+    @Override
     public Thread newThread(Runnable r) {
         Thread t = new Thread(r);
         t.setDaemon(true);

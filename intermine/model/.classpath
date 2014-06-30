@@ -8,5 +8,6 @@
 	<classpathentry exported="true" kind="lib" path="main/lib/log4j.jar"/>
 	<classpathentry kind="lib" path="test/lib/junit-4.8.2.jar"/>
 	<classpathentry kind="lib" path="test/lib/commons-io-1.2.jar"/>
+	<classpathentry kind="src" path="/testmodel"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

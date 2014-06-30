@@ -107,14 +107,14 @@ public final class ProfileBinding
                 for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
                     String bagName = entry.getKey();
                     InterMineBag bag = entry.getValue();
+                    if (bag == null) {
+                        LOG.error("bag was null for bagName: " + bagName
+                                + " username: " + profile.getUsername());
+                        continue;
+                    }
                     bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(classKeys,
                                          bag.getQualifiedType()));
-                    if (bag != null) {
-                        InterMineBagBinding.marshal(bag, writer);
-                    } else {
-                        LOG.error("bag was null for bagName: " + bagName
-                                  + " username: " + profile.getUsername());
-                    }
+                    InterMineBagBinding.marshal(bag, writer);
                 }
                 writer.writeEndElement();
             } else {

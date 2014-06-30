@@ -12,18 +12,14 @@ package org.intermine.webservice.server.query;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
-import org.intermine.webservice.server.core.Producer;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 import org.intermine.webservice.server.query.result.PathQueryBuilderForJSONObj;
 
@@ -64,7 +60,7 @@ public abstract class AbstractQueryService extends WebService
                     request.getServerPort(), relPath);
             return url.toString();
         } catch (MalformedURLException e) {
-            throw new InternalErrorException(e);
+            throw new ServiceException(e);
         }
     }
 

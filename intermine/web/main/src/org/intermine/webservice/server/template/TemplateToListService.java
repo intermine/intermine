@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.pathquery.Path;
@@ -43,10 +42,14 @@ public class TemplateToListService extends QueryToListService
 {
 
     /* ERROR MESSAGES */
-    private static final String NOT_LISTABLE = "You cannot make lists from objects of type ";
-    private static final String INVALID_VIEW = "The new view string is not a valid path";
-    private static final String NOT_IM_OBJECT = "The new view string refers to an attribute which is not the object id";
-    private static final String BAD_CONSTRAINT_VALUES = "Could not apply template constraint values. ";
+    private static final String NOT_LISTABLE =
+            "You cannot make lists from objects of type ";
+    private static final String INVALID_VIEW =
+            "The new view string is not a valid path";
+    private static final String NOT_IM_OBJECT =
+            "The new view string refers to an attribute which is not the object id";
+    private static final String BAD_CONSTRAINT_VALUES =
+            "Could not apply template constraint values. ";
     private static final String NEW_VIEW_PARAM = "path";
 
     private final TemplateManager templateManager;
@@ -114,7 +117,7 @@ public class TemplateToListService extends QueryToListService
         pq.clearView();
         pq.addView(newViewString);
         // Make sure these are added back to keep the query structure the same
-        pq.addViews(oldView); 
+        pq.addViews(oldView);
 
         return pq;
     }

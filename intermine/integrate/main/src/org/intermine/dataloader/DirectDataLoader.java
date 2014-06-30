@@ -10,6 +10,9 @@ package org.intermine.dataloader;
  *
  */
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.Util;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
@@ -22,9 +25,16 @@ import org.intermine.util.DynamicUtil;
 
 public class DirectDataLoader extends DataLoader
 {
+    private static final Logger LOG = Logger.getLogger(DirectDataLoader.class);
     private int idCounter = 0;
+    private int storeCount = 0;
+    private long startTime;
+    private long stepTime;
     private String sourceName;
     private String sourceType;
+
+    private static final int LOG_FREQUENCY = 100000;
+    private static final int COMMIT_FREQUENCY = 500000;
 
     /**
      * Create a new DirectDataLoader using the given IntegrationWriter and source name.
@@ -36,6 +46,8 @@ public class DirectDataLoader extends DataLoader
         super(iw);
         this.sourceName = sourceName;
         this.sourceType = sourceType;
+        this.startTime = System.currentTimeMillis();
+        this.stepTime = startTime;
     }
 
 
@@ -44,13 +56,36 @@ public class DirectDataLoader extends DataLoader
      * @param o the InterMineObject
      * @throws ObjectStoreException if there is a problem in the IntegrationWriter
      */
-    public void store(InterMineObject o) throws ObjectStoreException {
+    public void store(FastPathObject o) throws ObjectStoreException {
         Source source = getIntegrationWriter().getMainSource(sourceName, sourceType);
         Source skelSource = getIntegrationWriter().getSkeletonSource(sourceName, sourceType);
 
         getIntegrationWriter().store(o, source, skelSource);
+        storeCount++;
+        if (storeCount % LOG_FREQUENCY == 0) {
+            long now = System.currentTimeMillis();
+            LOG.info("Dataloaded " + storeCount + " objects - running at "
+                    + ((60000L * LOG_FREQUENCY) / (now - stepTime)) + " (avg "
+                    + ((60000L * storeCount) / (now - startTime))
+                    + ") objects per minute -- now on "
+                    + Util.getFriendlyName(o.getClass()));
+            stepTime = now;
+        }
+        if (storeCount % COMMIT_FREQUENCY == 0) {
+            LOG.info("Committing transaction after storing " + storeCount + " objects.");
+            getIntegrationWriter().batchCommitTransaction();
+        }
     }
 
+    /**
+     * Close the DirectDataLoader, this just prints a final log message with loading stats.
+     */
+    public void close() {
+        long now = System.currentTimeMillis();
+        LOG.info("Finished dataloading " + storeCount + " objects at " + ((60000L * storeCount)
+                / (now - startTime)) + " objects per minute (" + (now - startTime)
+            + " ms total) for source " + sourceName);
+    }
     /**
      * Create a new object of the given class name and give it a unique ID.
      * @param className the class name
@@ -74,4 +109,16 @@ public class DirectDataLoader extends DataLoader
         idCounter++;
         return o;
     }
+
+    /**
+     * Create a 'simple object' which doesn't inherit from InterMineObject and doesn't have an id.
+     * @param c the class of object to create
+     * @param <C> the type of the class
+     * @return an empty simple object of the given class
+     */
+    public <C extends FastPathObject> C createSimpleObject(Class<C> c) {
+        C o = DynamicUtil.simpleCreateObject(c);
+        return o;
+    }
+
 }

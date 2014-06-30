@@ -36,6 +36,7 @@ import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -91,7 +92,7 @@ public class InterMineAPITestCase extends TestCase {
         clearUserprofile();
 
         ObjectStoreSummary oss = new ObjectStoreSummary(new Properties());
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
+        ClassKeys classKeys = getClassKeys(os.getModel());
 
         InputStream configStream = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), configStream);
@@ -195,7 +196,7 @@ public class InterMineAPITestCase extends TestCase {
 
     }
 
-    private Map<String, List<FieldDescriptor>> getClassKeys(Model model) {
+    private ClassKeys getClassKeys(Model model) {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(getClass().getClassLoader()
@@ -203,8 +204,7 @@ public class InterMineAPITestCase extends TestCase {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        Map<String, List<FieldDescriptor>> classKeys =
-            ClassKeyHelper.readKeys(model, classKeyProps);
+        ClassKeys classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         return classKeys;
     }
 }

@@ -27,10 +27,11 @@ import org.json.JSONObject;
 public class TableJSONProcessor implements WidgetResultProcessor
 {
 
-    private static final TableJSONProcessor instance = new TableJSONProcessor();
+    private static final TableJSONProcessor INSTANCE = new TableJSONProcessor();
 
+    /** @return a table json processor **/
     public static TableJSONProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override

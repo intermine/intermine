@@ -28,6 +28,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  * Base request parser that is used by advanced web service parsers.
  *
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  **/
 public class WebServiceRequestParser
 {
@@ -140,6 +141,7 @@ public class WebServiceRequestParser
     /** The parameter for requesting column headers **/
     public static final String ADD_HEADER_PARAMETER = "columnheaders";
 
+    /** The parameter for accepting any format **/
     public static final String FORMAT_PARAMETER_ANY = "*/*";
 
     /**
@@ -182,34 +184,40 @@ public class WebServiceRequestParser
         return ret;
     }
 
-    private static final Map<String, Format> formatMapping= new HashMap<String, Format>() {
+    private static final Map<String, Format> FORMAT_MAPPING = new HashMap<String, Format>() {
         private static final long serialVersionUID = -2791706714042933771L;
-    {
-        put(FORMAT_PARAMETER_ANY, Format.DEFAULT);
-        put(FORMAT_PARAMETER_XML, Format.XML);
-        put(FORMAT_PARAMETER_HTML, Format.HTML);
-        put(FORMAT_PARAMETER_TAB, Format.TSV);
-        put(FORMAT_PARAMETER_CSV, Format.CSV);
-        put(FORMAT_PARAMETER_TEXT, Format.TEXT);
-        put(FORMAT_PARAMETER_COUNT, Format.TEXT);
-        put(FORMAT_PARAMETER_JSON_OBJ, Format.OBJECTS);
-        put(FORMAT_PARAMETER_JSONP_OBJ, Format.OBJECTS);
-        put(FORMAT_PARAMETER_JSON_TABLE, Format.TABLE);
-        put(FORMAT_PARAMETER_JSONP_TABLE, Format.TABLE);
-        put(FORMAT_PARAMETER_JSON_ROW, Format.ROWS);
-        put(FORMAT_PARAMETER_JSONP_ROW, Format.ROWS);
-        put(FORMAT_PARAMETER_JSONP, Format.JSON);
-        put(FORMAT_PARAMETER_JSON, Format.JSON);
-        put(FORMAT_PARAMETER_JSONP_COUNT, Format.JSON);
-        put(FORMAT_PARAMETER_JSON_COUNT, Format.JSON);
-    }};
+        {
+            put(FORMAT_PARAMETER_ANY, Format.DEFAULT);
+            put(FORMAT_PARAMETER_XML, Format.XML);
+            put(FORMAT_PARAMETER_HTML, Format.HTML);
+            put(FORMAT_PARAMETER_TAB, Format.TSV);
+            put(FORMAT_PARAMETER_CSV, Format.CSV);
+            put(FORMAT_PARAMETER_TEXT, Format.TEXT);
+            put(FORMAT_PARAMETER_COUNT, Format.TEXT);
+            put(FORMAT_PARAMETER_JSON_OBJ, Format.OBJECTS);
+            put(FORMAT_PARAMETER_JSONP_OBJ, Format.OBJECTS);
+            put(FORMAT_PARAMETER_JSON_TABLE, Format.TABLE);
+            put(FORMAT_PARAMETER_JSONP_TABLE, Format.TABLE);
+            put(FORMAT_PARAMETER_JSON_ROW, Format.ROWS);
+            put(FORMAT_PARAMETER_JSONP_ROW, Format.ROWS);
+            put(FORMAT_PARAMETER_JSONP, Format.JSON);
+            put(FORMAT_PARAMETER_JSON, Format.JSON);
+            put(FORMAT_PARAMETER_JSONP_COUNT, Format.JSON);
+            put(FORMAT_PARAMETER_JSON_COUNT, Format.JSON);
+        }
+    };
 
+    /**
+     * Figure out which format the user wants.
+     * @param format The format as provided by the user.
+     * @return A real Format.
+     */
     protected static Format interpretFormat(String format) {
         if (StringUtils.isBlank(format)) {
             return Format.EMPTY;
         }
-        Format mapped = formatMapping.get(format);
-        if (mapped== null) {
+        Format mapped = FORMAT_MAPPING.get(format);
+        if (mapped == null) {
             return Format.UNKNOWN;
         }  else {
             return mapped;
@@ -218,7 +226,7 @@ public class WebServiceRequestParser
 
     /**
      * Work out if this a JSON-P request.
-     * @param request
+     * @param request The incoming request.
      * @return Whether or not it is a JSON-P request.
      */
     public static boolean isJsonP(HttpServletRequest request) {
@@ -276,8 +284,10 @@ public class WebServiceRequestParser
                     String type = parts[0].trim();
                     if (ACCEPT_TYPES.containsKey(type)) {
                         areAcceptable.add(Format.valueOf(ACCEPT_TYPES.get(type)));
-                    } else if (type.equals("application/json") || type.equals("text/javascript")
-                            || type.equals("application/javascript") || type.equals("application/jsonp")) {
+                    } else if ("application/json".equals(type)
+                            || "text/javascript".equals(type)
+                            || "application/javascript".equals(type)
+                            || "application/jsonp".equals(type)) {
                         if (parts.length > 1) {
                             for (int i = 1; i < parts.length; i++) {
                                 String option = parts[i].trim();
@@ -312,7 +322,8 @@ public class WebServiceRequestParser
      * path-info is one of "xml", "json", "jsonp", "tsv" or "csv", then an
      * appropriate format will be returned. All other values will cause null to
      * be returned.
-     * 
+     *
+     * @param request the incoming request.
      * @return A format string.
      */
     protected static Format parseFormatFromPathInfo(HttpServletRequest request) {
@@ -341,7 +352,11 @@ public class WebServiceRequestParser
         return null;
     }
 
-
+    /**
+     * Get the list of formats that this request finds acceptable.
+     * @param request The incoming client request.
+     * @return A list of formats this request can accept.
+     */
     public static List<Format> getAcceptableFormats(HttpServletRequest request) {
         List<Format> areAcceptable = new ArrayList<Format>();
 
@@ -357,6 +372,10 @@ public class WebServiceRequestParser
         return areAcceptable;
     }
 
+    /**
+     * @param request The incoming request.
+     * @return true iff this request is looking for a count.
+     */
     public static boolean isCountRequest(HttpServletRequest request) {
         String doCount = request.getParameter("count");
         boolean count = Boolean.parseBoolean(doCount);

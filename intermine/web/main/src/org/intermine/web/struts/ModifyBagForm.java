@@ -64,18 +64,22 @@ public class ModifyBagForm extends ActionForm
         return selectedBags;
     }
 
+    /** @return the list on the left **/
     public String getListLeft() {
         return listLeft;
     }
 
+    /** @param listLeft The list on the left. **/
     public void setListLeft(String listLeft) {
         this.listLeft = listLeft;
     }
 
+    /** @return the list on the right. **/
     public String getListRight() {
         return listRight;
     }
 
+    /** @param listRight the list on the right. **/
     public void setListRight(String listRight) {
         this.listRight = listRight;
     }

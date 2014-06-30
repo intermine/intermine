@@ -253,8 +253,8 @@ public class JSONResultsIterator implements Iterator<JSONObject>
      * @param cell The result element
      * @param column The path representing the view column
      * @param objectMap The map to put the values on
-     * @throws JSONFormattingException if the map already has values for this attribute and they are
-     * different to the ones in the cell
+     * @throws JSONFormattingException if the map already has values for this attribute
+     *                                  and they are different to the ones in the cell
      */
     protected void addFieldToMap(ResultElement cell, Path column,
             Map<String, Object> objectMap) {
@@ -267,7 +267,7 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         if (cell.getField() instanceof Date) {
             newValue = ConstraintValueParser.ISO_DATE_FORMAT.format(cell.getField());
         } else if (cell.getField() instanceof ClobAccess) {
-        	newValue = cell.getField().toString();
+            newValue = cell.getField().toString();
         } else {
             newValue = cell.getField();
         }

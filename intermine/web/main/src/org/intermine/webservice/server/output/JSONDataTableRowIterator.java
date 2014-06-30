@@ -11,19 +11,12 @@ package org.intermine.webservice.server.output;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.model.InterMineObject;
-import org.intermine.pathquery.Path;
-import org.intermine.web.logic.PortalHelper;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Alexis Kalderimis
@@ -50,7 +43,7 @@ public class JSONDataTableRowIterator implements Iterator<JSONArray>
     @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
-        List jsonRow = new ArrayList();
+        List<Object> jsonRow = new ArrayList<Object>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement re = row.get(i);
             if (re == null || re.getId() == null) {
