@@ -42,12 +42,10 @@ public class StringTableExporter
      * Perform export.
      * @param rows rows to be exported
      */
-    @SuppressWarnings("unchecked")
     public void export(List<List<String>> rows) {
         try {
             for (List<String> row : rows) {
-                // upcasting because rowFormatter expect List<Object>
-                writer.println(rowFormatter.format((List) row));
+                writer.println(rowFormatter.format(row));
             }
             writer.flush();
         } catch (RuntimeException e) {

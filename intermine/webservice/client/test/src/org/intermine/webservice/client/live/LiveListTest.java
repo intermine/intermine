@@ -29,15 +29,16 @@ import org.intermine.webservice.client.lists.ItemList;
 import org.intermine.webservice.client.results.Item;
 import org.intermine.webservice.client.services.ListService;
 import org.intermine.webservice.client.services.ListService.ListCreationInfo;
+import org.intermine.webservice.client.util.TestUtil;
+import org.intermine.webservice.client.exceptions.ServiceException;
 import org.junit.AfterClass;
 import org.junit.Test;
 
 public class LiveListTest {
 
     private static final Logger LOGGER = Logger.getLogger(LiveListTest.class);
-    private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "test-user-token";
-    private static ListService testmine = new ServiceFactory(baseUrl, authToken).getListService();
+    private static ListService testmine =
+            new ServiceFactory(TestUtil.getRootUrl(), TestUtil.getToken()).getListService();
     private static final List<ItemList> tempLists = new ArrayList<ItemList>();
     private static int initialSize = 0;
 
@@ -297,7 +298,7 @@ public class LiveListTest {
         tempLists.add(newList);
 
         assertEquals(1, newList.size());
-        assertEquals("Employee", newList.getType());
+        assertEquals("Manager", newList.getType());
         assertEquals("David Brent", newList.get(0).getString("name"));
     }
 

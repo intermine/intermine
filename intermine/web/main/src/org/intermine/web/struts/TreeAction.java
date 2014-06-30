@@ -48,6 +48,7 @@ public class TreeAction extends DispatchAction
     public ActionForward expand(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
+        @SuppressWarnings("unchecked")
         Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.add(request.getParameter("node"));
         return mapping.findForward("renderTree");
@@ -72,6 +73,7 @@ public class TreeAction extends DispatchAction
     public ActionForward collapse(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
+        @SuppressWarnings("unchecked")
         Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.remove(request.getParameter("node"));
         return mapping.findForward("renderTree");

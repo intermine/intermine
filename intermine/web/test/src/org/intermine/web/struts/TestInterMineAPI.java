@@ -8,18 +8,17 @@ package org.intermine.web.struts;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.List;
-import java.util.Map;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateSummariser;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.types.ClassKeys;
 
 /**
  * InterMineAPITest is a class created only to allow some tests.
@@ -37,7 +36,7 @@ public class TestInterMineAPI extends InterMineAPI
      * @param oss summary information for the ObjectStore
      */
     public TestInterMineAPI(ObjectStore objectStore, ProfileManager pm,
-            Map<String, List<FieldDescriptor>> classKeys,
+            ClassKeys classKeys,
             BagQueryConfig bagQueryConfig, ObjectStoreSummary oss) {
         super(objectStore, null, classKeys, bagQueryConfig, oss, null, null);
         this.objectStore = objectStore;

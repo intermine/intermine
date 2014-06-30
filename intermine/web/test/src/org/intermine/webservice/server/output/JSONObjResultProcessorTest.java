@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.intermine.api.query.MainHelper;
@@ -36,6 +35,7 @@ public class JSONObjResultProcessorTest extends TestCase {
 
     private final Model model = Model.getInstanceByName("testmodel");
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void setUp() {
         os = new ObjectStoreDummyImpl();
 

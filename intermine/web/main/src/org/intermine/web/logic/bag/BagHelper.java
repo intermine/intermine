@@ -10,11 +10,9 @@ package org.intermine.web.logic.bag;
  *
  */
 
-
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.ClassKeysNotFoundException;
@@ -27,7 +25,6 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -93,7 +90,6 @@ public final class BagHelper
         }
 
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
-        ObjectStoreWriterInterMineImpl osw = os.getNewWriter();
 
         BagManager bagManager = im.getBagManager();
 

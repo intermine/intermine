@@ -12,8 +12,19 @@ package org.intermine.webservice.server.user;
 
 import org.intermine.api.InterMineAPI;
 
-public class DeletionTokenCancellationService extends DeletionTokenInfoService {
+/**
+ * A service that cancels the profile deletion process by deleting the
+ * token that could be used to complete it.
+ * @author Alex Kalderimis
+ *
+ */
+public class DeletionTokenCancellationService extends DeletionTokenInfoService
+{
 
+    /**
+     * @param im The InterMine state object
+     * @param uuid The identifier of the token
+     */
     public DeletionTokenCancellationService(InterMineAPI im, String uuid) {
         super(im, uuid);
     }

@@ -20,8 +20,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -42,9 +40,9 @@ public class QueryBuilderViewChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward removeFromView(ActionMapping mapping,
-                                        @SuppressWarnings("unused") ActionForm form,
+                                        ActionForm form,
                                         HttpServletRequest request,
-                                        @SuppressWarnings("unused") HttpServletResponse response)
+                                        HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String path = request.getParameter("path");
@@ -73,9 +71,9 @@ public class QueryBuilderViewChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward moveLeft(ActionMapping mapping,
-                                  @SuppressWarnings("unused") ActionForm form,
+                                  ActionForm form,
                                   HttpServletRequest request,
-                                  @SuppressWarnings("unused") HttpServletResponse response)
+                                  HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));
@@ -102,9 +100,9 @@ public class QueryBuilderViewChange extends DispatchAction
      * @exception Exception if the application business logic throws
      */
     public ActionForward moveRight(ActionMapping mapping,
-                                   @SuppressWarnings("unused") ActionForm form,
+                                   ActionForm form,
                                    HttpServletRequest request,
-                                   @SuppressWarnings("unused") HttpServletResponse response)
+                                   HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         int index = Integer.parseInt(request.getParameter("index"));

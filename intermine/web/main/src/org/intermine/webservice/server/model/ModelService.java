@@ -33,7 +33,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
@@ -74,7 +74,7 @@ public class ModelService extends WebService
         return Format.XML;
     }
 
-    private static final String formatEndings = "^/?(xml|tsv|csv|json|jsonp)$";
+    private static final String FORMAT_ENDINGS = "^/?(xml|tsv|csv|json|jsonp)$";
 
     @Override
     protected void initState() {
@@ -83,15 +83,15 @@ public class ModelService extends WebService
         if (StringUtils.isBlank(pathInfo)) {
             return;
         }
-        if (pathInfo.matches(formatEndings)) {
+        if (pathInfo.matches(FORMAT_ENDINGS)) {
             return;
         }
         setFormat(Format.JSON);
         pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         try {
-            
             Map<String, String> subclasses = new HashMap<String, String>();
-            for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+            for (@SuppressWarnings("unchecked")
+            Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
                 String param = e.nextElement();
                 subclasses.put(param, request.getParameter(param));
             }
@@ -177,7 +177,7 @@ public class ModelService extends WebService
                 try {
                     ret.add(fieldToJSON(node.append(fd.getName())));
                 } catch (PathException e) {
-                    throw new InternalErrorException("While walking model", e);
+                    throw new ServiceException("While walking model", e);
                 }
             }
         }

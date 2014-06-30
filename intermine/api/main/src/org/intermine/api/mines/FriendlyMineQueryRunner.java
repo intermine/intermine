@@ -69,7 +69,7 @@ public final class FriendlyMineQueryRunner
         if (jsonMine != null) {
             return jsonMine;
         }
-        List<Map<String, String>> results = new ArrayList<Map<String, String>>();
+        List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
 
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
@@ -77,22 +77,23 @@ public final class FriendlyMineQueryRunner
                     mine.getName(), xmlQuery));
             return null;
         }
-        StringBuilder builder = new StringBuilder();
-        for (String line = null; (line = reader.readLine()) != null;) {
-            builder.append(line).append("\n");
-        }
-        JSONObject jsonResponse = new JSONObject(builder.toString());
-        JSONArray queryResults = jsonResponse.getJSONArray("results");
-        for (int i = 0; i < queryResults.length(); i++) {
-            Map<String, String> result = new HashMap<String, String>();
-            JSONArray row = queryResults.getJSONArray(i);
-            result.put("id", row.getString(0));
-            result.put("name", row.getString(1));
-            // used for extra value, eg. organism name
-            if (row.length() > 2) {
-                result.put("ref", row.getString(2));
+        try {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject result = new JSONObject(tokener);
+            JSONArray rows = result.getJSONArray("results");
+            for (int i = 0, l = rows.length(); i < l; i++) {
+                JSONArray row = rows.getJSONArray(i);
+                Map<String, Object> found = new HashMap<String, Object>();
+                found.put("id", row.get(0));
+                found.put("name", row.get(1));
+                if (row.length() > 2) {
+                    // used for extra value, eg. organism name
+                    found.put("ref", row.get(2));
+                }
+                results.add(found);
             }
-            results.add(result);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error reading results.", e);
         }
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("results", results);

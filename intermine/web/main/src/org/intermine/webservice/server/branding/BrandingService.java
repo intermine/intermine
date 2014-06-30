@@ -1,11 +1,20 @@
 package org.intermine.webservice.server.branding;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
-import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -18,11 +27,15 @@ import org.intermine.webservice.server.core.JSONService;
  * @author Alex Kalderimis
  *
  */
-public class BrandingService extends JSONService {
+public class BrandingService extends JSONService
+{
 
+    private static final String PROPERTIES_NEED_2_SECTIONS
+        = "Branding properties should contain at least two sections. Skipping ";
     private static final String PREFIX = "branding.";
     private static final Logger LOG = Logger.getLogger(BrandingService.class);
 
+    /** @param im The InterMine state object. **/
     public BrandingService(InterMineAPI im) {
         super(im);
     }
@@ -35,7 +48,7 @@ public class BrandingService extends JSONService {
             String keyString = String.valueOf(key);
             String[] keyParts = keyString.split("\\.");
             if (keyParts.length < 2) {
-                LOG.warn("Branding properties should contain at least two sections. Skipping " + key);
+                LOG.warn(PROPERTIES_NEED_2_SECTIONS + key);
                 continue;
             }
             Queue<String> path = new LinkedList<String>();
@@ -53,7 +66,10 @@ public class BrandingService extends JSONService {
     }
 
     @SuppressWarnings("unchecked")
-    private void setProperty(final Map<String, Object> branding, final Queue<String> path, final String value) {
+    private void setProperty(
+            final Map<String, Object> branding,
+            final Queue<String> path,
+            final String value) {
         String key = path.remove();
         if (path.isEmpty()) {
             branding.put(key, value);

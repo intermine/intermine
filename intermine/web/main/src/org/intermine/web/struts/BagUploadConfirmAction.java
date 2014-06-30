@@ -104,12 +104,12 @@ public class BagUploadConfirmAction extends InterMineAction
             if (bagToUpgrade == null) {
                 recordError(new ActionMessage("bagUploadConfirm.notFound"), request);
                 return mapping.findForward("error");
-            }       
+            }
             bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
         }
         confirmForm.reset(mapping, request);
-        
+
         ForwardParameters forwardParameters = new ForwardParameters(
                 mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);

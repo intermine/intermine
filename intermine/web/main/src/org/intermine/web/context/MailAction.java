@@ -12,7 +12,18 @@ package org.intermine.web.context;
 
 import org.intermine.util.Emailer;
 
-public interface MailAction {
+/**
+ * The type of objects that can send themselves with an Emailer.
+ * @author Alex Kalderimis.
+ *
+ */
+public interface MailAction
+{
 
-    public void act(Emailer emailer) throws Exception;
+    /**
+     * Inject an emailer, and do something.
+     * @param emailer The emailer to use.
+     * @throws Exception If something untoward happens.
+     */
+    void act(Emailer emailer) throws Exception;
 }

@@ -20,7 +20,7 @@ import org.intermine.api.tracker.track.QueryTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
-public class QueryTracker extends TrackerAbstract
+public class QueryTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(QueryTracker.class);
     private static QueryTracker queryTracker = null;

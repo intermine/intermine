@@ -30,9 +30,13 @@ import org.xml.sax.SAXException;
  * @see org.intermine.web.dataset.Aspect
  * @author Thomas Riley
  */
-public class AspectBinding
+public final class AspectBinding
 {
     private static final Logger LOG = Logger.getLogger(AspectBinding.class);
+
+    private AspectBinding() {
+        // Hidden constructor.
+    }
 
     /**
      * Read in data set configuration from XML. The keys (set names) in the returned map
@@ -61,12 +65,14 @@ public class AspectBinding
                 "org.intermine.web.logic.aspects.AspectSource");
         digester.addSetNext("aspects/aspect", "add", "java.lang.Object");
 
+        @SuppressWarnings("rawtypes")
         List list = (List) digester.parse(reader);
         if (list == null) {
             LOG.error("Failed to unmashal aspects (digester returned null)");
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
         Map<String, Aspect> map = new LinkedHashMap<String, Aspect>();
+        @SuppressWarnings("rawtypes")
         Iterator iter = list.iterator();
         while (iter.hasNext()) {
             Aspect set = (Aspect) iter.next();

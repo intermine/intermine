@@ -27,7 +27,6 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
