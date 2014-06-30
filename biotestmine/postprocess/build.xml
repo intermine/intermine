@@ -1,0 +1,7 @@
+<project name="biotestmine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for biotestmine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>

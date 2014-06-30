@@ -26,11 +26,11 @@ query.add_view(
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 # You can edit the constraint values below
-query.add_constraint("Gene", "LOOKUP", "zen", "D. melanogaster", code = "A")
+query.add_constraint("Gene", "LOOKUP", "zen", "C. elegans", code = "A")
 query.add_constraint("Gene", "LOOKUP", "eve", code = "B")
 
 # Uncomment and edit the code below to specify your own custom logic:
-query.set_logic("A or B")
+# query.set_logic("A and B")
 
 for row in query.rows():
     print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], \
