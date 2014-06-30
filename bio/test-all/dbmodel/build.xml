@@ -54,7 +54,6 @@
     <merge-additions file="bio/sources/panther/panther_additions.xml"/>
     <merge-additions file="bio/sources/homologene/homologene_additions.xml"/>
     <merge-additions file="bio/sources/orthodb/orthodb_additions.xml"/>
-    <merge-additions file="bio/sources/human/ncbi-gene/ncbi-gene_additions.xml"/>
     <merge-additions file="bio/sources/human/hpo-annotation/hpo-annotation_additions.xml"/>
     <merge-additions file="bio/sources/ensembl/ensembl-snp/ensembl-snp_additions.xml"/>
   </target>
