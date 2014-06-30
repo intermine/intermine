@@ -7,7 +7,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaxrpc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/libreadline-java.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/postgresql-cvs-2010-07-20-patched.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/saaj.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/torque-3.2-dev.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/torque-gen-3.2-dev.jar"/>
@@ -20,5 +19,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/opencsv-2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry exported="true" kind="lib" path="lib/postgresql-9.3-1101.jdbc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

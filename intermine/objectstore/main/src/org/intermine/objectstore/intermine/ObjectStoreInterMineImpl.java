@@ -722,6 +722,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String cacheKey = "Batchsize: " + batchSize + ", optimise: " + optimise + ", explain: "
             + explain + ", prefetch: " + prefetch + ", query: " + q;
         synchronized (resultsCache) {
+            // if this query has been executed before return a cached copy of the Results
             Results retval = resultsCache.get(cacheKey);
             if (retval != null) {
                 try {
@@ -980,6 +981,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
             boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         Constraint where = q.getConstraint();
+        // we know there will be no results if we ORing or NANDing over an empty constraint set
         if (where instanceof ConstraintSet) {
             ConstraintSet where2 = (ConstraintSet) where;
             if (where2.getConstraints().isEmpty()
