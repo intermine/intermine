@@ -31,25 +31,29 @@ public class PathQueryBuilderForJSONTest extends TestCase {
     private final Model model = Model.getInstanceByName("testmodel");
 
     PathQueryBuilderForJSONObj builder;
+    String schemaUrl;
+    Map<String, InterMineBag> savedBags;
+
+    Producer<Map<String, InterMineBag>> noBags = new BagProducer();
+
     protected void setUp() {
         builder = new PathQueryBuilderForJSONObj();
+        savedBags = new HashMap<String, InterMineBag>();
+        schemaUrl = getClass().getResource("webservice/query.xsd").toString();
     }
 
     public void testPublicConstructor() {
-        System.out.println("classpath=" + System.getProperty("java.class.path"));
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
-        String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(xml, schemaUrl, new ConstantProducer());
+        PathQueryBuilderForJSONObj publicBuilder
+            = new PathQueryBuilderForJSONObj(xml, schemaUrl, new BagProducer(savedBags));
         assertTrue(publicBuilder != null);
-
     }
 
     public void testPublicGetQuery() {
         String xml = "<query model=\"testmodel\" name=\"test-query\" view=\"Manager.department.name\"></query>";
-        String schemaUrl = this.getClass().getClassLoader().getResource("webservice/query.xsd").toString();
 
-        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(xml, schemaUrl, new ConstantProducer());
+        PathQueryBuilderForJSONObj publicBuilder = new PathQueryBuilderForJSONObj(xml, schemaUrl, noBags);
         PathQuery pq = publicBuilder.getQuery();
         List<String> expectedViews = Arrays.asList("Manager.id", "Manager.department.name");
         assertEquals(expectedViews, pq.getView());
@@ -100,7 +104,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
 
         for (PathQuery pq : pathQueries) {
             List<String> oldViews = pq.getView();
-            List<String> newViews = builder.getAlteredViews(pq);
+            List<String> newViews = PathQueryBuilderForJSONObj.getAlteredViews(pq);
             assertEquals(oldViews, newViews);
         }
     }
@@ -159,7 +163,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
 
         for (int index = 0; index < expectedViews.size(); index++) {
             List<String> expected = expectedViews.get(index);
-            List<String> newViews = builder.getAlteredViews(pathQueries.get(index));
+            List<String> newViews = PathQueryBuilderForJSONObj.getAlteredViews(pathQueries.get(index));
             assertEquals(expected, newViews);
         }
     }
@@ -210,7 +214,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
 
         for (int index = 0; index < expectedViews.size(); index++) {
             List<String> expected = expectedViews.get(index);
-            List<String> newViews = builder.getAlteredViews(pathQueries.get(index));
+            List<String> newViews = PathQueryBuilderForJSONObj.getAlteredViews(pathQueries.get(index));
             assertEquals(expected, newViews);
         }
     }
@@ -232,7 +236,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         for (int index = 0; index < expectedErrors.size(); index++) {
             String expected = expectedErrors.get(index);
             try {
-                List<String> newViews = builder.getAlteredViews(pathQueries.get(index));
+                List<String> newViews = PathQueryBuilderForJSONObj.getAlteredViews(pathQueries.get(index));
                 fail("No exception was thrown when processing the bad view list " +
                         pathQueries.get(index).getView() + " - got: " + newViews);
             } catch (AssertionFailedError e) {
@@ -250,7 +254,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
     public void testCantCreateAttributeNode() {
         try {
             Path cantAddToThis = new Path(model, "Manager.name");
-            String newNode = builder.getNewAttributeNode(new HashSet(), cantAddToThis);
+            String newNode = PathQueryBuilderForJSONObj.getNewAttributeNode(new HashSet<Path>(), cantAddToThis);
             fail("No exception thrown when trying to handle bad path Manager.name - got: " + newNode);
         } catch (AssertionFailedError e) {
             // rethrow the fail from within the try
@@ -262,16 +266,17 @@ public class PathQueryBuilderForJSONTest extends TestCase {
         }
     }
 
-    private class ConstantProducer implements Producer<Map<String, InterMineBag>> {
+    // Java's type system prevents us from genericising this more elegantly.
+    private static class BagProducer implements Producer<Map<String, InterMineBag>> {
 
-        private Map<String, InterMineBag> bags;
+        private final Map<String, InterMineBag> bags;
 
-        ConstantProducer(Map<String, InterMineBag> bags) {
-            this.bags = bags;
+        BagProducer() {
+            this.bags = Collections.emptyMap();
         }
 
-        ConstantProducer() {
-            this(new HashMap<String, InterMineBag>());
+        BagProducer(Map<String, InterMineBag> bags) {
+            this.bags = bags;
         }
 
         @Override

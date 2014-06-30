@@ -31,6 +31,7 @@ import org.intermine.web.logic.Constants;
 public class DisplayLookupMessageHandler
 {
     private static Set<String> unresolved, duplicates, translated, lowQuality;
+    @SuppressWarnings("rawtypes")
     private static Map<String, List> wildcards;
 
     /**
@@ -126,6 +127,7 @@ public class DisplayLookupMessageHandler
         }
         if (wildcards.size() > 0) {
             if (wildcards.size() == 1) {
+                @SuppressWarnings("unchecked")
                 List<String> list = wildcards.values().iterator().next();
                 String key = wildcards.keySet().iterator().next();
                 if (list.size() == 1) {
@@ -155,6 +157,7 @@ public class DisplayLookupMessageHandler
      * Fills in arrays from the BagQueryResult
      * @param bqr the bag query Result object
      */
+    @SuppressWarnings("rawtypes")
     private static void fillInArrays(BagQueryResult bqr) {
         unresolved = bqr.getUnresolved().keySet();
         duplicates = new HashSet<String>();

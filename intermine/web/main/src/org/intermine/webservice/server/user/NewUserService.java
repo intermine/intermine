@@ -15,7 +15,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
@@ -27,7 +26,7 @@ import org.intermine.web.context.MailAction;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.core.RateLimitHistory;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.RateLimitException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
@@ -41,7 +40,8 @@ import org.json.JSONObject;
 public class NewUserService extends JSONService
 {
 
-
+    private static final String DEFAULTING_TO_1000PH
+        = "Configured new user rate limit is not a valid integer. Defaulting to 1000 per hour";
     private static final Logger LOG = Logger.getLogger(NewUserService.class);
     private int maxNewUsersPerAddressPerHour = 1000;
     private static RateLimitHistory requestHistory = null;
@@ -49,7 +49,6 @@ public class NewUserService extends JSONService
     /**
      * Constructor.
      * @param im The InterMine API object.
-     * @param mailQueue 
      */
     public NewUserService(InterMineAPI im) {
         super(im);
@@ -60,13 +59,12 @@ public class NewUserService extends JSONService
                 try {
                     maxNewUsersPerAddressPerHour = Integer.valueOf(rateLimit.trim()).intValue();
                 } catch (NumberFormatException e) {
-                    LOG.error("Configured new user rate limit is not a valid integer. Defaulting to 1000 per hour", e);
+                    LOG.error(DEFAULTING_TO_1000PH, e);
                     maxNewUsersPerAddressPerHour = 1000;
                 }
             }
             requestHistory = new RateLimitHistory((60 * 60), maxNewUsersPerAddressPerHour);
         }
-        
     }
 
     @Override
@@ -89,7 +87,7 @@ public class NewUserService extends JSONService
 
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
-        
+
         MailAction welcomeMessage = new WelcomeAction(input.getUsername());
         if (!InterMineContext.queueMessage(welcomeMessage)) {
             LOG.error("Mail queue capacity exceeded. Not sending welcome message");
@@ -105,10 +103,10 @@ public class NewUserService extends JSONService
         }
         user.put("subscribedToList", mailingList != null);
         user.put("mailingList", mailingList);
-        
+
         Profile p = pm.getProfile(input.getUsername());
         if (p == null) {
-            throw new InternalErrorException("Creating profile failed");
+            throw new ServiceException("Creating profile failed");
         }
         user.put("temporaryToken", pm.generate24hrKey(p));
 
@@ -122,7 +120,8 @@ public class NewUserService extends JSONService
         return retval;
     }
 
-    private class WelcomeAction implements MailAction {
+    private static class WelcomeAction implements MailAction
+    {
 
         private final String to;
 
@@ -134,10 +133,10 @@ public class NewUserService extends JSONService
         public void act(Emailer emailer) throws Exception {
             emailer.welcome(to);
         }
-        
     }
 
-    private class SubscribeAction implements MailAction {
+    private static class SubscribeAction implements MailAction
+    {
 
         private final String to;
 
@@ -149,7 +148,6 @@ public class NewUserService extends JSONService
         public void act(Emailer emailer) throws Exception {
             emailer.subscribeToList(to);
         }
-        
     }
 
     private class NewUserInput

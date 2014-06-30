@@ -25,25 +25,51 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.autocompletion.AutoCompleter;
 
+/**
+ * A class that will help you manufacture instances of DisplayConstraint.
+ * @author Alex Kalderimis
+ *
+ */
 public class DisplayConstraintFactory
 {
     private InterMineAPI im;
     private AutoCompleter ac;
 
+    /**
+     * Get an object that creates display constraints.
+     * @param im The InterMine state object.
+     * @param ac Something that can provide autocomplete hints.
+     */
     public DisplayConstraintFactory(InterMineAPI im, AutoCompleter ac) {
         this.im = im;
         this.ac = ac;
     }
 
+    /**
+     * Get a display constraint.
+     * @param path The path this constraint constrains.
+     * @param profile The profile of the current user (needed so we know what bags are available)
+     * @param query The query this constraint constrains.
+     * @return A display constraint.
+     */
     public DisplayConstraint get(Path path, Profile profile, PathQuery query) {
         return new DisplayConstraint(path, profile, query, ac, im.getObjectStoreSummary(),
                 im.getBagQueryConfig(), im.getClassKeys(), im.getBagManager());
     }
 
+    /**
+     * Get a display constraint.
+     * @param con The existing constraint we want to wrap.
+     * @param profile The profile of the current user (needed so we know what bags are available)
+     * @param query The query this constraint constrains.
+     * @return A display constraint.
+     * @throws PathException if the existing constraint is invalid.
+     */
     public DisplayConstraint get(PathConstraint con, Profile profile, PathQuery query)
         throws PathException {
 
         Path path = query.makePath(con.getPath());
+        DisplayConstraint dc = get(path, profile, query);
         String label = null;
         List<Object> templateSummary = null;
 
@@ -66,9 +92,12 @@ public class DisplayConstraintFactory
                     templateSummariser.getPossibleValues(originalTemplate, con.getPath());
             }
         }
-        return new DisplayConstraint(path, con, label, query.getConstraints().get(con),
-                editableInTemplate, switchOffAbility, profile, query, ac,
-                im.getObjectStoreSummary(), im.getBagQueryConfig(), im.getClassKeys(),
-                im.getBagManager(), templateSummary);
+        dc.setSwitchOffAbility(switchOffAbility);
+        dc.setLabel(label);
+        dc.setOriginalConstraint(con);
+        dc.setCode(query.getConstraints().get(con));
+        dc.setEditableInTemplate(editableInTemplate);
+        dc.setTemplatesummary(templateSummary);
+        return dc;
     }
 }

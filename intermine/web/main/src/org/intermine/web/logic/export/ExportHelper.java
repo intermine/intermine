@@ -21,6 +21,7 @@ import org.intermine.web.logic.results.PagedTable;
  *
  * @author rns
  */
+@SuppressWarnings("deprecation")
 public final class ExportHelper
 {
     private ExportHelper() {

@@ -1,8 +1,17 @@
 package org.intermine.web.struts;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Properties;
 
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,7 +32,13 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
 import org.intermine.web.logic.session.SessionMethods;
 
-public class InvitationAction extends InterMineAction {
+/**
+ * Action that processes invitations.
+ * @author Alex Kalderimis
+ *
+ */
+public class InvitationAction extends InterMineAction
+{
 
     private static final Logger LOG = Logger.getLogger(InvitationAction.class);
 
@@ -53,7 +68,7 @@ public class InvitationAction extends InterMineAction {
             sbm.acceptInvitation(invite, p);
             notifyInvitee(pm, invite, p, props);
 
-            return forwardToBagDetails(mapping, invite); 
+            return forwardToBagDetails(mapping, invite);
         } catch (UserAlreadyShareBagException e) {
             sendErrorMsg(request, e, "invitation-errors.alreadyshared", new Object[]{});
             return forwardToBagDetails(mapping, invite);
@@ -89,7 +104,8 @@ public class InvitationAction extends InterMineAction {
 
     private ActionForward forwardToBagDetails(ActionMapping mapping,
             SharingInvite invite) {
-        ForwardParameters forwardParameters = new ForwardParameters(mapping.findForward("bagDetails"));
+        ForwardParameters forwardParameters =
+                new ForwardParameters(mapping.findForward("bagDetails"));
         forwardParameters.addParameter("name", invite.getBag().getName());
         return forwardParameters.forward();
     }

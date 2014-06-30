@@ -46,7 +46,9 @@ public abstract class JSONResultFormatter extends JSONFormatter
      */
     @Override
     protected void formatAttributes(Map<String, Object> attributes, StringBuilder sb) {
-        if (sb         == null) throw new NullPointerException("sb must not be null");
+        if (sb         == null) {
+            throw new NullPointerException("sb must not be null");
+        }
         if (attributes == null) {
             attributes = new HashMap<String, Object>();
         } else {
@@ -67,10 +69,12 @@ public abstract class JSONResultFormatter extends JSONFormatter
 
             if (val instanceof List) {
                 // Format lists as arrays
+                @SuppressWarnings("rawtypes")
                 JSONArray ja = new JSONArray((List) val);
                 sb.append(ja.toString());
             } else if (val instanceof Map) {
                 // Format maps as objects
+                @SuppressWarnings("rawtypes")
                 JSONObject jo = new JSONObject((Map) val);
                 sb.append(jo.toString());
             } else {

@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -39,6 +37,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @see org.intermine.web.logic.session.SessionMethods#runQuery
  * @author Thomas Riley
  */
+@SuppressWarnings("deprecation")
 public class PollQueryAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(PollQueryAction.class);
@@ -54,9 +53,9 @@ public class PollQueryAction extends InterMineAction
      *  an exception
      */
     public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         String qid = request.getParameter("qid");
@@ -91,39 +90,37 @@ public class PollQueryAction extends InterMineAction
             // Look at results, if only one result, go straight to object details page
             PagedTable pr = SessionMethods.getResultsTable(session, "results." + qid);
             if (followSingleResult) {
-                List allRows = pr.getAllRows();
-                if ((allRows instanceof WebTable)) {
-                    WebTable webResults = (WebTable) allRows;
-                    // Query can have more than one column, forward from the first
-                    Object cell = null;
-                    Integer forwardId = null;
-                    if (webResults.size() == 1) {
-                        cell = webResults.getResultElements(0).get(0).get(0).getValue();
-                        if (cell instanceof ResultElement) {
-                            forwardId = ((ResultElement) cell).getId();
-                        }
-                    }
+                WebTable webResults = pr.getAllRows();
 
-                    // special case hack - if every element of the first column is the same,
-                    // use that as the object to forward to
-                    for (int i = 1; i < webResults.size() && forwardId != null; i++) {
-                        cell = webResults.getResultElements(i).get(0);
-                        if (cell instanceof ResultElement) {
-                            if (!forwardId.equals(((ResultElement) cell).getId())) {
-                                forwardId = null;
-                            }
-                        }
+                // Query can have more than one column, forward from the first
+                Object cell = null;
+                Integer forwardId = null;
+                if (webResults.size() == 1) {
+                    cell = webResults.getResultElements(0).get(0).get(0).getValue();
+                    if (cell instanceof ResultElement) {
+                        forwardId = ((ResultElement) cell).getId();
                     }
+                }
 
-                    if (forwardId != null) {
-                        if (trail != null) {
-                            trail += "|" + forwardId;
-                        } else {
-                            trail = "|" + forwardId;
+                // special case hack - if every element of the first column is the same,
+                // use that as the object to forward to
+                for (int i = 1; i < webResults.size() && forwardId != null; i++) {
+                    cell = webResults.getResultElements(i).get(0);
+                    if (cell instanceof ResultElement) {
+                        if (!forwardId.equals(((ResultElement) cell).getId())) {
+                            forwardId = null;
                         }
-                        String url = "/report.do?id=" + forwardId + "&trail=" + trail;
-                        return new ActionForward(url, true);
                     }
+                }
+
+                if (forwardId != null) {
+                    if (trail != null) {
+                        trail += "|" + forwardId;
+                    } else {
+                        trail = "|" + forwardId;
+                    }
+                    String url = "/report.do?id=" + forwardId + "&trail=" + trail;
+                    return new ActionForward(url, true);
                 }
             }
 
@@ -135,12 +132,14 @@ public class PollQueryAction extends InterMineAction
             }
             PathQuery pq = null;
             if (pr != null && pr.getPathQuery() != null) {
-            	pq = pr.getPathQuery();
+                pq = pr.getPathQuery();
             } else {
-            	pq = controller.getPathQuery();
+                pq = controller.getPathQuery();
             }
-            if (pq != null) request.setAttribute("query", pq);
-            
+            if (pq != null) {
+                request.setAttribute("query", pq);
+            }
+
             ForwardParameters fp = new ForwardParameters(mapping.findForward("results"))
                                     .addParameter("trail", trail)
                                     .addParameter("table", "results." + qid);

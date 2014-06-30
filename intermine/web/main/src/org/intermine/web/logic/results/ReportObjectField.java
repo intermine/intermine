@@ -56,18 +56,39 @@ public class ReportObjectField
      * @param doNotTruncate bool
      * @param escapeXml bool
      */
-    public ReportObjectField(String objectType, String fieldName,
-            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate, boolean escapeXml) {
+    public ReportObjectField(
+            String objectType,
+            String fieldName,
+            Object fieldValue,
+            String fieldDisplayerPage,
+            boolean doNotTruncate,
+            boolean escapeXml) {
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
         this.fieldDisplayerPage = fieldDisplayerPage;
         this.fieldDoNotTruncate = doNotTruncate;
-	this.fieldEscapeXml = escapeXml;
+        this.fieldEscapeXml = escapeXml;
         this.pathString = objectType + "." + fieldName;
     }
 
-    public ReportObjectField(String objectType, String fieldName,
-            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate, boolean escapeXml, String label) {
+    /**
+     * Constructor
+     * @param objectType unqualified class name
+     * @param fieldName String
+     * @param fieldValue Object
+     * @param fieldDisplayerPage String
+     * @param doNotTruncate bool
+     * @param escapeXml bool
+     * @param label Meat-readable label.
+     */
+    public ReportObjectField(
+            String objectType,
+            String fieldName,
+            Object fieldValue,
+            String fieldDisplayerPage,
+            boolean doNotTruncate,
+            boolean escapeXml,
+            String label) {
         this(objectType, fieldName, fieldValue, fieldDisplayerPage, doNotTruncate, escapeXml);
         this.label = label;
     }

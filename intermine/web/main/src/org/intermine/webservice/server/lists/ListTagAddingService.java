@@ -14,7 +14,6 @@ import static org.apache.commons.collections.CollectionUtils.collect;
 import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
 import static org.apache.commons.lang.StringUtils.split;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -66,10 +65,16 @@ public class ListTagAddingService extends ListTagService
         modifyList(tags, list);
 
         List<Tag> allTags = bagManager.getTagsForBag(list, getPermission().getProfile());
+        @SuppressWarnings("unchecked")
         List<String> tagNames = (List<String>) collect(allTags, invokerTransformer("getTagName"));
         output.addResultItem(tagNames);
     }
 
+    /**
+     * Modify the list by adding the tags.
+     * @param tags The tags to add.
+     * @param list The list to add them for.
+     */
     protected void modifyList(Set<String> tags, InterMineBag list) {
         Profile profile = getPermission().getProfile();
         try {

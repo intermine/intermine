@@ -36,7 +36,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Thomas Riley
  * @author Matthew Wakeling
  */
-public class PathQueryHandler extends DefaultHandler {
+public class PathQueryHandler extends DefaultHandler
+{
     private final Map<String, PathQuery> queries;
     private String queryName;
     protected PathQuery query;
@@ -77,6 +78,7 @@ public class PathQueryHandler extends DefaultHandler {
         this.version = version;
     }
 
+    /** @param m The model to add. **/
     public void addModel(Model m) {
         String name = m.getName();
         models.put(name, m);
@@ -245,7 +247,7 @@ public class PathQueryHandler extends DefaultHandler {
      */
     public PathConstraint processConstraint(PathQuery q, String path,
             Map<String, String> attrs, Collection<String> values)
-            throws SAXException {
+        throws SAXException {
 
         if (path == null) {
             throw new SAXException("Bad constraint: Path is null. "
@@ -372,7 +374,7 @@ public class PathQueryHandler extends DefaultHandler {
      */
     @Override
     public void endElement(String uri, String localName, String qName)
-            throws SAXException {
+        throws SAXException {
         if ("query".equals(qName)) {
             if (constraintLogic != null) {
                 query.setConstraintLogic(constraintLogic);

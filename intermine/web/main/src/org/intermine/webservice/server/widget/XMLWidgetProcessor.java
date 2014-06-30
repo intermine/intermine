@@ -48,9 +48,9 @@ public final class XMLWidgetProcessor extends WidgetProcessorImpl
         sb.append(formatCell("name", name));
         sb.append(formatCell("title", widgetConfig.getTitle()));
         sb.append(formatCell("description", widgetConfig.getDescription()));
-        String widgetType = getWidgetType(widgetConfig);
-        sb.append(formatCell("widgetType", widgetType));
-        if ("chart".equals(widgetType)) {
+        WidgetType widgetType = getWidgetType(widgetConfig);
+        sb.append(formatCell("widgetType", widgetType.name().toLowerCase()));
+        if (widgetType == WidgetType.CHART) {
             sb.append(formatCell("chartType",
                     ((GraphWidgetConfig) widgetConfig).getGraphType()));
             sb.append(formatCell("labels", getLabels((GraphWidgetConfig) widgetConfig)));

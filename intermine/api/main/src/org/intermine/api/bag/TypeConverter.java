@@ -63,7 +63,9 @@ public final class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    getConvertedObjectMap(List<ApiTemplate> conversionTemplates, Class<?> typeA, Class<?> typeB,
+    getConvertedObjectMap(List<ApiTemplate> conversionTemplates,
+            Class<? extends InterMineObject> typeA,
+            Class<? extends InterMineObject> typeB,
             Object bagOrIds, ObjectStore os) throws InterMineException {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bagOrIds);
 
@@ -88,7 +90,7 @@ public final class TypeConverter
         Map<InterMineObject, List<InterMineObject>> retval =
             new HashMap<InterMineObject, List<InterMineObject>>();
         r = os.execute(q);
-        Iterator iter = r.iterator();
+        Iterator<?> iter = r.iterator();
         while (iter.hasNext()) {
             List row = (List) iter.next();
             InterMineObject orig = (InterMineObject) row.get(0);
@@ -107,6 +109,9 @@ public final class TypeConverter
      * Get conversion query for the types provided, edited so that the first
      * type is constrained to be in the bag.
      *
+     * If there is no suitable conversion template, returns <code>null</code>. Throws
+     * a run-time exception if there is such a template, but it is not valid.
+     *
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from
      * @param typeB the type to convert to
@@ -114,7 +119,9 @@ public final class TypeConverter
      * @return a PathQuery that finds a conversion mapping for the given bag
      */
     public static PathQuery getConversionMapQuery(List<ApiTemplate> conversionTemplates,
-                                                Class typeA, Class typeB, Object bagOrIds) {
+                                                Class<? extends InterMineObject> typeA,
+                                                Class<? extends InterMineObject> typeB,
+                                                Object bagOrIds) {
         ApiTemplate tq = getConversionTemplates(conversionTemplates, typeA).get(typeB);
         if (tq == null) {
             return null;
@@ -131,6 +138,7 @@ public final class TypeConverter
                 InterMineBag bag = (InterMineBag) bagOrIds;
                 tq.replaceConstraint(c, Constraints.in(parent, bag.getName()));
             } else if (bagOrIds instanceof Collection) {
+                @SuppressWarnings("unchecked")
                 Collection<Integer> ids = (Collection<Integer>) bagOrIds;
                 tq.replaceConstraint(c, Constraints.inIds(parent, ids));
             }
@@ -153,7 +161,9 @@ public final class TypeConverter
      * @return a PathQuery that finds converted objects for the given bag
      */
     public static PathQuery getConversionQuery(List<ApiTemplate> conversionTemplates,
-            Class<?> typeA, Class<?> typeB, Object bagOrIds) {
+            Class<? extends InterMineObject> typeA,
+            Class<? extends InterMineObject> typeB,
+            Object bagOrIds) {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bagOrIds);
         if (pq == null) {
             return null;
@@ -180,6 +190,7 @@ public final class TypeConverter
 
     /**
      * Return a Map from typeB to a TemplateQuery that will convert from typeA to typeB.
+     * TODO: return a map of Class<InterMineObject> -> ApiTemplates
      *
      * @param conversionTemplates a list of templates to be used for conversion
      * @param typeA the type to convert from

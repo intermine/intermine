@@ -40,7 +40,7 @@ public class Page
         this(start, null);
     }
 
-    /** 
+    /**
      * Get the index of the first row that is requested.
      * @return The index of the first row to return.
      */
@@ -67,7 +67,7 @@ public class Page
             return start + size;
         }
     }
-    
+
     /**
      * @param index An index to test.
      * @return Whether or not the given index lies within the page.

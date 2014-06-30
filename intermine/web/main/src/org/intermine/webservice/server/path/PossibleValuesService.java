@@ -12,13 +12,11 @@ package org.intermine.webservice.server.path;
 
 import static org.apache.commons.lang.StringUtils.split;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.objectstore.ObjectStore;
@@ -45,9 +43,11 @@ import org.json.JSONObject;
 public class PossibleValuesService extends JSONService
 {
 
+    private static final String TYPE_CONSTRAINTS_SHOULD_BE_JSON =
+            "The value of 'typeConstraints' should be a json string";
+    private static final String TYPE_CONSTRAINTS_ARE_STRINGS =
+            "The typeConstraints object may only have strings as values";
     private static final int DEFAULT_BATCH_SIZE = 5000;
-    private static Logger logger
-        = Logger.getLogger(PossibleValuesService.class);
 
     /**
      * A service for providing column summary information. This information is
@@ -75,8 +75,9 @@ public class PossibleValuesService extends JSONService
             case JSON:
             case TEXT:
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     private boolean count = false;
@@ -115,9 +116,10 @@ public class PossibleValuesService extends JSONService
         try {
             typeJO = new JSONObject(typeConstraintStr);
         } catch (JSONException e) {
-            throw new BadRequestException("The value of 'typeConstraints' should be a json string");
+            throw new BadRequestException(TYPE_CONSTRAINTS_SHOULD_BE_JSON);
         }
 
+        @SuppressWarnings("unchecked")
         Iterator<String> it = (Iterator<String>) typeJO.keys();
         while (it.hasNext()) {
             String name = it.next();
@@ -125,7 +127,7 @@ public class PossibleValuesService extends JSONService
             try {
                 subType = typeJO.getString(name);
             } catch (JSONException e) {
-                throw new BadRequestException("The typeConstraints object may only have strings as values");
+                throw new BadRequestException(TYPE_CONSTRAINTS_ARE_STRINGS);
             }
             typeMap.put(name, subType);
         }
@@ -147,7 +149,6 @@ public class PossibleValuesService extends JSONService
 
         Query q = new Query();
 
-        addOutputInfo("class", path.getLastClassDescriptor().getUnqualifiedName());
         addOutputInfo("class", path.getLastClassDescriptor().getUnqualifiedName());
         addOutputInfo("field", path.getLastElement());
 
@@ -175,7 +176,6 @@ public class PossibleValuesService extends JSONService
             Results results = im.getObjectStore().execute(q, DEFAULT_BATCH_SIZE, true, true, false);
             Iterator<Object> iter = results.iterator();
 
-            List<Map<String,Object>> parsed = new ArrayList<Map<String,Object>>();
             while (iter.hasNext()) {
                 @SuppressWarnings("rawtypes")
                 List row = (List) iter.next();

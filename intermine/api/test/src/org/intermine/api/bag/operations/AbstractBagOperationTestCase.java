@@ -1,6 +1,5 @@
 package org.intermine.api.bag.operations;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +14,7 @@ import org.intermine.model.testmodel.Secretary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
 
-public class BagOperationTest extends InterMineAPITestCase {
+public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase {
 
     Set<Integer> employees1;
 
@@ -40,7 +39,7 @@ public class BagOperationTest extends InterMineAPITestCase {
     protected InterMineBag bagF;
     protected InterMineBag bagG;
 
-    public BagOperationTest(String arg) {
+    public AbstractBagOperationTestCase(String arg) {
         super(arg);
     }
 
