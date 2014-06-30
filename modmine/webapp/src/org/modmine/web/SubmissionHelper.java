@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.intermine.model.bio.ExperimentalFactor;
 import org.intermine.model.bio.Submission;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 /**
  * Helper methods for dealing with submissions.

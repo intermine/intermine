@@ -30,7 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.bio.web.model.GenomicRegion;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.json.JSONObject;
 import org.modmine.web.model.SpanQueryResultRow;
 import org.modmine.web.model.SpanUploadConstraint;

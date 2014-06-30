@@ -22,6 +22,9 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.NotXmlRenderer;
@@ -281,7 +284,7 @@ public class DynamicBean implements MethodInterceptor
     private String doToString(Object obj) {
         StringBuffer className = new StringBuffer();
         boolean needComma = false;
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(obj.getClass());
+        Set<Class<?>> classes = Util.decomposeClass(obj.getClass());
         for (Class<?> clazz : classes) {
             if (needComma) {
                 className.append(",");

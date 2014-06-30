@@ -10,10 +10,10 @@ package org.intermine.webservice.client.services;
  *
  */
 
+import static org.junit.Assert.assertEquals;
+
 import org.intermine.webservice.client.core.Request;
 import org.intermine.webservice.client.results.XMLTableResult;
-
-import static org.junit.Assert.*;
 
 /**
  * Provides a dummy-fied TemplateService.

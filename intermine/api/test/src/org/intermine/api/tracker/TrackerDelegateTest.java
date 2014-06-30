@@ -87,6 +87,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
 
     public void testTrackTemplate() throws SQLException, InterruptedException {
         try {
+        	
             trackerDelegate.trackTemplate("template1", superUser, "sessionId1");
             trackerDelegate.trackTemplate("template1", superUser, "sessionId1");
             trackerDelegate.trackTemplate("template1", superUser, "sessionId2");
@@ -134,6 +135,13 @@ public class TrackerDelegateTest extends InterMineAPITestCase
     }
 
     public void testGetRank() {
+    	
+        trackerDelegate.trackTemplate("template1", superUser, "sessionId1");
+        trackerDelegate.trackTemplate("template1", superUser, "sessionId1");
+        trackerDelegate.trackTemplate("template1", superUser, "sessionId2");
+        trackerDelegate.trackTemplate("template1", testUser, "sessionId3");
+        trackerDelegate.trackTemplate("template2", testUser, "sessionId3");
+    	
         TemplateManager templateManager = new TemplateManager(superUser, uosw.getModel());
         assertEquals(1, trackerDelegate.getRank(templateManager).get("template1").intValue());
         assertNull(trackerDelegate.getRank(templateManager).get("template2"));

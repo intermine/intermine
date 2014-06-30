@@ -35,7 +35,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.webservice.server.exceptions.NotImplementedException;
 import org.intermine.webservice.server.core.DisjointRecursiveList.Eacher;
 

@@ -12,7 +12,7 @@ package org.intermine.pathquery;
 
 import java.util.Collection;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /**
  * Builds constraints for the PathQuery.

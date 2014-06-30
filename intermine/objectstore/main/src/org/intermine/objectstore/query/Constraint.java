@@ -10,6 +10,8 @@ package org.intermine.objectstore.query;
  *
  */
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Abstract reperesentation of a query constraint.
  *
