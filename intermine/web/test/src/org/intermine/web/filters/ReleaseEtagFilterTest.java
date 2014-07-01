@@ -44,7 +44,7 @@ public class ReleaseEtagFilterTest {
         expect(req.getDateHeader("If-Modified-Since")).andReturn(-1L);
         resp.setHeader("ETag", "testing-17");
         resp.setHeader("Cache-Control", "public,max-age=600");
-        resp.setDateHeader("Last-Modified", ReleaseEtagFilter.START_UP);
+        resp.setDateHeader("Last-Modified", ReleaseEtagFilter.START_UP.getTime());
 
         replay(req);
         replay(resp);

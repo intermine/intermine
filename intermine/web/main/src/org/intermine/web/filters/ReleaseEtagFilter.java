@@ -40,7 +40,10 @@ public class ReleaseEtagFilter implements Filter
 {
 
     private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
-    private static final Date START_UP = new Date();
+    /**
+     * When the server is started up
+     */
+    static final Date START_UP = new Date();
     private static String release = null;
 
     @Override
@@ -53,7 +56,7 @@ public class ReleaseEtagFilter implements Filter
         HttpServletResponse inner = (HttpServletResponse) response;
         HttpServletRequest req = ((HttpServletRequest) request);
 
-        String ifNoneMatch = req.getHeader("If-None-Match"); 
+        String ifNoneMatch = req.getHeader("If-None-Match");
         long ifModSince = req.getDateHeader("If-Modified-Since");
         LOG.debug("etag = " + etag
                 + ", START_UP = " + START_UP
