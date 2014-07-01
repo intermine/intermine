@@ -32,11 +32,19 @@ import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraintRange;
 
+/**
+ * Method to help querying for ranges
+ *
+ * @author Fengyuan
+ */
 public class ChromosomeLocationHelper implements RangeHelper
 {
     private final QueryClass chromosome;
     private final QueryField chrIdField;
 
+    /**
+     * Method to set up chromosome fields for helping
+     */
     public ChromosomeLocationHelper() {
         Model model = Model.getInstanceByName("genomic");
         if (model == null) {
@@ -105,7 +113,11 @@ public class ChromosomeLocationHelper implements RangeHelper
         return mainSet;
     }
 
-    static class GenomicInterval {
+    /**
+     * Represents a genomic interval
+     */
+    static class GenomicInterval
+    {
 
         private final Integer start, end;
 
@@ -119,6 +131,9 @@ public class ChromosomeLocationHelper implements RangeHelper
         private static final Pattern COLON_START = Pattern.compile("^[^:]+:\\d+$");
         private static final Pattern CHR_ONLY = Pattern.compile("^[^:]+$");
 
+        /**
+         * @param range string to be parsed for coordinates
+         */
         GenomicInterval(String range) {
             if (range == null) {
                 throw new NullPointerException("range may not be null");
@@ -163,14 +178,23 @@ public class ChromosomeLocationHelper implements RangeHelper
             }
         }
 
+        /**
+         * @return start of range
+         */
         public Integer getStart() {
             return start;
         }
 
+        /**
+         * @return end of range
+         */
         public Integer getEnd() {
             return end;
         }
 
+        /**
+         * @return identifier of chromosome
+         */
         public String getChr() {
             return chr;
         }
