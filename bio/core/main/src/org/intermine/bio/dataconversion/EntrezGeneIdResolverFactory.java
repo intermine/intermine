@@ -155,13 +155,12 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 && resolver.hasTaxonsAndClassName(taxonIds, this.clsCol
                         .iterator().next())) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) { // Not the case, Entrez has gene only
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) { // Not the case, Entrez has gene only
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 
@@ -321,10 +320,11 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     /**
      * Merge all sets in a collection to a single set
+     *
      * @param colOfCols a collection of HashSet
      * @return a set of strings
      */
-    private Set<String> flattenCollections(Collection<Set<String>> colOfCols) {
+    private static Set<String> flattenCollections(Collection<Set<String>> colOfCols) {
         Set<String> all = new HashSet<String>();
         for (Set<String> col : colOfCols) {
             all.addAll(col);
@@ -351,7 +351,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     }
 
     @Override
-    // Not implemented. TaxonId is needed as argument
     protected void createIdResolver() {
+        // Not implemented. TaxonId is needed as argument
     }
 }

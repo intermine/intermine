@@ -45,6 +45,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * Return an IdResolver, if not already built then create it.
      * @return a specific IdResolver
      */
+    @Override
     public IdResolver getIdResolver() {
         return getIdResolver(true);
     }
@@ -56,6 +57,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * @param failOnError if false swallow any exceptions and return null
      * @return a specific IdResolver
      */
+    @Override
     public IdResolver getIdResolver(boolean failOnError) {
         if (!caughtError) {
             try {
@@ -77,10 +79,9 @@ public class OntologyIdResolverFactory extends IdResolverFactory
     protected void createIdResolver() {
         if (resolver != null && resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology)) {
             return;
-        } else {
-            if (resolver == null) {
-                resolver = new IdResolver(this.ontology);
-            }
+        }
+        if (resolver == null) {
+            resolver = new IdResolver(this.ontology);
         }
 
         try {
