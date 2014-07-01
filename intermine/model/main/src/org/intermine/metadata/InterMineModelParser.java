@@ -18,12 +18,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -45,14 +39,15 @@ public class InterMineModelParser implements ModelParser
      * @throws ModelParserException if something goes wrong with parsing the class descriptors.
      */
     public Model process(Reader reader) throws ModelParserException {
-    	try {
-	        ModelHandler handler = new ModelHandler();
-	        SAXParser.parse(new InputSource(reader), handler);
-	        Model model = new Model(handler.modelName, handler.packageName, handler.version, handler.classes);
-	        return model;
-    	} catch (Exception e) {
-    		throw new ModelParserException(e);
-    	}
+        try {
+            ModelHandler handler = new ModelHandler();
+            SAXParser.parse(new InputSource(reader), handler);
+            Model model = new Model(
+                    handler.modelName, handler.packageName, handler.version, handler.classes);
+            return model;
+        } catch (Exception e) {
+            throw new ModelParserException(e);
+        }
     }
 
     /**
@@ -66,14 +61,14 @@ public class InterMineModelParser implements ModelParser
      */
     public Set<ClassDescriptor> generateClassDescriptors(Reader reader,
             String packageName) throws ModelParserException {
-    	try {
-	        ModelHandler handler = new ModelHandler();
-	        handler.packageName = packageName;
-	        SAXParser.parse(new InputSource(reader), handler);
-	        return handler.classes;
-    	} catch (Exception e) {
-    		throw new ModelParserException(e);
-    	}
+        try {
+            ModelHandler handler = new ModelHandler();
+            handler.packageName = packageName;
+            SAXParser.parse(new InputSource(reader), handler);
+            return handler.classes;
+        } catch (Exception e) {
+            throw new ModelParserException(e);
+        }
     }
 
     /**
@@ -91,19 +86,19 @@ public class InterMineModelParser implements ModelParser
          * {@inheritDoc}
          */
         @Override
-        public void startElement(@SuppressWarnings("unused") String uri,
-                @SuppressWarnings("unused") String localName, String qName, Attributes attrs) {
+        public void startElement(
+                String uri, String localName, String qName, Attributes attrs) {
             if ("model".equals(qName)) {
                 modelName = attrs.getValue("name");
                 packageName = attrs.getValue("package");
                 String versionString = attrs.getValue("version");
                 if (versionString != null) {
-                	try {
-                	    version = Integer.parseInt(versionString);
-                	} catch (NumberFormatException e) {
-                		throw new IllegalArgumentException("Error - version = "
-                				+ versionString + " is not a valid version");
-                	}
+                    try {
+                        version = Integer.parseInt(versionString);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException("Error - version = "
+                                + versionString + " is not a valid version");
+                    }
                 }
                 if (packageName == null) {
                     throw new IllegalArgumentException("Error - package name of model is not "
@@ -189,12 +184,8 @@ public class InterMineModelParser implements ModelParser
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
-        public void endElement(@SuppressWarnings("unused") String uri,
-                @SuppressWarnings("unused") String localName, String qName) {
+        public void endElement(String uri, String localName, String qName) {
             if ("class".equals(qName)) {
                 classes.add(new ClassDescriptor(cls.name, cls.supers,
                                                 cls.isInterface, cls.attributes, cls.references,

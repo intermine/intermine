@@ -807,13 +807,16 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return sb.toString();
     }
 
+    /**
+     * @return a representation of this class descriptor as JSON.
+     */
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
         Set<String> superClassNames = getSuperclassNames();
         String name = className.substring(className.lastIndexOf(".") + 1);
         sb.append("{\"name\":\"")
-          .append(name)
-          .append("\",\"extends\":[");
+            .append(name)
+            .append("\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {
             sb.append("\"");
@@ -838,8 +841,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return sb.toString();
     }
 
-    private void addFields(StringBuffer sb, Collection fields) {
-        Iterator<FieldDescriptor> iter = ((Collection<FieldDescriptor>) fields).iterator();
+    private void addFields(StringBuffer sb, Collection<? extends FieldDescriptor> fields) {
+        Iterator<? extends FieldDescriptor> iter = fields.iterator();
         while (iter.hasNext()) {
             FieldDescriptor fld = iter.next();
             sb.append("\"" + fld.getName() + "\":");

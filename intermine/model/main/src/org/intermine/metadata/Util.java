@@ -312,68 +312,77 @@ public final class Util
     /**
      * Add values to a Map from keys to Set of values, creating the value list
      * as needed.
+     * @param <K> The type of the key of the map.
+     * @param <V> The type of the values in the sets of the map.
      *
      * @param map the Map
      * @param key the key
-     * @param values the set of values
+     * @param newValues the set of values
      */
-    public static void addToSetMap(Map map, Object key, Set<Object> values) {
+    public static <K, V> void addToSetMap(Map<K, Set<V>> map, K key, Collection<V> newValues) {
         if (map == null) {
             throw new IllegalArgumentException("invalid map");
         }
         if (key == null) {
             throw new IllegalArgumentException("invalid map key");
         }
-        Set valuesList = (Set) map.get(key);
-        if (valuesList == null) {
-            valuesList = new HashSet();
-            map.put(key, valuesList);
+        if (newValues == null) {
+            throw new IllegalArgumentException("invalid new values");
         }
-        valuesList.addAll(values);
+        Set<V> values = map.get(key);
+        if (values == null) {
+            values = new HashSet<V>();
+            map.put(key, values);
+        }
+        values.addAll(newValues);
     }
 
 
     /**
      * Add a value to a Map from keys to Set of values, creating the value list
      * as needed.
+     * @param <K> The type of the key of the map.
+     * @param <V> The type of the values in the sets of the map.
      *
      * @param map the Map
      * @param key the key
      * @param value the value
      */
-    public static void addToSetMap(Map map, Object key, Object value) {
+    public static <K, V> void addToSetMap(Map<K, Set<V>> map, K key, V value) {
         if (map == null) {
             throw new IllegalArgumentException("invalid map");
         }
         if (key == null) {
             throw new IllegalArgumentException("invalid map key");
         }
-        Set valuesList = (Set) map.get(key);
-        if (valuesList == null) {
-            valuesList = new HashSet();
-            map.put(key, valuesList);
+        Set<V> values = map.get(key);
+        if (values == null) {
+            values = new HashSet<V>();
+            map.put(key, values);
         }
-        valuesList.add(value);
+        values.add(value);
     }
 
     /**
      * Add a value to a Map from keys to Set of values, creating the value list
      * as needed.
+     * @param <K> The type of the key of the map.
+     * @param <V> The type of the values in the lists of the map.
      *
      * @param map the Map
      * @param key the key
      * @param value the value
      */
-    public static void addToListMap(Map map, Object key, Object value) {
+    public static <K, V> void addToListMap(Map<K, List<V>> map, K key, V value) {
         if (map == null) {
             throw new IllegalArgumentException("invalid map");
         }
         if (key == null) {
             throw new IllegalArgumentException("invalid map key");
         }
-        List valuesList = (List) map.get(key);
+        List<V> valuesList = map.get(key);
         if (valuesList == null) {
-            valuesList = new ArrayList();
+            valuesList = new ArrayList<V>();
             map.put(key, valuesList);
         }
         valuesList.add(value);
