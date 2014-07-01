@@ -38,7 +38,7 @@ public interface InterMineFastPathObject extends FastPathObject
      */
     StringConstructor getoBJECT();
 
-//	TODO FIXME 
+//    TODO FIXME
 //    /**
 //     * Sets the values of the fields to the values in the given NotXml.
 //     *
