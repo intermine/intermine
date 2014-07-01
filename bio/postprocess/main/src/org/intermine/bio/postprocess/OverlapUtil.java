@@ -36,7 +36,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.DynamicUtil;
+
 
 /**
  * Utility methods for finding overlaps.
