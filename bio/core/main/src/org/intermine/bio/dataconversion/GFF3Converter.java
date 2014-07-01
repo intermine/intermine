@@ -281,7 +281,7 @@ public class GFF3Converter extends DataConverter
         // If pid set in gff_config.propeties, look for the attribute field, e.g. locus_tag
         if (configAttr.containsKey(this.orgTaxonId)) {
             if (configAttr.get(this.orgTaxonId).containsKey("primaryIdentifier")) {
-                primaryIdentifier = getPrimaryIdentifier(record, term, primaryIdentifier);
+                primaryIdentifier = getPrimaryIdentifier(record, term);
             }
         }
         String refId = identifierMap.get(primaryIdentifier);
@@ -325,12 +325,12 @@ public class GFF3Converter extends DataConverter
         // get the attribute set for symbol
         if (configAttr.containsKey(this.orgTaxonId)) {
             if (configAttr.get(this.orgTaxonId).containsKey("symbol")) {
-                symbol = getSymbol(record, term, symbol);
+                symbol = getSymbol(record, term);
             }
         }
         // get the attribute set for synonym
         if (configAttr.containsKey(this.orgTaxonId)) {
-            synonyms = createSynonyms(record, term, synonyms);
+            synonyms = createSynonyms(record, term);
         }
         if (names != null) {
             setNames(names, symbol, synonyms, synonymsToAdd, primaryIdentifier, feature, cd);
@@ -375,8 +375,9 @@ public class GFF3Converter extends DataConverter
         }
     }
 
-    private String getSymbol(GFF3Record record, String term, String symbol) {
+    private String getSymbol(GFF3Record record, String term) {
         String cls = configAttrClass.get(this.orgTaxonId).get("symbol");
+        String symbol = null;
         if ("all".equals(cls) || term.equals(cls)) {
             String symbolAttr = configAttr.get(this.orgTaxonId).get("symbol");
             if (symbolAttr.contains("Dbxref") && record.getDbxrefs() != null) {
@@ -397,8 +398,8 @@ public class GFF3Converter extends DataConverter
         return symbol;
     }
 
-    private String getPrimaryIdentifier(GFF3Record record, String term,
-            String primaryIdentifier) {
+    private String getPrimaryIdentifier(GFF3Record record, String term) {
+        String primaryIdentifier = null;
         String cls = configAttrClass.get(this.orgTaxonId).get("primaryIdentifier");
         if ("all".equals(cls) || term.equals(cls)) {
             String pidAttr = configAttr.get(this.orgTaxonId).get("primaryIdentifier");
@@ -420,8 +421,8 @@ public class GFF3Converter extends DataConverter
         return primaryIdentifier;
     }
 
-    private List<String> createSynonyms(GFF3Record record, String term,
-            List<String> synonyms) {
+    private List<String> createSynonyms(GFF3Record record, String term) {
+        List<String> synonyms = new ArrayList<String>();
         if (configAttr.get(this.orgTaxonId).containsKey("synonym")) {
             String cls = configAttrClass.get(this.orgTaxonId).get("synonym");
             if ("all".equals(cls) || term.equals(cls)) {
@@ -495,7 +496,7 @@ public class GFF3Converter extends DataConverter
                 && !dontCreateLocations
                 && handler.createLocations(record);
         if (makeLocation) {
-            Item location = getLocation(record, refId, seq, cd);
+            Item location = getLocation(record, refId, seq);
             if (feature == null) {
                 // this feature has already been created and stored
                 // we only wanted the location, we're done here.
@@ -513,7 +514,7 @@ public class GFF3Converter extends DataConverter
         }
     }
 
-    private Item getLocation(GFF3Record record, String refId, Item seq, ClassDescriptor cd) {
+    private Item getLocation(GFF3Record record, String refId, Item seq) {
         Item location = createItem("Location");
         int start = record.getStart();
         int end = record.getEnd();
@@ -590,9 +591,11 @@ public class GFF3Converter extends DataConverter
             }
         } else {
             if (symbol == null) {
-                symbol = (String) names.get(0);
+                feature.setAttribute("symbol", (String) names.get(0));
+            } else {
+                feature.setAttribute("symbol", symbol);
             }
-            feature.setAttribute("symbol", symbol);
+
             for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
                 if (!recordName.equals(primaryIdentifier) && !recordName.equals(symbol)) {
@@ -783,7 +786,7 @@ public class GFF3Converter extends DataConverter
         return item;
     }
 
-    private int getLength(GFF3Record record) {
+    private static int getLength(GFF3Record record) {
         int start = record.getStart();
         int end = record.getEnd();
         int length = Math.abs(end - start) + 1;
