@@ -620,7 +620,7 @@ public final class TypeUtil
          */
         public Class<? extends FastPathObject> getElementType() {
             @SuppressWarnings("unchecked") Class<? extends FastPathObject> retval =
-                (Class) adder.getParameterTypes()[0];
+                (Class<? extends FastPathObject>) adder.getParameterTypes()[0];
             return retval;
         }
     }

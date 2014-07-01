@@ -18,11 +18,11 @@ package org.intermine.metadata;
 public class ModelParserException extends Exception
 {
     /**
-	 * Serial ID demanded by Commissar Eclipse
-	 */
-	private static final long serialVersionUID = 5556567365374538414L;
+     * Serial ID demanded by Commissar Eclipse
+     */
+    private static final long serialVersionUID = 5556567365374538414L;
 
-	/**
+    /**
      * Constructs a ModelParserException
      */
     public ModelParserException() {
