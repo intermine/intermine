@@ -146,8 +146,7 @@ public class StringConstructor implements CharSequence
     /**
      * {@inheritDoc}
      */
-    public CharSequence subSequence(@SuppressWarnings("unused") int start,
-            @SuppressWarnings("unused") int end) {
+    public CharSequence subSequence(int start, int end) {
         throw new UnsupportedOperationException("We probably don't need this method");
     }
 
