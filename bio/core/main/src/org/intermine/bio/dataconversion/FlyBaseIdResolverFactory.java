@@ -40,7 +40,6 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
 
     /**
      * Construct with class name/feature type to read from chado database or file.
-     * @param soTerm the feature type to resolve
      */
     public FlyBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -64,21 +63,20 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
 
     /**
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
-     * @return an IdResolver for FlyBase
      */
     @Override
     protected void createIdResolver() {
-         if (resolver != null && resolver.hasTaxonAndClassNames(taxonId, this.clsCol)) {
-             return;
-         } else {
-             if (resolver == null) {
-                 if (clsCol.size() > 1) {
-                     resolver = new IdResolver();
-                 } else {
-                     resolver = new IdResolver(clsCol.iterator().next());
-                 }
-             }
-         }
+        if (resolver != null && resolver.hasTaxonAndClassNames(taxonId, this.clsCol)) {
+            return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
+        }
 
         try {
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
@@ -86,7 +84,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     && !resolver.hasTaxonAndClassNames(taxonId, this.clsCol))) {
                 LOG.info("Creating id resolver from database and caching id resolver to file: "
                         + ID_RESOLVER_CACHED_FILE_NAME);
-                System.out. println("Creating id resolver from database and " +
+                System.out.println("Creating id resolver from database and " +
                         "caching id resolver to file: " + ID_RESOLVER_CACHED_FILE_NAME);
                 createFromDb(clsCol, DatabaseFactory.getDatabase(propName));
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));

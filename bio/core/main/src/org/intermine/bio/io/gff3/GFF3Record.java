@@ -148,8 +148,8 @@ public class GFF3Record
     private void parseAttribute(String argAttributeString, String line) throws IOException {
         String attributeString = argAttributeString;
         attributeString = StringUtils.replaceEach(attributeString,
-                new String[] { "&amp;", "&quot;", "&lt;", "&gt;" },
-                new String[] { "&", "\"", "<", ">" });
+                new String[] {"&amp;", "&quot;", "&lt;", "&gt;"},
+                new String[] {"&", "\"", "<", ">"});
         StringTokenizer sTok = new StringTokenizer(attributeString, ";", false);
 
         while (sTok.hasMoreTokens()) {
