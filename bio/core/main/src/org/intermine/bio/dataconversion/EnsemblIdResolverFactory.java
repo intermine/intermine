@@ -51,13 +51,12 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 && resolver.hasTaxonAndClassName(taxonId, this.clsCol
                         .iterator().next())) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) {
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 

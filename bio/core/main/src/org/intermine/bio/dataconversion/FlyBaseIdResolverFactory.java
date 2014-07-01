@@ -68,13 +68,12 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     protected void createIdResolver() {
         if (resolver != null && resolver.hasTaxonAndClassNames(taxonId, this.clsCol)) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) {
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 
@@ -118,9 +117,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     resolver.writeToFile(f);
                 }
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

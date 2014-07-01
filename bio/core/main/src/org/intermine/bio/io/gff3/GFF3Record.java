@@ -165,35 +165,34 @@ public class GFF3Record
             if (spaceIndx == -1) {
                 throw new IOException("the attributes section must contain name=value pairs, "
                                       + "while parsing: " + line);
-            } else {
-                attName = attVal.substring(0, spaceIndx);
-                attributeString = attVal.substring(spaceIndx + 1).trim();
+            }
+            attName = attVal.substring(0, spaceIndx);
+            attributeString = attVal.substring(spaceIndx + 1).trim();
 
-                if (!"\"\"".equals(attributeString)) {
-                    while (attributeString.length() > 0) {
-                        if (attributeString.startsWith("\"")) {
-                            attributeString = attributeString.substring(1);
-                            int quoteIndx = attributeString.indexOf("\"");
-                            if (quoteIndx > 0) {
-                                valList.add(attributeString.substring(0, quoteIndx));
-                                attributeString = attributeString.substring(quoteIndx + 1).trim();
-                                if (attributeString.startsWith(",")) {
-                                    attributeString = attributeString.substring(1).trim();
-                                }
-                            } else {
-                                throw new IOException("unmatched quote in this line: " + line
-                                                      + " (reading attribute: " + attName + ", "
-                                                      + attributeString + ")");
+            if (!"\"\"".equals(attributeString)) {
+                while (attributeString.length() > 0) {
+                    if (attributeString.startsWith("\"")) {
+                        attributeString = attributeString.substring(1);
+                        int quoteIndx = attributeString.indexOf("\"");
+                        if (quoteIndx > 0) {
+                            valList.add(attributeString.substring(0, quoteIndx));
+                            attributeString = attributeString.substring(quoteIndx + 1).trim();
+                            if (attributeString.startsWith(",")) {
+                                attributeString = attributeString.substring(1).trim();
                             }
                         } else {
-                            int commaIndx = attributeString.indexOf(",");
-                            if (commaIndx == -1) {
-                                valList.add(attributeString);
-                                attributeString = "";
-                            } else {
-                                valList.add(attributeString.substring(0, commaIndx));
-                                attributeString = attributeString.substring(commaIndx + 1).trim();
-                            }
+                            throw new IOException("unmatched quote in this line: " + line
+                                                  + " (reading attribute: " + attName + ", "
+                                                  + attributeString + ")");
+                        }
+                    } else {
+                        int commaIndx = attributeString.indexOf(",");
+                        if (commaIndx == -1) {
+                            valList.add(attributeString);
+                            attributeString = "";
+                        } else {
+                            valList.add(attributeString.substring(0, commaIndx));
+                            attributeString = attributeString.substring(commaIndx + 1).trim();
                         }
                     }
                 }
@@ -292,9 +291,8 @@ public class GFF3Record
     public String getId () {
         if (getAttributes().containsKey("ID")) {
             return getAttributes().get("ID").get(0);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -312,9 +310,8 @@ public class GFF3Record
     public List<String> getNames() {
         if (getAttributes().containsKey("Name")) {
             return getAttributes().get("Name");
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -324,9 +321,8 @@ public class GFF3Record
     public String getFirstAlias () {
         if (getAttributes().containsKey("Alias")) {
             return getAttributes().get("Alias").get(0);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -336,9 +332,8 @@ public class GFF3Record
     public List<String> getAliases () {
         if (getAttributes().containsKey("Alias")) {
             return getAttributes().get("Alias");
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -348,9 +343,8 @@ public class GFF3Record
     public List<String> getParents () {
         if (getAttributes().containsKey("Parent")) {
             return getAttributes().get("Parent");
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -360,9 +354,8 @@ public class GFF3Record
     public String getTarget() {
         if (getAttributes().containsKey("Target")) {
             return getAttributes().get("Target").get(0);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -372,9 +365,8 @@ public class GFF3Record
     public String getGap() {
         if (getAttributes().containsKey("Gap")) {
             return getAttributes().get("Gap").get(0);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -384,9 +376,8 @@ public class GFF3Record
     public String getNote() {
         if (getAttributes().containsKey("Note")) {
             return getAttributes().get("Note").get(0);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -396,9 +387,8 @@ public class GFF3Record
     public List<String> getDbxrefs() {
         if (getAttributes().containsKey("Dbxref")) {
             return getAttributes().get("Dbxref");
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -408,9 +398,8 @@ public class GFF3Record
     public String getOntologyTerm () {
         if (getAttributes().containsKey("Ontology_term")) {
             return getAttributes().get("Ontology_term").get(0);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

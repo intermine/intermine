@@ -41,9 +41,6 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(WormBaseIdResolverFactory.class);
 
     private final String taxonId = "6239";
-    @SuppressWarnings("unused")
-    private final String propKeyDb = "db.wormbase";
-
     private final String propKeyFile = "resolver.file.rootpath";
     private final String resolverFileSymboWormId = "wormid";
     // HACK
@@ -73,13 +70,12 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 && resolver.hasTaxonAndClassName(taxonId, this.clsCol
                         .iterator().next())) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) {
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 

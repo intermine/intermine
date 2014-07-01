@@ -40,7 +40,7 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
     public void testReadConfig() throws Exception {
         factory.propFile = idresolverConfig;
         factory.readConfig();
-        assertEquals(5, factory.configXref.size());
+        assertEquals(6, factory.configXref.size());
         assertTrue(factory.configXref.containsKey("7955"));
         assertFalse(factory.configXref.containsValue("OMIM"));
         assertTrue(factory.configPrefix.containsKey("10090"));
