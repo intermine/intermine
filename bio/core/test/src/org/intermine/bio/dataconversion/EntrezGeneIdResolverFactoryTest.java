@@ -55,7 +55,7 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
 
     public void testCreateIdResolver() throws Exception {
         // resolver cached
-        factory.ID_RESOLVER_CACHED_FILE_NAME = idresolverCache;
+        factory.idResolverCachedFileName = idresolverCache;
 
         factory.createIdResolver(Collections.<String> emptySet());
         assertNull(IdResolverFactory.resolver);

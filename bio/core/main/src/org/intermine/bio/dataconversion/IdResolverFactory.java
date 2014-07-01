@@ -20,7 +20,8 @@ import org.intermine.sql.Database;
 
 /**
  * Create an IdResolver.
- * @author rns
+ *
+ * @author Richard Smith
  * @author Fengyuan Hu
  *
  */
@@ -32,10 +33,10 @@ public abstract class IdResolverFactory
 
     // ResolverFactory takes in a SO term/Class name (as a collection), "gene" is used by default
     protected final Set<String> defaultClsCol = new HashSet<String>(
-            Arrays.asList(new String[] { "gene" }));
+            Arrays.asList(new String[] {"gene"}));
     protected Set<String> clsCol = new HashSet<String>();
 
-    protected String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
+    protected static String idResolverCachedFileName = "build/idresolver.cache";
 
     /**
      * Return an IdResolver, if not already built then create it.
@@ -69,7 +70,6 @@ public abstract class IdResolverFactory
     /**
      * Read IdResolver contents from a file, allows for caching during build.
      *
-     * @param clsCol a collection of class name to resolve
      * @param f the file to read from
      * @return a created IdResolver
      * @throws IOException if problem reading from file
@@ -87,13 +87,12 @@ public abstract class IdResolverFactory
     /**
      * Read IdResolver contents from a file, allows for caching during build. Use default file name.
      *
-     * @param clsCol a collection of class name to resolve
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
     protected boolean restoreFromFile()
         throws IOException {
-        File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
+        File f = new File(idResolverCachedFileName);
         if (f.exists()) {
             resolver.populateFromFile(f);
             return true;
@@ -106,7 +105,6 @@ public abstract class IdResolverFactory
      * Read IdResolver contents from a database.
      *
      * @param db the file to read from
-     * @return null, need strictly override
      */
     protected void createFromDb(Database db) {
         createFromDb(defaultClsCol, db);
@@ -117,7 +115,6 @@ public abstract class IdResolverFactory
      *
      * @param clsName the class name to resolve
      * @param db the file to read from
-     * @return null, need strictly override
      */
     protected void createFromDb(String clsName, Database db) {
         createFromDb(new HashSet<String>(Arrays.asList(new String[]{clsName})), db);
@@ -128,14 +125,12 @@ public abstract class IdResolverFactory
      *
      * @param clsCol a collection of class name to resolve
      * @param db the file to read from
-     * @return null, need strictly override
      */
     protected void createFromDb(Set<String> clsCol, Database db) {
     }
 
     /**
      * Create and IdResolver from source information.
-     * @return the new IdResolver
      */
     protected abstract void createIdResolver();
 }

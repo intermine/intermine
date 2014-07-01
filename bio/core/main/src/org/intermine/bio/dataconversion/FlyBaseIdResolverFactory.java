@@ -83,24 +83,26 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassNames(taxonId, this.clsCol))) {
                 LOG.info("Creating id resolver from database and caching id resolver to file: "
-                        + ID_RESOLVER_CACHED_FILE_NAME);
-                System.out.println("Creating id resolver from database and " +
-                        "caching id resolver to file: " + ID_RESOLVER_CACHED_FILE_NAME);
+                        + idResolverCachedFileName);
                 createFromDb(clsCol, DatabaseFactory.getDatabase(propName));
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                resolver.writeToFile(new File(idResolverCachedFileName));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Populate the ID resolver from a cached file
+     *
+     * @param clsCol set of classes
+     * @return true if cached file exists and operation was successful
+     */
     protected boolean restoreFromFile(Set<String> clsCol) {
         try {
-            File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
+            File f = new File(idResolverCachedFileName);
             if (f.exists()) {
-                LOG.info("Restoring id resolver from cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
-                System.out. println("Restoring id resolver from cache file: "
-                        + ID_RESOLVER_CACHED_FILE_NAME);
+                LOG.info("Restoring id resolver from cache file: " + idResolverCachedFileName);
                 resolver.populateFromFile(f);
 
                 // if file doesn't contain classes, revisit db
@@ -131,7 +133,6 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         try {
             conn = db.getConnection();
             LOG.info("Querying FlyBase DB: " + db.getName());
-            System.out. println("Querying FlyBase DB: " + db.getName());
             for (String clsName : clsCol) {
                 String query = "select c.cvterm_id"
                     + " from cvterm c, cv"
@@ -264,6 +265,15 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Add results from query to ID resolver
+     *
+     * @param res Result set from query
+     * @param or organism repository
+     * @param clsName type of data to resolve
+     * @return number of IDs parsed
+     * @throws Exception if error parsing query results
+     */
     protected int addIdsFromResultSet(ResultSet res, OrganismRepository or,
             String clsName) throws Exception {
         int i = 0;
