@@ -279,10 +279,10 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("modmine-metadata-cache".equals(operation)) {
                 CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
             } else if ("populate-child-features".equals(operation)) {
-            	PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
-            	jb.populateCollection();
+                PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
+                jb.populateCollection();
             }
-                
+
         } catch (BuildException e) {
             LOGGER.error("Failed postprocess. Operation was: " + operation, e);
             throw e;
