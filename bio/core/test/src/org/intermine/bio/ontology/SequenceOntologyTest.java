@@ -42,6 +42,8 @@ public class SequenceOntologyTest extends TestCase
         assertEquals(2, parents.size());
         assertTrue(parents.contains("transcript"));
     }
+
+    // test generating SO without providing the data file
     public void testNoFile() {
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
         Model model = so.getModel();
