@@ -169,7 +169,7 @@ public class NcbiGeneInfoParser
         return duplicates;
     }
 
-    private Set<String> parseXrefs(String xrefs, String prefix) {
+    private static Set<String> parseXrefs(String xrefs, String prefix) {
         String newPrefix = prefix;
         if (!prefix.endsWith(":")) {
             newPrefix = prefix + ":";
@@ -191,7 +191,7 @@ public class NcbiGeneInfoParser
      * @param xrefs a "|" separated string
      * @return a map of xrefs
      */
-    private Map<String, Set<String>> parseXrefs(String xrefs) {
+    private static Map<String, Set<String>> parseXrefs(String xrefs) {
         Map<String, Set<String>> xrefMap = new HashMap<String, Set<String>>();
         for (String xref : xrefs.split("\\|")) {
             if (!xref.startsWith("-")) {

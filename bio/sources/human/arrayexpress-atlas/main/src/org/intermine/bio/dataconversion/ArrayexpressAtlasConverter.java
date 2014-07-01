@@ -42,7 +42,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     private static final String DATA_SOURCE_NAME = "ArrayExpress";
     private Map<String, String> genes = new HashMap<String, String>();
     private boolean isDatasetTitleAssigned = false;
-    private String DATASET_TITLE;
+    private String datasetTitle;
     private List<String> datasets = new ArrayList<String>();
 
     private String taxonId = "9606";
@@ -69,7 +69,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
             String fileName = f.getName();
             if (fileName.endsWith("json")) {
                 LOG.info("Reading file: " + fileName);
-                process(new FileReader(f));
+                processFile(new FileReader(f));
             }
         }
     }
@@ -82,7 +82,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         return files;
     }
 
-    public void process(Reader reader) throws Exception {
+    private void processFile(Reader reader) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(reader);
         StringBuilder sb = new StringBuilder();
         String line = null;
@@ -100,8 +100,8 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         if (!isDatasetTitleAssigned) {
             JSONObject experimentInfo = result.getJSONObject("experimentInfo");
             String accession = experimentInfo.getString("accession");
-            DATASET_TITLE = DATASET_TITLE_PREFIX + accession;
-            String dataSetRefId = getDataSet(DATASET_TITLE, getDataSource(DATA_SOURCE_NAME));
+            datasetTitle = DATASET_TITLE_PREFIX + accession;
+            String dataSetRefId = getDataSet(datasetTitle, getDataSource(DATA_SOURCE_NAME));
             setDataSet(dataSetRefId);
             datasets.add(dataSetRefId);
             isDatasetTitleAssigned = true;
@@ -169,12 +169,12 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         return geneId;
     }
 
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
+    private static double round(double value, int places) {
+        if (places < 0) {
+            throw new IllegalArgumentException();
+        }
         long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
+        long tmp = Math.round(value * factor);
         return (double) tmp / factor;
     }
 }

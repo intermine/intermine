@@ -169,9 +169,8 @@ public class SequenceOntology
     private boolean isManyToMany(String parent, String child) {
         if (!testManyToMany(parent, child)) {
             return testManyToMany(child, parent);
-        } else {
-            return true;
         }
+        return true;
     }
 
     private boolean testManyToMany(String parent, String child) {
@@ -562,7 +561,7 @@ public class SequenceOntology
         return invalidPartOfs;
     }
 
-    private void removeRelationship(Map<String, Set<String>> map1,
+    private static void removeRelationship(Map<String, Set<String>> map1,
             Map<String, Set<String>> map2, String child,
             String collectionName) {
         // remove collection from both ends
@@ -573,7 +572,7 @@ public class SequenceOntology
         removeReference(map2, collectionName, child);
     }
 
-    private void removeCollection(Map<String, Set<String>> relationshipMap, String child,
+    private static void removeCollection(Map<String, Set<String>> relationshipMap, String child,
             String collection) {
         Set<String> childCollections = relationshipMap.get(child);
         if (childCollections != null) {
@@ -581,7 +580,7 @@ public class SequenceOntology
         }
     }
 
-    private void removeReference(Map<String, Set<String>> relationshipMap, String child,
+    private static void removeReference(Map<String, Set<String>> relationshipMap, String child,
     String collection) {
         Set<String> childRefs = relationshipMap.get(collection);
         if (childRefs != null) {
@@ -768,7 +767,7 @@ public class SequenceOntology
         }
     }
 
-    private Comparator<ClassDescriptor> getComparator() {
+    private static Comparator<ClassDescriptor> getComparator() {
         // sort classes by name for readability
         Comparator<ClassDescriptor> comparator = new Comparator<ClassDescriptor>() {
             @Override

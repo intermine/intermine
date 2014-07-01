@@ -79,9 +79,8 @@ public abstract class IdResolverFactory
         if (f.exists()) {
             resolver.populateFromFile(f);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -96,9 +95,8 @@ public abstract class IdResolverFactory
         if (f.exists()) {
             resolver.populateFromFile(f);
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
