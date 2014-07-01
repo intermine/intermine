@@ -35,6 +35,29 @@ import org.intermine.model.InterMineFastPathObject;
  */
 public class Model
 {
+    /**
+     * A Map<String, Object with slightly more type information.
+     * @author Alex Kalderimis
+     */
+    public class ModelAST extends HashMap<String, Object>
+    {
+        /**
+         * @return The data for the classes of this model.
+         */
+        @SuppressWarnings("unchecked")
+        public Map<String, Map<String, Object>> getClasses() {
+            return (Map<String, Map<String, Object>>) get("classes");
+        }
+
+        /**
+         * @param classes The classes of this model.
+         */
+        public void setClasses(Map<String, Map<String, Object>> classes) {
+            put("classes", classes);
+        }
+
+    }
+
     private static Map<String, Model> models = new HashMap<String, Model>();
     protected static final String ENDL = System.getProperty("line.separator");
     private static final String DEFAULT_PACKAGE = "org.intermine.model";
@@ -55,10 +78,10 @@ public class Model
     private List<ClassDescriptor> topDownOrderClasses = null;
     private List<ClassDescriptor> bottomUpOrderClasses = null;
     private List<String> problems = new ArrayList<String>();
-    
+
     private static final String CLOB_ACCESS = "org.intermine.objectstore.query.ClobAccess";
     private boolean generatedClassesAvailable = true;
-        
+
     /**
      * Return a Model for specified model name (loading Model if necessary)
      * @param name the name of the model
@@ -66,7 +89,7 @@ public class Model
      */
     public static Model getInstanceByName(String name) {
         if (!models.containsKey(name)) {
-        	models.put(name, ModelFactory.loadModel(name));
+            models.put(name, ModelFactory.loadModel(name));
         }
         return models.get(name);
     }
@@ -89,11 +112,15 @@ public class Model
      *
      * @param name name of model
      * @param packageName the package name of the model
-     * @param version 
+     * @param version The version of this model.
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, String packageName, int version, Set<ClassDescriptor> clds) throws MetaDataException {
+    public Model(String name,
+            String packageName,
+            int version,
+            Set<ClassDescriptor> clds)
+        throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
@@ -159,11 +186,19 @@ public class Model
         }
     }
 
-    public Model(String name, String namespace, Set<ClassDescriptor> classes) throws MetaDataException {
-		this(name, namespace, 0, classes);
-	}
+    /**
+     * Construct a model without a version.
+     * @param name The name of the model.
+     * @param namespace The namespace for this model.
+     * @param classes The classes within this model.
+     * @throws MetaDataException if inconsistencies found in model
+     */
+    public Model(String name, String namespace, Set<ClassDescriptor> classes)
+        throws MetaDataException {
+        this(name, namespace, 0, classes);
+    }
 
-	/**
+    /**
      * Return name of the model's package.
      * @return package name
      */
@@ -283,10 +318,10 @@ public class Model
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<model"
-        		+ " name=\"" + modelName + "\""
-        		+ " package=\"" + packageName + "\""
-        		+ ((version == 0) ? "" : " version=\"" + version + "\"")
-        		+ ">" + ENDL);
+                + " name=\"" + modelName + "\""
+                + " package=\"" + packageName + "\""
+                + ((version == 0) ? "" : " version=\"" + version + "\"")
+                + ">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
@@ -300,13 +335,13 @@ public class Model
      * Returns a data structure suitable for serialisation, eg. as JSON.
      * @return Information about this model.
      */
-    public Map<String, Object> toJsonAST() {
-        Map<String, Object> data = new HashMap<String, Object>();
-        Map<String, Object> classes = new HashMap<String, Object>();
+    public ModelAST toJsonAST() {
+        ModelAST data = new ModelAST();
+        Map<String, Map<String, Object>> classes = new HashMap<String, Map<String, Object>>();
         data.put("name", modelName);
         data.put("package", packageName);
         data.put("version", version);
-        data.put("classes", classes);
+        data.setClasses(classes);
 
         for (ClassDescriptor cld: getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
@@ -315,7 +350,7 @@ public class Model
                 Map<String, Object> attrs = new HashMap<String, Object>();
                 Map<String, Object> refs = new HashMap<String, Object>();
                 Map<String, Object> colls = new HashMap<String, Object>();
-                
+
                 classes.put(cld.getUnqualifiedName(), classData);
                 classData.put("name", cld.getUnqualifiedName());
                 classData.put("extends", parents);
@@ -634,7 +669,10 @@ public class Model
         return !problems.isEmpty();
     }
 
-	public int getVersion() {
-		return version;
-	}
+    /**
+     * @return The version of this model.
+     */
+    public int getVersion() {
+        return version;
+    }
 }
