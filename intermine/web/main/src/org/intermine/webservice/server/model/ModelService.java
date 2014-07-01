@@ -127,7 +127,8 @@ public class ModelService extends WebService
             if (node == null) {
                 attributes.put(JSONFormatter.KEY_INTRO, "\"model\":");
                 output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(new JSONObject(getAnnotatedModel(model)).toString()));
+                output.addResultItem(
+                        Arrays.asList(new JSONObject(getAnnotatedModel(model)).toString()));
             } else {
                 Map<String, String> kvPairs = new HashMap<String, String>();
                 kvPairs.put("name", getNodeName(node));
@@ -146,12 +147,13 @@ public class ModelService extends WebService
     }
 
     private Map<String, Object> getAnnotatedModel(Model model) {
-        Map<String, Object> modelData = model.toJsonAST();
+        Model.ModelAST modelData = model.toJsonAST();
         WebConfig config = InterMineContext.getWebConfig();
-        Map<String, Map<String, Object>> classes = (Map<String, Map<String, Object>>) modelData.get("classes");
+        Map<String, Map<String, Object>> classes = modelData.getClasses();
         for (Map<String, Object> classData: classes.values()) {
-            classData.put("displayName", WebUtil.formatClass(model.getClassDescriptorByName((String) classData.get("name")), config));
-            // Might be a good idea to add in field names as well, but these have sharper edge cases.
+            // Might be a good idea to add in field names as well, but these have sharper edge cases
+            ClassDescriptor cd = model.getClassDescriptorByName((String) classData.get("name"));
+            classData.put("displayName", WebUtil.formatClass(cd, config));
         }
         return modelData;
     }
