@@ -103,7 +103,7 @@ public class IntergenicRegionUtil
 
         Integer previousChrId = null;
         Set<Location> locationSet = new HashSet<Location>();
-        Map<Location, Set<Gene>> locToGeneMap = new HashMap<Location, Set<Gene>>();
+        Map<Integer, Set<Gene>> locToGeneMap = new HashMap<Integer, Set<Gene>>();
 
         osw.beginTransaction();
         while (resIter.hasNext()) {
@@ -113,11 +113,11 @@ public class IntergenicRegionUtil
             Location loc = (Location) rr.get(2);
 
             if (previousChrId != null && !chrId.equals(previousChrId)) {
-                Iterator<?> irIter = createIntergenicRegionFeatures(locationSet,
-                        locToGeneMap, previousChrId);
+                Iterator<SequenceFeature> irIter =
+                        createIntergenicRegionFeatures(locationSet, locToGeneMap, previousChrId);
                 storeItergenicRegions(osw, irIter);
                 locationSet = new HashSet<Location>();
-                locToGeneMap = new HashMap<Location, Set<Gene>>();
+                locToGeneMap = new HashMap<Integer, Set<Gene>>();
             }
 
             addToLocToGeneMap(locToGeneMap, loc, gene);
@@ -127,8 +127,8 @@ public class IntergenicRegionUtil
         }
 
         if (previousChrId != null) {
-            Iterator<?> irIter = createIntergenicRegionFeatures(locationSet, locToGeneMap,
-                    previousChrId);
+            Iterator<SequenceFeature> irIter =
+                    createIntergenicRegionFeatures(locationSet, locToGeneMap, previousChrId);
             storeItergenicRegions(osw, irIter);
 
             // we've created some IntergenicRegion objects so store() the DataSet
@@ -137,7 +137,7 @@ public class IntergenicRegionUtil
         osw.commitTransaction();
     }
 
-    private void addToLocToGeneMap(Map<Location, Set<Gene>> locToGeneMap, Location loc, Gene gene) {
+    private void addToLocToGeneMap(Map<Integer, Set<Gene>> locToGeneMap, Location loc, Gene gene) {
         Util.addToSetMap(locToGeneMap, loc.getStart(), gene);
         Util.addToSetMap(locToGeneMap, loc.getEnd(), gene);
     }
@@ -146,9 +146,9 @@ public class IntergenicRegionUtil
      * Store the objects returned by createIntergenicRegionFeatures().
      */
     private void storeItergenicRegions(ObjectStoreWriter objectStoreWriter,
-            Iterator<?> irIter) throws ObjectStoreException, IllegalAccessException {
+            Iterator<SequenceFeature> irIter) throws ObjectStoreException, IllegalAccessException {
         while (irIter.hasNext()) {
-            SequenceFeature ir = (SequenceFeature) irIter.next();
+            SequenceFeature ir = irIter.next();
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
             Set<Gene> adjacentGenes = (Set<Gene>) ir.getFieldValue("adjacentGenes");
@@ -174,14 +174,16 @@ public class IntergenicRegionUtil
      * @return an Iterator over IntergenicRegion objects
      * @throws ObjectStoreException if there is an ObjectStore problem
      */
-    protected Iterator<?> createIntergenicRegionFeatures(Set<Location> locationSet,
-            final Map<Location, Set<Gene>> locToGeneMap, Integer chrId)
+    protected Iterator<SequenceFeature> createIntergenicRegionFeatures(
+            final Set<Location> locationSet,
+            final Map<Integer, Set<Gene>> locToGeneMap,
+            final Integer chrId)
         throws ObjectStoreException {
         final Chromosome chr = (Chromosome) os.getObjectById(chrId);
 
         // do nothing if chromosome has no length set
         if (chr.getLength() == null) {
-            return new HashSet<Location>().iterator();
+            return new HashSet<SequenceFeature>().iterator();
         }
         final BitSet bs = new BitSet(chr.getLength().intValue() + 1);
 
@@ -192,7 +194,7 @@ public class IntergenicRegionUtil
             bs.set(location.getStart().intValue(), location.getEnd().intValue() + 1);
         }
 
-        return new Iterator<Object>() {
+        return new Iterator<SequenceFeature>() {
             int prevEndPos = 0;
             {
                 if (bs.nextClearBit(prevEndPos) == -1) {
@@ -204,7 +206,7 @@ public class IntergenicRegionUtil
                 return prevEndPos != -1;
             }
 
-            public Object next() {
+            public SequenceFeature next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
@@ -306,7 +308,7 @@ public class IntergenicRegionUtil
             }
 
             public void remove() {
-                throw new UnsupportedOperationException("remove() not implemented");
+                throw new UnsupportedOperationException("Cannot remove from this iterator.");
             }
         };
     }

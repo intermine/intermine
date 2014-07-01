@@ -25,8 +25,11 @@ import org.apache.commons.collections.Predicate;
  *
  * @author Alex Kalderimis
  */
-public class DescriptorUtils
+public final class DescriptorUtils
 {
+    private DescriptorUtils() {
+        // Hidden.
+    }
 
     /**
      * Find the ClassDescriptor for the type that any random element selected from a collection
