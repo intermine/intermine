@@ -76,6 +76,7 @@ public class OntologyIdResolverFactoryTest extends TestCase {
                    .getStatementResultSetHandler();
            MockResultSet result = statementHandler.createResultSet();
            statementHandler.prepareGlobalResultSet(result);
+           connection.close();
            return result;
        }
 

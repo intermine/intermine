@@ -40,6 +40,7 @@ public class NcbiGeneInfoParser
     /**
      * Construct the parser with the file to read, the input file can be for a single taxon or for
      * multiple.
+     * @param taxonIds set of taxon identifiers
      * @param reader a reader for the gene_info file to be parsed
      * @throws IOException if problems reading file
      */
@@ -184,7 +185,9 @@ public class NcbiGeneInfoParser
 
     /**
      * Parse all xref, some gene will have multiple id from same source
-     * e.g. P2RX5 HGNC:8536|MIM:602836|Ensembl:ENSG00000083454|Ensembl:ENSG00000257950|HPRD:09110|Vega:OTTHUMG00000090700|Vega:OTTHUMG00000169623
+     * e.g. P2RX5 HGNC:8536|MIM:602836|Ensembl:ENSG00000083454|Ensembl:ENSG00000257950|HPRD:09110|
+     * Vega:OTTHUMG00000090700|Vega:OTTHUMG00000169623
+     *
      * @param xrefs a "|" separated string
      * @return a map of xrefs
      */
