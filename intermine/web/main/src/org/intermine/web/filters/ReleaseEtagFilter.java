@@ -63,7 +63,9 @@ public class ReleaseEtagFilter implements Filter
                 + ", ifNoneMatch = " + ifNoneMatch
                 + ", ifModSince = " + ifModSince);
 
-        if (etag.equals(ifNoneMatch) || zipEtag.equals(ifNoneMatch) || (ifModSince == START_UP.getTime())) {
+        if (etag.equals(ifNoneMatch)
+                || zipEtag.equals(ifNoneMatch)
+                || (ifModSince == START_UP.getTime())) {
             inner.setStatus(304);
         } else {
             inner.setHeader("ETag", etag);
@@ -73,9 +75,12 @@ public class ReleaseEtagFilter implements Filter
         }
     }
 
+    /* The release is the combination of the release version AND the API version - since
+     * we want fresh data served if either changes. */
     private String getRelease() {
         if (release == null) {
-            release = InterMineContext.getWebProperties().getProperty("project.releaseVersion");
+            release = InterMineContext.getWebProperties().getProperty("project.releaseVersion")
+                        + "-" + Constants.WEB_SERVICE_VERSION;
         }
         return release;
     }
