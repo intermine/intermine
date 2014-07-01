@@ -184,7 +184,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
                 }

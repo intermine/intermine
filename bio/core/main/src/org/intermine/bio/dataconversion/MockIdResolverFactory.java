@@ -34,17 +34,6 @@ public class MockIdResolverFactory extends IdResolverFactory
         return resolver;
     }
 
-    /**
-     * Create mock entries for the IdResolver, these will be added when getIdResolver
-     * is called.
-     * @param taxonId the organism of identifiers
-     * @param primaryId main identifier
-     * @param synonyms synonyms for the main identifier
-     */
-//    public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-//        resolver.addSynonyms(taxonId, primaryId, synonyms);
-//    }
-
     @Override
     protected void createIdResolver() {
     }

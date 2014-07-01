@@ -44,7 +44,6 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Construct without SO term of the feature type.
-     * @param soTerm the feature type to resolve
      */
     public ZfinIdentifiersResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -52,7 +51,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Construct with SO term of the feature type.
-     * @param soTerm the feature type to resolve
+     * @param clsName the feature type to resolve
      */
     public ZfinIdentifiersResolverFactory(String clsName) {
         this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
@@ -60,7 +59,6 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Build an IdResolver from Entrez Gene gene_info file
-     * @return an IdResolver for Entrez Gene
      */
     @Override
     protected void createIdResolver() {
@@ -96,7 +94,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f);
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
                 }
@@ -106,9 +104,15 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Populate the ID resolver from a tab delimited file
+     *
+     * @param f the file
+     * @throws IOException if we can't read from the file
+     */
     protected void createFromFile(File f) throws IOException {
         // data is in format:
-        // ZDBID	ID1,ID2,ID3
+        // ZDBID ID1,ID2,ID3
         Iterator<?> lineIter = FormattedTextParser.
                 parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {

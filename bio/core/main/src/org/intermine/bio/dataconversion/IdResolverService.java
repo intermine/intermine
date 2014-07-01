@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  *
  * @author Fengyuan Hu
  */
-public class IdResolverService
+public final class IdResolverService
 {
     protected static final Logger LOG = Logger.getLogger(IdResolverService.class);
 
@@ -54,7 +54,7 @@ public class IdResolverService
 
     /**
      * Create a Entrez Gene Id Resolver by given taxonId set
-     * @param taxonIda set of taxon ids
+     * @param taxonIds set of taxon ids
      * @return an IdResolver
      */
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
@@ -67,12 +67,15 @@ public class IdResolverService
         return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
     }
 
+    /**
+     * @return array of taxon IDs for MODs
+     */
     public static IdResolver getIdResolverForMOD() {
         // String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
         // String[] modTaxonIdsWithoutWorm = {"9606", "7227", "7955", "10090","10116", "4932"};
         // HACK - In entrezIdResolver_config.properties, 6239 (worm) is disabled.
 
-        String[] modTaxonIdsWithoutHuman = {"7227", "7955", "10090","10116", "4932", "6239"};
+        String[] modTaxonIdsWithoutHuman = {"7227", "7955", "10090", "10116", "4932", "6239"};
         // HACK - resolve human ids to HGNC symbols
         IdResolverService.getHumanIdResolver();
         return new EntrezGeneIdResolverFactory()
@@ -91,7 +94,7 @@ public class IdResolverService
 
     /**
      * Create a Entrez Gene Id Resolver by given taxonId set
-     * @param taxonId a set of taxon ids
+     * @param taxonIds a set of taxon ids
      * @param failOnError if false swallow any exceptions and return null
      * @return an IdResolver
      */
@@ -118,7 +121,7 @@ public class IdResolverService
 
     /**
      * Create a fly id resolver
-     * @param clsName SO term collection
+     * @param clsCol SO term collection
      * @return an IdResolver
      */
     public static IdResolver getFlyIdResolver(Set<String> clsCol) {
@@ -137,7 +140,7 @@ public class IdResolverService
 
     /**
      * Create a fly id resolver
-     * @param clsName SO term collection
+     * @param clsCol SO term collection
      * @param failOnError if false swallow any exceptions and return null
      * @return an IdResolver
      */

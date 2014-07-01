@@ -40,7 +40,6 @@ public class HumanIdResolverFactory extends IdResolverFactory
 
     /**
      * Construct without SO term of the feature type.
-     * @param soTerm the feature type to resolve
      */
     public HumanIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -80,7 +79,7 @@ public class HumanIdResolverFactory extends IdResolverFactory
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f);
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
                 }
@@ -90,6 +89,12 @@ public class HumanIdResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Populate the ID resolver from a tab delimited file
+     *
+     * @param f the file
+     * @throws IOException if we can't read from the file
+     */
     protected void createFromFile(File f) throws IOException {
         // Approved Symbol\tHGNC ID\tEntrez Gene ID\tEnsembl ID\tOMIM ID
         Iterator<?> lineIter = FormattedTextParser
