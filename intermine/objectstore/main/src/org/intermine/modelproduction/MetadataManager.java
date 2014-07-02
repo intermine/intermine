@@ -21,14 +21,12 @@ import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
 import org.postgresql.largeobject.LargeObject;
@@ -132,13 +130,15 @@ public final class MetadataManager
         Connection connection = database.getConnection();
         PreparedStatement insert = null, delete = null;
         boolean autoCommit = connection.getAutoCommit();
+        String removeExisting = "DELETE FROM " + METADATA_TABLE + " where key = ?";
+        String insertNew = "INSERT INTO " + METADATA_TABLE + " (key, value) " + " VALUES (?,?)";
         try {
             connection.setAutoCommit(false);
-            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE + " where key = ?");
+            delete = connection.prepareStatement(removeExisting);
             delete.setString(1, key);
             delete.executeUpdate();
             if (value != null) {
-                insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE + " (key, value) " + " VALUES (?,?)");
+                insert = connection.prepareStatement(insertNew);
                 insert.setString(1,  key);
                 insert.setString(2, value);
                 insert.executeUpdate();
@@ -149,7 +149,7 @@ public final class MetadataManager
                 connection.rollback();
             }
         } finally {
-            
+
             if (insert != null) {
                 insert.close();
             }
@@ -181,16 +181,20 @@ public final class MetadataManager
         try {
             connection.setAutoCommit(false);
 
-            columnResult = connection.getMetaData().getColumns(null, null, METADATA_TABLE, "blob_value");
+            columnResult =
+                    connection.getMetaData().getColumns(null, null, METADATA_TABLE, "blob_value");
             if (!columnResult.next()) {
-                connection.createStatement().execute("ALTER TABLE " + METADATA_TABLE + " ADD blob_value BYTEA");
+                String ddl = "ALTER TABLE " + METADATA_TABLE + " ADD blob_value BYTEA";
+                connection.createStatement().execute(ddl);
             }
 
-            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE + " where key = ?");
+            String deleteExisting = "DELETE FROM " + METADATA_TABLE + " where key = ?";
+            delete = connection.prepareStatement(deleteExisting);
             delete.setString(1, key);
             delete.executeUpdate();
 
-            insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE + " (key, blob_value) VALUES (?, ?)");
+            String sql = "INSERT INTO " + METADATA_TABLE + " (key, blob_value) VALUES (?, ?)";
+            insert = connection.prepareStatement(sql);
             insert.setString(1, key);
             insert.setBytes(2, value);
             insert.executeUpdate();
@@ -410,6 +414,7 @@ public final class MetadataManager
          * which must not be in autocommit mode. The connection will be closed when this object is
          * closed
          * @param obj a LargeObject to write to
+         * @param commitMode The commit mode to leave the connection in.
          */
         public LargeObjectOutputStream(Connection con, LargeObject obj, boolean commitMode) {
             this.con = con;
@@ -472,7 +477,7 @@ public final class MetadataManager
         Connection con = database.getConnection();
         boolean commitMode = con.getAutoCommit();
         try {
-            con.setAutoCommit(false); // Large Objects may not be used in auto-commit mode. 
+            con.setAutoCommit(false); // Large Objects may not be used in auto-commit mode.
             Statement s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
                     + key + "'");
