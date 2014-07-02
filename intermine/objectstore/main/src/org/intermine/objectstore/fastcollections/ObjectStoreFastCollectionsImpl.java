@@ -77,8 +77,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
      * @throws IllegalArgumentException if props are invalid
      * @throws ObjectStoreException if there is a problem with the instance
      */
-    public static ObjectStoreFastCollectionsImpl getInstance(
-            @SuppressWarnings("unused") String osAlias, Properties props)
+    public static ObjectStoreFastCollectionsImpl getInstance(String osAlias, Properties props)
         throws ObjectStoreException {
         String underlyingOsAlias = props.getProperty("os");
         if (underlyingOsAlias == null) {
@@ -382,7 +381,8 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
 
     private void insertResults(Map<Integer, Collection<Object>> collections, Results l)
         throws IllegalAccessException {
-        @SuppressWarnings("unchecked") Collection<ResultsRow<Object>> res = (Collection) l;
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Collection<ResultsRow<Object>> res = (Collection) l;
         for (ResultsRow<Object> row : res) {
             Collection<Object> fromCollection = collections.get(row.get(0));
             if (fromCollection != null) {
