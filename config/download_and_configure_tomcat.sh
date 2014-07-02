@@ -11,4 +11,5 @@ cat apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh >> prefixed
 cp prefixed apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh
 sed -i 's!<Context>!<Context sessionCookiePath="/" useHttpOnly="false">!' apache-tomcat-${TOMCAT_VERSION}/conf/context.xml
 chmod +x apache-tomcat-${TOMCAT_VERSION}/bin/catalina.sh # startup.sh won't work unless catalina.sh is executable.
-
+sh apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh 2>&1 & sleep 3
+echo "Started tomcat application container"
