@@ -1,0 +1,14 @@
+<model name="so" package="org.intermine.model.bio">
+<class name="Chromosome" extends="SequenceFeature" is-interface="true"></class>
+<class name="Exon" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="exons"/>
+</class>
+<class name="Gene" extends="SequenceFeature" is-interface="true">
+	<collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
+</class>
+<class name="SequenceFeature" is-interface="true"></class>
+<class name="Transcript" extends="SequenceFeature" is-interface="true">
+	<reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
+	<collection name="exons" referenced-type="Exon" reverse-reference="transcript"/>
+</class>
+</model>

@@ -228,7 +228,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param log ignored
      */
     @Override
-    public void setLog(@SuppressWarnings("unused") Writer log) {
+    public void setLog(Writer log) {
         throw new UnsupportedOperationException("Cannot change the log on a writer");
     }
 
@@ -238,7 +238,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param tableName ignored
      */
     @Override
-    public void setLogTableName(@SuppressWarnings("unused") String tableName) {
+    public void setLogTableName(String tableName) {
         throw new UnsupportedOperationException("Cannot change the log table name on a writer");
     }
 
@@ -255,7 +255,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setLogEverything(@SuppressWarnings("unused") boolean logEverything) {
+    public void setLogEverything(boolean logEverything) {
         throw new UnsupportedOperationException("Cannot change logEverything on a writer");
     }
 
@@ -271,7 +271,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setVerboseQueryLog(@SuppressWarnings("unused") boolean verboseQueryLog) {
+    public void setVerboseQueryLog(boolean verboseQueryLog) {
         throw new UnsupportedOperationException("Cannot change verboseQueryLog on a writer");
     }
 
@@ -287,7 +287,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setLogExplains(@SuppressWarnings("unused") boolean logExplains) {
+    public void setLogExplains(boolean logExplains) {
         throw new UnsupportedOperationException("Cannot change logExplains on a writer");
     }
 
@@ -303,7 +303,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setLogBeforeExecute(@SuppressWarnings("unused") boolean logBeforeExecute) {
+    public void setLogBeforeExecute(boolean logBeforeExecute) {
         throw new UnsupportedOperationException("Cannot change logBeforeExecute on a writer");
     }
 
@@ -319,7 +319,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setDisableResultsCache(@SuppressWarnings("unused") boolean disableResultsCache) {
+    public void setDisableResultsCache(boolean disableResultsCache) {
         throw new UnsupportedOperationException("Cannot change disableResultsCache on a writer");
     }
 
@@ -1596,7 +1596,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * This method should never be called on an ObjectStoreWriter.
      */
     @Override
-    public void databaseAltered(@SuppressWarnings("unused") Set<Object> tablesAltered) {
+    public void databaseAltered(Set<Object> tablesAltered) {
         throw new IllegalArgumentException("databaseAltered should never be called on an "
                 + "ObjectStoreWriter");
     }
