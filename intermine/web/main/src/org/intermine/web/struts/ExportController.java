@@ -36,6 +36,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Kim Rutherford
  */
 
+@SuppressWarnings("deprecation")
 public class ExportController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(ExportController.class);

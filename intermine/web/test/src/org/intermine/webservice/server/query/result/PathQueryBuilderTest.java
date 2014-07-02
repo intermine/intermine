@@ -3,7 +3,7 @@
  */
 package org.intermine.webservice.server.query.result;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import junit.framework.AssertionFailedError;
@@ -24,6 +24,14 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  *
  */
 public class PathQueryBuilderTest extends TestCase {
+
+    public static final class EmptyMapProducer<K, V> implements Producer<Map<K, V>> {
+
+        @Override
+        public Map<K, V> produce() {
+            return Collections.emptyMap();
+        }
+    }
 
     /**
      * @param name
@@ -47,8 +55,8 @@ public class PathQueryBuilderTest extends TestCase {
     "<constraint path=\"Employee\" op=\"IN\" value=\"Decent Human Beings\" />" +
     "</query>";
 
+    private final Producer<Map<String, InterMineBag>> bags = new EmptyMapProducer<String, InterMineBag>();
 
-    private final Map<String, InterMineBag> bags = new HashMap<String, InterMineBag>();
     private PathQuery expectedGoodQuery;
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
@@ -72,7 +80,7 @@ public class PathQueryBuilderTest extends TestCase {
     public void testBuildGoodQuery() {
         PathQueryBuilder pqb = new PathQueryBuilder();
 
-        pqb.buildQuery(goodXML, schemaUrl, new ConstantProducer(bags));
+        pqb.buildQuery(goodXML, schemaUrl, bags);
         assertEquals(expectedGoodQuery.toString(), pqb.getQuery().toString());
 
     }
@@ -81,7 +89,7 @@ public class PathQueryBuilderTest extends TestCase {
         PathQueryBuilder pqb = new PathQueryBuilder();
 
         try {
-            pqb.buildQuery(invalidXML, schemaUrl, new ConstantProducer(bags));
+            pqb.buildQuery(invalidXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -95,7 +103,7 @@ public class PathQueryBuilderTest extends TestCase {
         }
 
         try {
-            pqb.buildQuery(badQuery, schemaUrl, new ConstantProducer(bags));
+            pqb.buildQuery(badQuery, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -109,7 +117,7 @@ public class PathQueryBuilderTest extends TestCase {
         }
 
         try {
-            pqb.buildQuery(bagXML, schemaUrl, new ConstantProducer(bags));
+            pqb.buildQuery(bagXML, schemaUrl, bags);
             fail("Build query did not throw an exception - despite being given bad input - got this:" + pqb.getQuery());
         } catch (AssertionFailedError e) {
             throw e;
@@ -125,20 +133,5 @@ public class PathQueryBuilderTest extends TestCase {
             fail("Unexpected error when building a query from bad xml" + t.getMessage());
         }
 
-    }
-
-    private class ConstantProducer implements Producer<Map<String, InterMineBag>> {
-
-        private Map<String, InterMineBag> bags;
-
-        ConstantProducer(Map<String, InterMineBag> bags) {
-            this.bags = bags;
-        }
-
-        @Override
-        public Map<String, InterMineBag> produce() {
-            return bags;
-        }
-        
     }
 }

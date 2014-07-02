@@ -27,6 +27,7 @@ import org.intermine.web.struts.TableExportForm;
  * @author Kim Rutherford
  */
 
+@SuppressWarnings("deprecation")
 public interface TableHttpExporter
 {
     /**

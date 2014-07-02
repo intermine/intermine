@@ -13,9 +13,12 @@ import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.userprofile.Tag;
@@ -33,7 +36,13 @@ public class BagManagerTest extends InterMineAPITestCase
     private InterMineBag globalCompanyBag, globalAddressBag, superPrivateBag, userCompanyBag, userAddressBag;
     private Integer ADDRESS_ID = 1;
     private Integer DUMMY_ID = 2;
+    private ClassKeys classKeys;
     private Profile bobProfile;
+    private Map<String, InterMineBag>  noBags = new HashMap<String, InterMineBag>();
+    private Map<String, SavedQuery>  noQueries = new HashMap<String, SavedQuery>();
+    private Map<String, ApiTemplate>  noTemplates = new HashMap<String, ApiTemplate>();
+    private boolean isLocal = true;
+    private boolean isSuperUser = false;
 
     public BagManagerTest(String arg) {
         super(arg);
@@ -47,9 +56,10 @@ public class BagManagerTest extends InterMineAPITestCase
         emptyUser = pm.getProfile("emptyUser");
         tagManager = pm.getTagManager();
         bagManager = im.getBagManager();
-        
-        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(),
-                new HashMap(), true, false);
+        classKeys = im.getClassKeys();
+
+        bobProfile = new Profile(pm, "bob", 101, "bob_pass",
+                noQueries, noBags, noTemplates, isLocal, isSuperUser);
         pm.createProfile(bobProfile);
         setUpBagsAndTags();
     }
@@ -106,14 +116,13 @@ public class BagManagerTest extends InterMineAPITestCase
         expected = createExpected(globalCompanyBag, superPrivateBag);
         assertEquals(expected, bagManager.getUserBagsWithTag(superUser, TagNames.IM_FAVOURITE));
 
-        expected = Collections.EMPTY_MAP;
+        expected = Collections.emptyMap();
         assertEquals(expected, bagManager.getUserBagsWithTag(superUser, TagNames.IM_HIDDEN));
     }
 
     public void testGetBagsWithTagsDashCollisions() throws Exception {
-        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
         InterMineBag listA = superUser.createBag("list-a", "Employee", "", classKeys);
-        InterMineBag list_A = superUser.createBag("list_a", "Employee", "", classKeys);
+        superUser.createBag("list_a", "Employee", "", classKeys);
 
         tagManager.addTag("FOO", listA, superUser);
 
@@ -123,9 +132,8 @@ public class BagManagerTest extends InterMineAPITestCase
     }
 
     public void testGetBagsWithTagsUnderscoreCollisions() throws Exception {
-        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
         InterMineBag listA = superUser.createBag("listX", "Employee", "", classKeys);
-        InterMineBag list_A = superUser.createBag("list_", "Employee", "", classKeys);
+        superUser.createBag("list_", "Employee", "", classKeys);
 
         tagManager.addTag("FOO", listA, superUser);
 
@@ -134,9 +142,8 @@ public class BagManagerTest extends InterMineAPITestCase
     }
 
     public void testGetBagsWithTagsCaseCollisions() throws Exception {
-        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
         InterMineBag listb = superUser.createBag("list-b", "Employee", "", classKeys);
-        InterMineBag listB = superUser.createBag("list-B", "Employee", "", classKeys);
+        superUser.createBag("list-B", "Employee", "", classKeys);
 
         tagManager.addTag("BAR", listb, superUser);
 
@@ -234,7 +241,7 @@ public class BagManagerTest extends InterMineAPITestCase
     }
 
     public void testGetUserOrGlobalBagsOfTypeNoneOfType() throws Exception {
-        Map<String, InterMineBag> expected = Collections.EMPTY_MAP;
+        Map<String, InterMineBag> expected = Collections.emptyMap();
         assertEquals(expected, bagManager.getBagsOfType(testUser, "Employee"));
     }
 
@@ -255,7 +262,7 @@ public class BagManagerTest extends InterMineAPITestCase
     }
 
     public void testGetUserOrGlobalBagsContainingIdNoBagsWithId() throws Exception {
-        Set<InterMineBag> expected = Collections.EMPTY_SET;
+        Set<InterMineBag> expected = Collections.emptySet();
         assertEquals(expected, bagManager.getCurrentBagsContainingId(testUser, DUMMY_ID));
     }
 

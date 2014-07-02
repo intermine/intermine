@@ -29,6 +29,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Thomas Riley
  *
  */
+@SuppressWarnings("deprecation")
 public class BagDetailsAction extends Action
 {
     /**

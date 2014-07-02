@@ -47,11 +47,12 @@ import static java.lang.String.format;
 /**
  * Singleton manager class for shared bags.
  * Implements retrieving, adding and deleting bag shared between users.
- * @author Daniela Butano
+ *
+ * @author Daniela Butano, Alex Kalderimis
  */
-public class SharedBagManager
+public final class SharedBagManager
 {
-    private static final Map<ProfileManager, SharedBagManager> sharedBagManagers
+    private static final Map<ProfileManager, SharedBagManager> SHARED_BAG_MANAGERS
         = new HashMap<ProfileManager, SharedBagManager>();
     /** the table name **/
     public static final String SHARED_BAGS = "sharedbag";
@@ -67,10 +68,10 @@ public class SharedBagManager
      * @return the instance
      */
     public static SharedBagManager getInstance(ProfileManager profileManager) {
-        if (!sharedBagManagers.containsKey(profileManager)) {
-            sharedBagManagers.put(profileManager, new SharedBagManager(profileManager));
+        if (!SHARED_BAG_MANAGERS.containsKey(profileManager)) {
+            SHARED_BAG_MANAGERS.put(profileManager, new SharedBagManager(profileManager));
         }
-        return sharedBagManagers.get(profileManager);
+        return SHARED_BAG_MANAGERS.get(profileManager);
     }
 
     /**
@@ -80,7 +81,8 @@ public class SharedBagManager
     private SharedBagManager(ProfileManager profileManager) {
         this.profileManager = profileManager;
         try {
-            this.uosw = (ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter();
+            this.uosw = (ObjectStoreWriterInterMineImpl)
+                    profileManager.getProfileObjectStoreWriter();
         } catch (ClassCastException e) {
             throw new RuntimeException("Hey, that wasn't an intermine object store writer");
         }
@@ -90,8 +92,8 @@ public class SharedBagManager
             LOG.error("Error trying to create extra tables", sqle);
         }
     }
-    
-    private static final SQLOperation<Boolean> createSavedBagTable = new SQLOperation<Boolean>() {
+
+    private static final SQLOperation<Boolean> CREATE_SB_TABLE = new SQLOperation<Boolean>() {
         @Override
         public Boolean run(PreparedStatement stm) throws SQLException {
             if (!DatabaseUtil.tableExists(stm.getConnection(), SHARED_BAGS)) {
@@ -102,7 +104,8 @@ public class SharedBagManager
             return Boolean.FALSE;
         }
     };
-    private static final SQLOperation<Void> createInvitesTable = new SQLOperation<Void>() {
+
+    private static final SQLOperation<Void> CREATE_INVITES_TABLE = new SQLOperation<Void>() {
         @Override
         public Void run(PreparedStatement stm) throws SQLException {
             if (!DatabaseUtil.tableExists(stm.getConnection(), SharingInvite.TABLE_NAME)) {
@@ -115,7 +118,7 @@ public class SharedBagManager
 
     private void checkDBTablesExist() throws SQLException {
         final Boolean createdTable = uosw.performUnsafeOperation(
-                getStatementCreatingTable(), createSavedBagTable);
+                getStatementCreatingTable(), CREATE_SB_TABLE);
         uosw.performUnsafeOperation(getStatementCreatingIndex(), new SQLOperation<Void>() {
             @Override
             public Void run(PreparedStatement stm) throws SQLException {
@@ -126,7 +129,7 @@ public class SharedBagManager
                 return null;
             }
         });
-        uosw.performUnsafeOperation(SharingInvite.getTableDefinition(), createInvitesTable);
+        uosw.performUnsafeOperation(SharingInvite.getTableDefinition(), CREATE_INVITES_TABLE);
     }
 
     /**
@@ -135,9 +138,10 @@ public class SharedBagManager
      */
     private static String getStatementCreatingTable() {
         return "CREATE TABLE " + SHARED_BAGS
-             + "(bagid integer NOT NULL, userprofileid integer NOT NULL)";
+             + "(bagid integer NOT NULL, "
+             + " userprofileid integer NOT NULL)";
     }
- 
+
     /**
      * Return the sql query to create the index in the 'sharedbag'
      * @return the string containing the sql query
@@ -146,7 +150,7 @@ public class SharedBagManager
         return "CREATE UNIQUE INDEX sharedbag_index1 ON " + SHARED_BAGS
                 + "(bagid, userprofileid)";
     }
-    
+
     private static final String GET_SHARED_BAGS_SQL =
         "SELECT bag.name as bagname, u.username as sharer"
         + " FROM savedbag as bag, userprofile as u, " + SHARED_BAGS + " as share"
@@ -162,27 +166,31 @@ public class SharedBagManager
         if (profile == null || !profile.isLoggedIn()) {
             return Collections.emptyMap();
         }
-        // We have to loop over things twice, because otherwise we end up in 
+        // We have to loop over things twice, because otherwise we end up in
         // the dreaded ObjectStore deadlock, since this DB has only a single
         // connection.
         Map<String, Set<String>> whatTheSharersShared;
         try {
-            whatTheSharersShared = uosw.performUnsafeOperation(GET_SHARED_BAGS_SQL, new SQLOperation<Map<String, Set<String>>>() {
-                @Override
-                public Map<String, Set<String>> run(PreparedStatement stm) throws SQLException {
-                    final Map<String, Set<String>> ret = new HashMap<String, Set<String>>();
-                    stm.setInt(1, profile.getUserId());
-                    ResultSet rs = stm.executeQuery();
-                    while (rs.next()) {
-                        String bagName = rs.getString("sharer");
-                        if (!ret.containsKey(bagName)) {
-                            ret.put(bagName, new HashSet<String>());
+            whatTheSharersShared = uosw.performUnsafeOperation(
+                    GET_SHARED_BAGS_SQL,
+                    new SQLOperation<Map<String, Set<String>>>() {
+                        @Override
+                        public Map<String, Set<String>> run(PreparedStatement stm)
+                            throws SQLException {
+                            final Map<String, Set<String>> ret = new HashMap<String, Set<String>>();
+                            stm.setInt(1, profile.getUserId());
+                            ResultSet rs = stm.executeQuery();
+                            while (rs.next()) {
+                                String bagName = rs.getString("sharer");
+                                if (!ret.containsKey(bagName)) {
+                                    ret.put(bagName, new HashSet<String>());
+                                }
+                                ret.get(bagName).add(rs.getString("bagname"));
+                            }
+                            return ret;
                         }
-                        ret.get(bagName).add(rs.getString("bagname"));
                     }
-                    return ret;
-                }
-            });
+            );
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving the shared bags "
                     + "for the user : " + profile.getUserId(), e);
@@ -196,13 +204,13 @@ public class SharedBagManager
                     LOG.warn("Shared bag doesn't exist: " + bagName);
                 } else {
                     ret.put(bagName, bag);
-                }    
-            }    
+                }
+            }
         }
         return ret;
     }
-    
-    private final static String USERS_WITH_ACCESS_SQL =
+
+    private static final String USERS_WITH_ACCESS_SQL =
         "SELECT u.username"
         + " FROM userprofile as u, sharedbag as share"
         + " WHERE u.id = share.userprofileid AND share.bagid = ?"
@@ -210,36 +218,38 @@ public class SharedBagManager
 
     /**
      * Return the users this bag is shared with.
-     * 
+     *
      * This set does not include the name of the owner of the bag, and it doesn't take
      * global sharing into account.
-     * 
+     *
      * @param bag the bag the users share
      * @return the list of users sharing the bag
      */
     public Set<String> getUsersWithAccessToBag(final StorableBag bag) {
         try {
-            return uosw.performUnsafeOperation(USERS_WITH_ACCESS_SQL, new SQLOperation<Set<String>>() {
-                @Override
-                public Set<String> run(PreparedStatement stm) throws SQLException {
-                    final Set<String> usersWithAccess = new LinkedHashSet<String>();
-                    stm.setInt(1, bag.getSavedBagId());
-                    ResultSet rs = stm.executeQuery();
-                    while (rs.next()) {
-                        usersWithAccess.add(rs.getString(1));
+            return uosw.performUnsafeOperation(USERS_WITH_ACCESS_SQL,
+                    new SQLOperation<Set<String>>() {
+                    @Override
+                    public Set<String> run(PreparedStatement stm) throws SQLException {
+                        final Set<String> usersWithAccess = new LinkedHashSet<String>();
+                        stm.setInt(1, bag.getSavedBagId());
+                        ResultSet rs = stm.executeQuery();
+                        while (rs.next()) {
+                            usersWithAccess.add(rs.getString(1));
+                        }
+                        return usersWithAccess;
                     }
-                    return usersWithAccess;
                 }
-            });
+            );
         } catch (SQLException e) {
             throw new RuntimeException("Error retrieving the users sharing "
                     + "the bag : " + bag.getName(), e);
         }
     }
-    
+
     /**
      * Generate an invitation to share a bag.
-     * 
+     *
      * The invitation is a record of the invitation to share a bag, and records the
      * bag that is shared and whom it is meant to be shared with. This method generates a new
      * invitation, stores it in the persistent data-store that the bag is stored in,
@@ -258,17 +268,35 @@ public class SharedBagManager
         }
         return invite;
     }
-    
+
+    /**
+     * Either reject or accept an invitation to share a list.
+     *
+     * @param invitation The invitation in question.
+     * @param accepter The user who is deciding what to do.
+     * @param accepted Whether to accept or reject this invitation.
+     * @throws UserNotFoundException If we can't find the accepter or the inviter.
+     * @throws UserAlreadyShareBagException If this user already has access to this resource.
+     * @throws NotFoundException If the resource itself does not exist.
+     */
     public void resolveInvitation(SharingInvite invitation, Profile accepter, boolean accepted)
-            throws UserNotFoundException, UserAlreadyShareBagException, NotFoundException {
+        throws UserNotFoundException, UserAlreadyShareBagException, NotFoundException {
         if (accepted) {
             acceptInvitation(invitation, accepter);
         } else {
             rejectInvitation(invitation);
         }
-        resolveInvitation(invitation, accepter, true);
     }
-    
+
+    /**
+     * Reject this invitation. After this method is called, the invitation will be
+     * marked as resolved (declined), and will not be able to be used again.
+     *
+     * @param invitation The invitation.
+     * @throws UserNotFoundException If we can't find the accepter or the inviter.
+     * @throws UserAlreadyShareBagException If this user already has access to this resource.
+     * @throws NotFoundException If the resource itself does not exist.
+     */
     public void rejectInvitation(SharingInvite invitation)
             throws UserNotFoundException, UserAlreadyShareBagException, NotFoundException {
         try { // Try this first, as we don't want to share unless this worked.
@@ -277,12 +305,22 @@ public class SharedBagManager
             throw new RuntimeException("Error rejecting invitation", e);
         }
     }
-    
+
+    /**
+     * Accept this invitation. When this method returns, the user who accepted this
+     * invitation will have access to the resource it grants access to.
+     *
+     * @param invitation The invitation.
+     * @param accepter The user accepting the invitation.
+     * @throws UserNotFoundException If we can't find the accepter or the inviter.
+     * @throws UserAlreadyShareBagException If this user already has access to this resource.
+     * @throws NotFoundException If the resource itself does not exist.
+     */
     public void acceptInvitation(
             SharingInvite invitation,
             Profile accepter)
         throws UserNotFoundException, UserAlreadyShareBagException, NotFoundException {
-        
+
         try { // Try this first, as we don't want to share unless this worked.
             invitation.setAccepted(true);
         } catch (SQLException e) {
@@ -317,10 +355,10 @@ public class SharedBagManager
         }
         storeShare(bag, userProfile);
     }
-    
-    private static final String STORE_SHARE_SQL = "INSERT INTO " + SHARED_BAGS + " VALUES(?, ?)";
 
-    private void storeShare(final InterMineBag bag, final UserProfile sharedWith) 
+    private static final String STORE_SHARE_SQL = "INSERT INTO " + SHARED_BAGS + " VALUES (?, ?)";
+
+    private void storeShare(final InterMineBag bag, final UserProfile sharedWith)
         throws UserAlreadyShareBagException {
         final String userName = sharedWith.getUsername();
         try {
@@ -399,7 +437,7 @@ public class SharedBagManager
 
     private static final String NOT_ALREADY_SHARED_MSG =
         "This bag (%s) was not shared with this user (%s)";
-    
+
     private static final String UNSHARING_ERROR_MSG =
         "Error unsharing this bag (%s:%d) from this user (%s:%d)";
 
@@ -415,14 +453,17 @@ public class SharedBagManager
             return;
         }
         try {
-            Integer deleted = uosw.performUnsafeOperation(DELETE_SHARE_SQL, new SQLOperation<Integer>() {
-                @Override
-                public Integer run(PreparedStatement stm) throws SQLException {
-                    stm.setInt(1, userProfile.getId());
-                    stm.setInt(2, bag.getSavedBagId());
-                    return stm.executeUpdate();
-                }
-            });
+            Integer deleted = uosw.performUnsafeOperation(
+                    DELETE_SHARE_SQL,
+                    new SQLOperation<Integer>() {
+                        @Override
+                        public Integer run(PreparedStatement stm) throws SQLException {
+                            stm.setInt(1, userProfile.getId());
+                            stm.setInt(2, bag.getSavedBagId());
+                            return stm.executeUpdate();
+                        }
+                    }
+            );
             if (deleted > 0) {
                 informProfileOfChange(userName, new DeletionEvent(bag));
             } else {
@@ -434,19 +475,19 @@ public class SharedBagManager
                 userProfile.getUsername(), userProfile.getId()), e);
         }
     }
-    
+
     private void informProfileOfChange(final String name, final ChangeEvent evt) {
         if (profileManager.isProfileCached(name)) {
             profileManager.getProfile(name).getSearchRepository().receiveEvent(evt);
         }
     }
 
-    private static final String UNSHARE_BAG_SQL = 
+    private static final String UNSHARE_BAG_SQL =
         "DELETE FROM " + SHARED_BAGS + " WHERE bagid = ?";
 
     private static final String UNSHARE_BAG_ERROR_MSG =
         "Error removing all shares of this bag: %s:%d";
-    
+
     /**
      * Delete the sharing between the bag and all the users sharing the bag.
      * Method used when a bag is deleted.
@@ -481,6 +522,12 @@ public class SharedBagManager
     private static final String REMOVE_USERS_INVITES_SQL =
         "DELETE FROM " + SharingInvite.TABLE_NAME + " WHERE inviterid = ?";
 
+    /**
+     * Removes all invitations to share resources that were issued by the
+     * user with the given id. This is used as part of the user deletion operation.
+     *
+     * @param userId An id of a user.
+     */
     public void removeAllInvitesBy(final Integer userId) {
         if (userId == null) {
             LOG.warn("I can't remove invites when the user-id is null");
@@ -498,10 +545,16 @@ public class SharedBagManager
             throw new RuntimeException("Errors removing invites", e);
         }
     }
-    
+
     private static final String DELETE_SHARES_WITH =
         "DELETE FROM " + SHARED_BAGS + " WHERE userprofileid = ?";
 
+    /**
+     * Removes all shares from or to the user with the given id.
+     * This is used as part of the user deletion operation.
+     *
+     * @param userId A user id.
+     */
     public void removeAllSharesInvolving(final Integer userId) {
         if (userId == null) {
             return;
@@ -518,10 +571,17 @@ public class SharedBagManager
             throw new RuntimeException("Errors removing shares", e);
         }
     }
-    
-    private static final String DELETE_USERS_SHARES_WITH = DELETE_SHARES_WITH +
-        " AND bagid IN (SELECT b.id FROM savedbag AS b WHERE b.userprofileid = ?)";
 
+    private static final String DELETE_USERS_SHARES_WITH = DELETE_SHARES_WITH
+            + " AND bagid IN (SELECT b.id FROM savedbag AS b WHERE b.userprofileid = ?)";
+
+    /**
+     * Stop sharing all bags owned by the given user which have been shared with
+     * the given recipient.
+     *
+     * @param owner They what shared the bag.
+     * @param recipient Them what got access.
+     */
     public void unshareAllBagsFromUser(final Profile owner, final Profile recipient) {
         if (owner == null) {
             throw new IllegalArgumentException("owner must not be null");

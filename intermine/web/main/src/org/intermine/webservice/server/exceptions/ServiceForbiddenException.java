@@ -22,13 +22,13 @@ public class ServiceForbiddenException extends ServiceException
 {
 
     private static final long serialVersionUID = 1L;
+    private static final int ERROR_CODE = Output.SC_FORBIDDEN;
 
     /**
      * @param message message
      */
     public ServiceForbiddenException(String message) {
-        super(message);
-        initResponseCode();
+        super(message, ERROR_CODE);
     }
 
     /**
@@ -36,19 +36,13 @@ public class ServiceForbiddenException extends ServiceException
      * @param cause cause
      */
     public ServiceForbiddenException(String message, Throwable cause) {
-        super(message, cause);
-        initResponseCode();
+        super(message, cause, ERROR_CODE);
     }
 
     /**
      * @param cause cause
      */
     public ServiceForbiddenException(Throwable cause) {
-        super(cause);
-        initResponseCode();
-    }
-
-    private void initResponseCode() {
-        setHttpErrorCode(Output.SC_FORBIDDEN);
+        super(cause, ERROR_CODE);
     }
 }

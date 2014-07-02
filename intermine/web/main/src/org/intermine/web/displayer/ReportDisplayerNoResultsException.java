@@ -10,23 +10,35 @@ package org.intermine.web.displayer;
  *
  */
 
+/**
+ * An exception for conveying the message that there are no results.
+ * @author Radek (?)
+ *
+ */
 @SuppressWarnings("serial")
 class ReportDisplayerNoResultsException extends Exception
 {
 
-    String mistake;
+    private final String mistake;
 
+    /**
+     * Construct an exception with the default mistake.
+     */
     public ReportDisplayerNoResultsException() {
         super();
         mistake = "The displayer has no results to show";
     }
 
+    /**
+     * Construct an exception with a custom mistake message.
+     * @param err The mistake.
+     */
     public ReportDisplayerNoResultsException(String err) {
-        // a super error...
         super(err);
         mistake = err;
     }
 
+    /** @return the error **/
     public String getError() {
         return mistake;
     }

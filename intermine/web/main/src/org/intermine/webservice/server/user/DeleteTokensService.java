@@ -18,24 +18,36 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
-public class DeleteTokensService extends ReadWriteJSONService {
+/**
+ * Service which ensures that the authenticating user has no tokens.
+ * When finished executing, the profile will have no permanent tokens.
+ * @author Alex Kalderimis
+ */
+public class DeleteTokensService extends ReadWriteJSONService
+{
 
-	public DeleteTokensService(InterMineAPI im) {
-		super(im);
-	}
+    /**
+     * @param im The InterMine state object.
+     */
+    public DeleteTokensService(InterMineAPI im) {
+        super(im);
+    }
 
-	@Override
-	protected void execute() throws Exception {
+    @Override
+    protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        if (profile.getUserId() == null) return; // Temporary user. Nothing to delete.
+        if (profile.getUserId() == null) {
+            return; // Temporary user. Nothing to delete.
+        }
         ProfileManager pm = im.getProfileManager();
-        UserProfile up = (UserProfile) pm.getProfileObjectStoreWriter().getObjectById(profile.getUserId());
+        UserProfile up = (UserProfile) pm.getProfileObjectStoreWriter()
+                                         .getObjectById(profile.getUserId());
         if (up == null) {
-        	throw new ServiceException("Could not load user profile");
+            throw new ServiceException("Could not load user profile");
         }
         for (PermanentToken t: up.getPermanentTokens()) {
-        	pm.removePermanentToken(t);
+            pm.removePermanentToken(t);
         }
-	}
+    }
 
 }

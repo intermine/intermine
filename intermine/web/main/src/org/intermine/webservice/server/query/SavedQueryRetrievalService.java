@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.query;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,8 +38,11 @@ import org.intermine.webservice.server.output.StreamedOutput;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SavedQueryRetrievalService extends JSONService {
+/** @author Alex Kalderimis **/
+public class SavedQueryRetrievalService extends JSONService
+{
 
+    /** @param im The InterMine state object. **/
     public SavedQueryRetrievalService(InterMineAPI im) {
         super(im);
     }
@@ -37,11 +50,11 @@ public class SavedQueryRetrievalService extends JSONService {
     @Override
     protected boolean canServe(Format format) {
         switch (format) {
-        case XML:
-        case JSON:
-            return true;
-        default:
-            return false;
+            case XML:
+            case JSON:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -52,7 +65,7 @@ public class SavedQueryRetrievalService extends JSONService {
     }
 
     @Override
-    protected void execute() throws ServiceException {
+    protected void execute() {
         Profile p = getPermission().getProfile();
 
         Predicate<String> filter = getFilter(getOptionalParameter("filter", ""));
@@ -68,7 +81,8 @@ public class SavedQueryRetrievalService extends JSONService {
         int version = im.getProfileManager().getVersion();
 
         try {
-            XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(getRawOutput());
+            XMLStreamWriter writer
+                = XMLOutputFactory.newInstance().createXMLStreamWriter(getRawOutput());
 
             writer.writeStartElement("saved-queries");
             for (Entry<String, PathQuery> pair: queries.entrySet()) {
@@ -95,12 +109,14 @@ public class SavedQueryRetrievalService extends JSONService {
         }
     }
 
-    private Map<String, PathQuery> getQueries(Predicate<String> filter, Map<String, SavedQuery> allSaved) {
+    private Map<String, PathQuery> getQueries(
+            Predicate<String> filter,
+            Map<String, SavedQuery> allSaved) {
         Map<String, PathQuery> queries = new HashMap<String, PathQuery>();
         for (Entry<String, SavedQuery> pair: allSaved.entrySet()) {
             SavedQuery q = pair.getValue();
             PathQuery pq = q.getPathQuery();
-            if (filter.test(pair.getKey())) {
+            if (filter.call(pair.getKey())) {
                 queries.put(pair.getKey(), pq);
             }
         }
@@ -136,15 +152,17 @@ public class SavedQueryRetrievalService extends JSONService {
         return "queries";
     }
 
-    private class AlwaysTrue implements Predicate<String> {
+    private class AlwaysTrue implements Predicate<String>
+    {
 
         @Override
-        public boolean test(String subject) {
+        public Boolean call(String subject) {
             return true;
         }
     }
- 
-    private class Contains implements Predicate<String> {
+
+    private class Contains implements Predicate<String>
+    {
 
         private final String target;
 
@@ -153,12 +171,13 @@ public class SavedQueryRetrievalService extends JSONService {
         }
 
         @Override
-        public boolean test(String subject) {
+        public Boolean call(String subject) {
             return subject != null && subject.toLowerCase().contains(target);
         }
     }
 
-    private class EndsWith implements Predicate<String> {
+    private class EndsWith implements Predicate<String>
+    {
 
         private final String target;
 
@@ -167,12 +186,13 @@ public class SavedQueryRetrievalService extends JSONService {
         }
 
         @Override
-        public boolean test(String subject) {
+        public Boolean call(String subject) {
             return subject != null && subject.toLowerCase().endsWith(target);
         }
     }
 
-    private class StartsWith implements Predicate<String> {
+    private class StartsWith implements Predicate<String>
+    {
 
         private final String target;
 
@@ -181,12 +201,13 @@ public class SavedQueryRetrievalService extends JSONService {
         }
 
         @Override
-        public boolean test(String subject) {
+        public Boolean call(String subject) {
             return subject != null && subject.toLowerCase().startsWith(target);
         }
     }
 
-    private class Matches implements Predicate<String> {
+    private class Matches implements Predicate<String>
+    {
 
         private final String target;
 
@@ -195,7 +216,7 @@ public class SavedQueryRetrievalService extends JSONService {
         }
 
         @Override
-        public boolean test(String subject) {
+        public Boolean call(String subject) {
             return subject != null && subject.equalsIgnoreCase(target);
         }
     }

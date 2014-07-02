@@ -17,10 +17,14 @@ public class ErrorCorrectionTest extends TestCase
     private final static int REFERENCE_SIZE = 5000;
     private static final Double max = new Double(1.0);
 
-    private static LinkedHashMap<String, BigDecimal> pvalues = new LinkedHashMap<String, BigDecimal>();
-    private static LinkedHashMap<String, String> bonferroni = new LinkedHashMap();
-    private static LinkedHashMap<String, String> benjamini = new LinkedHashMap();
-    private static LinkedHashMap<String, String> bonferroniHolm = new LinkedHashMap();
+    private static LinkedHashMap<String, BigDecimal> pvalues =
+            new LinkedHashMap<String, BigDecimal>();
+    private static LinkedHashMap<String, String> bonferroni =
+            new LinkedHashMap<String, String>();
+    private static LinkedHashMap<String, String> benjamini =
+            new LinkedHashMap<String, String>();
+    private static LinkedHashMap<String, String> bonferroniHolm =
+            new LinkedHashMap<String, String>();
 
     /**
      * @param arg

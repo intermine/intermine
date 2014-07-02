@@ -18,10 +18,20 @@ import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.core.ISO8601DateFormat;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 
-public class NewDeletionTokenService extends ReadWriteJSONService {
+/**
+ * A service that issues a deletion token to a user who intends to
+ * delete their profile.
+ * @author Alex Kalderimis
+ *
+ */
+public class NewDeletionTokenService extends ReadWriteJSONService
+{
 
     protected final DeletionTokens tokenFactory;
 
+    /**
+     * @param im The InterMine state object.
+     */
     public NewDeletionTokenService(InterMineAPI im) {
         super(im);
         this.tokenFactory = DeletionTokens.getInstance();
@@ -40,12 +50,17 @@ public class NewDeletionTokenService extends ReadWriteJSONService {
         serveToken(token);
     }
 
+    /**
+     * Serve a token to the outside world.
+     * @param token The token to return.
+     */
     protected void serveToken(DeletionToken token) {
         Map<String, Object> info = new HashMap<String, Object>();
 
         info.put("uuid", token.getUUID().toString());
         info.put("expiry", ISO8601DateFormat.getFormatter().format(token.getExpiry()));
-        info.put("secondsRemaining", (token.getExpiry().getTime() - System.currentTimeMillis()) / 1000);
+        info.put("secondsRemaining",
+                (token.getExpiry().getTime() - System.currentTimeMillis()) / 1000);
 
         this.addResultItem(info, false);
     }

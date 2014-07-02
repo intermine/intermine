@@ -141,7 +141,7 @@ public class InlineResultsTableTest extends TestCase
         assertEquals(new Integer(3), new Integer(resultsTable.getColumnsSize()));
         assertEquals(new Boolean(true), resultsTable.getHasMoreThanOneType());
         assertEquals(
-                new ArrayList<Class>(Arrays.asList(
+                new ArrayList<Class<?>>(Arrays.asList(
                         DynamicUtil.getSimpleClass(ceo), DynamicUtil.getSimpleClass(company))),
                         resultsTable.getListOfTypes());
     }
@@ -208,7 +208,7 @@ public class InlineResultsTableTest extends TestCase
                 typeClasses);
 
         // List<InlineResultsTableRow>
-        List<Object> rows = rows = resultsTable.getResultElementRows();
+        List<Object> rows = resultsTable.getResultElementRows();
         assertEquals(new Integer(2), new Integer(rows.size()));
         // traverse and create a map to match
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();

@@ -47,7 +47,6 @@ public class InlineListTest extends TestCase
      * Duplo test name matches the complexity of the task contained...
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
     public void testDuplo() throws Exception {
         HashSet<Object> listOfObjects = new HashSet<Object>(
                 new ArrayList<Object>(
@@ -86,7 +85,7 @@ public class InlineListTest extends TestCase
         // count the number of elements as HashSet (next) will remove duplicates
         assertEquals(l.size(), result.size());
         // convert to HashSet for comparison
-        assertEquals(new HashSet(l), new HashSet(result));
+        assertEquals(new HashSet<Object>(l), new HashSet<Object>(result));
     }
 
 }

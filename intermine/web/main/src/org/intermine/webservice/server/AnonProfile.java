@@ -33,7 +33,6 @@ final class AnonProfile extends Profile
     /**
      * Constructor
      */
-    @SuppressWarnings("rawtypes")
     public AnonProfile() {
         super(null, null, null, null,
                 new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
@@ -42,7 +41,7 @@ final class AnonProfile extends Profile
         savedBags = new DevNullMap<String, InterMineBag>();
         savedTemplates = new DevNullMap<String, ApiTemplate>();
         savedInvalidBags = new DevNullMap<String, InvalidBag>();
-        queryHistory = new DevNullMap();
+        queryHistory = new DevNullMap<String, SavedQuery>();
         savingDisabled = true;
     }
 

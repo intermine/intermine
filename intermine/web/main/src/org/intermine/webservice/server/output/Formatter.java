@@ -37,6 +37,8 @@ public abstract class Formatter
 
     /**
      * Returns formatted footer.
+     * @param errorMessage The error message, if sth went wrong.
+     * @param errorCode The error code, if sth went wrong.
      * @return formatted footer
      */
     public abstract String formatFooter(String errorMessage, int errorCode);

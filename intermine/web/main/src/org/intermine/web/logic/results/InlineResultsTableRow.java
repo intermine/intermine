@@ -21,7 +21,7 @@ import java.util.List;
 public class InlineResultsTableRow
 {
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     List columnList = new ArrayList<Object>();
     String className = null;
     Integer imObjId;

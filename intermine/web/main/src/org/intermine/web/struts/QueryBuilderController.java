@@ -12,6 +12,7 @@ package org.intermine.web.struts;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,6 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.MetadataNode;
 import org.intermine.web.logic.querybuilder.ModelBrowserHelper;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.objectstore.ObjectStoreSummary;
 
 /**
  * Controller for the main query builder tile. Generally, request attributes that are required by
@@ -58,10 +58,11 @@ public class QueryBuilderController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context,
+                                ActionMapping mapping,
+                                ActionForm form,
+                                HttpServletRequest request,
+                                HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Profile profile = SessionMethods.getProfile(session);
@@ -71,7 +72,12 @@ public class QueryBuilderController extends TilesAction
                 new ActionMessage("login.upgradeListManually"));
             saveErrors(request, actionErrors);
         }
-        populateRequest(request, response);
+        ActionMessages msgs = this.getMessages(request);
+        for (String removedOrderBy: populateRequest(request, response)) {
+            msgs.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("querybuilder.assuresortorder.removeorderby", removedOrderBy));
+        }
+        this.saveMessages(request, msgs);
         return null;
     }
 
@@ -83,15 +89,17 @@ public class QueryBuilderController extends TilesAction
      *            the current request
      * @param response
      *            the current response
+     * @return A collection of strings that have been removed from the sort-order.
      */
-    public static void populateRequest(HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+    public static Collection<String> populateRequest(
+            HttpServletRequest request,
+            HttpServletResponse response) {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         Model model = im.getModel();
         PathQuery query = SessionMethods.getQuery(session);
-        assureCorrectSortOrder(query);
+        Collection<String> removedOrderBys = assureCorrectSortOrder(query);
 
         try {
             // Create a Map from view path to sort style (disabled, asc, desc, none). At the moment,
@@ -124,6 +132,7 @@ public class QueryBuilderController extends TilesAction
         } catch (PathException e) {
             LOG.error("PathQuery is invalid: " + query, e);
         }
+        return removedOrderBys;
     }
 
     /**
@@ -131,15 +140,18 @@ public class QueryBuilderController extends TilesAction
      * that are not also on the view list.
      *
      * @param pathQuery a PathQuery object to manipulate
+     * @param request needed in case we need to add any messages.
+     * @return A collection of strings representing paths removed from the sort order.
      */
-    private static void assureCorrectSortOrder(PathQuery pathQuery) {
+    private static Collection<String> assureCorrectSortOrder(PathQuery pathQuery) {
+        Collection<String> ret = new HashSet<String>();
         for (OrderElement order : pathQuery.getOrderBy()) {
             if (!pathQuery.getView().contains(order.getOrderPath())) {
                 pathQuery.removeOrderBy(order.getOrderPath());
-                // TODO: FAIL: Send a message to the user saying we have removed something from the
-                // ORDER BY list.
+                ret.add(order.getOrderPath());
             }
         }
+        return ret;
     }
 
     /**

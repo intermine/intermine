@@ -1,6 +1,5 @@
 package org.intermine.webservice.server.jbrowse;
 
-import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +64,7 @@ public class Endpoint extends JSONService {
     // Never null
     private Command getCommand() throws ServiceException {
         String pathInfo = request.getPathInfo();
+        @SuppressWarnings("unchecked")
         Map<String, String[]> params = request.getParameterMap();
         Command cmd = Commands.getCommand(pathInfo, singlefyMap(params));
         if (cmd == null) {

@@ -24,10 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.InterMineAPITestCase;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -36,6 +35,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
@@ -75,7 +75,6 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
     Map<String, Object> attributes;
 
     JSONRowResultProcessor processor;
-
 
     public void setUp() throws Exception {
 
@@ -125,15 +124,15 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
 
         os.setResultsSize(5);
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Employee> row1 = new ResultsRow<Employee>();
         row1.add(tim);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Employee> row2 = new ResultsRow<Employee>();
         row2.add(gareth);
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Employee> row3 = new ResultsRow<Employee>();
         row3.add(dawn);
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Employee> row4 = new ResultsRow<Employee>();
         row4.add(keith);
-        ResultsRow row5 = new ResultsRow();
+        ResultsRow<Employee> row5 = new ResultsRow<Employee>();
         row5.add(lee);
 
         os.addRow(row1);
@@ -161,10 +160,11 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
-        Map pathToQueryNode = new HashMap();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query q;
-        q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+        q = MainHelper.makeQuery(pq, new HashMap<String, InterMineBag>(), pathToQueryNode, null, null);
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = os.execute(q, 0, 5, true, true, new HashMap<Object, Integer>());
         Results results = new DummyResults(q, resultList);
         return new ExportResultsIterator(pq, q, results, pathToQueryNode);
     }
