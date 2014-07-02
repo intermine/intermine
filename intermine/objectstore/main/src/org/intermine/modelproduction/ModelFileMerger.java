@@ -1,5 +1,15 @@
 package org.intermine.modelproduction;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,19 +27,28 @@ import org.intermine.metadata.ModelParserException;
  * @author Alex Kalderimis
  *
  */
-public class ModelFileMerger {
-	
-	/**
-	 * Merges a model from a core model file and a list of additions files.
-	 * 
-	 * @param inputModelFile The core.xml file for the model.
-	 * @param additionsFiles a list of genomic additions files. 
-	 * @return The merged Model 
-	 * @throws MetaDataException
-	 */
-	public static Model mergeModelFromFiles(File inputModelFile, List<File> additionsFiles, ModelParser parser) 
-		throws MetaDataException {
-		Model mergedModel = null;
+public final class ModelFileMerger
+{
+
+    private ModelFileMerger() {
+        // Hidden
+    }
+
+    /**
+     * Merges a model from a core model file and a list of additions files.
+     *
+     * @param inputModelFile The core.xml file for the model.
+     * @param additionsFiles a list of genomic additions files.
+     * @param parser A parser to read the models.
+     * @return The merged Model
+     * @throws MetaDataException if the models are incorrect.
+     */
+    public static Model mergeModelFromFiles(
+            File inputModelFile,
+            List<File> additionsFiles,
+            ModelParser parser)
+        throws MetaDataException {
+        Model mergedModel = null;
         try {
             FileReader reader = new FileReader(inputModelFile);
             mergedModel = parser.process(reader);
@@ -42,27 +61,27 @@ public class ModelFileMerger {
         } else {
             for (File additionsFile: additionsFiles) {
                 try {
-                	mergedModel = processFile(mergedModel, additionsFile, parser);
+                    mergedModel = processFile(mergedModel, additionsFile, parser);
                 } catch (Exception e) {
-                	throw new MetaDataException("Exception while merging " + additionsFile + " into "
-                            + inputModelFile, e);    	
+                    throw new MetaDataException("Exception while merging " + additionsFile
+                            + " into " + inputModelFile, e);
                 }
             }
         }
         return mergedModel;
-	}
-	
-	/**
-	 * Merges the additions from an additions file into an existing model.
-	 * @param mergedModel The existing model.
-	 * @param newAdditionsFile a file containing genomic additions.
-	 * @return The existing model with the additions merged in.
-	 * @throws ModelParserException
-	 * @throws ModelMergerException
-	 * @throws FileNotFoundException
-	 */
-	private static Model processFile(Model mergedModel, File newAdditionsFile, ModelParser parser) 
-		throws ModelParserException, ModelMergerException, FileNotFoundException {
+    }
+
+    /**
+     * Merges the additions from an additions file into an existing model.
+     * @param mergedModel The existing model.
+     * @param newAdditionsFile a file containing genomic additions.
+     * @return The existing model with the additions merged in.
+     * @throws ModelParserException
+     * @throws ModelMergerException
+     * @throws FileNotFoundException
+     */
+    private static Model processFile(Model mergedModel, File newAdditionsFile, ModelParser parser)
+        throws ModelParserException, ModelMergerException, FileNotFoundException {
         Set<ClassDescriptor> additionClds =
             parser.generateClassDescriptors(new FileReader(newAdditionsFile),
                     mergedModel.getPackageName());
