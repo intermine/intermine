@@ -151,7 +151,7 @@ public class ModelTest extends TestCase
     public void testGetClassDescriptorByWrongName() throws Exception {
         ClassDescriptor cld1 = cdMaker.makeClass("Class1");
         ClassDescriptor cld2 = cdMaker.makeClass("Class2");
-        Model model = new Model("model", "package.name", Arrays.asList(cld1, cld2));
+        Model model = new Model("model", cdMaker.getPackageName(), Arrays.asList(cld1, cld2));
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));
     }
@@ -206,16 +206,49 @@ public class ModelTest extends TestCase
 
     // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
     // MidClass < SubClass and BaseClass < MidClass
-    public void testRemoveRedundantClasses() throws MetaDataException {
-        ClassDescriptor base = cdMaker.makeClass("BaseClass");
-        ClassDescriptor sub = cdMaker.makeClass("SubClass", "BaseClass", "MidClass");
+    public void testRemoveRedundantInterfaces() throws MetaDataException {
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor base = cdMaker.makeInterface("BaseClass");
+        ClassDescriptor sub = cdMaker.makeInterface("SubClass", "BaseClass", "MidClass");
         ClassDescriptor mid = cdMaker.makeInterface("MidClass", "BaseClass");
-        Model model = new Model("model", "org.intermine.model.testmodel", Arrays.asList(base, sub, mid));
+        Model model = new Model("model", packageName, Arrays.asList(base, sub, mid));
 
-        ClassDescriptor subCD = model.getClassDescriptorByName("SubName");
+        ClassDescriptor subCD = model.getClassDescriptorByName("SubClass");
 
         assertEquals(1, subCD.getSuperclassNames().size());
-        assertEquals("MidName", subCD.getSuperclassNames().iterator().next());
+        assertEquals(packageName + ".MidClass", subCD.getSuperclassNames().iterator().next());
+
+    }
+ 
+    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
+    // MidClass < SubClass and BaseClass < MidClass
+    public void testRemoveRedundantClasses() throws MetaDataException {
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor base = cdMaker.makeClass("BaseClass");
+        ClassDescriptor sub = cdMaker.makeClass("SubClass", "BaseClass", "MidClass");
+        ClassDescriptor mid = cdMaker.makeClass("MidClass", "BaseClass");
+        Model model = new Model("model", packageName, Arrays.asList(base, sub, mid));
+
+        ClassDescriptor subCD = model.getClassDescriptorByName("SubClass");
+
+        assertEquals(1, subCD.getSuperclassNames().size());
+        assertEquals(packageName + ".MidClass", subCD.getSuperclassNames().iterator().next());
+
+    }
+
+    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
+    // MidClass < SubClass and BaseClass < MidClass
+    public void testRemoveRedundantMixed() throws MetaDataException {
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor base = cdMaker.makeInterface("BaseClass");
+        ClassDescriptor sub = cdMaker.makeClass("SubClass", "BaseClass", "MidClass");
+        ClassDescriptor mid = cdMaker.makeInterface("MidClass", "BaseClass");
+        Model model = new Model("model", packageName, Arrays.asList(base, sub, mid));
+
+        ClassDescriptor subCD = model.getClassDescriptorByName("SubClass");
+
+        assertEquals(1, subCD.getSuperclassNames().size());
+        assertEquals(packageName + ".MidClass", subCD.getSuperclassNames().iterator().next());
 
     }
 
