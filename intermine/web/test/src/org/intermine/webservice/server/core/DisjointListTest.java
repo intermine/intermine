@@ -3,8 +3,11 @@ package org.intermine.webservice.server.core;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.junit.Test;
 
 public class DisjointListTest {
@@ -25,6 +28,8 @@ public class DisjointListTest {
                 new Either.Left<Integer, String>(3),
                 new Either.Right<Integer, String>("four"));
         assertEquals(expected, numsAndStrings);
+        Collections.reverse(numsAndStrings);
+        assertTrue(!expected.equals(numsAndStrings));
     }
 
 }
