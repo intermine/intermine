@@ -45,6 +45,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
@@ -480,20 +481,7 @@ public class MainHelperTest extends TestCase {
         assertEquals(expected.toString(), actual.toString());
     }
 
-    public void testTrialOuterJoin() throws Exception {
-        PathQuery pq = new PathQuery(os.getModel());
-        pq.addViews("Department.name", "Department.company.name");
-        pq.addConstraint(new PathConstraintAttribute("Department.company.name", ConstraintOp.EQUALS, "Com1"));
-        pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
-
-
-        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
-        String a = actual.toString();
-    }
-
-    // TODO test null/not null collection with other constraints/view
-
-    // Test that a null reference constraint works when the reference has been set as an outer
+    // Test that a null reference constraint works when the same reference has been set as an outer
     // join. This isn't particularly useful but needs to generate a valid query.
     public void testNullReferenceOuterJoin() throws Exception {
         PathQuery pq = new PathQuery(os.getModel());
@@ -508,21 +496,20 @@ public class MainHelperTest extends TestCase {
 
         // outer join to select Department.company.name
         QueryObjectPathExpression comOuter = new QueryObjectPathExpression(qc, "company");
-        //comOuter.addToSelect(new QueryField(comOuter.getDefaultClass(), "name"));
         expected.addToSelect(comOuter);
         // Company IS_NOT_NULL
         QueryObjectReference ref = new QueryObjectReference(qc, "company");
         ContainsConstraint cc = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
         expected.setConstraint(cc);
-        expected.addToOrderBy(new QueryField(qc, "name"));
 
         Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
         assertEquals(expected.toString(), actual.toString());
 
         // Same test for IS_NOT_NULL
         pq = new PathQuery(os.getModel());
-        pq.addView("Department.name");
+        pq.addView("Department.company.name");
         pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NOT_NULL));
+        pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
 
         cc = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
         expected.setConstraint(cc);
@@ -531,8 +518,90 @@ public class MainHelperTest extends TestCase {
     }
 
 
-    // TODO test null/not null collection constraints with outer join
+    // Test that NULL/NOT NULL constraints work either side of outer joins in a query but where
+    // the NULL reference isn't itself an outer join.
+    public void testNullReferenceOuterJoinElsewhere() throws Exception {
+        // Test outer join beyond the NULL constraint
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addViews("Department.company.name");
+        pq.addConstraint(new PathConstraintNull("Department.company.contractors", ConstraintOp.IS_NOT_NULL));
+        pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
 
+        Query expected = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        expected.addFrom(qc);
+        expected.addToSelect(qc);
+
+        QueryObjectPathExpression comOuter = new QueryObjectPathExpression(qc, "company");
+        comOuter.addToSelect(comOuter.getDefaultClass());
+        QueryCollectionReference col = new QueryCollectionReference(comOuter.getDefaultClass(), "contractors");
+        ContainsConstraint cc = new ContainsConstraint(col, ConstraintOp.IS_NOT_NULL);
+        comOuter.setConstraint(cc);
+        expected.addToSelect(comOuter);
+
+        Query actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+
+        // Test outer join before the NULL constraint
+        pq = new PathQuery(os.getModel());
+        pq.addViews("Department.company.name", "Department.company.contractors.name");
+        pq.addConstraint(new PathConstraintNull("Department.company", ConstraintOp.IS_NOT_NULL));
+        pq.setOuterJoinStatus("Department.company.contractors", OuterJoinStatus.OUTER);
+
+        expected = new Query();
+        QueryClass qcDep = new QueryClass(Department.class);
+        expected.addFrom(qcDep);
+        QueryClass qcCom = new QueryClass(Company.class);
+        expected.addFrom(qcCom);
+        expected.addToSelect(qcCom);
+        QueryObjectReference ref = new QueryObjectReference(qcDep, "company");
+        // Here we have two contains constraints, this doesn't make much sense as the NOT NULL
+        // constraint is actually redundant.
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        ContainsConstraint ccNormal = new ContainsConstraint(ref, ConstraintOp.CONTAINS, qcCom);
+        cs.addConstraint(ccNormal);
+        ContainsConstraint ccNull = new ContainsConstraint(ref, ConstraintOp.IS_NOT_NULL);
+        cs.addConstraint(ccNull);
+        expected.setConstraint(cs);
+        QueryCollectionPathExpression conOuter = new QueryCollectionPathExpression(qcCom, "contractors");
+        conOuter.addToSelect(conOuter.getDefaultClass());
+        expected.addToSelect(conOuter);
+        expected.addToOrderBy(new QueryField(qcCom, "name"));
+
+        actual = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
+        assertEquals(expected.toString(), actual.toString());
+    }
+
+
+    public void testAddToConstraintLogic() throws Exception {
+        LogicExpression l = new LogicExpression("A");
+        LogicExpression updated = MainHelper.addToConstraintLogic(l, "B");
+        assertEquals("A and B", updated.toString());
+        l = new LogicExpression("A and B");
+        updated = MainHelper.addToConstraintLogic(l, "C");
+        assertEquals("A and B and C", updated.toString());
+        l = new LogicExpression("(A or B) and (C or D)");
+        updated = MainHelper.addToConstraintLogic(l, "E");
+        assertEquals("(A or B) and (C or D) and E", updated.toString());
+        l = null;
+        updated = MainHelper.addToConstraintLogic(l, "A");
+        assertEquals("A", updated.toString());
+    }
+
+
+    public void testRemoveFromConstraintLogic() throws Exception {
+        LogicExpression l = new LogicExpression("A and B");
+        LogicExpression updated = MainHelper.removeFromConstraintLogic(l, "B");
+        assertEquals("A", updated.toString());
+        l = new LogicExpression("A and B");
+        updated = MainHelper.removeFromConstraintLogic(l, "A");
+        assertEquals("B", updated.toString());
+        l = new LogicExpression("(A and B) or (C and D)");
+        updated = MainHelper.removeFromConstraintLogic(l, "C");
+        assertEquals("(A and B) or D", updated.toString());
+        l = new LogicExpression("A");
+        assertNull(MainHelper.removeFromConstraintLogic(l, "A"));
+    }
 
     private Map<String, PathQuery> readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
