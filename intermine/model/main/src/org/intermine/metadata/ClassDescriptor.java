@@ -69,8 +69,10 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @throws IllegalArgumentException if fields are null
      */
     public ClassDescriptor(String name, String supers,
-            boolean isInterface, Set<AttributeDescriptor> atts, Set<ReferenceDescriptor> refs,
-            Set<CollectionDescriptor> cols) {
+            boolean isInterface,
+            Collection<AttributeDescriptor> atts,
+            Collection<ReferenceDescriptor> refs,
+            Collection<CollectionDescriptor> cols) {
         if (name == null || "".equals(name) || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
