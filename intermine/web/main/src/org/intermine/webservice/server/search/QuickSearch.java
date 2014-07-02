@@ -1,33 +1,44 @@
 package org.intermine.webservice.server.search;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
+
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.lucene.KeywordSearch;
+import org.intermine.api.lucene.KeywordSearchFacet;
+import org.intermine.api.lucene.KeywordSearchFacetData;
+import org.intermine.api.lucene.ResultsWithFacets;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.model.InterMineObject;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.search.KeywordSearch;
-import org.intermine.web.search.KeywordSearchFacetData;
-import org.intermine.web.search.KeywordSearchHit;
 import org.intermine.web.search.KeywordSearchResult;
-import org.intermine.web.struts.KeywordSearchFacet;
+import org.intermine.web.search.SearchUtils;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -36,9 +47,12 @@ import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
 import com.browseengine.bobo.api.BrowseFacet;
-import com.browseengine.bobo.api.BrowseHit;
-import com.browseengine.bobo.api.BrowseResult;
 
+/**
+ * A service that runs key-word searches.
+ * @author Alex Kalderimis
+ *
+ */
 public class QuickSearch extends JSONService
 {
 
@@ -47,53 +61,46 @@ public class QuickSearch extends JSONService
     private static final String FACET_PREFIX = "facet_";
     private static final int PREFIX_LEN = FACET_PREFIX.length();
 
-    private Map<String, Map<String, Object>> HEADER_OBJS
+    private Map<String, Map<String, Object>> headerObjs
         = new HashMap<String, Map<String, Object>>();
 
-    public QuickSearch(InterMineAPI im) {
+    private final ServletContext servletContext;
+
+    /**
+     * @param im The InterMine state object
+     * @param ctx The servlet context so that the index can be located.
+     */
+    public QuickSearch(InterMineAPI im, ServletContext ctx) {
         super(im);
+        this.servletContext = ctx;
     }
 
     @Override
     protected void execute() throws Exception {
-        javax.servlet.ServletContext servletContext = request.getSession().getServletContext();
         String contextPath = servletContext.getRealPath("/");
         KeywordSearch.initKeywordSearch(im, contextPath);
+        WebConfig wc = InterMineContext.getWebConfig();
 
         QuickSearchRequest input = new QuickSearchRequest();
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
 
-        long searchTime = System.currentTimeMillis();
-        BrowseResult result = KeywordSearch.runBrowseSearch(input.searchTerm, input.offset,
-                facetValues, input.getListIds());
-        searchTime = System.currentTimeMillis() - searchTime;
+        ResultsWithFacets results = KeywordSearch.runBrowseWithFacets(
+                im, input.searchTerm, input.offset, facetValues, input.getListIds());
 
-        Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
-        Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
-
-        Set<Integer> objectIds = new HashSet<Integer>();
-        if (result != null) {
-            LOG.debug("Browse found " + result.getNumHits() + " hits");
-            BrowseHit[] browseHits = result.getHits();
-            objectIds = KeywordSearch.getObjectIds(browseHits);
-            Map<Integer, InterMineObject> objMap = KeywordSearch.getObjects(im, objectIds);
-            Vector<KeywordSearchHit> searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
-            WebConfig wc = InterMineContext.getWebConfig();
-            searchResultsParsed = KeywordSearch.parseResults(im, wc, searchHits);
-            searchResultsFacets = KeywordSearch.parseFacets(result, facets, facetValues);
-        }
+        Collection<KeywordSearchResult> searchResultsParsed =
+                SearchUtils.parseResults(im, wc, results.getHits());
 
         if (input.getIncludeFacets()) {
             Map<String, Object> facetData = new HashMap<String, Object>();
-            for (KeywordSearchFacet kwsf: searchResultsFacets) {
+            for (KeywordSearchFacet kwsf: results.getFacets()) {
                 Map<String, Integer> sfData = new HashMap<String, Integer>();
                 for (BrowseFacet bf: kwsf.getItems()) {
                     sfData.put(bf.getValue(), bf.getFacetValueHitCount());
                 }
                 facetData.put(kwsf.getField(), sfData);
             }
-            HEADER_OBJS.put("facets", facetData);
+            headerObjs.put("facets", facetData);
         }
 
         QuickSearchResultProcessor processor = getProcessor();
@@ -112,14 +119,16 @@ public class QuickSearch extends JSONService
         if (formatIsJSON()) {
             attributes.put(JSONFormatter.KEY_INTRO, "\"results\":[");
             attributes.put(JSONFormatter.KEY_OUTRO, "]");
-            attributes.put(JSONFormatter.KEY_HEADER_OBJS, HEADER_OBJS);
+            attributes.put(JSONFormatter.KEY_HEADER_OBJS, headerObjs);
         }
         return attributes;
     }
 
     private Map<String, String> getFacetValues(Vector<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
-        PARAM_LOOP: for (Enumeration<String> params = request.getParameterNames();
+    PARAM_LOOP:
+        for (@SuppressWarnings("unchecked")
+            Enumeration<String> params = request.getParameterNames();
                 params.hasMoreElements();) {
             String param = params.nextElement();
             String value = request.getParameter(param);
@@ -140,7 +149,8 @@ public class QuickSearch extends JSONService
         return facetValues;
     }
 
-    private class QuickSearchRequest {
+    private class QuickSearchRequest
+    {
 
         private final String searchTerm;
         private final int offset;
@@ -209,7 +219,8 @@ public class QuickSearch extends JSONService
                 final Profile p = getPermission().getProfile();
                 final InterMineBag bag = bm.getBag(p, searchBag);
                 if (bag == null) {
-                    throw new BadRequestException("You do not have access to a bag named '" + searchBag + "'");
+                    throw new BadRequestException(
+                            "You do not have access to a bag named '" + searchBag + "'");
                 }
                 ids.addAll(bag.getContentsAsIds());
             }

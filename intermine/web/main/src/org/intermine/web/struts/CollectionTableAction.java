@@ -26,19 +26,20 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.config.WebConfig;
 
-import static org.intermine.web.logic.pathqueryresult.PathQueryResultHelper.makePathQueryForCollection;
 
 /**
  * Action that creates a table of collection elements for display in a table widget.
  *
+ * @author unknown.
  */
 public class CollectionTableAction extends Action
 {
     /**
-     * Create PagedTable for this collection, register it with an identifier 
+     * Create PagedTable for this collection, register it with an identifier
      *
      * @param mapping
      *            The ActionMapping used to select this instance
@@ -66,8 +67,8 @@ public class CollectionTableAction extends Action
         InterMineObject o = os.getObjectById(id);
         String referencedClassName = getReferencedCD(os.getModel(), o, field).getUnqualifiedName();
 
-        PathQuery collectionQuery = makePathQueryForCollection(webConfig, os,
-                o, referencedClassName, field);
+        PathQuery collectionQuery = PathQueryResultHelper.makePathQueryForCollection(
+                webConfig, os, o, referencedClassName, field);
 
         request.setAttribute("collectionQuery", collectionQuery);
 

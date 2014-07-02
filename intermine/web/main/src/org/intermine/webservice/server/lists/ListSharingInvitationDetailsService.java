@@ -29,12 +29,16 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
-public class ListSharingInvitationDetailsService extends JSONService {
+/** @author Alex Kalderimis **/
+public class ListSharingInvitationDetailsService extends JSONService
+{
 
+    /** @param im The InterMine state object **/
     public ListSharingInvitationDetailsService(InterMineAPI im) {
         super(im);
     }
 
+    @Override
     protected Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attrs = super.getHeaderAttributes();
         attrs.put(JSONFormatter.KEY_INTRO, "\"invitation\":");

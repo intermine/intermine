@@ -92,6 +92,7 @@
         <li><a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a></li>
         <c:if test="${PROFILE.loggedIn}">
             <li>
+
               <!-- display (optionally trimmed) username -->
               <c:choose>
                 <c:when test="${! empty PROVIDER}">
@@ -99,16 +100,17 @@
                     <c:when test="${empty USERNAME || USERNAME == 'nullnull'}">
                       <c:set var="displayUserName" value="logged in with OpenID"/>
                     </c:when>
-            <c:otherwise>
-              <c:set var="displayUserName" value="${USERNAME}"/>
-            </c:otherwise>
+                   <c:otherwise>
+                     <c:set var="displayUserName" value="${USERNAME}"/>
+                   </c:otherwise>
                   </c:choose>
-        </c:when>
-        <c:otherwise>
-          <c:set var="displayUserName" value="${PROFILE.username}"/>
-        </c:otherwise>
-        </c:choose>
-        <c:choose>
+                </c:when>
+                <c:otherwise>
+                  <c:set var="displayUserName" value="${PROFILE.name}"/>
+                </c:otherwise>
+              </c:choose>
+
+              <c:choose>
                 <c:when test="${fn:length(displayUserName) > 25}">
                   <c:out value="${fn:substring(displayUserName,0,25)}"/>&hellip;
                 </c:when>

@@ -22,13 +22,13 @@ public class NoContentException extends ServiceException
 {
 
     private static final long serialVersionUID = 1L;
+    private static final int ERROR_CODE = Output.SC_NO_CONTENT;
 
     /**
      * @param message message
      */
     public NoContentException(String message) {
-        super(message);
-        initResponseCode();
+        super(message, ERROR_CODE);
     }
 
     /**
@@ -36,19 +36,13 @@ public class NoContentException extends ServiceException
      * @param cause cause
      */
     public NoContentException(String message, Throwable cause) {
-        super(message, cause);
-        initResponseCode();
+        super(message, cause, ERROR_CODE);
     }
 
     /**
      * @param cause cause
      */
     public NoContentException(Throwable cause) {
-        super(cause);
-        initResponseCode();
-    }
-
-    private void initResponseCode() {
-        setHttpErrorCode(Output.SC_NO_CONTENT);
+        super(cause, ERROR_CODE);
     }
 }

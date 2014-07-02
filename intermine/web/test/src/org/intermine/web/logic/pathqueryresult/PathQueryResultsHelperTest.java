@@ -229,8 +229,9 @@ public class PathQueryResultsHelperTest extends TestCase
         osw.store(m1);
         osw.store(d1);
         List<Class<?>> classes = PathQueryResultHelper.queryForTypesInCollection(d1, field, os);
-        List<Class<?>> expectedClasses = new ArrayList<Class<?>>(
-                Arrays.asList(Employee.class, Manager.class));
+        @SuppressWarnings("unchecked")
+        List<Class<? extends Employee>> expectedClasses =
+                Arrays.asList(Employee.class, Manager.class);
         assertEquals(expectedClasses, classes);
         osw.delete(d1);
         osw.delete(e1);

@@ -204,7 +204,6 @@ public class AutoCompleter
      * @throws ObjectStoreException ObjectStoreException
      * @throws ClassNotFoundException ClassNotFoundException
      */
-    @SuppressWarnings("unchecked")
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
 
@@ -248,6 +247,7 @@ public class AutoCompleter
                 objectClass.addField(fieldName);
 
                 for (Object resRow: results) {
+                    @SuppressWarnings("rawtypes")
                     Object fieldValue = ((ResultsRow) resRow).get(0);
                     if (fieldValue != null) {
                         objectClass.addValueToField(objectClass.getFieldName(0), fieldValue
@@ -280,10 +280,10 @@ public class AutoCompleter
     }
 
     /**
-     * checks if an autocompletin exists
-     * @param type classname
-     * @param field fieldname
-     * @return boolean true if an autocompletion exists
+     * checks if an autocompletion exists
+     * @param type The name of the class to search.
+     * @param field The name of the field to search for.
+     * @return whether an autocompletion exists
      */
     public boolean hasAutocompleter(String type, String field) {
         if (fieldIndexMap.get(type + "." + field) != null) {

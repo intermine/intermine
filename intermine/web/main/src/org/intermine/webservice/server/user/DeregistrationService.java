@@ -11,28 +11,18 @@ package org.intermine.webservice.server.user;
  */
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.profile.TagManager;
 import org.intermine.api.xml.ProfileBinding;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.model.userprofile.Tag;
-import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.Emailer;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -47,10 +37,13 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.user.DeletionTokens.TokenExpired;
 
-public class DeregistrationService extends WebService {
+/** @author Alex Kalderimis **/
+public class DeregistrationService extends WebService
+{
 
     private DeletionTokens tokens;
 
+    /** @param im The InterMine state object. **/
     public DeregistrationService(InterMineAPI im) {
         super(im);
         this.tokens = DeletionTokens.getInstance();
@@ -68,6 +61,7 @@ public class DeregistrationService extends WebService {
         return Format.XML;
     }
 
+    @Override
     protected Output makeXMLOutput(PrintWriter out, String separator) {
         ResponseUtil.setXMLHeader(response, "data.xml");
         return new StreamedOutput(out, new UserDataFormatter(), separator);
@@ -112,9 +106,8 @@ public class DeregistrationService extends WebService {
         String userData = os.toString();
         MailAction action = new GoodbyeAction(profile.getUsername(), userData);
         if (!InterMineContext.queueMessage(action)) {
-            ServiceException e = new ServiceException("Cannot send your archive at this time, try again later.");
-            e.setHttpErrorCode(503);
-            throw e;
+            throw new ServiceException(
+                    "Cannot send your archive at this time, try again later.", 503);
         }
         try {
             im.getProfileManager().deleteProfile(profile);
@@ -124,7 +117,8 @@ public class DeregistrationService extends WebService {
         output.addResultItem(Arrays.asList(userData));
     }
 
-    private class GoodbyeAction implements MailAction {
+    private class GoodbyeAction implements MailAction
+    {
 
         private final String to, xml;
 

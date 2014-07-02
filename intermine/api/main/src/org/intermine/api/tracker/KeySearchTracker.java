@@ -24,7 +24,7 @@ import org.intermine.api.tracker.track.KeySearchTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
-public class KeySearchTracker extends TrackerAbstract
+public class KeySearchTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(KeySearchTracker.class);
     private static KeySearchTracker searchTracker = null;
@@ -66,17 +66,26 @@ public class KeySearchTracker extends TrackerAbstract
 
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName + "(keyword text, username text, sessionidentifier text,"
-               + " timestamp timestamp)";
+        return "CREATE TABLE " + trackTableName + " ("
+                + "keyword text,"
+                + "username text,"
+                + "sessionidentifier text,"
+                + "timestamp timestamp)";
     }
 
+    /**
+     * Record the search.
+     * @param keyword
+     * @param profile
+     * @param sessionIdentifier
+     */
     protected void trackSearch(String keyword, Profile profile, String sessionIdentifier) {
         String userName = (profile.getUsername() != null)
                           ? profile.getUsername()
                           : "";
         KeySearchTrack searchTrack = new KeySearchTrack(keyword, userName, sessionIdentifier,
                                                        new Timestamp(System.currentTimeMillis()));
-        if (searchTrack  != null) {
+        if (searchTracker  != null) {
             searchTracker.storeTrack(searchTrack);
         } else {
             LOG.warn("Keyword search not tracked. Check if the KeySearchTrack has been configured");

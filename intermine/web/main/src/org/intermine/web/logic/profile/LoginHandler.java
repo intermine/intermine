@@ -180,7 +180,15 @@ public abstract class LoginHandler extends InterMineAction
         }
     }
 
-    public static void runBagUpgrade(UpgradeBagList procedure, InterMineAPI api,
+    /**
+     * Kick off a bag upgrade for current user.
+     * @param procedure The bag upgrade routine.
+     * @param api The InterMine state object.
+     * @param profile The current user's profile.
+     */
+    public static void runBagUpgrade(
+            UpgradeBagList procedure,
+            InterMineAPI api,
             Profile profile) {
         Connection con = null;
         try {

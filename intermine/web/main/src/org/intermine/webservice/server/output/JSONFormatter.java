@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
@@ -40,7 +39,8 @@ import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
  * @author Alex Kalderimis
  *
  */
-public class JSONFormatter extends Formatter {
+public class JSONFormatter extends Formatter
+{
 
     private boolean hasCallback = false;
     private String outro = "";
@@ -53,9 +53,13 @@ public class JSONFormatter extends Formatter {
      * The key for the callback
      */
     public static final String KEY_CALLBACK = "callback";
+    /** the key for the result object. **/
     public static final String KEY_INTRO = "intro";
+    /** The way to wrap up after the result. **/
     public static final String KEY_OUTRO = "outro";
+    /** Whether we should quote the result item. **/
     public static final String KEY_QUOTE = "should_quote";
+    /** Things that should go into the header **/
     public static final String KEY_HEADER_OBJS = "headerObjs";
     /**
      * A map of optional key value pairs that should go in the header of the object.
@@ -68,6 +72,7 @@ public class JSONFormatter extends Formatter {
      */
     public static final String KEY_TIME = "executionTime";
 
+    /** keys which you aren't allowed to set. **/
     public static final Set<String> RESERVED_KEYS = Collections.unmodifiableSet(
             new HashSet<String>(Arrays.asList(
                 KEY_CALLBACK,
@@ -108,19 +113,28 @@ public class JSONFormatter extends Formatter {
         return header;
     }
 
+    /**
+     * Format the header attributes.
+     * @param attributes The header attributes.
+     * @param sb Where to format them to.
+     */
     protected void formatAttributes(Map<String, Object> attributes, StringBuilder sb) {
-        if (attributes == null) return;
-        if (sb         == null) throw new NullPointerException("sb must not be null");
+        if (attributes == null) {
+            return;
+        }
+        if (sb == null) {
+            throw new NullPointerException("sb must not be null");
+        }
 
         if (attributes.containsKey(KEY_KV_PAIRS)) {
             @SuppressWarnings("unchecked")
             Map<String, String> kvPairs = (Map<String, String>) attributes.get(KEY_KV_PAIRS);
             for (Entry<String, String> pair: kvPairs.entrySet()) {
                 sb.append("\"")
-                  .append(escapeJava(pair.getKey()))
-                  .append("\":")
-                  .append(quoteValue(escapeJava(pair.getValue())))
-                  .append(",");
+                    .append(escapeJava(pair.getKey()))
+                    .append("\":")
+                    .append(quoteValue(escapeJava(pair.getValue())))
+                    .append(",");
             }
         }
         // Add any complex objects as json-objects to the headers.
@@ -129,10 +143,10 @@ public class JSONFormatter extends Formatter {
             Map<String, Map> headerObjs = (Map<String, Map>) attributes.get(KEY_HEADER_OBJS);
             for (@SuppressWarnings("rawtypes") Entry<String, Map> pair: headerObjs.entrySet()) {
                 sb.append("\"")
-                  .append(escapeJava(pair.getKey()))
-                  .append("\":")
-                  .append(new JSONObject(pair.getValue()))
-                  .append(",");
+                    .append(escapeJava(pair.getKey()))
+                    .append("\":")
+                    .append(new JSONObject(pair.getValue()))
+                    .append(",");
             }
         }
         if (attributes.get(KEY_INTRO) != null) {
@@ -190,6 +204,7 @@ public class JSONFormatter extends Formatter {
         return buffer.toString();
     }
 
+    /** Signal that we have started printing results and that it isn't safe to print headers. **/
     protected void declarePrinted() {
         hasPrintedSomething = true;
     }

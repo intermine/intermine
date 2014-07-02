@@ -411,8 +411,8 @@ public final class MainHelper
                         } else {
                             // Use simple forms of operators when not dealing with strings.
                             ConstraintOp simpleOp = ConstraintOp.EXACT_MATCH == pca.getOp()
-                                    ? ConstraintOp.EQUALS :
-                                        ConstraintOp.STRICT_NOT_EQUALS == pca.getOp()
+                                    ? ConstraintOp.EQUALS
+                                            : ConstraintOp.STRICT_NOT_EQUALS == pca.getOp()
                                                 ? ConstraintOp.NOT_EQUALS : pca.getOp();
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
                                     simpleOp, new QueryValue(TypeUtil.stringToObject(
@@ -1071,6 +1071,7 @@ public final class MainHelper
      * @param classKeys class key config
      * @param bagQueryConfig a BagQueryConfig object
      * @param pm the ProfileManager to fetch the superuser profile from
+     * @param occurancesOnly Force summary to take form of item summary if true.
      * @return the generated summary query
      * @throws ObjectStoreException if there is a problem creating the query
      */
@@ -1110,9 +1111,9 @@ public final class MainHelper
             String summaryPath,
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner)
-            throws ObjectStoreException {
-        return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode, bagQueryRunner, false);
+            BagQueryRunner bagQueryRunner) throws ObjectStoreException {
+        return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,
+                bagQueryRunner, false);
     }
 
     /**
@@ -1133,8 +1134,7 @@ public final class MainHelper
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner,
-            boolean occurancesOnly)
-            throws ObjectStoreException {
+            boolean occurancesOnly) throws ObjectStoreException {
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap<String, QuerySelectable>();
         Query subQ = null;
         subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, bagQueryRunner, null);
@@ -1252,7 +1252,8 @@ public final class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qope.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet<QuerySelectable>(qope.getSelect()), pathToQueryNode, occurancesOnly);
+                                new HashSet<QuerySelectable>(qope.getSelect()), pathToQueryNode,
+                                occurancesOnly);
                     } else if (qs instanceof QueryCollectionPathExpression) {
                         QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
                         QueryClass firstQc = qcpe.getDefaultClass();
@@ -1282,7 +1283,8 @@ public final class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qcpe.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode, occurancesOnly);
+                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode,
+                                    occurancesOnly);
                     }
                 } catch (IllegalArgumentException e2) {
                     // Ignore it - we are searching for a working branch of the query
@@ -1303,7 +1305,8 @@ public final class MainHelper
         String className = Util.getFriendlyName(((QueryClass) origQf.getFromElement())
                 .getType());
 
-        if (!occurancesOnly && isNumeric(summaryType) && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
+        if (!occurancesOnly && isNumeric(summaryType)
+                && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
             return getHistogram(subQ, qf, pathToQueryNode);
         } else if ((summaryType == String.class) || (summaryType == Boolean.class)
                 || (summaryType == Long.class) || (summaryType == Integer.class)
@@ -1500,38 +1503,45 @@ public final class MainHelper
         }
 
         protected static void loadHelpers(Properties allProps) {
-            Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.", allProps);
+            Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.",
+                    allProps);
             for (String key: props.stringPropertyNames()) {
                 String[] parts = key.split("\\.", 3);
                 if (parts.length != 3) {
                     throw new IllegalStateException(
-                        "Property names must be in the format pathquery.range.${FullyQualifiedClassName}, got '" + key + "'"
+                        "Property names must be in the format "
+                            + "pathquery.range.${FullyQualifiedClassName}, got '" + key + "'"
                     );
                 }
                 String targetTypeName = parts[2];
                 Class<?> targetType;
                 try {
-                     targetType = Class.forName(targetTypeName);
+                    targetType = Class.forName(targetTypeName);
                 } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Cannot find class named in config: '" + key + "'", e);
+                    throw new RuntimeException("Cannot find class named in config: '" + key
+                            + "'", e);
                 }
                 String helperName = props.getProperty(key);
                 Class<RangeHelper> helperType;
                 try {
                     helperType = (Class<RangeHelper>) Class.forName(helperName);
                 } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Cannot find class named in congfig: '" + helperName + "'");
+                    throw new RuntimeException("Cannot find class named in congfig: '" + helperName
+                            + "'");
                 }
                 RangeHelper helper;
                 try {
                     helper = helperType.newInstance();
                 } catch (InstantiationException e) {
-                    throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
+                    throw new RuntimeException("Could not instantiate range helper for '" + key
+                            + "'", e);
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
+                    throw new RuntimeException("Could not instantiate range helper for '" + key
+                            + "'", e);
                 }
                 rangeHelpers.put(targetType, helper);
-                LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName() + ")");
+                LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName()
+                        + ")");
             }
         }
 
@@ -1608,7 +1618,8 @@ public final class MainHelper
 
             return helper.createConstraint(q, node, con);
         }
-        throw new RuntimeException("No range constraints are possible for paths of type " + type.getName());
+        throw new RuntimeException("No range constraints are possible for paths of type "
+                + type.getName());
     }
 
 }

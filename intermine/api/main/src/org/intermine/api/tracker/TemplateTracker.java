@@ -37,7 +37,7 @@ import org.intermine.api.template.TemplateManager;
  * a new track is saved into the database and saved into the memory too.
  * @author dbutano
  */
-public class TemplateTracker extends TrackerAbstract
+public class TemplateTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(TemplateTracker.class);
     private static TemplateTracker templateTracker = null;

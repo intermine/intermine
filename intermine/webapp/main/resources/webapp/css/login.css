@@ -21,3 +21,19 @@
 #pagecontentcontainer.login-page #create span.lists { background-image:url('../images/icons/lists-16.png'); }
 #pagecontentcontainer.login-page #create span.queries { background-image:url('../images/icons/queries-16.png'); }
 #pagecontentcontainer.login-page #create span.favorite { background-image:url('../images/star_active.gif'); }
+
+.column.oauth2 {
+    margin-left: 40px;
+}
+.oauth2-button {
+    background-color: #fefefe;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    display: block;
+    padding: 0.2em 1em;
+    margin-bottom: 0.4em;
+}
+a.oauth2-button:hover {
+    background-color:#cbcbcb;
+    text-decoration: none;
+}

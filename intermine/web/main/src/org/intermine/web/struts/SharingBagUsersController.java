@@ -11,8 +11,6 @@ package org.intermine.web.struts;
  */
 
 
-import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,10 +42,10 @@ public class SharingBagUsersController extends TilesAction
      */
     @Override
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         String bagName = (String) context.getAttribute("bagName");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());

@@ -56,6 +56,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Kim Rutherford
  * @author Jakub Kulaviak
  */
+@SuppressWarnings("deprecation")
 public class TableExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(TableExportAction.class);

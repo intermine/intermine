@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.InterMineAPITestCase;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -27,6 +28,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.OuterJoinStatus;
@@ -217,7 +219,7 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
                 "]";
         JSONArray expected = new JSONArray(jsonString);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Employee> row = new ResultsRow<Employee>();
         row.add(david);
 
         os.addRow(row);
@@ -225,9 +227,10 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Manager.name", "Manager.age");
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Query q = MainHelper.makeQuery(pq, new HashMap<String, InterMineBag>(), pathToQueryNode, null, null);
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = os.execute(q, 0, 5, true, true, new HashMap<Object, Integer>());
         Results results = new DummyResults(q, resultList);
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
@@ -275,10 +278,10 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
                 "{value: null, url: null}" +
                 "]");
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Employee> row = new ResultsRow<Employee>();
         row.add(david);
 
-        ResultsRow emptyRow = new ResultsRow();
+        ResultsRow<Employee> emptyRow = new ResultsRow<Employee>();
         emptyRow.add(null);
 
         os.addRow(row);
@@ -305,9 +308,10 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Query q = MainHelper.makeQuery(pq, new HashMap<String, InterMineBag>(), pathToQueryNode, null, null);
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = os.execute(q, 0, 5, true, true, new HashMap<Object, Integer>());
         Results results = new DummyResults(q, resultList);
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
@@ -339,15 +343,15 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
                 "{id: 9, class: 'Employee', url: '/report.do?id=9', value:'Lee'}" +
                 "]");
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Employee> row1 = new ResultsRow<Employee>();
         row1.add(tim);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Employee> row2 = new ResultsRow<Employee>();
         row2.add(gareth);
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Employee> row3 = new ResultsRow<Employee>();
         row3.add(dawn);
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Employee> row4 = new ResultsRow<Employee>();
         row4.add(keith);
-        ResultsRow row5 = new ResultsRow();
+        ResultsRow<Employee> row5 = new ResultsRow<Employee>();
         row5.add(lee);
 
         os.addRow(row1);
@@ -376,15 +380,16 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
 
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testSingleObjectWithNestedCollections() throws Exception {
         os.setResultsSize(4);
 
         ResultsRow row = new ResultsRow();
         row.add(wernhamHogg);
-        List sub1 = new ArrayList();
-        ResultsRow subRow1 = new ResultsRow();
+        List<ResultsRow<Object>> sub1 = new ArrayList<ResultsRow<Object>>();
+        ResultsRow<Object> subRow1 = new ResultsRow<Object>();
         subRow1.add(sales);
-        List sub2 = new ArrayList();
+        List<ResultsRow> sub2 = new ArrayList<ResultsRow>();
         ResultsRow subRow2 = new ResultsRow();
         subRow2.add(tim);
         sub2.add(subRow2);
@@ -393,9 +398,9 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
         sub2.add(subRow2);
         subRow1.add(sub2);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<Object>();
         subRow1.add(distribution);
-        sub2 = new ArrayList();
+        sub2 = new ArrayList<ResultsRow>();
         subRow2 = new ResultsRow();
         subRow2.add(lee);
         sub2.add(subRow2);
@@ -483,15 +488,16 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
 
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testSingleObjectWithNestedCollectionsAndMultipleAttributes() throws Exception {
         os.setResultsSize(1);
 
         ResultsRow row = new ResultsRow();
         row.add(wernhamHogg);
-        List sub1 = new ArrayList();
-        ResultsRow subRow1 = new ResultsRow();
+        List<ResultsRow<Object>> sub1 = new ArrayList<ResultsRow<Object>>();
+        ResultsRow<Object> subRow1 = new ResultsRow<Object>();
         subRow1.add(sales);
-        List sub2 = new ArrayList();
+        List<ResultsRow> sub2 = new ArrayList<ResultsRow>();
         ResultsRow subRow2 = new ResultsRow();
         subRow2.add(tim);
         sub2.add(subRow2);
@@ -500,9 +506,9 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
         sub2.add(subRow2);
         subRow1.add(sub2);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<Object>();
         subRow1.add(distribution);
-        sub2 = new ArrayList();
+        sub2 = new ArrayList<ResultsRow>();
         subRow2 = new ResultsRow();
         subRow2.add(lee);
         sub2.add(subRow2);
@@ -572,7 +578,9 @@ public class JSONRowIteratorTest extends InterMineAPITestCase {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void testRemove() throws ObjectStoreException {
+        @SuppressWarnings("rawtypes")
         ResultsRow row = new ResultsRow();
         row.add(wernhamHogg);
 

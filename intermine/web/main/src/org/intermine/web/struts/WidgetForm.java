@@ -26,6 +26,7 @@ import org.intermine.metadata.StringUtil;
  */
 public class WidgetForm extends ActionForm
 {
+
     private String link;
     private String bagName;
     private String[] selected;
@@ -271,8 +272,7 @@ public class WidgetForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
     }
 }

@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +61,7 @@ public class ConvertBagController extends TilesAction
         Model model = im.getModel();
         TemplateManager templateManager = im.getTemplateManager();
 
+        @SuppressWarnings("rawtypes")
         Map<Class, ApiTemplate> conversionTypesMap = TypeConverter.getConversionTemplates(
             templateManager.getConversionTemplates(),
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
