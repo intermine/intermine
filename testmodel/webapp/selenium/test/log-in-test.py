@@ -1,13 +1,13 @@
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from test.browsertestcase import BrowserTestCase
+from test.testmodeltestcase import TestModelTestCase as Super
 
-class LoginTestCase(BrowserTestCase):
+class LoginTestCase(Super):
 
     def setUp(self):
-        BrowserTestCase.setUp(self)
-        self.browser.get('http://localhost:8080/intermine-demo/begin.do')
+        Super.setUp(self)
+        self.browser.get(self.base_url + '/begin.do')
 
     def testLogin(self):
         login_link = self.browser.find_element_by_link_text('Log in')
@@ -24,7 +24,10 @@ class LoginTestCase(BrowserTestCase):
         submit = self.browser.find_element_by_name('action')
         submit.click()
 
-        logged_in_as = self.browser.find_element_by_css_selector('#loginbar li:nth-child(2)')
-        self.assertEqual('intermine-test-user', logged_in_as.text)
+        self.assertLoggedInAs('intermine-test-user')
 
+    def assertLoggedInAs(self, username):
+        sel = '#loginbar li:nth-child(2)'
+        logged_in_as = self.browser.find_element_by_css_selector(sel)
+        self.assertEqual('intermine-test-user', logged_in_as.text)
 
