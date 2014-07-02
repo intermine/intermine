@@ -524,7 +524,7 @@ public final class SqlGenerator
                 needComma = true;
                 retval.append(osb.getBagId() + "");
             }
-            retval.append(") ORDER BY " + BAGVAL_COLUMN);
+            retval.append(")");
             return retval.toString();
         } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
             StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN

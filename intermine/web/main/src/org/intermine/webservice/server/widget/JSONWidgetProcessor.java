@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.widget;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,17 +21,23 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.json.JSONObject;
 
-public class JSONWidgetProcessor extends WidgetProcessorImpl
+/**
+ * @author Alex Kalderimis
+ */
+public final class JSONWidgetProcessor extends WidgetProcessorImpl
 {
 
-    private static final WidgetProcessor instance = new JSONWidgetProcessor();
+    private static final WidgetProcessor INSTANCE = new JSONWidgetProcessor();
 
     private JSONWidgetProcessor() {
         // Private constructor.
     }
 
+    /**
+     * @return An instance of WidgetProcessor
+     */
     public static WidgetProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -32,10 +48,10 @@ public class JSONWidgetProcessor extends WidgetProcessorImpl
         backingMap.put("description", widgetConfig.getDescription());
         backingMap.put("targets", getClasses(widgetConfig.getTypeClass()));
         backingMap.put("filters", widgetConfig.getFilters());
-        String widgetType = getWidgetType(widgetConfig);
-        backingMap.put("widgetType", widgetType);
-        if (widgetType.equals("chart")) {
-            backingMap.put("chartType", 
+        WidgetType widgetType = getWidgetType(widgetConfig);
+        backingMap.put("widgetType", widgetType.name().toLowerCase());
+        if (widgetType == WidgetType.CHART) {
+            backingMap.put("chartType",
                     ((GraphWidgetConfig) widgetConfig).getGraphType());
             backingMap.put("labels", getLabels((GraphWidgetConfig) widgetConfig));
         }

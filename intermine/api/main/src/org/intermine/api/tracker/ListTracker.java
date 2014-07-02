@@ -26,7 +26,7 @@ import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.api.tracker.util.TrackerUtil;
 
-public class ListTracker extends TrackerAbstract
+public class ListTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(ListTracker.class);
     private static ListTracker listTracker = null;

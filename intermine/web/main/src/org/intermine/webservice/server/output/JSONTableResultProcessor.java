@@ -33,6 +33,6 @@ public class JSONTableResultProcessor extends JSONResultProcessor
 
     @Override
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.emptyList().iterator();
     }
 }

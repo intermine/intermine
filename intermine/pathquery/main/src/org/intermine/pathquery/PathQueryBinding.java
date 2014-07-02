@@ -203,7 +203,7 @@ public class PathQueryBinding
                         writer.writeEndElement();
                     } else {
                         if (!value.equals(value.trim())) {
-                        throw new XMLStreamException("Value in MultiValue starts or ends with "
+                            throw new XMLStreamException("Value in MultiValue starts or ends with "
                                 + "whitespace - this query cannot be represented in XML");
                         }
                         writer.writeStartElement("value");

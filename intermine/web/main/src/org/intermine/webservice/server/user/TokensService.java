@@ -20,8 +20,13 @@ import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 
-public class TokensService extends ReadWriteJSONService {
+/** Service that lets a user inspect their currently active tokens
+ * @author Alex Kalderimis
+ **/
+public class TokensService extends ReadWriteJSONService
+{
 
+    /** @param im The InterMine state object **/
     public TokensService(InterMineAPI im) {
         super(im);
     }
@@ -32,7 +37,9 @@ public class TokensService extends ReadWriteJSONService {
         List<Map<String, Object>> tokens = new ArrayList<Map<String, Object>>();
 
         if (profile.getUserId() != null) { // ie. is really in the DB.
-            UserProfile up = (UserProfile) im.getProfileManager().getProfileObjectStoreWriter().getObjectById(profile.getUserId());
+            UserProfile up = (UserProfile) im.getProfileManager()
+                                             .getProfileObjectStoreWriter()
+                                             .getObjectById(profile.getUserId());
 
             for (PermanentToken t: up.getPermanentTokens()) {
                 tokens.add(PermaTokens.format(t));

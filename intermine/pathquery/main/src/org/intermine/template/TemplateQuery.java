@@ -14,7 +14,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -438,7 +437,7 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Return the template's title, or its name if it has no title.
+     * @return the template's title, or its name if it has no title.
      */
     @Override
     public String getTitle() {
@@ -520,8 +519,9 @@ public class TemplateQuery extends PathQuery
         return res;
     }
 
-    // Only switched-on constraints are relevant.
+    @Override
     public synchronized Map<PathConstraint, String> getRelevantConstraints() {
+        // Only switched-on constraints are relevant.
         Map<PathConstraint, String> retVal
             = new LinkedHashMap<PathConstraint, String>(getConstraints());
         for (PathConstraint con: getConstraints().keySet()) {
@@ -532,6 +532,7 @@ public class TemplateQuery extends PathQuery
         return retVal;
     }
 
+    @Override
     protected Map<String, Object> getHeadAttributes() {
         Map<String, Object> retVal = super.getHeadAttributes();
         retVal.put("name", getName());

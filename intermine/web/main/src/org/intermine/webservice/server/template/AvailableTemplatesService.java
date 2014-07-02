@@ -26,6 +26,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.exceptions.NotAcceptableException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
@@ -84,26 +85,28 @@ public class AvailableTemplatesService extends WebService
         }
 
         switch (getFormat()) {
-        case XML:
-            output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToXml(templates,
-                    PathQuery.USERPROFILE_VERSION)));
-            break;
-        case JSON:
-            Map<String, Object> attributes = new HashMap<String, Object>();
-            if (formatIsJSONP()) {
-                attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
-            }
-            attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
-            output.setHeaderAttributes(attributes);
-            output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(templates)));
-            break;
-        case TEXT:
-            Set<String> templateNames = new TreeSet<String>(templates.keySet());
-            for (String templateName : templateNames) {
-                output.addResultItem(Arrays.asList(templateName));
-            }
-        case HTML:
-            throw new ServiceException("Not implemented: " + Format.HTML);
+            case XML:
+                output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToXml(templates,
+                        PathQuery.USERPROFILE_VERSION)));
+                break;
+            case JSON:
+                Map<String, Object> attributes = new HashMap<String, Object>();
+                if (formatIsJSONP()) {
+                    attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
+                }
+                attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
+                output.setHeaderAttributes(attributes);
+                output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(templates)));
+                break;
+            case TEXT:
+                Set<String> templateNames = new TreeSet<String>(templates.keySet());
+                for (String templateName : templateNames) {
+                    output.addResultItem(Arrays.asList(templateName));
+                }
+            case HTML:
+                throw new ServiceException("Not implemented: " + Format.HTML);
+            default:
+                throw new NotAcceptableException();
         }
     }
 }

@@ -37,6 +37,7 @@ public class DisclosureDetailsTag extends BaseDisclosureTag
      * @throws JspException if element is not inside &lt;disclosure&gt; element
      * @throws IOException if error occurs during writing to stream output
      */
+    @Override
     public void doTag() throws JspException, IOException {
         DisclosureHeadTag parent =  (DisclosureHeadTag) getParent();
         if (parent == null) {

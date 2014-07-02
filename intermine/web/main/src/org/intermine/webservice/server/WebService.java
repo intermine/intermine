@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
@@ -45,7 +46,6 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.NotAcceptableException;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -53,13 +53,11 @@ import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
 import org.intermine.webservice.server.output.CSVFormatter;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
-import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
-import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
@@ -94,7 +92,8 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * @author Alex Kalderimis
  * @version
  */
-public abstract class WebService {
+public abstract class WebService
+{
 
     /** Default jsonp callback **/
     public static final String DEFAULT_CALLBACK = "callback";
@@ -161,14 +160,12 @@ public abstract class WebService {
     /**
      * Get a parameter this service deems to be required.
      *
-     * @param name
-     *            The name of the parameter
+     * @param name The name of the parameter
      * @return The value of the parameter. Never null, never blank.
      * @throws MissingParameterException
      *             If the value of the parameter is blank or null.
      */
-    protected String getRequiredParameter(String name)
-            throws MissingParameterException {
+    protected String getRequiredParameter(String name) {
         String value = request.getParameter(name);
         if (StringUtils.isBlank(value)) {
             throw new MissingParameterException(name);
@@ -202,7 +199,7 @@ public abstract class WebService {
      * @throws ServiceForbiddenException
      *             if this request resolves to an unauthenticated profile.
      */
-    protected Profile getAuthenticatedUser() throws ServiceForbiddenException {
+    protected Profile getAuthenticatedUser() {
         Profile profile = getPermission().getProfile();
         if (profile.isLoggedIn()) {
             return profile;
@@ -210,6 +207,7 @@ public abstract class WebService {
         throw new ServiceForbiddenException("You must be logged in to use this service");
     }
 
+    /** @return A ListManager for this user. **/
     protected ListManager getListManager() {
         return new ListManager(im, getPermission().getProfile());
     }
@@ -443,6 +441,33 @@ public abstract class WebService {
         // No-op stub;
     }
 
+    private JWTVerifier.Verification getIdentityFromBearerToken(final String rawString) {
+        JWTVerifier verifier;
+        try {
+            verifier = new JWTVerifier(InterMineContext.getKeyStore(), webProperties);
+            return verifier.verify(rawString);
+        } catch (KeyStoreException e) {
+            throw new ServiceException("Failed to load key store.", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServiceException("Key store incorrectly configured", e);
+        } catch (CertificateException e) {
+            throw new ServiceException("Key store incorrectly configured", e);
+        } catch (IOException e) {
+            throw new ServiceException("Failed to load key store.", e);
+        } catch (JWTVerifier.VerificationError e) {
+            throw new UnauthorizedException(e.getMessage());
+        }
+    }
+
+    private String getIdentityAssertion() {
+        String header = webProperties.getProperty("authentication.identity.assertion.header");
+
+        if (StringUtils.isNotBlank(header)) {
+            return request.getHeader(header);
+        }
+        return null;
+    }
+
     /**
      * If user name and password is specified in request, then it setups user
      * profile in session. User was authenticated. It uses HTTP basic access
@@ -452,6 +477,7 @@ public abstract class WebService {
     private void authenticate() {
 
         String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        JWTVerifier.Verification identity = null;
         final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
         final ProfileManager pm = im.getProfileManager();
 
@@ -459,33 +485,52 @@ public abstract class WebService {
             return; // Not Authenticated.
         }
         // Accept tokens passed in the Authorization header.
-        if (StringUtils.isEmpty(authToken) && StringUtils.startsWith(authString, "Token ")) {
-            authToken = StringUtils.removeStart(authString, "Token ");
+        if (StringUtils.isEmpty(authToken)) {
+            if (StringUtils.startsWith(authString, "Token ")) {
+                authToken = StringUtils.removeStart(authString, "Token ");
+            } else if (StringUtils.startsWith(authString, "Bearer ")) {
+                identity = getIdentityFromBearerToken(
+                    StringUtils.removeStart(authString, "Bearer "));
+            } else {
+                String identityAssertion = getIdentityAssertion();
+                if (StringUtils.isNotBlank(identityAssertion)) {
+                    identity = getIdentityFromBearerToken(identityAssertion);
+                }
+            }
         }
 
         try {
-             // Use a token if provided.
-             if (StringUtils.isNotEmpty(authToken)) {
-                 permission = pm.getPermission(authToken, im.getClassKeys());
-             } else {
+            // Use a token if provided.
+            if (identity != null) {
+                permission = pm.grantPermission(
+                     identity.getIssuer(),
+                     identity.getIdentity(),
+                     im.getClassKeys());
+            } else if (StringUtils.isNotEmpty(authToken)) {
+                permission = pm.getPermission(authToken, im.getClassKeys());
+            } else {
                  // Try and read the authString as a basic auth header.
                  // Strip off the "Basic" part - but don't require it.
-                 final String encoded = StringUtils.removeStart(authString, "Basic ");
-                 final String decoded = new String(Base64.decodeBase64(encoded.getBytes()));
-                 final String[] parts = decoded.split(":", 2);
-                 if (parts.length != 2) {
-                     throw new UnauthorizedException(
+                final String encoded = StringUtils.removeStart(authString, "Basic ");
+                final String decoded = new String(Base64.decodeBase64(encoded.getBytes()));
+                final String[] parts = decoded.split(":", 2);
+                if (parts.length != 2) {
+                    throw new UnauthorizedException(
                              "Invalid request authentication. "
                                      + "Authorization field contains invalid value. "
                                      + "Decoded authorization value: "
                                      + parts[0]);
-                 }
-                 final String username = StringUtils.lowerCase(parts[0]);
-                 final String password = parts[1];
+                }
+                 // Allow tokens to be passed in basic auth headers.
+                if (StringUtils.isEmpty(parts[1])) {
+                    permission = pm.getPermission(parts[0], im.getClassKeys());
+                } else {
+                    final String username = StringUtils.lowerCase(parts[0]);
+                    final String password = parts[1];
 
-                 permission = pm.getPermission(username, password,
-                         im.getClassKeys());
-             }
+                    permission = pm.getPermission(username, password, im.getClassKeys());
+                }
+            }
         } catch (AuthenticationException e) {
             throw new UnauthorizedException(e.getMessage());
         }
@@ -570,6 +615,7 @@ public abstract class WebService {
 
     private String requestParametersToString() {
         StringBuilder sb = new StringBuilder();
+        @SuppressWarnings("unchecked") // Old pre-generic API.
         Map<String, String[]> map = request.getParameterMap();
         for (String name : map.keySet()) {
             for (String value : map.get(name)) {
@@ -637,8 +683,8 @@ public abstract class WebService {
     /**
      * Make the XML output given the HttpResponse's PrintWriter.
      *
-     * @param out
-     *            The PrintWriter from the HttpResponse.
+     * @param out The PrintWriter from the HttpResponse.
+     * @param separator the line-separator for the client's platform.
      * @return An Output that produces good XML.
      */
     protected Output makeXMLOutput(PrintWriter out, String separator) {
@@ -649,8 +695,8 @@ public abstract class WebService {
     /**
      * Make the default JSON output given the HttpResponse's PrintWriter.
      *
-     * @param out
-     *            The PrintWriter from the HttpResponse.
+     * @param out The PrintWriter from the HttpResponse.
+     * @param separator The line-separator for the client's platform.
      * @return An Output that produces good JSON.
      */
     protected Output makeJSONOutput(PrintWriter out, String separator) {
@@ -694,7 +740,7 @@ public abstract class WebService {
     private PrintWriter out = null;
 
     private String lineBreak = null;
- 
+
     /**
      * Get access to the underlying print-writer.
      *
@@ -707,8 +753,6 @@ public abstract class WebService {
 
     private void initOutput() {
         final String separator = getLineBreak();
-        
-        Format format = getFormat();
 
         OutputStream os;
         try {
@@ -722,76 +766,76 @@ public abstract class WebService {
             }
             out = new PrintWriter(os);
         } catch (IOException e) {
-            throw new InternalErrorException(e);
+            throw new ServiceException(e);
         }
         // TODO: retrieve the content types from the formats.
         String filename = getDefaultFileName();
-        switch (format) {
-        case HTML:
-            output = new StreamedOutput(out, new HTMLTableFormatter(),
-                    separator);
-            ResponseUtil.setHTMLContentType(response);
-            break;
-        case XML:
-            output = makeXMLOutput(out, separator);
-            break;
-        case TSV:
-            output = new StreamedOutput(out, new TabFormatter(
-                    StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
-                    separator);
-            filename = "result.tsv";
-            if (isUncompressed()) {
-                ResponseUtil.setTabHeader(response, filename);
-            }
-            break;
-        case CSV:
-            output = new StreamedOutput(out, new CSVFormatter(), separator);
-            filename = "result.csv";
-            if (isUncompressed()) {
-                ResponseUtil.setCSVHeader(response, filename);
-            }
-            break;
-        case TEXT:
-            output = new StreamedOutput(out, new PlainFormatter(), separator);
-            if (filename == null) {
-                filename = "result.txt";
-            }
-            filename += getExtension();
-            if (isUncompressed()) {
-                ResponseUtil.setPlainTextHeader(response, filename);
-            }
-            break;
-        case JSON:
-            output = makeJSONOutput(out, separator);
-            filename = "result.json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-            }
-            break;
-        case OBJECTS:
-            output = new StreamedOutput(out, new JSONObjectFormatter(),
-                    separator);
-            filename = "result.json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-            }
-            break;
-        case TABLE:
-            output = new StreamedOutput(out, new JSONTableFormatter(),
-                    separator);
-            filename = "resulttable.json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-            }
-            break;
-        case ROWS:
-            output = new StreamedOutput(out, new JSONRowFormatter(), separator);
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
-            }
-            break;
-        default:
-            output = getDefaultOutput(out, os, separator);
+        switch (getFormat()) {
+            case HTML:
+                output = new StreamedOutput(out, new HTMLTableFormatter(),
+                        separator);
+                ResponseUtil.setHTMLContentType(response);
+                break;
+            case XML:
+                output = makeXMLOutput(out, separator);
+                break;
+            case TSV:
+                output = new StreamedOutput(out, new TabFormatter(
+                        StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
+                        separator);
+                filename = "result.tsv";
+                if (isUncompressed()) {
+                    ResponseUtil.setTabHeader(response, filename);
+                }
+                break;
+            case CSV:
+                output = new StreamedOutput(out, new CSVFormatter(), separator);
+                filename = "result.csv";
+                if (isUncompressed()) {
+                    ResponseUtil.setCSVHeader(response, filename);
+                }
+                break;
+            case TEXT:
+                output = new StreamedOutput(out, new PlainFormatter(), separator);
+                if (filename == null) {
+                    filename = "result.txt";
+                }
+                filename += getExtension();
+                if (isUncompressed()) {
+                    ResponseUtil.setPlainTextHeader(response, filename);
+                }
+                break;
+            case JSON:
+                output = makeJSONOutput(out, separator);
+                filename = "result.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+                }
+                break;
+            case OBJECTS:
+                output = new StreamedOutput(out, new JSONObjectFormatter(),
+                        separator);
+                filename = "result.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+                }
+                break;
+            case TABLE:
+                output = new StreamedOutput(out, new JSONTableFormatter(),
+                        separator);
+                filename = "resulttable.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+                }
+                break;
+            case ROWS:
+                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
+                }
+                break;
+            default:
+                output = getDefaultOutput(out, os, separator);
         }
         if (!isUncompressed()) {
             ResponseUtil.setGzippedHeader(response, filename + getExtension());
@@ -799,12 +843,15 @@ public abstract class WebService {
                 try {
                     ((ZipOutputStream) os).putNextEntry(new ZipEntry(filename));
                 } catch (IOException e) {
-                    throw new InternalErrorException(e);
+                    throw new ServiceException(e);
                 }
             }
         }
     }
 
+    /**
+     * @return The line separator for the client's platform.
+     */
     public String getLineBreak() {
         if (lineBreak == null && request != null) {
             if (RequestUtil.isWindowsClient(request)) {
@@ -826,18 +873,26 @@ public abstract class WebService {
     /**
      * Make the default output for this service.
      *
-     * @param out
-     *            The response's PrintWriter.
-     * @param os
-     *            The Response's output stream.
-     * @return An Output. (default = new StreamedOutput(out, new
-     *         TabFormatter()))
+     * @param out The response's PrintWriter.
+     * @param os The Response's output stream.
+     * @param separator The client's line separator.
+     * @return An Output. (default = new StreamedOutput(out, new TabFormatter()))
      */
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os,
-            String separator) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
         output = new StreamedOutput(out, new TabFormatter(), separator);
         ResponseUtil.setTabHeader(response, getDefaultFileName());
         return output;
+    }
+
+    /**
+     * Make the default output for this service.
+     *
+     * @param out The response's PrintWriter.
+     * @param os The Response's output stream.
+     * @return An Output. (default = new StreamedOutput(out, new TabFormatter()))
+     */
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+        return getDefaultOutput(out, os, getLineBreak());
     }
 
     /**
@@ -945,7 +1000,9 @@ public abstract class WebService {
      */
     public String getCallback() {
         if (formatIsJSONP()) {
-            return getOptionalParameter(WebServiceRequestParser.CALLBACK_PARAMETER, DEFAULT_CALLBACK);
+            return getOptionalParameter(
+                    WebServiceRequestParser.CALLBACK_PARAMETER,
+                    DEFAULT_CALLBACK);
         } else {
             return null;
         }

@@ -12,7 +12,6 @@ package org.intermine.webservice.server.query;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -55,7 +54,8 @@ public class CodeService extends AbstractQueryService
 {
     protected static final Logger LOG = Logger.getLogger(CodeService.class);
     private String perlModuleVersion;
-    private static final String PERL_MODULE_URI = "http://api.metacpan.org/v0/module/Webservice::InterMine";
+    private static final String PERL_MODULE_URI =
+            "http://api.metacpan.org/v0/module/Webservice::InterMine";
 
     /**
      * Constructor.
@@ -73,12 +73,12 @@ public class CodeService extends AbstractQueryService
     @Override
     protected boolean canServe(Format format) {
         switch (format) {
-        case JSON:
-            return true;
-        case TEXT:
-            return true;
-        default:
-            return false;
+            case JSON:
+                return true;
+            case TEXT:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -200,7 +200,7 @@ public class CodeService extends AbstractQueryService
                 perlModuleVersion = data.getString("version");
             } catch (Exception e) {
                 return null;
-            } finally { 
+            } finally {
                 if (reader != null) {
                     try {
                         reader.close();

@@ -39,6 +39,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Kim Rutherford
  * @author Richard Smith
  */
+@SuppressWarnings("deprecation")
 public class ReportTemplateController extends TilesAction
 {
     private static final Logger LOG = Logger.getLogger(ReportTemplateController.class);
@@ -46,7 +47,6 @@ public class ReportTemplateController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("null")
     @Override
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

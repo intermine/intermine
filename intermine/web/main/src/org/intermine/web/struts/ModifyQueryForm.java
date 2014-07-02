@@ -61,8 +61,8 @@ public class ModifyQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") HttpServletRequest request) {
+    @Override
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = null;
         if (selectedQueries.length == 0) {
             errors = new ActionErrors();
@@ -79,8 +79,9 @@ public class ModifyQueryForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    @Override
+    public void reset(ActionMapping mapping,
+                      HttpServletRequest request) {
         initialise();
     }
 }

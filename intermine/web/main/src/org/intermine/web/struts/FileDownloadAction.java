@@ -30,6 +30,7 @@ import org.intermine.web.context.InterMineContext;
  * Path needs to be setup in controller or jsp.
  *
  * @author Fengyuan Hu
+ * @author Alex Kalderimis (specifically the black/white listing)
  */
 public class FileDownloadAction extends InterMineAction
 {
@@ -42,9 +43,6 @@ public class FileDownloadAction extends InterMineAction
             HttpServletResponse response)
         throws Exception {
 
-//        String path = "WEB-INF/lib/";
-//        String fileName = "intermine-webservice-client.jar";
-
         try {
             String path = request.getParameter("path");
             String fileName = request.getParameter("fileName");
@@ -55,11 +53,6 @@ public class FileDownloadAction extends InterMineAction
                 response.sendError(401);
                 return null;
             }
-
-//          String contextPath = getServlet().getServletContext().getRealPath("/");
-//          String filePath = contextPath + path + fileName;
-//          File file = new File(filePath);
-//          FileOutputStream fos = new FileOutputStream(file);
 
             // Read the file into a input stream
             InputStream is = getServlet().getServletContext().getResourceAsStream(path + fileName);
@@ -104,7 +97,8 @@ public class FileDownloadAction extends InterMineAction
         String[] blackList = webProps.getProperty("web.download.blacklist").split(",");
         for (String notAllowed: blackList) {
             if (fileName.contains(notAllowed)) {
-                LOG.info("Request denied due to black-list entry: " + fileName + " contains " + notAllowed);
+                LOG.info("Request denied due to black-list entry: "
+                        + fileName + " contains " + notAllowed);
                 return false;
             }
         }
@@ -115,7 +109,8 @@ public class FileDownloadAction extends InterMineAction
                     return true;
                 }
             }
-            LOG.info("Request denied due to white-list: " + fileName + " does not contain any of " + StringUtils.join(whiteList));
+            LOG.info("Request denied due to white-list: "
+                    + fileName + " does not contain any of " + StringUtils.join(whiteList));
             return false;
         } else {
             return true;

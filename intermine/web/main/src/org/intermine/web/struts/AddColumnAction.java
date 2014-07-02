@@ -39,6 +39,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Jakub Kulaviak
  *
  */
+@SuppressWarnings("deprecation")
 public class AddColumnAction extends InterMineAction
 {
     /**

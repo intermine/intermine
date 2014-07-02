@@ -73,9 +73,12 @@ public class TemplateController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(
+            ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response)
         throws Exception {
 
         HttpSession session = request.getSession();
