@@ -1,5 +1,15 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,10 +36,9 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GenomicRegionSearchListInput extends ListInput {
@@ -153,7 +162,7 @@ public class GenomicRegionSearchListInput extends ListInput {
                         }
                     } catch (MetaDataException e) {
                         // This should never happen.
-                        throw new InternalErrorException(e);
+                        throw new ServiceException(e);
                     }
                     featureCds.add(cld);
                     for (ClassDescriptor subCld : model.getAllSubs(cld)) {

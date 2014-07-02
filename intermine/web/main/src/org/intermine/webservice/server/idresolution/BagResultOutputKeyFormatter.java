@@ -35,24 +35,27 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 
-public class BagResultOutputKeyFormatter implements BagResultFormatter {
+/**
+ * Format a bag result grouping by matched object.
+ * @author Alex Kalderimis
+ */
+public class BagResultOutputKeyFormatter implements BagResultFormatter
+{
 
     private static final Logger LOG = Logger.getLogger(BagResultOutputKeyFormatter.class);
 
     private final InterMineAPI im;
 
+    /** @param api The InterMine state object **/
     public BagResultOutputKeyFormatter(InterMineAPI api) {
         this.im = api;
     }
 
-    /* (non-Javadoc)
-     * @see org.intermine.webservice.server.idresolution.BagResultFormatter#format(org.intermine.api.bag.BagQueryResult)
-     */
     @Override
     public Map<String, Object> format(Job job) {
         final BagQueryResult bqr = job.getResult();
         final Map<String, Object> ret = new HashMap<String, Object>();
-        
+
         doMatches(ret, bqr);
         doDuplicates(ret, bqr, BagQueryResult.DUPLICATE);
         doDuplicates(ret, bqr, BagQueryResult.WILDCARD);
@@ -62,6 +65,7 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter {
         return ret;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void doDuplicates(final Map<String, Object> ret, BagQueryResult bqr, String key) {
         Map<String, Map<String, List>> issues = bqr.getIssues().get(key);
         if (issues == null) {
@@ -77,7 +81,8 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter {
                         try {
                             imo = im.getObjectStore().getObjectById((Integer) o);
                         } catch (ObjectStoreException e) {
-                            throw new IllegalStateException("Could not retrieve object reported as match", e);
+                            throw new IllegalStateException(
+                                    "Could not retrieve object reported as match", e);
                         }
                     } else if (o instanceof ConvertedObjectPair) {
                         imo = ((ConvertedObjectPair) o).getNewObject();
@@ -94,8 +99,9 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter {
                     if (!resultItem.containsKey("summary")) {
                         resultItem.put("summary", getObjectDetails(imo));
                     }
-                    Map<String, Object> identifiers = (Map<String, Object>) resultItem.get("identifiers");
-                    
+                    Map<String, Object> identifiers =
+                            (Map<String, Object>) resultItem.get("identifiers");
+
                     if (!identifiers.containsKey(ident)) {
                         identifiers.put(ident, new HashSet<String>());
                     }
@@ -108,9 +114,9 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter {
             }
         }
     }
-    
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void doMatches(Map<String, Object> ret, BagQueryResult bqr) {
-        
         for (Entry<Integer, List> pair: bqr.getMatches().entrySet()) {
             Map<String, Object> resultItem;
             InterMineObject imo;
@@ -143,7 +149,7 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter {
             ret.put(idKey, resultItem);
         }
     }
-    
+
     private Map<String, Object> getObjectDetails(InterMineObject imo) {
         WebConfig webConfig = InterMineContext.getWebConfig();
         Model m = im.getModel();

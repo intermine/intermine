@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.web.logic.config.WebConfig;
 
@@ -34,18 +35,21 @@ public class BagUploadConfirmInlineResultsTable extends InlineResultsTable
      * @param results the List to display object
      * @param model the current Model
      * @param webConfig the WebConfig object for this webapp
-     * @param webProperties the web properties from the session
+     * @param classKeys class keys for this mine.
      * @param size the maximum number of rows to list from the collection, or -1 if we should
      * @param ignoreDisplayers if true don't include any columns that have jsp displayers defined
      * @param listOfTypes resolved using PathQueryResultHelper.queryForTypesInCollection on a
      *  Collection, a Reference object will have null instead and its Type will be resolved
      *  using getListOfTypes()
      */
-    @SuppressWarnings("unchecked")
-    public BagUploadConfirmInlineResultsTable(Collection<?> results, Model model,
-            WebConfig webConfig, Map webProperties, int size,
-            boolean ignoreDisplayers, List<Class<?>> listOfTypes) {
-        super(results, model, webConfig, webProperties, size, ignoreDisplayers, listOfTypes);
+    public BagUploadConfirmInlineResultsTable(
+            Collection<?> results, Model model,
+            WebConfig webConfig,
+            Map<String, List<FieldDescriptor>> classKeys,
+            int size,
+            boolean ignoreDisplayers,
+            List<Class<?>> listOfTypes) {
+        super(results, model, webConfig, classKeys, size, ignoreDisplayers, listOfTypes);
     }
 
     /**

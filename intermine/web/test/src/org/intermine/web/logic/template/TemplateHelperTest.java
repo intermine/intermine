@@ -39,7 +39,7 @@ public class TemplateHelperTest {
         parametersWithLotsOfConstraints,
         incompleteParameters;
 
-    private final Map<String, String[]> emptyHeaders = Collections.EMPTY_MAP;
+    private final Map<String, String[]> emptyHeaders = new HashMap<String, String[]>();
 
     @Before
     public void setup() {

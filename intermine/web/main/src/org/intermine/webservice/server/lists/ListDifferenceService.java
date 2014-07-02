@@ -32,7 +32,8 @@ public class ListDifferenceService extends ListOperationService
 
     @Override
     protected SymmetricDifference getOperation(ListInput input) {
-        return new SymmetricDifference(im.getModel(), getPermission().getProfile(), input.getLists());
+        return new SymmetricDifference(
+                im.getModel(), getPermission().getProfile(), input.getLists());
     }
 
 }

@@ -202,6 +202,7 @@ public class FindInListAction extends InterMineAction
     /**
      * Return the id of the first object in the output, or -1 if there aren't any rows.
      */
+    @SuppressWarnings("rawtypes")
     private int findFirst(ObjectStore os, Query q) {
         Results res = os.execute(q);
         try {

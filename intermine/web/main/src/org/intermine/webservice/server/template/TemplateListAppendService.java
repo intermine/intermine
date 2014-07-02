@@ -13,7 +13,6 @@ package org.intermine.webservice.server.template;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;

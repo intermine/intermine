@@ -42,6 +42,7 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Kim Rutherford
  */
+@SuppressWarnings("deprecation")
 public class LoadQueryAction extends InterMineDispatchAction
 {
     /**
@@ -118,7 +119,7 @@ public class LoadQueryAction extends InterMineDispatchAction
             }
         }
     }
-    
+
     /**
      * Load a query using given list
      * @param mapping The ActionMapping used to select this instance
@@ -135,15 +136,14 @@ public class LoadQueryAction extends InterMineDispatchAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        
+
         String listName = request.getParameter("name");
         if (listName == null) {
-            String msg = "No list name specified in URL";            
             recordError(new ActionMessage("query.load.noName"), request);
             return mapping.findForward("errors");
         }
         BagManager bagManager = im.getBagManager();
-        
+
         Map<String, InterMineBag> allBags = bagManager.getBags(profile);
         if (allBags == null) {
             recordError(new ActionMessage("query.load.notFound"), request);
@@ -156,7 +156,7 @@ public class LoadQueryAction extends InterMineDispatchAction
         }
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         PathQuery query = PathQueryResultHelper.makePathQueryForBag(bag, webConfig, im.getModel());
-        
+
         SessionMethods.loadQuery(query, session, response);
         return mapping.findForward("query");
     }

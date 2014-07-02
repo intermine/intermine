@@ -2,7 +2,7 @@ package org.intermine.webservice.client.util;
 
 import java.util.List;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.intermine.webservice.client.services.DummyModelService;
 import org.intermine.webservice.client.services.DummyQueryService;
@@ -21,8 +21,11 @@ import org.intermine.webservice.client.services.DummyTemplateService;
 /**
  * @author Jakub Kulaviak
  **/
-public class TestUtil extends TestCase
+public class TestUtil
 {
+    private TestUtil() {
+        // Namespace class.
+    }
 
     public static DummyQueryService getQueryService() {
         return new DummyQueryService(getRootUrl(), "TestUtil");
@@ -38,6 +41,10 @@ public class TestUtil extends TestCase
 
     public static String getRootUrl() {
         return "http://localhost:8080/intermine-test/service";
+    }
+
+    public static String getToken() {
+        return "test-user-token";
     }
 
     public static void checkRow(List<String> actual, Object ... expected) {

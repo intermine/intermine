@@ -42,11 +42,11 @@ public class ClassChooserController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
 
         HttpSession session = request.getSession();
@@ -54,6 +54,7 @@ public class ClassChooserController extends TilesAction
         ObjectStoreSummary oss = im.getObjectStoreSummary();
         ServletContext servletContext = session.getServletContext();
         Collection<String> qualifiedTypes = im.getModel().getClassNames();
+        @SuppressWarnings("unchecked")
         Map<String, String> classDescrs =
             (Map<String, String>) servletContext.getAttribute("classDescriptions");
         StringBuffer sb = new StringBuffer();
@@ -62,8 +63,8 @@ public class ClassChooserController extends TilesAction
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null,
                 "class", im.getProfileManager().getSuperuser());
 
-        ArrayList<String> typeList = new ArrayList();
-        ArrayList<String> preferedTypeList = new ArrayList();
+        ArrayList<String> typeList = new ArrayList<String>();
+        ArrayList<String> preferedTypeList = new ArrayList<String>();
 
         for (Tag tag : preferredBagTypeTags) {
             preferedTypeList.add(TypeUtil.unqualifiedName(tag.getObjectIdentifier()));

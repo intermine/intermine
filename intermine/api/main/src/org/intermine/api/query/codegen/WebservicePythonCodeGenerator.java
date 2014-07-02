@@ -119,13 +119,14 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
         StringBuffer sb = new StringBuffer(getBoilerPlate());
 
-        if (info.isPublic()) {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")"
-                    + endl + endl);
-        } else {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "\", \"YOUR-API-KEY\")"
-                    +  endl + endl);
+        sb.append("service = Service(\"")
+          .append(info.getServiceBaseURL())
+          .append("/service\"");
+
+        if (!info.isPublic()) {
+            sb.append(", token = \"YOUR-API-KEY\"");
         }
+        sb.append(")" + endl + endl);
 
         List<String> rootLessViews = new ArrayList<String>();
         List<String> rowKeyAccesses = new ArrayList<String>();

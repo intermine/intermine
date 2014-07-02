@@ -167,7 +167,7 @@ public class Names extends JSONService {
                 return new Iterator<Object>() {
 
                     private int current = 0;
-                    private List subCol = null;
+                    private List<Object> subCol = null;
                     private String subPath = null;
                     private int subIdx = 0;
 
@@ -206,11 +206,12 @@ public class Names extends JSONService {
                                         break;
                                     }
                                 }
-                                Collection things = (Collection) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
+                                @SuppressWarnings("unchecked")
+                                Collection<Object> things = (Collection<Object>) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
                                 if (things.isEmpty()) {
                                     return null;
                                 } else {
-                                    subCol = new ArrayList(things);
+                                    subCol = new ArrayList<Object>(things);
                                     subIdx = 0;
                                     subPath = p.toStringNoConstraints().replace(upToCollection + ".", "");
                                     return nextFromSubCol();
