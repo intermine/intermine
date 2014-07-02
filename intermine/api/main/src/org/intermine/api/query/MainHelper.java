@@ -179,15 +179,12 @@ public final class MainHelper
             // This is the Map that stores what we will put in pathToQueryNode. Because we can't
             // trust what is in there already, we use a separate variable and copy across afterwards
             Map<String, QuerySelectable> queryBits = new HashMap<String, QuerySelectable>();
+
             // If we have recursed, and are operating on a PathExpression, then we need to extract
             // the default class which was set up in the parent group and add it to the queryBits
             if (q instanceof QueryObjectPathExpression) {
                 queryBits.put(root, ((QueryObjectPathExpression) q).getDefaultClass());
-                //Path path = new Path(model, root);
-                //queryBits.put(path.getPrefix().toString(), ((QueryObjectPathExpression) q).getQueryClass());
             } else if (q instanceof QueryCollectionPathExpression) {
-                //Path path = new Path(model, root);
-                //queryBits.put(path.getPrefix().toString(), ((QueryCollectionPathExpression) q).getQueryClass());
                 queryBits.put(root, ((QueryCollectionPathExpression) q).getDefaultClass());
             }
 
@@ -203,15 +200,11 @@ public final class MainHelper
 
             // This is complicated - for NULL/NOT NULL constraints on refs/cols that span an outer
             // join boundary we need the constraint to be on the left side of the boundary, i.e.
-            // in the main part of the query rather than subquery on the select.
-            // We may need to move a constraint code from another outer join group.
-
-            // TODO find outer join boundaries
-
-            // TODO find PathConstraintNulls on refs/cols
+            // in the main part of the query rather than subquery on the select. We may need to
+            // move a constraint code from another outer join group.
+            // e.g. Company.departments IS_NOT_NULL and Company.departments is an outer join
             Map<String, String> nullRefColConstraints = getPathConstraintNulls(model, pathQuery,
                     false);
-            // TODO loop through nullRefColConstraints and check outer join status
             for (String constraintPath : nullRefColConstraints.keySet()) {
                 OuterJoinStatus ojs = pathQuery.getOuterJoinStatus(constraintPath);
                 if (ojs == OuterJoinStatus.OUTER) {
@@ -219,29 +212,22 @@ public final class MainHelper
                     if (root.split("\\.").length < constraintPath.split("\\.").length) {
                         // we're on the left side of the outer join so we want to add this
                         // constraint to the relevant codes now
-
-                        // TODO there may be more than one constraint per path
                         String code = nullRefColConstraints.get(constraintPath);
                         if (!relevantCodes.contains(code)) {
-                            System.out.println("On left of outer join, adding constraint: " + code);
                             relevantCodes.add(code);
+                            logic = addToConstraintLogic(logic, code);
                         }
                     } else {
                         // we've recursed into an outer join so we don't want to process this
                         // constraint now, remove it if it's in the relevant codes
                         String code = nullRefColConstraints.get(constraintPath);
                         if (relevantCodes.contains(code)) {
-                            System.out.println("On right of outer join, removing constraint: " + code);
                             relevantCodes.remove(code);
+                            logic = removeFromConstraintLogic(logic, code);
                         }
                     }
                 }
             }
-
-            // TODO if the constraint spans an outer join work out which side we're on
-
-            // TODO add or remove constraint from relevant constraints as appropriate
-
 
             // This is the set of loop constraints that participate in the class collapsing
             // mechanism. All others must have a ClassConstraint generated for them.
@@ -254,7 +240,8 @@ public final class MainHelper
             // Get any paths in the query that are constrained to be NULL/NOT NULL references or
             // collections AND don't appear in other constraints or the query view. These will only
             // be accessed in an EXISTS subquery and shouldn't be add to the FROM.
-            Map<String, String> pathConstraintNullOnly = getPathConstraintNulls(model, pathQuery, true);
+            Map<String, String> pathConstraintNullOnly =
+                    getPathConstraintNulls(model, pathQuery, true);
 
             // Set up queue system. We don't know what order we want to process these entries in,
             // so a queue allows us to put one we can't process yet to the back of the queue to
@@ -486,7 +473,8 @@ public final class MainHelper
                         codeToConstraint.put(code, makeRangeConstraint(q, (QueryNode) field, pcr));
                     } else if (constraint instanceof PathConstraintMultitype) {
                         PathConstraintMultitype pcmt = (PathConstraintMultitype) constraint;
-                        codeToConstraint.put(code, makeMultiTypeConstraint(pathQuery.getModel(), (QueryNode) field, pcmt));
+                        codeToConstraint.put(code, makeMultiTypeConstraint(pathQuery.getModel(),
+                                (QueryNode) field, pcmt));
                     } else if (constraint instanceof PathConstraintMultiValue) {
                         Class<?> fieldType = path.getEndType();
                         if (String.class.equals(fieldType)) {
@@ -666,8 +654,8 @@ public final class MainHelper
         for (String name: pcmt.getValues()) {
             ClassDescriptor cd = model.getClassDescriptorByName(name);
             if (cd == null) { // PathQueries should take care of this, but you know.
-              throw new ObjectStoreException(
-                  String.format("%s is not a class in the %s model", name, model.getName()));
+                throw new ObjectStoreException(
+                        String.format("%s is not a class in the %s model", name, model.getName()));
             }
             classes.add(cd.getType());
         }
@@ -1033,6 +1021,43 @@ public final class MainHelper
                 cs.addConstraint(set);
             }
         }
+    }
+
+    /**
+     * Add a constraint code to a logic expression, ANDed with any constraints already in the
+     * expression, e.g. 'A OR B' + code C -> '(A OR B) AND C'. If the expression is null a new
+     * expression is created.
+     * @param logic an existing constraint logic
+     * @param code the code to add
+     * @return a new logic expression including the new code
+     */
+    protected static LogicExpression addToConstraintLogic(LogicExpression logic, String code) {
+        if (logic == null) {
+            logic = new LogicExpression(code);
+        } else {
+            logic = new LogicExpression("(" + logic.toString() + ") AND " + code);
+        }
+        return logic;
+    }
+
+    /**
+     * Remove a constraint code from a logic expression, e.g. '(A OR B) AND C' -> 'B AND C'. If
+     * there is only one code in the expression return null.
+     * @param logic an existing constraint logic
+     * @param code the code to remove
+     * @return a new logic expression or null if the expression is now empty
+     */
+    protected static LogicExpression removeFromConstraintLogic(LogicExpression logic, String code) {
+        if (logic != null) {
+            try {
+                logic.removeVariable(code);
+            } catch (IllegalArgumentException e) {
+                // an IllegalArgumentException is thrown if we try to remove the root node, this
+                // would make an empty expression so we can just set it to null
+                logic = null;
+            }
+        }
+        return logic;
     }
 
     /**
