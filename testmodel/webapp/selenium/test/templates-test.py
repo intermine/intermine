@@ -28,7 +28,7 @@ class TemplateTestCase(Super):
     def testRunTemplate(self):
         template_link = self.findLink()
         template_link.click()
-        self.assertIn('Search for Managers', self.browser.title)
+        self.assertIn(self.template_name, self.browser.title)
         button = self.elem("#smallGreen.button input")
         self.assertIsNotNone(button, "Expected to find button to run template")
         button.click()
