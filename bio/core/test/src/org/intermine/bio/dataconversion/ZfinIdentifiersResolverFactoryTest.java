@@ -40,7 +40,7 @@ public class ZfinIdentifiersResolverFactoryTest extends TestCase {
 
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/zfin"));
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"7955"})), IdResolverFactory.resolver.getTaxons());
+        assertTrue(IdResolverFactory.resolver.getTaxons().contains("7955"));
         assertTrue(IdResolverFactory.resolver.isPrimaryIdentifier("7955", "ZDB-GENE-000125-12"));
         assertEquals("ZDB-GENE-000112-47", IdResolverFactory.resolver.resolveId("7955", "ppardb").iterator().next());
         assertEquals("ZDB-GENE-000128-11", IdResolverFactory.resolver.resolveId("7955", "gene", "ENSDARG00000001859").iterator().next());
