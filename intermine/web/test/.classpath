@@ -12,6 +12,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-dbmodel"/>
 	<classpathentry kind="lib" path="/testmodel-dbmodel/resources"/>
+	<classpathentry kind="lib" path="lib/cglib-3.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
