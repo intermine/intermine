@@ -13,6 +13,10 @@ class BrowserTestCase(unittest.TestCase):
         """Alias for self.browser.find_element_by_css_selector"""
         return self.browser.find_element_by_css_selector(selector)
 
+    def elems(self, selector):
+        """Alias for self.browser.find_elements_by_css_selector"""
+        return self.browser.find_elements_by_css_selector(selector)
+
     def findLink(self, name):
         """Alias for self.browser.find_element_by_link_text"""
         return self.browser.find_element_by_link_text(name)
