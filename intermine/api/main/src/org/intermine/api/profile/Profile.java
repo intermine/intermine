@@ -13,13 +13,11 @@ package org.intermine.api.profile;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
@@ -435,7 +433,7 @@ public class Profile
             String name = pair.getKey();
             int c = 1;
             while (savedQueries.containsKey(name)) {
-                name = pair.getKey() + "_"  + c++; 
+                name = pair.getKey() + "_"  + c++;
             }
             SavedQuery sq = new SavedQuery(name, now, pair.getValue());
             savedQueries.put(name, sq);
@@ -503,7 +501,7 @@ public class Profile
         Iterator<String> iter = queryHistory.keySet().iterator();
         while (iter.hasNext()) {
             String name = iter.next();
-            SavedQuery sq = (SavedQuery) queryHistory.get(name);
+            SavedQuery sq = queryHistory.get(name);
             if (name.equals(oldName)) {
                 sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
             }
@@ -636,10 +634,10 @@ public class Profile
         throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
-        List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
+        List<String> keyFieldNames = ClassKeyHelper.getKeyFieldNames(
                                     classKeys, type);
         InterMineBag bag = new InterMineBag(name, type, description, new Date(),
-                               BagState.CURRENT, os, userId, uosw, keyFielNames);
+                               BagState.CURRENT, os, userId, uosw, keyFieldNames);
         saveBag(name, bag);
         return bag;
     }
@@ -667,7 +665,7 @@ public class Profile
             getSharedBagManager().unshareBagWithAllUsers(bagToDelete);
             bagToDelete.delete();
         } else { //refresh the search repository
-            ((StorableBag) bagToDelete).delete();
+            bagToDelete.delete();
         }
 
         TagManager tagManager = getTagManager();
@@ -680,11 +678,10 @@ public class Profile
      * @param name the bag name
      * @param newType the type to set
      * @throws UnknownBagTypeException if the bag type is wrong
-     * @throws BagDoesNotExistException if the bag doesn't exist
      * @throws ObjectStoreException if problems storing bag
      */
     public void updateBagType(String name, String newType)
-        throws UnknownBagTypeException, BagDoesNotExistException, ObjectStoreException {
+        throws UnknownBagTypeException, ObjectStoreException {
         if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
@@ -736,6 +733,7 @@ public class Profile
      * @param oldName the template to rename
      * @param template the new template
      * @throws ObjectStoreException if problems storing
+     * @throws BadTemplateException if bad template
      */
     public void updateTemplate(String oldName, ApiTemplate template)
         throws ObjectStoreException, BadTemplateException {
@@ -890,7 +888,7 @@ public class Profile
 
     /**
      * Determine whether a user perfers a certain thing or not.
-     * @param The name of the preference.
+     * @param preference The name of the preference.
      * @return Whether this preference is set by this user.
      */
     public boolean prefers(String preference) {
