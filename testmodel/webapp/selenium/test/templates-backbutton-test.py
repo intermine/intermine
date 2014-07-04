@@ -6,9 +6,10 @@ from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re, os
 
 class TemplatesBackButton(Super):
+
     def setUp(self):
         Super.setUp(self)
-    
+
     def test_templates_backbutton(self):
 
         browser = self.browser
