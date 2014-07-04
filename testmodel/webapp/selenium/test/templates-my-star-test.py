@@ -6,7 +6,7 @@ from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re
 from imuser import IMUser
 
-class AccountLogin(Super):
+class TemplatesMyStarTest(Super):
 
     def setUp(self):
         Super.setUp(self)

@@ -56,7 +56,6 @@ class AccountPersistentSettings(Super):
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[4]/td[2]/form/button[2]").click()
         browser.find_element_by_link_text("Log out").click()
 
-
         # Finally, log back in and make sure the values are back to the original
         self.login()
 
@@ -79,8 +78,6 @@ class AccountPersistentSettings(Super):
         browser.find_element_by_name("password").send_keys(self.user.password)
         browser.find_element_by_name("action").click()
         return True
-
-
     
     def is_element_present(self, how, what):
         try: self.browser.find_element(by=how, value=what)
