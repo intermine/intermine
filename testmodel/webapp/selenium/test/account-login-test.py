@@ -10,13 +10,13 @@ import unittest, time, re
 class AccountLogin(unittest.TestCase):
     def setUp(self):
 
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
+        self.user = IMUser("zombie-testing-account-login@intermine.org")
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
         self.base_url = config.base_url
         self.verificationErrors = []
         self.accept_next_alert = True
-    
+
     def test_account_login(self):
 
         driver = self.driver

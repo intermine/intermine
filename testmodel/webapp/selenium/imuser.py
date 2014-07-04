@@ -36,7 +36,7 @@ class IMUser:
 		else:
 			print "Error creating user: " + j['error']
 
-	def getDeregistrationToken(self):
+	def get_deregistration_token(self):
 
 		methodURI = 'service/user/deregistration'
 		result = requests.post(self.base_url + methodURI, auth=(self.name, self.password))
