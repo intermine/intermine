@@ -19,7 +19,7 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.*;
 
 /**
  * A List that can understand ResultElement objects.
@@ -87,5 +87,16 @@ public interface WebTable extends List<MultiRow<ResultsRow<MultiRowValue<ResultE
      * @throws ObjectStoreException exception
      */
     ResultsInfo getInfo() throws ObjectStoreException;
+
+    /**
+     * @return The paths for the displayed columns.
+     */
+    List<Path> getColumnsPath();
+
+    /**
+     * Adds columns that should be displayed to the table.
+     * @param columnPaths columns correspond to paths and columns for these paths should be added
+     */
+    void addColumns(List<Path> columnPaths);
 
 }

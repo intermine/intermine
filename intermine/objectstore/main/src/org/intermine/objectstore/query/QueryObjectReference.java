@@ -62,4 +62,12 @@ public class QueryObjectReference extends QueryReference implements QueryOrderab
     public Class<? extends InterMineObject> getType() {
         return (Class) type;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return qc.toString() + "." +  fieldName;
+    }
 }
