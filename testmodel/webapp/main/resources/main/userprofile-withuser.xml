@@ -1,3 +1,27 @@
+<userprofiles>
+<userprofile username="sue" superUser="true" password="by the power of greyskull" apikey="greyskull">
+    <bags>
+        <bag name="My-Favourite-Employees" type="Employee">
+            <bagValue value="David Brent"/>
+            <bagValue value="Bernd Stromberg"/>
+            <bagValue value="Timo Becker"/>
+            <bagValue value="Neil Godwin"/>
+            <bagValue value="Brenda"/>
+            <bagValue value="Devon White"/>
+            <bagValue value="Hans Schmelzer"/>
+            <bagValue value="Frank Möllers"/>
+            <bagValue value="Herr Pötsch"/>
+        </bag>
+        <bag name="Places-I-Have-Worked" type="Company">
+            <bagValue value="Wernham-Hogg"/>
+            <bagValue value="Capitol Versicherung AG"/>
+        </bag>
+    </bags>
+    <tags>
+        <tag name="im:public" objectIdentifier="My-Favourite-Employees" type="bag"/>
+        <tag name="im:public" objectIdentifier="Places-I-Have-Worked" type="bag"/>
+    </tags>
+</userprofile>
 <userprofile username="intermine-test-user" password="intermine-test-user-password" apikey="test-user-token">
     <preferences>
         <alias>The Great Tester</alias>
@@ -124,3 +148,4 @@
         </template>
     </template-queries>
 </userprofile>
+</userprofiles>

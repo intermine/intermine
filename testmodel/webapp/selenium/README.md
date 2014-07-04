@@ -23,3 +23,12 @@ existing tests.
     pip install -r requirements.txt
     nosetests
 
+Required Environment Variables
+---------------------
+
+global use:
+TESTMODEL_URL - The base URL of the web application. Ex: http://localhost:8080/intermine-demo
+
+account-login-openid-test.py:
+TESTMODEL_OPENID_NAME - The username of a Gmail account
+TESTMODEL_OPENID_PASSWORD - The password of a Gmail account

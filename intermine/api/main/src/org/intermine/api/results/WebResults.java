@@ -56,7 +56,8 @@ import org.intermine.metadata.TypeUtil;
  *
  * @author Kim Rutherford
  */
-public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
+public class WebResults
+    extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
     implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
@@ -176,14 +177,12 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @return the column name
      */
-    public List getColumnNames() {
+    public List<String> getColumnNames() {
         return columnNames;
     }
 
-    /**
-     * Adds columns that should be displayed to the table.
-     * @param columnPaths columns correspond to paths and columns for these paths should be added
-     */
+
+    @Override
     public void addColumns(List<Path> columnPaths) {
         addColumnsInternal(columnPaths);
     }
@@ -513,11 +512,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
         return columns;
     }
 
-    /**
-     * Returns the columns path.
-     *
-     * @return the columns path
-     */
+    @Override
     public List<Path> getColumnsPath() {
         return columnPaths;
     }

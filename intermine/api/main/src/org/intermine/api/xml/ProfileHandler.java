@@ -56,7 +56,7 @@ class ProfileHandler extends DefaultHandler
     private Map<String, List> sharedBagsByUser;
     private List<Map<String, String>> sharedBags;
     private Map<String, InvalidBag> invalidBags;
-    private Map<String, TemplateQuery> savedTemplates;
+    private Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
     private Set<Tag> tags;
     private Map<String, Set<BagValue>> bagsValues;
     private final Map<String, String> preferences = new HashMap<String, String>();
