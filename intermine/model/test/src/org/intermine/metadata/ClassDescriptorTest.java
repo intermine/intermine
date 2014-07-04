@@ -240,7 +240,7 @@ public class ClassDescriptorTest extends TestCase
         assertEquals(col3, col4);
         assertEquals(col3.hashCode(), col4.hashCode());
         assertFalse(col1.equals(col5));
-        assertFalse(col1.equals(col6));
+        assertTrue(col1.equals(col6));
         assertFalse(col1.equals(col7));
     }
 
@@ -248,7 +248,7 @@ public class ClassDescriptorTest extends TestCase
         ClassDescriptor cld1 = makeInterface("package.name.Interface1");
         ClassDescriptor cld2 = makeClass("package.name.Class2");
         ClassDescriptor cld3 = makeClass("package.name.Class3", "package.name.Class2 package.name.Interface1");
-        String expected = 
+        String expected =
                 "<class name=\"Class3\" extends=\"Class2 Interface1\" is-interface=\"false\"></class>" + ENDL;
         new Model("test", "package.name", Arrays.asList(cld1, cld2, cld3));
         assertEquals(expected, cld3.toString());
