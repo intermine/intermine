@@ -273,5 +273,4 @@
   <module name="NewlineAtEndOfFile">
   </module>
 
-  <suppress files="[\\/]gen[\\/]src[\\/]" checks="."/>
 </module>
