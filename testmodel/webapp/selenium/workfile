@@ -1,7 +1,0 @@
-<html xmlns="http://www.w3.org/1999/xhtml"><head><link title="Wrap Long Lines" href="resource://gre-resources/plaintext.css" type="text/css" rel="alternate stylesheet" /></head><body><pre>
-
-&lt;template name="employeeByName" title="employeeByName" comment=""&gt;
-  &lt;query name="employeeByName" model="testmodel" view="Employee.name Employee.age" longDescription=""&gt;
-    &lt;constraint path="Employee.name" editable="true" description="" op="=" value=""/&gt;
-  &lt;/query&gt;
-&lt;/template&gt;</pre></body></html>
