@@ -10,11 +10,14 @@ package org.intermine.api.profile;
  *
  */
 
+import static java.util.Collections.singleton;
+
 import java.io.StringReader;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -23,13 +26,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.SharedBagManager;
@@ -38,15 +39,16 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.TextUtil;
 import org.intermine.api.xml.SavedQueryBinding;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
-import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -54,7 +56,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -943,6 +944,28 @@ public class ProfileManager
      */
     public Profile getSuperuserProfile() {
         return getProfile(superuser);
+    }
+
+    /**
+     * @return All the profiles of users who are super-users.
+     * @throws ObjectStoreException If we have trouble accessing the data-store.
+     */
+    public Collection<Profile> getAllSuperUsers() throws ObjectStoreException {
+        Set<Profile> superUsers = new HashSet<Profile>();
+        for (String name: getAllSuperNames()) {
+            superUsers.add(getProfile(name));
+        }
+        return superUsers;
+    }
+
+    private Iterable<String> getAllSuperNames() throws ObjectStoreException {
+        Set<String> names = new HashSet<String>();
+        UserProfile example = new UserProfile();
+        example.setSuperuser(true);
+        for (UserProfile up: uosw.getObjectsByExample(example, singleton("superuser"))) {
+            names.add(up.getUsername());
+        }
+        return names;
     }
 
     /**
