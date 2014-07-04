@@ -26,11 +26,11 @@
     <th>PubMed</th>
     <th>Note</th>
   </tr>
-  <tr><td rowspan="3" class="leftcol">
+  <tr><td rowspan="1" class="leftcol">
         <h2><p>Genes</p></h2></td>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R5.57), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura (R3.1), D. sechellia (R1.3), D. simulans (R1.4), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
-    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2014_01</td>
+    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2014_03</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new" class="extlink">PubMed: 17099233</a></td>
     <td> <html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
   </tr>
