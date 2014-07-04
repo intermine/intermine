@@ -538,6 +538,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * Get the type of this bag (a class from InterMine model)
      * @return the type of objects in this bag
      */
+    @Override
     public String getType() {
         return type;
     }
@@ -621,6 +622,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * Return the bag state: current, not current, to upgrade
      * @return the status
      */
+    @Override
     public String getState() {
         return state.toString();
     }
