@@ -41,6 +41,7 @@ public abstract class BioQueries
      * Query ObjectStore for all Location object between given object (eg. Chromosome) and
      * subject (eg. Gene) classes.  Return an iterator over the results ordered by subject if
      * orderBySubject is true, otherwise order by object.
+     *
      * @param os the ObjectStore to find the Locations in
      * @param objectCls object type of the Location
      * @param subjectCls subject type of the Location
@@ -50,7 +51,7 @@ public abstract class BioQueries
      * length, e.g. a chromosome's length should be greater than zero
      * @param batchSize the batch size for the results object
      * @param hasChromosomeLocation if true, only query where the subject has a chromosome location
-     * @return a Results object: object.id, location, subject
+     * @return a Results object: object.id, subject, location
      * @throws ObjectStoreException if problem reading ObjectStore
      */
     public static Results findLocationAndObjects(ObjectStore os, Class<?> objectCls,
