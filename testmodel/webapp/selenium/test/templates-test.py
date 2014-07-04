@@ -1,11 +1,12 @@
 import unittest
-from test.browsertestcase import BrowserTestCase
+from test.testmodeltestcase import TestModelTestCase as Super
 
-class TemplateTestCase(BrowserTestCase):
+class TemplateTestCase(Super):
 
     def setUp(self):
-        BrowserTestCase.setUp(self)
-        self.browser.get('http://localhost:8080/intermine-demo/templates.do')
+        Super.setUp(self)
+        self.browser.get(self.base_url + '/templates.do')
+        self.template_name = "Search for Managers"
 
     def elem(self, selector):
         return self.browser.find_element_by_css_selector(selector)
@@ -13,15 +14,21 @@ class TemplateTestCase(BrowserTestCase):
     def testTemplatesPageTitle(self):
         self.assertIn('Template queries', self.browser.title)
 
+    def findLink(self):
+        return self.browser.find_element_by_link_text(self.template_name)
+
     def testFindTemplate(self):
-        template_link = self.browser.find_element_by_link_text("Search for Managers")
+        template_link = self.findLink()
         self.assertIsNotNone(template_link, "Expected to find link")
-        self.assertTrue(template_link.is_displayed(), "Expected link to be visible to user")
+        self.assertTrue(
+            template_link.is_displayed(),
+            "Expected link to be visible to user"
+        )
 
     def testRunTemplate(self):
-        template_link = self.browser.find_element_by_link_text("Search for Managers")
+        template_link = self.findLink()
         template_link.click()
-        self.assertIn('Search for Managers', self.browser.title)
+        self.assertIn(self.template_name, self.browser.title)
         button = self.elem("#smallGreen.button input")
         self.assertIsNotNone(button, "Expected to find button to run template")
         button.click()
