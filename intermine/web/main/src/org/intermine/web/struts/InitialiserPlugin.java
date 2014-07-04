@@ -184,6 +184,11 @@ public class InitialiserPlugin implements PlugIn
         // Verify that the superuser found in the DB matches the user set in the properties file.
         final Profile superProfile = profileManager.getSuperuserProfile();
         initSuperUser(im, superProfile);
+        try {
+            startBagUpgrade(im, profileManager.getAllSuperUsers());
+        } catch (ObjectStoreException e) {
+            throw new ServletException("Could not read from userprofile data store", e);
+        }
 
         initSearch(servletContext, superProfile);
 
@@ -221,12 +226,19 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.superuser", null);
         }
 
-        if (!im.getBagManager().isAnyBagInState(superProfile, BagState.UPGRADING)) {
-            UpgradeBagList upgrade = new UpgradeBagList(superProfile, im.getBagQueryRunner());
-            LoginHandler.runBagUpgrade(upgrade, im, superProfile);
-        }
-
         LOG.debug("CHECKED SUPER PROFILE");
+    }
+
+    private void startBagUpgrade(final InterMineAPI im, final Collection<Profile> users) {
+
+        // Start the bag upgrade for all of a set of users.
+        for (Profile user: users) {
+            if (!im.getBagManager().isAnyBagInState(user, BagState.UPGRADING)) {
+                UpgradeBagList upgrade = new UpgradeBagList(user, im.getBagQueryRunner());
+                LoginHandler.runBagUpgrade(upgrade, im, user);
+            }
+            LOG.info("UPGRADING BAGS FOR " + user.getUsername());
+        }
     }
 
     private void initKeylessClasses(
