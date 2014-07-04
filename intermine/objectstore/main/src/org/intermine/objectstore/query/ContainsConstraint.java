@@ -191,4 +191,13 @@ public class ContainsConstraint extends Constraint
     /** List of possible null operations */
     public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
         ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return ref.toString() + " " + op + " " + cls;
+    }
 }
