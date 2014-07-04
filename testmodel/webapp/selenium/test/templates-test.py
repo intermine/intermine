@@ -8,17 +8,11 @@ class TemplateTestCase(Super):
         self.browser.get(self.base_url + '/templates.do')
         self.template_name = "Search for Managers"
 
-    def elem(self, selector):
-        return self.browser.find_element_by_css_selector(selector)
-
     def testTemplatesPageTitle(self):
         self.assertIn('Template queries', self.browser.title)
 
-    def findLink(self):
-        return self.browser.find_element_by_link_text(self.template_name)
-
     def testFindTemplate(self):
-        template_link = self.findLink()
+        template_link = self.findLink(self.template_name)
         self.assertIsNotNone(template_link, "Expected to find link")
         self.assertTrue(
             template_link.is_displayed(),
@@ -26,7 +20,7 @@ class TemplateTestCase(Super):
         )
 
     def testRunTemplate(self):
-        template_link = self.findLink()
+        template_link = self.findLink(self.template_name)
         template_link.click()
         self.assertIn(self.template_name, self.browser.title)
         button = self.elem("#smallGreen.button input")
@@ -34,5 +28,5 @@ class TemplateTestCase(Super):
         button.click()
         summary = self.elem(".im-table-summary")
         self.assertIsNotNone(button, "Expected to find a summary of the template results")
-        self.assertEqual("Showing 1 to 2 of 2 rows", summary.text)
+        self.assertIn("1 to 2", summary.text)
 
