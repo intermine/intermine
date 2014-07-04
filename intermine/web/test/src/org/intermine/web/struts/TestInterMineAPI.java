@@ -35,9 +35,11 @@ public class TestInterMineAPI extends InterMineAPI
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
      */
-    public TestInterMineAPI(ObjectStore objectStore, ProfileManager pm,
+    public TestInterMineAPI(ObjectStore objectStore,
+            ProfileManager pm,
             ClassKeys classKeys,
-            BagQueryConfig bagQueryConfig, ObjectStoreSummary oss) {
+            BagQueryConfig bagQueryConfig,
+            ObjectStoreSummary oss) {
         super(objectStore, null, classKeys, bagQueryConfig, oss, null, null);
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
