@@ -7,10 +7,13 @@ import unittest, time, re, os
 from imuser import IMUser
 
 class AccountLoginOpenID(Super):
+
     def setUp(self):
         Super.setUp(self)
-    
+
     def test_account_login_openid(self):
+        print "SKIPPED"
+        return
 
         name = os.getenv('TESTMODEL_OPENID_NAME')
         password = os.getenv('TESTMODEL_OPENID_PASSWORD')
@@ -30,7 +33,13 @@ class AccountLoginOpenID(Super):
         # TBD until we can deploy testmodel on a server with access to openid
         return
         self.assertEqual("Log out", browser.find_element_by_link_text("Log out").text)
+        self.assetLoggedIn()
+        self.upload_list_and_save_it()
 
+    def assetLoggedIn(self):
+        self.assertEqual("Log out", browser.find_element_by_link_text("Log out").text)
+
+    def upload_list_and_save_it(self):
         browser.get(self.base_url + "//bag.do?subtab=upload")
         browser.find_element_by_link_text("Lists").click()
         browser.find_element_by_link_text("Upload").click()
