@@ -92,8 +92,8 @@ public class CollectionDescriptorTest extends TestCase
         CollectionDescriptor cod1 = new CollectionDescriptor("cod1", "package.name.Class2", null);
         Set<CollectionDescriptor> collections = Collections.singleton(cod1);
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, noAttrs, noRefs, collections);
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, noAttrs, noRefs, noColls);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, noAttrs, noRefs, collections);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, noAttrs, noRefs, noColls);
         new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
             ClassDescriptor refCld = cod1.getReferencedClassDescriptor();
