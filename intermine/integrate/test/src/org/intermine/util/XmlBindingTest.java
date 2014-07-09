@@ -10,9 +10,7 @@ package org.intermine.util;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Collection;
 
@@ -23,6 +21,7 @@ import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 
 public class XmlBindingTest extends XMLTestCase {
@@ -36,7 +35,7 @@ public class XmlBindingTest extends XMLTestCase {
         StringWriter sw = new StringWriter();
         InputStream original = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
         XMLUnit.setIgnoreWhitespace(true);
-        Collection unmarshalled = (Collection) binding.unmarshal(original);
+        Collection<FastPathObject> unmarshalled = (Collection<FastPathObject>) binding.unmarshal(original);
         setIds(unmarshalled);
         binding.marshal(unmarshalled, sw);
 
@@ -49,7 +48,7 @@ public class XmlBindingTest extends XMLTestCase {
     }
 
 
-    protected void setIds(Collection c) throws Exception {
+    protected void setIds(Collection<FastPathObject> c) throws Exception {
         int i=1;
         for (Object o : c) {
             if (o instanceof InterMineObject) {
