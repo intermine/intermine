@@ -10,18 +10,16 @@ package org.intermine.template.xml;
  *
  */
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintSubclass;
@@ -83,7 +81,7 @@ public class TemplateQueryBindingTest extends TestCase
         queryWithConstraint.addViews("Company.name", "Company.departments.name", "Company.departments.employees.name", "Company.departments.employees.title");
         queryWithConstraint.addConstraint(new PathConstraintSubclass("Company.departments.employees", "CEO"));
         t = new TemplateQuery("queryWithConstraint", "Company --> CEO", "", queryWithConstraint);
-        t.setDescription("this is the queryWithConstraint description");
+//        t.setDescription("this is the queryWithConstraint description");
         expected.put("queryWithConstraint", t);
 
         // employeesInBag
@@ -124,7 +122,7 @@ public class TemplateQueryBindingTest extends TestCase
         System.out.println(xml);
         Map<String, TemplateQuery> readFromXml = new LinkedHashMap<String, TemplateQuery>();
         readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), 1);
-        System.out.println(readFromXml.size());
+        System.out.println(readFromXml.toString());
 
         Map<String, TemplateQuery> expectedQuery = new LinkedHashMap<String, TemplateQuery>();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
