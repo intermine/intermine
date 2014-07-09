@@ -30,7 +30,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -101,6 +101,7 @@ public class TableWidgetLdr extends WidgetLdr
         setFlattenedResults();
     }
 
+    /** @return the class name of the path this table widget loads. **/
     public String getType() {
         return type;
     }

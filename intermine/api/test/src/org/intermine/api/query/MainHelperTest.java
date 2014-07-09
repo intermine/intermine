@@ -40,7 +40,7 @@ import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -58,7 +58,7 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 /**
  * Tests for the MainHelper class

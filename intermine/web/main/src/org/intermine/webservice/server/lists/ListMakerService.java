@@ -38,13 +38,13 @@ public abstract class ListMakerService extends AuthenticatedListService
     public ListMakerService(final InterMineAPI api) {
         super(api);
     }
-    
+
     @Override
     protected void validateState() {
         super.validateState();
         if (!getPermission().isRW()) {
-            throw new ServiceForbiddenException("This request has not been authenticated with " +
-                    "RW permission");
+            throw new ServiceForbiddenException(
+                    "This request has not been authenticated with RW permission");
         }
     }
 

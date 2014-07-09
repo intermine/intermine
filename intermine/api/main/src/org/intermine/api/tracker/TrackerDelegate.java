@@ -125,14 +125,14 @@ public class TrackerDelegate
     public Map<String, Integer> getAccessCounter() {
         TemplateTracker tt = getTemplateTracker();
         if (tt != null) {
-            Connection connection = null;
+            Connection conn = null;
             try {
-                connection = getConnection();
-                return tt.getAccessCounter(connection);
+                conn = getConnection();
+                return tt.getAccessCounter(conn);
             } catch (SQLException sqle) {
-                LOG.error("Problems retrieving conn for getAccessCounter ", sqle);
+                LOG.error("Problems retrieving connection for getAccessCounter ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(conn);
             }
         }
         return null;

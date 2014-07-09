@@ -27,13 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts.util.ResponseUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.Output;
 
 /**

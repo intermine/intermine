@@ -26,19 +26,20 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
+import org.json.JSONObject;
 
 /**
  * Web service that returns a serialised representation of the data model. The currently
@@ -73,7 +74,7 @@ public class ModelService extends WebService
         return Format.XML;
     }
 
-    private static final String formatEndings = "^/?(xml|tsv|csv|json|jsonp)$";
+    private static final String FORMAT_ENDINGS = "^/?(xml|tsv|csv|json|jsonp)$";
 
     @Override
     protected void initState() {
@@ -82,15 +83,15 @@ public class ModelService extends WebService
         if (StringUtils.isBlank(pathInfo)) {
             return;
         }
-        if (pathInfo.matches(formatEndings)) {
+        if (pathInfo.matches(FORMAT_ENDINGS)) {
             return;
         }
         setFormat(Format.JSON);
         pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         try {
-            
             Map<String, String> subclasses = new HashMap<String, String>();
-            for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+            for (@SuppressWarnings("unchecked")
+            Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
                 String param = e.nextElement();
                 subclasses.put(param, request.getParameter(param));
             }
@@ -124,10 +125,9 @@ public class ModelService extends WebService
                 attributes.put(JSONFormatter.KEY_CALLBACK, callback);
             }
             if (node == null) {
-                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":{");
-                attributes.put(JSONFormatter.KEY_OUTRO, "}");
+                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":");
                 output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(model.toJSONString()));
+                output.addResultItem(Arrays.asList(new JSONObject(getAnnotatedModel(model)).toString()));
             } else {
                 Map<String, String> kvPairs = new HashMap<String, String>();
                 kvPairs.put("name", getNodeName(node));
@@ -143,6 +143,17 @@ public class ModelService extends WebService
         } else {
             output.addResultItem(Arrays.asList(model.toString()));
         }
+    }
+
+    private Map<String, Object> getAnnotatedModel(Model model) {
+        Map<String, Object> modelData = model.toJsonAST();
+        WebConfig config = InterMineContext.getWebConfig();
+        Map<String, Map<String, Object>> classes = (Map<String, Map<String, Object>>) modelData.get("classes");
+        for (Map<String, Object> classData: classes.values()) {
+            classData.put("displayName", WebUtil.formatClass(model.getClassDescriptorByName((String) classData.get("name")), config));
+            // Might be a good idea to add in field names as well, but these have sharper edge cases.
+        }
+        return modelData;
     }
 
     private String getNodeName(Path node) {
@@ -166,7 +177,7 @@ public class ModelService extends WebService
                 try {
                     ret.add(fieldToJSON(node.append(fd.getName())));
                 } catch (PathException e) {
-                    throw new InternalErrorException("While walking model", e);
+                    throw new ServiceException("While walking model", e);
                 }
             }
         }

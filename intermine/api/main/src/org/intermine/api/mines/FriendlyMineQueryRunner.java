@@ -27,8 +27,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.CacheMap;
-import org.intermine.webservice.client.results.XMLTableResult;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * Class to query friendly mines.
@@ -39,34 +41,35 @@ public final class FriendlyMineQueryRunner
 {
     private static final Logger LOG = Logger.getLogger(FriendlyMineQueryRunner.class);
     private static final String WEBSERVICE_URL = "/service";
-    private static final String QUERY_PATH = "/query/results?format=xml&query=";
+    private static final String QUERY_PATH = "/query/results?format=json&query=";
     private static Map<MultiKey, JSONObject> queryResultsCache
         = new CacheMap<MultiKey, JSONObject>();
     private static final String RELEASE_VERSION_URL = "/version/release";
     private static final boolean DEBUG = false;
     private static final int CONNECT_TIMEOUT = 20000; // 20 seconds
-    
+
     private FriendlyMineQueryRunner() {
         // don't
     }
 
     /**
      * Query a mine and recieve map of results.  only processes first two columns set as id and
-     * name
+     * name.
      *
      * @param mine mine to query
      * @param xmlQuery query to run
      * @return map of results
      * @throws IOException if something goes wrong
+     * @throws JSONException bad JSON
      */
     public static JSONObject runJSONWebServiceQuery(Mine mine, String xmlQuery)
-        throws IOException {
+        throws IOException, JSONException {
         MultiKey key = new MultiKey(mine, xmlQuery);
         JSONObject jsonMine = queryResultsCache.get(key);
         if (jsonMine != null) {
             return jsonMine;
         }
-        List<Map<String, String>> results = new ArrayList<Map<String, String>>();
+        List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
 
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
@@ -74,16 +77,23 @@ public final class FriendlyMineQueryRunner
                     mine.getName(), xmlQuery));
             return null;
         }
-        XMLTableResult table = new XMLTableResult(reader);
-        for (List<String> row: table.getData()) {
-            Map<String, String> result = new HashMap<String, String>();
-            result.put("id", row.get(0));
-            result.put("name", row.get(1));
-            if (row.size() > 2) {
-                // used for extra value, eg. organism name
-                result.put("ref", row.get(2));
+        try {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject result = new JSONObject(tokener);
+            JSONArray rows = result.getJSONArray("results");
+            for (int i = 0, l = rows.length(); i < l; i++) {
+                JSONArray row = rows.getJSONArray(i);
+                Map<String, Object> found = new HashMap<String, Object>();
+                found.put("id", row.get(0));
+                found.put("name", row.get(1));
+                if (row.length() > 2) {
+                    // used for extra value, eg. organism name
+                    found.put("ref", row.get(2));
+                }
+                results.add(found);
             }
-            results.add(result);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error reading results.", e);
         }
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("results", results);
@@ -124,7 +134,7 @@ public final class FriendlyMineQueryRunner
             BufferedReader reader = runWebServiceQuery(url);
             final String msg = "Unable to retrieve release version for " + mine.getName();
             String newReleaseVersion = null;
-            
+
             if (reader != null) {
                 try {
                     newReleaseVersion = IOUtils.toString(reader);

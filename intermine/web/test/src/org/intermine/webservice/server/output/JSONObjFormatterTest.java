@@ -52,6 +52,7 @@ public class JSONObjFormatterTest extends TestCase {
 
     JSONObjResultProcessor processor;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected void setUp() throws Exception {
 

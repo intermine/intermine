@@ -11,7 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +29,9 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -39,7 +41,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -60,7 +62,6 @@ import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.DisplayConstraintFactory;
-import org.intermine.web.logic.query.DisplayConstraint.DisplayConstraintOption;
 
 
 public class DisplayConstraintTest extends TestCase
@@ -68,11 +69,14 @@ public class DisplayConstraintTest extends TestCase
     protected ProfileManager pm;
     protected ObjectStore os;
     protected ObjectStoreWriter uosw;
-    protected Map<String, List<FieldDescriptor>> classKeys;
+    protected ClassKeys classKeys;
     protected Profile superUser, testUser, emptyUser;
     protected DisplayConstraint dcAttribute, dcNull, dcBag, dcLookup, dcSubclass,
     dcLoop, dcNullPathConstraint, dcAttribute2, dcInTemplate;
     protected InterMineBag firstEmployeeBag, secondEmployeeBag;
+    Map<String, SavedQuery> noQueries = Collections.emptyMap();
+    Map<String, InterMineBag> noBags = Collections.emptyMap();
+    Map<String, ApiTemplate> noTemplates = Collections.emptyMap();
 
     public void setUp() throws Exception
     {
@@ -81,22 +85,31 @@ public class DisplayConstraintTest extends TestCase
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
         pm = new ProfileManager(os, uosw);
-        superUser = new Profile(pm, "superUser", null, "password",
-            new HashMap(), new HashMap(), new HashMap(), true, true);
+        superUser = createSuperUser("superUser", "password");
         pm.createProfile(superUser);
 
-        testUser = new Profile(pm, "testUser", null, "password",
-            new HashMap(), new HashMap(), new HashMap(), true, false);
+        testUser = createUser("testUser", "password");
         pm.createProfile(testUser);
 
-        emptyUser = new Profile(pm, "emptyUser", null, "password",
-            new HashMap(), new HashMap(), new HashMap(), true, false);
+        emptyUser = createUser("emptyUser", "password");
         pm.createProfile(emptyUser);
 
         initializeDisplayConstraints();
 
         firstEmployeeBag = superUser.createBag("firstEmployeeBag", "Employee", "", classKeys);
         secondEmployeeBag = superUser.createBag("secondEmployeeBag", "Employee", "", classKeys);
+    }
+
+    private Profile createSuperUser(String name, String pwd) {
+        return createProfile(name, pwd, true);
+    }
+
+    private Profile createUser(String name, String pwd) {
+        return createProfile(name, pwd, false);
+    }
+
+    private Profile createProfile(String name, String pwd, boolean sup) {
+        return new Profile(pm, name, null, pwd, noQueries, noBags, noTemplates, true, sup);
     }
 
     private void initializeDisplayConstraints() {
@@ -111,7 +124,6 @@ public class DisplayConstraintTest extends TestCase
         }
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         MokaBagQueryConfig bagQueryConfig = new MokaBagQueryConfig();
 
         Properties ossProps = new Properties();
@@ -193,7 +205,7 @@ public class DisplayConstraintTest extends TestCase
             new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
         q.setConstraint(sc);
         SingletonResults res = uosw.getObjectStore().executeSingleton(q);
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             uosw.delete(o);

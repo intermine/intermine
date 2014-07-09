@@ -19,8 +19,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.SAXParser;
+import org.intermine.metadata.StringUtil;
 import org.xml.sax.InputSource;
 
 /**
@@ -203,7 +203,7 @@ public class PathQueryBinding
                         writer.writeEndElement();
                     } else {
                         if (!value.equals(value.trim())) {
-                        throw new XMLStreamException("Value in MultiValue starts or ends with "
+                            throw new XMLStreamException("Value in MultiValue starts or ends with "
                                 + "whitespace - this query cannot be represented in XML");
                         }
                         writer.writeStartElement("value");

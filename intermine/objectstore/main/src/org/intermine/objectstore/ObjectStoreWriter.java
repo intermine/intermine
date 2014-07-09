@@ -11,6 +11,7 @@ package org.intermine.objectstore;
  */
 
 import java.util.Collection;
+
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;

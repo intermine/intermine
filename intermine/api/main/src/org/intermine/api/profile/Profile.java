@@ -214,7 +214,7 @@ public class Profile
      * @return This user's email address.
      */
     public String getEmailAddress() {
-        if (preferences.containsKey(UserPreferences.EMAIL)) {
+        if (prefers(UserPreferences.EMAIL)) {
             return preferences.get(UserPreferences.EMAIL);
         }
         return getUsername();
@@ -227,6 +227,9 @@ public class Profile
      * @return String
      */
     public String getName() {
+        if (prefers(UserPreferences.AKA)) {
+            return getPreferences().get(UserPreferences.AKA);
+        }
         int atPos = username.indexOf("@");
         if (atPos > 0) {
             return username.substring(0, atPos);

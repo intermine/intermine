@@ -18,7 +18,7 @@ import org.junit.Test;
 
 public class LiveParsingOnlyTest {
 
-    private String uri = "http://www.flymine.org/release-33.0/service/query/results?"
+    private String uri = "http://www.flymine.org/query/service/query/results?"
             + "query=%3Cquery+name%3D%22%22+model%3D%22genomic%22+view%3D%22Organism.taxonId+"
             + "Organism.name%22+sortOrder%3D%22Organism.taxonId+asc%22%3E%3C%2Fquery%3E";
 

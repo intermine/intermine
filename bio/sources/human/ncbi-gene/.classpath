@@ -8,5 +8,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 </classpath>

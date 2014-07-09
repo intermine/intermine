@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -29,10 +28,9 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 
@@ -132,19 +130,36 @@ public final class MetadataManager
      */
     public static void store(Database database, String key, String value) throws SQLException {
         Connection connection = database.getConnection();
+        PreparedStatement insert = null, delete = null;
         boolean autoCommit = connection.getAutoCommit();
         try {
-            connection.setAutoCommit(true);
-            connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
-                                                 + key + "'");
+            connection.setAutoCommit(false);
+            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE + " where key = ?");
+            delete.setString(1, key);
+            delete.executeUpdate();
             if (value != null) {
-                connection.createStatement().
-                    execute("INSERT INTO " + METADATA_TABLE + " (key, value) " + "VALUES('"
-                            + key + "', '" + StringUtil.duplicateQuotes(value) + "')");
+                insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE + " (key, value) " + " VALUES (?,?)");
+                insert.setString(1,  key);
+                insert.setString(2, value);
+                insert.executeUpdate();
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                connection.rollback();
             }
         } finally {
-            connection.setAutoCommit(autoCommit);
-            connection.close();
+            
+            if (insert != null) {
+                insert.close();
+            }
+            if (delete != null) {
+                delete.close();
+            }
+            if (connection != null) {
+                connection.setAutoCommit(autoCommit);
+                connection.close();
+            }
         }
     }
 
@@ -157,39 +172,48 @@ public final class MetadataManager
      */
     public static void storeBinary(Database database, String key,
             byte[] value) throws SQLException {
+
+        PreparedStatement delete = null, insert = null;
+        ResultSet columnResult = null;
         Connection connection = database.getConnection();
         boolean autoCommit = connection.getAutoCommit();
 
         try {
             connection.setAutoCommit(false);
 
-            ResultSet rs = connection.createStatement().
-                    executeQuery("SELECT * FROM " + METADATA_TABLE);
-            ResultSetMetaData meta = rs.getMetaData();
-
-            if (meta.getColumnCount() != 3) {
-                connection.createStatement().execute("ALTER TABLE "
-                        + METADATA_TABLE + " ADD blob_value BYTEA");
+            columnResult = connection.getMetaData().getColumns(null, null, METADATA_TABLE, "blob_value");
+            if (!columnResult.next()) {
+                connection.createStatement().execute("ALTER TABLE " + METADATA_TABLE + " ADD blob_value BYTEA");
             }
 
-            connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
-                    + key + "'");
+            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE + " where key = ?");
+            delete.setString(1, key);
+            delete.executeUpdate();
 
-            PreparedStatement pstmt = connection.prepareStatement("INSERT INTO "
-                    + METADATA_TABLE + " (key, blob_value) "
-                    + "VALUES('" + key + "', ?)");
-
-            pstmt.setBytes(1, value);
-
-            pstmt.executeUpdate();
+            insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE + " (key, blob_value) VALUES (?, ?)");
+            insert.setString(1, key);
+            insert.setBytes(2, value);
+            insert.executeUpdate();
 
             connection.commit();
-
-            pstmt.close();
-
+        } catch (SQLException e) {
+            if (connection != null) {
+                connection.rollback();
+            }
         } finally {
-            connection.setAutoCommit(autoCommit);
-            connection.close();
+            if (columnResult != null) {
+                columnResult.close();
+            }
+            if (insert != null) {
+                insert.close();
+            }
+            if (delete != null) {
+                delete.close();
+            }
+            if (connection != null) {
+                connection.setAutoCommit(autoCommit);
+                connection.close();
+            }
         }
     }
 
@@ -203,16 +227,22 @@ public final class MetadataManager
     public static String retrieve(Database database, String key) throws SQLException {
         String value = null;
         Connection connection = database.getConnection();
+        PreparedStatement select = null;
         try {
-            String sql = "SELECT value FROM " + METADATA_TABLE + " WHERE key='" + key + "'";
-            ResultSet rs = connection.createStatement().executeQuery(sql);
-            if (!rs.next()) {
-                // no value found in database
-                return null;
+            String sql = "SELECT value FROM " + METADATA_TABLE + " WHERE key = ?";
+            select = connection.prepareStatement(sql);
+            select.setString(1, key);
+            ResultSet rs = select.executeQuery();
+            if (rs.next()) {
+                value = rs.getString(1);
             }
-            value = rs.getString(1);
         } finally {
-            connection.close();
+            if (select != null) {
+                select.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
         return value;
     }
@@ -228,22 +258,30 @@ public final class MetadataManager
             String key) throws SQLException {
         InputStream value = null;
         Connection connection = database.getConnection();
+        PreparedStatement select = null;
+        ResultSet results = null;
+        String sql = "SELECT blob_value FROM " + METADATA_TABLE + " WHERE key = ?";
         try {
-            String sql = "SELECT blob_value FROM " + METADATA_TABLE + " WHERE key ='" + key + "'";
-            Statement  st    = connection.createStatement();
-            ResultSet  rs    = st.executeQuery(sql);
+            select = connection.prepareStatement(sql);
+            select.setString(1, key);
+            results = select.executeQuery();
 
-            if (rs.next()) {
-                value = rs.getBinaryStream("blob_value");
-
-                return value;
-            } else {
-                return null;
+            if (results.next()) {
+                value = results.getBinaryStream("blob_value");
             }
-
         } finally {
-            connection.close();
+            if (select != null) {
+                select.close();
+            }
+            if (results != null) {
+                results.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
+
+        return value;
     }
 
     /**
@@ -273,7 +311,7 @@ public final class MetadataManager
                     needNewBlob = false;
                 }
             }
-            LargeObjectManager lom = ((org.postgresql.PGConnection) con).getLargeObjectAPI();
+            LargeObjectManager lom = getLargeObjectManager(con);
             if (needNewBlob) {
                 blob = lom.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
                 s.execute("DELETE FROM " + METADATA_TABLE + " WHERE key = '" + key + "'");
@@ -316,8 +354,7 @@ public final class MetadataManager
                 if ((blobValue != null) && isLargeObject(blobValue)) {
                     blob = getBlobId(blobValue);
                     foundBlob = true;
-                    LargeObjectManager lom =
-                        ((org.postgresql.PGConnection) con).getLargeObjectAPI();
+                    LargeObjectManager lom = getLargeObjectManager(con);
                     lom.delete(blob);
                 }
                 s.execute("DELETE FROM " + METADATA_TABLE + " WHERE key = '" + key + "'");
@@ -345,8 +382,10 @@ public final class MetadataManager
      */
     public static class LargeObjectOutputStream extends OutputStream
     {
-        Connection con;
-        LargeObject obj;
+        final Connection con;
+        final LargeObject obj;
+        final boolean commitMode;
+        boolean closed = false;
 
         /**
          * Constructs a new object.
@@ -359,6 +398,22 @@ public final class MetadataManager
         public LargeObjectOutputStream(Connection con, LargeObject obj) {
             this.con = con;
             this.obj = obj;
+            this.commitMode = true;
+        }
+
+
+        /**
+         * Constructs a new object.
+         *
+         * @param con a database Connection, to which this object will have exclusive access, and
+         * which must not be in autocommit mode. The connection will be closed when this object is
+         * closed
+         * @param obj a LargeObject to write to
+         */
+        public LargeObjectOutputStream(Connection con, LargeObject obj, boolean commitMode) {
+            this.con = con;
+            this.obj = obj;
+            this.commitMode = commitMode;
         }
 
         @Override
@@ -381,18 +436,21 @@ public final class MetadataManager
 
         @Override
         public void close() throws IOException {
-            if (con != null) {
+            if (!closed) {
                 try {
                     obj.close();
-                    con.commit();
-                    con.setAutoCommit(true);
-                    con.close();
-                    obj = null;
-                    con = null;
                 } catch (SQLException e) {
-                    IOException e2 = new IOException("Error closing large object");
-                    e2.initCause(e);
-                    throw e2;
+                    throw new IOException("Error closing large object", e);
+                } finally {
+                    try {
+                        con.commit();
+                        con.setAutoCommit(commitMode);
+                        con.close();
+                    } catch (Exception e) {
+                        throw new IOException("Error closing connection.", e);
+                    } finally {
+                        closed = true;
+                    }
                 }
             }
         }
@@ -411,8 +469,9 @@ public final class MetadataManager
     public static LargeObjectInputStream readLargeBinary(Database database, String key)
         throws SQLException {
         Connection con = database.getConnection();
+        boolean commitMode = con.getAutoCommit();
         try {
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Large Objects may not be used in auto-commit mode. 
             Statement s = con.createStatement();
             ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
                     + key + "'");
@@ -421,22 +480,25 @@ public final class MetadataManager
                 String blobValue = r.getString(1);
                 if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
                     blob = Long.parseLong(blobValue.substring(6));
-                    LargeObjectManager lom = ((org.postgresql.PGConnection) con)
-                        .getLargeObjectAPI();
+                    LargeObjectManager lom = getLargeObjectManager(con);
                     LargeObject obj = lom.open(blob, LargeObjectManager.READ);
-                    return new LargeObjectInputStream(con, obj);
+                    return new LargeObjectInputStream(con, obj, commitMode);
                 } else {
                     throw new SQLException("Value is not a large object");
                 }
             } else {
-                con.setAutoCommit(true);
-                con.close();
+                if (con != null) {
+                    con.setAutoCommit(commitMode);
+                    con.close();
+                }
                 return null;
             }
         } catch (SQLException e) {
             try {
-                con.setAutoCommit(true);
-                con.close();
+                if (con != null) {
+                    con.setAutoCommit(commitMode);
+                    con.close();
+                }
             } catch (SQLException e2) {
                 // Ignore - we already have a problem
             }
@@ -444,6 +506,11 @@ public final class MetadataManager
         }
     }
 
+
+    private static LargeObjectManager getLargeObjectManager(Connection con) throws SQLException {
+        org.postgresql.PGConnection pgCon = con.unwrap(org.postgresql.PGConnection.class);
+        return pgCon.getLargeObjectAPI();
+    }
     /**
      * Class providing an InputStream interface to read a value from the database. This object must
      * be closed when it has been finished with, in order to correctly release the connection it is
@@ -455,6 +522,7 @@ public final class MetadataManager
     {
         private Connection con;
         private LargeObject obj;
+        private boolean commitMode = true;
 
         /**
          * Constructor.
@@ -465,6 +533,19 @@ public final class MetadataManager
         public LargeObjectInputStream(Connection con, LargeObject obj) {
             this.con = con;
             this.obj = obj;
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param con a Connection that will be exclusively used by this object until it is closed
+         * @param obj a LargeObject
+         * @param commitMode the commit mode to restore the connection to.
+         */
+        public LargeObjectInputStream(Connection con, LargeObject obj, boolean commitMode) {
+            this.con = con;
+            this.obj = obj;
+            this.commitMode = commitMode;
         }
 
         @Override
@@ -499,43 +580,29 @@ public final class MetadataManager
 
         @Override
         public void close() throws IOException {
-            if (con != null) {
-                try {
+            try {
+                if (obj != null) {
                     obj.close();
-                    con.commit();
-                    con.setAutoCommit(true);
-                    con.close();
-                    obj = null;
+                }
+                obj = null;
+            } catch (SQLException e) {
+                throw new IOException("Error closing large object", e);
+            } finally {
+                if (con != null) {
+                    try {
+                        con.commit();
+                        con.setAutoCommit(commitMode);
+                        con.close();
+                    } catch (SQLException e) {
+                        throw new IOException("Error closing connection", e);
+                    }
                     con = null;
-                } catch (SQLException e) {
-                    IOException e2 = new IOException("Error closing large object");
-                    e2.initCause(e);
-                    throw e2;
                 }
             }
         }
     }
 
-    /**
-     * Load a named model from the classpath
-     * @param name the model name
-     * @return the model
-     */
-    public static Model loadModel(String name) {
-        String filename = getFilename(MODEL, name);
-        InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
-        if (is == null) {
-            throw new IllegalArgumentException("Model definition file '" + filename
-                                               + "' cannot be found");
-        }
-        Model model = null;
-        try {
-            model = new InterMineModelParser().process(new InputStreamReader(is));
-        } catch (Exception e) {
-            throw new RuntimeException("Error parsing model definition file '" + filename + "'", e);
-        }
-        return model;
-    }
+
 
     /**
      * Save a model, in serialized form, to the specified directory

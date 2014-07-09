@@ -1,10 +1,16 @@
 package org.intermine.web.struts;
 
-import javax.servlet.http.HttpServletRequest;
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionMapping;
-
+/** @author Alex Kalderimis **/
 public class TriageBagForm extends ModifyBagForm
 {
     protected String newBagType;
@@ -25,6 +31,7 @@ public class TriageBagForm extends ModifyBagForm
         return newBagType;
     }
 
+    @Override
     public void initialise() {
         super.initialise();
         newBagType = "";

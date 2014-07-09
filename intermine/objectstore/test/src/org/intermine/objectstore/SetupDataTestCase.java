@@ -42,7 +42,7 @@ import org.intermine.model.testmodel.Secretary;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -56,7 +56,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.util.XmlBinding;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
@@ -128,7 +128,7 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Iterator iter = c.iterator();
         while (iter.hasNext()) {
             try {
-                TypeUtil.setFieldValue(iter.next(), "id", new Integer(i++));
+                DynamicUtil.setFieldValue(iter.next(), "id", new Integer(i++));
             } catch (IllegalArgumentException e) {
             }
         }

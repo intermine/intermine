@@ -15,33 +15,28 @@ package org.intermine.web.logic.widget;
  * @author Daniela Butano
  *
  */
-public class PopulationInfo {
-    private int size;
-    private Object extraAttribute;
+public final class PopulationInfo
+{
+    private final int size;
+    private final float extraAttribute;
 
     /**
      * Constructor
-     * @param size
-     * @param extraAttribute
+     * @param size the size of the population.
+     * @param extraAttribute The extra attribute.
      */
-    public PopulationInfo(int size, Object extraAttribute) {
+    public PopulationInfo(int size, float extraAttribute) {
         this.size = size;
         this.extraAttribute = extraAttribute;
     }
 
+    /** @return the size of the population **/
     public int getSize() {
         return size;
     }
 
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public Object getExtraAttribute() {
+    /** @return the value of the extra attribute. **/
+    public float getExtraAttribute() {
         return extraAttribute;
-    }
-
-    public void setExtraAttribute(float extraAttribute) {
-        this.extraAttribute = extraAttribute;
     }
 }

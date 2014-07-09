@@ -26,6 +26,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
+@SuppressWarnings("deprecation")
 public class ChangeTableSizeAction extends InterMineAction
 {
     /**
@@ -37,9 +38,9 @@ public class ChangeTableSizeAction extends InterMineAction
      */
     @Override
     public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+                                 HttpServletResponse response) {
         HttpSession session = request.getSession();
         PagedTable pt = SessionMethods.getResultsTable(session, request.getParameter("table"));
 

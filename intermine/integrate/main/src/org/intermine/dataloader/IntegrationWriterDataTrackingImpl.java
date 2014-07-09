@@ -10,6 +10,7 @@ package org.intermine.dataloader;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,25 +20,24 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.lang.reflect.Constructor;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Priority-based implementation of IntegrationWriter. Allows field values to be chosen according
@@ -268,15 +268,15 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 return onlyEquivalent;
             }
             Set<Class<?>> classes = new HashSet<Class<?>>();
-            classes.addAll(DynamicUtil.decomposeClass(o.getClass()));
+            classes.addAll(Util.decomposeClass(o.getClass()));
             for (InterMineObject obj : equivObjects) {
                 if (obj instanceof ProxyReference) {
                     obj = ((ProxyReference) obj).getObject();
                 }
                 try {
-                    classes.addAll(DynamicUtil.decomposeClass(obj.getClass()));
+                    classes.addAll(Util.decomposeClass(obj.getClass()));
                 } catch (Exception e) {
-                    LOG.error("Broken with: " + DynamicUtil.decomposeClass(o.getClass()));
+                    LOG.error("Broken with: " + Util.decomposeClass(o.getClass()));
                     throw new ObjectStoreException(e);
                 }
             }
@@ -429,24 +429,24 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             timeSpentDataTrackerWrite += time1 - time2;
             return newObj;
         } catch (RuntimeException e) {
-            if (idMap.size() <= 100000) {
+            if (idMap.size() <= 10000) {
                 LOG.info("IDMAP contents: " + idMap.toString());
             }
-            if (skeletons.size() <= 100000) {
+            if (skeletons.size() <= 10000) {
                 LOG.info("Skeletons: " + skeletons.toString());
             }
-            if (pureObjects.size() <= 100000) {
+            if (pureObjects.size() <= 10000) {
                 LOG.info("pureObjects: " + pureObjects.toString());
             }
             throw e;
         } catch (ObjectStoreException e) {
-            if (idMap.size() <= 100000) {
+            if (idMap.size() <= 10000) {
                 LOG.info("IDMAP contents: " + idMap.toString());
             }
-            if (skeletons.size() <= 100000) {
+            if (skeletons.size() <= 10000) {
                 LOG.info("Skeletons: " + skeletons.toString());
             }
-            if (pureObjects.size() <= 100000) {
+            if (pureObjects.size() <= 10000) {
                 LOG.info("pureObjects: " + pureObjects.toString());
             }
             throw e;

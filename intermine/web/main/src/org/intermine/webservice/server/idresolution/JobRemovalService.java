@@ -13,12 +13,14 @@ package org.intermine.webservice.server.idresolution;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.idresolution.IDResolver;
-import org.intermine.api.idresolution.Job;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
-public class JobRemovalService extends JSONService {
+/** @author Alex Kalderimis **/
+public class JobRemovalService extends JSONService
+{
 
+    /** @param im The InterMine state object **/
     public JobRemovalService(InterMineAPI im) {
         super(im);
     }

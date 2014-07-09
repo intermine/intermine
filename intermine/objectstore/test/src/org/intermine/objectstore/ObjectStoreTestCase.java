@@ -36,7 +36,7 @@ import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;

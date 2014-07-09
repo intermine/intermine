@@ -1,7 +1,5 @@
 package org.intermine.web.logic.query;
 
-import org.intermine.pathquery.PathQuery;
-
 /*
  * Copyright (C) 2002-2014 FlyMine
  *
@@ -12,6 +10,7 @@ import org.intermine.pathquery.PathQuery;
  *
  */
 
+import org.intermine.pathquery.PathQuery;
 
 /**
  * QueryMonitor that cancels a query after a given timeout period. An instance of this method
@@ -130,10 +129,12 @@ public class QueryMonitorTimeout implements QueryMonitor
 
     private PathQuery query = null;
 
+    /** @param query the path query to set **/
     public void setPathQuery(PathQuery query) {
         this.query = (PathQuery) query.clone();
     }
 
+    /** @return the path query **/
     public PathQuery getPathQuery() {
         return this.query;
     }

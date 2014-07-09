@@ -73,7 +73,8 @@ public abstract class Output
 
     /**
      * Sets the error message
-     * @param message
+     * @param message The error message.
+     * @param code The error code.
      */
     public void setError(String message, int code) {
         errorMessage = message;

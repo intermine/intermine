@@ -29,32 +29,52 @@ package org.intermine.webservice.server.core;
  */
 public abstract class Either<A, B>
 {
-    private Either() {}
+    private Either() {
+        // Hidden
+    }
 
+    /**
+     * How you go about accessing the values.
+     * @param visitor The mapping function.
+     * @param <T> The return type.
+     * @return Whatever the mapping function returns.
+     */
     public abstract <T> T accept(EitherVisitor<A, B, T> visitor);
 
-    public static final class Left<A, B> extends Either<A, B> {
+    /** @author Alex Kalderimis **/
+    public static final class Left<A, B> extends Either<A, B>
+    {
 
         private final A a;
 
+        /**
+         * Construct a left.
+         * @param a The content of this Either.
+         */
         public Left(A a) {
             this.a = a;
         }
-        
+
         @Override
         public <T> T accept(EitherVisitor<A, B, T> visitor) {
             return visitor.visitLeft(a);
         }
-        
+
         @Override
         public String toString() {
             return String.format("Left(%s)", a);
         }
     }
-    
-    public static final class Right<A, B> extends Either<A, B> {
+
+    /** @author Alex Kalderimis **/
+    public static final class Right<A, B> extends Either<A, B>
+    {
         private final B b;
-        
+
+        /**
+         * Construct a right.
+         * @param b the content of this Either.
+         */
         public Right(B b) {
             this.b = b;
         }

@@ -10,20 +10,29 @@ package org.intermine.util;
  *
  */
 
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TimeZone;
 
 import net.sf.cglib.proxy.Factory;
 
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.proxy.ProxyReference;
 
 /**
  * Utilities to create DynamicBeans
@@ -34,9 +43,8 @@ public final class DynamicUtil
 {
     private static Map<Set<? extends Class<?>>, Class<? extends FastPathObject>> classMap
         = new HashMap<Set<? extends Class<?>>, Class<? extends FastPathObject>>();
-    private static HashMap<Class<?>, Set<Class<?>>> decomposeMap = new HashMap<Class<?>,
-        Set<Class<?>>>();
-    private static Map<Class<?>, String> friendlyNameMap = new HashMap<Class<?>, String>();
+
+
     private static Map<Class<?>, String> simpleNameMap = new HashMap<Class<?>, String>();
 
     /**
@@ -45,6 +53,7 @@ public final class DynamicUtil
     private DynamicUtil() {
         // don't instantiate
     }
+
 
     /**
      * Create a DynamicBean from a Set of Class objects
@@ -226,64 +235,7 @@ public final class DynamicUtil
         return classes;
     }
 
-    /**
-     * Convert a dynamic Class into a Set of Class objects that comprise it.
-     *
-     * @param clazz the Class to decompose
-     * @return a Set of Class objects
-     */
-    public static synchronized Set<Class<?>> decomposeClass(Class<?> clazz) {
-        Set<Class<?>> retval = decomposeMap.get(clazz);
-        if (retval == null) {
-            if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
-                // Decompose
-                retval = new TreeSet<Class<?>>(new ClassNameComparator());
-                retval.add(clazz.getSuperclass());
-                Class<?>[] interfs = clazz.getInterfaces();
-                for (int i = 0; i < interfs.length; i++) {
-                    Class<?> inter = interfs[i];
-                    if (net.sf.cglib.proxy.Factory.class != inter) {
-                        boolean notIn = true;
-                        Iterator<Class<?>> inIter = retval.iterator();
-                        while (inIter.hasNext() && notIn) {
-                            Class<?> in = inIter.next();
-                            if (in.isAssignableFrom(inter)) {
-                                // That means that the one already in the return value is more
-                                // general than the one we are about to put in, so we can get rid
-                                // of the one already in.
-                                inIter.remove();
-                            }
-                            if (inter.isAssignableFrom(in)) {
-                                // That means that the one already in the return value is more
-                                // specific than the one we would have added, so don't bother.
-                                notIn = false;
-                            }
-                        }
-                        if (notIn) {
-                            retval.add(inter);
-                        }
-                    }
-                }
-            } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
-                try {
-                    retval = new TreeSet<Class<?>>(new ClassNameComparator());
-                    retval.add((Class<?>) clazz.getField("shadowOf").get(null));
-                } catch (NoSuchFieldException e) {
-                    throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
-                            + "shadowOf method", e);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(clazz.getName()
-                            + ".shadowOf method is inaccessible", e);
-                }
-            } else {
-                // Normal class - return it.
-                retval = new TreeSet<Class<?>>(new ClassNameComparator());
-                retval.add(clazz);
-            }
-            decomposeMap.put(clazz, retval);
-        }
-        return retval;
-    }
+
 
     /**
      * Create an outline business object from a class name and a list of interface names
@@ -313,28 +265,7 @@ public final class DynamicUtil
         return createObject(convertToClasses(classNames));
     }
 
-    /**
-     * Creates a friendly name for a given class.
-     *
-     * @param clazz the class
-     * @return a String describing the class, without package names
-     */
-    public static synchronized String getFriendlyName(Class<?> clazz) {
-        String retval = friendlyNameMap.get(clazz);
-        if (retval == null) {
-            retval = "";
-            Iterator<Class<?>> iter = decomposeClass(clazz).iterator();
-            boolean needComma = false;
-            while (iter.hasNext()) {
-                Class<?> constit = iter.next();
-                retval += needComma ? "," : "";
-                needComma = true;
-                retval += constit.getName().substring(constit.getName().lastIndexOf('.') + 1);
-            }
-            friendlyNameMap.put(clazz, retval);
-        }
-        return retval;
-    }
+
 
     /**
      * Creates a friendly description of an object - that is, the class and the ID (if it has one).
@@ -344,7 +275,7 @@ public final class DynamicUtil
      */
     public static String getFriendlyDesc(Object o) {
         if (o instanceof InterMineObject) {
-            return getFriendlyName(o.getClass()) + ":" + ((InterMineObject) o).getId();
+            return Util.getFriendlyName(o.getClass()) + ":" + ((InterMineObject) o).getId();
         } else {
             return o.toString();
         }
@@ -359,10 +290,10 @@ public final class DynamicUtil
     public static synchronized String getSimpleClassName(Class<?> clazz) {
         String retval = simpleNameMap.get(clazz);
         if (retval == null) {
-            Set<Class<?>> decomposedClass = decomposeClass(clazz);
+            Set<Class<?>> decomposedClass = Util.decomposeClass(clazz);
             if (decomposedClass.size() > 1) {
                 throw new IllegalArgumentException("No simple name for class: "
-                                                   + getFriendlyName(clazz));
+                                                   + Util.getFriendlyName(clazz));
             } else {
                 retval = decomposedClass.iterator().next().getName();
                 simpleNameMap.put(clazz, retval);
@@ -391,7 +322,7 @@ public final class DynamicUtil
      * @return a boolean
      */
     public static boolean isAssignableFrom(Class<?> sup, Class<?> sub) {
-        Set<Class<?>> classes = decomposeClass(sup);
+        Set<Class<?>> classes = Util.decomposeClass(sup);
         for (Class<?> clazz : classes) {
             if (!clazz.isAssignableFrom(sub)) {
                 return false;
@@ -411,12 +342,6 @@ public final class DynamicUtil
         return isAssignableFrom(clazz, obj.getClass());
     }
 
-    private static class ClassNameComparator implements Comparator<Class<?>>
-    {
-        public int compare(Class<?> a, Class<?> b) {
-            return a.getName().compareTo(b.getName());
-        }
-    }
 
     /**
      * Returns the result of decomposeClass if that is a single class, or throws an exception if
@@ -428,16 +353,17 @@ public final class DynamicUtil
     @SuppressWarnings("unchecked")
     public static Class<? extends FastPathObject> getSimpleClass(
             Class<? extends FastPathObject> clazz) {
-        Set<Class<?>> decomposed = decomposeClass(clazz);
+        Set<Class<?>> decomposed = Util.decomposeClass(clazz);
         if (decomposed.size() > 1) {
-            throw new IllegalArgumentException("No simple class for " + getFriendlyName(clazz));
+            throw new IllegalArgumentException("No simple class for "
+                    + Util.getFriendlyName(clazz));
         }
         return (Class) decomposed.iterator().next();
     }
 
     /**
-     * For the given objet returns the result of decomposeClass if that is a single class, or throws
-     * an exception if there are more than one class.
+     * For the given object returns the result of decomposeClass if that is a single class, or
+     * throws an exception if there are more than one class.
      *
      * @param obj an object from the model
      * @return the corresponding non-dynamic class
@@ -445,5 +371,40 @@ public final class DynamicUtil
     @SuppressWarnings("unchecked")
     public static Class<? extends FastPathObject> getSimpleClass(FastPathObject obj) {
         return getSimpleClass(obj.getClass());
+    }
+
+
+
+    /**
+     * Sets the value of a public or protected Field of an Object given the field name.
+     * This used to be in TypeUtil.
+     *
+     * @param o the Object
+     * @param fieldName the name of the relevant Field
+     * @param fieldValue the value of the Field
+     */
+    public static void setFieldValue(Object o, String fieldName, Object fieldValue) {
+        try {
+            if (fieldValue instanceof ProxyReference) {
+                TypeUtil.getProxySetter(o.getClass(), fieldName).invoke(o,
+                        new Object[] {fieldValue});
+            } else {
+                TypeUtil.getSetter(o.getClass(), fieldName).invoke(o, new Object[] {fieldValue});
+            }
+        } catch (Exception e) {
+            String type = null;
+            try {
+                type = TypeUtil.getFieldInfo(o.getClass(),
+                        fieldName).getGetter().getReturnType().getName();
+            } catch (Exception e3) {
+                // ignore
+            }
+            IllegalArgumentException e2 = new IllegalArgumentException("Couldn't set field \""
+                    + Util.getFriendlyName(o.getClass()) + "." + fieldName + "\""
+                    + (type == null ? "" : " (a " + type + ")")
+                    + " to \"" + fieldValue + "\" (a " + fieldValue.getClass().getName() + ")");
+            e2.initCause(e);
+            throw e2;
+        }
     }
 }

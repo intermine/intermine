@@ -10,12 +10,6 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.ServletConfig;
-
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
@@ -32,8 +26,10 @@ public class NewUserServlet extends WebServiceServlet
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case POST: return new NewUserService(api);
-            default: throw new NoServiceException();
+            case POST:
+                return new NewUserService(api);
+            default:
+                throw new NoServiceException();
         }
     }
 

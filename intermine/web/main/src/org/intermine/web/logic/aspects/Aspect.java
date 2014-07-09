@@ -39,8 +39,8 @@ public class Aspect
     private String largeImage;
     /** List of AspectSources. */
     private List<AspectSource> aspectSources = new ArrayList<AspectSource>();
-    /** Comma seperated list of starting-point class names. */
-    private List startingPoints = new ArrayList();
+    /** Comma separated list of starting-point class names. */
+    private List<String> startingPoints = new ArrayList<String>();
 
     /**
      * Get the name of the data set.
@@ -78,7 +78,7 @@ public class Aspect
      * Get the AspectSources.
      * @return the AspectSources
      */
-    public List getAspectSources() {
+    public List<AspectSource> getAspectSources() {
         return aspectSources;
     }
 
@@ -159,7 +159,7 @@ public class Aspect
      * @param classnames class names as a space seperated list
      */
     public void setStartingPoints(String classnames) {
-        String classes[] = StringUtils.split(classnames);
+        String[] classes = StringUtils.split(classnames);
         classes = StringUtils.stripAll(classes);
         startingPoints = Arrays.asList(classes);
     }
@@ -168,7 +168,7 @@ public class Aspect
      * Get a List of starting point class names.
      * @return List of class names
      */
-    public List getStartingPoints() {
+    public List<String> getStartingPoints() {
         return startingPoints;
     }
 }

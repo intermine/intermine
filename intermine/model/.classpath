@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="test/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="main/lib/commons-collections-3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/lib/commons-lang-2.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="main/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="test/lib/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="test/lib/commons-io-1.2.jar"/>
+	<classpathentry kind="src" path="/testmodel"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OuterJoinStatus;
@@ -34,7 +34,7 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Class for generating Python code to run a query, using the intermine python library.
@@ -119,13 +119,14 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
         StringBuffer sb = new StringBuffer(getBoilerPlate());
 
-        if (info.isPublic()) {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "/service\")"
-                    + endl + endl);
-        } else {
-            sb.append("service = Service(\"" + info.getServiceBaseURL() + "\", \"YOUR-API-KEY\")"
-                    +  endl + endl);
+        sb.append("service = Service(\"")
+          .append(info.getServiceBaseURL())
+          .append("/service\"");
+
+        if (!info.isPublic()) {
+            sb.append(", token = \"YOUR-API-KEY\"");
         }
+        sb.append(")" + endl + endl);
 
         List<String> rootLessViews = new ArrayList<String>();
         List<String> rowKeyAccesses = new ArrayList<String>();

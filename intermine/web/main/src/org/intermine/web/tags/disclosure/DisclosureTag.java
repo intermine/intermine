@@ -126,6 +126,7 @@ public class DisclosureTag extends BaseDisclosureTag
      * @throws IOException if error occurs during writing to stream output
      * @throws JspException if JspException error occurs during rendering nested tags
      */
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         out.write("<div");

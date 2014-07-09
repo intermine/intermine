@@ -33,7 +33,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -202,6 +202,7 @@ public class FindInListAction extends InterMineAction
     /**
      * Return the id of the first object in the output, or -1 if there aren't any rows.
      */
+    @SuppressWarnings("rawtypes")
     private int findFirst(ObjectStore os, Query q) {
         Results res = os.execute(q);
         try {

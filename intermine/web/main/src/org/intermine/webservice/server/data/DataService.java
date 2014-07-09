@@ -1,9 +1,18 @@
 package org.intermine.webservice.server.data;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +22,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
@@ -22,13 +30,18 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
-public class DataService extends JSONService {
+/** @author Alex Kalderimis **/
+public class DataService extends JSONService
+{
 
+    /** @param im The InterMine state object **/
     public DataService(InterMineAPI im) {
         super(im);
     }
@@ -44,7 +57,7 @@ public class DataService extends JSONService {
     }
 
     @Override
-    protected void execute() throws ServiceException {
+    protected void execute() {
         String pathInfo = request.getPathInfo();
         String rangeHeader = request.getHeader("Range");
         int start = -1, end = -1;
@@ -64,19 +77,33 @@ public class DataService extends JSONService {
         }
         PathQuery pq = new PathQuery(m);
         pq.addView(className + ".id");
+        @SuppressWarnings("unchecked")
         Enumeration<String> params = request.getParameterNames();
         while (params.hasMoreElements()) {
             String param = params.nextElement();
-            FieldDescriptor fd = cd.getFieldDescriptorByName(param);
-            if (fd == null) {
-                throw new BadRequestException(param + " is not a field of " + className);
+            String value = request.getParameter(param);
+            String pathString = String.format("%s.%s", className, param);
+            Path p;
+            try {
+                p = new Path(m, pathString);
+            } catch (PathException e) {
+                throw new BadRequestException(pathString + " is not a valid relationship.");
             }
-            pq.addConstraint(Constraints.equalsExactly(className + "." + param, request.getParameter(param)));
+            if (p.endIsAttribute()) {
+                pq.addConstraint(Constraints.equalsExactly(pathString, value));
+            } else {
+                pq.addConstraint(Constraints.lookup(pathString, value, ""));
+            }
         }
         Profile p = getPermission().getProfile();
         Query q;
         try {
-            q = MainHelper.makeQuery(pq, p.getCurrentSavedBags(), null, im.getBagQueryRunner(), null);
+            q = MainHelper.makeQuery(
+                    pq,
+                    p.getCurrentSavedBags(),
+                    null,
+                    im.getBagQueryRunner(),
+                    null);
         } catch (ObjectStoreException e) {
             throw new ServiceException("Could not make query.", e);
         }
@@ -95,13 +122,13 @@ public class DataService extends JSONService {
                     end = results.size() - 1;
                 }
                 if (start >= results.size()) {
-                    ServiceException e = new ServiceException("Range not satisfiable: Start exceeds size.");
-                    e.setHttpErrorCode(416);
+                    ServiceException e = new ServiceException(
+                            "Range not satisfiable: Start exceeds size.", 416);
                     throw e;
                 }
                 if (end < start) {
-                    ServiceException e = new ServiceException("Range not satisfiable: end is less than start.");
-                    e.setHttpErrorCode(416);
+                    ServiceException e = new ServiceException(
+                            "Range not satisfiable: end is less than start.", 416);
                     throw e;
                 }
                 iter = results.range(start, end).iterator();
