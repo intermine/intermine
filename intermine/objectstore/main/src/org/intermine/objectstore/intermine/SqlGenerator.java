@@ -1986,8 +1986,43 @@ public final class SqlGenerator
 //	        queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
 //	        buffer.append(")");
 //        } else if (schema.hasBioSeg()) {
-        if (schema.hasBioSeg()) {
-        	buffer.append("bioseg_create(");
+
+        // get the table name for this constraint
+
+        String leftType = c.getLeft().getParent().getQueryClass().getType().getName();
+        ClassDescriptor leftCld = schema.getModel().getClassDescriptorByName(leftType);
+        String leftTable = DatabaseUtil.getTableName(schema.getTableMaster(leftCld));
+        LOG.info("RANGE leftType " + leftType + " leftTable: " + leftTable);
+
+        String rightType = c.getLeft().getParent().getQueryClass().getType().getName();
+        ClassDescriptor rightCld = schema.getModel().getClassDescriptorByName(rightType);
+        String rightTable = DatabaseUtil.getTableName(schema.getTableMaster(rightCld));
+        LOG.info("RANGE rightType " + rightType + " rightTable: " + rightTable);
+
+        //schema.getTableFields(leftCld)
+        if (false) {
+            buffer.append("intermine_locrange ");
+            if ((ConstraintOp.CONTAINS == c.getOp())
+                    || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
+                buffer.append("@>");
+            } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
+                buffer.append("<@");
+            } else if ((ConstraintOp.OVERLAPS == c.getOp())
+                    || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
+                buffer.append("&&");
+            } else {
+                throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
+                        + " for range");
+            }
+            c.getOp();
+            buffer.append(" int8range(");
+            queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+            buffer.append(", ");
+            queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+            buffer.append(")");
+        } else if (schema.hasBioSeg()) {
+        //} else if (true) {
+            buffer.append("bioseg_create(");
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);

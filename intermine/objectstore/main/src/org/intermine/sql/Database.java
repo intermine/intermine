@@ -92,7 +92,7 @@ public class Database implements Shutdownable
             // database connection properties need dataSource prefix
             renameProperty(dsProps, "user", "dataSource.user");
             renameProperty(dsProps, "password", "dataSource.password");
-            renameProperty(dsProps, "port", "dataSource.port");
+            renameProperty(dsProps, "port", "dataSource.portNumber");
             renameProperty(dsProps, "databaseName", "dataSource.databaseName");
             renameProperty(dsProps, "serverName", "dataSource.serverName");
 
