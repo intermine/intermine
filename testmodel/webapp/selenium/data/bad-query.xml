@@ -1,0 +1,1 @@
+<query model="testmodel" view="Employee.name Company.name"/>

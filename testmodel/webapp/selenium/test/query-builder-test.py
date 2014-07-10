@@ -13,7 +13,6 @@ class QueryBuilderTestCase(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.browser.get(self.base_url + '/begin.do')
         self.browser.get(self.base_url + '/customQuery.do')
 
     def test_on_right_page(self):
