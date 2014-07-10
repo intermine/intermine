@@ -62,7 +62,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 "/contact", "/portal", "/templates", "/templateSearch", "/template", "/aspect",
                 "/ping", "/standalone", "/quickStart", "/importQuery", "/tree", "/headMenu",
                 "/htmlHead", "/dataCategories", "/bagDetails", "/results", "/passwordReset",
-                "/experiment", "/features", "/loadQuery", "/loadTemplate");
+                "/experiment", "/features", "/loadQuery", "/loadTemplate", "/customQuery",
+                "/importQueries");
 
     /**
      * This is called during the processing of every controller.
