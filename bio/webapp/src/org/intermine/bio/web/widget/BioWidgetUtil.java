@@ -12,6 +12,7 @@ package org.intermine.bio.web.widget;
 
 
 import java.util.Collection;
+import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
@@ -37,7 +38,6 @@ public class BioWidgetUtil implements WidgetHelper
      */
     @Override
     public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
-        return BioUtil.getOrganisms(os, bag, false);
+        return BioUtil.getOrganisms(os, bag.getType(), bag.getContentsAsIds(), false);
     }
-
 }
