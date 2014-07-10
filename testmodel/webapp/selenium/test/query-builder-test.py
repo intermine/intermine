@@ -82,7 +82,10 @@ class QueryBuilderTestCase(Super):
         self.elem('#importQueriesForm input[type="submit"]').click()
         self.elem('#showResult').click()
         summary = self.elem(".im-table-summary")
-        self.assertIn("22 rows", summary.text)
+        self.assertRowCountIs(22)
+
+    def assertRowCountIs(self, n):
+        self.assertEquals(n, len(self.elems('.im-table-container tbody tr')))
 
     def test_add_constraint_set_and(self):
         query = """
@@ -122,7 +125,7 @@ class QueryBuilderTestCase(Super):
         self.browser.back()
         # Check that the results are as expected.
         self.elem('#showResult').click()
-        self.assertIn("of 2 rows", self.elem(".im-table-summary").text)
+        self.assertRowCountIs(2)
 
     def test_add_constraint_set_or(self):
         query = """
@@ -160,7 +163,9 @@ class QueryBuilderTestCase(Super):
         self.elem('#attributeSubmit').click()
         # Switch the constraint logic to A or B
         self.elem('#constraintLogic').click()
-        self.elem('#expr').send_keys('A or B')
+        logic = self.elem('#expr')
+        logic.clear()
+        logic.send_keys('A or B')
         self.browser.find_element_by_id('editconstraintlogic').click()
 
         # Check that the query is as expected.
@@ -169,7 +174,7 @@ class QueryBuilderTestCase(Super):
         self.browser.back()
         # Check that the results are as expected.
         self.elem('#showResult').click()
-        self.assertIn("of 24 rows", self.elem(".im-table-summary").text)
+        self.assertRowCountIs(24)
 
     def load_queries_into_history(self):
         query_1 = ''.join([
@@ -189,6 +194,28 @@ class QueryBuilderTestCase(Super):
             self.elem('#importQueriesForm input[type="submit"]').click()
             self.elem('#showResult').click()
         self.browser.get(self.base_url + '/customQuery.do')
+
+    def test_edit_template(self):
+        self.browser.get(self.base_url + '/template.do?name=ManagerLookup&scope=all')
+        self.elem('input.editQueryBuilder').click()
+        self.assertIn('Query builder', self.browser.title)
+        # Edit the constraint.
+        self.elem('img[title="Edit this constraint"]').click()
+        con_value = self.elem('#attribute8')
+        con_value.clear()
+        con_value.send_keys('Anne')
+        self.elem('#attributeSubmit').click()
+        # Check export.
+        self.elem('a[title="Export this query as XML"]').click()
+        expected_query = '\n'.join([
+            '<query name="" model="testmodel" view="Manager.name Manager.title" longDescription="">',
+            '  <constraint path="Manager" op="LOOKUP" value="Anne" extraValue=""/>',
+            '</query>'])
+        self.assertEquals(expected_query, self.elem('body').text)
+        self.browser.back()
+        # Check results.
+        self.elem('#showResult').click()
+        self.assertRowCountIs(1)
 
     def test_query_history(self):
         self.load_queries_into_history()
@@ -213,7 +240,7 @@ class QueryBuilderTestCase(Super):
         self.load_queries_into_history()
 
         self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(1)').click()
-        self.assertIn("of 16 rows", self.elem(".im-table-summary").text)
+        self.assertRowCountIs(16)
 
     def test_edit_query_in_query_history(self):
         self.load_queries_into_history()
@@ -223,11 +250,13 @@ class QueryBuilderTestCase(Super):
         self.assertEquals('Bank', self.elem('.typeSelected').text)
         # Edit a constraint.
         self.elem('img[title="Edit this constraint"]').click()
-        self.elem('#attribute8').send_keys('40,000,000')
+        con_value = self.elem('#attribute8')
+        con_value.clear()
+        con_value.send_keys('40,000,000')
         self.elem('#attributeSubmit').click()
         # Check results.
         self.elem('#showResult').click()
-        self.assertIn("of 16 rows", self.elem(".im-table-summary").text)
+        self.assertRowCountIs(15)
 
     def test_export_query_in_query_history(self):
         self.load_queries_into_history()
