@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.alert import Alert
@@ -71,6 +73,16 @@ class QueryBuilderTestCase(Super):
         """
         self.assertEquals(expected_query.strip(), self.elem('body').text)
 
+    def test_build_query(self):
+        Select(self.elem("#queryClassSelector")).select_by_visible_text("Employee")
+        self.elem("#submitClassSelect").click()
+        self.elem('a[title="Show name in results"]').click()
+        self.elem('a[title="Add a constraint to name"]').click()
+        self.elem("#attribute8").clear()
+        self.elem("#attribute8").send_keys(u"*ö*")
+        self.elem("#attributeSubmit").click()
+        self.run_and_expect(4)
+
     def test_run_query(self):
         query = """
         <query model="testmodel" view="Bank.name Bank.debtors.debt" sortOrder="Bank.debtors.debt ASC" >
@@ -80,9 +92,12 @@ class QueryBuilderTestCase(Super):
         self.findLink("Import query from XML").click()
         self.elem('#xml').send_keys(query)
         self.elem('#importQueriesForm input[type="submit"]').click()
+        self.run_and_expect(22)
+
+    def run_and_expect(self, n):
         self.elem('#showResult').click()
         summary = self.elem(".im-table-summary")
-        self.assertRowCountIs(22)
+        self.assertRowCountIs(n)
 
     def assertRowCountIs(self, n):
         self.assertEquals(n, len(self.elems('.im-table-container tbody tr')))
