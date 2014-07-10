@@ -3,11 +3,19 @@ from selenium import webdriver
 
 class BrowserTestCase(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.browser = webdriver.Firefox()
+        cls.browser.implicitly_wait(5)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.browser.quit()
+
     def setUp(self):
         """Start a new browser session, and schedule the browser to be shutdown"""
-        self.browser = webdriver.Firefox()
-        self.browser.implicitly_wait(10)
-        self.addCleanup(self.browser.quit)
+        self.browser = self.__class__.browser
+        self.browser.delete_all_cookies()
 
     def elem(self, selector):
         """Alias for self.browser.find_element_by_css_selector"""
