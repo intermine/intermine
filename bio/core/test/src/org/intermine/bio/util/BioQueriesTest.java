@@ -49,7 +49,6 @@ import org.intermine.util.DynamicUtil;
  */
 public class BioQueriesTest extends TestCase
 {
-    private ObjectStore os;
     private ObjectStoreWriter osw;
     private Chromosome storedChromosome = null;
     private Gene storedGene1 = null;
@@ -60,7 +59,6 @@ public class BioQueriesTest extends TestCase
 
     public void testFindLocationAndObjects() throws Exception {
 
-        os = ObjectStoreFactory.getObjectStore("os.bio-test");
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         createData();
 
@@ -80,7 +78,7 @@ public class BioQueriesTest extends TestCase
 
         Results res = null;
         try {
-            res = BioQueries.findLocationAndObjects(os, chromosomeCls, geneCls, false, false, false, 2);
+            res = BioQueries.findLocationAndObjects(osw.getObjectStore(), chromosomeCls, geneCls, false, false, false, 2);
         } catch (ObjectStoreException e) {
             fail("Unexpected ObjectStoreException. The model is wrong.");
         }
