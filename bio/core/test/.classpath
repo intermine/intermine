@@ -13,5 +13,7 @@
 	<classpathentry kind="lib" path="/intermine-integrate-test/lib/mockrunner.jar"/>
 	<classpathentry kind="src" path="/intermine-pathquery"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="src" path="/intermine-api-main"/>
+	<classpathentry kind="src" path="/intermine-api-test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
