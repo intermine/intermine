@@ -125,6 +125,9 @@
           <span><fmt:message key="menu.mymine"/></span>
         </a>
       </li>
+      <li id="mgi"  <c:if test="${tab == 'mgi'}">class="activelink"</c:if>>
+        <a href="http://www.informatics.jax.org" target="_blank" title="Opens the MGI home page in a new tab."><span>MGI</span></a>
+      </li>
     </ul>
   </div>
 
