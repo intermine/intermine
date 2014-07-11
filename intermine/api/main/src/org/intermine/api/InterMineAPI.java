@@ -11,7 +11,6 @@ package org.intermine.api;
  */
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.bag.BagManager;
@@ -29,7 +28,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.types.ClassKeys;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
