@@ -1,5 +1,15 @@
 package org.intermine.api.query.codegen;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,17 +40,6 @@ import org.intermine.metadata.TypeUtil;
 
 import static java.lang.String.format;
 
-/*
- * Copyright (C) 2002-2014 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-
 /**
  * This Class generates Java source code of web service client for path query and template query.
  *
@@ -53,13 +52,17 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String LOOKUP_FMT = "Constraints.lookup(%s, %s, %s)";
     protected static final String TEST_STRING = "This is a Java test string...";
 
+    /**
+     * @return error message
+     */
     protected String getInvalidQuery() {
         StringBuffer b = new StringBuffer()
             .append("/**").append(endl)
             .append(" * Invalid query.").append(endl)
             .append(" * =============").append(endl)
             .append(" * ")
-            .append("The java code for this query could not be generated for the following reasons:").append(endl);
+            .append("The java code for this query could not be generated for "
+                    + "the following reasons:").append(endl);
         return b.toString();
     }
 
@@ -78,8 +81,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         = "This query makes use of a feature that is only for internal use ";
 
     private static final String OUTER_JOIN_TITLE = "Outer Joins";
-    private static final String OUTER_JOIN_EXPL
-        = "Show all information about these relationships if they exist, but do not require that they exist.";
+    private static final String OUTER_JOIN_EXPL = "Show all information about these "
+            + "relationships if they exist, but do not require that they exist.";
 
     private static final String TEMPLATE_PARAMS_INIT
         = "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();";
@@ -89,10 +92,12 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String MULTI_VALUE_FMT = "Constraints.%s(\"%s\", %s);";
 
     private static final String STR_FMT = "s";
-    private static final String GET_ITERATOR = "Iterator<List<Object>> rows = service.getRowListIterator(";
+    private static final String GET_ITERATOR = "Iterator<List<Object>> rows "
+            + "= service.getRowListIterator(";
     private static final String INIT_OUT = "PrintStream out = System.out;";
 
-    private static class MethodNameMap extends HashMap<ConstraintOp, String> {
+    private static class MethodNameMap extends HashMap<ConstraintOp, String>
+    {
 
         public String get(ConstraintOp op) throws UnhandledFeatureException {
             String ret = super.get(op);
@@ -103,9 +108,9 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
 
         private static final long serialVersionUID = -2113407677691787960L;
-    };
+    }
 
-    private static final MethodNameMap multiMethodNames = new MethodNameMap() {
+    private static final MethodNameMap MULTI_METHOD_NAMES = new MethodNameMap() {
         private static final long serialVersionUID = -2113407677691787960L;
         {
             put(ConstraintOp.ONE_OF, "oneOfValues");
@@ -113,7 +118,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
     };
 
-    private static final MethodNameMap loopMethodNames = new MethodNameMap() {
+    private static final MethodNameMap LOOP_METHOD_NAMES = new MethodNameMap() {
         private static final long serialVersionUID = -2113407677691787960L;
         {
             put(ConstraintOp.EQUALS, "equalToLoop");
@@ -121,7 +126,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
     };
 
-    private static final MethodNameMap nullMethodNames = new MethodNameMap() {
+    private static final MethodNameMap NULL_METHOD_NAMES = new MethodNameMap() {
         private static final long serialVersionUID = -2113407677691787960L;
         {
             put(ConstraintOp.IS_NULL, "isNull");
@@ -129,7 +134,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
     };
 
-    private static final MethodNameMap methodNames = new MethodNameMap() {
+    private static final MethodNameMap METHOD_NAMES = new MethodNameMap() {
         private static final long serialVersionUID = -2113407677691787960L;
         {
             put(ConstraintOp.EXACT_MATCH, "equalsExactly");
@@ -172,9 +177,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         try {
             if (query instanceof TemplateQuery) {
-                generateTemplateQueryCode(wsCodeGenInfo, packageName, javaImports, intermineImports, codeBody);
+                generateTemplateQueryCode(wsCodeGenInfo, packageName, javaImports,
+                        intermineImports, codeBody);
             } else {
-                generatePathQueryCode(wsCodeGenInfo, packageName, javaImports, intermineImports, codeBody);
+                generatePathQueryCode(wsCodeGenInfo, packageName, javaImports,
+                        intermineImports, codeBody);
             }
         } catch (InvalidQueryException e) {
             return invalidQuery + formatProblems(e.getProblems());
@@ -237,14 +244,14 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         if (!info.isPublic()) {
             sb.append(
                 INDENT + "//Authenticate your request by providing an API access token." + endl
-              + INDENT + TOKEN_INIT + endl
-              + endl);
+                + INDENT + TOKEN_INIT + endl + endl);
         }
         // Add methods code
         // Add Main method
         sb.append(
               INDENT +         "/**" + endl
-            + INDENT + SPACE + "*" + SPACE + "Perform the query and print the rows of results." + endl
+              + INDENT + SPACE + "*" + SPACE + "Perform the query and print the rows of results."
+                      + endl
             + INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + endl
             + INDENT + SPACE + "*" + SPACE + "@throws IOException" + endl
             + INDENT + SPACE + "*/" + endl);
@@ -372,8 +379,10 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                 }
 
                 // Add constraintLogic
-                if (constraintsWithCodes > 1 && StringUtils.isNotBlank(query.getConstraintLogic())) {
-                    codeBody.append(INDENT2 + "// Specify how these constraints should be combined." + endl);
+                if (constraintsWithCodes > 1 && StringUtils.isNotBlank(
+                        query.getConstraintLogic())) {
+                    codeBody.append(INDENT2
+                            + "// Specify how these constraints should be combined." + endl);
                     codeBody.append(INDENT2 + "query.setConstraintLogic(")
                             .append("\"" + query.getConstraintLogic() + "\"")
                             .append(");" + endl);
@@ -409,8 +418,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         codeBody.append("}" + endl); // END CLASS
     }
 
-    private void handleResults(Set<? super String> javaImports, Set<? super String> intermineImports,
-            StringBuffer codeBody, PathQuery query) throws InvalidQueryException {
+    private void handleResults(Set<? super String> javaImports,
+            Set<? super String> intermineImports, StringBuffer codeBody, PathQuery query) {
 
         javaImports.add("java.util.List");
         javaImports.add("java.util.Iterator");
@@ -422,9 +431,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         codeBody.append(INDENT2 + INIT_OUT + endl);
 
         if (query.getView().size() == 1) {
-            codeBody.append(format(INDENT2 + "out.println(%s);" + endl, qq(query.getView().get(0))));
+            codeBody.append(format(INDENT2 + "out.println(%s);"
+                    + endl, qq(query.getView().get(0))));
         } else {
-            codeBody.append(format(INDENT2 + "String format = %s;" + endl, qq(getFormat(query) + "\\n")));
+            codeBody.append(format(INDENT2 + "String format = %s;"
+                    + endl, qq(getFormat(query) + "\\n")));
             codeBody.append(INDENT2 + "out.printf(format, query.getView().toArray());" + endl);
         }
 
@@ -440,7 +451,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         codeBody.append(INDENT2 + "out.printf(\"%d rows\\n\", service.getCount(query));" + endl);
     }
 
-    private String getFormat(PathQuery query) throws InvalidQueryException {
+    private static String getFormat(PathQuery query) {
         List<String> parts = new ArrayList<String>();
         int width = 0;
         int span = 100;
@@ -452,7 +463,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
         String prefix = "%-" + width;
         for (int i = 0; i < query.getView().size(); i++) {
-            parts.add(prefix + "." + width + STR_FMT );
+            parts.add(prefix + "." + width + STR_FMT);
         }
         return StringUtils.join(parts, " | ");
     }
@@ -489,7 +500,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
         intermineImports.add("org.intermine.webservice.client.core.ServiceFactory");
         intermineImports.add("org.intermine.webservice.client.template.TemplateParameter");
-        javaImports.addAll(Arrays.asList("java.util.List", "java.util.ArrayList", "java.io.IOException"));
+        javaImports.addAll(Arrays.asList("java.util.List", "java.util.ArrayList",
+                "java.io.IOException"));
 
         codeBody.append(INDENT2 + "// " + TEMPLATE_PARAMS_EXPL + endl);
         codeBody.append(INDENT2 + TEMPLATE_PARAMS_INIT + endl);
@@ -521,15 +533,15 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         javaImports.add("java.util.Iterator");
 
         // Add display results code
-        String[] lines = new String[] {
-                "// Name of template",
+        String[] lines = new String[] {"// Name of template",
                 format("String name = %s;", qq(template.getName())),
-                "// Template Service - use this object to fetch results.",
-                "TemplateService service = factory.getTemplateService();",
-                "// Format to present data in fixed width columns",
+            "// Template Service - use this object to fetch results.",
+            "TemplateService service = factory.getTemplateService();",
+            "// Format to present data in fixed width columns",
                 format("String format = %s;", qq(getFormat(template)))
         };
-        codeBody.append(INDENT2).append(StringUtils.join(lines, endl + INDENT2)).append(endl + endl);
+        codeBody.append(INDENT2).append(StringUtils.join(lines, endl + INDENT2)).append(endl
+                + endl);
 
         StringBuffer currentLine = new StringBuffer(INDENT2 + "System.out.printf(format,");
         Iterator<String> viewIt = template.getView().iterator();
@@ -548,9 +560,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             currentLine.append(view);
         }
         codeBody.append(currentLine.toString() + ");" + endl);
-        codeBody.append(INDENT2).append(StringUtils.join(PROCESS_TEMPLATE_RES_LINES, endl + INDENT2)).append(endl);
-        
-        codeBody.append(INDENT2).append("System.out.printf(\"%d rows\\n\", service.getCount(name, parameters));" + endl);
+        codeBody.append(INDENT2).append(StringUtils.join(PROCESS_TEMPLATE_RES_LINES, endl
+                + INDENT2)).append(endl);
+
+        codeBody.append(INDENT2).append("System.out.printf(\"%d rows\\n\", service.getCount(name, "
+                + "parameters));" + endl);
 
         codeBody.append(INDENT + "}" + endl + endl); // END METHOD
         codeBody.append("}" + endl); // END CLASS
@@ -574,7 +588,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      *  "\"a string\", "\"another string\",\n    \"yet another string\""
      * </pre>
      */
-    private String formatList(Collection<String> items, int indentation) {
+    private static String formatList(Collection<String> items, int indentation) {
         String indent = "";
         for (int i = 0; i < indentation; i++) {
             indent += INDENT;
@@ -606,11 +620,11 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         return sb.toString();
     }
 
-    private String produceCallToConstraints(String method, String path, String value) {
+    private static String produceCallToConstraints(String method, String path, String value) {
         return format("Constraints.%s(%s, %s)", method, qq(path), qq(value));
     }
 
-    private String produceCallToConstraints(String method, String path) {
+    private static String produceCallToConstraints(String method, String path) {
         return format("Constraints.%s(%s)", method, qq(path));
     }
 
@@ -620,7 +634,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @return a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
      * @throws UnhandledFeatureException
      */
-    private String pathContraintUtil(PathConstraint pc, Set<String> javaImports) throws UnhandledFeatureException {
+    private static String pathContraintUtil(PathConstraint pc, Set<String> javaImports)
+        throws UnhandledFeatureException {
         // Generate a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
         // Ref to Constraints
 
@@ -644,36 +659,38 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         throw new UnhandledFeatureException("Unknown constraint type " + pc.getClass().getName());
     }
 
-    private String handleConstraint(PathConstraintSubclass pc) {
+    private static String handleConstraint(PathConstraintSubclass pc) {
         return produceCallToConstraints("type", pc.getPath(), pc.getType());
     }
 
-    private String handleConstraint(PathConstraintLoop pc) throws UnhandledFeatureException {
-        final String method = loopMethodNames.get(pc.getOp());
+    private static String handleConstraint(PathConstraintLoop pc) throws UnhandledFeatureException {
+        final String method = LOOP_METHOD_NAMES.get(pc.getOp());
         return produceCallToConstraints(method, pc.getPath(), pc.getLoopPath());
     }
 
-    private String handleConstraint(PathConstraintNull pc) throws UnhandledFeatureException {
-        return produceCallToConstraints(nullMethodNames.get(pc.getOp()), pc.getPath());
+    private static String handleConstraint(PathConstraintNull pc) throws UnhandledFeatureException {
+        return produceCallToConstraints(NULL_METHOD_NAMES.get(pc.getOp()), pc.getPath());
     }
 
-    private String handleConstraint(PathConstraintMultiValue pc, Set<? super String> imports) throws UnhandledFeatureException {
+    private static String handleConstraint(PathConstraintMultiValue pc, Set<? super String> imports)
+        throws UnhandledFeatureException {
         imports.add("java.util.Arrays");
         final String values = "Arrays.asList(" + formatList(pc.getValues(), 2) + ")";
-        return format(MULTI_VALUE_FMT, multiMethodNames.get(pc.getOp()), pc.getPath(), values);
+        return format(MULTI_VALUE_FMT, MULTI_METHOD_NAMES.get(pc.getOp()), pc.getPath(), values);
     }
 
-    private String handleConstraint(PathConstraintLookup pc) throws UnhandledFeatureException {
+    private static String handleConstraint(PathConstraintLookup pc) {
         return format(LOOKUP_FMT, qq(pc.getPath()), qq(pc.getValue()), qq(pc.getExtraValue()));
     }
 
-    private String handleConstraintWithValue(PathConstraint pc) throws UnhandledFeatureException {
+    private static String handleConstraintWithValue(PathConstraint pc)
+        throws UnhandledFeatureException {
         ConstraintOp op = pc.getOp();
         final String value = PathConstraint.getValue(pc);
         if (value == null) {
             throw new IllegalArgumentException("The constraint must have a value.");
         }
-        return produceCallToConstraints(methodNames.get(op), pc.getPath(), value);
+        return produceCallToConstraints(METHOD_NAMES.get(op), pc.getPath(), value);
     }
 
     /**
@@ -696,7 +713,9 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
      * @param pc PathConstraint object
      * @return a line of source code
      */
-    private String templateConstraintUtil(PathConstraint pc, String code, Set<String> javaImports) throws UnhandledFeatureException {
+    private static String templateConstraintUtil(PathConstraint pc, String code,
+        Set<String> javaImports)
+        throws UnhandledFeatureException {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
 
         if ("PathConstraintIds".equals(className)) {
@@ -711,13 +730,13 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         String op = qq(pc.getOp().toString());
 
         String prefix = "parameters.add(new TemplateParameter(" + path + ", " + op;
-        code = qq(code);
+        String newCode = qq(code);
 
         Collection<String> values = PathConstraint.getValues(pc);
         if (values == null) {
             String value = qq(PathConstraint.getValue(pc));
             String extraValue = qq(PathConstraint.getExtraValue(pc));
-            return prefix + ", " + value + ", " + extraValue + ", " + code + "));";
+            return prefix + ", " + value + ", " + extraValue + ", " + newCode + "));";
         } else {
             javaImports.add("java.util.Arrays");
             String[] quoted = new String[values.size()];
@@ -726,7 +745,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                 quoted[i] = qq(s);
                 i++;
             }
-            return prefix + ", Arrays.asList(" + StringUtils.join(quoted, ", ") + "), " + code + "));";
+            return prefix + ", Arrays.asList(" + StringUtils.join(quoted, ", ") + "), "
+                + code + "));";
         }
     }
 }
