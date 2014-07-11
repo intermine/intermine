@@ -55,7 +55,6 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagName;
     private String bagType;
     private String bagDescription;
-    private String bagState;
     private InterMineBag bag;
     private InvalidBag invalidBag;
     private int elementsInOldBag;
@@ -89,7 +88,7 @@ public class InterMineBagHandler extends DefaultHandler
                                       .getResourceAsStream("class_keys.properties");
             classKeyProps.load(inputStream);
         } catch (IOException ioe) {
-            new BuildException("class_keys.properties not found", ioe);
+            throw new BuildException("class_keys.properties not found", ioe);
         }
         classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
     }
@@ -100,6 +99,7 @@ public class InterMineBagHandler extends DefaultHandler
      * @param uosw UserProfile ObjectStoreWriter
      * @param osw ObjectStoreWriter used to resolve object ids and write to the objectstore bag
      * @param bags Map from bag name to InterMineIdBag - results are added to this Map
+     * @param invalidBags list of invalid bags
      * @param bagsValues a Map from bagName to a set of bag values.
      */
     public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw,
@@ -121,7 +121,7 @@ public class InterMineBagHandler extends DefaultHandler
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
-                bagState = attrs.getValue("status");
+                attrs.getValue("status");
                 Date dateCreated;
                 try {
                     dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
@@ -174,8 +174,6 @@ public class InterMineBagHandler extends DefaultHandler
                     bagContents.put(bagName, bagValues);
                     debugMsg = "invalid bag with " + bagValues.size() + " old values";
                 }
-                System.out.println("XML bag \"" + bagName + "\" contained " + elementsInOldBag
-                        + " elements; created " + debugMsg);
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
                         + " elements; created " + debugMsg);
                 bag = null;
