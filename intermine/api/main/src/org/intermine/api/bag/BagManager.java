@@ -610,7 +610,8 @@ public class BagManager
         return bagsContainingId;
     }
 
-    private Map<Integer, InterMineBag> getOsBagIdToInterMineBag(Collection<InterMineBag> imBags) {
+    private static Map<Integer, InterMineBag> getOsBagIdToInterMineBag(
+            Collection<InterMineBag> imBags) {
         Map<Integer, InterMineBag> osBagIdToInterMineBag = new HashMap<Integer, InterMineBag>();
 
         for (InterMineBag imBag : imBags) {
@@ -619,7 +620,7 @@ public class BagManager
         return osBagIdToInterMineBag;
     }
 
-    private Collection<ObjectStoreBag> getObjectStoreBags(Collection<InterMineBag> imBags) {
+    private static Collection<ObjectStoreBag> getObjectStoreBags(Collection<InterMineBag> imBags) {
         Set<ObjectStoreBag> objectStoreBags = new HashSet<ObjectStoreBag>();
         for (InterMineBag imBag : imBags) {
             objectStoreBags.add(imBag.getOsb());

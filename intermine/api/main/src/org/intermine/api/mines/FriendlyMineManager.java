@@ -65,14 +65,14 @@ public class FriendlyMineManager
     }
 
     /**
-     * @param im intermine api
+     * @param imAPI intermine api
      * @param properties the web properties
      * @return OrthologueLinkManager the link manager
      */
-    public static synchronized FriendlyMineManager getInstance(InterMineAPI im,
+    public static synchronized FriendlyMineManager getInstance(InterMineAPI imAPI,
             Properties properties) {
         if (linkManager == null || DEBUG) {
-            linkManager = new FriendlyMineManager(im, properties);
+            linkManager = new FriendlyMineManager(imAPI, properties);
             primeCache();
         }
         return linkManager;
@@ -122,7 +122,10 @@ public class FriendlyMineManager
         intermineLinkCache.put(key, results);
     }
 
-    private Map<String, Mine> readConfig(InterMineAPI im, String localMineName) {
+    /**
+     * @param imAPI intermine API
+     */
+    private static Map<String, Mine> readConfig(InterMineAPI imAPI, String localMineName) {
         mines = new LinkedHashMap<String, Mine>();
         Properties props = PropertiesUtil.stripStart("intermines",
                 PropertiesUtil.getPropertiesStartingWith("intermines", webProperties));
@@ -165,7 +168,7 @@ public class FriendlyMineManager
         return mines;
     }
 
-    private void parseLocalConfig(String url, String logo, String defaultValues,
+    private static void parseLocalConfig(String url, String logo, String defaultValues,
             String bgcolor, String frontcolor, String description) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
@@ -177,7 +180,7 @@ public class FriendlyMineManager
         }
     }
 
-    private void parseRemoteConfig(String mineName, String mineId, String defaultValues,
+    private static void parseRemoteConfig(String mineName, String mineId, String defaultValues,
             String url, String logo, String bgcolor, String frontcolor, String description) {
         Mine mine = new Mine(mineName);
         mine.setUrl(url);
