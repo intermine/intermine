@@ -180,9 +180,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
 
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
                 cl.createOverlapRelations(classNamesToIgnoreList, false);
-            } else if ("set-collection-counts".equals(operation)) {
-                SetCollectionCounts setCounts = new SetCollectionCounts(getObjectStoreWriter());
-                setCounts.setCollectionCount();
             } else if ("create-attribute-indexes".equals(operation)) {
                 CreateIndexesTask cit = new CreateIndexesTask();
                 cit.setAttributeIndexes(true);
