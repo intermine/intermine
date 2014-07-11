@@ -118,9 +118,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOGGER.info("Starting CreateReferences.insertReferences()");
                 cr.insertReferences();
-            } else if ("create-symmetrical-relation-references".equals(operation)) {
-                throw new BuildException("create-symmetrical-relation-references task is"
-                        + " deprecated");
             } else if ("create-utr-references".equals(operation)) {
                 CreateReferences cr = new CreateReferences(getObjectStoreWriter());
                 LOGGER.info("Starting CreateReferences.createUtrRefs()");
@@ -130,16 +127,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 ts = new TransferSequences(getObjectStoreWriter());
                 LOGGER.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
                 ts.transferToLocatedSequenceFeatures();
-
                 ts = new TransferSequences(getObjectStoreWriter());
-                LOGGER.info("Starting TransferSequences.transferToTranscripts()");
-                ts.transferToTranscripts();
-            } else if ("transfer-sequences-located-sequence-feature".equals(operation)) {
-                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
-                LOGGER.info("Starting TransferSequences.transferToLocatedSequenceFeatures()");
-                ts.transferToLocatedSequenceFeatures();
-            } else if ("transfer-sequences-transcripts".equals(operation)) {
-                TransferSequences ts = new TransferSequences(getObjectStoreWriter());
                 LOGGER.info("Starting TransferSequences.transferToTranscripts()");
                 ts.transferToTranscripts();
             } else if ("make-spanning-locations".equals(operation)) {
