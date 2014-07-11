@@ -6,7 +6,7 @@ class BrowserTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.browser = webdriver.Firefox()
-        cls.browser.implicitly_wait(5)
+        cls.browser.implicitly_wait(30)
 
     @classmethod
     def tearDownClass(cls):
