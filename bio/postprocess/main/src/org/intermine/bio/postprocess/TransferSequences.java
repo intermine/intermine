@@ -246,7 +246,7 @@ public class TransferSequences
                 + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
-    private ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr) {
+    private static ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr) {
         int charsToCopy =
             locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
         ClobAccess chromosomeSequenceString = chromosomeSequence.getResidues();
