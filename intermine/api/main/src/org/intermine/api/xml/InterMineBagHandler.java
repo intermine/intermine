@@ -121,7 +121,6 @@ public class InterMineBagHandler extends DefaultHandler
                 bagName = attrs.getValue("name");
                 bagType = attrs.getValue("type");
                 bagDescription = attrs.getValue("description");
-                attrs.getValue("status");
                 Date dateCreated;
                 try {
                     dateCreated = new Date(Long.parseLong(attrs.getValue("date-created")));
