@@ -104,7 +104,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
         if (operation == null) {
             throw new BuildException("operation attribute is not set");
         }
-        long startTime = System.currentTimeMillis();
         try {
             if ("create-chromosome-locations-and-lengths".equals(operation)) {
                 CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());

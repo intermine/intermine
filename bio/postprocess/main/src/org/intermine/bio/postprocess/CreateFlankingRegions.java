@@ -72,8 +72,7 @@ public class CreateFlankingRegions
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("modMine");
         try {
-            dataSource = (DataSource) os.getObjectByExample(dataSource,
-                    Collections.singleton("name"));
+            dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
             throw new RuntimeException(
                     "unable to fetch modMine DataSource object", e);
