@@ -223,8 +223,14 @@ public abstract class OverlapUtil
 
     /**
      * Return true if the given class should be ignored when overlapping with the other given class.
+     *
+     * @param classesToIgnore list of classes to ignore.
+     * @param class1 first class to compare
+     * @param class2 second class to compare
+     * @return Return true if the given class should be ignored when overlapping with the other
+     * given class.
      */
-    private static boolean ignoreCombination(Map<Class<?>, Set<Class<?>>> classesToIgnore,
+    protected static boolean ignoreCombination(Map<Class<?>, Set<Class<?>>> classesToIgnore,
             Class<?> class1, Class<?> class2) {
         Iterator<?> iter = classesToIgnore.entrySet().iterator();
 
