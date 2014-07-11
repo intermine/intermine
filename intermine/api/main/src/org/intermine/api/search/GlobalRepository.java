@@ -106,6 +106,7 @@ public class GlobalRepository extends UserRepository
      * @param type A valid TagType.
      * @return A new unmodifiable map containing the requested information.
      */
+    @Override
     public Map<String, WebSearchable> getWebSearchableMap(String type) {
         if (type == null) {
             throw new IllegalArgumentException("'type' may not be null");
@@ -123,8 +124,11 @@ public class GlobalRepository extends UserRepository
         return Collections.unmodifiableMap(retval);
     }
 
-    public void deleteGlobalRepository(Profile profile) {
-        SearchRepository sr = getGlobalSearchRepository(profile);
+    /**
+     * @param userprofile user profile
+     */
+    public void deleteGlobalRepository(Profile userprofile) {
+        SearchRepository sr = getGlobalSearchRepository(userprofile);
         GLOBALS.remove(sr);
     }
 

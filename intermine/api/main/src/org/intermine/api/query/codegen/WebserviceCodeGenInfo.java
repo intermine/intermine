@@ -46,8 +46,8 @@ public class WebserviceCodeGenInfo
      * @param user the name of the user who was logged in when this info was generated
      *
      */
-    public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL,
-            String projectTitle, String perlWSModuleVer, boolean isPubliclyAccessible, Profile user) {
+    public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL, String projectTitle,
+            String perlWSModuleVer, boolean isPubliclyAccessible, Profile user) {
         this.query = query;
         this.serviceBaseURL = serviceBaseURL;
         this.projectTitle = projectTitle;
@@ -57,6 +57,15 @@ public class WebserviceCodeGenInfo
         this.lineBreak = System.getProperty("line.separator");
     }
 
+    /**
+     * @param pq
+     * @param serviceBaseURL
+     * @param projectTitle
+     * @param perlWSModuleVer
+     * @param pathQueryIsPublic
+     * @param profile
+     * @param lineBreak
+     */
     public WebserviceCodeGenInfo(PathQuery pq, String serviceBaseURL,
             String projectTitle, String perlWSModuleVer,
             boolean pathQueryIsPublic, Profile profile, String lineBreak) {
@@ -152,6 +161,9 @@ public class WebserviceCodeGenInfo
         return user.getUsername();
     }
 
+    /**
+     * @return a line break
+     */
     public String getLineBreak() {
         return lineBreak;
     }

@@ -54,6 +54,7 @@ public abstract class AbstractTracker implements Tracker
      * @throws Exception when a database error access is verified
      * @param connection the userprofile connection
      */
+    @Override
     public void createTrackerTable(Connection connection) throws Exception {
         try {
             if (trackTableName != null && !"".equals(trackTableName)) {
@@ -73,6 +74,7 @@ public abstract class AbstractTracker implements Tracker
      * Save into the table the track object representing the user activity
      * @param track the object saved into the database
      */
+    @Override
     public void storeTrack(Track track) {
         if (trackTableName != null) {
             if (track.validate()) {
@@ -93,6 +95,7 @@ public abstract class AbstractTracker implements Tracker
      * Return the tracker's name
      * @return String tracker's name
      */
+    @Override
     public abstract String getName();
 
     /**
