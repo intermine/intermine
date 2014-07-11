@@ -10,19 +10,18 @@ package org.intermine.bio.util;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
-import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.profile.InterMineBag;
+import junit.framework.TestCase;
+
 import org.intermine.model.InterMineObject;
-import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -34,29 +33,23 @@ import org.intermine.util.DynamicUtil;
  *
  * @author Julie
  */
-public class BioUtilTest extends InterMineAPITestCase
+public class BioUtilTest extends TestCase
 {
     public BioUtilTest(String arg) {
         super(arg);
     }
 
-    private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
-    private ObjectStoreWriter osw;
+    protected ObjectStoreWriter osw;
+
 
     private Gene storedGene1 = null;
     private Gene storedGene2 = null;
     private Organism storedOrganism1 = null;
     private Organism storedOrganism2 = null;
-    protected InterMineBag testBag;
-
-    public void setUp() throws Exception {
-        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
-
-    }
+    List<Integer> bagContents = null;
 
     private void createData() throws Exception {
-        osw.flushObjectById();
-
+        osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
         Set toStore = new HashSet();
 
         storedOrganism1 = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
@@ -83,31 +76,24 @@ public class BioUtilTest extends InterMineAPITestCase
         storedGene2.setId(new Integer(3002));
         toStore.add(storedGene2);
 
-
         Iterator iter = toStore.iterator();
         while (iter.hasNext()) {
             InterMineObject o = (InterMineObject) iter.next();
             osw.store(o);
         }
-
-        setUpBags();
+        bagContents = Arrays.asList(storedGene1.getId(), storedGene2.getId());
     }
 
     public void testGetOrganisms() throws Exception {
         createData();
-        boolean lowercase = true;
+        boolean lowercase = false;
         String organismFieldName = "shortName";
-        Collection<String> actualOrganismNames = BioUtil.getOrganisms(osw.getObjectStore(), testBag, lowercase, organismFieldName);
-
+        Collection<String> actualOrganismNames = BioUtil.getOrganisms(osw.getObjectStore(), "Gene", bagContents, lowercase, organismFieldName);
         HashSet<String> expectedOrganismNames = new HashSet(Arrays.asList(new String[] {storedOrganism1.getShortName(),
                 storedOrganism2.getShortName()}));
-        assertEquals(expectedOrganismNames, actualOrganismNames);
-    }
+        assertTrue(actualOrganismNames.size() == 2);
+        assertTrue(actualOrganismNames.containsAll(expectedOrganismNames));
 
-    private void setUpBags() throws Exception {
-        HashSet<Integer> expectedGeneIds = new HashSet(Arrays.asList(new Integer[] {storedGene1.getId(), storedGene2.getId()}));
-        testBag = testUser.createBag("bag1", "Gene", "bag of test genes", im.getClassKeys());
-        testBag.addIdsToBag(expectedGeneIds, "Gene");
     }
 
     public void testReplaceStrain() {
@@ -119,7 +105,7 @@ public class BioUtilTest extends InterMineAPITestCase
 
         Integer strainId = 46245;
         taxonId = 7237;
-        actualTaxon = BioUtil.replaceStrain(taxonId);
+        actualTaxon = BioUtil.replaceStrain(46245);
         assertEquals(taxonId, actualTaxon);
     }
 }
