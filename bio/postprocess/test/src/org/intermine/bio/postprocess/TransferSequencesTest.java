@@ -47,7 +47,7 @@ public class TransferSequencesTest extends TestCase
     private Exon [] storedExons;
     private Transcript [] storedTranscripts;
     private CDS storedCDS;
-    
+
     private String expectedExonSequence0 =
         "ctctctctctaaagagaggggaggaggaggactctctctct";
 
@@ -211,15 +211,16 @@ public class TransferSequencesTest extends TestCase
         ObjectStore os = osw.getObjectStore();
         System.out.println("storedCDS.getId(): " + storedCDS.getId());
         CDS resCDS = (CDS) os.getObjectById(storedCDS.getId());
-        assertNull(resCDS.getSequence());
+        assertNotNull("CDS used to be skipped a long time ago but should be here now", resCDS.getSequence());
     }
-    
+
     public void checkExonSequences() throws Exception {
         osw.flushObjectById();
 
         ObjectStore os = osw.getObjectStore();
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
+
         Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues().toString());
 
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
@@ -345,7 +346,7 @@ public class TransferSequencesTest extends TestCase
         toStore.add(storedCDS);
         Location loc8 = createLocation(storedChromosome, storedCDS, "1", 3863, 3993);
         toStore.add(loc8);
-        
+
         osw.beginTransaction();
         for (InterMineObject obj : toStore) {
             osw.store(obj);
