@@ -39,7 +39,8 @@ public class PathLengthComparator implements Comparator<Path>
      * elements is the same sort by text length of paths.
      * {@inheritDoc}
      */
-    public int compare(Path arg0, Path arg1) {
+    @Override
+	public int compare(Path arg0, Path arg1) {
         if (arg0 == null || arg1 == null) {
             throw new RuntimeException("Paths must not be null");
         }
