@@ -52,6 +52,7 @@ public abstract class SoftReferenceMap<K, V> extends ReferenceMap<K, V>
             this.key = key;
         }
 
+        @Override
         public K getKey() {
             return key;
         }
