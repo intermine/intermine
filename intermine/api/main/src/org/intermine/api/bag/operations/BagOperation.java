@@ -118,15 +118,10 @@ public abstract class BagOperation implements BagProducer {
     }
 
     private void checkCurrency() throws BagOperationException {
-        boolean allAreCurrent = true;
         for (InterMineBag bag: bags) {
-            allAreCurrent = bag.isCurrent();
-            if (!allAreCurrent) {
-                break;
+            if (!bag.isCurrent()) {
+                throw new NotCurrent();
             }
-        }
-        if (!allAreCurrent) {
-            throw new NotCurrent();
         }
     }
 
