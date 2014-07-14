@@ -77,7 +77,7 @@ public class FriendlyMineLinkController  extends TilesAction
     }
 
 
-    private String getIdentifierField(InterMineBag bag) {
+    private static String getIdentifierField(InterMineBag bag) {
         Class c = null;
         try {
             c = Class.forName(bag.getQualifiedType());
