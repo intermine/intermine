@@ -19,7 +19,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -44,12 +43,10 @@ import org.json.JSONObject;
  */
 public class GenomicRegionSearchAction extends InterMineAction
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchAction.class);
-
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -171,10 +168,8 @@ public class GenomicRegionSearchAction extends InterMineAction
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    request.setAttribute(
-                            "liftOverStatus",
-                            "<i>Genomic region coordinates are not lifted. " +
-                            "liftOver service error, please contact system admin</i>");
+                    request.setAttribute("liftOverStatus", "<i>Genomic region coordinates are not "
+                            + "lifted. liftOver service error, please contact system admin</i>");
                 }
             }
         }
