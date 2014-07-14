@@ -24,12 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.BEDExportForm;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -49,9 +48,6 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class BEDHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(BEDHttpExporter.class);
-
     /**
      * The batch size to use when we need to iterate through the whole result set.
      */
@@ -63,6 +59,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
      * attributes (rather than objects).
      * {@inheritDoc}
      */
+    @Override
     public void export(PagedTable pt, HttpServletRequest request,
             HttpServletResponse response, TableExportForm form,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
@@ -72,13 +69,12 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
 
         String organisms = null;
         boolean makeUcscCompatible = false;
-
-        String trackDescription = ((BEDExportForm) form).getTrackDescription();
+        String trackDescription = null;
 
         // try to find the organism from the form
         if (form != null && form instanceof BEDExportForm) {
             organisms = ((BEDExportForm) form).getOrgansimString();
-
+            trackDescription = ((BEDExportForm) form).getTrackDescription();
             if ("yes".equals(((BEDExportForm) form).getUcscCompatibleCheck())) {
                 makeUcscCompatible = true;
             }
@@ -141,7 +137,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
 //        }
     }
 
-    private void setBEDHeader(HttpServletResponse response) {
+    private static void setBEDHeader(HttpServletResponse response) {
         ResponseUtil.setTabHeader(response, "table" + StringUtil.uniqueString() + ".bed");
     }
 
@@ -149,6 +145,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
      * The intial export path list is just the paths from the columns of the PagedTable.
      * {@inheritDoc}
      */
+    @Override
     public List<Path> getInitialExportPaths(PagedTable pt) {
         return ExportHelper.getColumnPaths(pt);
     }
@@ -156,6 +153,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(PagedTable pt) {
         return BEDExporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }

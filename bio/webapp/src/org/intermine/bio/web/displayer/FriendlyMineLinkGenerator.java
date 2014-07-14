@@ -145,7 +145,8 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
     }
 
     // TODO just get JSON back from webservice instead
-    private Collection<JSONObject> resultsToJSON(MultiKey key, Map<String, Set<String[]>> results) {
+    private static Collection<JSONObject> resultsToJSON(MultiKey key, Map<String,
+            Set<String[]>> results) {
         Collection<JSONObject> organisms = new ArrayList<JSONObject>();
         // now we have a list of orthologues, add to JSON Organism object
         for (Entry<String, Set<String[]>> entry : results.entrySet()) {
