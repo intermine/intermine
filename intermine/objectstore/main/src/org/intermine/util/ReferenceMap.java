@@ -65,6 +65,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int size() {
         expungeStaleEntries();
         return subMap.size();
@@ -73,6 +74,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -80,6 +82,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<K> keySet() {
         expungeStaleEntries();
         return subMap.keySet();
@@ -88,6 +91,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void clear() {
         expungeStaleEntries();
         subMap.clear();
@@ -96,6 +100,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public V get(Object key) {
         expungeStaleEntries();
@@ -113,6 +118,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean containsKey(Object key) {
         expungeStaleEntries();
         // Note - expungeEntries is NOT guaranteed to remove everything from the subMap that has
@@ -135,6 +141,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public V put(K key, V value) {
         expungeStaleEntries();
@@ -169,6 +176,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void putAll(Map<? extends K, ? extends V> t) {
         for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
             put(entry.getKey(), entry.getValue());
@@ -178,6 +186,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public V remove(Object key) {
         expungeStaleEntries();
@@ -195,6 +204,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean containsValue(@SuppressWarnings("unused") Object value) {
         throw new UnsupportedOperationException();
     }
@@ -202,6 +212,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<Map.Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
     }
@@ -209,6 +220,7 @@ public abstract class ReferenceMap<K, V> implements Map<K, V>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<V> values() {
         throw new UnsupportedOperationException();
     }

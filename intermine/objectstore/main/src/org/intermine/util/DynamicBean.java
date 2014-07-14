@@ -76,6 +76,7 @@ public class DynamicBean implements MethodInterceptor
      * @return the return value of the real method call
      * @throws Throwable if an error occurs in executing the real method
      */
+    @Override
     public Object intercept(Object obj, Method method, Object[] args,
             @SuppressWarnings("unused") MethodProxy proxy) throws Throwable {
         // java.lang.Object methods
