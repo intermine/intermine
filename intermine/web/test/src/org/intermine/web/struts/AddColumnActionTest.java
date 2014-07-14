@@ -30,7 +30,9 @@ public class AddColumnActionTest {
         WebTable webTable = createMock(WebTable.class);
 
         // Real objects.
+        @SuppressWarnings("deprecation")
         PagedTable table = new PagedTable(webTable);
+        @SuppressWarnings("deprecation")
         Map<String, PagedTable> tableMap = new HashMap<String, PagedTable>();
         tableMap.put("y", table);
         Model model = Model.getInstanceByName("testmodel");
