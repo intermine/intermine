@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -61,6 +62,8 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     }
 
+    private static final Logger LOG = Logger.getLogger(EnrichmentWidgetResultService.class);
+
     private final WidgetsRequestParser requestParser;
 
     /** @param im The InterMine state object. **/
@@ -102,6 +105,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         WidgetsServiceInput input = getInput();
         InterMineBag imBag = retrieveBag(input.getBagName());
         addOutputListInfo(imBag);
+        LOG.debug("Enriching with " + input);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());

@@ -1,39 +1,34 @@
 package org.intermine.web.logic;
 
+import static org.junit.Assert.*;
+
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.intermine.web.logic.widget.ErrorCorrection;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Julie Sullivan
  *
  */
-public class ErrorCorrectionTest extends TestCase
+public class ErrorCorrectionTest
 {
     private final static int REFERENCE_SIZE = 5000;
     private static final Double max = new Double(1.0);
 
-    private static LinkedHashMap<String, BigDecimal> pvalues =
-            new LinkedHashMap<String, BigDecimal>();
-    private static LinkedHashMap<String, String> bonferroni =
-            new LinkedHashMap<String, String>();
-    private static LinkedHashMap<String, String> benjamini =
-            new LinkedHashMap<String, String>();
-    private static LinkedHashMap<String, String> bonferroniHolm =
-            new LinkedHashMap<String, String>();
+    private static Map<String, BigDecimal> pvalues;
+    private static Map<String, String> bonferroni, benjamini, bonferroniHolm;
 
-    /**
-     * @param arg
-     */
-    public  ErrorCorrectionTest(String arg) {
-        super(arg);
-    }
+    @Before
+    public void setUpMaps() {
+        pvalues = new LinkedHashMap<String, BigDecimal>();
+        bonferroni = new LinkedHashMap<String, String>();
+        benjamini = new LinkedHashMap<String, String>();
+        bonferroniHolm = new LinkedHashMap<String, String>();
 
-    static {
         pvalues.put("A", new BigDecimal(0.0000000000000000000099));
         pvalues.put("B", new BigDecimal(0.00000000001));
         pvalues.put("C", new BigDecimal(0.000001));
@@ -54,30 +49,34 @@ public class ErrorCorrectionTest extends TestCase
         benjamini.put("C", "0.001666666666666666591246853043143765");
         benjamini.put("D", "1");
     }
+
+    @Test
     public void testBonferroni() throws Exception {
-        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues("Bonferroni", pvalues, max, REFERENCE_SIZE);
-        for (Map.Entry<String, BigDecimal> entry : actual.entrySet()) {
-            String adjustedPvalue = entry.getValue().toPlainString();
-            String key = entry.getKey();
-            assertEquals(bonferroni.get(key), adjustedPvalue);
-        }
+        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues(
+                ErrorCorrection.Strategy.BONFERRONI, pvalues, max, REFERENCE_SIZE);
+        checkValues(actual, bonferroni);
     }
 
+    @Test
     public void testBenjaminiHochberg() throws Exception {
-        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues("Benjamini Hochberg", pvalues, max, REFERENCE_SIZE);
+        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues(
+                ErrorCorrection.Strategy.BENJAMINI_HOCHBERG, pvalues, max, REFERENCE_SIZE);
+        checkValues(actual, benjamini);
+    }
+
+    @Test
+    public void testBonferroniHolm() throws Exception {
+        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues(
+                ErrorCorrection.Strategy.HOLM_BONFERRONI, pvalues, max, REFERENCE_SIZE);
+        checkValues(actual, bonferroniHolm);
+    }
+
+    private void checkValues(Map<String, BigDecimal> actual, Map<String, String> expected) {
         for (Map.Entry<String, BigDecimal> entry : actual.entrySet()) {
             String adjustedPvalue = entry.getValue().toPlainString();
             String key = entry.getKey();
-            assertEquals(benjamini.get(key), adjustedPvalue);
+            assertEquals(expected.get(key), adjustedPvalue);
         }
     }
 
-    public void testBonferroniHolm() throws Exception {
-        Map<String, BigDecimal> actual = ErrorCorrection.adjustPValues("Holm-Bonferroni", pvalues, max, REFERENCE_SIZE);
-        for (Map.Entry<String, BigDecimal> entry : actual.entrySet()) {
-            String adjustedPvalue = entry.getValue().toPlainString();
-            String key = entry.getKey();
-            assertEquals(bonferroniHolm.get(key), adjustedPvalue);
-        }
-    }
 }
