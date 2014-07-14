@@ -19,6 +19,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
@@ -26,7 +27,6 @@ import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.CompanyShadow;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -35,7 +35,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.SetupDataTestCase;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

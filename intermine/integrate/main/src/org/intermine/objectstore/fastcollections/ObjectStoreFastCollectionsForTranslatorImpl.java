@@ -82,7 +82,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
      * @throws ObjectStoreException if there is a problem with the instance
      */
     public static ObjectStoreFastCollectionsForTranslatorImpl getInstance(
-            @SuppressWarnings("unused") String osAlias,
+            String osAlias,
             Properties props) throws ObjectStoreException {
         String underlyingOsAlias = props.getProperty("os");
         if (underlyingOsAlias == null) {
