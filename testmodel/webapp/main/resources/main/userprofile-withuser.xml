@@ -1,12 +1,10 @@
 <userprofiles>
 <userprofile username="sue" superUser="true" password="by the power of greyskull" apikey="greyskull">
     <bags>
-        <bag name="My-Favourite-Employees" type="Employee">
-            <bagValue value="David Brent"/>
+        <bag name="Everyones-Favourite-Employees" type="Employee">
             <bagValue value="Bernd Stromberg"/>
             <bagValue value="Timo Becker"/>
             <bagValue value="Neil Godwin"/>
-            <bagValue value="Brenda"/>
             <bagValue value="Devon White"/>
             <bagValue value="Hans Schmelzer"/>
             <bagValue value="Frank Möllers"/>
@@ -18,7 +16,7 @@
         </bag>
     </bags>
     <tags>
-        <tag name="im:public" objectIdentifier="My-Favourite-Employees" type="bag"/>
+        <tag name="im:public" objectIdentifier="Everyones-Favourite-Employees" type="bag"/>
         <tag name="im:public" objectIdentifier="Places-I-Have-Worked" type="bag"/>
     </tags>
 </userprofile>
