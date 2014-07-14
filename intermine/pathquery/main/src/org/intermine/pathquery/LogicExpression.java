@@ -328,6 +328,7 @@ public class LogicExpression
             split(variables);
             return this;
         } catch (IllegalArgumentException e) {
+            // expression is valid, so keep going
         }
         // It is not valid, so alter it.
         Set<String> presentVariables = new HashSet<String>();
@@ -391,7 +392,7 @@ public class LogicExpression
         return expr.toString();
     }
 
-    private boolean isStringContainingAnyValueInArray(String s, List<String> values) {
+    private static boolean isStringContainingAnyValueInArray(String s, List<String> values) {
         for (String value : values) {
             if (s.contains(value)) {
                 return true;
@@ -399,6 +400,7 @@ public class LogicExpression
         }
         return false;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -423,6 +425,7 @@ public class LogicExpression
      */
     public abstract class Node
     {
+        // a node
     }
 
     /**
