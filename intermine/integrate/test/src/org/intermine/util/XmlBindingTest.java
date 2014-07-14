@@ -34,11 +34,12 @@ public class XmlBindingTest extends XMLTestCase {
     public void testRoundTrip() throws Exception {
         StringWriter sw = new StringWriter();
         InputStream original = getClass().getClassLoader().getResourceAsStream("testmodel_data.xml");
+
         XMLUnit.setIgnoreWhitespace(true);
         Collection<FastPathObject> unmarshalled = (Collection<FastPathObject>) binding.unmarshal(original);
         setIds(unmarshalled);
         binding.marshal(unmarshalled, sw);
-
+        // System.out.println(sw.toString());
         String expected = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("testmodel_data.xml"));
 
         Diff diff = new Diff(expected, sw.toString());
