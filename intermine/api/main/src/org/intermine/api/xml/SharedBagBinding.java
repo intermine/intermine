@@ -14,7 +14,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ public class SharedBagBinding
 {
     /**
      * Convert the shared bags to XML
-     * @param profile
+     * @param profile user's profile
      * @return the corresponding XML String
      */
     public String marshal(Profile profile) {
@@ -67,9 +66,9 @@ public class SharedBagBinding
                 writer.writeCharacters("\n");
                 writer.writeStartElement("shared-bag");
                 writer.writeAttribute("name", entry.getKey());
-                Date dateCreated = ((InterMineBag) entry.getValue()).getDateCreated();
+                Date dateCreated = entry.getValue().getDateCreated();
                 if (dateCreated != null) {
-                    writer.writeAttribute("date-created", "" +dateCreated.getTime());
+                    writer.writeAttribute("date-created", "" + dateCreated.getTime());
                 }
                 writer.writeEndElement();
             }
@@ -82,14 +81,14 @@ public class SharedBagBinding
     }
 
     /**
-     * Parse saved queries from a Reader
+     * Parse saved queries from a Reader.
+     *
      * @param reader the saved bags
-     * @param uosw UserProfile ObjectStoreWriter
-     * @param osw ObjectStoreWriter used to resolve object id's and write to ObjectStoreBags
      * @param userId an Integer
+     * @return list of queries
      */
     public static List<Map<String, String>> unmarshal(final Reader reader, Integer userId) {
-        final List<Map<String, String>> sharedBags = new ArrayList<Map<String,String>>();
+        final List<Map<String, String>> sharedBags = new ArrayList<Map<String, String>>();
         try {
             SAXParser.parse(new InputSource(reader), new SharedBagHandler(sharedBags));
         } catch (Exception e) {

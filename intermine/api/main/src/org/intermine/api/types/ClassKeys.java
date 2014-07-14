@@ -22,5 +22,5 @@ import org.intermine.metadata.FieldDescriptor;
  */
 public interface ClassKeys extends Map<String, List<FieldDescriptor>>
 {
-
+    // I'm an interface
 }

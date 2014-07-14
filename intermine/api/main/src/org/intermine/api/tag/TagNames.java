@@ -72,7 +72,7 @@ public interface TagNames
     String IM_SEARCH_RESULTS = "im:searchresults";
 
     /**
-     * bag with background population for specific widget 
+     * bag with background population for specific widget
      */
     String IM_WIDGET = "im:widget";
 

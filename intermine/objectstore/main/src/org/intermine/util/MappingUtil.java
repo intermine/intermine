@@ -34,6 +34,7 @@ public final class MappingUtil
 
     private static final MappingUtilChecker<Object> DEFAULT_CHECKER
         = new MappingUtilChecker<Object>() {
+            @Override
             public boolean check(@SuppressWarnings("unused") Map<Object, Object> map) {
                 return true;
             }

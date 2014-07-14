@@ -578,11 +578,17 @@ public final class KeywordSearch
         return matches;
     }
 
+    /**
+     * @param result search result
+     * @param facetVector facets for search results
+     * @param facetValues values for facets
+     * @return search result for given facet
+     */
     public static Vector<KeywordSearchFacet> parseFacets(BrowseResult result,
-            Vector<KeywordSearchFacetData> facets, Map<String, String> facetValues) {
+            Vector<KeywordSearchFacetData> facetVector, Map<String, String> facetValues) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
-        for (KeywordSearchFacetData facet : facets) {
+        for (KeywordSearchFacetData facet : facetVector) {
             FacetAccessible boboFacet = result.getFacetMap().get(facet.getField());
             if (boboFacet != null) {
                 searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet
@@ -595,8 +601,12 @@ public final class KeywordSearch
         return searchResultsFacets;
     }
 
-    public static Vector<KeywordSearchHit> getSearchHits(
-            BrowseHit[] browseHits,
+    /**
+     * @param browseHits search results
+     * @param objMap object map
+     * @return matching object
+     */
+    public static Vector<KeywordSearchHit> getSearchHits(BrowseHit[] browseHits,
             Map<Integer, InterMineObject> objMap) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
@@ -619,6 +629,11 @@ public final class KeywordSearch
         return searchHits;
     }
 
+    /**
+     * @param browseHits the query results.
+     *
+     * @return set of IDs found in the search results
+     */
     public static Set<Integer> getObjectIds(BrowseHit[] browseHits) {
         long time = System.currentTimeMillis();
         Set<Integer> objectIds = new HashSet<Integer>();
@@ -1073,21 +1088,20 @@ public final class KeywordSearch
 
     /**
      * recurse into class descriptor and add all subclasses to ignoredClasses
-     * @param ignoredClasses
+     * @param ignoredClassMap
      *            set of classes
      * @param cld
      *            super class descriptor
      */
-    @SuppressWarnings("unchecked")
-    private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClasses,
+    private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClassMap,
             ClassDescriptor cld) {
         if (cld == null) {
             LOG.error("cld is null!");
         } else if (InterMineObject.class.isAssignableFrom(cld.getType())) {
-            ignoredClasses.add((Class<? extends InterMineObject>) cld.getType());
+            ignoredClassMap.add((Class<? extends InterMineObject>) cld.getType());
 
             for (ClassDescriptor subCld : cld.getSubDescriptors()) {
-                addCldToIgnored(ignoredClasses, subCld);
+                addCldToIgnored(ignoredClassMap, subCld);
             }
         } else {
             LOG.error("cld " + cld + " is not IMO!");
@@ -1095,7 +1109,7 @@ public final class KeywordSearch
     }
 
     private static void addToIgnoredFields(
-            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields, ClassDescriptor cld,
+            Map<Class<? extends InterMineObject>, Set<String>> ignoredFieldMap, ClassDescriptor cld,
             String fieldName) {
         if (cld == null) {
             LOG.error("ClassDesriptor was null when attempting to add an ignored field.");
@@ -1107,13 +1121,13 @@ public final class KeywordSearch
             }
 
             for (ClassDescriptor ignoreCld : clds) {
-                Set<String> fields = ignoredFields.get(ignoreCld.getType());
+                Set<String> fields = ignoredFieldMap.get(ignoreCld.getType());
                 @SuppressWarnings("unchecked")
                 Class<? extends InterMineObject> cls =
                     (Class<? extends InterMineObject>) ignoreCld.getType();
                 if (fields == null) {
                     fields = new HashSet<String>();
-                    ignoredFields.put(cls, fields);
+                    ignoredFieldMap.put(cls, fields);
                 }
                 fields.add(fieldName);
             }

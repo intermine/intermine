@@ -65,8 +65,7 @@ public class IntergenicRegionUtil
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
-            dataSource = (DataSource) os.getObjectByExample(dataSource,
-                    Collections.singleton("name"));
+            dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
             throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
         }
@@ -137,7 +136,8 @@ public class IntergenicRegionUtil
         osw.commitTransaction();
     }
 
-    private void addToLocToGeneMap(Map<Integer, Set<Gene>> locToGeneMap, Location loc, Gene gene) {
+    private static void addToLocToGeneMap(Map<Integer, Set<Gene>> locToGeneMap, Location loc,
+            Gene gene) {
         Util.addToSetMap(locToGeneMap, loc.getStart(), gene);
         Util.addToSetMap(locToGeneMap, loc.getEnd(), gene);
     }
@@ -145,7 +145,7 @@ public class IntergenicRegionUtil
     /**
      * Store the objects returned by createIntergenicRegionFeatures().
      */
-    private void storeItergenicRegions(ObjectStoreWriter objectStoreWriter,
+    private static void storeItergenicRegions(ObjectStoreWriter objectStoreWriter,
             Iterator<SequenceFeature> irIter) throws ObjectStoreException, IllegalAccessException {
         while (irIter.hasNext()) {
             SequenceFeature ir = irIter.next();
@@ -202,10 +202,12 @@ public class IntergenicRegionUtil
                 }
             }
 
+            @Override
             public boolean hasNext() {
                 return prevEndPos != -1;
             }
 
+            @Override
             public SequenceFeature next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
@@ -307,6 +309,7 @@ public class IntergenicRegionUtil
                 return intergenicRegion;
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("Cannot remove from this iterator.");
             }
