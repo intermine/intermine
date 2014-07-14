@@ -236,11 +236,7 @@ public class BagQueryRunner
         }
 
         unresolved.addAll(wildcardUnresolved);
-        Map<String, ?> unresolvedMap = new HashMap<String, Object>();
-        for (String unresolvedStr : unresolved) {
-            unresolvedMap.put(unresolvedStr, null);
-        }
-        bqr.putUnresolved(unresolvedMap);
+        bqr.addUnresolved(unresolved);
 
         return bqr;
     }
