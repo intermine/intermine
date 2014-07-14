@@ -78,6 +78,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
      * @param mineName name of mine to query
      * @return map from mine to organism-->genes
      */
+    @Override
     public Collection<JSONObject> getLinks(FriendlyMineManager olm, String mineName,
             String organismShortName, String primaryIdentifier) {
 
@@ -172,8 +173,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
         return organisms;
     }
 
-    private static List<String> identifiersToJSON(Set<String[]> genes)
-        throws JSONException {
+    private static List<String> identifiersToJSON(Set<String[]> genes) {
         List<String> identifiers = new ArrayList<String>();
         for (String[] identifier : genes) {
             identifiers.add(identifier[0]);
@@ -242,7 +242,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
 
     /*****************************************************************************************
         HOMOLOGUES
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException
      *****************************************************************************************/
 
     // query local mine for orthologues - results cache is handling

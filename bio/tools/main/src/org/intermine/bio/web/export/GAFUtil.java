@@ -10,7 +10,6 @@ package org.intermine.bio.web.export;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.bio.io.gaf.GAFRecord;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
@@ -24,8 +23,6 @@ import org.intermine.model.bio.SequenceFeature;
  */
 public final class GAFUtil
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GAFUtil.class);
 
     private GAFUtil() {
        // dont'
