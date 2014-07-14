@@ -12,7 +12,6 @@ package org.intermine.bio.web.widget;
 
 
 import java.util.Collection;
-import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;

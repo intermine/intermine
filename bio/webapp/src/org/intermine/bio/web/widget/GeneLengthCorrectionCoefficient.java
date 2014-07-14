@@ -10,8 +10,6 @@ package org.intermine.bio.web.widget;
  *
  */
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Inherited;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -21,12 +19,12 @@ import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -60,9 +58,11 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     private static final String PERCENTAGE_GENE_LENGTH_NOT_NULL = "percentage_gene_length_not_null";
     private static final String PATH_QUERY_GENE_LENGTH_NULL = "pathQueryGeneLengthNull";
 
-    public GeneLengthCorrectionCoefficient() {
-    }
-
+    /**
+     * @param config config for this widget
+     * @param os database
+     * @param bag list of genes being operated on
+     */
     public GeneLengthCorrectionCoefficient(WidgetConfig config, ObjectStore os, InterMineBag bag) {
         this.config = config;
         this.os = os;
@@ -72,6 +72,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSelected(String correctionCoefficientInput) {
         if (correctionCoefficientInput != null
             && "true".equalsIgnoreCase(correctionCoefficientInput)) {
@@ -83,6 +84,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isApplicable() {
         if (countItemsWithLengthNotNull != null) {
             if (countItemsWithLengthNotNull != 0) {
@@ -140,6 +142,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updatePopulationQuery(Query q, Query subQ, QueryField qfCorrection) {
         if (qfCorrection != null) {
             subQ.addToSelect(qfCorrection);
@@ -167,7 +170,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
             }
             PopulationInfo pi = annotatedPopulationInfo.get(term);
             if (pi != null) {
-                float geneLengthPerTerm = (Float) pi.getExtraAttribute();
+                float geneLengthPerTerm = pi.getExtraAttribute();
                 int populationPerTerm = pi.getSize();
                 float geneLength = population.getExtraAttribute();
                 float geneLenghtProbability = (geneLengthPerTerm / geneLength);
@@ -192,6 +195,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, Map<String, Object>> getOutputInfo(String geneLengthCorrectionInput) {
         Map<String, Object> geneLengthAttributes = new HashMap<String, Object>();
         Map<String, Map<String, Object>> extraAttributes = new HashMap<String,
@@ -211,7 +215,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
                     geneLengthAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
                     geneLengthAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
                 }
-            } catch (ObjectStoreException os) {
+            } catch (ObjectStoreException e) {
                 geneLengthAttributes.put(GENE_LENGTH_CORRECTION, null);
                 geneLengthAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
                 geneLengthAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
@@ -220,8 +224,8 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
             if (geneLengthCorrectionInput == null) {
                 geneLengthAttributes.put(GENE_LENGTH_CORRECTION, false);
             } else {
-                geneLengthAttributes.put(GENE_LENGTH_CORRECTION,
-                    new Boolean(geneLengthCorrectionInput));
+                geneLengthAttributes.put(GENE_LENGTH_CORRECTION, Boolean.valueOf(
+                        geneLengthCorrectionInput));
             }
         } else {
             geneLengthAttributes.put(GENE_LENGTH_CORRECTION, null);
@@ -267,6 +271,7 @@ public class GeneLengthCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
+    @Override
     public QueryField updateQueryWithCorrectionCoefficient(Query query, QueryClass qc) {
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
         QueryField qfCorrection = new QueryField(qc, "length");
