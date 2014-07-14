@@ -19,6 +19,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
@@ -26,7 +27,6 @@ import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.CompanyShadow;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -35,7 +35,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.SetupDataTestCase;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -159,7 +158,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
     // Not doing the Query tests here
     @Override
-    public void executeTest(@SuppressWarnings("unused") String type) throws Exception {
+    public void executeTest(String type) throws Exception {
     }
 
     public void testStoreObject() throws Exception {
@@ -1105,31 +1104,31 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         SingletonResults r = iw.executeSingleton(q);
         assertEquals(2, r.size());
     }
-    
+
     // Investigate problem with merging, described in ticket #341
     public void testMergeBug() throws Exception {
         Employee e = new Employee();
         e.setName("abc");
         Address a = new Address();
         a.setAddress("abc");
-        
+
         if (doIds) {
             e.setId(new Integer(1));
             a.setId(new Integer(2));
         }
-        
+
         Source source = iw.getMainSource("testsource", "testsource");
         Source skelSource = iw.getSkeletonSource("testsource", "testsource");
-        
+
         iw.store(e, source, skelSource);
         iw.store(a, source, skelSource);
         iw.commitTransaction();
         iw.reset();
         iw.beginTransaction();
-        
+
         source = iw.getMainSource("nokeys", "nokeys");
         skelSource = iw.getSkeletonSource("nokeys", "nokeys");
-        
+
         iw.store(e, source, skelSource);
         iw.store(a, source, skelSource);
         iw.commitTransaction();
@@ -1150,13 +1149,13 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         q2.setConstraint(new SimpleConstraint(new QueryField(qc2, "address"), ConstraintOp.EQUALS, new QueryValue("abc")));
         SingletonResults r2 = iw.executeSingleton(q2);
         assertEquals(2, r2.size());
-        
+
         source = iw.getMainSource("testsource2", "testsource2");
         skelSource = iw.getSkeletonSource("testsource2", "testsource2");
-        
+
         iw.store(e, source, skelSource);
         iw.store(a, source, skelSource);
-        
+
         r = iw.executeSingleton(q);
         assertEquals(1, r.size());
         r2 = iw.executeSingleton(q2);

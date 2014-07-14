@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.bag.InvitationHandler;
 import org.intermine.api.profile.BagSet;
 import org.intermine.api.profile.BagValue;
@@ -46,8 +45,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 class ProfileHandler extends DefaultHandler
 {
-    private static final Logger LOG = Logger.getLogger(ProfileHandler.class);
-
     private ProfileManager profileManager;
     private String username;
     private String password;
@@ -67,6 +64,11 @@ class ProfileHandler extends DefaultHandler
     private boolean isSuperUser;
     private final InvitationHandler invitationHandler = new InvitationHandler();
 
+    /**
+     * Constructor.
+     *
+     * @return invitation handler
+     */
     public InvitationHandler getInvitationHandler() {
         return invitationHandler;
     }
@@ -84,9 +86,8 @@ class ProfileHandler extends DefaultHandler
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
      * @param osw an ObjectStoreWriter to the production database, to write bags
-     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
-     * problem and continue if possible (used by read-userprofile-xml).
      * @param version the version of the profile xml, an attribute on the profile manager xml
+     * @param sharedBagsByUser list of bags shared by user
      */
     public ProfileHandler(ProfileManager profileManager, ObjectStoreWriter osw,
                           int version, Map<String, List> sharedBagsByUser) {
@@ -96,15 +97,12 @@ class ProfileHandler extends DefaultHandler
     /**
      * Create a new ProfileHandler
      * @param profileManager the ProfileManager to pass to the Profile constructor
-     * @param idUpgrader the IdUpgrader to use to find objects in the new ObjectStore that
-     * correspond to object in old bags.
      * @param defaultUsername default username
      * @param defaultPassword default password
      * @param tags a set to populate with user tags
      * @param osw an ObjectStoreWriter to the production database, to write bags
-     * @param abortOnError if true, throw an exception if there is a problem.  If false, log the
-     * problem and continue if possible (used by read-userprofile-xml).
      * @param version the version of the profile xml, an attribute on the profile manager xml
+     * @param sharedBagsByUser list of bags shared by user
      */
     public ProfileHandler(ProfileManager profileManager, String defaultUsername,
             String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw, int version,
@@ -122,6 +120,7 @@ class ProfileHandler extends DefaultHandler
     /**
      * Return the de-serialised Profile.
      * @return the new Profile
+     * @throws SAXException if error reading XML
      */
     public Profile getProfile() throws SAXException {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
@@ -155,6 +154,7 @@ class ProfileHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if ("userprofile".equals(qName)) {
@@ -182,8 +182,8 @@ class ProfileHandler extends DefaultHandler
                     profileManager.getProfileObjectStoreWriter(), osw,
                     savedBags, invalidBags, bagsValues);
         }
-        if("shared-bags".equals(qName)) {
-            sharedBags = new ArrayList<Map<String,String>>();
+        if ("shared-bags".equals(qName)) {
+            sharedBags = new ArrayList<Map<String, String>>();
             subHandler = new SharedBagHandler(sharedBags);
         }
         if ("template-queries".equals(qName)) {
@@ -211,16 +211,16 @@ class ProfileHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if ("bags".equals(qName) || qName.equals("template-queries")
-            || "queries".equals(qName) || qName.equals("items")
-            || qName.equals("tags") || qName.equals("preferences")
-            || qName.equals("invitations")) {
+        if ("bags".equals(qName) || ("template-queries").equals(qName)
+            || "queries".equals(qName) ||  "items".equals(qName) || "tags".equals(qName)
+            || "preferences".equals(qName) || "invitations".equals(qName)) {
             subHandler = null;
         }
         if ("shared-bags".equals(qName)) {
-            if (sharedBagsByUser  != null){
+            if (sharedBagsByUser  != null) {
                 sharedBagsByUser.put(username, sharedBags);
             }
         }
@@ -232,6 +232,7 @@ class ProfileHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (subHandler != null) {
             subHandler.characters(ch, start, length);

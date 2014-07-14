@@ -79,7 +79,7 @@ public class PathTest extends TestCase
     }
 
     public void testValidWithClassConstraintMap() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
 
@@ -90,7 +90,7 @@ public class PathTest extends TestCase
     }
 
     public void testNotValidWithClassConstraintMap() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
 
@@ -105,7 +105,7 @@ public class PathTest extends TestCase
         }
     }
     public void testNotValidConstraintMapColon() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department:manager", "CEO");
         String stringPath = "Department.manager.name";
 
@@ -160,7 +160,7 @@ public class PathTest extends TestCase
 
 
     public void testToString() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
 
@@ -172,7 +172,7 @@ public class PathTest extends TestCase
     }
 
     public void testToStringNoConstraints() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
 
@@ -194,7 +194,7 @@ public class PathTest extends TestCase
         path = new Path(model, "Department.manager");
         assertFalse(path.isRootPath());
     }
-    
+
     public void testEquals() throws Exception {
         Path path1 = new Path(model, "Department.manager.name");
         Path path2 = new Path(model, "Department.manager.name");
@@ -202,7 +202,7 @@ public class PathTest extends TestCase
     }
 
     public void testGetPrefix() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
 
@@ -234,7 +234,7 @@ public class PathTest extends TestCase
     }
 
     public void testGetPrefixOuterJoin() throws Exception {
-        Map constraintMap = new HashMap();
+        Map<String, String> constraintMap = new HashMap<String, String>();
         constraintMap.put("Department.manager", "CEO");
         constraintMap.put("Department.manager.company.departments.employees", "Manager");
 
@@ -264,26 +264,26 @@ public class PathTest extends TestCase
         }
 
     }
-    
+
     public void testDecomposePath() throws Exception {
-    	
-    	String shortPathString = "Company";
-    	Path shortPath = new Path(model, shortPathString);
-    	List<Path> decomposedPaths = shortPath.decomposePath();
-    	assertTrue(decomposedPaths != null);
-    	assertTrue(decomposedPaths.size() == 1);
-    	assertTrue("Company".equals(decomposedPaths.get(0).toString()));
-    	
-    	String longPathString = "Company.departments.manager.name";
-    	Path longPath = new Path(model, longPathString);
-    	decomposedPaths = longPath.decomposePath();
-    	assertTrue(decomposedPaths != null);
-    	assertTrue(decomposedPaths.size() == 4);
-    	assertTrue("Company".equals(decomposedPaths.get(0).toString()));
-    	assertTrue("Company.departments".equals(decomposedPaths.get(1).toString()));
-    	assertTrue("Company.departments.manager".equals(decomposedPaths.get(2).toString()));
-    	assertTrue("Company.departments.manager.name".equals(decomposedPaths.get(3).toString()));
-    	
+
+        String shortPathString = "Company";
+        Path shortPath = new Path(model, shortPathString);
+        List<Path> decomposedPaths = shortPath.decomposePath();
+        assertTrue(decomposedPaths != null);
+        assertTrue(decomposedPaths.size() == 1);
+        assertTrue("Company".equals(decomposedPaths.get(0).toString()));
+
+        String longPathString = "Company.departments.manager.name";
+        Path longPath = new Path(model, longPathString);
+        decomposedPaths = longPath.decomposePath();
+        assertTrue(decomposedPaths != null);
+        assertTrue(decomposedPaths.size() == 4);
+        assertTrue("Company".equals(decomposedPaths.get(0).toString()));
+        assertTrue("Company.departments".equals(decomposedPaths.get(1).toString()));
+        assertTrue("Company.departments.manager".equals(decomposedPaths.get(2).toString()));
+        assertTrue("Company.departments.manager.name".equals(decomposedPaths.get(3).toString()));
+
     }
 
     public void testContainsCollections() throws Exception {

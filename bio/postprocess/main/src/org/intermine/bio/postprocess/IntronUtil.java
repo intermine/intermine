@@ -80,8 +80,7 @@ public class IntronUtil
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
-            dataSource = (DataSource) os.getObjectByExample(dataSource,
-                                                            Collections.singleton("name"));
+            dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
             throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
         }

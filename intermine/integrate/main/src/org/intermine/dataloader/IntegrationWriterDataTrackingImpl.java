@@ -95,7 +95,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      * @throws ObjectStoreException sometimes
      */
     protected static IntegrationWriterDataTrackingImpl getInstance(
-            @SuppressWarnings("unused") String osAlias, Properties props,
+            String osAlias, Properties props,
             Class<? extends IntegrationWriterDataTrackingImpl> iwClass,
             Class<? extends DataTracker> trackerClass)
         throws ObjectStoreException {
