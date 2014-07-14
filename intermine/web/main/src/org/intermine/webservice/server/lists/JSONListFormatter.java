@@ -80,11 +80,8 @@ public class JSONListFormatter implements ListFormatter
         } catch (ObjectStoreException e) {
             throw new ServiceException("Error getting list size:" + e);
         }
-        if (profile.getSavedBags().get(list.getName()) == list) {
-            listMap.put("authorized", true);
-        } else {
-            listMap.put("authorized", false);
-        }
+        boolean belongsToMe = list == profile.getSavedBags().get(list.getName());
+        listMap.put("authorized", belongsToMe);
         return listMap;
     }
 
