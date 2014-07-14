@@ -123,7 +123,7 @@ public class PathQueryBinding
     /**
      * Create XML for the join style in a PathQuery.
      */
-    private void marshalPathQueryJoinStyle(PathQuery query, XMLStreamWriter writer)
+    private static void marshalPathQueryJoinStyle(PathQuery query, XMLStreamWriter writer)
         throws XMLStreamException {
         for (Map.Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
             writer.writeEmptyElement("join");
@@ -136,7 +136,7 @@ public class PathQueryBinding
     /**
      * Create XML for the path descriptions in a PathQuery.
      */
-    private void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer)
+    private static void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer)
         throws XMLStreamException {
         for (Map.Entry<String, String> entry : query.getDescriptions().entrySet()) {
             String path = entry.getKey();

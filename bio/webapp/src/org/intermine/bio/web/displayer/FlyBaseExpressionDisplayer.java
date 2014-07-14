@@ -62,7 +62,7 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
 
         // API connection
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         PathQuery query = new PathQuery(model);
 
@@ -72,7 +72,7 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
         if (id != null) {
             // fetch the expression
             String geneId = String.valueOf(id);
-            
+
             try {
                 query = getQuery(geneId, query);
 
@@ -88,7 +88,7 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
                 InlineResultsTable table = processTable(request, reportObject);
                 request.setAttribute("flybaseCollection", table);
             } catch (Exception e) {
-                request.setAttribute("flybaseResults",new LinkedHashMap<String, String>());
+                request.setAttribute("flybaseResults", new LinkedHashMap<String, String>());
             }
         }
     }
@@ -103,7 +103,7 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
                     collection = (Collection<?>)
                         reportObject.getObject().getFieldValue("rnaSeqResults");
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    return null;
                 }
 
                 List<Class<?>> lc = PathQueryResultHelper.
@@ -121,7 +121,7 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
         return null;
     }
 
-    private Map<String, String> processResults(ExportResultsIterator it) {
+    private static Map<String, String> processResults(ExportResultsIterator it) {
         Map<String, String> results = new LinkedHashMap<String, String>();
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
@@ -132,7 +132,7 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
         return results;
     }
 
-    private PathQuery getQuery(String geneId, PathQuery query) {
+    private static PathQuery getQuery(String geneId, PathQuery query) {
         query.addViews(
                 "Gene.rnaSeqResults.stage",
                 "Gene.rnaSeqResults.expressionLevel",
