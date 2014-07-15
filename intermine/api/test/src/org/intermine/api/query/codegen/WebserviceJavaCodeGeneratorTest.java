@@ -10,7 +10,6 @@ package org.intermine.api.query.codegen;
  *
  */
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -90,7 +89,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
         String got = cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
 
-        assertEquals(expected, got);
+        assertEquals("Generated query is incorrect.", expected, got);
     }
 
     private void doPrivateComparison(String xml, String resource) {
@@ -220,10 +219,11 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
      * </pre>
      */
     public void testPathQueryCodeGenerationWithNoConstraints() {
-        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-                "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-                "sortOrder=\"Gene.primaryIdentifier asc\"></query>";
-        // Parse xml to PathQuery - PathQueryBinding
+        String queryXml =
+                "<query model=\"genomic\""
+                + " view=\"Gene.primaryIdentifier Gene.secondaryIdentifier"
+                + " Gene.symbol Gene.name Gene.organism.shortName\""
+                + " sortOrder=\"Gene.primaryIdentifier asc\"/>";
         doComparison(queryXml, "no-constraints");
     }
 

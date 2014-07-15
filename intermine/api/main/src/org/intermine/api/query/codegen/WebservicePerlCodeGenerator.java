@@ -82,31 +82,36 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         return "#!/usr/bin/perl" + endl + endl;
     }
 
-    protected String getBoilerPlate() {
+    private String getBoilerPlate() {
         return "use strict;" + endl + "use warnings;" + endl + endl;
     }
 
-    protected String getIntro() {
+    private String getIntro() {
         StringBuffer intro = new StringBuffer()
-          .append("######################################################################").append(endl)
-          .append("# This is an automatically generated script to run your query.").append(endl)
-          .append("# To use it you will require the InterMine Perl client libraries.").append(endl)
-          .append("# These can be installed from CPAN, using your preferred client, eg:").append(endl)
-          .append("#").append(endl)
-          .append("#").append(INDENT).append("sudo cpan Webservice::InterMine").append(endl)
-          .append("#").append(endl)
-          .append("# For help using these modules, please see these resources:").append(endl)
-          .append("#").append(endl)
-          .append("#  * https://metacpan.org/pod/Webservice::InterMine").append(endl)
-          .append("#       - API reference").append(endl)
-          .append("#  * https://metacpan.org/pod/Webservice::InterMine::Cookbook").append(endl)
-          .append("#       - A How-To manual").append(endl)
-          .append("#  * http://www.intermine.org/wiki/PerlWebServiceAPI").append(endl)
-          .append("#       - General Usage").append(endl)
-          .append("#  * http://www.intermine.org/wiki/WebService").append(endl)
-          .append("#       - Reference documentation for the underlying REST API").append(endl)
-          .append("#").append(endl)
-          .append("######################################################################").append(endl + endl);
+            .append("######################################################################")
+            .append(endl)
+            .append("# This is an automatically generated script to run your query.")
+            .append(endl)
+            .append("# To use it you will require the InterMine Perl client libraries.")
+            .append(endl)
+            .append("# These can be installed from CPAN, using your preferred client, eg:")
+            .append(endl)
+            .append("#").append(endl)
+            .append("#").append(INDENT).append("sudo cpan Webservice::InterMine").append(endl)
+            .append("#").append(endl)
+            .append("# For help using these modules, please see these resources:").append(endl)
+            .append("#").append(endl)
+            .append("#  * https://metacpan.org/pod/Webservice::InterMine").append(endl)
+            .append("#       - API reference").append(endl)
+            .append("#  * https://metacpan.org/pod/Webservice::InterMine::Cookbook").append(endl)
+            .append("#       - A How-To manual").append(endl)
+            .append("#  * http://intermine.readthedocs.org/en/latest/web-services").append(endl)
+            .append("#       - General Usage").append(endl)
+            .append("#  * http://iodoc.labs.intermine.org").append(endl)
+            .append("#       - Reference documentation for the underlying REST API").append(endl)
+            .append("#").append(endl)
+            .append("######################################################################")
+            .append(endl + endl);
         return intro.toString();
     }
 
@@ -165,7 +170,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             sb.append("use Webservice::InterMine"
                     + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer) 
                     + " '" + serviceBaseURL + "', "
-                    + "'YOUR-API-TOKEN';" + endl);
+                    + "'" + wsCodeGenInfo.getUserToken() + "';" + endl);
         }
         sb.append(endl);
 
@@ -211,7 +216,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
     }
 
-    private void generateTemplateQueryCode(TemplateQuery template, StringBuffer sb) throws InvalidQueryException {
+    private void generateTemplateQueryCode(
+            TemplateQuery template,
+            StringBuffer sb) throws InvalidQueryException {
         String name = template.getName();
         Map<PathConstraint, String> allConstraints = template.getConstraints();
         List<PathConstraint> editableConstraints = template.getEditableConstraints();
@@ -254,7 +261,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         printResults(template, sb);
     }
 
-    private void generatePathQueryCode(PathQuery query, StringBuffer sb) throws InvalidQueryException {
+    private void generatePathQueryCode(
+            PathQuery query,
+            StringBuffer sb) throws InvalidQueryException {
 
         String rootClass = null;
         try {
@@ -403,7 +412,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
      * @param pc PathConstraint object
      * @return a string for constraints source code
      */
-    private String pathContraintUtil(PathConstraint pc, String code) throws UnhandledFeatureException {
+    private String pathContraintUtil(
+            PathConstraint pc,
+            String code) throws UnhandledFeatureException {
         // Ref to Constraints
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String path = pc.getPath();
@@ -423,12 +434,16 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintLookup".equals(className)) {
+            String evLine = "";
+            if (extraValue != null) {
+                evLine = INDENT + "extra_value => '" + extraValue + "'," + endl;
+            }
             return
                 "$query->add_constraint(" + endl
                 + INDENT + "path        => '" + path + "'," + endl
                 + INDENT + "op          => 'LOOKUP'," + endl
                 + INDENT + "value       => '" + value + "'," + endl
-                + INDENT + "extra_value => '" + extraValue + "'," + endl
+                + evLine
                 + INDENT + "code        => '" + code + "'," + endl
                 + ");" + endl;
         }

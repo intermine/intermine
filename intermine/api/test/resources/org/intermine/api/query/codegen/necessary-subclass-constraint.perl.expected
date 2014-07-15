@@ -34,22 +34,23 @@ no warnings ('uninitialized');
 # The following import statement sets TEST_PROJECT_TITLE as your default
 use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT';
 
-my $template = Webservice::InterMine->template('TEMP_NAME')
-    or die 'Could not find a template called TEMP_NAME';
+my $query = new_query(class => 'Employee');
+
+# Type constraints must come before all mentions of the paths they constrain
+$query->add_constraint(
+    path => 'Employee.department.manager',
+    type => 'CEO',
+);
+# The view specifies the output columns
+$query->add_view(qw/
+    name
+    age
+    department.manager.salary
+/);
+
 
 # Use an iterator to avoid having all rows in memory at once.
-my $it = $template->results_iterator_with(
-    # A:  Employee.end
-    opA    => 'IS NULL',
-    # B:  Employee.name
-    opB    => '=',
-    valueB => 'Foo',
-    # D:  Employee
-    opD    => 'LOOKUP',
-    valueD => 'EmployeeA1',
-    extra_valueD => 'DepartmentA',
-);
-
+my $it = $query->iterator();
 while (my $row = <$it>) {
-    print $row->{'name'}, "\n";
+    print $row->{'name'}, $row->{'age'}, $row->{'department.manager.salary'}, "\n";
 }

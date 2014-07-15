@@ -39,15 +39,9 @@ my $template = Webservice::InterMine->template('TEMP_NAME')
 
 # Use an iterator to avoid having all rows in memory at once.
 my $it = $template->results_iterator_with(
-    # A:  Employee.end
-    opA    => 'IS NULL',
-    # B:  Employee.name
-    opB    => '=',
-    valueB => 'Foo',
-    # D:  Employee
-    opD    => 'LOOKUP',
-    valueD => 'EmployeeA1',
-    extra_valueD => 'DepartmentA',
+    # A:  Employee
+    opA    => 'IN',
+    valueA => 'aList',
 );
 
 while (my $row = <$it>) {
