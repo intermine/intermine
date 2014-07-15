@@ -12,16 +12,12 @@ package org.intermine.web.logic.widget;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.AbstractMap;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+
+import org.intermine.web.logic.SortableMap;
 
 
 /**
@@ -93,24 +89,15 @@ public final class ErrorCorrection
 
     /**
      * Sort the map by values.
+     *
      * @param originalMap The map to sort.
      * @return A similar map, but sorted.
      */
     public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
-        final List<Map.Entry<String, BigDecimal>> entries
-            = new ArrayList<Map.Entry<String, BigDecimal>>(originalMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<String, BigDecimal>>() {
-            @Override
-            public int compare(Entry<String, BigDecimal> a, Entry<String, BigDecimal> b) {
-                return b.getValue().compareTo(a.getValue());
-            }
-        });
-        return new AbstractMap<String, BigDecimal>() {
-            @Override
-            public Set<java.util.Map.Entry<String, BigDecimal>> entrySet() {
-                return new LinkedHashSet<Map.Entry<String, BigDecimal>>(entries);
-            }
-        };
+        SortableMap sortedMap = new SortableMap(originalMap);
+        // sort ascending, smallest values first
+        sortedMap.sortValues(false, true);
+        return new LinkedHashMap(sortedMap);
     }
 
     /**
