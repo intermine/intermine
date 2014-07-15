@@ -43,6 +43,7 @@ public class FriendlyMineManager
     private static InterMineAPI im;
     private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
         = new CacheMap<MultiKey, Collection<JSONObject>>();
+    private FriendlyMineQueryRunner queryRunner;
 
 /**
  * @param interMineAPI intermine api
@@ -54,6 +55,7 @@ public class FriendlyMineManager
         final String localMineName = webProperties.getProperty("project.title");
         localMine = new Mine(localMineName);
         mines = readConfig(im, localMineName);
+        queryRunner = new FriendlyMineQueryRunner();
     }
 
     /**
@@ -73,7 +75,7 @@ public class FriendlyMineManager
             Properties properties) {
         if (linkManager == null || DEBUG) {
             linkManager = new FriendlyMineManager(imAPI, properties);
-            primeCache();
+            linkManager.primeCache();
         }
         return linkManager;
     }
@@ -97,12 +99,12 @@ public class FriendlyMineManager
     /**
      * if an hour has passed, update data
      */
-    public static synchronized void primeCache() {
+    public synchronized void primeCache() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
         if (timeSinceLastRefresh > ONE_HOUR || !cached || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
-            FriendlyMineQueryRunner.updateReleaseVersion(mines);
+            queryRunner.updateReleaseVersion(mines);
         }
     }
 
@@ -194,15 +196,29 @@ public class FriendlyMineManager
 
     /**
      * @param mineName name of mine
-     * @return mine
+     * @return The mine properties object.
      */
     public Mine getMine(String mineName) {
+        if (mineName == null) {
+            throw new NullPointerException("mineName must not be null");
+        }
+        if (mines.containsKey(mineName)) {
+            return mines.get(mineName);
+        }
         for (Mine mine : mines.values()) {
-            if (mine.getName().equals(mineName)) {
+            if (mineName.equals(mine.getName())) {
+                mines.put(mineName, mine); // Save loop next time.
                 return mine;
             }
         }
         return null;
+    }
+
+    /**
+     * @return An object capable of running friendly mine queries.
+     */
+    public FriendlyMineQueryRunner getQueryRunner() {
+        return queryRunner;
     }
 }
 
