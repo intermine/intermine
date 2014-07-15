@@ -32,24 +32,33 @@ no warnings ('uninitialized');
 
 # This code makes use of the Webservice::InterMine library.
 # The following import statement sets TEST_PROJECT_TITLE as your default
-use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT';
+# You must also supply your login details here to access this query
+use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT', 'null';
 
-my $template = Webservice::InterMine->template('TEMP_NAME')
-    or die 'Could not find a template called TEMP_NAME';
+my $query = new_query(class => 'Gene');
 
-# Use an iterator to avoid having all rows in memory at once.
-my $it = $template->results_iterator_with(
-    # A:  Employee.end
-    opA    => 'IS NULL',
-    # B:  Employee.name
-    opB    => '=',
-    valueB => 'Foo',
-    # D:  Employee
-    opD    => 'LOOKUP',
-    valueD => 'EmployeeA1',
-    extra_valueD => 'DepartmentA',
+# The view specifies the output columns
+$query->add_view(qw/
+    primaryIdentifier
+    secondaryIdentifier
+    symbol
+    name
+    organism.shortName
+/);
+
+# edit the line below to change the sort order:
+# $query->add_sort_order('primaryIdentifier', 'ASC');
+
+$query->add_constraint(
+    path  => 'Gene',
+    op    => 'IN',
+    value => 'aList',
+    code  => 'A',
 );
 
+# Use an iterator to avoid having all rows in memory at once.
+my $it = $query->iterator();
 while (my $row = <$it>) {
-    print $row->{'name'}, "\n";
+    print $row->{'primaryIdentifier'}, $row->{'secondaryIdentifier'}, $row->{'symbol'},
+        $row->{'name'}, $row->{'organism.shortName'}, "\n";
 }
