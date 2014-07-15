@@ -216,7 +216,12 @@
     <module name="UpperEll"/>
     <module name="Indentation"/>
     <module name="CovariantEquals"/>
-    <module name="RedundantThrows"/>
+    <module name="RedundantThrows">
+        <!-- Allow, but don't require, unchecked exceptions to be declared -->
+        <property name="allowUnchecked" value="true"/>
+        <!-- Allow javadoc to document subclasses of exceptions -->
+        <property name="allowSubclasses" value="true"/>
+    </module>
     <module name="StringLiteralEquality"/>
     <module name="SuperFinalize"/>
     <module name="PackageDeclaration"/>
