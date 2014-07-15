@@ -34,6 +34,15 @@ import org.intermine.template.TemplateQuery;
 public class TemplateQueryBindingTest extends TestCase
 {
     Map<String, TemplateQuery> savedTemplates, expected;
+    Map<String, String> templateTags;
+
+    // to add to xml queries to get a template
+    private static final String T1 =
+            "<template name=\"employeesWithOldManagers\" title=\"Old Managers --&gt; Employees\" "
+            + " longDescription=\"\" comment=\"This template is exciting\" > ";
+    private static final String T2 =
+            "<template name=\"queryWithConstraint\" title=\"Company --&gt; CEO\" "
+            +" longDescription=\"this is the queryWithConstraint description\" comment=\"\">";
 
     public void setUp() throws Exception {
         super.setUp();
@@ -41,6 +50,10 @@ public class TemplateQueryBindingTest extends TestCase
         savedTemplates = TemplateQueryBinding.unmarshalTemplates(new InputStreamReader(is), 1);
         // checking can be removed maybe
         expected = getExpectedQueries();
+        templateTags = new LinkedHashMap<String, String>();
+        templateTags.put("employeesWithOldManagers", T1);
+        templateTags.put("queryWithConstraint", T2);
+
     }
 
     public TemplateQueryBindingTest(String arg) {
@@ -120,21 +133,38 @@ public class TemplateQueryBindingTest extends TestCase
     public void testMarshallings() throws Exception {
         String xml = TemplateQueryBinding.marshal(expected.get("employeesWithOldManagers"), "employeesWithOldManagers", "testmodel", 1);
         System.out.println(xml);
-        Map<String, TemplateQuery> readFromXml = new LinkedHashMap<String, TemplateQuery>();
-        readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), 1);
-        System.out.println(readFromXml.toString());
+        // we need to tranform this query in a template query
+        String templateXml = makeTemplate("employeesWithOldManagers", xml);
 
+        Map<String, TemplateQuery> readFromXml = new LinkedHashMap<String, TemplateQuery>();
+        readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(templateXml), 1);
         Map<String, TemplateQuery> expectedQuery = new LinkedHashMap<String, TemplateQuery>();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
-
         assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
 
         xml = TemplateQueryBinding.marshal(expected.get("queryWithConstraint"), "queryWithConstraint", "testmodel", 1);
+        System.out.println(xml);
+        templateXml = makeTemplate("queryWithConstraint", xml);
+
         readFromXml = new LinkedHashMap<String, TemplateQuery>();
-        readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), 1);
+        readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(templateXml), 1);
         expectedQuery = new LinkedHashMap<String, TemplateQuery>();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
-
         assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
+    }
+
+    /**
+     * @param name the name of the template
+     * @param xml the query
+     * @return the template query
+     */
+    private String makeTemplate(String name, String xml) {
+        final String TH = "<template-queries> ";
+        final String TF = "</template></template-queries>";
+
+        String tt = templateTags.get(name);
+        StringBuffer tXml = new StringBuffer();
+        tXml.append(TH + tt + xml + TF);
+        return tXml.toString();
     }
 }
