@@ -58,7 +58,7 @@ public class UpgradeBagList implements Runnable
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
                 BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
                 try {
-                    if (result.getUnresolved().isEmpty()
+                    if (result.getUnresolvedIdentifiers().isEmpty()
                         && (result.getIssues().isEmpty()
                             || onlyOtherIssuesAlreadyContained(result))) {
                         @SuppressWarnings("rawtypes")
