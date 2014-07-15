@@ -62,6 +62,10 @@ public abstract class WebUtil
 {
     protected static final Logger LOG = Logger.getLogger(WebUtil.class);
 
+    private WebUtil() {
+        // don't
+    }
+
     /**
      * Lookup an Integer property from the SessionContext and return it.
      *
