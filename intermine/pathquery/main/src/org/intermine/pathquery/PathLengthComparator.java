@@ -40,7 +40,7 @@ public class PathLengthComparator implements Comparator<Path>
      * {@inheritDoc}
      */
     @Override
-	public int compare(Path arg0, Path arg1) {
+    public int compare(Path arg0, Path arg1) {
         if (arg0 == null || arg1 == null) {
             throw new RuntimeException("Paths must not be null");
         }
