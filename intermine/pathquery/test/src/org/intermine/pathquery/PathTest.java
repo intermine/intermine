@@ -134,13 +134,13 @@ public class PathTest extends TestCase
 
     public void testNullPath() throws Exception {
         try {
-            Path path = new Path(model, null);
+            new Path(model, null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
         }
         try {
-            Path path = new Path(model, "");
+            new Path(model, "");
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected

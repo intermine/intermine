@@ -19,7 +19,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -36,9 +35,6 @@ import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
  */
 public class GenomicRegionSearchOptionsController extends TilesAction
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchOptionsController.class);
-
     private static final String GALAXY_SERVER_CONNECTION_ERROR =
         "Failed to fetch genomic region data from Galaxy server";
 
@@ -48,6 +44,7 @@ public class GenomicRegionSearchOptionsController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
         throws Exception {
@@ -96,7 +93,7 @@ public class GenomicRegionSearchOptionsController extends TilesAction
         return null;
     }
 
-    private String fetchGalaxyData(String galaxyDataUrl) {
+    private static String fetchGalaxyData(String galaxyDataUrl) {
 
         String galaxyInput;
 

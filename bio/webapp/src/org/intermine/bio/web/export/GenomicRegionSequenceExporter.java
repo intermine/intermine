@@ -1,7 +1,16 @@
 package org.intermine.bio.web.export;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,20 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.StringUtil;
 
 /**
  * Exports DNA sequences of given genomic regions in FASTA format.
@@ -41,7 +47,7 @@ public class GenomicRegionSequenceExporter
      * Instructor
      *
      * @param os ObjectStore
-     * @param response HttpServletResponse
+     * @param out output stream
      */
     public GenomicRegionSequenceExporter(ObjectStore os, OutputStream out) {
         this.os = os;
@@ -60,14 +66,15 @@ public class GenomicRegionSequenceExporter
                 .singleton(Organism.class));
         org.setShortName(aRegion.getOrganism());
 
-        org = (Organism) os.getObjectByExample(org, Collections.singleton("shortName"));
+        org = os.getObjectByExample(org, Collections.singleton("shortName"));
 
         for (GenomicRegion gr : grList) {
-            Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+            Chromosome chr = (Chromosome) DynamicUtil.createObject(
+                    Collections.singleton(Chromosome.class));
             chr.setPrimaryIdentifier(gr.getChr());
             chr.setOrganism(org);
 
-            chr = (Chromosome) os.getObjectByExample(chr,
+            chr = os.getObjectByExample(chr,
                         new HashSet<String>(Arrays.asList("primaryIdentifier", "organism")));
 
             String chrResidueString;

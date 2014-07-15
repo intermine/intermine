@@ -125,7 +125,12 @@ public class InterMineAPITestCase extends TestCase {
     public void tearDown() throws Exception {
         if (trackerDelegate != null) {
             trackerDelegate.close();
-            trackerDelegate.finalize();
+            try {
+                trackerDelegate.finalize();
+            } catch (Throwable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         if (os != null) {
             clearDatabase();

@@ -120,6 +120,7 @@ public class GFF3Exporter implements Exporter
      * @param sourceName name of Mine to put in GFF source column
      * @param organisms taxon id of the organisms
      * @param makeUcscCompatible true if chromosome ids should be prefixed by 'chr'
+     * @param paths
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
             List<String> attributesNames, String sourceName, Set<Integer> organisms,
@@ -185,6 +186,7 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         if (featureIndexes.size() == 0) {
@@ -198,8 +200,8 @@ public class GFF3Exporter implements Exporter
             }
 
             if (writtenResultsCount == 0) {
-                out.println("Nothing to export. Sequence features might miss some information, " +
-                        "e.g. chromosome location, etc.");
+                out.println("Nothing to export. Sequence features might miss some information, "
+                        + "e.g. chromosome location, etc.");
             }
 
             out.flush();
@@ -221,8 +223,7 @@ public class GFF3Exporter implements Exporter
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
     private void exportRow(List<ResultElement> row,
-            Collection<Path> unionPathCollection, Collection<Path> newPathCollection)
-        throws ObjectStoreException, IllegalAccessException {
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
 
         List<ResultElement> elWithObject = getResultElements(row);
         if (elWithObject == null) {
@@ -297,7 +298,8 @@ public class GFF3Exporter implements Exporter
                 }
 
                 // NB:
-                // processAttributes should run here for collection attributes, e.g. Gene.pathways.name,
+                // processAttributes should run here for collection attributes,
+                // e.g. Gene.pathways.name,
                 // ticket: https://github.com/intermine/intermine/issues/218
 
                 lastLsfId = lsf.getId();
@@ -334,7 +336,7 @@ public class GFF3Exporter implements Exporter
 
             // Disable collection export until further bug diagnose
             if (isCollection || el.getPath().containsCollections()) {
-              continue;
+                continue;
             }
             //---------------------------------------------------------------
             // checks for attributes:
@@ -480,7 +482,7 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-    private List<String> formatElementValue(ResultElement el) {
+    private static List<String> formatElementValue(ResultElement el) {
         List<String> ret = new ArrayList<String>();
         String s;
         if (el == null) {
@@ -510,6 +512,7 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(List<Class<?>> clazzes) {
         return canExportStatic(clazzes);
     }
@@ -527,17 +530,15 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getWrittenResultsCount() {
         return writtenResultsCount;
     }
 
     /**
      * Remove the elements from row which are not in pathCollection
-     * @param row
-     * @param pathCollection
-     * @return
      */
-    private List<ResultElement> filterResultRow(List<ResultElement> row,
+    private static List<ResultElement> filterResultRow(List<ResultElement> row,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
 
         List<ResultElement> newRow = new ArrayList<ResultElement>();
