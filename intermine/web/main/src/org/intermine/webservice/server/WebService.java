@@ -38,6 +38,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;

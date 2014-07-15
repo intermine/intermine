@@ -1,4 +1,4 @@
-package org.intermine.webservice.server;
+package org.intermine.api.util;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
@@ -18,7 +18,6 @@ import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.web.util.DevNullMap;
 
 /**
  * A null-object for profiles for use with the web services.
@@ -28,8 +27,11 @@ import org.intermine.web.util.DevNullMap;
  * @author Alex Kalderimis
  *
  */
-final class AnonProfile extends Profile
+public final class AnonProfile extends Profile
 {
+    /** The user name of the anonymous user. **/
+    public static final String USERNAME = "__ANONYMOUS_USER__";
+
     /**
      * Constructor
      */
@@ -69,7 +71,7 @@ final class AnonProfile extends Profile
 
     @Override
     public String getUsername() {
-        return "__ANONYMOUS_USER__";
+        return USERNAME;
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -130,7 +131,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
     }
     private WebserviceCodeGenInfo getGenInfo(PathQuery pq, boolean isPrivate) {
         return new WebserviceCodeGenInfo(pq, serviceRootURL, projectTitle, perlWSVersion,
-                !isPrivate, null);
+                !isPrivate, new AnonProfile());
     }
 
     //****************************** Test PathQuery *********************************

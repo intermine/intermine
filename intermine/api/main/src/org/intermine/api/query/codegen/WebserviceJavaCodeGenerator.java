@@ -217,7 +217,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 
     private String getIntro(WebserviceCodeGenInfo info) {
         final String src = info.getProjectTitle();
-        final String author = (StringUtils.isBlank(info.getUserName())) ? src : info.getUserName();
+        final String author = info.isLoggedIn() ?  info.getUserName() : src;
         StringBuffer sb = new StringBuffer();
         sb.append("/**" + endl);
         sb.append(" * This is a Java program to run a query from " + src + "." + endl);
@@ -228,7 +228,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
         sb.append(" * " + "@author " + author + endl);
         sb.append(" *" + endl);
-        sb.append(" **/" + endl);
+        sb.append(" */" + endl);
         return sb.toString();
     }
 
@@ -746,7 +746,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
                 i++;
             }
             return prefix + ", Arrays.asList(" + StringUtils.join(quoted, ", ") + "), "
-                + code + "));";
+                + newCode + "));";
         }
     }
 }

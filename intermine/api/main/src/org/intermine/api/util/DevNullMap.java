@@ -1,4 +1,4 @@
-package org.intermine.web.util;
+package org.intermine.api.util;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
