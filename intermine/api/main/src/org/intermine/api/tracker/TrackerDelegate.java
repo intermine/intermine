@@ -159,7 +159,7 @@ public class TrackerDelegate
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
         TemplateTracker tt = getTemplateTracker();
         if (tt != null) {
-            Connection connection = null;
+            connection = null;
             try {
                 connection = getConnection();
                 tt.updateTemplateName(oldTemplateName, newTemplateName, connection);
@@ -211,7 +211,7 @@ public class TrackerDelegate
     public List<ListTrack> getListOperations() {
         Tracker lt = getTracker(TrackerUtil.LIST_TRACKER);
         if (lt != null) {
-            Connection connection = null;
+            connection = null;
             try {
                 connection = getConnection();
                 return ((ListTracker) lt).getListOperations(connection);
@@ -242,7 +242,7 @@ public class TrackerDelegate
     public Map<String, Integer> getUserLogin() {
         Tracker lt = getTracker(TrackerUtil.LOGIN_TRACKER);
         if (lt != null) {
-            Connection connection = null;
+            connection = null;
             try {
                 connection = getConnection();
                 return ((LoginTracker) lt).getUserLogin(connection);
@@ -276,7 +276,7 @@ public class TrackerDelegate
     public Map<String, Integer> getKeywordSearches() {
         Tracker st = getTracker(TrackerUtil.SEARCH_TRACKER);
         if (st != null) {
-            Connection connection = null;
+            connection = null;
             try {
                 connection = getConnection();
                 return ((KeySearchTracker) st).getKeywordSearches(connection);
@@ -307,7 +307,7 @@ public class TrackerDelegate
      * Release the database connection
      * @param conn the connection to release
      */
-    private void releaseConnection(Connection conn) {
+    private static void releaseConnection(Connection conn) {
         if (conn != null) {
             try {
                 if (!conn.getAutoCommit()) {
@@ -330,11 +330,20 @@ public class TrackerDelegate
         return uosw.getDatabase().getConnection();
     }
 
+    /**
+     * release the db connection when done
+     */
     public void close() {
         releaseConnection(connection);
     }
 
-    public void finalize() {
+    /**
+     * clean up threads
+     * @throws Throwable if something goes wrong
+     */
+    @Override
+    public void finalize() throws Throwable {
+        super.finalize();
         trackerLoggerThread.interrupt();
         try {
             trackerLoggerThread.join();
