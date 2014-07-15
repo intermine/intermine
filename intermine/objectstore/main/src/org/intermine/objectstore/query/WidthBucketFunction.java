@@ -38,19 +38,20 @@ public class WidthBucketFunction extends QueryFunction
                     || (arg instanceof QueryValue) || (arg instanceof QueryFunction)) {
                 // Cool
             } else {
-                throw new IllegalArgumentException("Value unsuitable for WidthBucketFunction: " + arg);
+                throw new IllegalArgumentException("Value unsuitable for WidthBucketFunction: "
+                        + arg);
             }
         }
         for (int i = 0; i < 3; i++) {
             QueryEvaluable arg = args[i];
             if (!(Number.class.isAssignableFrom(arg.getType())
                     || arg.getType().equals(UnknownTypeValue.class))) {
-                  throw new IllegalArgumentException("Invalid argument type: Number expected");
+                throw new IllegalArgumentException("Invalid argument type: Number expected");
             }
         }
         if (!(Integer.class.isAssignableFrom(bins.getType())
                 || bins.getType().equals(UnknownTypeValue.class))) {
-              throw new IllegalArgumentException("Invalid type for bins: Integer expected");
+            throw new IllegalArgumentException("Invalid type for bins: Integer expected");
         }
         obj = qe;
         op = QueryFunction.WIDTH_BUCKET;
@@ -58,21 +59,22 @@ public class WidthBucketFunction extends QueryFunction
         lowerBound = minQE;
         binWidth = bins;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public Class<?> getType() {
         return Integer.class;
     }
-    
+
     /**
      * @return The parameter defining the upper bound.
      */
     public QueryEvaluable getMaxParam() {
         return upperBound;
     }
-    
+
     /**
      * @return The parameter defining the lower bound.
      */
