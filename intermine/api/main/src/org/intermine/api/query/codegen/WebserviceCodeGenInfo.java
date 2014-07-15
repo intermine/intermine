@@ -12,7 +12,9 @@ package org.intermine.api.query.codegen;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 
@@ -178,5 +180,14 @@ public class WebserviceCodeGenInfo
             return user.getApiKey();
         }
         return user.getDayToken();
+    }
+
+    /**
+     * @return True if this user has a permanent profile.
+     */
+    public boolean isLoggedIn() {
+        return user.getUserId() != null && !(
+                StringUtils.isBlank(user.getUsername())
+                    || AnonProfile.USERNAME.equals(user.getUsername()));
     }
 }
