@@ -13,7 +13,6 @@ package org.intermine.api.profile;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +56,12 @@ import org.intermine.pathquery.PathQuery;
 public class Profile
 {
     private static final Logger LOG = Logger.getLogger(Profile.class);
+    /** Empty typed map holding no saved queries - useful when creating profiles. **/
+    public static final Map<String, SavedQuery> NO_QUERIES = Collections.emptyMap();
+    /** Empty typed map holding no bags - useful when creating profiles. **/
+    public static final Map<String, InterMineBag> NO_BAGS = Collections.emptyMap();
+    /** Empty typed map holding no templates - useful when creating profiles. **/
+    public static final Map<String, ApiTemplate> NO_TEMPLATES = Collections.emptyMap();
     protected ProfileManager manager;
     protected String username;
     protected Integer userId;
@@ -68,11 +73,14 @@ public class Profile
     protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
     protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
-    protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
+    // was ListOrderedMap() - but that is the same as a LinkedHashMap.
+
     protected boolean savingDisabled;
     private SearchRepository searchRepository;
     private String token;
     private Map<String, String> preferences;
+    @SuppressWarnings("unchecked")
+    protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
 
     /**
      * True if this account is purely local. False if it was created
@@ -344,6 +352,7 @@ public class Profile
      * Save a template
      * @param name the template name
      * @param template the template
+     * @throws BadTemplateException if the template name is invalid.
      */
     public void saveTemplate(String name, ApiTemplate template) throws BadTemplateException {
         if (!NameUtil.isValidName(template.getName())) {
@@ -497,17 +506,28 @@ public class Profile
      * @param newName the new name
      */
     public void renameHistory(String oldName, String newName) {
-        Map<String, SavedQuery> newMap = new ListOrderedMap();
-        Iterator<String> iter = queryHistory.keySet().iterator();
-        while (iter.hasNext()) {
-            String name = iter.next();
-            SavedQuery sq = queryHistory.get(name);
-            if (name.equals(oldName)) {
-                sq = new SavedQuery(newName, sq.getDateCreated(), sq.getPathQuery());
-            }
-            newMap.put(sq.getName(), sq);
+        SavedQuery q = queryHistory.get(oldName);
+        if (q == null) {
+            throw new IllegalArgumentException("No query named " + oldName);
         }
-        queryHistory = newMap;
+        if (StringUtils.isBlank(newName)) {
+            throw new IllegalArgumentException("new name must not be blank");
+        }
+        if (queryHistory.containsKey(newName)) {
+            throw new IllegalArgumentException("there is already a query named " + newName);
+        }
+        q = new SavedQuery(newName, q.getDateCreated(), q.getPathQuery());
+        @SuppressWarnings("unchecked")
+        // Rebuild history to preserve iteration order.
+        Map<String, SavedQuery> newHistory = new ListOrderedMap();
+        for (Entry<String, SavedQuery> oldEntry: queryHistory.entrySet()) {
+            if (oldName.equals(oldEntry.getKey())) {
+                newHistory.put(newName, q);
+            } else {
+                newHistory.put(oldEntry.getKey(), oldEntry.getValue());
+            }
+        }
+        queryHistory = newHistory;
     }
 
     /**

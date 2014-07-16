@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,7 +36,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.types.ClassKeys;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -98,9 +96,7 @@ public class InterMineAPITestCase extends TestCase {
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), configStream);
 
         ProfileManager pmTmp = new ProfileManager(os, uosw);
-        Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(),
-                                        new HashMap(), new HashMap(), true, true);
-        pmTmp.createProfile(superUser);
+        pmTmp.createSuperUser("superUser", "password", null);
 
         String apiKey = "abcdef012345";
         Integer userId = null;
@@ -108,8 +104,8 @@ public class InterMineAPITestCase extends TestCase {
         Map<String, InterMineBag> validBags = new HashMap<String, InterMineBag>();
 
         testUser = new Profile(pmTmp, "testUser", userId, "password",
-                               new HashMap(), new BagSet(validBags, invalidBags),
-                               new HashMap(), apiKey, true, false);
+                               Profile.NO_QUERIES, new BagSet(validBags, invalidBags),
+                               Profile.NO_TEMPLATES, apiKey, true, false);
         pmTmp.createProfile(testUser);
 
         String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
@@ -148,7 +144,7 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         SingletonResults res = os.executeSingleton(q, 20000, false, false, true);
         ObjectStoreWriter osw = os.getNewWriter();
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             osw.delete(o);
@@ -164,7 +160,7 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         ObjectStore uos = uosw.getObjectStore();
         SingletonResults res = uos.executeSingleton(q, 1000, false, false, false);
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             UserProfile userProfile = (UserProfile) resIter.next();
             pm.deleteProfile(userProfile.getId());
