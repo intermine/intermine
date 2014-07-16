@@ -627,7 +627,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         pq.addViews("Employee.name", "Employee.age");
         pq.addConstraint(Constraints.notInIds("Employee", Arrays.asList(1, 2, 3, 4, 5)));
 
-        doComparison(pq, "inids-query");
+        doComparison(pq, "notinids-query");
     }
 
     /**
@@ -895,7 +895,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
         tq.setEditable(tq.getConstraintForCode(code), true);
 
-        doTemplateComparison(tq, "inids-query");
+        doTemplateComparison(tq, "inids-template");
 
     }
 
@@ -914,7 +914,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
         tq.setEditable(tq.getConstraintForCode(code), true);
 
-        doTemplateComparison(tq, "inids-query");
+        doTemplateComparison(tq, "notinids-template");
     }
 
     /**
@@ -964,7 +964,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
         tq.setEditable(tq.getConstraintForCode(code), true);
 
-        doTemplateComparison(tq, "loop-template");
+        doTemplateComparison(tq, "neloop-template");
     }
 
     // Other private methods can be added...

@@ -18,7 +18,7 @@
     type: 'table',
     url: 'TEST_SERVICE_ROOT',
     token: null,
-    query: {"model":{"name":"testmodel"},"title":"TEMP_NAME","select":["Employee.name"],"name":"TEMP_NAME","where":[{"path":"Employee.name","op":"NONE OF","code":"A","editable":true,"switchable":false,"switched":"LOCKED","values":["Employee A1","EmployeeA2"]}]}
+    query: {"model":{"name":"testmodel"},"title":"TEMP_NAME","select":["Employee.name"],"name":"TEMP_NAME","where":[{"path":"Employee","op":"IN","code":"A","editable":true,"switchable":false,"switched":"LOCKED","value":"aList"}]}
   };
   jQuery('#query-container').imWidget(options);
 </script>

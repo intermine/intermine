@@ -1,21 +1,24 @@
-<!-- This is an automatically generated code snippet to run your query
- using the intermine JavaScript client library. It is assumed that you
- will be wanting to run this query from a webpage, and so the code is
- formatted such that you can just cut and paste it into any webpage -->
-
-<!-- You need to import the IMBedding client library - this is hosted at intermine.org for your convenience: -->
-<script src="http://www.intermine.org/lib/imbedding/0.2/imbedding.js" type="text/javascript"></script>
-
-<!-- We also need to import a stylesheet - you can choose from light, dark or bold-->
-<link rel="stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.2/style/light.css">
-
-<!-- You need to set a place holder element in your page to hold the resultant table - this can also hold apology text/content -->
-<div id="queryplaceholder"><p class="apology">Please be patient while the results of your query are retrieved.</p></div>
-
+<!DOCTYPE html>
+<!-- 
+-- This is an automatically generated code snippet to run your query 
+-- using the InterMine JavaScript client library and display the results
+-- in a table. The code is formatted such that you can just cut and paste
+-- it into any webpage.
+-->
+<link rel="stylesheet" type="text/css" href="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.css">
+<script charset="UTF-8" type="text/javascript" src="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables-bundled.js"></script>
+<!-- A place holder element in your page to hold the table -->
+<div id="query-container">
+ <p class="apology">
+  Please be patient while the results of your query are retrieved.
+ </p>
+</div>
 <script type="text/javascript">
-/* Your query can be defined as XML */
-var query = '<query name="query" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName" sortOrder="Gene.primaryIdentifier asc"><constraint path="Gene.organism.commonName" op="NONE OF"><value>fruit fly</value><value>honey bee</value></constraint></query>';
-
-/* It can now be loaded into a table with the following command */
-IMBedding.loadQuery(query, {baseUrl: 'TEST_SERVICE_ROOT'}, '#queryplaceholder');
+  var options = {
+    type: 'table',
+    url: 'TEST_SERVICE_ROOT',
+    token: null,
+    query: {"model":{"name":"genomic"},"select":["Gene.primaryIdentifier","Gene.secondaryIdentifier","Gene.symbol","Gene.name","Gene.organism.shortName"],"orderBy":[{"Gene.primaryIdentifier":"ASC"}],"where":[{"path":"Gene.organism.commonName","op":"NONE OF","code":"A","values":["fruit fly","honey bee"]}]}
+  };
+  jQuery('#query-container').imWidget(options);
 </script>
