@@ -50,11 +50,11 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         if (query == null) {
             return error(JSStrings.getString("IS_NULL"));
         }
-        if (query.getView().isEmpty()) {
-            return error(JSStrings.getString("NO_FIELDS"));
-        }
         if (!query.isValid()) {
             return errorList(query.verifyQuery());
+        }
+        if (query.getView().isEmpty()) {
+            return error(JSStrings.getString("NO_FIELDS"));
         }
 
         final String url = wsCodeGenInfo.getServiceBaseURL();
@@ -71,7 +71,8 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         return sb.toString().replaceAll("\n", wsCodeGenInfo.getLineBreak());
     }
 
-    private class StringLiteral implements Formattable {
+    private class StringLiteral implements Formattable
+    {
 
         private String value;
 
@@ -88,6 +89,5 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                 formatter.format("'%s'", value);
             }
         }
-        
     }
 }
