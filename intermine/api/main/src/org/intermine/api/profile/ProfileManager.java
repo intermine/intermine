@@ -692,6 +692,46 @@ public class ProfileManager
     }
 
     /**
+     * Create a new Profile with the given username, password and
+     * api-key. This profile will be a local standard user.
+     * @param username  The name for this user.
+     * @param password The password for this user.
+     * @param apiKey The API key for this user.
+     * @return The profile.
+     */
+    public synchronized Profile createBasicLocalProfile(
+            String username,
+            String password,
+            String apiKey) {
+        Profile p = new Profile(
+                this, username, null, password,
+                Profile.NO_QUERIES, Profile.NO_BAGS, Profile.NO_TEMPLATES,
+                apiKey, true, false);
+        createProfile(p);
+        return p;
+    }
+
+    /**
+     * Create a super-user with the given username, password and API-key. The user will be
+     * marked as a local super-user.
+     * @param username  The name for this user.
+     * @param password The password for this user.
+     * @param apiKey The API key for this user.
+     * @return The profile.
+     */
+    public synchronized Profile createSuperUser(
+            String username,
+            String password,
+            String apiKey) {
+        Profile p = new Profile(
+                this, username, null, password,
+                Profile.NO_QUERIES, Profile.NO_BAGS, Profile.NO_TEMPLATES,
+                apiKey, true, true);
+        createProfile(p);
+        return p;
+    }
+
+    /**
      * Creates a profile in the userprofile database.
      *
      * @param profile a Profile object
