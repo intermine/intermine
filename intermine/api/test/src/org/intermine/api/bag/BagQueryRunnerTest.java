@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import junit.framework.Test;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
@@ -29,7 +31,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 
@@ -207,16 +208,14 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     // test searching for an input string that only matches an object of the wrong type and can't
     // be converted
     public void testObjectWrongType() throws Exception {
-        String contractorName = "EmployeeA2";
-        List<String> input = Arrays.asList(contractorName);
+        String ceoName = "Tatjana Berkel";
+        List<String> input = Arrays.asList(ceoName);
         BagQueryResult res = runner.searchForBag("Contractor", input, null, true);
         assertEquals(0, res.getMatches().values().size());
-        //fail("" + res.getIssues());
-        Map<String, Object> resUnresolved = res.getUnresolved();
+        Collection<String> resUnresolved = res.getUnresolvedIdentifiers();
         assertEquals(1, resUnresolved.size());
-        assertTrue(resUnresolved.containsKey(contractorName));
-        Set contractors = (Set) resUnresolved.get(contractorName);
-        assertEquals(contractorName, ((Employee) contractors.iterator().next()).getName());
+        assertTrue(resUnresolved.contains(ceoName));
+        assertEquals(ceoName, resUnresolved.iterator().next());
     }
 
     // test searching for an input string that has to be converted
