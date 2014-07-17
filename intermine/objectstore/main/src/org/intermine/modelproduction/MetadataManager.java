@@ -311,7 +311,7 @@ public final class MetadataManager
                     needNewBlob = false;
                 }
             }
-            LargeObjectManager lom = ((org.postgresql.PGConnection) con).getLargeObjectAPI();
+            LargeObjectManager lom = getLargeObjectManager(con);
             if (needNewBlob) {
                 blob = lom.createLO(LargeObjectManager.READ | LargeObjectManager.WRITE);
                 s.execute("DELETE FROM " + METADATA_TABLE + " WHERE key = '" + key + "'");
@@ -354,8 +354,7 @@ public final class MetadataManager
                 if ((blobValue != null) && isLargeObject(blobValue)) {
                     blob = getBlobId(blobValue);
                     foundBlob = true;
-                    LargeObjectManager lom =
-                        ((org.postgresql.PGConnection) con).getLargeObjectAPI();
+                    LargeObjectManager lom = getLargeObjectManager(con);
                     lom.delete(blob);
                 }
                 s.execute("DELETE FROM " + METADATA_TABLE + " WHERE key = '" + key + "'");
@@ -481,8 +480,7 @@ public final class MetadataManager
                 String blobValue = r.getString(1);
                 if ((blobValue != null) && blobValue.startsWith("BLOB: ")) {
                     blob = Long.parseLong(blobValue.substring(6));
-                    LargeObjectManager lom = ((org.postgresql.PGConnection) con)
-                        .getLargeObjectAPI();
+                    LargeObjectManager lom = getLargeObjectManager(con);
                     LargeObject obj = lom.open(blob, LargeObjectManager.READ);
                     return new LargeObjectInputStream(con, obj, commitMode);
                 } else {
@@ -508,6 +506,11 @@ public final class MetadataManager
         }
     }
 
+
+    private static LargeObjectManager getLargeObjectManager(Connection con) throws SQLException {
+        org.postgresql.PGConnection pgCon = con.unwrap(org.postgresql.PGConnection.class);
+        return pgCon.getLargeObjectAPI();
+    }
     /**
      * Class providing an InputStream interface to read a value from the database. This object must
      * be closed when it has been finished with, in order to correctly release the connection it is
