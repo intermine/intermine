@@ -47,6 +47,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         results.put("QueryClassBagNotViaNand", NO_RESULT); // Has trouble with "1 = 1" - both are UnknownTypeValues
         results.put("QueryClassBagNotViaNor", NO_RESULT);
         results.put("Range1", NO_RESULT);
+        results.put("Range2", NO_RESULT);
         results.put("SubclassCollection", NO_RESULT);
         results.put("SubclassCollection2", NO_RESULT);
         results.put("ObjectPathExpression5", NO_RESULT);

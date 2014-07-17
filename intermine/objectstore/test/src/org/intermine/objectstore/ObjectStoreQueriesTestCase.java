@@ -320,6 +320,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SelectWhereBackslash", selectWhereBackslash());
         queries.put("MultiColumnObjectInCollection", multiColumnObjectInCollection());
         queries.put("Range1", range1());
+        queries.put("Range2", range2());
         queries.put("ConstrainClass1", constrainClass1());
         queries.put("ConstrainClass2", constrainClass2());
         queries.put("MultipleInBagConstraint1", multipleInBagConstraint1());
@@ -2288,6 +2289,23 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         return q;
     }
 
+    /*
+     * SELECT a1_, a2_ FROM Range AS a1_, Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) DOES NOT OVERLAP RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)
+     */
+    public static Query range2() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Range.class);
+        QueryClass qc2 = new QueryClass(Range.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(new QueryField(qc1, "id"));
+        q.addToSelect(new QueryField(qc2, "id"));
+        OverlapRange r1 = new OverlapRange(new QueryField(qc1, "rangeStart"), new QueryField(qc1, "rangeEnd"), new QueryObjectReference(qc1, "parent"));
+        OverlapRange r2 = new OverlapRange(new QueryField(qc2, "rangeStart"), new QueryField(qc2, "rangeEnd"), new QueryObjectReference(qc2, "parent"));
+        q.setConstraint(new OverlapConstraint(r1, ConstraintOp.DOES_NOT_OVERLAP, r2));
+        q.setDistinct(false);
+        return q;
+    }
     /*
      * SELECT a1_ FROM InterMineObject WHERE a1_.class = Employee.class
      */

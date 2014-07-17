@@ -424,6 +424,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "InterMineObject", "Department", "Contractor", "CompanysContractors")));
         results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
         results2.put("Range1", new HashSet(Arrays.asList("intermine_Range")));
+        results.put("Range2", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND NOT (bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd)) ORDER BY a1_.id, a2_.id");
+        results2.put("Range1", new HashSet(Arrays.asList("intermine_Range")));
         results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results2.put("ConstrainClass1", new HashSet(Arrays.asList("InterMineObject")));
         results.put("ConstrainClass2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class IN ('org.intermine.model.testmodel.Company', 'org.intermine.model.testmodel.Employee') ORDER BY a1_.id");
@@ -637,7 +639,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1, false);
+        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1, false, null);
         try {
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, s, db, new HashMap());
             fail("Expected: ObjectStoreException");
