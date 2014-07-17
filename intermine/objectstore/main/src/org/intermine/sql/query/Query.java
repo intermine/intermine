@@ -62,8 +62,6 @@ public class Query implements SQLStringable
 
     private Map<String, AbstractTable> aliasToTable;
     private Map<String, AbstractTable> originalAliasToTable;
-    private AbstractTable onlyTable;
-
     // keep track of aliases defined in the select list as they may be used elsewhere
     private Map<String, AbstractValue> aliasToSelect;
     /**
@@ -82,7 +80,6 @@ public class Query implements SQLStringable
         distinct = false;
         queriesInUnion = new ArrayList<Query>();
         queriesInUnion.add(this);
-        onlyTable = null;
         aliasToSelect = new HashMap<String, AbstractValue>();
         this.aliasToTable = null;
         this.originalAliasToTable = null;
@@ -429,6 +426,7 @@ public class Query implements SQLStringable
      *
      * @return this Query in String form
      */
+    @Override
     public String getSQLString() {
         boolean needComma = false;
         String retval = "";
@@ -617,9 +615,10 @@ public class Query implements SQLStringable
     /**
      * Processes a SQL_STATEMENT AST node produced by antlr.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processSqlStatementAST(AST ast) {
+    private void processSqlStatementAST(AST node) {
+        AST ast = node;
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
             throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
         }
@@ -634,10 +633,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node produced by antlr, at the top level of the SQL query.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processAST(AST ast) {
-
+    private void processAST(AST node) {
+        AST ast = node;
         // Parts of SQL statement need to be processed in the correct order, for example:
         // - tables defined in FROM need to be referenced in the SELECT
         // - aliases defined in SELECT may be used in GROUP BY and ORDER BY, etc
@@ -721,11 +720,12 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a table in the FROM list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processNewTable(AST ast) {
+    private void processNewTable(AST node) {
         String tableName = null;
         String tableAlias = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.TABLE_NAME:
@@ -746,9 +746,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a subquery in the FROM list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processNewSubQuery(AST ast) {
+    private void processNewSubQuery(AST node) {
+        AST ast = node;
         AST subquery = null;
         String alias = null;
         do {
@@ -775,9 +776,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a SELECT list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processSelectList(AST ast) {
+    public void processSelectList(AST node) {
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.SELECT_VALUE:
@@ -794,11 +796,12 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a SelectValue.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processNewSelect(AST ast) {
+    public void processNewSelect(AST node) {
         AbstractValue v = null;
         String alias = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.FIELD_ALIAS:
@@ -828,9 +831,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a GROUP clause.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processGroupClause(AST ast) {
+    public void processGroupClause(AST node) {
+        AST ast = node;
         do {
             addGroupBy(processNewAbstractValue(ast));
             ast = ast.getNextSibling();
@@ -840,9 +844,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a ORDER clause.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processOrderClause(AST ast) {
+    public void processOrderClause(AST node) {
+        AST ast = node;
         do {
             addOrderBy(processNewAbstractValue(ast));
             ast = ast.getNextSibling();
@@ -880,12 +885,13 @@ public class Query implements SQLStringable
      * field may be an alias, in which case find the actual field name/function/etc that was
      * defined in the select list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      * @return a Field object corresponding to the input
      */
-    public AbstractValue processNewField(AST ast) {
+    public AbstractValue processNewField(AST node) {
         String table = null;
         String field = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.TABLE_ALIAS:
@@ -923,12 +929,13 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a typecast.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      * @return a Function object corresponding to the input
      */
-    public Function processNewTypecast(AST ast) {
+    public Function processNewTypecast(AST node) {
         AbstractValue obj = null;
         Function retval = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.FIELD:
@@ -991,7 +998,7 @@ public class Query implements SQLStringable
                     obj = retval;
                     break;
                 default:
-                throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
+                    throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
             }
             ast = ast.getNextSibling();
@@ -1076,11 +1083,12 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a safe function.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      * @return a Function object corresponding to the input
      */
-    public Function processNewSafeFunction(AST ast) {
+    public Function processNewSafeFunction(AST node) {
         Function retval = null;
+        AST ast = node;
         boolean gotType = false;
         do {
             switch (ast.getType()) {
@@ -1181,9 +1189,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a where condition.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processWhereClause(AST ast) {
+    private void processWhereClause(AST node) {
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.AND_CONSTRAINT_SET:
@@ -1209,9 +1218,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a HAVING condition.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processHavingClause(AST ast) {
+    private void processHavingClause(AST node) {
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.AND_CONSTRAINT_SET:
