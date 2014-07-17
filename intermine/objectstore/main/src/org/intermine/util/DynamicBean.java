@@ -78,7 +78,7 @@ public class DynamicBean implements MethodInterceptor
      */
     @Override
     public Object intercept(Object obj, Method method, Object[] args,
-            @SuppressWarnings("unused") MethodProxy proxy) throws Throwable {
+            MethodProxy proxy) throws Throwable {
         // java.lang.Object methods
         if ("equals".equals(method.getName())) {
             if (args[0] instanceof InterMineObject) {
