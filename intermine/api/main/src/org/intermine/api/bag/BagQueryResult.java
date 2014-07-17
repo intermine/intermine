@@ -60,7 +60,8 @@ public class BagQueryResult
     public static final String WILDCARD = "WILDCARD";
 
     public static final Set<String> ISSUE_KEYS
-        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
+        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
 
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
 
@@ -151,7 +152,7 @@ public class BagQueryResult
     }
 
     /**
-     * Get ids of all InterMineObjects returned that were registered as 
+     * Get ids of all InterMineObjects returned that were registered as
      * issues of this particular type for this bag query lookup.
      * @param issueKey The type of issue we want (eg "DUPLICATE").
      * @return the set of all ids that were issues
@@ -192,7 +193,10 @@ public class BagQueryResult
         return result;
     }
 
-    // Simple struct to hold three pieces of information together.
+    /**
+     * Simple struct to hold three pieces of information together.
+     * @author Alex Kalderimis
+     */
     public static class IssueResult {
 
         public final String queryDesc, inputIdent;
@@ -209,7 +213,8 @@ public class BagQueryResult
         }
 
         public int hashCode() {
-            return new HashCodeBuilder().append(queryDesc).append(inputIdent).append(results).hashCode();
+            return new HashCodeBuilder().append(queryDesc).append(inputIdent).
+                    append(results).hashCode();
         }
     }
 

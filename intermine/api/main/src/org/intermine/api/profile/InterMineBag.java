@@ -26,19 +26,18 @@ import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.search.PropertyChangeEvent;
-import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.Constraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
@@ -50,7 +49,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.metadata.TypeUtil;
 
 /**
  * An object that represents a bag of objects in our database for the webapp. It is backed by an
@@ -60,7 +58,7 @@ import org.intermine.metadata.TypeUtil;
  * @author Matthew Wakeling
  * @author Daniela Butano
  */
-public class InterMineBag extends StorableBag implements WebSearchable, Cloneable
+public class InterMineBag extends StorableBag implements Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
     /** name of bag values table */
@@ -95,7 +93,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
         List<String> keyFieldNames)
-        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
+        throws UnknownBagTypeException, ObjectStoreException {
         this.type = TypeUtil.unqualifiedName(type);
         init(name, description, dateCreated, state, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
@@ -113,6 +111,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @param keyFieldNames the list of identifiers defined for this bag
      * @throws UnknownBagTypeException if the type bag is unknown
+     * @throws ClassKeysNotFoundException if class keys arent found
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
@@ -122,17 +121,17 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
         this(name, type, description, dateCreated, state, os, null, uosw, keyFieldNames);
     }
 
-    private void init(String name, String description, Date dateCreated, BagState state,
-        ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
+    private void init(String listName, String descr, Date created, BagState bagState,
+        ObjectStore objectStore, Integer profile, ObjectStoreWriter osw)
         throws UnknownBagTypeException, ObjectStoreException {
-        checkAndSetName(name);
-        this.description = description;
-        this.dateCreated = dateCreated;
-        this.state = state;
-        this.os = os;
-        this.profileId = profileId;
-        this.osb = os.createObjectStoreBag();
-        this.uosw = uosw;
+        checkAndSetName(listName);
+        this.description = descr;
+        this.dateCreated = created;
+        this.state = bagState;
+        this.os = objectStore;
+        this.profileId = profile;
+        this.osb = objectStore.createObjectStoreBag();
+        this.uosw = osw;
         this.savedBagId = null;
         SavedBag savedBag = storeSavedBag();
         this.savedBagId = savedBag.getId();
@@ -442,6 +441,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     }
 
     /** @return the user-profile object store writer **/
+    @Override
     public ObjectStoreWriter getUserProfileWriter() {
         return uosw;
     }
@@ -451,6 +451,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      *
      * @return the ObjectStoreBag
      */
+    @Override
     public ObjectStoreBag getOsb() {
         return osb;
     }
@@ -499,11 +500,11 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     }
 
     // Always set the name via this method to avoid saving bags with blank names
-    private void checkAndSetName(String name) {
-        if (StringUtils.isBlank(name)) {
+    private void checkAndSetName(String listName) {
+        if (StringUtils.isBlank(listName)) {
             throw new RuntimeException("Attempt to create a list with a blank name.");
         }
-        this.name = name;
+        this.name = listName;
     }
 
     /**
@@ -519,6 +520,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * Return the creation date that was passed to the constructor.
      * @return the creation date
      */
+    @Override
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -640,9 +642,11 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     /**
      * Create copy of bag. Bag is saved to objectstore.
      * @return create bag
+     * @throws CloneNotSupportedException if something goes wrong
      */
     @Override
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
+        super.clone();
         InterMineBag ret = cloneShallowIntermineBag();
         cloneInternalObjectStoreBag(ret);
         return ret;
@@ -701,25 +705,25 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * Add the given id to the bag, this updates the bag contents in the database. he type can
      * be a qualified or un-qualified class name.
      * @param id the id to add
-     * @param type the type of ids being added
+     * @param dataType the type of ids being added
      * @throws ObjectStoreException if problem storing
      */
-    public void addIdToBag(Integer id, String type) throws ObjectStoreException {
-        addIdsToBag(Collections.singleton(id), type);
+    public void addIdToBag(Integer id, String dataType) throws ObjectStoreException {
+        addIdsToBag(Collections.singleton(id), dataType);
     }
 
     /**
      * Add the given ids to the bag, this updates the bag contents in the database.  The type can
      * be a qualified or un-qualified class name.
      * @param ids the ids to add
-     * @param type the type of ids being added
+     * @param dataType the type of ids being added
      * @throws ObjectStoreException
      *             if problem storing
      */
-    public void addIdsToBag(Collection<Integer> ids, String type)
+    public void addIdsToBag(Collection<Integer> ids, String dataType)
         throws ObjectStoreException {
-        if (!isOfType(type)) {
-            throw new IncompatibleTypesException("Cannot add type " + type
+        if (!isOfType(dataType)) {
+            throw new IncompatibleTypesException("Cannot add type " + dataType
                     + " to bag of type " + getType() + ".");
         }
         if (profileId != null) {
