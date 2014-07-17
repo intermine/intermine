@@ -67,7 +67,7 @@ public class HomologeneConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public HomologeneConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public HomologeneConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
     }
@@ -96,6 +96,7 @@ public class HomologeneConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         /*
             homologene.data is a tab delimited file containing the following
@@ -108,7 +109,7 @@ public class HomologeneConverter extends BioFileConverter
             5) Protein gi
             6) Protein accession
         */
-    	setUpResolver();
+        setUpResolver();
         String previousGroup = null;
 
         Set<GeneRecord> genes = new HashSet<GeneRecord>();
@@ -160,7 +161,7 @@ public class HomologeneConverter extends BioFileConverter
             rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
     }
-    
+
     private void readConfig() {
         try {
             props.load(getClass().getClassLoader().getResourceAsStream(
@@ -234,7 +235,7 @@ public class HomologeneConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (identifierType == null) {
-        	identifierType = DEFAULT_IDENTIFIER_TYPE;
+            identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
         String resolvedIdentifier = resolveGene(taxonId, ncbiId, symbol);
         if (resolvedIdentifier == null) {
@@ -280,10 +281,10 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String ncbi, String identifier) {
-    	if (taxonId.equals("9606")) {
-    		// use entrez-gene identifier for human
-    		return ncbi;
-    	}
+        if (taxonId.equals("9606")) {
+            // use entrez-gene identifier for human
+            return ncbi;
+        }
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;

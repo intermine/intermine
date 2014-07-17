@@ -39,12 +39,11 @@ public class FlybaseExpressionConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(FlybaseExpressionConverter.class);
     private static final String DATASET_TITLE = "FlyBase expression data";
     private static final String DATA_SOURCE_NAME = "modENCODE";
-    private File flybaseExpressionLevelsFile, stagesFile;
+    private File stagesFile;
     private Item organism;
     private static final String PREFIX = "me_mRNA_";
     private static final String TAXON_FLY = "7227";
     private Map<String, String> genes = new HashMap<String, String>();
-    private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, Stage> stages = new HashMap<String, Stage>();
     protected IdResolver rslv;
 
@@ -63,19 +62,6 @@ public class FlybaseExpressionConverter extends BioFileConverter
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    
-    
-    /**
-     * Set the expression levels input file. This file contains the details for each expression
-     * level from modMine and FlyBase, eg. ME_01   No expression
-     *
-     * The "ME_O1" is used in the scores file to represent the expression level.
-     * @param flybaseExpressionLevelsFile data file
-     */
-    public void setFlybaseExpressionLevelsFile(File flybaseExpressionLevelsFile) {
-        this.flybaseExpressionLevelsFile = flybaseExpressionLevelsFile;
     }
 
     /**
@@ -129,13 +115,13 @@ public class FlybaseExpressionConverter extends BioFileConverter
 
             if (line.length > 7) {
                 String rpkm = line[7];	// 6825 - OPTIONAL
-                
+
                 if (StringUtils.isNotEmpty(rpkm)) {
-                	Integer expressionScore = new Integer(0);
+                    Integer expressionScore = new Integer(0);
                     try {
-                    	expressionScore = Integer.valueOf(rpkm);
+                        expressionScore = Integer.valueOf(rpkm);
                         result.setAttribute("expressionScore", rpkm);
-                        result.setAttribute("expressionLevel", getLabel(expressionScore));                        
+                        result.setAttribute("expressionLevel", getLabel(expressionScore));
                     } catch (NumberFormatException e) {
                         LOG.warn("bad score: " + rpkm, e);
                     }
@@ -148,7 +134,7 @@ public class FlybaseExpressionConverter extends BioFileConverter
             }
         }
     }
-    
+
   //> No/Extremely low expression (0 - 0)
   //> Very low expression (1 - 3)
   //> Low expression (4 - 10)
@@ -158,24 +144,24 @@ public class FlybaseExpressionConverter extends BioFileConverter
   //> Very high expression (101 - 1000)
   //> Extremely high expression (>1000)
 
-    private String getLabel(Integer score) {
-    	String label = "No / Extremely low expression";
-    	if (score > 1000) {
-    		label = "Extremely high expression";
-    	} else if (score > 100) {
-    		label = "Very high expression";
-    	} else if (score > 50) {
-    		label = "High expression";
-    	} else if (score > 25) {
-    		label = "Moderately high expression";
-    	} else if (score > 10) {
-    		label = "Moderate expression";
-    	} else if (score > 3) {
-    		label = "Low expression";
-    	} else if (score > 0) {
-    		label = "Very low expression";
-    	}    	
-    	return label;
+    private static String getLabel(Integer score) {
+        String label = "No / Extremely low expression";
+        if (score > 1000) {
+            label = "Extremely high expression";
+        } else if (score > 100) {
+            label = "Very high expression";
+        } else if (score > 50) {
+            label = "High expression";
+        } else if (score > 25) {
+            label = "Moderately high expression";
+        } else if (score > 10) {
+            label = "Moderate expression";
+        } else if (score > 3) {
+            label = "Low expression";
+        } else if (score > 0) {
+            label = "Very low expression";
+        }
+        return label;
     }
 
     private String replaceStage(String identifier) {
@@ -212,33 +198,6 @@ public class FlybaseExpressionConverter extends BioFileConverter
 
             Stage stage = new Stage(name, category);
             stages.put(identifier, stage);
-        }
-    }
-
-    private void processTermFile(Reader reader) {
-        Iterator<?> tsvIter;
-        try {
-            tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        } catch (Exception e) {
-            throw new BuildException("cannot parse file: " + getCurrentFile(), e);
-        }
-
-        while (tsvIter.hasNext()) {
-            String[] line = (String[]) tsvIter.next();
-
-            if (line.length != 6) {
-                LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
-                continue;
-            }
-            String source = line[0];	// modENCODE or FlyAtlas
-            if ("modENCODE".equals(source)) {
-
-            	String identifier = line[1];	// 09
-            	String name = line[3];	// No expression
-            	
-            	// only put the digit
-            	terms.put(identifier.substring(1), name);
-            }
         }
     }
 

@@ -48,7 +48,7 @@ public class DataSourceUpdater extends Task
     private String outputFile = null;
     private String dataSourceFile = null;
     private Set<String> dataSourceNames = new HashSet<String>();
-    
+
     /**
      * Set the ObjectStore alias.
      * @param osAlias The ObjectStore alias
@@ -64,7 +64,7 @@ public class DataSourceUpdater extends Task
     public void setOutputFile(String outputFile) {
         this.outputFile = outputFile;
     }
-    
+
     /**
      * Set the file name for the data file from UniProt
      * @param dataSourceFile the name of the data file to process (from uniprot)
@@ -97,19 +97,19 @@ public class DataSourceUpdater extends Task
         LOG.info("Starting DataSourceUpdater");
 
         Writer writer = null;
-        
+
         try {
             writer = new FileWriter(outputFile);
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
             // get the data sources already in the database
             dataSourceNames = getDataSources(os);
-            
+
             // parse the uniprot data source file
-            Map<String, DataSourceHolder> allDataSources 
+            Map<String, DataSourceHolder> allDataSources
                 = parseDataFile(new FileReader(dataSourceFile));
             ItemFactory itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + "\n");
-            
+
             // write the relevant data sources to file
             for (DataSourceHolder holder : allDataSources.values()) {
                 Item datasource = itemFactory.makeItemForClass("DataSource");
@@ -117,14 +117,14 @@ public class DataSourceUpdater extends Task
                 if (holder.descr != null) {
                     datasource.setAttribute("description", holder.descr);
                 }
-                if (holder.URL != null) {
-                    datasource.setAttribute("url", holder.URL);
+                if (holder.url != null) {
+                    datasource.setAttribute("url", holder.url);
                 }
                 if (holder.pubMedId != null) {
                     Item publication = itemFactory.makeItemForClass("Publication");
                     publication.setAttribute("pubMedId", holder.pubMedId);
                     writer.write(FullRenderer.render(publication));
-                    
+
                     datasource.addToCollection("publications", publication);
                 }
                 writer.write(FullRenderer.render(datasource));
@@ -153,7 +153,7 @@ public class DataSourceUpdater extends Task
 //    Db_URL: http://flybase.org/reports/%s.html
 //    Note  : Obsolete abbreviation: DMAP
 //    Cat   : Organism-specific database
-    
+
     private Map<String, DataSourceHolder> parseDataFile(Reader reader) throws IOException {
         Map<String, DataSourceHolder> datasources = new HashMap<String, DataSourceHolder>();
         BufferedReader br = new BufferedReader(reader);
@@ -176,7 +176,7 @@ public class DataSourceUpdater extends Task
                 if (line.startsWith("Name")) {
                     datasource.descr = value;
                 } else if (line.startsWith("Server: ")) {
-                    datasource.URL = value;
+                    datasource.url = value;
                 } else if (line.startsWith("Ref   : ")) {
                     String pubMedId = parseRefString(value);
                     if (pubMedId != null) {
@@ -187,8 +187,8 @@ public class DataSourceUpdater extends Task
         }
         return datasources;
     }
-    
-    private String parseRefString(String refs) {
+
+    private static String parseRefString(String refs) {
         for (String ref : refs.split("\\;")) {
             String[] refStrings = ref.split("=");
             if (refStrings.length == 2) {
@@ -202,6 +202,11 @@ public class DataSourceUpdater extends Task
         return null;
     }
 
+    /**
+     * get all the data sources from the database
+     * @param os objectstore
+     * @return set of strings representing datasources
+     */
     protected Set<String> getDataSources(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(DataSource.class);
@@ -216,13 +221,14 @@ public class DataSourceUpdater extends Task
         }
         return names;
     }
-    
-    private class DataSourceHolder {
+
+    private class DataSourceHolder
+    {
         protected String name;
         protected String descr;
         protected String pubMedId;
-        protected String URL;
-        
+        protected String url;
+
         public DataSourceHolder(String name) {
             this.name = name;
         }
