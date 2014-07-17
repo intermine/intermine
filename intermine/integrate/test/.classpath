@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="/intermine-objectstore-main/lib/ojdbc14.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="lib" path="/intermine-model-main/lib/cglib-3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
