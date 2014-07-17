@@ -12,7 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-dbmodel"/>
 	<classpathentry kind="lib" path="/testmodel-dbmodel/resources"/>
-	<classpathentry kind="lib" path="lib/cglib-3.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
@@ -21,5 +20,8 @@
 	<classpathentry kind="lib" path="lib/easymock-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15on-150.jar"/>
+	<classpathentry kind="lib" path="/intermine-model-main/lib/cglib-3.1.jar"/>
+	<classpathentry kind="lib" path="/intermine-model-main/lib/asm-4.2.jar"/>
+	<classpathentry kind="lib" path="/intermine-model-main/lib/asm-util-4.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
