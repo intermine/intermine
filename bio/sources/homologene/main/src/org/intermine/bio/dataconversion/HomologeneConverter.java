@@ -186,7 +186,7 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private void processHomologues(Set<GeneRecord> genes)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Set<GeneRecord> notProcessed = new HashSet<GeneRecord>(genes);
         for (GeneRecord gene : genes) {
             notProcessed.remove(gene);
@@ -200,12 +200,12 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private void createHomologue(String gene1, String taxonId1, String gene2, String taxonId2)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.addToCollection("evidence", getEvidence());
-        homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
+        homologue.setAttribute("type", taxonId1.equals(taxonId2) ? PARALOGUE : ORTHOLOGUE);
         store(homologue);
     }
 
@@ -232,7 +232,7 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private String getGene(String ncbiId, String symbol, String taxonId)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (identifierType == null) {
             identifierType = DEFAULT_IDENTIFIER_TYPE;
@@ -281,7 +281,7 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String ncbi, String identifier) {
-        if (taxonId.equals("9606")) {
+        if ("9606".equals(taxonId)) {
             // use entrez-gene identifier for human
             return ncbi;
         }
@@ -299,9 +299,18 @@ public class HomologeneConverter extends BioFileConverter
         return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 
-    protected class GeneRecord {
+    /**
+     * represents a gene record in the data files
+     * @author Julie
+     */
+    protected class GeneRecord
+    {
         protected String geneRefId;
         protected String taxonId;
+        /**
+         * @param geneRefId the reference number of the gene
+         * @param taxonId taxon ID
+         */
         public GeneRecord(String geneRefId, String taxonId) {
             this.geneRefId = geneRefId;
             this.taxonId = taxonId;
