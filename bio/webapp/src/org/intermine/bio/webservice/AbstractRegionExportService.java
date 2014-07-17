@@ -61,27 +61,27 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
 
     @Override
     public boolean isAuthenticated() {
-        // Allow anyone to use this service, as it doesn't use a list, but 
-        // an id-list query.
+        // Allow anyone to use this service, as it doesn't use a list, but an id-list query.
         return true;
     }
 
     @Override
     protected void validateState() {
+        // what does this do
     }
 
     @Override
     protected void makeList(ListInput input, String type, Profile profile,
             Set<String> temporaryBagNamesAccumulator) throws Exception {
-        
+
         GenomicRegionSearchListInput searchInput = (GenomicRegionSearchListInput) input;
 
         Set<Integer> objectIds = new HashSet<Integer>();
         Map<GenomicRegion, Query> queries = createQueries(searchInput.getSearchInfo());
         for (Entry<GenomicRegion, Query> e: queries.entrySet()) {
             Query q = e.getValue();
-            ObjectStore os = im.getObjectStore();
-            Results rs = os.execute(q);
+            ObjectStore objectstore = im.getObjectStore();
+            Results rs = objectstore.execute(q);
             Iterator<Object> it = rs.iterator();
             while (it.hasNext()) {
                 ResultsRow rr = (ResultsRow) it.next();
@@ -96,8 +96,11 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
 
     /**
      * Make a path-query from a bag.
-     * @param tempBag The bag to constrain this query on.
+     *
+     * @param ids list of ids
+     * @param type The bag to constrain this query on.
      * @return A path-query.
+     * @throws Exception if something goes wrong
      */
     protected PathQuery makePathQuery(String type, Collection<Integer> ids) throws Exception {
         PathQuery pq = new PathQuery(im.getModel());
@@ -107,10 +110,19 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
         return pq;
     }
 
+    /**
+     * No-op stub. Override to implement format checks.
+     * @param pq pathquery
+     * @throws Exception if something goes wrong
+     */
     protected void checkPathQuery(PathQuery pq) throws Exception {
         // No-op stub. Override to implement format checks.
     }
 
+    /**
+     * @param pq pathquery
+     * @return the exporter
+     */
     protected abstract Exporter getExporter(PathQuery pq);
 
     /**
@@ -138,7 +150,7 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
     }
 
     /**
-     * The suffix for the file name.
+     * @return The suffix for the file name.
      */
     protected abstract String getSuffix();
 
@@ -149,25 +161,38 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
 
     private PrintWriter pw;
     private OutputStream os;
-    
+
+    /**
+     * @return printwriter
+     */
     protected PrintWriter getPrintWriter() {
         return pw;
     }
 
+    /**
+     * @return outputstream
+     */
     protected OutputStream getOutputStream() {
         return os;
     }
 
+    /**
+     * @return content type
+     */
     protected abstract String getContentType();
 
+    /**
+     * @return formatter
+     */
     protected Formatter getFormatter() {
         return new PlainFormatter();
     }
 
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream outputstream,
+            String separator) {
         this.pw = out;
-        this.os = os;
+        this.os = outputstream;
         output = new StreamedOutput(out, getFormatter(), separator);
         if (isUncompressed()) {
             ResponseUtil.setCustomTypeHeader(response, getDefaultFileName(), getContentType());
