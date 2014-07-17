@@ -86,6 +86,7 @@ public class EnsemblHgncConverter extends BioFileConverter
      *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         File currentFile = getCurrentFile();
         if (currentFile.getName().startsWith("ensembl_hgnc")) {
@@ -166,47 +167,7 @@ public class EnsemblHgncConverter extends BioFileConverter
         storeSynonyms(ensemblSynonymsMap, "primaryIdentifier");
     }
 
-    @SuppressWarnings("unused")
-    private void processEntrezIds(Reader reader) throws Exception {
-        Set<String> chrs = getChromosomes();
-
-        Set<IdPair> ids = new HashSet<IdPair>();
-        Set<String> ensembls = new HashSet<String>();
-        Set<String> duplicateEnsembls = new HashSet<String>();
-
-        // Read all lines into id pairs, track any ensembl ids mapped to more than one entrez id
-        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        while (lineIter.hasNext()) {
-            String[] line = (String[]) lineIter.next();
-            String ensembl = line[0];
-            String chr = line[1];
-            String entrez = line[2];
-
-            if (!StringUtils.isBlank(entrez) && chrs.contains(chr)) {
-                IdPair idPair = new IdPair(ensembl, entrez);
-                if (ids.contains(idPair)) {
-                    // same pair appears again because file isn't unique
-                    continue;
-                }
-                ids.add(idPair);
-
-                if (ensembls.contains(ensembl)) {
-                    duplicateEnsembls.add(ensembl);
-                } else {
-                    ensembls.add(ensembl);
-                }
-
-                addToMapOfSets(ensemblEntrezIds, ensembl, entrez);
-            }
-        }
-        // if multiple entrez ids were mapped to an ensembl id, remove them
-        for (String ensembl : duplicateEnsembls) {
-            ensemblEntrezIds.remove(ensembl);
-        }
-    }
-
-
-   private Item getGene(String keyAttribute, String key) {
+    private Item getGene(String keyAttribute, String key) {
        Item gene = genes.get(key);
        if (gene == null) {
            gene = createItem("Gene");
@@ -227,7 +188,7 @@ public class EnsemblHgncConverter extends BioFileConverter
         }
     }
 
-    private void addToMapOfSets(Map<String, Set<String>> map, String key, String value) {
+    private static void addToMapOfSets(Map<String, Set<String>> map, String key, String value) {
         Set<String> values = map.get(key);
         if (values == null) {
             values = new HashSet<String>();
@@ -236,7 +197,7 @@ public class EnsemblHgncConverter extends BioFileConverter
         values.add(value);
     }
 
-    private Set<String> getChromosomes() {
+    private static Set<String> getChromosomes() {
         Set<String> chrs = new HashSet<String>();
         chrs.add("X");
         chrs.add("Y");
@@ -271,6 +232,7 @@ public class EnsemblHgncConverter extends BioFileConverter
             return 3 * ensembl.hashCode() + 7 * symbol.hashCode();
         }
 
+        @Override
         public String toString() {
             return ensembl + ", " + symbol;
         }

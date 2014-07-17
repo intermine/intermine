@@ -50,6 +50,7 @@ public class InterProConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         InterProHandler handler = new InterProHandler(getItemWriter());
         try {
@@ -81,17 +82,18 @@ public class InterProConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
 
             // descriptions span multiple lines
             // so don't reset temp var when processing descriptions
-            if (attName != null && !attName.equals("description")) {
+            if (attName != null && !"description".equals(attName)) {
                 attName = null;
             }
 
             // <interpro id="IPR000002" type="Domain" short_name="Fizzy" protein_count="256">
-            if (qName.equals("interpro")) {
+            if ("interpro".equals(qName)) {
                 String identifier = attrs.getValue("id");
                 proteinDomain = getDomain(identifier);
                 String name = attrs.getValue("short_name");
@@ -101,17 +103,17 @@ public class InterProConverter extends BioFileConverter
                 // reset
                 description = new StringBuffer();
             // <publication><db_xref db="PUBMED" dbkey="8606774" />
-            }  else if (qName.equals("db_xref") && stack.peek().equals("publication")) {
+            }  else if ("db_xref".equals(qName) && "publication".equals(stack.peek())) {
                 String refId = getPub(attrs.getValue("dbkey"));
                 proteinDomain.addToCollection("publications", refId);
             // <interpro><name>
-            } else if (qName.equals("name") && stack.peek().equals("interpro")) {
+            } else if ("name".equals(qName) && "interpro".equals(stack.peek())) {
                 attName = "name";
             // <interpro><abstract>
-            } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
+            } else if ("abstract".equals(qName) && "interpro".equals(stack.peek())) {
                 attName = "description";
            //<member_list><db_xref db="PFAM" dbkey="PF01167" name="SUPERTUBBY" />
-            } else if (qName.equals("db_xref") && stack.peek().equals("member_list")) {
+            } else if ("db_xref".equals(qName) && "member_list".equals(stack.peek())) {
                 String dbkey = attrs.getValue("dbkey");
 //                String name = attrs.getValue("name");
                 String db = attrs.getValue("db");
@@ -125,23 +127,23 @@ public class InterProConverter extends BioFileConverter
                     throw new SAXException(e);
                 }
                 //<interpro><foundin><rel_ref ipr_ref="IPR300000" /></foundin>
-            } else if (qName.equals("rel_ref") && (stack.peek().equals("found_in")
-                            || stack.peek().equals("contains")
-                            || stack.peek().equals("child_list")
-                            || stack.peek().equals("parent_list"))) {
+            } else if ("rel_ref".equals(qName) && ("found_in".equals(stack.peek())
+                            || "contains".equals(stack.peek())
+                            || "child_list".equals(stack.peek())
+                            || "parent_list".equals(stack.peek()))) {
 
                 String domainRelationship = stack.peek().toString();
                 String interproId = attrs.getValue("ipr_ref");
                 Item relative = getDomain(interproId);
                 String relationCollection = null;
 
-                if (domainRelationship.equals("found_in")) {
+                if ("found_in".equals(domainRelationship)) {
                     relationCollection = "foundIn";
-                } else if (domainRelationship.equals("contains")) {
+                } else if ("contains".equals(domainRelationship)) {
                     relationCollection = "contains";
-                } else if (domainRelationship.equals("parent_list")) {
+                } else if ("parent_list".equals(domainRelationship)) {
                     relationCollection = "parentFeatures";
-                } else if (domainRelationship.equals("child_list")) {
+                } else if ("child_list".equals(domainRelationship)) {
                     relationCollection = "childFeatures";
                 }
                 proteinDomain.addToCollection(relationCollection, relative);
@@ -154,13 +156,14 @@ public class InterProConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
 
             stack.pop();
             // finished processing file, store all domains
-            if (qName.equals("interprodb")) {
+            if ("interprodb".equals(qName)) {
                 for (Item item : proteinDomains.values()) {
                     try {
                         store(item);
@@ -176,12 +179,11 @@ public class InterProConverter extends BioFileConverter
                     }
                 }
             // <interpro><name>
-            } else if (qName.equals("name") && stack.peek().equals("interpro")
-                            && attName != null) {
+            } else if ("name".equals(qName) && "interpro".equals(stack.peek()) && attName != null) {
                 String name = attValue.toString();
                 proteinDomain.setAttribute("name", name);
             // <interpro><abstract>
-            } else if (qName.equals("abstract") && stack.peek().equals("interpro")) {
+            } else if ("abstract".equals(qName) && "interpro".equals(stack.peek())) {
                 proteinDomain.setAttribute("description", description.toString());
                 attName = null;
             }
@@ -217,6 +219,7 @@ public class InterProConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void characters(char[] ch, int start, int length) {
             int st = start;
             int l = length;
@@ -247,7 +250,7 @@ public class InterProConverter extends BioFileConverter
                     StringBuffer s = new StringBuffer();
                     s.append(ch, st, l);
                     attValue.append(s);
-                    if (attName.equals("description")) {
+                    if ("description".equals(attName)) {
                         description.append(s);
                     }
                 }
