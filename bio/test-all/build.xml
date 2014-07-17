@@ -55,6 +55,7 @@
         <include name="bio/tools/**/*.java" />
         <include name="bio/webapp/**/*.java" />
         <exclude name="bio/**/*Test.java" />
+        <exclude name="bio/**/Test*" />
         <exclude name="bio/sources/experimental-sources/**/*.java"/>
       </fileset>
       </customize>

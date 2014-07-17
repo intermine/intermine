@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -74,7 +74,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     // interactions use this - UKNOWN
     private static final String RELATIONSHIP_TYPE = "MI:0499";
     private static final String DEFAULT_ROLE = "unspecified";
-    
+
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
      * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
@@ -510,7 +510,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * Return a query that gets the feature_ids of genes that have locations.
      */
-    private String getLocatedGenesSql() {
+    private static String getLocatedGenesSql() {
         return "SELECT feature_id FROM " + LOCATED_GENES_TEMP_TABLE_NAME;
     }
 
@@ -718,7 +718,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * Query that returns only allele of located genes.
      */
-    private String getLocatedGeneAllesSql() {
+    private static String getLocatedGeneAllesSql() {
         return "(NOT (uniquename LIKE 'FBal%') OR feature_id IN"
             + "   (SELECT subject_id"
             + "      FROM feature_relationship, cvterm"
@@ -840,7 +840,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * Return true iff the given term or one of its children is named termName.
      */
-    private boolean termOrChildrenNameMatches(ChadoCVTerm term, String termName) {
+    private static boolean termOrChildrenNameMatches(ChadoCVTerm term, String termName) {
         if (term.getName().equals(termName)) {
             return true;
         }
@@ -917,16 +917,16 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     private Item getInteraction(Map<MultiKey, Item> interactions, String refId,
-    		String gene2RefId) throws ObjectStoreException {
-    	MultiKey key = new MultiKey(refId, gene2RefId);
-    	Item item = interactions.get(key);
-    	if (item == null) {
-    	    item = getChadoDBConverter().createItem("Interaction");
-    	    item.setReference("gene1", refId);
-    	    item.setReference("gene2", gene2RefId);
-    		interactions.put(key, item);
-    	}
-    	return item;
+            String gene2RefId) {
+        MultiKey key = new MultiKey(refId, gene2RefId);
+        Item item = interactions.get(key);
+        if (item == null) {
+            item = getChadoDBConverter().createItem("Interaction");
+            item.setReference("gene1", refId);
+            item.setReference("gene2", gene2RefId);
+            interactions.put(key, item);
+        }
+        return item;
     }
 
     /**
@@ -937,7 +937,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         Map<MultiKey, Item> seenInteractions = new HashMap<MultiKey, Item>();
         ResultSet res = getInteractionResultSet(connection);
         String typeId = getRelationshipType();
-        
+
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             Integer otherFeatureId = new Integer(res.getInt("other_feature_id"));
@@ -952,13 +952,13 @@ public class FlyBaseProcessor extends SequenceProcessor
             String name = "FlyBase:" + featureData.getChadoFeatureUniqueName() + "_"
                     + otherFeatureData.getChadoFeatureUniqueName();
 
-            Item interaction = getInteraction(seenInteractions, featureData.getItemIdentifier(), 
+            Item interaction = getInteraction(seenInteractions, featureData.getItemIdentifier(),
                     otherFeatureData.getItemIdentifier());
             createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name, typeId);
 
             name = "FlyBase:" + otherFeatureData.getChadoFeatureUniqueName() + "_"
                     + featureData.getChadoFeatureUniqueName();
-            interaction = getInteraction(seenInteractions, otherFeatureData.getItemIdentifier(), 
+            interaction = getInteraction(seenInteractions, otherFeatureData.getItemIdentifier(),
                     featureData.getItemIdentifier());
             createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name, typeId);
         }
@@ -973,11 +973,11 @@ public class FlyBaseProcessor extends SequenceProcessor
         getChadoDBConverter().store(item);
         return item.getIdentifier();
     }
-    
-    private void createDetail(Item dataSetItem, String pubTitle, 
-    		String publicationItemId, Item interaction, String name, String typeId) 
-    	throws SQLException, ObjectStoreException {
-		Item detail = getChadoDBConverter().createItem("InteractionDetail");
+
+    private void createDetail(Item dataSetItem, String pubTitle,
+            String publicationItemId, Item interaction, String name, String typeId)
+        throws ObjectStoreException {
+        Item detail = getChadoDBConverter().createItem("InteractionDetail");
         detail.setAttribute("name", name);
         detail.setAttribute("type", "genetic");
         detail.setAttribute("role1", DEFAULT_ROLE);
@@ -990,7 +990,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         detail.addToCollection("dataSets", dataSetItem);
         getChadoDBConverter().store(detail);
     }
-    
+
     /**
      * Return the item identifier of the Interaction Item for the given pubmed id, creating the
      * Item if necessary.
@@ -1471,6 +1471,7 @@ public class FlyBaseProcessor extends SequenceProcessor
      * @return refId for anatomy term object
      * @throws ObjectStoreException if term can't be stored
      */
+    @Override
     protected String makeAnatomyTerm(String identifier) throws ObjectStoreException {
         String newIdentifier = identifier;
         if (!newIdentifier.startsWith(FLYBASE_ANATOMY_TERM_PREFIX)) {
@@ -1772,7 +1773,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     /**
      * Return a query that gets the feature_ids of the allele in the feature table.
      */
-    private String getAlleleFeaturesSql() {
+    private static String getAlleleFeaturesSql() {
         return "SELECT feature_id FROM " + ALLELE_TEMP_TABLE_NAME;
     }
 
