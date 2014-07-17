@@ -160,27 +160,27 @@ public class PathQueryResultsHelperTest extends TestCase
         List<Class<?>> sr = new ArrayList<Class<?>>();
         sr.add(Employee.class);
         sr.add(Manager.class);
-       
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Employee", "employees");
+
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, d1, "Employee", "employees");
         String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.name Department.employees.department.name Department.employees.department.company.name Department.employees.age Department.employees.fullTime\" longDescription=\"\">"
             + "<join path=\"Department.employees.department\" style=\"OUTER\"/>"
             + "<join path=\"Department.employees.department.company\" style=\"OUTER\"/>"
             + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
             + "</query>";
         assertEquals(pathQuery.toXml(PathQuery.USERPROFILE_VERSION), expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
-        PathQuery pathQuery2 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) e1, "Address", "address");
+        PathQuery pathQuery2 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, e1, "Address", "address");
         String expectedXml2 =  "<query name=\"query\" model=\"testmodel\" "
             + "view=\"Employee.address.address\" longDescription=\"\"><constraint path=\"Employee.id\" "
             + "op=\"=\" value=\"2\"/></query>";
         assertEquals(pathQuery2.toXml(PathQuery.USERPROFILE_VERSION), expectedXml2, pathQuery2.toXml(PathQuery.USERPROFILE_VERSION));
-        PathQuery pathQuery3 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Manager", "employees");
+        PathQuery pathQuery3 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, d1, "Manager", "employees");
         String expectedXml3 = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title "
             + "Department.employees.fullTime Department.employees.age Department.employees.end "
             + "Department.employees.name Department.employees.seniority\" longDescription=\"\">"
             + "<constraint path=\"Department.employees\" type=\"Manager\"/>"
             + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
             + "</query>";
-        assertEquals(pathQuery3.toXml(PathQuery.USERPROFILE_VERSION), expectedXml3, pathQuery3.toXml(PathQuery.USERPROFILE_VERSION));
+        assertEquals("Pathquery is not as expected", expectedXml3, pathQuery3.toXml());
     }
 
 
