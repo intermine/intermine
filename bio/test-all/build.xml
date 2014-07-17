@@ -31,7 +31,6 @@
       <fileset dir="../..">
         <include name="bio/sources/**/test/build.xml" />
         <include name="bio/*/test/build.xml"/>
-        <include name="bio/postprocess/core/test/build.xml"/>
         <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
       </fileset>
     </subant>
@@ -49,9 +48,15 @@
   <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
     <lib:checkstyle>
       <customize>
-        <fileset dir="..">
-          <include name="sources/*/test/**/*.java"/>
-        </fileset>
+      <fileset dir="../..">
+        <include name="bio/core/**/*.java" />
+        <include name="bio/postprocess/**/*.java" />
+        <include name="bio/sources/**/*.java" />
+        <include name="bio/tools/**/*.java" />
+        <include name="bio/webapp/**/*.java" />
+        <exclude name="bio/**/*Test.java" />
+        <exclude name="bio/sources/experimental-sources/**/*.java"/>
+      </fileset>
       </customize>
     </lib:checkstyle>
   </target>
