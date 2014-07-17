@@ -429,24 +429,24 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             timeSpentDataTrackerWrite += time1 - time2;
             return newObj;
         } catch (RuntimeException e) {
-            if (idMap.size() <= 100000) {
+            if (idMap.size() <= 10000) {
                 LOG.info("IDMAP contents: " + idMap.toString());
             }
-            if (skeletons.size() <= 100000) {
+            if (skeletons.size() <= 10000) {
                 LOG.info("Skeletons: " + skeletons.toString());
             }
-            if (pureObjects.size() <= 100000) {
+            if (pureObjects.size() <= 10000) {
                 LOG.info("pureObjects: " + pureObjects.toString());
             }
             throw e;
         } catch (ObjectStoreException e) {
-            if (idMap.size() <= 100000) {
+            if (idMap.size() <= 10000) {
                 LOG.info("IDMAP contents: " + idMap.toString());
             }
-            if (skeletons.size() <= 100000) {
+            if (skeletons.size() <= 10000) {
                 LOG.info("Skeletons: " + skeletons.toString());
             }
-            if (pureObjects.size() <= 100000) {
+            if (pureObjects.size() <= 10000) {
                 LOG.info("pureObjects: " + pureObjects.toString());
             }
             throw e;

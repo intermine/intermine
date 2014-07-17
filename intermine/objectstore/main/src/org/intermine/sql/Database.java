@@ -30,9 +30,13 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.StringUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.postgresql.util.PSQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * Class that represents a physical SQL database
@@ -43,13 +47,12 @@ import org.postgresql.util.PSQLException;
 public class Database implements Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(Database.class);
-
+    private static final String HIKARI_CLASSNAME = "com.zaxxer.hikari.HikariDataSource";
     protected DataSource datasource;
     protected String platform;
     protected String driver;
     /** The number of worker threads to use for background SQL statements */
     protected int parallel = 4;
-
     // Store all the properties this Database was configured with
     protected Properties settings;
 
@@ -62,6 +65,7 @@ public class Database implements Shutdownable
         // empty
     }
 
+
     /**
      * Constructs a Database object from a set of properties
      *
@@ -70,7 +74,48 @@ public class Database implements Shutdownable
      */
     protected Database(Properties props) throws ClassNotFoundException {
         settings = props;
-        configure(props);
+
+        if (props.containsKey("datasource.class")
+                && HIKARI_CLASSNAME.equals(props.get("datasource.class"))) {
+
+            // HikariCP has different configuration than default postgres, need to adjust properties
+            Properties dsProps = PropertiesUtil.getPropertiesStartingWith("datasource", props);
+            dsProps = PropertiesUtil.stripStart("datasource", dsProps);
+            removeProperty(dsProps, "class");
+
+            // this name is only used for logging
+            renameProperty(dsProps, "dataSourceName", "poolName");
+
+            // need to be compatible with old postgres pool maxConnections
+            renameProperty(dsProps, "maxConnections", "maximumPoolSize");
+
+            // database connection properties need dataSource prefix
+            renameProperty(dsProps, "user", "dataSource.user");
+            renameProperty(dsProps, "password", "dataSource.password");
+            renameProperty(dsProps, "port", "dataSource.port");
+            renameProperty(dsProps, "databaseName", "dataSource.databaseName");
+            renameProperty(dsProps, "serverName", "dataSource.serverName");
+
+            HikariConfig conf = new HikariConfig(dsProps);
+            datasource = new HikariDataSource(conf);
+
+            // also need to set 'driver' and 'platform' on this Database object
+            if (props.containsKey("platform")) {
+                this.platform = props.getProperty("platform");
+            }
+            if (props.containsKey("driver")) {
+                this.driver = props.getProperty("driver");
+            }
+        } else {
+            // this is the original PGPoolingDataSource configured by reflection
+            LOG.warn("This database connection is configured to use the "
+                    + props.getProperty("datasource.class") + " connection pool. We now recommend "
+                    + "using HikariCP as it is fast and more robust. Set "
+                    + props.getProperty("datasource.dataSourceName") + ".class="
+                    + HIKARI_CLASSNAME
+                    + " in default.intermine.properties or minename.properties.");
+            configure(props);
+        }
         try {
             LOG.info("Creating new Database " + getURL() + "(" + toString() + ") with ClassLoader "
                     + getClass().getClassLoader() + " and parallelism " + parallel);
@@ -79,6 +124,19 @@ public class Database implements Shutdownable
                     + getClass().getClassLoader(), e);
         }
         ShutdownHook.registerObject(new WeakReference<Database>(this));
+    }
+
+    private void renameProperty(Properties props, String origName, String newName) {
+        if (props.containsKey(origName)) {
+            props.put(newName,  props.get(origName));
+            props.remove(origName);
+        }
+    }
+
+    private void removeProperty(Properties props, String propName) {
+        if (props.containsKey(propName)) {
+            props.remove(propName);
+        }
     }
 
     /**
@@ -142,7 +200,11 @@ public class Database implements Shutdownable
         }
         LOG.info("Database " + getURL() + "(" + toString() + ") has " + totalConnections
                 + " connections, of which " + activeConnections + " are active");*/
-        if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
+        if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
+            LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((com.zaxxer.hikari.HikariDataSource) datasource).close();
+        } else if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Shutdown - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
             ((org.postgresql.ds.PGPoolingDataSource) datasource).close();
@@ -163,7 +225,11 @@ public class Database implements Shutdownable
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
+        if (datasource instanceof com.zaxxer.hikari.HikariDataSource) {
+            LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
+                    + ") with ClassLoader " + getClass().getClassLoader());
+            ((com.zaxxer.hikari.HikariDataSource) datasource).close();
+        } else if (datasource instanceof org.postgresql.ds.PGPoolingDataSource) {
             LOG.info("Finalise - Closing datasource for Database " + getURL() + "(" + toString()
                     + ") with ClassLoader " + getClass().getClassLoader());
             ((org.postgresql.ds.PGPoolingDataSource) datasource).close();
