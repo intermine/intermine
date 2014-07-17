@@ -46,6 +46,7 @@ public class DatabaseSchema
     private boolean fetchFromInterMineObject;
     private int version;
     private boolean hasBioSeg;
+    private RangeDefinitions rangeDefs;
 
     private Set<ClassDescriptor> truncatedSet;
     private Map<ClassDescriptor, Fields> tableMasterToFieldDescriptors
@@ -63,10 +64,11 @@ public class DatabaseSchema
      * @param missingTables a Set of lowercase table names which are missing
      * @param version the version number in the database
      * @param hasBioSeg true if the database has the bioseg type installed
+     * @param rangeDefs definitions of
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
     public DatabaseSchema(Model model, List<ClassDescriptor> truncated, boolean noNotXml,
-            Set<String> missingTables, int version, boolean hasBioSeg) {
+            Set<String> missingTables, int version, boolean hasBioSeg, RangeDefinitions rangeDefs) {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;
@@ -75,6 +77,10 @@ public class DatabaseSchema
         this.fetchFromInterMineObject = !missingTables.contains("intermineobject");
         this.version = version;
         this.hasBioSeg = hasBioSeg;
+        if (rangeDefs == null) {
+            rangeDefs = new RangeDefinitions();
+        }
+        this.rangeDefs = rangeDefs;
         for (int i = 0; i < truncated.size(); i++) {
             Class<?> cA = truncated.get(i).getType();
             for (int o = 0; o < i; o++) {
@@ -189,6 +195,15 @@ public class DatabaseSchema
      */
     public boolean hasBioSeg() {
         return hasBioSeg;
+    }
+
+    /**
+     * Return an object describing any range type columns that have been added to the database, the
+     * configuration may be empty.
+     * @return an object containing any range definitions
+     */
+    public RangeDefinitions getRangeDefinitions() {
+        return rangeDefs;
     }
 
     /**

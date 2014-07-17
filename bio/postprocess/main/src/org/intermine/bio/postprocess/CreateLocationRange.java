@@ -15,8 +15,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
+import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.objectstore.intermine.RangeDefinitions;
 import org.intermine.sql.Database;
 
 /**
@@ -112,8 +114,8 @@ public class CreateLocationRange
             // TODO may need to check Postgres version, use SPGIST on 9.3 or later, otherwise GIST
 
             startTime = System.currentTimeMillis();
-            String indexSql = "CREATE INDEX location__locatedon_locrange "
-                    + "ON location USING GIST (locatedonid, intermine_locrange)";
+            String indexSql = "CREATE INDEX location__locrange "
+                    + "ON location USING SPGIST (intermine_locrange)";
             statement = con.createStatement();
             statement.executeUpdate(indexSql);
             statement.close();
@@ -124,7 +126,13 @@ public class CreateLocationRange
         }
         con.close();
 
-        // TODO store details of ranges defined in intermine_metadata table
+
+        // read range definitions from metadata table (may be empty)
+        String rangeDefStr = MetadataManager.retrieve(db, MetadataManager.RANGE_DEFINITIONS);
+        RangeDefinitions rangeDefs = new RangeDefinitions(rangeDefStr);
+        // create a new range definition and store in metadata table
+        rangeDefs.addRange("location", COLUMN_NAME, RANGE_TYPE, "start", "end");
+        MetadataManager.store(db,  MetadataManager.RANGE_DEFINITIONS, rangeDefs.toJson());
         // TODO add a RangeDefinition class that marshals/unmarshals to text
 
     }

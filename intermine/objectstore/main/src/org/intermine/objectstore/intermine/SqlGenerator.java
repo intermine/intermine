@@ -67,6 +67,7 @@ import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.OverlapConstraint;
+import org.intermine.objectstore.query.OverlapRange;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
@@ -1974,34 +1975,38 @@ public final class SqlGenerator
             .append(state.getFieldToAlias(rightParent.getQueryClass()).get(rightParent
                     .getFieldName()))
             .append(" AND ");
-//        if (true && ConstraintOp.OVERLAPS == c.getOp()) {
-//        	LOG.warn("GENERATIMG OVERLAP!!!");
-//        	// TODO need to check if table being constrained has an intrange field
-//        	buffer.append("range");
-//        	// TODO check actual op
-//        	buffer.append(" &&");
-//        	buffer.append(" int8range(");
-//        	queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
-//	        buffer.append(", ");
-//	        queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-//	        buffer.append(")");
-//        } else if (schema.hasBioSeg()) {
 
-        // get the table name for this constraint
+        // do both sides have range cols or is one side a range col and one query values
+        // if only one side has a range col we can't use postgres range
+        Map<String, String> leftRangeDef = getRangeDefForOverlapRange(schema, c.getLeft());
+        boolean leftIsQueryValues = isOverlapRangeValues(c.getLeft());
+        Map<String, String> rightRangeDef = getRangeDefForOverlapRange(schema, c.getRight());
+        boolean rightIsQueryValues = isOverlapRangeValues(c.getRight());
 
-        String leftType = c.getLeft().getParent().getQueryClass().getType().getName();
-        ClassDescriptor leftCld = schema.getModel().getClassDescriptorByName(leftType);
-        String leftTable = DatabaseUtil.getTableName(schema.getTableMaster(leftCld));
-        LOG.info("RANGE leftType " + leftType + " leftTable: " + leftTable);
+        boolean useRangeColumn = false;
+        // if they're both ranges make sure they're compatible
+        if (leftRangeDef != null && rightRangeDef != null) {
+            // both sides have range columns but make sure they're the same range type,
+            // e.g. both are int8range
+            useRangeColumn = leftRangeDef.get("rangeType").equals(rightRangeDef.get("rangeType"));
+        } else {
+            // if one side is a range type and the other has QueryValues then we can use range col
+            useRangeColumn = (leftRangeDef != null && rightIsQueryValues)
+                    || (leftIsQueryValues && rightRangeDef != null);
+        }
 
-        String rightType = c.getLeft().getParent().getQueryClass().getType().getName();
-        ClassDescriptor rightCld = schema.getModel().getClassDescriptorByName(rightType);
-        String rightTable = DatabaseUtil.getTableName(schema.getTableMaster(rightCld));
-        LOG.info("RANGE rightType " + rightType + " rightTable: " + rightTable);
+        if (useRangeColumn) {
+            if (leftRangeDef != null) {
+                buffer.append(leftRangeDef.get("rangeColName") + " ");
+            } else {
+                // we need to construct a range type to match the right hand side
+                buffer.append(" " + rightRangeDef.get("rangeType") + "(");
+                queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
+                buffer.append(", ");
+                queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
+                buffer.append(") ");
+            }
 
-        //schema.getTableFields(leftCld)
-        if (false) {
-            buffer.append("intermine_locrange ");
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
                 buffer.append("@>");
@@ -2014,14 +2019,18 @@ public final class SqlGenerator
                 throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
                         + " for range");
             }
-            c.getOp();
-            buffer.append(" int8range(");
-            queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
-            buffer.append(", ");
-            queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
-            buffer.append(")");
+
+            if (rightRangeDef != null) {
+                buffer.append(" " + rightRangeDef.get("rangeColName") + " ");
+            } else {
+                // we need to construct a range type to match the left hand side
+                buffer.append(" " + leftRangeDef.get("rangeType") + "(");
+                queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
+                buffer.append(", ");
+                queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
+                buffer.append(")");
+            }
         } else if (schema.hasBioSeg()) {
-        //} else if (true) {
             buffer.append("bioseg_create(");
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");
@@ -2081,6 +2090,27 @@ public final class SqlGenerator
         } else if (safeness != SAFENESS_SAFE) {
             buffer.append(")");
         }
+    }
+
+
+    private static Map<String, String> getRangeDefForOverlapRange(DatabaseSchema schema,
+            OverlapRange overlapRange) {
+        if (overlapRange.getStart() instanceof QueryField
+                && overlapRange.getEnd() instanceof QueryField) {
+            RangeDefinitions rangeDefs = schema.getRangeDefinitions();
+            String startField = ((QueryField) overlapRange.getStart()).getFieldName();
+            String endField = ((QueryField) overlapRange.getEnd()).getFieldName();
+            String type = overlapRange.getParent().getQueryClass().getType().getName();
+            String tableName = DatabaseUtil.getTableName(schema.getTableMaster(
+                    schema.getModel().getClassDescriptorByName(type)));
+            return rangeDefs.getRange(tableName, startField, endField);
+        }
+        return null;
+    }
+
+    private static boolean isOverlapRangeValues(OverlapRange overlapRange) {
+        return overlapRange.getStart() instanceof QueryValue
+                && overlapRange.getEnd() instanceof QueryValue;
     }
 
     /**

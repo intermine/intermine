@@ -120,6 +120,11 @@ public final class MetadataManager
     public static final String SERIAL_NUMBER = "serialNumber";
 
     /**
+     * Description of range type columns defined in the database.
+     */
+    public static final String RANGE_DEFINITIONS = "rangeDefinitions";
+
+    /**
      * Store a (key, value) pair in the metadata table of the database
      * @param database the database
      * @param key the key
@@ -132,11 +137,13 @@ public final class MetadataManager
         boolean autoCommit = connection.getAutoCommit();
         try {
             connection.setAutoCommit(false);
-            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE + " where key = ?");
+            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE
+                    + " where key = ?");
             delete.setString(1, key);
             delete.executeUpdate();
             if (value != null) {
-                insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE + " (key, value) " + " VALUES (?,?)");
+                insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE
+                        + " (key, value) " + " VALUES (?,?)");
                 insert.setString(1,  key);
                 insert.setString(2, value);
                 insert.executeUpdate();
@@ -179,16 +186,20 @@ public final class MetadataManager
         try {
             connection.setAutoCommit(false);
 
-            columnResult = connection.getMetaData().getColumns(null, null, METADATA_TABLE, "blob_value");
+            columnResult = connection.getMetaData().getColumns(null, null, METADATA_TABLE,
+                    "blob_value");
             if (!columnResult.next()) {
-                connection.createStatement().execute("ALTER TABLE " + METADATA_TABLE + " ADD blob_value BYTEA");
+                connection.createStatement().execute("ALTER TABLE " + METADATA_TABLE
+                        + " ADD blob_value BYTEA");
             }
 
-            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE + " where key = ?");
+            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE
+                    + " where key = ?");
             delete.setString(1, key);
             delete.executeUpdate();
 
-            insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE + " (key, blob_value) VALUES (?, ?)");
+            insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE
+                    + " (key, blob_value) VALUES (?, ?)");
             insert.setString(1, key);
             insert.setBytes(2, value);
             insert.executeUpdate();
@@ -406,6 +417,7 @@ public final class MetadataManager
          * @param con a database Connection, to which this object will have exclusive access, and
          * which must not be in autocommit mode. The connection will be closed when this object is
          * closed
+         * * @param commitMode whether autoCommit should be on or off when restoring object
          * @param obj a LargeObject to write to
          */
         public LargeObjectOutputStream(Connection con, LargeObject obj, boolean commitMode) {
@@ -538,7 +550,7 @@ public final class MetadataManager
          *
          * @param con a Connection that will be exclusively used by this object until it is closed
          * @param obj a LargeObject
-         * @param commitMode the commit mode to restore the connection to.
+         * @param commitMode whether autoCommit should be on or off when restoring object
          */
         public LargeObjectInputStream(Connection con, LargeObject obj, boolean commitMode) {
             this.con = con;

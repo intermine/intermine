@@ -361,7 +361,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             MetadataManager.OS_FORMAT_VERSION);
                 } catch (SQLException e) {
                     LOG.warn("Error retrieving database format version number", e);
-                    throw new ObjectStoreException("The table intermine_metadata doesn't exist. Please run build-db");
+                    throw new ObjectStoreException("The table intermine_metadata doesn't exist. "
+                            + "Please run build-db");
                 }
                 if (versionString == null) {
                     formatVersion = 0;
@@ -434,6 +435,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         missingTables.add(tables[i].toLowerCase());
                     }
                 }
+
+                // Check if there is a bioseg index in the database for faster range queries
                 boolean hasBioSeg = false;
                 Connection c = null;
                 try {
@@ -453,8 +456,20 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         }
                     }
                 }
+
+                // Check for range columns defined in the db that can be used for range queries
+                String rangeDefStr = null;
+                try {
+                    rangeDefStr = MetadataManager.retrieve(database,
+                            MetadataManager.RANGE_DEFINITIONS);
+                } catch (SQLException e) {
+                    throw new IllegalArgumentException("Couldn't retrieve range definitions from"
+                            + " intermine_metadata table. ERROR: " + e.getMessage());
+                }
+                RangeDefinitions rangeDefs = new RangeDefinitions(rangeDefStr);
+
                 DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
-                        missingTables, formatVersion, hasBioSeg);
+                        missingTables, formatVersion, hasBioSeg, rangeDefs);
                 os = new ObjectStoreInterMineImpl(database, schema);
                 os.description = osAlias;
 
