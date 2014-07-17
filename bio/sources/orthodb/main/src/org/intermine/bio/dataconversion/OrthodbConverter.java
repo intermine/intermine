@@ -151,7 +151,8 @@ public class OrthodbConverter extends BioFileConverter
             if (taxonId != null && isValid(taxonId)) {
                 String proteinId = bits[2];
                 String geneId = bits[3];
-                String identifier = proteinId;	// protein is default
+                // protein is default
+                String identifier = proteinId;
                 if (config.get(taxonId) != null) {
                     identifier = geneId;
                 }
@@ -201,7 +202,7 @@ public class OrthodbConverter extends BioFileConverter
     }
 
     private void processHomologuePair(GeneHolder gene, GeneHolder homologue)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
 
         String geneTaxonId = gene.getTaxonId();
         String homologueTaxonId = homologue.getTaxonId();
@@ -247,7 +248,7 @@ public class OrthodbConverter extends BioFileConverter
     }
 
     private void createHomologue(String gene1, String gene2, String type)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
@@ -392,7 +393,8 @@ public class OrthodbConverter extends BioFileConverter
         return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 
-    private class GeneHolder {
+    private class GeneHolder
+    {
         private String identifier;
         private String taxonId;
         private String refId;
