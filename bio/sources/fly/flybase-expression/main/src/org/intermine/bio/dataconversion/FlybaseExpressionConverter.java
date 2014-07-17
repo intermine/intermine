@@ -20,8 +20,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -103,9 +101,12 @@ public class FlybaseExpressionConverter extends BioFileConverter
                 continue;
             }
 
-            final String fbgn = line[1];	// FBgn0000003
-            final String source = line[4]; //modENCODE_mRNA-Seq_U
-            final String stage = line[6];	// embryo_02-04hr
+            // FBgn0000003
+            final String fbgn = line[1];
+            // modENCODE_mRNA-Seq_U
+            final String source = line[4];
+            // embryo_02-04hr
+            final String stage = line[6];
 
             if (!source.startsWith("modENCODE")) {
                 continue;
@@ -114,7 +115,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
             result.setAttribute("stage", replaceStage(stage));
 
             if (line.length > 7) {
-                String rpkm = line[7];	// 6825 - OPTIONAL
+                // 6825 - OPTIONAL
+                String rpkm = line[7];
 
                 if (StringUtils.isNotEmpty(rpkm)) {
                     Integer expressionScore = new Integer(0);
@@ -230,10 +232,19 @@ public class FlybaseExpressionConverter extends BioFileConverter
         return null;
     }
 
-    class Stage {
+    /**
+     * Respresents a development stage
+     * @author Julie
+     */
+    protected class Stage
+    {
         protected String name;
         protected String category;
 
+        /**
+         * @param name identifer
+         * @param category category
+         */
         public Stage(String name, String category) {
             this.name = name;
             this.category = category;

@@ -90,7 +90,7 @@ public class EnsemblHgncConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         File currentFile = getCurrentFile();
         if (currentFile.getName().startsWith("ensembl_hgnc")) {
-           processHgncSymbols(reader);
+            processHgncSymbols(reader);
         } else if (currentFile.getName().startsWith("ensembl_entrez"))  {
             //processEntrezIds(reader);
         }
@@ -155,7 +155,7 @@ public class EnsemblHgncConverter extends BioFileConverter
                     addToMapOfSets(symbolSynonymsMap, idPair.symbol, idPair.ensembl);
                     addToMapOfSets(ensemblSynonymsMap, idPair.ensembl, idPair.symbol);
                 }
-                if (duplicateEnsembls.contains(idPair.ensembl)){
+                if (duplicateEnsembls.contains(idPair.ensembl)) {
                     addToMapOfSets(ensemblSynonymsMap, idPair.ensembl, idPair.symbol);
                     addToMapOfSets(symbolSynonymsMap, idPair.symbol, idPair.ensembl);
                 }
@@ -168,18 +168,18 @@ public class EnsemblHgncConverter extends BioFileConverter
     }
 
     private Item getGene(String keyAttribute, String key) {
-       Item gene = genes.get(key);
-       if (gene == null) {
-           gene = createItem("Gene");
-           gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
-           gene.setAttribute(keyAttribute, key);
-           genes.put(key, gene);
-       }
-       return gene;
-   }
+        Item gene = genes.get(key);
+        if (gene == null) {
+            gene = createItem("Gene");
+            gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
+            gene.setAttribute(keyAttribute, key);
+            genes.put(key, gene);
+        }
+        return gene;
+    }
 
     private void storeSynonyms(Map<String, Set<String>> synonymMap, String keyAttribute)
-    throws ObjectStoreException {
+        throws ObjectStoreException {
         for (String key : synonymMap.keySet()) {
             Item gene = getGene(keyAttribute, key);
             for (String synonym : synonymMap.get(key)) {
@@ -210,8 +210,8 @@ public class EnsemblHgncConverter extends BioFileConverter
 
     private class IdPair
     {
-        public String ensembl;
-        public String symbol;
+        private String ensembl;
+        private String symbol;
 
         public IdPair(String ensembl, String symbol) {
             this.ensembl = ensembl;
