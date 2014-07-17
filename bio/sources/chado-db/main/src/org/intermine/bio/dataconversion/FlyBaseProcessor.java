@@ -1241,6 +1241,11 @@ public class FlyBaseProcessor extends SequenceProcessor
             Integer cvtermId = new Integer(res.getInt("cvterm_id"));
 
             ChadoCVTerm cvterm = flyBaseMiscCv.getByChadoId(cvtermId);
+            if (cvterm == null) {
+                LOG.error("cvterm not found for " + res.getInt("cvterm_id") + " for feature "
+                        + res.getInt("feature_id"));
+                continue;
+            }
 
             Set<ChadoCVTerm> parents = cvterm.getAllParents();
 

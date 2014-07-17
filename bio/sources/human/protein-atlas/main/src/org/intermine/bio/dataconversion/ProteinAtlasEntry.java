@@ -42,10 +42,16 @@ public class ProteinAtlasEntry
         return version;
     }
 
+    /**
+     * @param version
+     */
     public void setVersion(String version) {
         this.version = version;
     }
 
+    /**
+     * @return
+     */
     public String getUrl() {
         return url;
     }
