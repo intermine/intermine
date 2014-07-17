@@ -13,8 +13,6 @@ package org.intermine.bio.dataconversion;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 /**
  * holder class representing an entry in protein atlas xml
  *
@@ -23,9 +21,6 @@ import org.apache.log4j.Logger;
  */
 public class ProteinAtlasEntry
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(ProteinAtlasEntry.class);
-
     private String version;
     private String url;
     private String geneName;
@@ -35,11 +30,14 @@ public class ProteinAtlasEntry
     private String geneIdDbVersion;
     private String geneIdXrefId;
     private String geneIdXrefDb;
-    private TissueExpression tissueExpression = new TissueExpression();;
+    private TissueExpression tissueExpression = new TissueExpression();
     private SubcellularLocation subcellularLocation = new SubcellularLocation();
-    private RnaExpression RnaExpression = new RnaExpression();
+    private RnaExpression rnaExpression = new RnaExpression();
     private Antibody antibody = new Antibody();
 
+    /**
+     * @return version
+     */
     public String getVersion() {
         return version;
     }
@@ -129,11 +127,11 @@ public class ProteinAtlasEntry
     }
 
     public RnaExpression getRnaExpression() {
-        return RnaExpression;
+        return rnaExpression;
     }
 
     public void setRnaExpression(RnaExpression rnaExpression) {
-        RnaExpression = rnaExpression;
+        this.rnaExpression = rnaExpression;
     }
 
     public Antibody getAntibody() {
@@ -157,7 +155,8 @@ public class ProteinAtlasEntry
     {
         private String type;
         private String technology;
-        private Set<TissueExpressionSummary> summarySet = new LinkedHashSet<TissueExpressionSummary>();
+        private Set<TissueExpressionSummary> summarySet
+            = new LinkedHashSet<TissueExpressionSummary>();
         private String verification;
         private String verificationType;
         private Set<TissueExpressionData> dataSet = new LinkedHashSet<TissueExpressionData>();
