@@ -466,7 +466,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     private void additionalProcessing(ModEncodeFeatureProcessor processor,
-            Map<Integer, FeatureData> subFeatureMap) throws ObjectStoreException{
+            Map<Integer, FeatureData> subFeatureMap) throws ObjectStoreException {
         for (FeatureData fData : subFeatureMap.values()) {
             // 1- generate a map of gene-identifiers so we can re-use the same item identifiers
             // when creating antibody/strain target genes late
@@ -919,9 +919,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     Integer currentAPId = nap.next();
                     appliedProtocolMap.get(currentAPId).submissionId = submissionId;
                     appliedProtocolMap.get(currentAPId).step = step + 1;
-
                     nextIterationProtocols.add(currentAPId);
-
                     // and set the reference from applied protocol to the submission
                     Reference reference = new Reference();
                     reference.setName("submission");
@@ -1378,7 +1376,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // setting references to SubmissionData
                 readCount.setReference("submission",
                         submissionMap.get(submissionId).itemIdentifier);
-                Integer intermineObjectId = getChadoDBConverter().store(readCount);
+                getChadoDBConverter().store(readCount);
                 continue;
             }
 
@@ -1544,24 +1542,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("PROCESS TIME protocols: " + (System.currentTimeMillis() - bT) + " ms");
     }
 
-    // now doing it with applied protocol (to avoid creating it for delete subs)
-    private String createProtocol(Integer chadoId, String name, String description, String wikiLink,
-            Integer version) throws ObjectStoreException {
-        String protocolItemId = protocolsMap.get(wikiLink);     // rename?
-        if (protocolItemId == null) {
-            Item protocol = getChadoDBConverter().createItem("Protocol");
-            protocol.setAttribute("name", name);
-            protocol.setAttribute("description", description);
-            protocol.setAttribute("wikiLink", wikiLink);
-            protocol.setAttribute("version", "" + version);
-            Integer intermineObjectId = getChadoDBConverter().store(protocol);
-            protocolItemId = protocol.getIdentifier();
-            protocolItemToObjectId.put(protocolItemId, intermineObjectId);
-            protocolsMap.put(wikiLink, protocolItemId);
-        }
-        protocolItemIds.put(chadoId, protocolItemId);
-        return protocolItemId;
-    }
 
     private Integer getProtocolInterMineId(Integer chadoId) {
         return protocolItemToObjectId.get(protocolItemIds.get(chadoId));
@@ -1880,6 +1860,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *    DATA ATTRIBUTES
      * =====================
      */
+    @SuppressWarnings("unused")
     private void processAppliedDataAttributesNEW(Connection connection)
         throws SQLException, ObjectStoreException {
         // attempts to collate attributes
@@ -1901,9 +1882,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             String name  = res.getString("heading");
-
-//            LOG.info("DA " + dataId + ": " + name);
-
             if (previousDataId == 0) { //first pass
                 value = res.getString("value");
                 type  = res.getString("name");
@@ -1926,8 +1904,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             if (!name.equalsIgnoreCase(previousName)) {
                 Item dataAttribute = storeDataAttribute(value, type, dataId, previousName);
-//                LOG.info("DA2 store: " + dataId + ": " + previousName + "|" + value);
-                count ++;
+                count++;
                 value = res.getString("value");
                 previousName = name;
                 LOG.info("DA2 new: " + dataId + ": " + previousName + "|" + value);
@@ -1991,7 +1968,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String name  = res.getString("heading");
             String value = res.getString("value");
             String type  = res.getString("name");
-            Item dataAttribute = storeDataAttribute(value, type, dataId, name);
+            storeDataAttribute(value, type, dataId, name);
             count++;
         }
         LOG.info("created " + count + " data attributes");
@@ -2392,12 +2369,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      */
 
     private void addNotApplicable(String clsName, String propName)
-            throws ObjectStoreException {
-            Item subProperty = getChadoDBConverter().createItem(clsName);
-            subProperty.setAttribute("type", propName);
-            subProperty.setAttribute("name", NA_PROP);
-            getChadoDBConverter().store(subProperty);
-        }
+        throws ObjectStoreException {
+        Item subProperty = getChadoDBConverter().createItem(clsName);
+        subProperty.setAttribute("type", propName);
+        subProperty.setAttribute("name", NA_PROP);
+        getChadoDBConverter().store(subProperty);
+    }
 
 
 
@@ -2431,6 +2408,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    @SuppressWarnings("unused")
     private void createEFItemNEW(Integer current, String type,
             String efName, String propertyIdentifier) throws ObjectStoreException {
         // don't create an EF if it is a primer
@@ -2439,7 +2417,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         String preferredType = getPreferredSynonym(type);
         String key = efName + preferredType;
-        String [] efTok = {efName,preferredType};
+        String [] efTok = {efName, preferredType};
 
         // create the EF, if not there already
         if (!eFactorIdMap.containsKey(key)) {
@@ -2449,7 +2427,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (propertyIdentifier != null) {
                 ef.setReference("property", propertyIdentifier);
             }
-            LOG.info("ExFactor created for sub " + dccIdMap.get(current) + ":" + efName + "|" + type);
+            LOG.info("ExFactor created for sub " + dccIdMap.get(current) + ":" + efName
+                    + "|" + type);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
             eFactorIdMap.put(key, intermineObjectId);
@@ -2535,8 +2514,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             currentSubId = dataSubmissionMap.get(dataId);
 
             if (currentSubId == null) {
-                LOG.info("DSM failing dataId: " + dataId + " - " + attHeading + "|" + attName +
-                        "|" + attValue);
+                LOG.info("DSM failing dataId: " + dataId + " - " + attHeading + "|" + attName
+                        + "|" + attValue);
             }
 
             if (dataId.intValue() != lastDataId.intValue()
@@ -2610,15 +2589,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("WIKILINK: " + wikiLink + " -- type: " + type);
         if (wikiLink != null && wikiLink.contains(":")) {
             String wikiType = wikiLink.substring(0, wikiLink.indexOf(':'));
-            if (type.equals(STRAIN)|| type.equals(DEVSTAGE)){
+            if (type.equals(STRAIN) || type.equals(DEVSTAGE)) {
                 if (!congruentType(type, wikiType)) {
                     LOG.warn("WIKILINK " + dccIdMap.get(subId) + ": "
                             + type + " but in wiki url: " + wikiType);
                     // not strictly necessary (code would deal with wikiType)
-                    if (wikiType.contains("Strain")){
+                    if (wikiType.contains("Strain")) {
                         return STRAIN;
                     }
-                    if (wikiType.contains("Stage")){
+                    if (wikiType.contains("Stage")) {
                         return DEVSTAGE;
                     }
                 }
@@ -2630,10 +2609,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private Boolean congruentType (String type, String wikiType) {
         // check only strain and devstages
-        if (wikiType.contains("Strain") && !type.equals(STRAIN)){
+        if (wikiType.contains("Strain") && !type.equals(STRAIN)) {
             return false;
         }
-        if (wikiType.contains("Stage") && !type.equalsIgnoreCase(DEVSTAGE)){
+        if (wikiType.contains("Stage") && !type.equalsIgnoreCase(DEVSTAGE)) {
             return false;
         }
         return true;
@@ -3839,6 +3818,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
 
     //sub -> ef
+    @SuppressWarnings("unused")
     private void setSubmissionEFactorsRefsNEW(Connection connection)
         throws ObjectStoreException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
@@ -3859,7 +3839,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 collection.addRefId(eFactorIdRefMap.get(efName + efType));
                 LOG.info("EF REFS!!: ->" + efName + " ref: " + eFactorIdRefMap.get(key));
             }
-            if (!collection.equals(null)) {
+            if (null != collection) {
                 LOG.info("EF REFS: ->" + thisSubmissionId + "|"
                         + submissionMap.get(thisSubmissionId).interMineObjectId);
                 getChadoDBConverter().store(collection,
@@ -3888,7 +3868,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 collection.addRefId(eFactorIdRefMap.get(currentEF));
                 LOG.debug("EF REFS: ->" + currentEF + " ref: " + eFactorIdRefMap.get(currentEF));
             }
-            if (!collection.equals(null)) {
+//            if (!collection.equals(null)) {
+            if (null != collection) {
                 LOG.info("EF REFS: ->" + thisSubmissionId + "|"
                         + submissionMap.get(thisSubmissionId).interMineObjectId);
                 getChadoDBConverter().store(collection,
