@@ -5,9 +5,11 @@
   
   <description>wrapper project for build/testing/cleaning everything in bio</description>
 
+  <import file="../../imbuild/library.xml"/> 
   <import file="../../imbuild/task.xml"/>
   <import file="../../imbuild/objectstore.xml"/>
-  
+   
+
   <target name="-pre-init" depends="library.-pre-init">
     <property name="test.results.dir" location="${build.dir}/test/results"/>
   </target>
