@@ -21,8 +21,9 @@
   <target name="-init-fulltest" depends="-init-properties, build-db.bio-test, init">
     <mkdir dir="${test.results.dir}"/>
   </target>
-  
-  <target name="fulltest" depends="init, -init-fulltest, -do-fulltest, test-report"/>
+
+ 
+  <target name="fulltest" depends="init, -init-properties, -init-fulltest, -do-fulltest, test-report"/>
   
   <target name="-do-fulltest">
     <subant inheritAll="false">
@@ -31,8 +32,11 @@
       <property name="no.dep" value="false"/>
       <!--<property name="test.fork" value="yes"/>-->
       <fileset dir="../..">
-        <include name="bio/sources/**/test/build.xml" />
-        <include name="bio/*/test/build.xml"/>
+        <!--<include name="bio/sources/**/test/build.xml" />-->
+        <!-- bio-core tests pass in eclipse -->
+        <!-- <include name="bio/core/test/build.xml"/> -->
+        <include name="bio/postprocess/test/build.xml"/>
+        <!--<include name="bio/tools/test/build.xml"/>-->
         <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
       </fileset>
     </subant>
@@ -68,5 +72,5 @@
   
   <target name="compile" depends="init, -init-deps"/>
   
-  <target name="default" depends="fulltest"/>
+
 </project>
