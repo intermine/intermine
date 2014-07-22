@@ -46,8 +46,7 @@ import org.intermine.xml.full.Reference;
  * @see OboConverter
  */
 public class EmapaOboConverter extends OboConverter implements OboConverterInterface {
-
-
+private static final Logger LOG = Logger.getLogger(DataConverter.class);
 
 public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, String dagName,
                         String url, String termClass) {
@@ -55,14 +54,8 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
 	super(writer,model,dagFilename,dagName,url,termClass);
 }
 
-
-
     /**
-     * Set up attributes and references for the Item created from a DagTerm. Subclasses
-     * can override this method to perform extra setup, for example by casting the
-     * DagTerm to some someclass and retrieving extra attributes. Subclasses should call this
-     * inherited method first. This method will call process() for each child/component term,
-     * resulting in recursion.
+     * Override base class method to set stage min and max attributes (startsAt, endsAt).
      *
      * @param termId the term id
      * @param item the Item created (see termClass field for type)
@@ -71,11 +64,9 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
      */
     protected void configureItem(String termId, Item item, OboTerm term)
         throws ObjectStoreException {
-        item.addAttribute(new Attribute("name", term.getName()));
-        item.addReference(new Reference("ontology", ontology.getIdentifier()));
-        if (term.getId() != null) {
-            item.addAttribute(new Attribute("identifier", term.getId()));
-        }
+
+	super.configureItem(termId, item, term);
+
         // this is the spcific EMAPA stuff 
         if(  term.getId()!= null && term.getId().indexOf("EMAPA") != -1){
            try{
@@ -84,41 +75,32 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
              item.addAttribute(new Attribute("startsAt", starts_at));
              item.addAttribute(new Attribute("endsAt", ends_at));
            }catch(Exception e){}
-
         }
-
-        for (OboTermSynonym syn : term.getSynonyms()) {
-            Item synItem = synToItem.get(syn);
-            if (synItem == null) {
-                synItem = createItem("OntologyTermSynonym");
-                synToItem.put(syn, synItem);
-                configureSynonymItem(syn, synItem, term);
-            }
-            item.addToCollection("synonyms", synItem);
-        }
-        for (OboTerm xref : term.getXrefs()) {
-            String identifier = xref.getId();
-            String refId = xrefs.get(identifier);
-            if (refId == null) {
-                Item xrefTerm = createItem("OntologyTerm");
-                refId = xrefTerm.getIdentifier();
-                xrefs.put(identifier, refId);
-                xrefTerm.setAttribute("identifier", identifier);
-                xrefTerm.addToCollection("crossReferences", item.getIdentifier());
-                store(xrefTerm);
-            }
-            item.addToCollection("crossReferences", refId);
-        }
-        OboTerm oboterm = term;
-        if (!StringUtils.isEmpty(oboterm.getNamespace())) {
-            item.setAttribute("namespace", oboterm.getNamespace());
-        }
-        if (!StringUtils.isEmpty(oboterm.getDescription())) {
-            item.setAttribute("description", oboterm.getDescription());
-        }
-        item.setAttribute("obsolete", "" + oboterm.isObsolete());
-        // Term is its own parent
-        item.addToCollection("parents", item);
     }
+
+    /**
+     * Override base class method to skip this relation if it is for a descendant whose stage range
+     * does NOT overlap the ancestor's. This is possible in the EMAPA.
+     *
+     * @param oboRelation a relation record
+     * @throws ObjectStoreException if an error occurs while writing to the itemWriter
+     */
+    protected void processRelation(OboRelation oboRelation)
+    throws ObjectStoreException {
+	Item p = nameToTerm.get(oboRelation.getParentTermId());
+	Item c = nameToTerm.get(oboRelation.getChildTermId());
+	if(p!=null && c !=null){
+	  int ps = Integer.parseInt(p.getAttribute("startsAt").getValue());
+	  int pe = Integer.parseInt(p.getAttribute("endsAt").getValue());
+	  int cs = Integer.parseInt(c.getAttribute("endsAt").getValue());
+	  int ce = Integer.parseInt(c.getAttribute("endsAt").getValue());
+	  if( ps <= ce && pe >= cs )
+		super.processRelation(oboRelation);
+	  else
+	      LOG.info("Skipped non-overlapping descendand/ancestor relation. desc="
+	      +oboRelation.getChildTermId()+" anc="+oboRelation.getParentTermId());
+	}
+    }
+
 
 }
