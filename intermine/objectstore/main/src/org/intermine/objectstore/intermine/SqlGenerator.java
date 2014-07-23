@@ -1941,7 +1941,9 @@ public final class SqlGenerator
     }
 
     /**
-     * Converts an OverlapConstraint to a String suitable for putting in an SQL query.
+     * Converts an OverlapConstraint to a String suitable for putting in an SQL query. This will
+     * try to use a Postgres range type column first, if not present it will try BioSeg, if not
+     * present it will use simple constraints on start and end fields.
      *
      * @param state the current SqlGenerator state
      * @param buffer the StringBuffer to place text into
