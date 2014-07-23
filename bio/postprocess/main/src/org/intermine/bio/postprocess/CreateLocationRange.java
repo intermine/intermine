@@ -34,16 +34,22 @@ public class CreateLocationRange
     private static final String COLUMN_NAME = "intermine_locrange";
     private static final String RANGE_TYPE = "int8range";
     private static final Logger LOG = Logger.getLogger(CreateLocationRange.class);
+    // postgres range types were added in version 9.2
+    private static final String MIN_POSTGRES_VERSION = "9.2";
 
     /**
-     * Construct a new BiosegIndexTask that will change the given object store.
+     * Construct a new CreateLocationRange
      *
-     * @param osw
-     *            an ObjectStore to write to
+     * @param osw an ObjectStore to fetch database from
      */
     public CreateLocationRange(ObjectStoreWriter osw) {
         if (osw instanceof ObjectStoreWriterInterMineImpl) {
             this.db = ((ObjectStoreWriterInterMineImpl) osw).getDatabase();
+            if (!db.isVersionIsLeast(MIN_POSTGRES_VERSION)) {
+                throw new IllegalArgumentException("Creating a range column on the location table"
+                        + " requires at least PostgreSQL " + MIN_POSTGRES_VERSION + " but database"
+                        + " has version: " + db.getVersion());
+            }
         } else {
             throw new RuntimeException("the ObjectStoreWriter is not an "
                     + "ObjectStoreWriterInterMineImpl");
@@ -63,26 +69,25 @@ public class CreateLocationRange
     }
 
     /**
-     * Add a range column to the location table if it doesn't already exist.
+     * Add a range column to the location table if it doesn't already exist
      *
-     * @throws SQLException
-     *             if there is a problem add the column
+     * @throws SQLException if there is a problem adding the column
      */
     private void createRangeColumn() throws SQLException {
         Connection con = db.getConnection();
 
-        // first command will throw and SQLException if the column doesn't exist, if autocommit
+        // first command will throw an SQLException if the column doesn't exist, if autocommit
         // is false the connection will give an error on next command.
         con.setAutoCommit(true);
 
-        // check if column exists
+        // check if column exists by trying to select from it
         try {
             String testSql = "SELECT " + COLUMN_NAME + " FROM location LIMIT 1";
             Statement statement = con.createStatement();
             statement.execute(testSql);
             statement.close();
         } catch (SQLException e) {
-            // error so column must not exist
+            // error so column must not exist, create it now
             String sql = "ALTER TABLE location ADD COLUMN " + COLUMN_NAME + " " + RANGE_TYPE;
             Statement statement = con.createStatement();
             statement.executeUpdate(sql);
@@ -102,6 +107,7 @@ public class CreateLocationRange
 
         // populate range column
         long startTime = System.currentTimeMillis();
+        // NOTE '[]' means that the start and end coordinates are included in the range
         String sql = "UPDATE location SET intermine_locrange = "
                 + "int8range(intermine_start, intermine_end, '[]')";
         Statement statement = con.createStatement();
@@ -111,11 +117,13 @@ public class CreateLocationRange
         LOG.info("Populated location.intermine_locrange, took: " + took + "ms.");
 
         try {
-            // TODO may need to check Postgres version, use SPGIST on 9.3 or later, otherwise GIST
+            // SPGIST indexes are fastest for range queries but only added support for
+            // ranges in 9.3, for older versions we need to use GIST
+            String indexType = db.isVersionIsLeast("9.3") ? "SPGIST" : "GIST";
 
             startTime = System.currentTimeMillis();
             String indexSql = "CREATE INDEX location__locrange "
-                    + "ON location USING SPGIST (intermine_locrange)";
+                    + "ON location USING " + indexType + " (intermine_locrange)";
             statement = con.createStatement();
             statement.executeUpdate(indexSql);
             statement.close();
@@ -126,14 +134,12 @@ public class CreateLocationRange
         }
         con.close();
 
-
         // read range definitions from metadata table (may be empty)
         String rangeDefStr = MetadataManager.retrieve(db, MetadataManager.RANGE_DEFINITIONS);
         RangeDefinitions rangeDefs = new RangeDefinitions(rangeDefStr);
+
         // create a new range definition and store in metadata table
         rangeDefs.addRange("location", COLUMN_NAME, RANGE_TYPE, "start", "end");
         MetadataManager.store(db,  MetadataManager.RANGE_DEFINITIONS, rangeDefs.toJson());
-        // TODO add a RangeDefinition class that marshals/unmarshals to text
-
     }
 }

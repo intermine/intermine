@@ -93,20 +93,20 @@ public class DatabaseTest extends TestCase
     public void testVersionIsAtLeast() throws Exception {
         Database db = new Database(props);
         db.version = "9.3";
-        assertTrue(db.versionIsAtLeast("9.2"));
-        assertTrue(db.versionIsAtLeast("9.1.7"));
-        assertTrue(db.versionIsAtLeast("8"));
-        assertTrue(db.versionIsAtLeast("9.3"));
-        assertTrue(db.versionIsAtLeast("9.3.0"));
-        assertFalse(db.versionIsAtLeast("10"));
-        assertFalse(db.versionIsAtLeast("9.4"));
-        assertFalse(db.versionIsAtLeast("9.3.1"));
+        assertTrue(db.isVersionIsLeast("9.2"));
+        assertTrue(db.isVersionIsLeast("9.1.7"));
+        assertTrue(db.isVersionIsLeast("8"));
+        assertTrue(db.isVersionIsLeast("9.3"));
+        assertTrue(db.isVersionIsLeast("9.3.0"));
+        assertFalse(db.isVersionIsLeast("10"));
+        assertFalse(db.isVersionIsLeast("9.4"));
+        assertFalse(db.isVersionIsLeast("9.3.1"));
         db.version = "9.2.1";
-        assertTrue(db.versionIsAtLeast("9.2"));
-        assertTrue(db.versionIsAtLeast("9.2.0"));
-        assertTrue(db.versionIsAtLeast("9.2.1.0"));
-        assertFalse(db.versionIsAtLeast("9.2.1.1"));
-        assertFalse(db.versionIsAtLeast("9.2.2"));
+        assertTrue(db.isVersionIsLeast("9.2"));
+        assertTrue(db.isVersionIsLeast("9.2.0"));
+        assertTrue(db.isVersionIsLeast("9.2.1.0"));
+        assertFalse(db.isVersionIsLeast("9.2.1.1"));
+        assertFalse(db.isVersionIsLeast("9.2.2"));
     }
 
 /*
