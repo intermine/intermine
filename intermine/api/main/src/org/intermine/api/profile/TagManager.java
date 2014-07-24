@@ -11,6 +11,7 @@ package org.intermine.api.profile;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -726,5 +727,43 @@ public class TagManager
         public TagNamePermissionException(String message) {
             super(message);
         }
+    }
+
+    /**
+     * Get all the tags that all users have access to.
+     * @param cld The class descriptor that is tagged.
+     * @return The tag names.
+     */
+    public Collection<String> getPublicTagNames(ClassDescriptor cld) {
+        return getPublicTagNames(cld.getName(), TagTypes.CLASS);
+    }
+
+    /**
+     * Get all the tags that all users have access to.
+     * @param taggable The thing that is tagged.
+     * @return The tag names.
+     */
+    public Collection<String> getPublicTagNames(Taggable taggable) {
+        return getPublicTagNames(taggable.getName(), taggable.getTagType());
+    }
+
+    /**
+     * Get the tags for an object that are visible to all users. Public tags are
+     * defined as those that begin with the IM_PREFIX.
+     * @param objectIdentifier The identifier for this object.
+     * @param tagType The type of thing this is.
+     * @return The names of the tags.
+     */
+    public Collection<String> getPublicTagNames(
+            String objectIdentifier,
+            String tagType) {
+        Set<String> ret = new HashSet<String>();
+        for (Tag tag: this.getTags(null, objectIdentifier, tagType, null)) {
+            String name = tag.getTagName();
+            if (name != null && tag.getTagName().startsWith(TagNames.IM_PREFIX)) {
+                ret.add(name);
+            }
+        }
+        return ret;
     }
 }
