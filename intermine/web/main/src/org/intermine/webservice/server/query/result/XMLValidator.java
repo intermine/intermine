@@ -10,7 +10,11 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -59,7 +63,9 @@ public class XMLValidator
             }
 
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new StreamSource(new StringReader(xmlSchemaUrl)));
+            URL schemaLocation = new URL(xmlSchemaUrl);
+            Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
+            Schema schema = factory.newSchema(new StreamSource(schemaReader));
 
             Validator validator = schema.newValidator();
             validator.setErrorHandler(errorHandler);
