@@ -14,12 +14,18 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -51,7 +57,7 @@ import org.json.JSONObject;
 public class ModelService extends WebService
 {
     private static final String DEFAULT_CALLBACK = "parseModel";
-
+    private static final Logger LOG = Logger.getLogger(ModelService.class);
     private static final String FILE_BASE_NAME = "model";
     private Path node = null;
 
@@ -147,13 +153,29 @@ public class ModelService extends WebService
     }
 
     private Map<String, Object> getAnnotatedModel(Model model) {
+        TagManager tm = im.getTagManager();
         Model.ModelAST modelData = model.toJsonAST();
         WebConfig config = InterMineContext.getWebConfig();
         Map<String, Map<String, Object>> classes = modelData.getClasses();
-        for (Map<String, Object> classData: classes.values()) {
-            // Might be a good idea to add in field names as well, but these have sharper edge cases
-            ClassDescriptor cd = model.getClassDescriptorByName((String) classData.get("name"));
-            classData.put("displayName", WebUtil.formatClass(cd, config));
+        Profile p = getPermission().getProfile();
+        String userName = p.getUsername();
+        try {
+            for (Map<String, Object> classData: classes.values()) {
+                // Might be a good idea to add in field names as well, but these have sharper edge cases
+                ClassDescriptor cd = model.getClassDescriptorByName((String) classData.get("name"));
+                // Add the display name for this class.
+                classData.put("displayName", WebUtil.formatClass(cd, config));
+                // Get the tags for this class.
+                Set<String> tags = new HashSet<String>();
+                if (p.isLoggedIn()) {
+                    tags.addAll(tm.getObjectTagNames(cd.getSimpleName(), TagTypes.CLASS, userName));
+                }
+                tags.addAll(tm.getPublicTagNames(cd.getSimpleName(), TagTypes.CLASS));
+                classData.put("tags", tags);
+            }
+        } catch (RuntimeException t) {
+            LOG.error("Could not annotate model", t);
+            throw t;
         }
         return modelData;
     }
