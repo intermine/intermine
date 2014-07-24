@@ -1681,11 +1681,15 @@ public class PathQuery implements Cloneable
                             problems.add(String.format(
                                     "Type '%s' named in [%s] is not in the model",
                                     typeName, constraint));
-                        } else if (!cd.getAllSuperDescriptors().contains(
-                                path.getEndClassDescriptor())) {
-                            problems.add(String.format(
-                                    "%s is not a subtype of %s, as required by %s",
-                                    typeName, path.getEndClassDescriptor(), constraint));
+                        } else {
+                            ClassDescriptor mustBeA = path.getEndClassDescriptor();
+                            Set<ClassDescriptor> isa = cd.getAllSuperDescriptors();
+                            isa.add(cd);
+                            if (!isa.contains(mustBeA)) {
+                                problems.add(String.format(
+                                        "%s is not a subtype of %s, as required by %s",
+                                        typeName, mustBeA.getUnqualifiedName(), constraint));
+                            }
                         }
                     }
                 } else if (constraint instanceof PathConstraintRange) {
