@@ -1999,34 +1999,36 @@ public final class SqlGenerator
 
         if (useRangeColumn) {
             if (leftRangeDef != null) {
-                buffer.append(leftRangeDef.get("rangeColName") + " ");
+                buffer.append(q.getAliases().get(leftParent.getQueryClass()) + "."
+                        + leftRangeDef.get("rangeColName"));
             } else {
                 // we need to construct a range type to match the right hand side
                 buffer.append(" " + rightRangeDef.get("rangeType") + "(");
                 queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
                 buffer.append(", ");
                 queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-                buffer.append(") ");
+                buffer.append(")");
             }
 
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
-                buffer.append("@>");
+                buffer.append(" @> ");
             } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
-                buffer.append("<@");
+                buffer.append(" <@ ");
             } else if ((ConstraintOp.OVERLAPS == c.getOp())
                     || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
-                buffer.append("&&");
+                buffer.append(" && ");
             } else {
                 throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
                         + " for range");
             }
 
             if (rightRangeDef != null) {
-                buffer.append(" " + rightRangeDef.get("rangeColName") + " ");
+                buffer.append(q.getAliases().get(rightParent.getQueryClass()) + "."
+                        + rightRangeDef.get("rangeColName"));
             } else {
                 // we need to construct a range type to match the left hand side
-                buffer.append(" " + leftRangeDef.get("rangeType") + "(");
+                buffer.append(leftRangeDef.get("rangeType") + "(");
                 queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
                 buffer.append(", ");
                 queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
@@ -2105,6 +2107,7 @@ public final class SqlGenerator
             String type = overlapRange.getParent().getQueryClass().getType().getName();
             String tableName = DatabaseUtil.getTableName(schema.getTableMaster(
                     schema.getModel().getClassDescriptorByName(type)));
+            // getRange() will return null if no range id found
             return rangeDefs.getRange(tableName, startField, endField);
         }
         return null;

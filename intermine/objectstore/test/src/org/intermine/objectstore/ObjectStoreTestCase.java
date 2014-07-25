@@ -637,7 +637,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(data.get("CompanyB"), Arrays.asList(
                             Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))),
                             Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB")))))));
-        results.put("Range1", Arrays.asList(
+        results.put("RangeOverlaps", Arrays.asList(
                     Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range1")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range2")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range4")).getId()),
@@ -652,9 +652,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range2")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range3")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range4")).getId())));
-        results.put("Range2", Arrays.asList(
+        results.put("RangeDoesNotOverlap", Arrays.asList(
                 Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range3")).getId()),
                 Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range1")).getId())));
+        results.put("RangeOverlapsValues", Arrays.asList(
+                Arrays.asList(((InterMineObject) data.get("Range3")).getId()),
+                Arrays.asList(((InterMineObject) data.get("Range4")).getId())));
 
         results.put("ConstrainClass1", Arrays.asList(
                     Arrays.asList(data.get("EmployeeA2")),
