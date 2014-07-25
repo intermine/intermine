@@ -64,7 +64,7 @@ public class ChromosomeLocationHelper implements RangeHelper
         QueryField leftB = new QueryField((QueryClass) n, "end");
         QueryObjectReference qor = new QueryObjectReference((QueryClass) n, "feature");
         QueryObjectReference chrOR = new QueryObjectReference((QueryClass) n, "locatedOn");
-        OverlapRange left = new OverlapRange(leftA, leftB, qor);
+        OverlapRange left = new OverlapRange(leftA, leftB, chrOR);
         ConstraintOp op = pcr.getOp();
         ConstraintOp rangeOp = op;
         if (op == ConstraintOp.WITHIN) {
@@ -91,11 +91,11 @@ public class ChromosomeLocationHelper implements RangeHelper
             if (interval.getEnd() != null) {
                 OverlapRange right = new OverlapRange(
                         new QueryValue(interval.getStart()),
-                        new QueryValue(interval.getEnd()), qor);
+                        new QueryValue(interval.getEnd()), chrOR);
                 rangeSet.addConstraint(new OverlapConstraint(left, rangeOp, right));
             } else if (interval.getStart() != null) {
                 OverlapRange right = new OverlapRange(new QueryValue(interval.getStart()),
-                        new QueryValue(interval.getStart()), qor);
+                        new QueryValue(interval.getStart()), chrOR);
                 rangeSet.addConstraint(new OverlapConstraint(left, rangeOp, right));
             } else {
                 // Chromosome only - no action needed.
