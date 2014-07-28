@@ -13,7 +13,15 @@ package org.intermine.objectstore;
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.MetaDataException;
