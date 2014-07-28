@@ -56,7 +56,7 @@ public class BeginAction extends InterMineAction
      */
     private static LinkedHashMap<String, HashMap<String, Object>> bagOfTabs;
 
-    private static final String GALAXY_KEY = "GALAXY_KEY";
+    private static final String GALAXY_KEY = "GALAXY_URL";
 
      /**
      * Either display the query builder or redirect to project.sitePrefix.
