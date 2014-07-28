@@ -112,6 +112,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process() throws Exception {
         // a database has been initialised from properties starting with db.ensembl-snp-db
         if (this.taxonId == null) {
@@ -130,7 +131,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         chrNames.add("Pt");
 
         for (String chrName : chrNames) {
-            System. out.println("Starting to process chromosome " + chrName);
+            System .out.println("Starting to process chromosome " + chrName);
             LOG.info("Starting to process chromosome " + chrName);
             Connection connection = getDatabase().getConnection();
             ResultSet res = queryVariation(connection, chrName);
@@ -170,7 +171,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * {@inheritDoc}
      */
     public void process(ResultSet res, String chrName) throws Exception {
-
         if (processedChrNames.contains(chrName.toUpperCase())) {
             LOG.info("Chr " + chrName + " has been processed...");
             return;
@@ -239,7 +239,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
                     if (previousUniqueLocation) {
                         // the SNP we just stored has only one location so we won't see it again
-                        // For the first snp, previousUniqueLocation is true, consequenceItemIdSet is
+                        // For the first snp, previousUniqueLocation is true, consequenceItemIdSet
                         // empty, nothing to store
                         storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
                     } else {
@@ -338,22 +338,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                         + currentVariationId + " previousVariationId: " + previousVariationId
                         + " storeSnp: " + storeSnp);
             } else {
-                // we're on the same SNP but maybe a new location
-
-                int start = res.getInt("seq_region_start");
-                int end = res.getInt("seq_region_end");
-                int strand = res.getInt("seq_region_strand");
-
-                int chrStart = Math.min(start, end);
-                int chrEnd = Math.max(start, end);
-
-                String chrLocStr = chrName + ":" + chrStart;
-                if (!seenLocsForSnp.contains(chrLocStr)) {
-                    seenLocsForSnp.add(chrLocStr);
-                    // if this location is on a chromosome we want, store it
-                    storeLocation("" + chrStart, "" + chrEnd, "" + strand,
-                            currentSnpItemId, chrName);
-                }
+                createNewLocation(res, chrName, seenLocsForSnp, currentSnpItemId);
             }
 
             // CONSEQUENCE TYPES
@@ -373,34 +358,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                         .equals(previousTranscriptStableId)
                         && currentVariationId.equals(previousVariationId) ? false : true;
                 if (newConsequenceType) {
-                    previousTranscriptStableId = currentTranscriptStableId;
-                    String type = res.getString("transcript_variation_consequence_types");
-                    // Seen one example so far where consequence type is an empty string
-                    if (StringUtils.isBlank(type)) {
-                        type = "UNKNOWN";
-                    }
-
-                    Item consequenceItem = createItem("Consequence");
-                    consequenceItem.setAttribute("description", type);
-                    for (String individualType : type.split(",")) {
-                        consequenceItem.addToCollection("types",
-                                    getConsequenceType(individualType.trim()));
-                    }
-                    setAttIfValue(consequenceItem, "peptideAlleles",
-                            res.getString("pep_allele_string"));
-                    setAttIfValue(consequenceItem, "siftPrediction",
-                            res.getString("sift_prediction"));
-                    setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
-                    setAttIfValue(consequenceItem, "polyphenPrediction",
-                            res.getString("polyphen_prediction"));
-                    setAttIfValue(consequenceItem, "polyphenScore",
-                            res.getString("polyphen_score"));
-
-                    consequenceItem.setReference("transcript",
-                            getTranscriptIdentifier(currentTranscriptStableId));
-
-                    consequenceItemIdSet.add(consequenceItem.getIdentifier());
-                    store(consequenceItem);
+                    previousTranscriptStableId = storeConsequence(res, consequenceItemIdSet,
+                            currentTranscriptStableId);
                     consequenceCounter++;
                 }
             } else { // transcriptStableId is empty, log it
@@ -460,7 +419,65 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 + chrName + " : " + nonTranscriptConsequences);
     }
 
-    private void setAttIfValue(Item item, String attName, String attValue) {
+
+    private String storeConsequence(ResultSet res,
+            Set<String> consequenceItemIdSet, String currentTranscriptStableId)
+        throws SQLException, ObjectStoreException {
+        String previousTranscriptStableId;
+        previousTranscriptStableId = currentTranscriptStableId;
+        String type = res.getString("transcript_variation_consequence_types");
+        // Seen one example so far where consequence type is an empty string
+        if (StringUtils.isBlank(type)) {
+            type = "UNKNOWN";
+        }
+
+        Item consequenceItem = createItem("Consequence");
+        consequenceItem.setAttribute("description", type);
+        for (String individualType : type.split(",")) {
+            consequenceItem.addToCollection("types",
+                        getConsequenceType(individualType.trim()));
+        }
+        setAttIfValue(consequenceItem, "peptideAlleles",
+                res.getString("pep_allele_string"));
+        setAttIfValue(consequenceItem, "siftPrediction",
+                res.getString("sift_prediction"));
+        setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
+        setAttIfValue(consequenceItem, "polyphenPrediction",
+                res.getString("polyphen_prediction"));
+        setAttIfValue(consequenceItem, "polyphenScore",
+                res.getString("polyphen_score"));
+
+        consequenceItem.setReference("transcript",
+                getTranscriptIdentifier(currentTranscriptStableId));
+
+        consequenceItemIdSet.add(consequenceItem.getIdentifier());
+        store(consequenceItem);
+        return previousTranscriptStableId;
+    }
+
+
+    private void createNewLocation(ResultSet res, String chrName,
+            Set<String> seenLocsForSnp, String currentSnpItemId)
+        throws SQLException, ObjectStoreException {
+        // we're on the same SNP but maybe a new location
+
+        int start = res.getInt("seq_region_start");
+        int end = res.getInt("seq_region_end");
+        int strand = res.getInt("seq_region_strand");
+
+        int chrStart = Math.min(start, end);
+        int chrEnd = Math.max(start, end);
+
+        String chrLocStr = chrName + ":" + chrStart;
+        if (!seenLocsForSnp.contains(chrLocStr)) {
+            seenLocsForSnp.add(chrLocStr);
+            // if this location is on a chromosome we want, store it
+            storeLocation("" + chrStart, "" + chrEnd, "" + strand,
+                    currentSnpItemId, chrName);
+        }
+    }
+
+    private static void setAttIfValue(Item item, String attName, String attValue) {
         if (!StringUtils.isBlank(attValue)) {
             item.setAttribute(attName, attValue);
         }
@@ -557,7 +574,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         String message = "For strain " + strainId + " snp ref: " + snpReferenceCount + ", no ref: "
             + ignoredCount;
         LOG.info(message);
-        System.out.println(message);
+        System .out.println(message);
     }
 
 
@@ -575,7 +592,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             store(pop);
             popIdentifiers.put(popId, pop.getIdentifier());
             LOG.warn("Processing population: " + popId);
-            System.out.println("Processing population: " + popId);
+            System .out.println("Processing population: " + popId);
 
             // for each population query and store genotypes
             processAllelesForPopulation(connection, popId, pop.getIdentifier());
@@ -647,7 +664,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
     }
 
-    private ResultSet queryStrainPopulationReferences(Connection connection)
+    private static ResultSet queryStrainPopulationReferences(Connection connection)
         throws SQLException {
         String query = "SELECT individual_sample_id, population_sample_id"
             + " FROM individual_population";
@@ -658,7 +675,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
-    private ResultSet queryGenotypesForStrainSingleBp(Connection connection, Integer strainId)
+    private static ResultSet queryGenotypesForStrainSingleBp(Connection connection,
+            Integer strainId)
         throws SQLException {
         String query = "SELECT variation_id, allele_1, allele_2"
             + " FROM tmp_individual_genotype_single_bp"
@@ -670,7 +688,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
-    private ResultSet queryGenotypesForStrainMultipleBp(Connection connection, Integer strainId)
+    private static ResultSet queryGenotypesForStrainMultipleBp(Connection connection,
+            Integer strainId)
         throws SQLException {
         String query = "SELECT variation_id, allele_1, allele_2"
             + " FROM individual_genotype_multiple_bp"
@@ -682,7 +701,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
-    private ResultSet queryAllelesForPopulation(Connection connection, Integer popId)
+    private static ResultSet queryAllelesForPopulation(Connection connection, Integer popId)
         throws SQLException {
         String query = "SELECT a.variation_id, a.sample_id, ac.allele, a.frequency"
             + " FROM allele a, allele_code ac"
@@ -710,10 +729,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * in-del, etc.  This is a re-implementation of code from the Ensembl perl API, see:
      * http://www.ensembl.org/info/docs/Doxygen/variation-api/
      *    classBio_1_1EnsEMBL_1_1Variation_1_1Utils_1_1Sequence.html
-     * @param alleleStr the alleles to determine the type for
+     * @param allele the alleles to determine the type for
      * @return a variation class or null if none can be determined
      */
-    protected String determineType(String alleleStr) {
+    protected String determineType(String allele) {
+        String alleleStr = allele;
         String type = null;
 
         final String validBases = "ATUGCYRSWKMBDHVN";
@@ -812,7 +832,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return stateIdentifier;
     }
 
-    private ResultSet queryVariation(Connection connection, String chrName)
+    private static ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
         // ensembl "variation_feature" table:
         // Doc: http://www.ensembl.org/info/docs/variation/variation_schema.html#variation_feature
@@ -924,7 +944,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return snpSourceIds;
     }
 
-    private String makeInList(Collection<String> strings) {
+    private static String makeInList(Collection<String> strings) {
         Set<String> quoted = new HashSet<String>();
         for (String s : strings) {
             quoted.add("\"" + s + "\"");
@@ -932,7 +952,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return StringUtil.join(quoted, ",");
     }
 
-    private ResultSet queryStrains(Connection connection)
+    private static ResultSet queryStrains(Connection connection)
         throws SQLException {
 
         String query = "SELECT s.sample_id, s.name"
@@ -945,7 +965,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
-    private ResultSet queryPopulations(Connection connection)
+    private static ResultSet queryPopulations(Connection connection)
         throws SQLException {
 
         String query = "SELECT s.sample_id, s.name, s.description"
@@ -961,11 +981,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(int taxon) {
         return DATASET_TITLE;
     }
 
-    private boolean containsOneOf(String target, String... substrings) {
+    private static boolean containsOneOf(String target, String... substrings) {
         for (String substring : substrings) {
             if (target.contains(substring)) {
                 return true;
@@ -974,7 +994,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return false;
     }
 
-    private boolean anyContainChar(String[] targets, String substring) {
+    private static boolean anyContainChar(String[] targets, String substring) {
         for (String target : targets) {
             if (target.contains(substring)) {
                 return true;
@@ -983,7 +1003,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return false;
     }
 
-    private boolean containsDigit(String target) {
+    private static boolean containsDigit(String target) {
         for (int i = 0; i < target.length(); i++) {
             if (Character.isDigit(target.charAt(i))) {
                 return true;
@@ -1010,7 +1030,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
     private Item storeLocation(String chrStart, String chrEnd, String strand,
             String currentSnpItemId, String chrName)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Item loc = createItem("Location");
         loc.setAttribute("start", "" + chrStart);
         loc.setAttribute("end", "" + chrEnd);
