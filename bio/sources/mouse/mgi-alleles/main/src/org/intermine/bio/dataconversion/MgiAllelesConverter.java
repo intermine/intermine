@@ -67,9 +67,10 @@ public class MgiAllelesConverter extends BioFileConverter
 
         organismIdentifier = getOrganism(MOUSE_TAXON);
         String currentFile = getCurrentFile().getName();
-        if ("MGI_PhenotypicAllele.rpt".equals(currentFile)
-                || "MGI_QTLAllele.rpt".equals(currentFile)) {
-            processPhenotypicAlleles(reader);
+        if ("MGI_PhenotypicAllele.rpt".equals(currentFile)) {
+            processPhenotypicAlleles(reader, false);
+        } else if ("MGI_QTLAllele.rpt".equals(currentFile)) {
+            processPhenotypicAlleles(reader, true);
         } else if ("MGI_PhenoGenoMP.rpt".equals(currentFile)) {
             processGenotypes(reader);
         } else {
@@ -142,7 +143,8 @@ public class MgiAllelesConverter extends BioFileConverter
         return null;
     }
 
-    private void processPhenotypicAlleles(Reader reader) throws ObjectStoreException, IOException {
+    private void processPhenotypicAlleles(Reader reader, boolean isQTLfile)
+        throws ObjectStoreException, IOException {
         if (ontology == null) {
             ontology = createItem("Ontology");
             ontology.setAttribute("name", "Mammalian Phenotype Ontology");
@@ -156,16 +158,27 @@ public class MgiAllelesConverter extends BioFileConverter
             String alleleSymbol = line[1];
             String alleleName = line[2];
 
-            String alleleType = line[3] + ", " + line[4];
-
-
-            String pubmed = line[5];
-            String geneIdentifier = line[6];
-
+            String alleleType = null;
+            String pubmed = null;
+            String geneIdentifier = null;
             String termsStr = null;
-            if (line.length >= 10) {
-                termsStr = line[9];
+
+            if (isQTLfile) {
+                alleleType = line[3];
+                pubmed = line[4];
+                geneIdentifier = line[5];
+                if (line.length >= 9) {
+                    termsStr = line[8];
+                }
+            } else {
+                alleleType = line[3] + ", " + line[4];
+                pubmed = line[5];
+                geneIdentifier = line[6];
+                if (line.length >= 10) {
+                    termsStr = line[9];
+                }
             }
+
 
             // TODO synonyms for alleles?
 
