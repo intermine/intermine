@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2009 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,8 +43,8 @@ public class NcbiGeneConverter extends BioFileConverter
 
     private static final String PROP_FILE = "ncbigene_config.properties";
     private Properties props = new Properties();
-    private Map<String, String> config_xref = new HashMap<String, String>();
-    private Map<String, String> config_prefix = new HashMap<String, String>();
+    private Map<String, String> configXref = new HashMap<String, String>();
+    private Map<String, String> configPrefix = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -69,6 +69,7 @@ public class NcbiGeneConverter extends BioFileConverter
      *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         if (this.taxonIds == null) {
             throw new IllegalArgumentException("No organisms passed to NcbiGeneConverter.");
@@ -78,19 +79,24 @@ public class NcbiGeneConverter extends BioFileConverter
         LOG.info("DUPLICATE symbols: " + parser.findDuplicateSymbols("9606"));
         Map<String, Set<GeneInfoRecord>> records = parser.getGeneInfoRecords();
 
-        // #Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description type_of_gene Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority Nomenclature_status Other_designations Modification_date (tab is used as a separator, pound sign - start of a comment)
+        // #Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location
+        //description type_of_gene
+        //Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority
+        //Nomenclature_status Other_designations Modification_date (tab is used as a separator,
+        //pound sign - start of a comment)
 
         for (String taxonId : records.keySet()) {
             for (GeneInfoRecord record : records.get(taxonId)) {
-                // gene type - http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/entrezgene/entrezgene.asn
+                // gene type -
+                //http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/
+                //entrezgene/entrezgene.asn
                 if (record.geneType == null) {
                     continue;
                 } else if ("tRNA".equals(record.geneType)
                         || "protein-coding".equals(record.geneType)
                         || "miscRNA".equals(record.geneType)
                         || "rRNA".equals(record.geneType)) { // ecolimine case
-
-                     createGeneByTaxonId(taxonId, record, parser);
+                    createGeneByTaxonId(taxonId, record, parser);
                 }
             }
         }
@@ -103,12 +109,12 @@ public class NcbiGeneConverter extends BioFileConverter
         createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
 
         // primaryIdentifier
-        if (record.xrefs.get(config_xref.get(taxonId)) != null) {
+        if (record.xrefs.get(configXref.get(taxonId)) != null) {
             gene.setAttribute(
                     "primaryIdentifier",
-                    (config_prefix.get(taxonId) != null ? config_prefix
+                    (configPrefix.get(taxonId) != null ? configPrefix
                             .get(taxonId) : "")
-                            + record.xrefs.get(config_xref.get(taxonId))
+                            + record.xrefs.get(configXref.get(taxonId))
                                     .iterator().next());
         } else {
             gene.setAttribute("primaryIdentifier", record.entrez);
@@ -118,8 +124,8 @@ public class NcbiGeneConverter extends BioFileConverter
         if (record.officialSymbol != null) {
             gene.setAttribute("symbol", record.officialSymbol);
             // if NCBI symbol is different add it as a synonym
-            if (record.defaultSymbol != null &&
-                    !record.officialSymbol.equals(record.defaultSymbol)) {
+            if (record.defaultSymbol != null
+                    && !record.officialSymbol.equals(record.defaultSymbol)) {
                 createSynonym(gene, record.defaultSymbol, true);
                 LOG.info("GENE official symbol " + record.officialSymbol
                         + " does not match " + record.defaultSymbol);
@@ -142,8 +148,8 @@ public class NcbiGeneConverter extends BioFileConverter
         // name
         if (record.officialName != null) {
             gene.setAttribute("name", record.officialName);
-            if (record.defaultName != null &&
-                    !record.officialName.equals(record.defaultName)) {
+            if (record.defaultName != null
+                    && !record.officialName.equals(record.defaultName)) {
                 createSynonym(gene, record.defaultName, true);
             }
         } else if (record.defaultName != null) {
@@ -197,9 +203,9 @@ public class NcbiGeneConverter extends BioFileConverter
 
             String taxonId = attributes[0];
             if ("xref".equals(attributes[1])) {
-                config_xref.put(taxonId, value);
+                configXref.put(taxonId, value);
             } else if ("prefix".equals(attributes[1])) {
-                config_prefix.put(taxonId, value);
+                configPrefix.put(taxonId, value);
             }
 
         }

@@ -77,8 +77,6 @@ public class UniprotConverter extends BioDirectoryConverter
     protected IdResolver rslv;
     private static final String FLY = "7227";
     private String datasourceRefId = null;
-    @SuppressWarnings("unused")
-    private OrganismRepository or;
     private static final Map<String, String> GENE_PREFIXES = new HashMap<String, String>();
 
     /**
@@ -88,7 +86,7 @@ public class UniprotConverter extends BioDirectoryConverter
      */
     public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model, "UniProt", "Swiss-Prot data set");
-        or = OrganismRepository.getOrganismRepository();
+        OrganismRepository.getOrganismRepository();
     }
 
     static {
@@ -867,7 +865,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processDbrefs(Item protein, UniprotEntry uniprotEntry)
-            throws SAXException, ObjectStoreException {
+            throws ObjectStoreException {
             Map<String, Set<String>> dbrefs = uniprotEntry.getDbrefs();
             for (Map.Entry<String, Set<String>> dbref : dbrefs.entrySet()) {
                 String key = dbref.getKey();
@@ -1311,7 +1309,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param name the attribute to fetch
      * @return attValue
      */
-    private String getAttrValue(Attributes attrs, String name) {
+    private static String getAttrValue(Attributes attrs, String name) {
         if (attrs.getValue(name) != null) {
             return attrs.getValue(name).trim();
         }
