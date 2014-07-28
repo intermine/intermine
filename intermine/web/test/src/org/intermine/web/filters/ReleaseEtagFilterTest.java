@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
