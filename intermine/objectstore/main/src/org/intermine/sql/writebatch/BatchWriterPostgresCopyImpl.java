@@ -51,8 +51,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
                 CopyManager copyManager = null;
-                if (con instanceof PGConnection) {
-                    copyManager = ((PGConnection) con).getCopyAPI();
+                if (con.isWrapperFor(PGConnection.class)) {
+                    copyManager = con.unwrap(PGConnection.class).getCopyAPI();
                 }
                 if (copyManager == null) {
                     LOG.warn("Database with Connection " + con.getClass().getName()
@@ -201,8 +201,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         if (!table.getRowsToInsert().isEmpty()) {
             try {
                 CopyManager copyManager = null;
-                if (con instanceof PGConnection) {
-                    copyManager = ((PGConnection) con).getCopyAPI();
+                if (con.isWrapperFor(PGConnection.class)) {
+                    copyManager = con.unwrap(PGConnection.class).getCopyAPI();
                 }
                 if (copyManager == null) {
                     LOG.warn("Database is incompatible with the PostgreSQL COPY command - falling"
