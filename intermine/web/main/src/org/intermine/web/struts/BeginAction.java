@@ -56,6 +56,8 @@ public class BeginAction extends InterMineAction
      */
     private static LinkedHashMap<String, HashMap<String, Object>> bagOfTabs;
 
+    private static final String GALAXY_KEY = "GALAXY_KEY";
+
      /**
      * Either display the query builder or redirect to project.sitePrefix.
      *
@@ -88,26 +90,7 @@ public class BeginAction extends InterMineAction
         // if user was just building a template, remove.  See #2619
         session.removeAttribute(Constants.NEW_TEMPLATE);
 
-        // If GALAXY_URL is sent from a Galaxy server, then save it in the session; if not, read
-        // the default value from web.properties and save it in the session
-        if ("false".equals(properties.getProperty("galaxy.display"))) {
-            if (request.getParameter("GALAXY_URL") != null) {
-                String disabledMsg = properties.getProperty("galaxy.disabledMessage");
-                SessionMethods.recordError(disabledMsg, session);
-            }
-        } else {
-            if (request.getParameter("GALAXY_URL") != null) {
-                request.getSession().setAttribute("GALAXY_URL",
-                        request.getParameter("GALAXY_URL"));
-                String welcomeMsg = properties.getProperty("galaxy.welcomeMessage");
-                SessionMethods.recordMessage(welcomeMsg, session);
-            } else {
-                request.getSession().setAttribute(
-                        "GALAXY_URL",
-                        properties.getProperty("galaxy.baseurl.default")
-                                + properties.getProperty("galaxy.url.value"));
-            }
-        }
+        rememberThisGalaxy(request, session, properties);
 
         List<ApiTemplate> templates = null;
 
@@ -193,6 +176,28 @@ public class BeginAction extends InterMineAction
         }
 
         return mapping.findForward("begin");
+    }
+
+    private void rememberThisGalaxy(HttpServletRequest request,
+            HttpSession session, Properties properties) {
+        String galaxyUrl = request.getParameter(GALAXY_KEY);
+        if ("false".equals(properties.getProperty("galaxy.display"))) {
+            if (galaxyUrl != null) {
+                String disabledMsg = properties.getProperty("galaxy.disabledMessage");
+                SessionMethods.recordError(disabledMsg, session);
+            }
+        } else {
+            if (galaxyUrl != null) {
+                session.setAttribute(GALAXY_KEY, galaxyUrl);
+                String welcomeMsg = properties.getProperty("galaxy.welcomeMessage");
+                SessionMethods.recordMessage(welcomeMsg, session);
+            } else {
+                String defaultGalaxy =
+                        properties.getProperty("galaxy.baseurl.default")
+                        + properties.getProperty("galaxy.url.value");
+                session.setAttribute(GALAXY_KEY, defaultGalaxy);
+            }
+        }
     }
 
     /**
