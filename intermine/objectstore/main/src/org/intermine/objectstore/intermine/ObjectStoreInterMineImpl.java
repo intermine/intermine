@@ -745,6 +745,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     }
                     ResultsBatches batch = getResultsBatches(batches, batchSize);
                     if (batch != null) {
+                        // We've executed this query before but with a different batch size, we may
+                        // be able to use the rows from previous batches to seed a new Results. This
+                        // is here because running a query in the webapp and exporting use different
+                        // batch sizes, this way we avoid re-executing queries that have results
+                        // already in cache.
                         retval = new Results(batch, optimise, explain, prefetch);
                     } else {
                         retval = super.execute(q, batchSize, optimise, explain, prefetch);
