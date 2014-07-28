@@ -55,7 +55,8 @@
 <script type="text/javascript">
 jQuery(function() {
     intermine.css.headerIcon = "fm-header-icon";
-    intermine.options.GalaxyCurrent = "${GALAXY_URL}";
+    var customGalaxy = "${GALAXY_URL}";
+    if (customGalaxy) intermine.options.GalaxyCurrent = customGalaxy;
     var opts = {
         type: 'table',
         service: $SERVICE,
