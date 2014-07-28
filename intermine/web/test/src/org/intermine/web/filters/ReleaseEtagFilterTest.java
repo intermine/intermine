@@ -24,11 +24,13 @@ public class ReleaseEtagFilterTest {
     private HttpServletResponse resp;
     private FilterChain chain;
     private Properties webProperties;
+    private String release;
 
     @Before
     public void setup() {
         webProperties = new Properties();
         webProperties.setProperty("project.releaseVersion", "testing");
+        release = "testing-" + String.valueOf(org.intermine.web.logic.Constants.WEB_SERVICE_VERSION);
         InterMineContext.initilise(
                 createMock(InterMineAPI.class),
                 webProperties,
@@ -43,7 +45,7 @@ public class ReleaseEtagFilterTest {
         filter = new ReleaseEtagFilter();
         expect(req.getHeader("If-None-Match")).andReturn("foo");
         expect(req.getDateHeader("If-Modified-Since")).andReturn(-1L);
-        resp.setHeader("ETag", "testing-" + Constants.WEB_SERVICE_VERSION);
+        resp.setHeader("ETag", release);
         resp.setHeader("Cache-Control", "public,max-age=600");
         resp.setDateHeader("Last-Modified", ReleaseEtagFilter.START_UP.getTime());
 
@@ -55,7 +57,7 @@ public class ReleaseEtagFilterTest {
     @Test
     public void testCacheHit() throws IOException, ServletException {
         filter = new ReleaseEtagFilter();
-        expect(req.getHeader("If-None-Match")).andReturn("testing-" + Constants.WEB_SERVICE_VERSION);
+        expect(req.getHeader("If-None-Match")).andReturn(release);
         expect(req.getDateHeader("If-Modified-Since")).andReturn(-1L);
         resp.setStatus(304);
 
@@ -67,7 +69,7 @@ public class ReleaseEtagFilterTest {
     @Test
     public void testCacheHitGzip() throws IOException, ServletException {
         filter = new ReleaseEtagFilter();
-        expect(req.getHeader("If-None-Match")).andReturn("testing-" + Constants.WEB_SERVICE_VERSION + "-gzip");
+        expect(req.getHeader("If-None-Match")).andReturn(release + "-gzip");
         expect(req.getDateHeader("If-Modified-Since")).andReturn(-1L);
         resp.setStatus(304);
 
