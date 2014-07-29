@@ -33,7 +33,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -126,6 +126,7 @@ public class CalculateLocations
             this.number = number;
         }
 
+        @Override
         public int compareTo(Object o) {
             int retval = ((SortElement) o).number - number;
             if (retval == 0) {
@@ -134,6 +135,7 @@ public class CalculateLocations
             return retval;
         }
 
+        @Override
         public String toString() {
             return number + " overlap" + (number == 1 ? "" : "s") + " for " + text;
         }
@@ -610,6 +612,7 @@ public class CalculateLocations
          * @see Object#toString()
          * @return String representation of location object
          */
+        @Override
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start
                 + " end " + end + " strand " + strand;

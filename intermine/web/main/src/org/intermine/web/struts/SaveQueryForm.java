@@ -56,8 +56,7 @@ public class SaveQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 HttpServletRequest request) {
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         Map<String, SavedQuery> savedQueries = profile.getSavedQueries();
@@ -85,8 +84,7 @@ public class SaveQueryForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         queryName = "";
     }
 }

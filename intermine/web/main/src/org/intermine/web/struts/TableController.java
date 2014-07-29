@@ -10,39 +10,19 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryResult;
-import org.intermine.api.results.Column;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.session.SessionMethods;
-import org.stringtree.json.JSONWriter;
 
 /**
  * Implementation of <strong>TilesAction</strong>. Sets up PagedTable
@@ -52,7 +32,6 @@ import org.stringtree.json.JSONWriter;
  */
 public class TableController extends TilesAction
 {
-    private static final Logger LOG = Logger.getLogger(TableController.class);
 
     /**
      * Set up table tile.

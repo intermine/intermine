@@ -12,11 +12,9 @@ package org.intermine.webservice.server;
 
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.lowerCase;
-import static org.intermine.util.StringUtil.trimSlashes;
+import static org.intermine.metadata.StringUtil.trimSlashes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +91,7 @@ public class VersionService extends JSONService
     protected boolean canServe(Format format) {
         return format == Format.JSON
             || format == Format.HTML
-            || format == Format.TEXT; 
+            || format == Format.TEXT;
     }
 
 }

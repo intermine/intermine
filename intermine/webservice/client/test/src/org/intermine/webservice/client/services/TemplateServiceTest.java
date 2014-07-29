@@ -40,8 +40,8 @@ public class TemplateServiceTest extends TestCase
         service.setExpectedRequest(HOST + PATH + "?" + "format=xml" + "&"
                 + "value3=60&value4=true&value1=EmployeeA&value2=10"
                 + "&constraint2=Employee.age&op1=contains"
-                + "&op2=gt&constraint1=Employee.name&constraint4=Employee.fullTime"
-                + "&op3=lt&constraint3=Employee.age&op4=eq"
+                + "&op2=gt&constraint1=Employee.name&op3=lt&constraint4=Employee.fullTime"
+                + "&constraint3=Employee.age&op4=eq"
                 + "&start=0"
                 + "&name=fourConstraints&code2=B&code3=C");
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();

@@ -10,17 +10,20 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import org.intermine.web.logic.export.RowFormatter;
 import org.intermine.web.logic.export.RowFormatterImpl;
 
 /**
  * Formats data to comma separated data format.
  *
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  **/
 public class CSVFormatter extends FlatFileFormatter
 {
-	public CSVFormatter() {
-		setRowFormatter(new RowFormatterImpl(",", true));
-	}
+    /**
+     * Construct a CSV formatter.
+     */
+    public CSVFormatter() {
+        setRowFormatter(new RowFormatterImpl(",", true));
+    }
 }

@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
-import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Class representing the input to a list creation request.
@@ -34,6 +33,7 @@ public class ListCreationInput extends ListInput
      * Constructor.
      * @param request The request we are responding to.
      * @param bagManager The manager for requesting bags from.
+     * @param profile The profile of the the current user.
      */
     public ListCreationInput(HttpServletRequest request, BagManager bagManager, Profile profile) {
         super(request, bagManager, profile);
@@ -41,13 +41,17 @@ public class ListCreationInput extends ListInput
         this.populateNormedList(this.addIssues, "add");
     }
 
-    /** Return the set of issue types the user wants to add. **/
+    /** @return the set of issue types the user wants to add. **/
     public Collection<String> getAddIssues() {
         // Return a subclass of set that does case insensitive matching.
         return new HashSet<String>(this.addIssues) {
+            private static final long serialVersionUID = -3419390541449198412L;
+
             public boolean contains(Object o) {
                 if (o instanceof String) {
-                    if (super.contains(":all")) return true;
+                    if (super.contains(":all")) {
+                        return true;
+                    }
                     return super.contains(String.valueOf(o).toLowerCase());
                 }
                 return super.contains(o);

@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.template;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.PrintWriter;
 import java.util.Arrays;
 
@@ -13,13 +23,18 @@ import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
 
-public class SingleTemplateService extends JSONService {
+/**
+ * Service that responds with a single template.
+ * @author Alex Kalderimis
+ */
+public class SingleTemplateService extends JSONService
+{
 
+    /** @param im The InterMine state object **/
     public SingleTemplateService(InterMineAPI im) {
         super(im);
     }
@@ -27,11 +42,11 @@ public class SingleTemplateService extends JSONService {
     @Override
     protected boolean canServe(Format format) {
         switch (format) {
-        case XML:
-        case JSON:
-            return true;
-        default:
-            return false;
+            case XML:
+            case JSON:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -42,7 +57,7 @@ public class SingleTemplateService extends JSONService {
     }
 
     @Override
-    protected void execute() throws ServiceException {
+    protected void execute() {
         String name = StringUtils.defaultString(request.getPathInfo(), "");
         name = name.replaceAll("^/", "");
         if (StringUtils.isBlank(name)) {

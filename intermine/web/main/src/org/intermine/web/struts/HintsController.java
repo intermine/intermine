@@ -60,16 +60,15 @@ public class HintsController extends TilesAction
         WebState webState = SessionMethods.getWebState(request.getSession());
 
         String pageName = (String) context.getAttribute("pageName");
-
         ActionMessages actionErrors = getErrors(request);
         ActionMessages actionMessages = getMessages(request);
         // Ticket #2449 - hide hints if messages are on a page
         if (actionErrors.isEmpty() && actionMessages.isEmpty()) {
-	        HintManager hintManager = HintManager.getInstance(webProperties);
-	        String hint = hintManager.getHintForPage(pageName, webState);
-	        if (hint != null) {
-	            request.setAttribute("hint", hint);
-	        }
+            HintManager hintManager = HintManager.getInstance(webProperties);
+            String hint = hintManager.getHintForPage(pageName, webState);
+            if (hint != null) {
+                request.setAttribute("hint", hint);
+            }
         }
 
         return null;

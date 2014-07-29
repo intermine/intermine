@@ -37,6 +37,7 @@ public class QueryResultRequestParser extends QueryRequestParser
     /**
      * RequestProcessor constructor.
      * @param request request
+     * @param queryStore A place to lookup qids in.
      */
     public QueryResultRequestParser(QueryStore queryStore, HttpServletRequest request) {
         super(queryStore, request);

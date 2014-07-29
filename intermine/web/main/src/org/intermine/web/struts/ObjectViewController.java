@@ -72,7 +72,7 @@ public class ObjectViewController extends TilesAction
         FieldConfig fc = webConfig.getFieldConfig(clsName, fieldName);
 
         // truncate fields by default, unless it says otherwise in config
-	// escape xml/html by default, unless it says otherwise in config
+        // escape xml/html by default, unless it says otherwise in config
         boolean doNotTruncate = false;
         boolean escapeXml = true;
         if (fc != null) {

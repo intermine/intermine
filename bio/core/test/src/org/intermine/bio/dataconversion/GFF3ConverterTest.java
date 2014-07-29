@@ -28,6 +28,7 @@ import org.intermine.model.fulldata.Item;
  * @author Wenyan Ji
  * @author Richard Smith
  * @author Fengyuan Hu
+ * @author Vivek Krishnakumar
  */
 
 public class GFF3ConverterTest extends ItemsTestCase {
@@ -42,6 +43,7 @@ public class GFF3ConverterTest extends ItemsTestCase {
     String seqClsName = "Chromosome";
     String flyTaxonId = "7227";
     String ratTaxonId = "10116";
+    String thaleTaxonId = "3702";
     String dataSourceName = "UCSC";
     String dataSetTitle = "UCSC data set";
 
@@ -108,31 +110,56 @@ public class GFF3ConverterTest extends ItemsTestCase {
         assertEquals(expected, writer.getItems());
     }
 
+//    /**
+//     * Test RGD
+//     */
+//    public void testRGD() throws Exception {
+//        /* Add to gff_config.properties:
+//            10116.terms=gene, mRNA, Exon, CDS, ThreePrimeUTR, FivePrimeUTR
+//            10116.attributes.ID=primaryIdentifier
+//            10116.gene.attributes.ID=secondaryIdentifier
+//            10116.attributes.Note=description
+//            10116.mRNA.attributes.Type=scoreType
+//            10116.attributes.Dbxref.EntrezGene=ncbiGeneNumber
+//            10116.attributes.Dbxref.EnsemblGenes=synonym
+//        */
+//        Model tgtModel = Model.getInstanceByName("genomic");
+//        converter = new GFF3Converter(writer, seqClsName, ratTaxonId, dataSourceName,
+//                dataSetTitle, tgtModel,
+//                new GFF3RecordHandler(tgtModel), null);
+//        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_rgd.gff")));
+//        converter.parse(srcReader);
+//        converter.storeAll();
+//
+//        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestRGD.xml"));
+//
+//        // uncomment to write out a new target items file
+//        writeItemsFile(writer.getItems(), "gff_rgd_test.xml");
+//
+//        assertEquals(expected, writer.getItems());
+//    }
+
     /**
-     * Test RGD
+     * Test GFF3 Excludes
      */
-    public void testRGD() throws Exception {
+    public void testExcludes() throws Exception {
         /* Add to gff_config.properties:
-            10116.terms=gene, mRNA, Exon, CDS, ThreePrimeUTR, FivePrimeUTR
-            10116.attributes.ID=primaryIdentifier
-            10116.gene.attributes.ID=secondaryIdentifier
-            10116.attributes.Note=description
-            10116.mRNA.attributes.Type=scoreType
-            10116.attributes.Dbxref.EntrezGene=ncbiGeneNumber
-            10116.attributes.Dbxref.EnsemblGenes=synonym
+            3702.excludes=CDS
+            3702.attributes.symbol=symbol
+            3702.attributes.Note=briefDescription
         */
         Model tgtModel = Model.getInstanceByName("genomic");
-        converter = new GFF3Converter(writer, seqClsName, ratTaxonId, dataSourceName,
+        converter = new GFF3Converter(writer, seqClsName, thaleTaxonId, dataSourceName,
                 dataSetTitle, tgtModel,
                 new GFF3RecordHandler(tgtModel), null);
-        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_rgd.gff")));
+        BufferedReader srcReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("test_excludes.gff")));
         converter.parse(srcReader);
         converter.storeAll();
 
-        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestRGD.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("GFF3ConverterTestExcludes.xml"));
 
         // uncomment to write out a new target items file
-        // writeItemsFile(writer.getItems(), "gff_rgd_test.xml");
+        //writeItemsFile(writer.getItems(), "gff_excludes_test.xml");
 
         assertEquals(expected, writer.getItems());
     }

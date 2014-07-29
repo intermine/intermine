@@ -37,7 +37,7 @@ import org.intermine.api.query.codegen.WebserviceCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaScriptCodeGenerator;
 import org.intermine.api.search.Scope;
 import org.intermine.api.template.TemplatePopulator;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
@@ -52,8 +52,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.util.NameUtil;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
-import org.intermine.util.StringUtil;
-import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
 import org.intermine.web.logic.query.DisplayConstraintFactory;
@@ -150,8 +149,14 @@ public class TemplateAction extends InterMineAction
             }
         }
         if (template == null) {
-            throw new RuntimeException("Could not find a template called "
+            if (editTemplate) {
+                recordMessage(new ActionMessage("errors.edittemplate.empty"),
+                        request);
+                return mapping.findForward("template");
+            } else {
+                throw new RuntimeException("Could not find a template called "
                     + session.getAttribute("templateName"));
+            }
         }
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
                 template, templateFormToTemplateValues(tf, template));
@@ -241,11 +246,6 @@ public class TemplateAction extends InterMineAction
             // Reload the initial template
             session.removeAttribute(Constants.NEW_TEMPLATE);
             session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
-            if (template == null) {
-                recordMessage(new ActionMessage("errors.edittemplate.empty"),
-                        request);
-                return mapping.findForward("template");
-            }
             SessionMethods.loadQuery(template, request.getSession(), response);
             if (!template.isValid()) {
                 recordError(new ActionMessage("errors.template.badtemplate",
@@ -278,11 +278,12 @@ public class TemplateAction extends InterMineAction
             // session.removeAttribute(Constants.QUERY);
         }
 
-        String queryName = NameUtil.findNewQueryName(
-        		profile.getHistory().keySet());
-        SessionMethods.saveQueryToHistory(session, queryName, 
-        		populatedTemplate.getQueryToExecute());
-        
+        String queryName = NameUtil.findNewQueryName(profile.getHistory().keySet());
+        SessionMethods.saveQueryToHistory(
+                session,
+                queryName,
+                populatedTemplate.getQueryToExecute());
+
         return new ForwardParameters(mapping.findForward("results"))
                 .addParameter("trail", trail)
                 .forward();
@@ -300,20 +301,11 @@ public class TemplateAction extends InterMineAction
     }
 
     private boolean wantsWebserviceURL(HttpServletRequest request) {
-        String ws = request.getParameter("actionType");
-        if (ws != null && ws.equalsIgnoreCase("webserviceURL")) {
-            return true;
-        }
-        return false;
+        return "webserviceURL".equals(request.getParameter("actionType"));
     }
 
     private boolean exportTemplate(HttpServletRequest request) {
-        String exportTemplate = request.getParameter("actionType");
-        if (exportTemplate != null
-               && "exportTemplate".equalsIgnoreCase(exportTemplate)) {
-            return true;
-        }
-        return false;
+        return "exportTemplate".equals(request.getParameter("actionType"));
     }
 
     private boolean codeGenTemplate(HttpServletRequest request) {

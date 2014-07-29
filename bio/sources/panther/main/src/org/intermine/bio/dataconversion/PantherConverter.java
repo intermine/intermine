@@ -12,12 +12,10 @@ package org.intermine.bio.dataconversion;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,9 +28,9 @@ import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -54,23 +52,8 @@ public class PantherConverter extends BioFileConverter
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
     private OrganismRepository or;
     private Set<String> databasesNamesToPrepend = new HashSet<String>();
-    private Map<String, Map<String, String>> geneIdPolymorphism =
-            new HashMap<String, Map<String, String>>();
-
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-    // PANTHER publication pubmed ids, refer to http://www.pantherdb.org/publications.jsp
-    private static ArrayList<String> PUBLICATIONS = new ArrayList<String>() {
-        private static final long serialVersionUID = 1L;
-    {
-        add("12520017");
-        add("20015972");
-        add("16912992");
-        add("19597783");
-        add("20534164");
-        add("15492219");
-    }};
-
     private IdResolver rslv;
 
     /**
@@ -134,21 +117,6 @@ public class PantherConverter extends BioFileConverter
                 continue;
             }
 
-            if (key.contains("geneid.polymorphism")) {
-                String[] attributes = key.split("\\.");
-                if (attributes.length == 4) {
-                    String taxonId = attributes[0];
-                    if (geneIdPolymorphism.isEmpty() || geneIdPolymorphism.get(taxonId).isEmpty()) {
-                        Map<String, String> patternMap = new HashMap<String, String>();
-                        patternMap.put(attributes[3].trim(), value);
-                        geneIdPolymorphism.put(taxonId, patternMap);
-                    } else {
-                        geneIdPolymorphism.get(taxonId).put(attributes[3].trim(), value);
-                    }
-                }
-                continue;
-            }
-
             String[] attributes = key.split("\\.");
             if (attributes.length == 0) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
@@ -165,11 +133,14 @@ public class PantherConverter extends BioFileConverter
         if (StringUtils.isEmpty(identifierType)) {
             identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
+        String resolvedGenePid = geneId;
 
-        geneId = parseIdentifier(geneId);
-        String resolvedGenePid = resolveGene(taxonId, geneId);
-        if (resolvedGenePid == null) {
-            return null;
+        // only resolve if fish - TODO put in config file
+        if ("7955".equals(taxonId)) {
+            resolvedGenePid = resolveGene(taxonId, geneId);
+            if (resolvedGenePid == null) {
+                return null;
+            }
         }
 
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
@@ -177,34 +148,9 @@ public class PantherConverter extends BioFileConverter
             Item gene = createItem("Gene");
             gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
 
-            if (geneIdPolymorphism.containsKey(taxonId)) {
-                Map<String, String> patternMap = geneIdPolymorphism.get(taxonId);
-                for (String key : patternMap.keySet()) {
-                    if (geneId.startsWith(key)) {
-                        identifierType = patternMap.get(key);
-                        if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                            if ("crossReferences".equals(identifierType)) {
-                                gene.addToCollection(identifierType,
-                                        createCrossReference(gene.getIdentifier(), geneId,
-                                                DATA_SOURCE_NAME, true));
-                            } else {
-                                gene.setAttribute(identifierType, geneId);
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                    if ("crossReferences".equals(identifierType)) {
-                        gene.addToCollection(identifierType,
-                                createCrossReference(gene.getIdentifier(), geneId,
-                                        DATA_SOURCE_NAME, true));
-                    } else {
-                        gene.setAttribute(identifierType, geneId);
-                    }
-                }
+            if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+                gene.setAttribute(identifierType, geneId);
             }
-
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
             identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
@@ -216,7 +162,7 @@ public class PantherConverter extends BioFileConverter
     private String parseIdentifier(String ident) {
         String[] identifierString = ident.split("=");
         String dbName = identifierString[0];
-        String identifier = identifierString[identifierString.length-1];
+        String identifier = identifierString[identifierString.length - 1];
         if (databasesNamesToPrepend.contains(dbName)) {
             identifier = dbName + ":" + identifier;
         }
@@ -273,9 +219,9 @@ public class PantherConverter extends BioFileConverter
                 continue;
             }
             String type = bits[2];
-            if (TYPES.get(type)== null) {
-            	LOG.warn("Type " + type + " is not recognised, record not loaded.");
-            	continue;
+            if (TYPES.get(type) == null) {
+                LOG.warn("Type " + type + " is not recognised, record not loaded.");
+                continue;
             }
 
             String pantherId = bits[4];
@@ -289,24 +235,24 @@ public class PantherConverter extends BioFileConverter
     }
 
     private void processHomologues(String gene1, String gene2, String type, String pantherId)
-            throws ObjectStoreException {
-            if (gene1 == null || gene2 == null) {
-                return;
-            }
-            Item homologue = createItem("Homologue");
-            homologue.setReference("gene", gene1);
-            homologue.setReference("homologue", gene2);
-            homologue.addToCollection("evidence", getEvidence());
-            if (StringUtils.isEmpty(TYPES.get(type))) {
-            	homologue.setAttribute("type", type);            	
-            } else {
-            	homologue.setAttribute("type", TYPES.get(type));
-            }
-            homologue.addToCollection("crossReferences",
+        throws ObjectStoreException {
+        if (gene1 == null || gene2 == null) {
+            return;
+        }
+        Item homologue = createItem("Homologue");
+        homologue.setReference("gene", gene1);
+        homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", getEvidence());
+        if (StringUtils.isEmpty(TYPES.get(type))) {
+            homologue.setAttribute("type", type);
+        } else {
+            homologue.setAttribute("type", TYPES.get(type));
+        }
+        homologue.addToCollection("crossReferences",
                 createCrossReference(homologue.getIdentifier(), pantherId,
                         DATA_SOURCE_NAME, true));
-            store(homologue);
-        }
+        store(homologue);
+    }
 
     // genes (in taxonIDs) are always processed
     // homologues are only processed if they are of an organism of interest
@@ -346,50 +292,30 @@ public class PantherConverter extends BioFileConverter
 
     private String getEvidence()
         throws ObjectStoreException {
-
         if (evidenceRefId == null) {
-            Item eviCode = createItem("OrthologueEvidenceCode");
-            eviCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
-            eviCode.setAttribute("name", EVIDENCE_CODE_NAME);
+            Item evidenceCode = createItem("OrthologueEvidenceCode");
+            evidenceCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+            evidenceCode.setAttribute("name", EVIDENCE_CODE_NAME);
             try {
-                store(eviCode);
+                store(evidenceCode);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-            String eviCodeRefId = eviCode.getIdentifier();
-
-            List<String> pubRefIds = new ArrayList<String>();
-            for (String pubmed : PUBLICATIONS) {
-                Item pub = createItem("Publication");
-                pub.setAttribute("pubMedId", pubmed);
-                String pubRefId = pub.getIdentifier();
-                pubRefIds.add(pubRefId);
-                try {
-                    store(pub);
-                } catch (ObjectStoreException e) {
-                    throw new ObjectStoreException(e);
-                }
-            }
+            String refId = evidenceCode.getIdentifier();
 
             Item evidence = createItem("OrthologueEvidence");
-            evidence.setReference("evidenceCode", eviCodeRefId);
-            evidence.setCollection("publications", pubRefIds);
+            evidence.setReference("evidenceCode", refId);
             try {
                 store(evidence);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-
             evidenceRefId = evidence.getIdentifier();
         }
         return evidenceRefId;
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        // Human - Ensembl as pid
-        if ("9606".equals(taxonId)) {
-            return identifier;
-        }
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;

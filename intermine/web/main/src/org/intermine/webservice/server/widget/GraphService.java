@@ -11,10 +11,7 @@ package org.intermine.webservice.server.widget;
  */
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -25,17 +22,17 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
+/** @author Alex Kalderimis **/
 public class GraphService extends WidgetService
 {
 
-    private class GraphXMLFormatter extends XMLFormatter {
+    private class GraphXMLFormatter extends XMLFormatter
+    {
 
         @Override
         public String formatResult(List<String> resultRow) {
@@ -45,47 +42,50 @@ public class GraphService extends WidgetService
 
     }
 
+    private final WidgetsRequestParser requestParser;
+
+    /** @param im the InterMine state object **/
     public GraphService(InterMineAPI im) {
         super(im);
+        requestParser = new WidgetsRequestParser();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void execute() throws Exception {
-        GraphInput input = new GraphInput(request);
+        WidgetsServiceInput input = requestParser.getInput(request);
 
-        InterMineBag imBag = retrieveBag(input.list);
+        InterMineBag imBag = retrieveBag(input.getBagName());
         addOutputListInfo(imBag);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
-        WidgetConfig widgetConfig = webConfig.getWidgets().get(input.widget);
+        WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
         if (widgetConfig == null || !(widgetConfig instanceof GraphWidgetConfig)) {
-            throw new ResourceNotFoundException("Could not find a graph widget called \""
-                    + input.widget + "\"");
+            throw new ResourceNotFoundException(
+                    "Could not find a graph widget called \""
+                    + input.getWidgetId() + "\"");
         }
 
         addOutputConfig(widgetConfig);
 
         //filters
         String filterSelectedValue = input.filter;
-        if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
-            String filters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
-            if (filters != null && !"".equals(filters)) {
-                filterSelectedValue = filters.split("\\,")[0];
-            }
+        if (StringUtils.isBlank(filterSelectedValue)) {
+            filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag);
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
         GraphWidget widget = null;
         try {
             widget = (GraphWidget) widgetConfig.getWidget(imBag, null,
-                    im.getObjectStore(), Arrays.asList(filterSelectedValue));
+                    im.getObjectStore(), input);
+            if (filterSelectedValue != null) {
+                widget.setFilter(filterSelectedValue);
+            }
+            widget.process();
         } catch (ClassCastException e) {
-            throw new ResourceNotFoundException("Could not find a graph widget called \""
-                    + input.widget + "\"", e);
-        }
-        if (widget == null) {
-            throw new InternalErrorException("Problem loading widget");
+            throw new ResourceNotFoundException(
+                    "Could not find a graph widget called \""
+                    + input.getWidgetId() + "\"", e);
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputInfo("simplePathQuery", widget.getSimplePathQuery().toJson());
@@ -106,6 +106,7 @@ public class GraphService extends WidgetService
         addOutputAttribute("rangeLabel", graphConfig.getRangeLabel());
     }
 
+    /** @return a widget result processor **/
     protected WidgetResultProcessor getProcessor() {
         if (formatIsJSON()) {
             return GraphJSONProcessor.instance();
@@ -116,28 +117,13 @@ public class GraphService extends WidgetService
         }
     }
 
+    /**
+     * @param out The raw XML output.
+     * @return An output object.
+     */
     protected Output makeXMLOutput(PrintWriter out) {
         ResponseUtil.setXMLHeader(response, "result.xml");
         return new StreamedOutput(out, new GraphXMLFormatter());
-    }
-
-    private static class GraphInput
-    {
-        String filter;
-        final String widget;
-        final String list;
-
-        GraphInput(HttpServletRequest request) {
-            filter = request.getParameter("filter");
-            widget = request.getParameter("widget");
-            list = request.getParameter("list");
-            if (StringUtils.isBlank(list)
-                    || StringUtils.isBlank(widget)) {
-                throw new BadRequestException("The parameters "
-                        + "\"widget\" and \"list\" are required, but "
-                        + "I got " + request.getParameterMap().keySet());
-            }
-        }
     }
 
 }

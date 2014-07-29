@@ -1,12 +1,24 @@
 package org.intermine.webservice.server.jbrowse;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +57,7 @@ public abstract class CommandRunner {
     public static CommandRunner getRunner(String className, InterMineAPI im) {
         CommandRunner runner;
         try {
+            @SuppressWarnings("unchecked")
             Class<CommandRunner> runnerCls = (Class<CommandRunner>) Class.forName(className);
             Constructor<CommandRunner> ctr = runnerCls.getConstructor(InterMineAPI.class);
             runner = ctr.newInstance(im);

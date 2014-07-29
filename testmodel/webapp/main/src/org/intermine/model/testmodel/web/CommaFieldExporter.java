@@ -39,7 +39,7 @@ public class CommaFieldExporter implements FieldExporter
      * @throws ExportException if the application business logic throws an exception
      */
     public void exportField(InterMineObject o, String fieldName,
-            @SuppressWarnings("unused") ObjectStore os,
+            ObjectStore os,
             HttpServletResponse response) throws ExportException {
         try {
             response.setContentType("text/plain");

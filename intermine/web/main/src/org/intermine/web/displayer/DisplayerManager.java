@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.config.WebConfig;
 

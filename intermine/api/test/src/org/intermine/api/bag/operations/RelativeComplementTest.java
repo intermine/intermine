@@ -9,7 +9,7 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.DynamicUtil;
 
-public class RelativeComplementTest extends BagOperationTest {
+public class RelativeComplementTest extends AbstractBagOperationTestCase {
 
     public RelativeComplementTest(String arg) {
         super(arg);

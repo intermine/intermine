@@ -64,7 +64,8 @@ public class TemplateResultService extends QueryResultService
         template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         if (template == null) {
             throw new ResourceNotFoundException(
-                "You do not have access to a template called '" + input.getName() + "' in this mine.");
+                "You do not have access to a template called '"
+                        + input.getName() + "' in this mine.");
         }
 
         Map<String, List<TemplateValue>> templateValues;

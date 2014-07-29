@@ -84,7 +84,7 @@ public class GeneInfoRecord
         return ids;
     }
 
-    private String filter(String s) {
+    private static String filter(String s) {
         if (!StringUtils.isBlank(s)) {
             if (!"-".equals(s)) {
                 return s;

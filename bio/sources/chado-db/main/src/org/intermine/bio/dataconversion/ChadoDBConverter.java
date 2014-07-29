@@ -29,7 +29,7 @@ import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 /**
  * DataConverter to read from a Chado database into items

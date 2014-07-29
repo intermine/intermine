@@ -35,11 +35,10 @@
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
-
-    <source name="human-gene" type="human-gene">
-      <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
-    </source>
-
+<source name="ncbi-gene" type="ncbi-gene">
+     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
+     <property name="organisms" value="9606"/>
+</source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
@@ -119,11 +118,13 @@
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/micklem/data/flymine/anoph-expr/reporter_gene_mappingFile.txt"/>
     </source>
+<!--
     <source name="anoest" type="anoest">
       <property name="dataSourceName" value="VectorBase"/>
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
+-->
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
@@ -575,6 +576,7 @@
       <property name="orthodb.organisms" value="7227 6239 9606 10090 10116 7955"/>
     </source>
 -->
+
    <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
@@ -609,7 +611,7 @@
   </sources>
 
   <post-processing>
-    <post-process name="populate-child-features"/>
+
     <post-process name="create-utr-references"/>
     <post-process name="populate-located-features"/>
     <post-process name="create-references" />
@@ -618,7 +620,7 @@
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
-
+    <post-process name="populate-child-features"/>
     <post-process name="create-overlap-relations-flymine" dump="true"/>
     <post-process name="do-sources" />
     <post-process name="create-intron-features">

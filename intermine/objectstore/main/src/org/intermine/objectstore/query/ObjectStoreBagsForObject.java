@@ -11,7 +11,8 @@ package org.intermine.objectstore.query;
  */
 
 import java.util.Collection;
-import org.intermine.util.Util;
+
+import org.intermine.metadata.Util;
 
 /**
  * Object representing a query to fetch ObjectStoreBag IDs for ObjectStoreBags that contain a

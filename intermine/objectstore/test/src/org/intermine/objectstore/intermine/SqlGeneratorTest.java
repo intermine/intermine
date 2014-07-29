@@ -36,7 +36,7 @@ import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
@@ -380,7 +380,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("ObjectStoreBagQueryClass", NO_RESULT);
         results.put("OrderDescending", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id DESC");
         results2.put("OrderDescending", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
-        results.put("ObjectStoreBagCombination", "SELECT DISTINCT value AS a1_ FROM osbag_int WHERE bagid IN (5, 6) ORDER BY value");
+        results.put("ObjectStoreBagCombination", "SELECT DISTINCT value AS a1_ FROM osbag_int WHERE bagid IN (5, 6)");
         results2.put("ObjectStoreBagCombination", Collections.singleton("osbag_int"));
         results.put("ObjectStoreBagCombination2", "SELECT value AS a1_ FROM osbag_int WHERE bagid = 5 INTERSECT SELECT value AS a1_ FROM osbag_int WHERE bagid = 6 ORDER BY a1_");
         results2.put("ObjectStoreBagCombination2", Collections.singleton("osbag_int"));

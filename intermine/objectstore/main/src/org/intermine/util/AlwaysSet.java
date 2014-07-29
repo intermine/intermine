@@ -39,6 +39,7 @@ public final class AlwaysSet<E> extends PseudoSet<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean contains(@SuppressWarnings("unused") Object o) {
         return true;
     }

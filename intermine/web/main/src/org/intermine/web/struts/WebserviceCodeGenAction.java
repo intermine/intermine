@@ -140,7 +140,8 @@ public class WebserviceCodeGenAction extends InterMineAction
         String scope = request.getParameter("scope");
         String originalTemplate = request.getParameter("originalTemplate");
 
-        TemplateManager templateManager = SessionMethods.getInterMineAPI(request).getTemplateManager();
+        TemplateManager templateManager =
+                SessionMethods.getInterMineAPI(request).getTemplateManager();
         if (name == null) {
             throw new IllegalArgumentException("Cannot find a template in context "
                                                    + scope);

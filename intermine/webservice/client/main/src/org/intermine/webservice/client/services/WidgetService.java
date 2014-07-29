@@ -160,10 +160,12 @@ public class WidgetService extends Service
             targets.add(targetArray.getString(i));
         }
         List<String> filters = new LinkedList<String>();
-        JSONArray filterArray = json.getJSONArray("filters");
-        length = filterArray.length();
-        for (int i = 0; i < length; i++) {
-            filters.add(filterArray.getString(i));
+        JSONArray filterArray = json.optJSONArray("filters");
+        if (filterArray != null) {
+            length = filterArray.length();
+            for (int i = 0; i < length; i++) {
+                filters.add(filterArray.getString(i));
+            }
         }
         JSONObject labels = json.optJSONObject("labels");
         String xLabel = labels == null ? null : labels.getString("x");

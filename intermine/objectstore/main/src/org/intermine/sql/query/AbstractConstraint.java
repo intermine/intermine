@@ -10,8 +10,9 @@ package org.intermine.sql.query;
  *
  */
 
-import org.intermine.util.IdentityMap;
 import java.util.Map;
+
+import org.intermine.util.IdentityMap;
 
 /**
  * An abstract representation of an item that can be present in the WHERE or HAVING

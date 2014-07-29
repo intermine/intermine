@@ -25,17 +25,11 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.BadTemplateException;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.util.NameUtil;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Imports templates in XML format.
@@ -81,13 +75,13 @@ public class TemplatesImportAction extends InterMineAction
                 if (!templateName.equals(updatedName)) {
                     apiTemplate = renameTemplate(updatedName, apiTemplate);
                 }
-                if (template.validateLookupConstraints() &&
-                    !template.getEditableConstraints().isEmpty()) {
+                if (template.validateLookupConstraints()
+                        && !template.getEditableConstraints().isEmpty()) {
                     try {
                         profile.saveTemplate(apiTemplate.getName(), apiTemplate);
                     } catch (BadTemplateException bte) {
-                       validTemplate = false;
-                       continue;
+                        validTemplate = false;
+                        continue;
                     }
                     imported++;
                 } else {

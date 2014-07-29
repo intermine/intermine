@@ -19,6 +19,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.widget.TableWidget;
+import org.intermine.web.logic.widget.WidgetOptions;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
@@ -176,8 +177,11 @@ public class TableWidgetConfig extends WidgetConfig
     /**
      * {@inheritDoc}
      */
-    public TableWidget getWidget(InterMineBag imBag, InterMineBag populationBag, ObjectStore os,
-                                 List<String> selectedExtraAttribute) {
+    public TableWidget getWidget(
+            InterMineBag imBag,
+            InterMineBag populationBag,
+            ObjectStore os,
+            WidgetOptions options) {
         return new TableWidget(this, imBag, os);
     }
 

@@ -12,9 +12,8 @@ package org.intermine.task;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;

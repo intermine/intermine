@@ -11,6 +11,9 @@ package org.intermine.web.logic.pathqueryresult;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,7 +25,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -35,11 +38,12 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+
+import static org.intermine.web.logic.config.FieldConfigHelper.getClassFieldConfigs;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -48,6 +52,11 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public final class PathQueryResultHelper
 {
+
+    private static class UnconfiguredException extends Exception
+    {
+    }
+
     private PathQueryResultHelper() {
         //disable external instantiation
     }
@@ -70,7 +79,7 @@ public final class PathQueryResultHelper
         String prefix = startingPath;
         List<String> view = new ArrayList<String>();
         ClassDescriptor cld = model.getClassDescriptorByName(type);
-        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+        List<FieldConfig> fieldConfigs = getClassFieldConfigs(webConfig, cld);
         if (!StringUtils.isEmpty(prefix)) {
             try {
                 // we can't add a subclass constraint, type must be same as the end of the prefix
@@ -114,52 +123,102 @@ public final class PathQueryResultHelper
 
     /**
      * Return a list of string paths that are defined as WebConfig to be shown in results.  This
-     * will include attributes of the given class and follow references. 
+     * will include attributes of the given class and follow references.
      *
      * @param type the class name to create a view for
      * @param model the model
      * @param webConfig we configuration
      * @return the configured view paths for the class
      */
-    public static List<String> getDefaultViewForClass(String type, Model model, WebConfig webConfig) {
-        List<String> view = new ArrayList<String>();
+    public static List<String> getDefaultViewForClass(
+            String type,
+            Model model,
+            WebConfig webConfig) {
         ClassDescriptor cld = model.getClassDescriptorByName(type);
-        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
-
-        for (FieldConfig fieldConfig : fieldConfigs) {
-            String relPath = fieldConfig.getFieldExpr();
-            // only add attributes, don't follow references, following references can be problematic
-            // when subclasses get involved.
-            if (fieldConfig.getShowInResults()) {
-                try {
-                    Path path = new Path(model, type + "." + relPath);
-                    // add references
-                    if (path.isRootPath() || path.endIsReference() ) {
-                        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, path.getEndClassDescriptor())) {
-                            Path pathToAdd =  new Path(model, path.toStringNoConstraints() + "." + fc.getFieldExpr());
-                            if (pathToAdd.endIsAttribute()
-                                    && (!view.contains(pathToAdd.getNoConstraintsString()))
-                                    && (fc.getDisplayer() == null && fc.getShowInSummary())) {
-                                view.add(pathToAdd.getNoConstraintsString());
-                            }
-                        }
-                    // add collections
-                    } else if (!path.endIsCollection()) {
-                        view.add(path.getNoConstraintsString());
-                    }
-                } catch (PathException e) {
-                    LOG.error("Invalid path configured in webconfig for class: " + type);
-                }
-            }
+        if (cld == null) {
+            throw new IllegalArgumentException(type + " is not in the data model");
         }
-        if (view.size() == 0) {
-            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-                if (!"id".equals(att.getName())) {
-                    view.add(type + "." + att.getName());
-                }
+
+        try {
+            return getConfiguredView(cld, webConfig);
+        } catch (UnconfiguredException e) {
+            return getAttributeView(cld);
+        }
+    }
+
+    private static List<String> getAttributeView(ClassDescriptor cld) {
+        List<String> view = new ArrayList<String>();
+        String basePath = cld.getUnqualifiedName() + ".";
+        for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+            if (!"id".equals(att.getName())) {
+                view.add(basePath + att.getName());
             }
         }
         return view;
+    }
+
+    /**
+     * Get the view as configured in the webconfig. Guarantees to return a non-empty non-null list.
+     * @param type The type we are trying to get a view for.
+     * @param model The data model
+     * @param webConfig The web-configuration.
+     * @param fieldConfigs
+     * @return The list of paths that we can use to construct a query.
+     * @throws UnconfiguredException if the class has not configured view.
+     */
+    private static List<String> getConfiguredView(
+            ClassDescriptor cld,
+            WebConfig webConfig)
+        throws UnconfiguredException {
+        Collection<String> view = new LinkedHashSet<String>(); // Preserve order and uniqueness.
+        Model m = cld.getModel();
+        for (FieldConfig fieldConfig : resultConfigs(webConfig, cld)) {
+            try {
+                Path p = new Path(m, cld.getUnqualifiedName() + "." + fieldConfig.getFieldExpr());
+                // add subpaths of references and roots, attrs themselves, ignore collections.
+                if (p.isRootPath() || p.endIsReference()) {
+                    view.addAll(getSubview(webConfig, m, p));
+                } else if (p.endIsAttribute()) {
+                    view.add(p.getNoConstraintsString());
+                }
+            } catch (PathException e) {
+                LOG.error("Invalid path configured in webconfig for class: " + cld);
+            }
+        }
+        if (view.isEmpty()) {
+            throw new UnconfiguredException();
+        }
+        return new ArrayList<String>(view);
+    }
+
+    private static List<String> getSubview(WebConfig webConfig, Model m,
+            Path path) throws PathException {
+        List<String> subview = new ArrayList<String>();
+        String basePath = path.toStringNoConstraints() + ".";
+        List<FieldConfig> subconfs =
+                getClassFieldConfigs(webConfig, path.getEndClassDescriptor());
+        for (FieldConfig fc : subconfs) {
+            String pathString = basePath + fc.getFieldExpr();
+            Path pathToAdd = new Path(m, pathString);
+            if (pathToAdd.endIsAttribute()
+                    && (fc.getDisplayer() == null && fc.getShowInSummary())) {
+                subview.add(pathToAdd.getNoConstraintsString());
+            }
+        }
+        return subview;
+    }
+
+    // In a future Java8 world, this should produce a Stream<FieldConfig>, to avoid the double loop.
+    private static Collection<FieldConfig> resultConfigs(WebConfig webConfig, ClassDescriptor cld) {
+        final List<FieldConfig> fieldConfigs = getClassFieldConfigs(webConfig, cld);
+        Iterator<FieldConfig> it = fieldConfigs.iterator();
+        while (it.hasNext()) {
+            FieldConfig f = it.next();
+            if (!f.getShowInResults()) {
+                it.remove();
+            }
+        }
+        return fieldConfigs;
     }
 
     /**
@@ -302,7 +361,7 @@ public final class PathQueryResultHelper
         String prefix = fieldType;
         PathQuery query = new PathQuery(model);
         ClassDescriptor cld = model.getClassDescriptorByName(objType);
-        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+        List<FieldConfig> fieldConfigs = getClassFieldConfigs(webConfig, cld);
 
         if (!StringUtils.isBlank(prefix)) {
             try {

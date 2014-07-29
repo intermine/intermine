@@ -26,7 +26,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -104,12 +104,12 @@ public class BagUploadConfirmAction extends InterMineAction
             if (bagToUpgrade == null) {
                 recordError(new ActionMessage("bagUploadConfirm.notFound"), request);
                 return mapping.findForward("error");
-            }       
+            }
             bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
         }
         confirmForm.reset(mapping, request);
-        
+
         ForwardParameters forwardParameters = new ForwardParameters(
                 mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);

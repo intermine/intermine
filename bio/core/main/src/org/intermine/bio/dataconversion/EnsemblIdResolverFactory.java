@@ -40,7 +40,6 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
 
     /**
      * Construct without SO term of the feature type.
-     * @param soTerm the feature type to resolve
      */
     public EnsemblIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -52,13 +51,12 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 && resolver.hasTaxonAndClassName(taxonId, this.clsCol
                         .iterator().next())) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) {
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 
@@ -80,7 +78,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f);
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
                 }
@@ -90,6 +88,12 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Populate the ID resolver from a tab delimited file
+     *
+     * @param f the file
+     * @throws IOException if we can't read from the file
+     */
     protected void createFromFile(File f) throws IOException {
 
         Set<String> validChromosomes = validChromosomes();
@@ -107,7 +111,11 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         }
     }
 
-    protected Set<String> validChromosomes() {
+    /**
+     * Get a set of valid chromosome identifiers for human as we want to ignore other data types
+     * @return a set of strings
+     */
+    protected static Set<String> validChromosomes() {
         Set<String> chrs = new HashSet<String>();
         for (int i = 1; i <= 22; i++) {
             chrs.add("" + i);

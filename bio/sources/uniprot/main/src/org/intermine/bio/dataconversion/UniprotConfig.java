@@ -100,13 +100,13 @@ public class UniprotConfig
             String taxonId = attributes[0];
 
             if ("feature".equals(taxonId)) {
-                String[] types = value.split("[, ]+");
+                String[] types = value.split(",\\s*");
                 featureTypes.addAll(Arrays.asList(types));
                 continue;
             }
 
             if ("crossReference".equals(taxonId)) {
-                String[] types = value.split("[, ]+");
+                String[] types = value.split(",\\s*");
                 xrefs.addAll(Arrays.asList(types));
                 continue;
             }

@@ -13,14 +13,13 @@ package org.intermine.webservice.server;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
@@ -43,29 +42,25 @@ public class AvailableServicesServlet extends HttpServlet
     /**
      * {@inheritDoc}}
      */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         runService(request, response);
     }
 
     /**
      * {@inheritDoc}}
      */
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) {
         runService(req, resp);
     }
 
     /**
      * {@inheritDoc}}
      */
-    public void doPut(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) {
         runService(req, resp);
     }
 
-    private void runService(HttpServletRequest request,
-            HttpServletResponse response) {
+    private void runService(HttpServletRequest request, HttpServletResponse response) {
         String pathFromUrl = request.getPathInfo();
 
         try {

@@ -10,9 +10,6 @@ package org.intermine.webservice.server.query;
  *
  */
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,8 +34,7 @@ public class QueryToListServlet extends HttpServlet
      * {@inheritDoc}
      */
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         runService(request, response);
     }
 
@@ -46,8 +42,7 @@ public class QueryToListServlet extends HttpServlet
      * {@inheritDoc}
      */
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
         runService(request, response);
     }
 
@@ -55,8 +50,7 @@ public class QueryToListServlet extends HttpServlet
      * {@inheritDoc}
      */
     @Override
-    public void doPut(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) {
         runService(request, response);
     }
 

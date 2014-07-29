@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,13 +60,14 @@ public class BagQueryResult
     public static final String WILDCARD = "WILDCARD";
 
     public static final Set<String> ISSUE_KEYS
-        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
+        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+                DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
 
     private Map<Integer, List> matches = new LinkedHashMap<Integer, List>();
 
     /**
      * A map from issueType -> Query -> Identifier -> FoundThing[]
-     * 
+     *
      * eg:<pre>
      *     { "DUPLICATE":      { "Q1": { "my-gene-id": [o1, o2] },
      *                           "Q2": { "my-gene-id": [o3, o4] }},
@@ -75,7 +77,7 @@ public class BagQueryResult
     private Map<String, Map<String, Map<String, List>>> issues =
         new LinkedHashMap<String, Map<String, Map<String, List>>>();
 
-    private final Map<String, Object> unresolved = new HashMap<String, Object>();
+    private final Set<String> unresolved = new LinkedHashSet<String>();
 
     /**
      * Get any results that require some user input before adding to the bag.
@@ -150,7 +152,7 @@ public class BagQueryResult
     }
 
     /**
-     * Get ids of all InterMineObjects returned that were registered as 
+     * Get ids of all InterMineObjects returned that were registered as
      * issues of this particular type for this bag query lookup.
      * @param issueKey The type of issue we want (eg "DUPLICATE").
      * @return the set of all ids that were issues
@@ -191,7 +193,10 @@ public class BagQueryResult
         return result;
     }
 
-    // Simple struct to hold three pieces of information together.
+    /**
+     * Simple struct to hold three pieces of information together.
+     * @author Alex Kalderimis
+     */
     public static class IssueResult {
 
         public final String queryDesc, inputIdent;
@@ -208,7 +213,8 @@ public class BagQueryResult
         }
 
         public int hashCode() {
-            return new HashCodeBuilder().append(queryDesc).append(inputIdent).append(results).hashCode();
+            return new HashCodeBuilder().append(queryDesc).append(inputIdent).
+                    append(results).hashCode();
         }
     }
 
@@ -236,13 +242,19 @@ public class BagQueryResult
 
     /**
      * Get a Map of any input Strings for which objects of the right type could not be found.
-     * @return a Map of from input string to null/object - null when the input doesn't match any
-     * object of any type, otherwise a reference to a Set of the objects that matched
+     * @return a Map of from input string to null
      *
-     * Changes to the returned map will not affect the information in this bag qeury result. 
+     * The values of this map are always null - and this method should be avoided.
+     *
+     * Changes to the returned map will not affect the information in this bag query result.
+     * @deprecated Use getUnresolvedIdentifiers
      */
     public Map<String, Object> getUnresolved() {
-        return new HashMap<String,Object>(unresolved);
+        Map<String, Object> ret = new HashMap<String, Object>();
+        for (String notFound: unresolved) {
+            ret.put(notFound, null);
+        }
+        return ret;
     }
 
     /**
@@ -250,16 +262,17 @@ public class BagQueryResult
      * @return a collection of unresolved identifiers.
      */
     public Collection<String> getUnresolvedIdentifiers() {
-        return unresolved.keySet();
+        return new HashSet<String>(unresolved);
     }
 
     /**
      * Set the Map of unresolved input strings.  It is Map from input string to null/object - null
      * when the input doesn't match any object of any type, otherwise a reference to the object
      * that matched.
-     * @param unresolved the unresolved identifiers to add to this result.
+     *
+     * @param unresolvedIdentifiers the unresolved identifiers to add to this result.
      */
-    public void putUnresolved(Map<String, ? extends Object> unresolved) {
-        this.unresolved.putAll(unresolved);
+    public void addUnresolved(Collection<String> unresolvedIdentifiers) {
+        unresolved.addAll(unresolvedIdentifiers);
     }
 }

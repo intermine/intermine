@@ -1,5 +1,15 @@
 package org.intermine.web.struts;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.StringReader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +25,13 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
 
-public class RunQueryAction extends InterMineAction {
+/**
+ * Run a query as passed in directly as XML.
+ * @author Alex Kalderimis
+ *
+ */
+public class RunQueryAction extends InterMineAction
+{
 
     private static final Logger LOG = Logger.getLogger(RunQueryAction.class);
 
@@ -24,11 +40,14 @@ public class RunQueryAction extends InterMineAction {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         QueryForm qf = (QueryForm) form;
         try {
-            PathQuery pq = PathQueryBinding.unmarshalPathQuery(new StringReader(qf.getQuery()), PathQuery.USERPROFILE_VERSION);
+            PathQuery pq
+                = PathQueryBinding.unmarshalPathQuery(
+                        new StringReader(qf.getQuery()), PathQuery.USERPROFILE_VERSION);
             HttpSession session = request.getSession();
             SessionMethods.setQuery(session, pq);
         } catch (Exception e) {
-            recordError(new ActionMessage("struts.runquery.failed", e.getMessage()), request, e, LOG);
+            ActionMessage msg = new ActionMessage("struts.runquery.failed", e.getMessage());
+            recordError(msg, request, e, LOG);
             return mapping.findForward("failure");
         }
         return mapping.findForward("success");

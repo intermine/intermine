@@ -1,15 +1,15 @@
 package org.intermine.api.query.range;
 
-import static org.intermine.objectstore.query.ConstraintOp.AND;
-import static org.intermine.objectstore.query.ConstraintOp.DOES_NOT_OVERLAP;
-import static org.intermine.objectstore.query.ConstraintOp.OR;
-import static org.intermine.objectstore.query.ConstraintOp.OUTSIDE;
-import static org.intermine.objectstore.query.ConstraintOp.OVERLAPS;
-import static org.intermine.objectstore.query.ConstraintOp.WITHIN;
+import static org.intermine.metadata.ConstraintOp.AND;
+import static org.intermine.metadata.ConstraintOp.DOES_NOT_OVERLAP;
+import static org.intermine.metadata.ConstraintOp.OR;
+import static org.intermine.metadata.ConstraintOp.OUTSIDE;
+import static org.intermine.metadata.ConstraintOp.OVERLAPS;
+import static org.intermine.metadata.ConstraintOp.WITHIN;
 
 import org.intermine.api.query.RangeHelper;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;

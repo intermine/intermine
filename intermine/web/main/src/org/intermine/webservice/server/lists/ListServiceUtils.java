@@ -10,18 +10,11 @@ package org.intermine.webservice.server.lists;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -34,7 +27,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Query;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
@@ -49,8 +41,6 @@ public final class ListServiceUtils
     private ListServiceUtils() {
         // Uninstantiatable
     }
-
-    private static final String CAST = "_temp_cast";
 
     /**
      * Given a common type, return a collection of bags cast to that type. The contents
@@ -131,6 +121,10 @@ public final class ListServiceUtils
         }
     }
 
+    /**
+     * @param classes The classes we want to reduce to a common type.
+     * @return The most specific common type.
+     */
     public static String findMostSpecificCommonTypeOf(Set<ClassDescriptor> classes) {
         try {
             return DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
@@ -139,6 +133,10 @@ public final class ListServiceUtils
         }
     }
 
+    /**
+     * @param classes The classes we want to reduce to a set of common types.
+     * @return The common types.
+     */
     public static List<ClassDescriptor> findCommonClasses(Set<ClassDescriptor> classes) {
         try {
             return DescriptorUtils.findCommonClasses(classes);
@@ -146,6 +144,5 @@ public final class ListServiceUtils
             throw new BadRequestException(e.getMessage(), e);
         }
     }
-    
 
 }

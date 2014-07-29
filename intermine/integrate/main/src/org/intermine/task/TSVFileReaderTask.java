@@ -10,21 +10,19 @@ package org.intermine.task;
  *
  */
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.FormattedTextParser;
-import org.intermine.util.TypeUtil;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.util.FormattedTextParser;
 
 /**
  * Read a file of tab separated values.  Use one column as the key to look up objects and use the

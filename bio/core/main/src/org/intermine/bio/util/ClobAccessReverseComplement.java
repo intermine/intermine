@@ -99,7 +99,7 @@ public class ClobAccessReverseComplement extends ClobAccess
         }
     }
 
-    private char returnChar(char c, boolean toLowerCase) {
+    private static char returnChar(char c, boolean toLowerCase) {
         if (toLowerCase) {
             return Character.toLowerCase(c);
         }

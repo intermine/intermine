@@ -33,20 +33,6 @@ public class IdResolverFactoryTest extends TestCase {
         IdResolverFactory.resolver = new IdResolver();
     }
 
-    public void testGetIdResolver() throws Exception {
-        assertEquals(IdResolverFactory.resolver, factory.getIdResolver(true));
-        assertEquals(IdResolverFactory.resolver, factory.getIdResolver(false));
-    }
-
-    public void testRestoreFromFile() throws Exception {
-        assertFalse(factory.restoreFromFile());
-
-        File testFile = new File(getClass().getClassLoader().
-                getResource(idresolverCache).toURI());
-        assertTrue(factory.restoreFromFile(testFile));
-        assertEquals(2, IdResolverFactory.resolver.getTaxons().size());
-    }
-
     public void testCreateMultipleResolvers() throws Exception {
         // test entrez + mgi factory
         EntrezGeneIdResolverFactory entrezFactory = new EntrezGeneIdResolverFactory();

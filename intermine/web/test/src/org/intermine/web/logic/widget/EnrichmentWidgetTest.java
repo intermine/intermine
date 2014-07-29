@@ -15,43 +15,64 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 public class EnrichmentWidgetTest extends WidgetConfigTestCase
 {
-    private static Logger LOG = Logger.getLogger(EnrichmentWidgetTest.class);
-    
+    private final class FixureOptions implements EnrichmentOptions {
+        @Override
+        public String getFilter() {
+            return filter;
+        }
+
+        @Override
+        public double getMaxPValue() {
+            return 1.0d;
+        }
+
+        @Override
+        public String getCorrection() {
+            return CORRECTION;
+        }
+
+        @Override
+        public String getExtraCorrectionCoefficient() {
+            return null;
+        }
+    }
+
     private EnrichmentWidget widget;
     private String MAX = "1.0";
     private String CORRECTION = "Bonferroni";
-    
+
     private InterMineBag bag;
     private WidgetConfig config;
     private String filter;
     private EnrichmentResults results;
+    EnrichmentOptions options;
 
     public void setUp() throws Exception {
         super.setUp();
         config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         InterMineBag employeeList = createEmployeeList();
         bag = employeeList;
-        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, "", MAX, CORRECTION, null);
+        options = new FixureOptions();
+        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, options);
     }
 
     public void testValidateBagType() throws Exception {
         InterMineBag companyList = createCompanyList();
         WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         try {
-            new EnrichmentWidget((EnrichmentWidgetConfig) config, companyList, null, os, "", MAX, CORRECTION, null);
+            EnrichmentWidget w = new EnrichmentWidget(
+                    (EnrichmentWidgetConfig) config, companyList, null, os, options);
+            w.process();
             fail("Should raise a IllegalArgumentException");
         } catch (IllegalArgumentException iae){
         }
@@ -63,13 +84,41 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION, false, null);
+
         List<List<Object>> exportResults = getResults();
 
-        assertEquals(1, exportResults.size());//there is only one contract
-        assertEquals(2, exportResults.get(0).get(3));//2 employees match with the only contracts
+        assertEquals(1, exportResults.size());       // there is only one contract
+        assertEquals(2, exportResults.get(0).get(3));// 2 employees match with the only contracts
+    }
+
+    public void testProcessLCBonferroni() throws Exception {
+        EnrichmentWidgetImplLdr ldr 
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
+        Double maxValue = Double.parseDouble(MAX);
+        results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION.toLowerCase(), false, null);
+
+        List<List<Object>> exportResults = getResults();
+
+        assertEquals(1, exportResults.size());       // there is only one contract
+        assertEquals(2, exportResults.get(0).get(3));// 2 employees match with the only contracts
+    }
+
+    public void testProcessHolmBonferroni() throws Exception {
+        EnrichmentWidgetImplLdr ldr 
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
+        EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
+        Double maxValue = Double.parseDouble(MAX);
+        results = EnrichmentCalculation.calculate(input, maxValue, "Holm-Bonferroni", false, null);
+
+        List<List<Object>> exportResults = getResults();
+
+        assertEquals(1, exportResults.size());       // there is only one contract
+        assertEquals(2, exportResults.get(0).get(3));// 2 employees match with the only contracts
     }
 
     public boolean getHasResults() {
+        widget.process();
         return results.getPValues().size() > 0;
     }
 

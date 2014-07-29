@@ -71,8 +71,6 @@ public final class ProfileManagerBinding
      */
     public static final String ZERO_PROFILE_VERSION = "0";
 
-    private Map<String, List> sharedBagsByUser = new HashedMap();
-
     /**
      * Convert the contents of a ProfileManager to XML and write the XML to the given writer.
      * @param profileManager the ProfileManager
@@ -109,7 +107,7 @@ public final class ProfileManagerBinding
     /** Returns profile format version from database. Version 0 corresponds to
      * situation when constraint values are saved in the internal format. Internal
      * format is format where '*' are replaced with % and other changes.
-     * @see Util.wildcardSqlToUser()
+     * @see #Util.wildcardSqlToUser()
      * @return saved format version or "0" if not saved in database
      */
     private static String getProfileVersion(ObjectStore os) {
@@ -133,7 +131,7 @@ public final class ProfileManagerBinding
                                       .getResourceAsStream("class_keys.properties");
             classKeyProps.load(inputStream);
         } catch (IOException ioe) {
-            new BuildException("class_keys.properties not found", ioe);
+            throw new BuildException("class_keys.properties not found", ioe);
         }
         return ClassKeyHelper.readKeys(os.getModel(), classKeyProps);
     }
@@ -267,8 +265,7 @@ class ProfileManagerHandler extends DefaultHandler
             }
             // Must come after the bags themselves have been stored.
             try {
-                // Make sure the tables we need exist.
-                SharedBagManager sbm = SharedBagManager.getInstance(profileManager);
+                SharedBagManager.getInstance(profileManager);
                 profileHandler.getInvitationHandler().storeInvites(profile);
             } catch (SQLException e) {
                 LOG.error("Cannot store invitations", e);

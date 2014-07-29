@@ -58,6 +58,7 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 /**
  * @author Xavier Watkins
  */
+@SuppressWarnings("deprecation")
 public class BagDetailsController extends TilesAction
 {
 
@@ -126,7 +127,7 @@ public class BagDetailsController extends TilesAction
         Model model = os.getModel();
         Map<String, Type> types = webConfig.getTypes();
         Type type = null;
-        
+
         LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
         LinkedList<WidgetConfig> subWidgets = new LinkedList<WidgetConfig>();
         //add also widgets having type a superclass of bag type
@@ -135,19 +136,19 @@ public class BagDetailsController extends TilesAction
         for (String superClass : superClasses) {
             type = types.get(superClass);
             subWidgets = type.getWidgets();
-            for (WidgetConfig newW : subWidgets){
+            for (WidgetConfig newW : subWidgets) {
                 boolean isNew = true;
-                for(WidgetConfig oldW : widgets){
-                 if(newW.equals(oldW)){
-                   isNew = false;
-                 }
+                for (WidgetConfig oldW : widgets) {
+                    if (newW.equals(oldW)) {
+                        isNew = false;
+                    }
                 }
-                if(isNew){
-                  widgets.add(newW);
+                if (isNew) {
+                    widgets.add(newW);
                 }
             }
-        }        
-        
+        }
+
         Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String,
                 Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {

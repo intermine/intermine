@@ -53,8 +53,11 @@ import org.intermine.util.SynchronisedIterator;
  *
  * @author Matthew Wakeling
  */
-public class PerformanceTester
+public final class PerformanceTester
 {
+    private PerformanceTester() {
+        // Hidden constructor.
+    }
 
     private static String superuser;
     private static ProfileManager pm = null;

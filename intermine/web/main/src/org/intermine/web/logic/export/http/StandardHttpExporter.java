@@ -41,6 +41,7 @@ import org.intermine.web.struts.TableExportForm;
  *
  * @author Jakub Kulaviak
  **/
+@SuppressWarnings("deprecation")
 public abstract class StandardHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
     protected static final Logger LOG = Logger.getLogger(StandardHttpExporter.class);

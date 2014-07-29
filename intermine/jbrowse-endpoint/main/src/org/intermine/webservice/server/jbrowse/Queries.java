@@ -17,7 +17,6 @@ public class Queries {
      * @param pq The PathQuery
      * @return A Query
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Query pathQueryToOSQ(PathQuery pq) {
         return pathQueryToOSQ(pq, null);
     }

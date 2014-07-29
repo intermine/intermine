@@ -22,11 +22,11 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.session.SessionMethods;
@@ -36,8 +36,13 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Richard Smith
  *
  */
-public class BagConversionHelper
+public final class BagConversionHelper
 {
+
+    private BagConversionHelper() {
+        // Hidden constructor.
+    }
+
     /**
      * Converts a List of objects from one type to another type using a TemplateQuery,
      * returns the converted objects.
@@ -51,8 +56,11 @@ public class BagConversionHelper
      * @throws InterMineException if an error occurs
      * @throws ObjectStoreException if an error occurs
      */
-    public static PathQuery getConvertedObjects(HttpSession session,
-            List<ApiTemplate> conversionTemplates, Class typeA, Class typeB,
+    public static PathQuery getConvertedObjects(
+            HttpSession session,
+            List<ApiTemplate> conversionTemplates,
+            Class<? extends InterMineObject> typeA,
+            Class<? extends InterMineObject> typeB,
             InterMineBag imBag) throws InterMineException, ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);

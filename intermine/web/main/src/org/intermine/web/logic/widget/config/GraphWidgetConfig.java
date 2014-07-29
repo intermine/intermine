@@ -12,7 +12,6 @@ package org.intermine.web.logic.widget.config;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.widget.GraphWidget;
+import org.intermine.web.logic.widget.WidgetOptions;
 
 /**
  * Configuration object describing details of a graph displayer
@@ -39,7 +39,7 @@ public class GraphWidgetConfig extends WidgetConfig
     private String seriesLabels;
     private HttpSession session;
     private String editable;
-    public static final String ACTUAL_EXPECTED_CRITERIA = "ActualExpectedCriteria";
+    private static final String ACTUAL_EXPECTED_CRITERIA = "ActualExpectedCriteria";
 
     /**
      * Get the session
@@ -116,71 +116,77 @@ public class GraphWidgetConfig extends WidgetConfig
                + rangeLabel + " />";
     }
 
+    /** @return the supported bag-types **/
     public String getBagType() {
         return bagType;
     }
 
+    /** @param bagType The bag types this widget supports **/
     public void setBagType(String bagType) {
         this.bagType = bagType;
     }
 
+    /** @return The list path **/
     public String getListPath() {
         return listPath;
     }
 
+    /** @param bagPath the new value for the list path **/
     public void setListPath(String bagPath) {
         this.listPath = bagPath;
     }
 
+    /** @return whether this the list path has a value. **/
     public boolean isListPathSet() {
-        if (listPath != null && !"".equals(listPath)) {
-            return true;
-        }
-        return false;
+        return !(listPath == null || "".equals(listPath));
     }
 
+    /** @return the category path **/
     public String getCategoryPath() {
         return categoryPath;
     }
 
+    /** @param categoryPath the path that defines the category we are charting **/
     public void setCategoryPath(String categoryPath) {
         this.categoryPath = categoryPath;
     }
 
+    /** @return the series path **/
     public String getSeriesPath() {
         return seriesPath;
     }
 
+    /** @param seriesPath the new value of the series path. **/
     public void setSeriesPath(String seriesPath) {
         this.seriesPath = seriesPath;
     }
 
-    public boolean isActualExpectedCriteria() {
-        if (hasSeries() && this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA)) {
-            return true;
-        }
-        return false;
-    }
-    
-    public boolean hasSeries() {
-        if (this.seriesPath != null && !"".equals(this.seriesPath)) {
-            return true;
-        }
-        return false;
+    /** @return whether this chart widget compares actual and expected values. **/
+    public boolean comparesActualToExpected() {
+        return (hasSeries() && this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA));
     }
 
+    /** @return whether the widget has a series. **/
+    public boolean hasSeries() {
+        return (this.seriesPath != null && !"".equals(this.seriesPath));
+    }
+
+    /** @return the series values **/
     public String getSeriesValues() {
         return seriesValues;
     }
 
+    /** @param seriesValues the values of the series axis. **/
     public void setSeriesValues(String seriesValues) {
         this.seriesValues = seriesValues;
     }
 
+    /** @return the labels for the series. **/
     public String getSeriesLabels() {
         return seriesLabels;
     }
 
+    /** @param seriesLabels The labels for the series. **/
     public void setSeriesLabels(String seriesLabels) {
         this.seriesLabels = seriesLabels;
     }
@@ -211,9 +217,12 @@ public class GraphWidgetConfig extends WidgetConfig
     /**
      * {@inheritDoc}
      */
-    public GraphWidget getWidget(InterMineBag imBag, InterMineBag populationBag, ObjectStore os,
-                                 List<String> selectedExtraAttribute) {
-        return new GraphWidget(this, imBag, os, selectedExtraAttribute.get(0));
+    public GraphWidget getWidget(
+            InterMineBag imBag,
+            InterMineBag populationBag,
+            ObjectStore os,
+            WidgetOptions options) {
+        return new GraphWidget(this, imBag, os, options);
     }
 
 }

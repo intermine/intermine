@@ -1,0 +1,467 @@
+<items>
+<item id="5_3" class="SOTerm">
+<attribute name="name" value="mRNA"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_14" class="Synonym">
+<attribute name="value" value="BSK4:exon:2"/>
+<reference name="subject" ref_id="11_11"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_3" class="FivePrimeUTR">
+<attribute name="length" value="50"/>
+<attribute name="primaryIdentifier" value="AT1G01740:five_prime_UTR:2"/>
+<attribute name="symbol" value="BSK4:five_prime_UTR:2"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_16"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_14" class="Location">
+<attribute name="end" value="272555"/>
+<attribute name="start" value="272445"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_9"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="7_18" class="Location">
+<attribute name="end" value="293453"/>
+<attribute name="start" value="290048"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="6_2"/>
+<reference name="locatedOn" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_12" class="Synonym">
+<attribute name="value" value="BSK4:exon:11"/>
+<reference name="subject" ref_id="11_10"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_6" class="Location">
+<attribute name="end" value="274249"/>
+<attribute name="start" value="274240"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="9_2"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_7" class="Exon">
+<attribute name="length" value="86"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:8"/>
+<attribute name="symbol" value="BSK4:exon:8"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_12"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_12" class="Location">
+<attribute name="end" value="273149"/>
+<attribute name="start" value="273064"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_7"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_3" class="Location">
+<attribute name="end" value="274569"/>
+<attribute name="start" value="272111"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="8_2"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_3" class="Exon">
+<attribute name="length" value="221"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:4"/>
+<attribute name="symbol" value="BSK4:exon:4"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_8"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_4" class="SOTerm">
+<attribute name="name" value="five_prime_UTR"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="FivePrimeUTR">
+<attribute name="length" value="10"/>
+<attribute name="primaryIdentifier" value="AT1G01740:five_prime_UTR:3"/>
+<attribute name="symbol" value="BSK4:five_prime_UTR:3"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_6"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_2" class="Location">
+<attribute name="end" value="274569"/>
+<attribute name="start" value="272111"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="8_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="UCSC"/>
+</item>
+<item id="11_4" class="Exon">
+<attribute name="length" value="136"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:5"/>
+<attribute name="symbol" value="BSK4:exon:5"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_9"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_15" class="Location">
+<attribute name="end" value="272362"/>
+<attribute name="start" value="272111"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_10"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_10" class="Exon">
+<attribute name="length" value="252"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:11"/>
+<attribute name="symbol" value="BSK4:exon:11"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_15"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_6" class="Synonym">
+<attribute name="value" value="BSK4:exon:5"/>
+<reference name="subject" ref_id="11_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_2" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_10" class="Synonym">
+<attribute name="value" value="BSK4:exon:9"/>
+<reference name="subject" ref_id="11_8"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_5" class="Exon">
+<attribute name="length" value="134"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:6"/>
+<attribute name="symbol" value="BSK4:exon:6"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_10"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_19" class="Location">
+<attribute name="end" value="293453"/>
+<attribute name="start" value="290048"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="8_3"/>
+<reference name="locatedOn" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_5" class="Location">
+<attribute name="end" value="274569"/>
+<attribute name="start" value="274384"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="Chr1"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_13" class="Synonym">
+<attribute name="value" value="BSK4:five_prime_UTR:2"/>
+<reference name="subject" ref_id="9_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="Gene">
+<attribute name="briefDescription" value="BR-signaling kinase 3"/>
+<attribute name="length" value="3406"/>
+<attribute name="primaryIdentifier" value="AT4G00710"/>
+<attribute name="symbol" value="BSK3"/>
+<reference name="chromosome" ref_id="4_2"/>
+<reference name="chromosomeLocation" ref_id="7_18"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_4" class="Synonym">
+<attribute name="value" value="BSK4:exon:3"/>
+<reference name="subject" ref_id="11_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_9" class="Exon">
+<attribute name="length" value="111"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:10"/>
+<attribute name="symbol" value="BSK4:exon:10"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_14"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_8" class="Location">
+<attribute name="end" value="274083"/>
+<attribute name="start" value="273863"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_3"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_9" class="Synonym">
+<attribute name="value" value="BSK4:exon:8"/>
+<reference name="subject" ref_id="11_7"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_11" class="Exon">
+<attribute name="length" value="123"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:2"/>
+<attribute name="symbol" value="BSK4:exon:2"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_17"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_7" class="Location">
+<attribute name="end" value="274249"/>
+<attribute name="start" value="274167"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_2"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_6" class="Exon">
+<attribute name="length" value="106"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:7"/>
+<attribute name="symbol" value="BSK4:exon:7"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_11"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_7" class="Synonym">
+<attribute name="value" value="BSK4:exon:6"/>
+<reference name="subject" ref_id="11_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_10" class="Location">
+<attribute name="end" value="273562"/>
+<attribute name="start" value="273429"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_5"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_11" class="Location">
+<attribute name="end" value="273339"/>
+<attribute name="start" value="273234"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_6"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_13" class="Location">
+<attribute name="end" value="272983"/>
+<attribute name="start" value="272651"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_8"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_16" class="Location">
+<attribute name="end" value="274289"/>
+<attribute name="start" value="274240"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="9_3"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_1" class="Synonym">
+<attribute name="value" value="BSK4:five_prime_UTR:1"/>
+<reference name="subject" ref_id="9_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="MRNA">
+<attribute name="length" value="2459"/>
+<attribute name="primaryIdentifier" value="AT1G01740.1"/>
+<attribute name="symbol" value="BSK4"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_2"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_4" class="Location">
+<attribute name="end" value="274569"/>
+<attribute name="start" value="274384"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="9_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Gene">
+<attribute name="briefDescription" value="Protein kinase protein with tetratricopeptide repeat domain"/>
+<attribute name="length" value="2459"/>
+<attribute name="primaryIdentifier" value="AT1G01740"/>
+<attribute name="symbol" value="BSK4"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_1"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_2" class="Synonym">
+<attribute name="value" value="BSK4:exon:1"/>
+<reference name="subject" ref_id="11_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_1" class="FivePrimeUTR">
+<attribute name="length" value="186"/>
+<attribute name="primaryIdentifier" value="AT1G01740:five_prime_UTR:1"/>
+<attribute name="symbol" value="BSK4:five_prime_UTR:1"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_4"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_2" class="Exon">
+<attribute name="length" value="83"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:3"/>
+<attribute name="symbol" value="BSK4:exon:3"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_7"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_17" class="Location">
+<attribute name="end" value="274289"/>
+<attribute name="start" value="274167"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_11"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_2" class="MRNA">
+<attribute name="length" value="2459"/>
+<attribute name="primaryIdentifier" value="AT1G01740.2"/>
+<attribute name="symbol" value="BSK4"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_3"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_5" class="Synonym">
+<attribute name="value" value="BSK4:exon:4"/>
+<reference name="subject" ref_id="11_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_11" class="Synonym">
+<attribute name="value" value="BSK4:exon:10"/>
+<reference name="subject" ref_id="11_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_8" class="Exon">
+<attribute name="length" value="333"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:9"/>
+<attribute name="symbol" value="BSK4:exon:9"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_13"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_5" class="SOTerm">
+<attribute name="name" value="exon"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_8" class="Synonym">
+<attribute name="value" value="BSK4:exon:7"/>
+<reference name="subject" ref_id="11_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_9" class="Location">
+<attribute name="end" value="273788"/>
+<attribute name="start" value="273653"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="11_4"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="Location">
+<attribute name="end" value="274569"/>
+<attribute name="start" value="272111"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="6_1"/>
+<reference name="locatedOn" ref_id="4_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_1" class="Exon">
+<attribute name="length" value="186"/>
+<attribute name="primaryIdentifier" value="AT1G01740:exon:1"/>
+<attribute name="symbol" value="BSK4:exon:1"/>
+<reference name="chromosome" ref_id="4_1"/>
+<reference name="chromosomeLocation" ref_id="7_5"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="UCSC data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="8_3" class="MRNA">
+<attribute name="length" value="3406"/>
+<attribute name="primaryIdentifier" value="AT4G00710.1"/>
+<attribute name="symbol" value="BSK3"/>
+<reference name="chromosome" ref_id="4_2"/>
+<reference name="chromosomeLocation" ref_id="7_19"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Organism">
+<attribute name="taxonId" value="3702"/>
+</item>
+<item id="10_3" class="Synonym">
+<attribute name="value" value="BSK4:five_prime_UTR:3"/>
+<reference name="subject" ref_id="9_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="Chromosome">
+<attribute name="primaryIdentifier" value="Chr4"/>
+<reference name="organism" ref_id="0_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

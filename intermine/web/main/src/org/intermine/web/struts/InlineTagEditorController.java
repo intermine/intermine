@@ -22,7 +22,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.StorableBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.Taggable;
@@ -31,7 +30,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -48,10 +46,10 @@ public class InlineTagEditorController extends TilesAction
      */
     @Override
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         // Retrieve the taggable thing from the context
         Object taggable = context.getAttribute("taggable");
@@ -59,10 +57,10 @@ public class InlineTagEditorController extends TilesAction
 
         String tagged = null;
         String type = null;
-        
+
         if (taggable instanceof Taggable) {
-        	tagged = ((Taggable) taggable).getName();
-            type = ((Taggable) taggable).getTagType();	
+            tagged = ((Taggable) taggable).getName();
+            type = ((Taggable) taggable).getTagType();
         } else if (taggable instanceof FieldDescriptor) {
             FieldDescriptor fd = (FieldDescriptor) taggable;
             tagged = fd.getClassDescriptor().getUnqualifiedName() + "." + fd.getName();
@@ -74,9 +72,9 @@ public class InlineTagEditorController extends TilesAction
                 type = "attribute";
             }
         } else if (taggable instanceof ClassDescriptor) {
-        	tagged = ((ClassDescriptor) taggable).getName();
+            tagged = ((ClassDescriptor) taggable).getName();
             type = TagTypes.CLASS;
-        } 
+        }
 
         request.setAttribute("editorId", createUniqueEditorId());
         request.setAttribute("taggableIdentifer", tagged);

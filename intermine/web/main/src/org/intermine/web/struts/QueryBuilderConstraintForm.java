@@ -18,7 +18,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.ParseValueException;
 import org.intermine.pathquery.Path;
@@ -358,7 +358,7 @@ public class QueryBuilderConstraintForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
+    public ActionErrors validate(ActionMapping mapping,
                                  HttpServletRequest request) {
         HttpSession session = request.getSession();
 
@@ -413,7 +413,7 @@ public class QueryBuilderConstraintForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
+    public void reset(ActionMapping mapping,
                       HttpServletRequest request) {
         bagOp = null;
         bagValue = null;

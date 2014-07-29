@@ -16,13 +16,24 @@ import java.util.Map;
 import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.webservice.server.core.ISO8601DateFormat;
 
-public final class PermaTokens {
+/** @author Alex Kalderimis **/
+public final class PermaTokens
+{
 
-	public static Map<String, Object> format(PermanentToken token) {
-		Map<String, Object> map = new HashMap<String, Object>();
+    private PermaTokens() {
+        // hidden.
+    }
+
+    /**
+     * Format a permanent token as a map.
+     * @param token The token
+     * @return a map of properties.
+     */
+    public static Map<String, Object> format(PermanentToken token) {
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("token", token.getToken());
         map.put("message", token.getMessage());
         map.put("dateCreated", ISO8601DateFormat.getFormatter().format(token.getDateCreated()));
         return map;
-	}
+    }
 }

@@ -9,9 +9,7 @@ package org.intermine.webservice.server;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.io.IOException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,13 +30,9 @@ public class ClassKeyServlet extends HttpServlet
      * {@inheritDoc}}
      */
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        runService(request, response);
-    }
-
-    private void runService(HttpServletRequest request, HttpServletResponse response) {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         WebService s = new ClassKeysService(InterMineContext.getInterMineAPI());
         s.service(request, response);
     }
+
 }

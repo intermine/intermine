@@ -11,12 +11,12 @@ package org.intermine.web.logic.widget.config;
  */
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.widget.Widget;
+import org.intermine.web.logic.widget.WidgetOptions;
 
 /**
  * dummy widget to output html widget
@@ -28,17 +28,15 @@ public class HTMLWidgetConfig extends WidgetConfig
     private String content;
 
     @Override
-    public Map<String, Collection<String>> getExtraAttributes(@SuppressWarnings("unused")
-            InterMineBag imBag, @SuppressWarnings("unused") ObjectStore os)
-        throws Exception {
+    public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os) {
         return null;
     }
 
     @Override
-    public Widget getWidget(@SuppressWarnings("unused") InterMineBag imBag,
-            @SuppressWarnings("unused") InterMineBag populationBag,
-            @SuppressWarnings("unused") ObjectStore os,
-            @SuppressWarnings("unused") List<String> attributes) {
+    public Widget getWidget(InterMineBag imBag,
+            InterMineBag populationBag,
+            ObjectStore os,
+            WidgetOptions options) {
         return null;
     }
 

@@ -24,7 +24,7 @@ import net.sourceforge.iharder.Base64;
 public final class PasswordHasher
 {
     private PasswordHasher() {
-        // TODO do we need this?
+        // don't
     }
 
     /**
@@ -61,9 +61,9 @@ public final class PasswordHasher
      * @return true if the password matches
      */
     public static boolean checkPassword(String password, String hash) {
-    	if (password == null && hash == null) {
-    		return true;
-    	}
+        if (password == null && hash == null) {
+            return true;
+        }
         try {
             if ((hash.length() == 88) && (hash.charAt(43) == '=') && (hash.charAt(87) == '=')) {
                 String saltString = hash.substring(0, 44);
@@ -75,7 +75,9 @@ public final class PasswordHasher
                     return true;
                 }
             } else {
-                return password.equals(hash);
+                if (password != null) {
+                    return password.equals(hash);
+                }
             }
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

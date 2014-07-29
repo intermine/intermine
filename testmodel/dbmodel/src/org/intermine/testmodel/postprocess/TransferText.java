@@ -2,12 +2,11 @@ package org.intermine.testmodel.postprocess;
 
 import java.util.List;
 import java.util.ArrayList;
-import org.intermine.metadata.Model;
+
 import org.intermine.postprocess.PostProcessor;
 import org.intermine.objectstore.query.*;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreException;
-
 import org.intermine.model.testmodel.*;
 
 public class TransferText extends PostProcessor {
@@ -28,6 +27,7 @@ public class TransferText extends PostProcessor {
         findSections.addToSelect(section);
 
         // Bad practice pulling all into memory, but the dataset is small.
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         List<Section> sections = new ArrayList<Section>((List) osw.executeSingleton(findSections));
 
         for (Section sec: sections) {

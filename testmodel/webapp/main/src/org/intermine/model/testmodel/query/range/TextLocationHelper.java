@@ -8,7 +8,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Book;
 import org.intermine.model.testmodel.Section;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.OverlapConstraint;

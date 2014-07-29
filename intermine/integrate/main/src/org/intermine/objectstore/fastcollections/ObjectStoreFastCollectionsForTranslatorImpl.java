@@ -32,7 +32,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -82,7 +82,7 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
      * @throws ObjectStoreException if there is a problem with the instance
      */
     public static ObjectStoreFastCollectionsForTranslatorImpl getInstance(
-            @SuppressWarnings("unused") String osAlias,
+            String osAlias,
             Properties props) throws ObjectStoreException {
         String underlyingOsAlias = props.getProperty("os");
         if (underlyingOsAlias == null) {

@@ -1,21 +1,23 @@
 package org.intermine.webservice.server.core;
 
+import static org.intermine.util.DynamicUtil.createObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.StringValueTransformer;
-import org.apache.log4j.Logger;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
+import org.intermine.api.results.ResultCell;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
@@ -32,7 +34,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.DynamicUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.After;
@@ -44,12 +45,13 @@ import org.junit.Test;
 public class RecordIteratorTest
 {
     private static ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(RecordIteratorTest.class);
     private static final int COMPANIES = 6;
     private static final int SECRETARIES = 3;
     private static final int DEPARTMENTS = 2;
     private static final int EMPLOYEES = 3;
-    
+
+    private static final Map<String, InterMineBag> NO_BAGS = Collections.emptyMap();
+
     @BeforeClass
     public static void loadData() throws ObjectStoreException {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
@@ -57,7 +59,7 @@ public class RecordIteratorTest
         try {
             osw.beginTransaction();
             for (int k = 0; k < COMPANIES; k++) {
-                Company c = (Company) DynamicUtil.createObject(new HashSet(Arrays.asList(Company.class)));
+                Company c = (Company) createObject(Collections.singleton(Company.class));
                 c.setName("temp-company" + k);
                 c.setVatNumber((k + 1) * (k + 1));
                 osw.store(c);
@@ -116,11 +118,11 @@ public class RecordIteratorTest
         System.out.printf("[START UP] Made %d employees\n", made);
     }
 
-    private EitherVisitor<TableCell, SubTable, Map<String, Object>> jsonTransformer
-        = new EitherVisitor<TableCell, SubTable, Map<String, Object>>() {
+    private EitherVisitor<ResultCell, SubTable, Map<String, Object>> jsonTransformer
+        = new EitherVisitor<ResultCell, SubTable, Map<String, Object>>() {
 
             @Override
-            public Map<String, Object> visitLeft(TableCell a) {
+            public Map<String, Object> visitLeft(ResultCell a) {
                 Map<String, Object> cell = new HashMap<String, Object>();
                 cell.put("value", a.getField());
                 cell.put("id", a.getId());
@@ -136,10 +138,10 @@ public class RecordIteratorTest
                 st.put("columns", CollectionUtils.collect(b.getColumns(), StringValueTransformer.getInstance()));
                 List<List<Map<String, Object>>> rows = new ArrayList<List<Map<String, Object>>>();
                 st.put("rows", rows);
-                for (List<Either<TableCell, SubTable>> items: b.getRows()){
+                for (List<Either<ResultCell, SubTable>> items: b.getRows()){
                     List<Map<String, Object>> row = new ArrayList<Map<String, Object>>();
                     rows.add(row);
-                    for (Either<TableCell, SubTable> item: items) {
+                    for (Either<ResultCell, SubTable> item: items) {
                         row.add(item.accept(this));
                     }
                 }
@@ -148,7 +150,7 @@ public class RecordIteratorTest
         
     };
 
-    private  EitherVisitor<TableCell, SubTable, Void> printer = new IndentingPrinter(4);
+    private  EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
     
     @Before
     public void setup() throws ObjectStoreException {
@@ -162,6 +164,7 @@ public class RecordIteratorTest
         }
     }
     
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @AfterClass
     public static void shutdown() {
         int deleted = 0;
@@ -236,7 +239,7 @@ public class RecordIteratorTest
         return pq;
     }
     
-    private static class IndentingPrinter extends EitherVisitor<TableCell, SubTable, Void> {
+    private static class IndentingPrinter extends EitherVisitor<ResultCell, SubTable, Void> {
         
         int indent = 0;
         int depth = 0;
@@ -254,7 +257,7 @@ public class RecordIteratorTest
         }
 
         @Override
-        public Void visitLeft(TableCell a) {
+        public Void visitLeft(ResultCell a) {
             System.out.printf(spacer + "%s: %s\n", a.getPath().getEndFieldDescriptor().getName(), a.getField());
             return null;
         }
@@ -264,10 +267,10 @@ public class RecordIteratorTest
             System.out.printf(spacer + "%d %s\n", b.getRows().size(), b.getJoinPath());
             System.out.println(spacer + "  " + b.getColumns());
             int c = 0;
-            for (List<Either<TableCell, SubTable>> row: b.getRows()) {
+            for (List<Either<ResultCell, SubTable>> row: b.getRows()) {
                 System.out.printf(spacer + "  %s %d\n",
                         b.getJoinPath().getLastClassDescriptor().getUnqualifiedName(), c++);
-                for (Either<TableCell, SubTable> item: row) {
+                for (Either<ResultCell, SubTable> item: row) {
                     item.accept(new IndentingPrinter(indent, depth + 1));
                 }
             }
@@ -275,6 +278,10 @@ public class RecordIteratorTest
         }
         
     };
+
+    private Map<String, BagQueryResult> getBQRAccumulator() {
+        return new HashMap<String, BagQueryResult>();
+    }
 
     @Test
     public void getJSONRecords() throws ObjectStoreException, JSONException {
@@ -285,19 +292,21 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
 
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
 
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
 
-        EitherVisitor<TableCell, SubTable, Void> printer = new IndentingPrinter(4);
+        // EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
         while(iter.hasNext()) {
+            @SuppressWarnings("rawtypes")
             Collection data = CollectionUtils.collect(iter.next(),
                 new Transformer() {
                     @Override
                     public Object transform(Object arg0) {
-                        Either<TableCell, SubTable> item = (Either<TableCell, SubTable>) arg0;
+                        @SuppressWarnings("unchecked")
+                        Either<ResultCell, SubTable> item = (Either<ResultCell, SubTable>) arg0;
                         return item.accept(jsonTransformer);
                     }
                 });
@@ -311,45 +320,45 @@ public class RecordIteratorTest
         PathQuery pq = getPQ();
 
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
 
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
         
-        List<Either<TableCell, SubTable>> row = iter.next();
+        List<Either<ResultCell, SubTable>> row = iter.next();
         String[] values = new String[] {
           "temp-company0", "temp-department-0-0", "temp-employee-0-0-0", "23",
           "3 employee st", "temp-secretary2", "1"
         };
         for (int i = 0; i < values.length; i++) {
             assertEquals(values[i],
-                row.get(i).accept(new EitherVisitor<TableCell, SubTable, String>() {
-                    public String visitLeft(TableCell a) { return String.valueOf(a.getField()); }
+                row.get(i).accept(new EitherVisitor<ResultCell, SubTable, String>() {
+                    public String visitLeft(ResultCell a) { return String.valueOf(a.getField()); }
                     public String visitRight(SubTable b) { fail("No subtables expected"); return null; }
                 })
             );
         }
         int c = 0;
         while (iter.hasNext()) {
-            for (Either<TableCell, SubTable> o: iter.next()) {
-                c += o.accept(new EitherVisitor<TableCell, SubTable, Integer>() {
-                    public Integer visitLeft(TableCell a) {return 1;}
+            for (Either<ResultCell, SubTable> o: iter.next()) {
+                c += o.accept(new EitherVisitor<ResultCell, SubTable, Integer>() {
+                    public Integer visitLeft(ResultCell a) {return 1;}
                     public Integer visitRight(SubTable b) { fail("No subtables expected"); return null; }
                 });
             }
         }
         assertEquals(c, 14);
     }
-    
-    EitherVisitor<TableCell, SubTable, Integer> deepCounter = new EitherVisitor<TableCell, SubTable, Integer>() {
 
-        @Override public Integer visitLeft(TableCell a) { return 1; }
+    EitherVisitor<ResultCell, SubTable, Integer> deepCounter = new EitherVisitor<ResultCell, SubTable, Integer>() {
+
+        @Override public Integer visitLeft(ResultCell a) { return 1; }
 
         @Override public Integer visitRight(SubTable b) {
             int c = 0;
-            for (List<Either<TableCell, SubTable>> row: b.getRows()) {
-                for (Either<TableCell, SubTable> item: row) {
+            for (List<Either<ResultCell, SubTable>> row: b.getRows()) {
+                for (Either<ResultCell, SubTable> item: row) {
                     c += item.accept(this);
                 }
             }
@@ -374,15 +383,15 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Employee.address", OuterJoinStatus.OUTER);
         
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 10), null);
         int c = 0;
         while (iter.hasNext()) {
-            List<Either<TableCell, SubTable>> row = iter.next();
+            List<Either<ResultCell, SubTable>> row = iter.next();
             //System.out.println();
-            for (Either<TableCell, SubTable> ro: row) {
+            for (Either<ResultCell, SubTable> ro: row) {
                 c += ro.accept(deepCounter); //printer.and(deepCounter));
             }
         }
@@ -408,16 +417,16 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
 
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
         
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 6), null);
         int c = 0;
         while (iter.hasNext()) {
-            List<Either<TableCell, SubTable>> row = iter.next();
+            List<Either<ResultCell, SubTable>> row = iter.next();
             System.out.println();
-            for (Either<TableCell, SubTable> ro: row) {
+            for (Either<ResultCell, SubTable> ro: row) {
                 c += ro.accept(printer.and(deepCounter));
             }
         }
@@ -439,14 +448,14 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
 
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
 
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
         int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
+        for (List<Either<ResultCell, SubTable>> row: iter) {
+            for (Either<ResultCell, SubTable> ro: row) {
                 c += ro.accept(printer.and(deepCounter));
             }
         }
@@ -482,14 +491,14 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
 
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
         System.out.println(res);
         TableRowIterator iter = new TableRowIterator(pq, q ,res, p2qn, new Page(2, 3), null);
         int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
+        for (List<Either<ResultCell, SubTable>> row: iter) {
+            for (Either<ResultCell, SubTable> ro: row) {
                 c += ro.accept(printer.and(deepCounter));
             }
         }
@@ -523,14 +532,14 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
 
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
         System.out.println(res);
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
         int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
+        for (List<Either<ResultCell, SubTable>> row: iter) {
+            for (Either<ResultCell, SubTable> ro: row) {
                 c += ro.accept(printer.and(deepCounter));
             }
         }
