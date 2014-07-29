@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +22,13 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
-public class AsymmetricOperationInput extends ListInput {
+/**
+ * A list input class for operations that have a left and a right side.
+ * @author Alex Kalderimis
+ *
+ */
+public class AsymmetricOperationInput extends ListInput
+{
 
     /**
      * Constructor.
@@ -43,9 +59,9 @@ public class AsymmetricOperationInput extends ListInput {
                     + "' are missing, at least one is required");
         }
         if (!getSubtractLists().isEmpty() && !super.getLists().isEmpty()) {
-            errors.add("Values have been supplied for both '" +
-                LISTS_PARAMETER + "' and '" + SUBTRACT_PARAM + "'. At most" +
-                " one is permitted");
+            errors.add("Values have been supplied for both '"
+                    + LISTS_PARAMETER + "' and '" + SUBTRACT_PARAM + "'. At most"
+                    + " one is permitted");
         }
         if (getReferenceLists().isEmpty()) {
             errors.add("Required parameter '" + REFERENCE_PARAMETER + "' is missing");

@@ -28,6 +28,10 @@ public class DoNothingIdResolverFactory extends IdResolverFactory
         resolver = new DoNothingIdResolver(clsName);
     }
 
+    /**
+     * @return the ID resolver
+     * @see org.intermine.bio.dataconversion.IdResolverFactory#getIdResolver()
+     */
     public IdResolver getIdResolver() {
         return resolver;
     }

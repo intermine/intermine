@@ -18,26 +18,36 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.webservice.server.core.ReadWriteJSONService;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
-public class PermaTokenDeletionService extends ReadWriteJSONService {
+/**
+ * Does what it says on the tin.
+ * @author Alex Kalderimis
+ */
+public class PermaTokenDeletionService extends ReadWriteJSONService
+{
 
-	private String uuid;
+    private String uuid;
 
-	public PermaTokenDeletionService(InterMineAPI im, String uuid) {
-		super(im);
-		this.uuid = uuid;
-	}
+    /**
+     * Constructor.
+     * @param im The InterMine state object.
+     * @param uuid The token we dislike so much.
+     */
+    public PermaTokenDeletionService(InterMineAPI im, String uuid) {
+        super(im);
+        this.uuid = uuid;
+    }
 
-	@Override
-	protected void execute() throws Exception {
-		PermanentToken token = new PermanentToken();
-		token.setToken(uuid);
-		ObjectStoreWriter osw = im.getProfileManager()
-				  .getProfileObjectStoreWriter(); 
-		token = (PermanentToken) osw.getObjectByExample(token, Collections.singleton("token"));
-		if (token == null) {
-			throw new ResourceNotFoundException(uuid + " is not a token");
-		}
-		im.getProfileManager().removePermanentToken(token);
-	}
+    @Override
+    protected void execute() throws Exception {
+        PermanentToken token = new PermanentToken();
+        token.setToken(uuid);
+        ObjectStoreWriter osw = im.getProfileManager()
+                  .getProfileObjectStoreWriter();
+        token = (PermanentToken) osw.getObjectByExample(token, Collections.singleton("token"));
+        if (token == null) {
+            throw new ResourceNotFoundException(uuid + " is not a token");
+        }
+        im.getProfileManager().removePermanentToken(token);
+    }
 
 }

@@ -10,7 +10,6 @@ package org.intermine.bio.web.displayer;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.PathQueryExecutor;
@@ -33,7 +33,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
@@ -67,7 +66,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         PathQueryExecutor executor = im.getPathQueryExecutor(SessionMethods.getProfile(session));
 
@@ -76,7 +75,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
 
         Integer alleleCount = 0;
         Boolean mouser = false;
-        if (!this.isThisAMouser(reportObject)) {
+        if (!MouseAllelesDisplayer.isThisAMouser(reportObject)) {
             // to give us some homologue identifier and the actual terms to tag-cloudize
             q.addViews(
                     "Gene.symbol",
@@ -106,11 +105,14 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             cq.addViews("Gene.homologues.homologue.alleles.primaryIdentifier");
             cq.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
                     "M. musculus"), "A");
-            cq.addConstraint(Constraints.eq("Gene.id", reportObject.getObject().getId().toString()), "B");
+            cq.addConstraint(Constraints.eq("Gene.id",
+                    reportObject.getObject().getId().toString()), "B");
             cq.setConstraintLogic("A and B");
             try {
                 alleleCount = executor.count(cq);
-            } catch (ObjectStoreException e) { }
+            } catch (ObjectStoreException e) {
+                // couldn't get count
+            }
         } else {
             mouser = true;
 
@@ -147,6 +149,10 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                             queryForTypesInCollection(reportObject.getObject(), "alleles",
                                     im.getObjectStore());
 
+                    if (collection == null) {
+                        return;
+                    }
+
                     // create an InlineResultsTable
                     InlineResultsTable t = new InlineResultsTable(collection,
                             fd.getClassDescriptor().getModel(),
@@ -165,7 +171,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
 
         ExportResultsIterator qResults;
         try {
-            qResults = executor.execute((PathQuery) q);
+            qResults = executor.execute(q);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(e);
         }
@@ -180,7 +186,8 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             HashMap<String, Integer> terms;
             if (!counts.containsKey(sourceGeneSymbol)) {
                 HashMap<String, Object> wrapper = new HashMap<String, Object>();
-                wrapper.put("terms", terms = new LinkedHashMap<String, Integer>());
+                terms = new LinkedHashMap<String, Integer>();
+                wrapper.put("terms", terms);
                 wrapper.put("homologueId", (mouser) ? row.get(2).getField().toString()
                         : row.get(4).getField().toString());
                 wrapper.put("isMouser", mouser);
@@ -191,8 +198,11 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             // populate the allele term with count
             String alleleTerm = row.get(3).getField().toString();
             if (!alleleTerm.isEmpty()) {
-                Object k = (!terms.containsKey(alleleTerm)) ? terms.put(alleleTerm, 1)
-                        : terms.put(alleleTerm, terms.get(alleleTerm) + 1);
+                if (!terms.containsKey(alleleTerm)) {
+                    terms.put(alleleTerm, 1);
+                } else {
+                    terms.put(alleleTerm, terms.get(alleleTerm) + 1);
+                }
             }
         }
 
@@ -209,7 +219,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                         new IntegerValueComparator(terms));
                 // deep copy
                 for (String term : terms.keySet()) {
-                    sorted.put(term, (Integer) terms.get(term));
+                    sorted.put(term, terms.get(term));
                 }
                 // "mark" top 20 and order by natural order - the keys
                 TreeMap<String, Map<String, Object>> marked =
@@ -224,7 +234,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                         topTerm = true;
                     }
                     m.put("top", topTerm);
-                    m.put("count", (Integer) sorted.get(term));
+                    m.put("count", sorted.get(term));
                     m.put("url", getUrl((String) gene.get("homologueId"), term));
 
                     // save it
@@ -247,33 +257,56 @@ public class MouseAllelesDisplayer extends ReportDisplayer
         request.setAttribute("alleleCount", alleleCount);
     }
 
-    private String getUrl(String geneId, String term) {
-
-        String url = "<query name=\"\" model=\"genomic\" view=\"Gene.alleles.genotypes.phenotypeTerms.name Gene.alleles.symbol Gene.alleles.primaryIdentifier Gene.alleles.genotypes.name Gene.alleles.name Gene.alleles.type Gene.alleles.genotypes.geneticBackground Gene.alleles.genotypes.zygosity Gene.alleles.organism.name\" longDescription=\"\" constraintLogic=\"B and C and A\">" +
-          "<constraint path=\"Gene.alleles.genotypes.phenotypeTerms.name\" code=\"B\" op=\"=\" value=\"" + term + "\"/>" +
-          "<constraint path=\"Gene.organism.species\" code=\"C\" op=\"=\" value=\"musculus\"/>" +
-          "<constraint path=\"Gene.id\" code=\"A\" op=\"=\" value=\"" + geneId + "\"/>" +
-        "</query>";
-
+    private static String getUrl(String geneId, String term) {
+        String url = "<query name=\"\" model=\"genomic\" view=\"Gene.alleles.genotypes."
+                + "phenotypeTerms.name Gene.alleles.symbol Gene.alleles.primaryIdentifier "
+                + "Gene.alleles.genotypes.name Gene.alleles.name Gene.alleles.type "
+                + "Gene.alleles.genotypes.geneticBackground Gene.alleles.genotypes.zygosity "
+                + "Gene.alleles.organism.name\" longDescription=\"\" "
+                + "constraintLogic=\"B and C and A\">"
+                + "<constraint path=\"Gene.alleles.genotypes.phenotypeTerms.name\" "
+                + "code=\"B\" op=\"=\" "
+                + "value=\"" + term + "\"/>"
+                + "<constraint path=\"Gene.organism.species\" code=\"C\" op=\"=\" "
+                + "value=\"musculus\"/>"
+                + "<constraint path=\"Gene.id\" code=\"A\" op=\"=\" value=\"" + geneId + "\"/>"
+                + "</query>";
         return url;
     }
 
-/**
- * Given columns: [symbol, primaryId, id] in a List<ResultElement> row, give us a nice
- *  identifier back
- * @param row
- * @return
- */
-    private String getIdentifier(List<ResultElement> row) {
+    /**
+     * Given columns: [symbol, primaryId, id] in a List<ResultElement> row, give us a nice
+     *  identifier back
+     * @param row
+     * @return nice identifier
+     */
+    private static String getIdentifier(List<ResultElement> row) {
+
+        String symbol = null;
+        String primaryId = null;
         String id = null;
-        return (!(id = row.get(0).getField().toString()).isEmpty()) ? id : ((id = row.get(1).getField().toString()).isEmpty()) ? id : row.get(2).getField().toString();
+
+        if (row.get(0).getField() != null) {
+            symbol = row.get(0).getField().toString();
+            if (StringUtils.isNotEmpty(symbol)) {
+                return symbol;
+            }
+        }
+
+        if (row.get(1).getField() != null) {
+            primaryId = row.get(1).getField().toString();
+            if (StringUtils.isNotEmpty(primaryId)) {
+                return primaryId;
+            }
+        }
+        return id;
     }
 
 /**
  *
  * @return true if we are on a mouseified gene
  */
-    private Boolean isThisAMouser(ReportObject reportObject) {
+    private static Boolean isThisAMouser(ReportObject reportObject) {
         try {
             return "Mus".equals(((InterMineObject) reportObject.getObject()
                         .getFieldValue("organism"))
@@ -307,6 +340,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
          * @param b parameter
          * @return Integer
          */
+        @Override
         public int compare(Object a, Object b) {
             Integer aV = (Integer) base.get(a);
             Integer bV = (Integer) base.get(b);

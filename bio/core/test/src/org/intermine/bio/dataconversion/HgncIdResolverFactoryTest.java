@@ -40,7 +40,7 @@ public class HgncIdResolverFactoryTest extends TestCase {
 
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/hgnc"));
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"9606"})), IdResolverFactory.resolver.getTaxons());
+        assertTrue(IdResolverFactory.resolver.getTaxons().contains("9606"));
         assertTrue(IdResolverFactory.resolver.isPrimaryIdentifier("9606", "A1BG"));
         assertEquals("A1CF", IdResolverFactory.resolver.resolveId("9606", "APOBEC1CF").iterator().next());
         assertEquals("A1BG-AS1", IdResolverFactory.resolver.resolveId("9606", "gene", "NCRNA00181").iterator().next());

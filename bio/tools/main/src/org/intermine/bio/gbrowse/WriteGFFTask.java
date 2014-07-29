@@ -32,6 +32,7 @@ import org.apache.tools.ant.Task;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
@@ -46,7 +47,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -60,7 +61,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * A Task for creating GFF and FASTA files for use by GBrowse.  Only those features that are
@@ -280,9 +281,9 @@ public class WriteGFFTask extends Task
         }
     }
 
-    private String getFeatureName(SequenceFeature feature) {
+    private static String getFeatureName(SequenceFeature feature) {
         Class<?> bioEntityClass = feature.getClass();
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(bioEntityClass);
+        Set<Class<?>> classes = Util.decomposeClass(bioEntityClass);
 
         StringBuffer nameBuffer = new StringBuffer();
 
@@ -296,7 +297,7 @@ public class WriteGFFTask extends Task
         return nameBuffer.toString();
     }
 
-    private void writeTranscriptsAndExons(Model model, PrintWriter gffWriter, Chromosome chr,
+    private static void writeTranscriptsAndExons(Model model, PrintWriter gffWriter, Chromosome chr,
                                           Map<SequenceFeature, Location> seenTranscripts,
                                           Map<String, Location> seenTranscriptParts,
                                           Map<Integer, List<String>> synonymMap) {
@@ -379,7 +380,7 @@ public class WriteGFFTask extends Task
         }
     }
 
-    private void incrementCount(Map<String, Integer> objectCounts, Object object) {
+    private static void incrementCount(Map<String, Integer> objectCounts, Object object) {
         if (objectCounts.containsKey(object.getClass())) {
             int oldCount = objectCounts.get(object.getClass()).intValue();
             objectCounts.put(object.getClass().toString(), new Integer(oldCount + 1));
@@ -399,10 +400,10 @@ public class WriteGFFTask extends Task
      * @param synonymValues a List of synonyms for this feature
      * @param evidenceList a List of evidence objects for this feature
      */
-    private void writeFeature(PrintWriter gffWriter, Chromosome chr, SequenceFeature bioEntity,
-            Location chromosomeLocation, String identifier, String featureType, String idType,
-            Map<String, List<String>> extraAttributes, List<String> synonymValues,
-            Integer flyMineId) {
+    private static void writeFeature(PrintWriter gffWriter, Chromosome chr,
+            SequenceFeature bioEntity, Location chromosomeLocation, String identifier,
+            String featureType, String idType, Map<String, List<String>> extraAttributes,
+            List<String> synonymValues, Integer flyMineId) {
 
         StringBuffer lineBuffer = new StringBuffer();
 
@@ -502,7 +503,7 @@ public class WriteGFFTask extends Task
         gffWriter.println(lineBuffer.toString());
     }
 
-    private String makeIdString(Integer id) {
+    private static String makeIdString(Integer id) {
         return "FlyMineInternalID_" + id;
     }
 
@@ -551,7 +552,7 @@ public class WriteGFFTask extends Task
      * @return a Map from id to synonym List
      * @throws ObjectStoreException
      */
-    private Map<Integer, List<String>> makeSynonymMap(ObjectStore os, Integer chromosomeId)
+    private static Map<Integer, List<String>> makeSynonymMap(ObjectStore os, Integer chromosomeId)
         throws ObjectStoreException {
         Query q = new Query();
         q.setDistinct(true);
@@ -662,7 +663,7 @@ public class WriteGFFTask extends Task
         return new File(destinationDirectory, chromosomeFileNamePrefix(chr) + ".gff");
     }
 
-    private String chromosomeFileNamePrefix(Chromosome chr) {
+    private static String chromosomeFileNamePrefix(Chromosome chr) {
         String orgPrefix;
         if (chr.getOrganism().getGenus() == null) {
             orgPrefix = "Unknown_organism";
@@ -673,7 +674,7 @@ public class WriteGFFTask extends Task
         return orgPrefix + "_chr_" + chr.getPrimaryIdentifier();
     }
 
-    private boolean isInstance(Model model, InterMineObject obj, String clsName) {
+    private static boolean isInstance(Model model, InterMineObject obj, String clsName) {
         if (model.hasClassDescriptor(clsName)) {
             Class<? extends FastPathObject> cls = model.getClassDescriptorByName(clsName).getType();
             if (DynamicUtil.isInstance(obj, cls)) {

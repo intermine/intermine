@@ -13,7 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -82,6 +82,7 @@ public class FastaLoaderTaskTest extends TestCase {
         }
         flt.setFileArray(files);
         flt.execute();
+
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
 

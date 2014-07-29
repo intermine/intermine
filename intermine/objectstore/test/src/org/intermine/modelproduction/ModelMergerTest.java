@@ -18,8 +18,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 
 public class ModelMergerTest extends TestCase
 {

@@ -19,8 +19,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.SAXParser;
+import org.intermine.metadata.StringUtil;
 import org.xml.sax.InputSource;
 
 /**
@@ -123,7 +123,7 @@ public class PathQueryBinding
     /**
      * Create XML for the join style in a PathQuery.
      */
-    private void marshalPathQueryJoinStyle(PathQuery query, XMLStreamWriter writer)
+    private static void marshalPathQueryJoinStyle(PathQuery query, XMLStreamWriter writer)
         throws XMLStreamException {
         for (Map.Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
             writer.writeEmptyElement("join");
@@ -136,7 +136,7 @@ public class PathQueryBinding
     /**
      * Create XML for the path descriptions in a PathQuery.
      */
-    private void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer)
+    private static void marshalPathQueryDescriptions(PathQuery query, XMLStreamWriter writer)
         throws XMLStreamException {
         for (Map.Entry<String, String> entry : query.getDescriptions().entrySet()) {
             String path = entry.getKey();
@@ -203,7 +203,7 @@ public class PathQueryBinding
                         writer.writeEndElement();
                     } else {
                         if (!value.equals(value.trim())) {
-                        throw new XMLStreamException("Value in MultiValue starts or ends with "
+                            throw new XMLStreamException("Value in MultiValue starts or ends with "
                                 + "whitespace - this query cannot be represented in XML");
                         }
                         writer.writeStartElement("value");

@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.Model;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -62,6 +61,7 @@ public class ConvertBagController extends TilesAction
         Model model = im.getModel();
         TemplateManager templateManager = im.getTemplateManager();
 
+        @SuppressWarnings("rawtypes")
         Map<Class, ApiTemplate> conversionTypesMap = TypeConverter.getConversionTemplates(
             templateManager.getConversionTemplates(),
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));

@@ -108,7 +108,7 @@ public class GeneOntologyDisplayer extends ReportDisplayer
             Model model = im.getModel();
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
 
-            InterMineObject object = (InterMineObject) reportObject.getObject();
+            InterMineObject object = reportObject.getObject();
             String primaryIdentifier = null;
             try {
                 primaryIdentifier = (String) object.getFieldValue("primaryIdentifier");
@@ -151,7 +151,8 @@ public class GeneOntologyDisplayer extends ReportDisplayer
         }
     }
 
-    private void addToOntologyMap(Map<String, Map<OntologyTerm, Set<String>>> goTermsByOntology,
+    private static void addToOntologyMap(
+            Map<String, Map<OntologyTerm, Set<String>>> goTermsByOntology,
             String namespace, OntologyTerm term, String evidenceCode) {
         Map<OntologyTerm, Set<String>> termToEvidence = goTermsByOntology.get(namespace);
         if (termToEvidence == null) {
@@ -166,7 +167,7 @@ public class GeneOntologyDisplayer extends ReportDisplayer
         codes.add(evidenceCode);
     }
 
-    private PathQuery buildQuery(Model model, Integer geneId) {
+    private static PathQuery buildQuery(Model model, Integer geneId) {
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.goAnnotation.ontologyTerm.parents.name",
                 "Gene.goAnnotation.ontologyTerm.name",
@@ -187,7 +188,7 @@ public class GeneOntologyDisplayer extends ReportDisplayer
         return q;
     }
 
-    private String getOrganismName(ReportObject reportObject) {
+    private static String getOrganismName(ReportObject reportObject) {
         Organism organism = ((BioEntity) reportObject.getObject()).getOrganism();
         if (organism != null) {
             if (!StringUtils.isBlank(organism.getName())) {

@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.sql.DatabaseUtil;
-
 import org.apache.log4j.Logger;
+import org.intermine.sql.DatabaseUtil;
 
 /**
  * An implementation of the BatchWriter interface that uses simple JDBC addBatch() and

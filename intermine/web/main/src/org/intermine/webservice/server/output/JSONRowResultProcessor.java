@@ -27,7 +27,13 @@ import org.json.JSONArray;
  */
 public class JSONRowResultProcessor extends JSONResultProcessor
 {
-    public enum Verbosity {MINIMAL, FULL};
+    public enum Verbosity {
+        /** Just the results **/
+        MINIMAL,
+        /** Very verbose - with cells as objects with class names and stuff. **/
+        FULL
+    };
+
     private final InterMineAPI im;
 
     private final Verbosity verbosity;
@@ -40,6 +46,11 @@ public class JSONRowResultProcessor extends JSONResultProcessor
         verbosity = Verbosity.FULL;
     }
 
+    /**
+     * Construct a row result processor.
+     * @param im The InterMine state object.
+     * @param verbosity How verbose should we be.
+     */
     public JSONRowResultProcessor(InterMineAPI im, Verbosity verbosity) {
         this.im = im;
         this.verbosity = verbosity;
@@ -49,7 +60,7 @@ public class JSONRowResultProcessor extends JSONResultProcessor
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
         Iterator<JSONArray> jsonIter;
         if (verbosity == Verbosity.MINIMAL) {
-            jsonIter = new MinimalJsonIterator(it, im);
+            jsonIter = new MinimalJsonIterator(it);
         } else {
             jsonIter = new JSONRowIterator((ExportResultsIterator) it, im);
         }

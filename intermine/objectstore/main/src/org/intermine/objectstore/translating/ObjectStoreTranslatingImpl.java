@@ -11,17 +11,12 @@ package org.intermine.objectstore.translating;
  */
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreAbstractImpl;
@@ -30,7 +25,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.DynamicUtil;
 
 /**
  * ObjectStore that transparently translates incoming queries and outgoing objects
@@ -202,16 +196,18 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         return retval;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public InterMineObject getObjectByExample(@SuppressWarnings("unused") InterMineObject o,
-            @SuppressWarnings("unused") Set<String> fieldNames)
-        throws ObjectStoreException {
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames) {
         throw new UnsupportedOperationException("getObjectByExample not supported by"
                 + "ObjectStoreTranslatingImpl");
     }
+
+    @Override
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(T o, Set<String> fs) {
+        throw new UnsupportedOperationException("getObjectsByExample not supported by"
+                    + "ObjectStoreTranslatingImpl");
+    }
+
 
     /**
      * {@inheritDoc}
@@ -224,7 +220,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      * {@inheritDoc}
      */
     @Override
-    public Set<Object> getComponentsForQuery(@SuppressWarnings("unused") Query q) {
+    public Set<Object> getComponentsForQuery(Query q) {
         return Collections.emptySet();
     }
 
@@ -248,7 +244,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
             Exception e = new Exception();
             e.fillInStackTrace();
             LOG.warn("Probable inefficiency: internalGetObjectById called "
-                    + (retval == null ? "" : "to fetch a " + DynamicUtil.getFriendlyName(retval
+                    + (retval == null ? "" : "to fetch a " + Util.getFriendlyName(retval
                             .getClass())) + " with id " + id + ", clazz " + clazz.toString()
                     + ", cache size = " + cache.size() + " - maybe you should use"
                     + " ObjectStoreFastCollectionsForTranslatorImpl", e);

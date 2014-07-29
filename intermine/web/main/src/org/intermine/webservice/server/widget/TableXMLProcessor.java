@@ -21,17 +21,18 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @author dbutano
  *
  */
-public class TableXMLProcessor implements WidgetResultProcessor
+public final class TableXMLProcessor implements WidgetResultProcessor
 {
 
-    private static final WidgetResultProcessor instance = new TableXMLProcessor();
+    private static final WidgetResultProcessor INSTANCE = new TableXMLProcessor();
 
     private TableXMLProcessor() {
         // Not to be instantiated.
     }
 
+    /** @return a Widget result processor. **/
     public static WidgetResultProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class TableXMLProcessor implements WidgetResultProcessor
     private String formatCell(String name, Object contents) {
         StringBuffer sb = new StringBuffer();
         if (contents instanceof List) {
-            for (Object o: (List) contents) {
+            for (Object o: (List<?>) contents) {
                 sb.append(formatCell(name, o));
             }
         } else {

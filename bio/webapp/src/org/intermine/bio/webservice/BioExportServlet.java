@@ -29,9 +29,16 @@ import org.intermine.webservice.server.core.WebServiceServlet;
 public abstract class BioExportServlet extends WebServiceServlet
 {
     private static final long serialVersionUID = 1L;
+    /**
+     * so class names
+     */
     public static final String SO_CLASS_NAMES = "SO_CLASS_NAMES";
     private static final String RESOURCE = "/WEB-INF/soClassName.properties";
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void init() throws ServletException {
         if (InterMineContext.getAttribute(SO_CLASS_NAMES) == null) {
             ServletContext sc = getServletContext();
@@ -49,17 +56,20 @@ public abstract class BioExportServlet extends WebServiceServlet
         }
     }
 
+    /**
+     * @return web service
+     */
     protected abstract WebService getService();
 
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-        case GET:
-            return getService();
-        case POST:
-            return getService();
-        default:
-            throw new NoServiceException();
+            case GET:
+                return getService();
+            case POST:
+                return getService();
+            default:
+                throw new NoServiceException();
         }
     }
 }

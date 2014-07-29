@@ -18,11 +18,11 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Utility methods for GFF3.
@@ -66,7 +66,7 @@ public final class GFF3Util
     public static GFF3Record makeGFF3Record(SequenceFeature lsf,
             Map<String, String> soClassNameMap, String sourceName,
             Map<String, List<String>> extraAttributes, boolean makeUcscCompatible) {
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(lsf.getClass());
+        Set<Class<?>> classes = Util.decomposeClass(lsf.getClass());
 
         String type = null;
         String sequenceID = null;
@@ -132,7 +132,7 @@ public final class GFF3Util
 
         Double score = null;
         try {
-            for (Class<?> c : DynamicUtil.decomposeClass(lsf.getClass())) {
+            for (Class<?> c : Util.decomposeClass(lsf.getClass())) {
                 if (TypeUtil.getFieldInfo(c, "score") != null) {
                     score = (Double) lsf.getFieldValue("score");
                 }

@@ -12,7 +12,9 @@ package org.intermine.api.query.codegen;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 
@@ -33,6 +35,7 @@ public class WebserviceCodeGenInfo
     private String resultTablesLib = null;
     private String baseUrl = null;
     private String lineBreak;
+    private Properties properties = new Properties();
 
     /**
      * Constructor.
@@ -45,8 +48,8 @@ public class WebserviceCodeGenInfo
      * @param user the name of the user who was logged in when this info was generated
      *
      */
-    public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL,
-            String projectTitle, String perlWSModuleVer, boolean isPubliclyAccessible, Profile user) {
+    public WebserviceCodeGenInfo(PathQuery query, String serviceBaseURL, String projectTitle,
+            String perlWSModuleVer, boolean isPubliclyAccessible, Profile user) {
         this.query = query;
         this.serviceBaseURL = serviceBaseURL;
         this.projectTitle = projectTitle;
@@ -56,6 +59,15 @@ public class WebserviceCodeGenInfo
         this.lineBreak = System.getProperty("line.separator");
     }
 
+    /**
+     * @param pq
+     * @param serviceBaseURL
+     * @param projectTitle
+     * @param perlWSModuleVer
+     * @param pathQueryIsPublic
+     * @param profile
+     * @param lineBreak
+     */
     public WebserviceCodeGenInfo(PathQuery pq, String serviceBaseURL,
             String projectTitle, String perlWSModuleVer,
             boolean pathQueryIsPublic, Profile profile, String lineBreak) {
@@ -69,10 +81,22 @@ public class WebserviceCodeGenInfo
     }
 
     public void readWebProperties(Properties properties) {
+        this.properties.putAll(properties);
         if (properties != null) {
             resultTablesLib = (String) properties.get("ws.imtables.provider");
             baseUrl = properties.get("webapp.baseurl") + "/" + properties.get("webapp.path") + "/";
         }
+    }
+
+    /**
+     * Get a configured property for which an accessor does not exist.
+     *
+     * @param key The key for this property.
+     * @param defaultValue The value to return if this property is not configured.
+     * @return The value of the property.
+     */
+    public String getProperty(String key, String defaultValue) {
+        return properties.getProperty(key, defaultValue);
     }
 
     public String getResultsTablesLib() {
@@ -139,6 +163,9 @@ public class WebserviceCodeGenInfo
         return user.getUsername();
     }
 
+    /**
+     * @return a line break
+     */
     public String getLineBreak() {
         return lineBreak;
     }
@@ -153,5 +180,14 @@ public class WebserviceCodeGenInfo
             return user.getApiKey();
         }
         return user.getDayToken();
+    }
+
+    /**
+     * @return True if this user has a permanent profile.
+     */
+    public boolean isLoggedIn() {
+        return user.getUserId() != null && !(
+                StringUtils.isBlank(user.getUsername())
+                    || AnonProfile.USERNAME.equals(user.getUsername()));
     }
 }

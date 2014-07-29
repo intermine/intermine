@@ -90,9 +90,8 @@ public class PathQueryUnmarshalTest extends  TestCase
     }
 
     public void testInvalidConstraintOperation() {
-        PathQuery query = null;
         try {
-            query = createQuery("InvalidConstraintOperation.xml");
+            createQuery("InvalidConstraintOperation.xml");
         } catch (Exception ex) {
             return;
         }
@@ -106,7 +105,7 @@ public class PathQueryUnmarshalTest extends  TestCase
 
     public void testInvalidValueTags() {
         try {
-            PathQuery query = createQuery("BadValueTags.xml");
+            createQuery("BadValueTags.xml");
         } catch (RuntimeException e) {
             assertEquals(e.getMessage(),
                     "Cannot have any tags inside a value tag");
@@ -117,7 +116,7 @@ public class PathQueryUnmarshalTest extends  TestCase
 
     public void testBadConstraintStructure() {
         try {
-            PathQuery query = createQuery("BadConstraintStructure.xml");
+            createQuery("BadConstraintStructure.xml");
         } catch (RuntimeException e) {
             assertEquals("Cannot have anything other than value tag inside a constraint",
                     e.getCause().getMessage());
@@ -172,18 +171,18 @@ public class PathQueryUnmarshalTest extends  TestCase
     }
 
     public void testRangeConstraint() {
-    	PathQuery pq = createQuery("employeesEmployedInMarchOrMay.xml");
-    	
-    	assertEquals(1, pq.getConstraints().size());
-    	PathConstraint pc = pq.getConstraints().keySet().iterator().next();
-    	assertTrue(pc instanceof PathConstraintRange);
-    	assertEquals(2, ((PathConstraintRange) pc).getValues().size());
+        PathQuery pq = createQuery("employeesEmployedInMarchOrMay.xml");
+
+        assertEquals(1, pq.getConstraints().size());
+        PathConstraint pc = pq.getConstraints().keySet().iterator().next();
+        assertTrue(pc instanceof PathConstraintRange);
+        assertEquals(2, ((PathConstraintRange) pc).getValues().size());
     }
 
     public void testMultipleQueries() {
         String path = "PathQueryBindingUnmarshal/MultipleQueries.xml";
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
-        Model model = Model.getInstanceByName("testmodel");
+        Model.getInstanceByName("testmodel");
         Collection<PathQuery> pqlist = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values();
 
         assertEquals(pqlist.size(), 2);
@@ -198,7 +197,7 @@ public class PathQueryUnmarshalTest extends  TestCase
     public void testMultipleQueriesWithSameName() {
         String path = "PathQueryBindingUnmarshal/MultipleQueriesSameName.xml";
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
-        Model model = Model.getInstanceByName("testmodel");
+        Model.getInstanceByName("testmodel");
         Set<String> pqnames = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).keySet();
 
         assertTrue(pqnames.contains("a_query"));
@@ -240,9 +239,9 @@ public class PathQueryUnmarshalTest extends  TestCase
         String path = "PathQueryBindingUnmarshal/" + fileName;
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
         if (is == null) {
-        	throw new RuntimeException("Could not find the required XML file: " + path);
+            throw new RuntimeException("Could not find the required XML file: " + path);
         }
-        Model model = Model.getInstanceByName("testmodel");
+        Model.getInstanceByName("testmodel");
         PathQuery ret = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values().iterator().next();
         return ret;
     }

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -39,16 +40,10 @@ import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
 /**
- * Web service that returns a widget for a given list of identifiers See
+ * Web service that returns the result of an enrichment calculation over a list
+ * of objects.
+ *
  * {@link WidgetsRequestProcessor} for parameter description
- * URL examples: get an EnrichmentWidget
- * /service/widgets?widgetId=go_enrichment&amp;className=Gene&amp;extraAttributes=Bonferroni,0.1
- * ,biological_process&amp;ids=S000000003,S000000004&amp;format=html
- * get a GraphWidget
- * /service/widgets?widgetId=flyatlas
- *   &amp;className=Gene&amp;extraAttributes=
- *   &amp;ids=FBgn0011648,FBgn0011655,FBgn0025800
- *   &amp;format=html
  *
  * @author Alex Kalderimis
  * @author Xavier Watkins
@@ -67,15 +62,29 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     }
 
+    private static final Logger LOG = Logger.getLogger(EnrichmentWidgetResultService.class);
+
+    private final WidgetsRequestParser requestParser;
+
+    /** @param im The InterMine state object. **/
     public EnrichmentWidgetResultService(InterMineAPI im) {
         super(im);
+        requestParser = new WidgetsRequestParser();
+        requestParser.parameterIsRequired(WidgetsRequestParser.MAXP);
+        requestParser.parameterIsRequired(WidgetsRequestParser.ERROR_CORRECTION);
+        requestParser.setDefaultValue(
+                WidgetsRequestParser.ERROR_CORRECTION,
+                getProperty("widgets.correction.default"));
+        requestParser.setDefaultValue(
+                WidgetsRequestParser.MAXP,
+                getProperty("widgets.maxp.default"));
     }
 
     @Override
     protected boolean canServe(Format format) {
-        if (   format == Format.JSON
-            || format == Format.XML
-            || Format.FLAT_FILES.contains(format)) {
+        if (format == Format.JSON
+                || format == Format.XML
+                || Format.FLAT_FILES.contains(format)) {
             return true;
         }
         return false;
@@ -96,6 +105,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         WidgetsServiceInput input = getInput();
         InterMineBag imBag = retrieveBag(input.getBagName());
         addOutputListInfo(imBag);
+        LOG.debug("Enriching with " + input);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
@@ -107,13 +117,9 @@ public class EnrichmentWidgetResultService extends WidgetService
         addOutputConfig(widgetConfig);
 
         //filters
-        String filterSelectedValue = input.getExtraAttributes().get(0);
-        if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
-            String filters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
-            if (filters != null && !"".equals(filters)) {
-                filterSelectedValue = filters.split("\\,")[0];
-                input.getExtraAttributes().set(0, filterSelectedValue);
-            }
+        String filterSelectedValue = input.getFilter();
+        if (StringUtils.isBlank(filterSelectedValue)) {
+            filterSelectedValue = getDefaultFilterValue(widgetConfig, imBag);
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
@@ -122,7 +128,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
         if (populationBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
-            if (input.isSavePopulation()) {
+            if (input.shouldSavePopulation()) {
                 deleteReferencePopulationPreference(input);
             }
             addOutputAttribute("message", String.format(BAD_POPULATION_MSG, imBag.getType()));
@@ -132,8 +138,12 @@ public class EnrichmentWidgetResultService extends WidgetService
         //instantiate the widget
         EnrichmentWidget widget = null;
         try {
-            widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, populationBag,
-                im.getObjectStore(), input.getExtraAttributes());
+            widget = (EnrichmentWidget) widgetConfig.getWidget(
+                    imBag, populationBag, im.getObjectStore(), input);
+            if (filterSelectedValue != null) {
+                widget.setFilter(filterSelectedValue);
+            }
+            widget.process();
         } catch (IllegalArgumentException e) {
             addOutputAttribute("message", e.getMessage());
             deleteReferencePopulationPreference(input);
@@ -148,6 +158,8 @@ public class EnrichmentWidgetResultService extends WidgetService
 
         addOutputResult(widget);
     }
+
+
 
     @Override
     protected void addOutputConfig(WidgetConfig config) {
@@ -179,7 +191,7 @@ public class EnrichmentWidgetResultService extends WidgetService
     private void addOutputExtraAttribute(WidgetsServiceInput input,
         EnrichmentWidget widget) throws Exception {
         WidgetResultProcessor processor = getProcessor();
-        String extra = input.getExtraAttributes().get(3);
+        String extra = input.getExtraAttribute();
         CorrectionCoefficient cc = widget.getExtraCorrectionCoefficient();
         Map<String, Map<String, Object>> extraAttributes;
         if (cc != null) {
@@ -194,6 +206,9 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
     }
 
+    /**
+     * @return A WidgetResultProcessor of some type, capable of serializing the output.
+     */
     protected WidgetResultProcessor getProcessor() {
         if (formatIsJSON()) {
             return EnrichmentJSONProcessor.instance();
@@ -211,7 +226,7 @@ public class EnrichmentWidgetResultService extends WidgetService
     }
 
     private WidgetsServiceInput getInput() {
-        return new WidgetsRequestParser(request).getInput();
+        return requestParser.getInput(request);
     }
 
     private boolean isProfileLoggedIn() {
@@ -243,11 +258,12 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     private void saveReferencePopulationPreference(WidgetsServiceInput input)
         throws TagNamePermissionException, TagNameException {
-        if (input.isSavePopulation()) {
+        if (input.shouldSavePopulation()) {
             if (isProfileLoggedIn()) {
                 TagManager tm = im.getTagManager();
-                String tagName = TagNames.IM_WIDGET + TagNames.SEPARATOR + input.getWidgetId()
-                           + TagNames.SEPARATOR + input.getPopulationBagName();
+                String tagName = TagNames.IM_WIDGET
+                        + TagNames.SEPARATOR + input.getWidgetId()
+                        + TagNames.SEPARATOR + input.getPopulationBagName();
                 deleteReferencePopulationPreference(input);
                 if (!"".equals(input.getPopulationBagName())) {
                     tm.addTag(tagName, input.getBagName(), TagTypes.BAG,

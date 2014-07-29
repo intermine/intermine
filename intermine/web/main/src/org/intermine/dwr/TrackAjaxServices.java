@@ -9,6 +9,7 @@ package org.intermine.dwr;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,33 +19,39 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.directwebremoting.WebContextFactory;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
-
-public class TrackAjaxServices {
+/**
+ * @author Daniela Butano
+ *
+ */
+public class TrackAjaxServices
+{
     protected static final Logger LOG = Logger.getLogger(TrackAjaxServices.class);
-    private ObjectStore uos = null;
-    public static String LAST_2WEEKS = "LAST2WEEKS";
-    public static String LAST_MONTH = "LASTMONTH";
-    public static String LAST_3MONTHES = "LAST3MONTHES";
-    public static String LAST_YEAR = "LASTYEAR";
 
+    private ObjectStore uos = null;
+    private static final String LAST_2WEEKS = "LAST2WEEKS";
+    private static final String LAST_MONTH = "LASTMONTH";
+    private static final String LAST_90_DAYS = "LAST3MONTHES";
+    private static final String LAST_YEAR = "LASTYEAR";
+    private static final long ONEDAY = 1000L * 60 * 60 * 24;
+
+    /**
+     * Construct a ajax services object that does tracking stuff.
+     */
     public TrackAjaxServices() {
-        HttpSession session = WebContextFactory.get().getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         uos = im.getProfileManager().getProfileObjectStoreWriter().getObjectStore();
     }
 
-    private List getTracksTrend(String tableName) {
-        List tracksTrend = new ArrayList<Object[]>();
+    private List<Object[]> getTracksTrend(String tableName) {
+        List<Object[]> tracksTrend = new ArrayList<Object[]>();
         String sql = "SELECT date_part('doy', timestamp) AS day, COUNT(timestamp) "
                    + "FROM " + tableName + " GROUP BY date_part('doy', timestamp)";
         Connection connection = null;
@@ -70,24 +77,28 @@ public class TrackAjaxServices {
         return tracksTrend;
     }
 
-    public List getQueryTracksTrend() {
+    /**  @return the overall query tracks trend. **/
+    public List<Object[]> getQueryTracksTrend() {
         return getTracksTrend("querytrack");
     }
 
-    public List getTemplateTracksTrend() {
+    /** @return the overall template tracks trend. **/
+    public List<Object[]> getTemplateTracksTrend() {
         return getTracksTrend("templatetrack");
     }
 
-    public List getLoginTracksTrend() {
+    /** @return the login tracks trend **/
+    public List<Object[]> getLoginTracksTrend() {
         return getTracksTrend("logintrack");
     }
 
-    public List getSearchTracksTrend() {
+    /** @return the search tracks trend **/
+    public List<Object[]> getSearchTracksTrend() {
         return getTracksTrend("searchtrack");
     }
 
-    private List getListTracksTrend(String event) {
-        List listTracksTrend = new ArrayList<Object[]>();
+    private List<Object[]> getListTracksTrend(String event) {
+        List<Object[]> listTracksTrend = new ArrayList<Object[]>();
 
         String sql = "SELECT date_part('doy', timestamp) AS day, COUNT(timestamp)"
                    + " FROM listtrack WHERE event='" + event + "'"
@@ -115,15 +126,17 @@ public class TrackAjaxServices {
         return listTracksTrend;
     }
 
-    public List getListExecutionTrend() {
+    /** @return the overall list execution trend **/
+    public List<Object[]> getListExecutionTrend() {
         return getListTracksTrend(ListTrackerEvent.EXECUTION.toString());
     }
 
-    public List getListCreationTrend() {
+    /** @return the overall list creation trend **/
+    public List<Object[]> getListCreationTrend() {
         return getListTracksTrend(ListTrackerEvent.CREATION.toString());
     }
 
-    public List getTracksDataTable(String sqlQuery) {
+    private List<Object[]> getTracksDataTable(String sqlQuery) {
         List<Object[]> trackTable = new ArrayList<Object[]>();
         Connection connection = null;
         try {
@@ -145,7 +158,11 @@ public class TrackAjaxServices {
         return trackTable;
     }
 
-    public List getQueryTracksDataTable(String timeRange) {
+    /**
+     * @param timeRange The time range to search within.
+     * @return The query tracks in that time-range.
+     */
+    public List<Object[]> getQueryTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
         String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "' ";
         String sql = "SELECT type, COUNT(type),"
@@ -161,7 +178,11 @@ public class TrackAjaxServices {
         return getTracksDataTable(sql);
     }
 
-    public List getTemplateTracksPercentage(String timeRange) {
+    /**
+     * @param timeRange The time range to search within.
+     * @return The template tracks in that time-range.
+     */
+    public List<Object[]> getTemplateTracksPercentage(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
         String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT templatename, COUNT(templatename),"
@@ -177,24 +198,32 @@ public class TrackAjaxServices {
         return getTracksDataTable(sql);
     }
 
+
     private Date calculateDate(String timeRange) {
-        final long ONEDAY = 1000 * 60 * 60 * 24;
         long currentDateMs = System.currentTimeMillis();
-        long startTimeMs = -1;
-        if (timeRange.equals(LAST_2WEEKS)) {
+        long startTimeMs;
+        if (StringUtils.isBlank(timeRange)) {
+            startTimeMs = -1;
+        } else if (timeRange.equals(LAST_2WEEKS)) {
             startTimeMs = (currentDateMs - 14 * ONEDAY);
         } else if (timeRange.equals(LAST_MONTH)) {
             startTimeMs = (currentDateMs - 30 * ONEDAY);
-        } else if (timeRange.equals(LAST_3MONTHES)) {
+        } else if (timeRange.equals(LAST_90_DAYS)) {
             startTimeMs = (currentDateMs - 30 * 3 * ONEDAY);
         } else if (timeRange.equals(LAST_YEAR)) {
             startTimeMs = (currentDateMs - 365 * ONEDAY);
+        } else {
+            throw new RuntimeException("Unknown time range: " + timeRange);
         }
         Date startDate = new Date(startTimeMs);
         return startDate;
     }
 
-    public List getSearchTracksDataTable(String timeRange) {
+    /**
+     * @param timeRange The time range to search within.
+     * @return The list search tracks in that time-range.
+     */
+    public List<Object[]> getSearchTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
         String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT keyword, COUNT(keyword),"
@@ -210,7 +239,11 @@ public class TrackAjaxServices {
         return getTracksDataTable(sql);
     }
 
-    public List getListExecutionTracksDataTable(String timeRange) {
+    /**
+     * @param timeRange The time range to search within.
+     * @return The list execution tracks in that time-range.
+     */
+    public List<Object[]> getListExecutionTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
         String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT type, COUNT(type),"
@@ -219,7 +252,8 @@ public class TrackAjaxServices {
                                       + timeStampConstraint
                                       + "GROUP BY username) AS listsubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM listtrack"
-                                      + " WHERE username='' AND event='EXECUTION' AND type=lt.type AND"
+                                      + " WHERE username='' AND event='EXECUTION'"
+                                      + " AND type=lt.type AND"
                                       + timeStampConstraint
                                       + "GROUP BY sessionidentifier) AS listsubselect2)"
             + " FROM listtrack AS lt WHERE lt.timestamp > '" + startTimeRange.toString() + "'"
@@ -227,7 +261,11 @@ public class TrackAjaxServices {
         return getTracksDataTable(sql);
     }
 
-    public List getListCreationTracksDataTable(String timeRange) {
+    /**
+     * @param timeRange The time range to search within.
+     * @return The list creation tracks in that time-range.
+     */
+    public List<Object[]> getListCreationTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
         String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT type, COUNT(type),"
@@ -236,7 +274,8 @@ public class TrackAjaxServices {
                                       + timeStampConstraint
                                       + "GROUP BY username) AS listsubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM listtrack"
-                                      + " WHERE username='' AND event='CREATION' AND type=lt.type AND"
+                                      + " WHERE username='' AND event='CREATION'"
+                                      + " AND type=lt.type AND"
                                       + timeStampConstraint
                                       + " GROUP BY sessionidentifier) AS listsubselect2)"
             + " FROM listtrack AS lt WHERE lt.timestamp > '" + startTimeRange.toString() + "'"

@@ -31,13 +31,13 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.sql.writebatch.FlushJob;
 import org.intermine.sql.writebatch.TableBatch;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Collection of commonly used Database utilities

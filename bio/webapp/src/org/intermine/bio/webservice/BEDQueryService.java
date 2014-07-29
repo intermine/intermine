@@ -60,7 +60,8 @@ public class BEDQueryService extends BioQueryService
                 getOptionalParameter(UCSC_COMPATIBLE, "yes"));
         String trackDescription = getOptionalParameter(TRACK_DESCRIPTION,
                 sourceName + " " + sourceReleaseVersion + " Custom Track");
-        Set<String> orgs = SequenceFeatureExportUtil.getOrganisms(pq, im, getPermission().getProfile());
+        Set<String> orgs = SequenceFeatureExportUtil.getOrganisms(pq, im,
+                getPermission().getProfile());
         List<Integer> indexes = new ArrayList<Integer>();
         List<String> viewColumns = new ArrayList<String>(pq.getView());
         for (int i = 0; i < viewColumns.size(); i++) {

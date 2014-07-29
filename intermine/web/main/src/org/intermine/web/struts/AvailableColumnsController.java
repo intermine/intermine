@@ -58,6 +58,7 @@ public class AvailableColumnsController extends InterMineAction
         String queryXML = (String) request.getAttribute("queryXML");
         String table = (String) request.getAttribute("table");
 
+        @SuppressWarnings("deprecation")
         PathQuery q = (queryXML != null) ? PathQueryBinding.unmarshalPathQuery(
                 new StringReader(queryXML), PathQuery.USERPROFILE_VERSION)
                 : SessionMethods.getResultsTable(session, table).getWebTable()

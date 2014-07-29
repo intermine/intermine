@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-use strict;
-use warnings;
-
 ######################################################################
 # This is an automatically generated script to run your query.
 # To use it you will require the InterMine Perl client libraries.
@@ -12,28 +9,44 @@ use warnings;
 #
 # For help using these modules, please see these resources:
 #
-#  * http://search.cpan.org/perldoc?Webservice::InterMine
+#  * https://metacpan.org/pod/Webservice::InterMine
 #       - API reference
-#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook
+#  * https://metacpan.org/pod/Webservice::InterMine::Cookbook
 #       - A How-To manual
-#  * http://www.intermine.org/wiki/PerlWebServiceAPI
+#  * http://intermine.readthedocs.org/en/latest/web-services
 #       - General Usage
-#  * http://www.intermine.org/wiki/WebService
+#  * http://iodoc.labs.intermine.org
 #       - Reference documentation for the underlying REST API
 #
 ######################################################################
 
+use strict;
+use warnings;
+
+# Set the output field separator as tab
+$, = "\t";
+# Print unicode to standard out
+binmode(STDOUT, 'utf8');
+# Silence warnings when printing null fields
+no warnings ('uninitialized');
+
+# This code makes use of the Webservice::InterMine library.
 # The following import statement sets TEST_PROJECT_TITLE as your default
-use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
+use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT';
 
 my $template = Webservice::InterMine->template('TEMP_NAME')
-    or die 'Could not find template';
+    or die 'Could not find a template called TEMP_NAME';
 
-$template->show_with(
-    # A:  Employee
+# Use an iterator to avoid having all rows in memory at once.
+my $it = $template->results_iterator_with(
+    # A:  Employee.name
     opA    => 'NONE OF',
     valueA => [
         'Employee A1',
         'EmployeeA2',
     ],
 );
+
+while (my $row = <$it>) {
+    print $row->{'name'}, "\n";
+}

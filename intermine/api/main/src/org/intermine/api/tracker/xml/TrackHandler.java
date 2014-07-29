@@ -19,6 +19,9 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * @author Daniela Butano
+ */
 public class TrackHandler extends DefaultHandler
 {
     private static final Logger LOG = Logger.getLogger(TrackHandler.class);
@@ -26,10 +29,16 @@ public class TrackHandler extends DefaultHandler
     protected Connection connection;
     protected PreparedStatement stm;
 
+    /**
+     * @param uosw userprofile db connection
+     */
     public TrackHandler(ObjectStoreWriter uosw) {
         this.osw = uosw;
     }
 
+    /**
+     * @throws SAXException if something goes wrong
+     */
     public void releaseResources()
         throws SAXException {
         if (stm != null) {

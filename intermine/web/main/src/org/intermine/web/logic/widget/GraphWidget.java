@@ -22,34 +22,54 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
- * @author "Xavier Watkins"
- * @author "Alex Kalderimis"
- * @author "Daniela Butano"
+ * @author Xavier Watkins
+ * @author Alex Kalderimis
+ * @author Daniela Butano
  */
 public class GraphWidget extends Widget
 {
+    private static final String NOT_ACCEPTABLE
+        = "The %s chart widget only accepts lists of %s, but you provided a list of %s";
+    private static final String WIDGET_TYPE_NOT_IN_MODEL
+        = "This widget is configured incorrectly. Its type is not in the model: ";
+    private static final String NOT_IN_MODEL
+        = "This bag has a type not found in the current model: ";
     private static final Logger LOG = Logger.getLogger(GraphWidget.class);
-    private GraphWidgetLoader grapgWidgetLdr;
+    private GraphWidgetLoader grapgWidgetLdr = null;
     private String filter;
-
 
     /**
      * @param config config for widget
      * @param interMineBag bag for widget
      * @param os objectstore
-     * @param filter filter
+     * @param options The options for this widget.
      */
     public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-                       String filter) {
+                       WidgetOptions options) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
-        this.filter = filter;
+        this.filter = options.getFilter();
         validateBagType();
-        process();
+    }
+
+    /** @param filter Set the filter to something else **/
+    public void setFilter(String filter) {
+        checkNotProcessed();
+        this.filter = filter;
+    }
+
+    private void checkNotProcessed() {
+        if (grapgWidgetLdr != null) {
+            throw new IllegalStateException("This widget has already been processed.");
+        }
+    }
+    private void checkProcessed() {
+        if (grapgWidgetLdr == null) {
+            throw new IllegalStateException("This widget has not been processed yet.");
+        }
     }
 
     /**
@@ -66,13 +86,15 @@ public class GraphWidget extends Widget
      * Throws a ResourceNotFoundException if it's not valid
      */
     private void validateBagType() {
-        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
-        ClassDescriptor accepted = os.getModel().getClassDescriptorByName(config.getTypeClass());
+        final String type = bag.getType();
+        final String accepts = config.getTypeClass();
+        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(type);
         if (bagType == null) {
-            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
+            throw new IllegalArgumentException(NOT_IN_MODEL + type);
         }
+        ClassDescriptor accepted = os.getModel().getClassDescriptorByName(accepts);
         if (accepted == null) {
-            throw new IllegalStateException("This widget is configured incorrectly. Its type is not in the model: " + config.getTypeClass());
+            throw new IllegalStateException(WIDGET_TYPE_NOT_IN_MODEL + accepts);
         }
         if ("InterMineObject".equals(accepted.getUnqualifiedName())) {
             return; // This widget accepts anything, however useless.
@@ -82,8 +104,7 @@ public class GraphWidget extends Widget
             return; // Sub-class.
         }
         throw new IllegalArgumentException(
-            String.format("The %s chart widget only accepts lists of %s, but you provided a list of %s",
-                config.getId(), config.getTypeClass(), bag.getType()));
+                String.format(NOT_ACCEPTABLE, config.getId(), accepts, type));
     }
 
     /**
@@ -91,6 +112,7 @@ public class GraphWidget extends Widget
      */
     @Override
     public void process() {
+        checkNotProcessed();
         grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter);
         if (grapgWidgetLdr == null || grapgWidgetLdr.getResults() == null) {
             LOG.warn("No data found for graph widget");
@@ -119,6 +141,7 @@ public class GraphWidget extends Widget
      */
     @Override
     public boolean getHasResults() {
+        checkProcessed();
         return (grapgWidgetLdr != null
                 && grapgWidgetLdr.getResults() != null
                 && grapgWidgetLdr.getResults().size() > 0);
@@ -126,6 +149,7 @@ public class GraphWidget extends Widget
 
     @Override
     public List<List<Object>> getResults() {
+        checkProcessed();
         return grapgWidgetLdr.getResultTable();
     }
 
@@ -149,8 +173,8 @@ public class GraphWidget extends Widget
         //category constraint
         q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
                                       "%category"));
-        if (!((GraphWidgetConfig) config).isActualExpectedCriteria()
-        	&& ((GraphWidgetConfig) config).hasSeries()) {
+        if (!((GraphWidgetConfig) config).comparesActualToExpected()
+                && ((GraphWidgetConfig) config).hasSeries()) {
             //series constraint
             q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
                                           "%series"));

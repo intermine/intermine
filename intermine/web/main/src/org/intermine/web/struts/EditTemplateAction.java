@@ -24,7 +24,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 

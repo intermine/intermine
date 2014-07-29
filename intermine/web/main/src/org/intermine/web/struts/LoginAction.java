@@ -16,15 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -35,8 +32,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class LoginAction extends LoginHandler
 {
-    private static final Logger LOG = Logger.getLogger(LoginAction.class);
-
     /**
      * Method called for login in
      *

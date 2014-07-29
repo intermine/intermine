@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
 import org.biojava.bio.Annotation;
 import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.Sequence;
@@ -43,7 +42,7 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
@@ -57,8 +56,6 @@ import org.intermine.web.logic.export.Exporter;
  **/
 public class SequenceExporter implements Exporter
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
 
     private ObjectStore os;
     private OutputStream out;
@@ -81,6 +78,7 @@ public class SequenceExporter implements Exporter
      * @param featureIndex
      *            index of cell in row that contains object to be exported
      * @param classKeys for the model
+     * @param extension extension
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
             int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension) {
@@ -91,6 +89,19 @@ public class SequenceExporter implements Exporter
         this.extension = extension;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param os
+     *            object store used for fetching sequence for exported object
+     * @param outputStream
+     *            output stream
+     * @param featureIndex
+     *            index of cell in row that contains object to be exported
+     * @param classKeys for the model
+     * @param extension extension
+     * @param paths paths to include
+     */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
             int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
             List<Path> paths) {
@@ -105,6 +116,7 @@ public class SequenceExporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getWrittenResultsCount() {
         return writtenResultsCount;
     }
@@ -118,6 +130,7 @@ public class SequenceExporter implements Exporter
      * {@inheritDoc} Lines are always separated with \n because third party tool
      * writeFasta is used for writing sequence.
      */
+    @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         // IDs of the features we have successfully output - used to avoid
@@ -337,7 +350,7 @@ public class SequenceExporter implements Exporter
 
                 // Disable collection export until further bug diagnose
                 if (re.getPath().containsCollections()) {
-                  continue;
+                    continue;
                 }
 
                 Object fieldValue = re.getField();
@@ -363,7 +376,7 @@ public class SequenceExporter implements Exporter
 
                 // Disable collection export until further bug diagnose
                 if (re.getPath().containsCollections()) {
-                  continue;
+                    continue;
                 }
 
                 Object fieldValue = re.getField();
@@ -383,6 +396,7 @@ public class SequenceExporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(List<Class<?>> clazzes) {
         return canExportStatic(clazzes);
     }

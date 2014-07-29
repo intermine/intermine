@@ -50,7 +50,6 @@ import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
 
 /**
@@ -86,11 +85,11 @@ public class QueryUploadService extends WebService
 
     @Override
     protected boolean canServe(Format f) {
-        return f == Format.JSON ||
-                f == Format.XML  ||
-                f == Format.TEXT ||
-                f == Format.TSV  ||
-                f == Format.CSV;
+        return f == Format.JSON
+             || f == Format.XML
+             || f == Format.TEXT
+             || f == Format.TSV
+             || f == Format.CSV;
     }
 
     @Override
@@ -105,9 +104,12 @@ public class QueryUploadService extends WebService
     private Map<String, Object> getHeaderAttributes() {
         Map<String, Object> headerAttributes = new HashMap<String, Object>();
         switch (getFormat()) {
-        case JSON:
-            headerAttributes.put(JSONFormatter.KEY_INTRO, "\"queries\":{");
-            headerAttributes.put(JSONFormatter.KEY_OUTRO, "},");
+            case JSON:
+                headerAttributes.put(JSONFormatter.KEY_INTRO, "\"queries\":{");
+                headerAttributes.put(JSONFormatter.KEY_OUTRO, "},");
+                break;
+            default:
+                break;
         }
         return headerAttributes;
     }
@@ -149,12 +151,14 @@ public class QueryUploadService extends WebService
                 if (missingBags.isEmpty()) {
                     toSave.put(name, pq);
                 } else {
-                    problems.add(name + " references the following missing lists: " + missingBags);
+                    problems.add(name
+                            + " references the following missing lists: " + missingBags);
                 }
             }
         }
         if (toSave.size() != queries.size()) {
-            throw new BadRequestException("Errors with queries. " + StringUtils.join(problems, "\n"));
+            throw new BadRequestException(
+                    "Errors with queries. " + StringUtils.join(problems, "\n"));
         }
 
         try {
@@ -169,6 +173,11 @@ public class QueryUploadService extends WebService
         }
     }
 
+    /**
+     * Save the given queries.
+     * @param toSave The queries to save.
+     * @return A mapping from given name to the name they were actually saved under.
+     */
     protected Map<String, String> saveQueries(Map<String, PathQuery> toSave) {
         return profile.saveQueries(toSave);
     }
@@ -186,13 +195,21 @@ public class QueryUploadService extends WebService
                 output.addResultItem(line);
                 break;
             case TEXT:
-                output.addResultItem(Arrays.asList(String.format("%s successfully saved as %s", mapping.getKey(), mapping.getValue())));
+                output.addResultItem(
+                        Arrays.asList(
+                                String.format("%s successfully saved as %s",
+                                        mapping.getKey(), mapping.getValue())));
                 break;
             default:
                 output.addResultItem(Arrays.asList(mapping.getKey(), mapping.getValue()));
         }
     }
 
+    /**
+     * Get the XML which represents the queries to be saved.
+     * @return The XML.
+     * @throws IOException If we can't read from the request.
+     */
     protected String getXML() throws IOException {
         String contentType = StringUtils.defaultString(request.getContentType(), "").trim();
         if (contentType.contains(";")) {
@@ -225,7 +242,6 @@ public class QueryUploadService extends WebService
     private Integer getVersion() {
         return getIntParameter(VERSION_PARAMETER, PathQuery.USERPROFILE_VERSION);
     }
-    
 
     @Override
     protected Output makeXMLOutput(PrintWriter out, String separator) {
@@ -239,11 +255,12 @@ public class QueryUploadService extends WebService
         }
     }
 
-    private static class XMLFormatter extends Formatter {
+    private static class XMLFormatter extends Formatter
+    {
 
         private XMLStreamWriter writer;
 
-        XMLFormatter(PrintWriter output) throws XMLStreamException, FactoryConfigurationError {
+        XMLFormatter(PrintWriter output) throws XMLStreamException {
             this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(output);
         }
 
@@ -287,7 +304,7 @@ public class QueryUploadService extends WebService
                     writer.writeStartElement("message");
                     writer.writeCharacters(errorMessage);
                     writer.writeEndElement();
-                    
+
                     writer.writeEndElement();
                 }
                 writer.writeEndElement();

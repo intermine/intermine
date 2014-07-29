@@ -37,6 +37,7 @@ public class IteratorIterable<T> implements Iterable<T>
      *
      * @return an iterator
      */
+    @Override
     public Iterator<T> iterator() {
         return iterator;
     }

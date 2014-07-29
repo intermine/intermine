@@ -13,6 +13,7 @@ package org.intermine.objectstore;
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     protected int maxOffset = Integer.MAX_VALUE;
     protected int maxLimit = Integer.MAX_VALUE;
     protected long maxTime = Long.MAX_VALUE;
+    // Optimiser will use a default query parse time if none is provided from properties
+    protected Long maxQueryParseTime = null;
     protected CacheMap<Integer, InterMineObject> cache;
 
     protected int getObjectOps = 0;
@@ -88,6 +91,10 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
 
         if (props.get("max-time") != null) {
             maxTime = Long.parseLong((String) props.get("max-time"));
+        }
+
+        if (props.get("max-query-parse-time") != null) {
+            maxQueryParseTime = Long.parseLong((String) props.get("max-query-parse-time"));
         }
 
         LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
@@ -355,10 +362,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         return model;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public InterMineObject getObjectByExample(InterMineObject o, Set<String> fieldNames)
+    @Override
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames)
         throws ObjectStoreException {
         Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
         List<ResultsRow<Object>> results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
@@ -368,10 +373,27 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                     + "this primary key (" + results.size() + "): " + query.toString());
         }
         if (results.size() == 1) {
-            InterMineObject j = (InterMineObject) results.get(0).get(0);
+            @SuppressWarnings("unchecked")
+            T j = (T) results.get(0).get(0);
             return j;
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(
+            T o,
+            Set<String> fieldNames)
+        throws ObjectStoreException {
+        Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
+        List<ResultsRow<Object>> results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
+        List<T> ret = new ArrayList<T>();
+
+        for (ResultsRow<Object> row: results) {
+            ret.add((T) row.get(0));
+        }
+        return ret;
     }
 
     /**
@@ -462,6 +484,13 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
      */
     public long getMaxTime() {
         return maxTime;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Long getMaxQueryParseTime() {
+        return maxQueryParseTime;
     }
 
     /**

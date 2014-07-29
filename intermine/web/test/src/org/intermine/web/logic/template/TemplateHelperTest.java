@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.intermine.MockHttpRequest;
 import org.intermine.api.template.TemplateHelper;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
@@ -39,7 +39,7 @@ public class TemplateHelperTest {
         parametersWithLotsOfConstraints,
         incompleteParameters;
 
-    private final Map<String, String[]> emptyHeaders = Collections.EMPTY_MAP;
+    private final Map<String, String[]> emptyHeaders = new HashMap<String, String[]>();
 
     @Before
     public void setup() {

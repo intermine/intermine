@@ -17,13 +17,13 @@ public class AspectBindingTest extends TestCase
     public void testUnmarshal() throws Exception {
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream("AspectBindingTest.xml"));
-        Map sets = AspectBinding.unmarshal(reader);
+        Map<String, Aspect> sets = AspectBinding.unmarshal(reader);
         assertNotNull(sets);
         assertEquals(2, sets.keySet().size());
 
-        Iterator iter = sets.values().iterator();
-        Aspect set1 = (Aspect) iter.next();
-        Aspect set2 = (Aspect) iter.next();
+        Iterator<Aspect> iter = sets.values().iterator();
+        Aspect set1 = iter.next();
+        Aspect set2 = iter.next();
         assertNotNull(set1);
         assertNotNull(set2);
 

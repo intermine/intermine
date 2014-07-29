@@ -23,7 +23,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 
 /**
@@ -49,9 +49,12 @@ public class PathQueryBuilder
      * PathQueryBuilder constructor.
      * @param xml xml string from which will be PathQuery constructed
      * @param schemaUrl url of XML Schema file, validation is performed according this file
-     * @param savedBags previously saved bags
+     * @param bagSource previously saved bags
      */
-    public PathQueryBuilder(String xml, String schemaUrl, Producer<Map<String, InterMineBag>> bagSource) {
+    public PathQueryBuilder(
+            String xml,
+            String schemaUrl,
+            Producer<Map<String, InterMineBag>> bagSource) {
         buildQuery(xml, schemaUrl, bagSource);
     }
 
@@ -59,9 +62,12 @@ public class PathQueryBuilder
      * Perform the build operation.
      * @param xml xml string from which will be PathQuery constructed
      * @param schemaUrl url of XML Schema file, validation is performed according this file
-     * @param savedBags previously saved bags.
+     * @param bagSource previously saved bags.
      */
-    void buildQuery(String xml, String schemaUrl, Producer<Map<String, InterMineBag>> bagSource) {
+    void buildQuery(
+            String xml,
+            String schemaUrl,
+            Producer<Map<String, InterMineBag>> bagSource) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
@@ -101,14 +107,14 @@ public class PathQueryBuilder
                         + formatMessage(missingBags));
             }
             if (!toUpgrade.isEmpty()) {
-                throw new InternalErrorException(
+                throw new ServiceException(
                         "The query XML is well formatted, but the following lists"
                         + " are not 'current', and need to be manually upgraded:\n"
                         + formatMessage(toUpgrade));
             }
         } else {
             logger.debug("Received invalid xml: " + xml);
-            throw new BadRequestException("Query does not pass XML validation:\n" 
+            throw new BadRequestException("Query does not pass XML validation:\n"
                     + formatMessage(validator.getErrorsAndWarnings()));
         }
     }

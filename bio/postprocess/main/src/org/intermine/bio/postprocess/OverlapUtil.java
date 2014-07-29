@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
@@ -26,7 +27,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -35,7 +36,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.DynamicUtil;
+
 
 /**
  * Utility methods for finding overlaps.
@@ -179,8 +180,8 @@ public abstract class OverlapUtil
                                         "overlappingFeatures", lsf.getId());
 
                                 // Log it, for the summary.
-                                String classname1 = DynamicUtil.getFriendlyName(lsf.getClass());
-                                String classname2 = DynamicUtil.getFriendlyName(currLsf
+                                String classname1 = Util.getFriendlyName(lsf.getClass());
+                                String classname2 = Util.getFriendlyName(currLsf
                                         .getClass());
 
                                 String summaryLine = classname1.compareTo(classname2) > 0
@@ -222,8 +223,14 @@ public abstract class OverlapUtil
 
     /**
      * Return true if the given class should be ignored when overlapping with the other given class.
+     *
+     * @param classesToIgnore list of classes to ignore.
+     * @param class1 first class to compare
+     * @param class2 second class to compare
+     * @return Return true if the given class should be ignored when overlapping with the other
+     * given class.
      */
-    private static boolean ignoreCombination(Map<Class<?>, Set<Class<?>>> classesToIgnore,
+    protected static boolean ignoreCombination(Map<Class<?>, Set<Class<?>>> classesToIgnore,
             Class<?> class1, Class<?> class2) {
         Iterator<?> iter = classesToIgnore.entrySet().iterator();
 

@@ -27,9 +27,12 @@ public class TemplateToListServlet extends WebServiceServlet
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case GET: return new TemplateToListService(api);
-            case POST: return new TemplateToListService(api);
-            default: throw new NoServiceException();
+            case GET:
+                return new TemplateToListService(api);
+            case POST:
+                return new TemplateToListService(api);
+            default:
+                throw new NoServiceException();
         }
     }
 }

@@ -26,7 +26,7 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.ImportantPerson;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

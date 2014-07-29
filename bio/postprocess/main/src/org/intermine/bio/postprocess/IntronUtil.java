@@ -37,7 +37,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -80,8 +80,7 @@ public class IntronUtil
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
         try {
-            dataSource = (DataSource) os.getObjectByExample(dataSource,
-                                                            Collections.singleton("name"));
+            dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
         } catch (ObjectStoreException e) {
             throw new RuntimeException("unable to fetch FlyMine DataSource object", e);
         }

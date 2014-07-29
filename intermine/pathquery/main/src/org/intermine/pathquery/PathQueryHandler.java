@@ -22,21 +22,22 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Extension of DefaultHandler to handle parsing PathQuery objects
- * 
+ *
  * @author Mark Woodbridge
  * @author Kim Rutherford
  * @author Thomas Riley
  * @author Matthew Wakeling
  */
-public class PathQueryHandler extends DefaultHandler {
+public class PathQueryHandler extends DefaultHandler
+{
     private final Map<String, PathQuery> queries;
     private String queryName;
     protected PathQuery query;
@@ -66,7 +67,7 @@ public class PathQueryHandler extends DefaultHandler {
 
     /**
      * Constructor
-     * 
+     *
      * @param queries
      *            Map from query name to PathQuery
      * @param version
@@ -77,6 +78,7 @@ public class PathQueryHandler extends DefaultHandler {
         this.version = version;
     }
 
+    /** @param m The model to add. **/
     public void addModel(Model m) {
         String name = m.getName();
         models.put(name, m);
@@ -122,7 +124,7 @@ public class PathQueryHandler extends DefaultHandler {
                 query.setDescription(longDescription);
             }
             String view = attrs.getValue("view");
-            if (view != null) { 
+            if (view != null) {
                 if (view.contains(":")) {
                     // This is an old style query, and we need to convert the
                     // colons into outer
@@ -230,7 +232,7 @@ public class PathQueryHandler extends DefaultHandler {
 
     /**
      * Process a constraint from the xml attributes.
-     * 
+     *
      * @param q
      *            the PathQuery, to enable creating Path objects
      * @param path
@@ -245,7 +247,7 @@ public class PathQueryHandler extends DefaultHandler {
      */
     public PathConstraint processConstraint(PathQuery q, String path,
             Map<String, String> attrs, Collection<String> values)
-            throws SAXException {
+        throws SAXException {
 
         if (path == null) {
             throw new SAXException("Bad constraint: Path is null. "
@@ -372,7 +374,7 @@ public class PathQueryHandler extends DefaultHandler {
      */
     @Override
     public void endElement(String uri, String localName, String qName)
-            throws SAXException {
+        throws SAXException {
         if ("query".equals(qName)) {
             if (constraintLogic != null) {
                 query.setConstraintLogic(constraintLogic);
@@ -436,7 +438,7 @@ public class PathQueryHandler extends DefaultHandler {
 
     /**
      * Convert a List of Objects to a List of Strings using toString
-     * 
+     *
      * @param list
      *            the Object List
      * @return the String list
@@ -452,7 +454,7 @@ public class PathQueryHandler extends DefaultHandler {
     /**
      * Checks that the query has a name and that there's no name duplicates and
      * appends a number to the name if there is.
-     * 
+     *
      * @param name
      *            the query name
      * @return the validated query name
@@ -479,7 +481,7 @@ public class PathQueryHandler extends DefaultHandler {
      * Given a path that may contain ':' characters to represent outer joins,
      * find each : separated segment and set the status for that join to OUTER.
      * NOTE this method will change the query parameter handed to it.
-     * 
+     *
      * @param query
      *            the query to set join styles
      * @param path

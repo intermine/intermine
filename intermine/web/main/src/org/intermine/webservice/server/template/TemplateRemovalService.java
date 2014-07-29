@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.template;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
@@ -10,8 +20,15 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class TemplateRemovalService extends ReadWriteJSONService {
+/**
+ * A service that deletes templates.
+ * @author Alex Kalderimis
+ *
+ */
+public class TemplateRemovalService extends ReadWriteJSONService
+{
 
+    /** @param im The InterMine state object **/
     public TemplateRemovalService(InterMineAPI im) {
         super(im);
     }
@@ -19,11 +36,11 @@ public class TemplateRemovalService extends ReadWriteJSONService {
     @Override
     protected boolean canServe(Format format) {
         switch (format) {
-        case XML:
-        case JSON:
-            return true;
-        default:
-            return false;
+            case XML:
+            case JSON:
+                return true;
+            default:
+                return false;
         }
     }
 

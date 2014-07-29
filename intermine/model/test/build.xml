@@ -1,0 +1,11 @@
+
+<project name="intermine-model-test" default="default" basedir="."
+  xmlns:imtestsproj="http://www.intermine.org/ns/im-tests-proj/1"
+  xmlns:imdbproj="http://www.intermine.org/ns/im-task-proj/1">
+  
+  <description>build, test, package intermine-model-test</description>
+        
+	  <import file="../../../imbuild/tests.xml"/>
+
+</project>
+

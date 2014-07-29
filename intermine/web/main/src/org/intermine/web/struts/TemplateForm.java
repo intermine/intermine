@@ -379,8 +379,8 @@ public class TemplateForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         reset();
     }
 

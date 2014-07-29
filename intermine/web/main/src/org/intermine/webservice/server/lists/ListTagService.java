@@ -15,18 +15,15 @@ import static org.apache.commons.collections.TransformerUtils.invokerTransformer
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -88,11 +85,7 @@ public class ListTagService extends AbstractListService
     }
 
     private Set<String> getAllTags(Profile profile) {
-        if (!this.isAuthenticated()) {
-            return Collections.emptySet();
-        }
-        TagManager tm = im.getTagManager();
-        return tm.getUserTagNames(TagTypes.BAG, profile.getUsername());
+        return im.getTagManager().getUserTagNames(TagTypes.BAG, profile);
     }
 
 }

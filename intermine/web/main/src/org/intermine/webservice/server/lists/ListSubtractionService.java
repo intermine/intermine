@@ -10,8 +10,6 @@ package org.intermine.webservice.server.lists;
  *
  */
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.operations.RelativeComplement;
 

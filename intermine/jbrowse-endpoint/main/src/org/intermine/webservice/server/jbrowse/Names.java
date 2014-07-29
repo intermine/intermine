@@ -16,7 +16,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
@@ -179,7 +179,7 @@ public class Names extends JSONService {
                 return new Iterator<Object>() {
 
                     private int current = 0;
-                    private List subCol = null;
+                    private List<Object> subCol = null;
                     private String subPath = null;
                     private int subIdx = 0;
 
@@ -206,25 +206,31 @@ public class Names extends JSONService {
                         if (subCol != null) return nextFromSubCol();
                         Path path = namePaths.get(current);
                         current++;
-                        if (!path.containsCollections()) {
-                            return resolveValue(root, headless(path));
-                        } else {
-                            String upToCollection = "";
-                            for (Path pp: path.decomposePath()) {
-                                upToCollection = pp.toStringNoConstraints();
-                                if (pp.endIsCollection()) {
-                                    break;
+                        try {
+                            Path p = new Path(im.getModel(), featureClass + "." + path);
+                            if (!p.containsCollections()) {
+                                return resolveValue(root, path.toString());
+                            } else {
+                                String upToCollection = "";
+                                for (Path pp: p.decomposePath()) {
+                                    upToCollection = pp.toStringNoConstraints();
+                                    if (pp.endIsCollection()) {
+                                        break;
+                                    }
+                                }
+                                @SuppressWarnings("unchecked")
+                                Collection<Object> things = (Collection<Object>) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
+                                if (things.isEmpty()) {
+                                    return null;
+                                } else {
+                                    subCol = new ArrayList<Object>(things);
+                                    subIdx = 0;
+                                    subPath = p.toStringNoConstraints().replace(upToCollection + ".", "");
+                                    return nextFromSubCol();
                                 }
                             }
-                            Collection things = (Collection) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
-                            if (things.isEmpty()) {
-                                return null;
-                            } else {
-                                subCol = new ArrayList(things);
-                                subIdx = 0;
-                                subPath = path.toStringNoConstraints().replace(upToCollection + ".", "");
-                                return nextFromSubCol();
-                            }
+                        } catch (PathException e) {
+                            throw new RuntimeException(e);
                         }
                     }
 

@@ -59,16 +59,4 @@ public class Commands {
         return Integer.valueOf(numStr);
     }
 
-    // Implementation of get with default value that treats all null
-    // values as missing.
-    private static <K, V> V getOrElse(Map<K, V> mapping,
-            K key, V ifMissing) {
-        V value = mapping.get(key);
-        if (value == null) {
-            return ifMissing;
-        } else {
-            return value;
-        }
-    }
-
 }

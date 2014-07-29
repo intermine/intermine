@@ -5,16 +5,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.Map.Entry;
-
-import org.intermine.webservice.client.results.ResultRowMap;
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import org.apache.commons.io.IOUtils;
+import java.util.TreeSet;
 
 import junit.framework.TestCase;
+
+import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class ResultRowMapTest extends TestCase {
 

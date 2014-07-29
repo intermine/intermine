@@ -209,14 +209,15 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      * @param editor editor that is going to be used for traversing functionallity
      * @see org.biopax.paxtools.controller.Traverser
      */
-    public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor<?, ?> editor) {
+    public void visit(BioPAXElement domain, Object range, Model model,
+            PropertyEditor<?, ?> editor) {
 
         if (range != null && range instanceof BioPAXElement) {
             BioPAXElement bpe = (BioPAXElement) range;
             if (bpe instanceof Named) {
                 Named entity = (Named) bpe;
                 String className = entity.getModelInterface().getSimpleName();
-                if (className.equalsIgnoreCase("ProteinReference")
+                if ("ProteinReference".equalsIgnoreCase(className)
                         && StringUtils.isNotEmpty(pathwayRefId)) {
                     processProteinEntry(entity);
                 }
