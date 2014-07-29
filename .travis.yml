@@ -40,5 +40,8 @@ script:
     - test ! -s failures.list
 notifications:
     irc:
-        - "chat.freenode.net#intermine-ci"
+        channels:
+            - "chat.freenode.net#intermine-ci"
+        on_success: change
+        on_error: always
 
