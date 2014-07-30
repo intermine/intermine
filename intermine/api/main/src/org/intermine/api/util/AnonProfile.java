@@ -78,4 +78,19 @@ public final class AnonProfile extends Profile
     public String getDayToken() {
         return null;
     }
+
+    // All instances are identical.
+
+    @Override
+    public int hashCode() {
+        return 1;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other != null && other instanceof AnonProfile) {
+            return true;
+        }
+        return false;
+    }
 }
