@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -31,14 +30,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -51,10 +48,8 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.webservice.server.jbrowse.Command;
 import org.intermine.webservice.server.jbrowse.CommandRunner;
@@ -80,12 +75,7 @@ import org.intermine.webservice.server.jbrowse.Segment;
  */
 public class Engine extends CommandRunner
 {
-
-    private static final Logger LOG = Logger.getLogger(CommandRunner.class);
-
     private final Model model;
-    private static final Map<Command, Map<String, Object>> STATS_CACHE =
-            new CacheMap<Command, Map<String, Object>>("jbrowse.genomic.engine.STATS_CACHE");
 
     /**
      * constructor
@@ -96,6 +86,7 @@ public class Engine extends CommandRunner
         this.model = api.getModel();
     }
 
+    @Override
     public void reference(Command command) {
         Query q = getReferenceQuery(command);
         Segment seg = command.getSegment();
@@ -466,8 +457,9 @@ public class Engine extends CommandRunner
         String type = command.getType("SequenceFeature");
         pq.addView(String.format("%s.id", type));
         pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
-        if (segment != Segment.GLOBAL_SEGMENT)
+        if (segment != Segment.GLOBAL_SEGMENT) {
             pq.addConstraint(makeRangeConstraint(type, segment));
+        }
         return pq;
     }
 

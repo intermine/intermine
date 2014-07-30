@@ -97,16 +97,22 @@ public abstract class CommandRunner
     private static final Map<Command, Map<String, Object>> STATS_CACHE =
             new CacheMap<Command, Map<String, Object>>("jbrowse.commandrunner.STATS_CACHE");
 
+    /**
+     * Serve the statistics for a given command.
+     * @param command The command to serve statistics for.
+     */
     public void stats(Command command) {
         Map<String, Object> stats;
         Query q = getStatsQuery(command);
         // Stats can be expensive to calculate, so they are independently cached.
-        synchronized(STATS_CACHE) {
+        synchronized (STATS_CACHE) {
             stats = STATS_CACHE.get(command);
             if (stats == null) {
                 stats = new HashMap<String, Object>();
                 try {
-                    List<?> results = getAPI().getObjectStore().execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                    List<?> results = getAPI().getObjectStore()
+                                              .execute(q, 0, 1, false, false,
+                                                      ObjectStore.SEQUENCE_IGNORE);
                     List<?> row = (List<?>) results.get(0);
                     stats.put("featureDensity", row.get(0));
                     stats.put("featureCount",   row.get(1));
@@ -119,8 +125,12 @@ public abstract class CommandRunner
         sendMap(stats);
     }
 
-    static private Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
+    private static Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
 
+    /**
+     * Serve the densities for a given command.
+     * @param command The command to serve densities for.
+     */
     public void densities(Command command) {
         final int nSlices = getNumberOfSlices(command);
         List<PathQuery> segmentQueries = getSliceQueries(command, nSlices);
@@ -131,7 +141,9 @@ public abstract class CommandRunner
         for (Future<Integer> future: pending) {
             try {
                 Integer r = future.get();
-                if (r != null && r > max) max = r;
+                if (r != null && r > max) {
+                    max = r;
+                }
                 sum += r;
                 results.add(r);
             } catch (InterruptedException e) {
@@ -148,8 +160,8 @@ public abstract class CommandRunner
         if (command.getSegment() != Segment.NEGATIVE_SEGMENT) {
             Integer bpb = command.getSegment().getWidth() / nSlices;
             binStats.put("basesPerBin", bpb);
-            MultiKey maxKey = new MultiKey( // Key by domain, type, ref-seq and band size
-                    command.getDomain(),
+            MultiKey maxKey = new MultiKey(
+                    command.getDomain(), // Key by domain, type, ref-seq and band size
                     command.getType("SequenceFeature"),
                     command.getSegment().getSection(),
                     bpb);
@@ -167,8 +179,9 @@ public abstract class CommandRunner
     }
 
     private List<Future<Integer>> countInParallel(List<PathQuery> segmentQueries) {
-        if (segmentQueries.isEmpty())
+        if (segmentQueries.isEmpty()) {
             return Collections.emptyList();
+        }
         ExecutorService executor = Executors.newFixedThreadPool(segmentQueries.size());
         List<Future<Integer>> pending = new ArrayList<Future<Integer>>();
         for (PathQuery pq: segmentQueries) {
@@ -181,8 +194,9 @@ public abstract class CommandRunner
 
     /** Get a list of queries to count the features in a slice of the segment. **/
     private List<PathQuery> getSliceQueries(Command command, int nSlices) {
-        if (command.getSegment() == Segment.NEGATIVE_SEGMENT)
+        if (command.getSegment() == Segment.NEGATIVE_SEGMENT) {
             return Collections.emptyList();
+        }
         List<Segment> slices = sliceUp(nSlices, command.getSegment());
         List<PathQuery> segmentQueries = new ArrayList<PathQuery>();
         for (Segment s: slices) {
@@ -191,17 +205,32 @@ public abstract class CommandRunner
         return segmentQueries;
     }
 
+    /**
+     *  Get a path query for this feature command
+     *
+     * @param command The current command
+     * @return A path query for features within the segment of this command.
+     */
     protected Query getFeatureQuery(Command command) {
         return pathQueryToOSQ(getFeaturePathQuery(command, command.getSegment()));
     }
 
+    /**
+     * Get a path query for this feature command
+     *
+     * @param command The current command
+     * @param s The current segment
+     * @return A path query for features within this segment.
+     */
     protected abstract PathQuery getFeaturePathQuery(Command command, Segment s);
 
     private static List<Segment> sliceUp(int n, Segment segment) {
-        if (n < 1)
+        if (n < 1) {
             throw new IllegalArgumentException("n must be greater than 0");
-        if (segment == null || segment.getWidth() == null)
+        }
+        if (segment == null || segment.getWidth() == null) {
             throw new IllegalArgumentException("segment must be non null with defined width");
+        }
         List<Segment> subsegments = new ArrayList<Segment>();
         int sliceWidth = segment.getWidth() / n;
         int inital = Math.max(0, segment.getStart());
@@ -216,7 +245,7 @@ public abstract class CommandRunner
     {
         final PathQuery pq;
         final ObjectStore os;
-        
+
         PathQueryCounter(PathQuery pq, ObjectStore os) {
             this.pq = pq.clone();
             this.os = os;
@@ -245,11 +274,15 @@ public abstract class CommandRunner
 
     /**
      * A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
-     * @param command
+     * @param command The current command
      * @return A query for the count and density.
      */
     protected abstract Query getStatsQuery(Command command);
 
+    /**
+     * Send a map of data to the client.
+     * @param map The data.
+     */
     protected void sendMap(Map<String, Object> map) {
         Iterator<Entry<String, Object>> it = map.entrySet().iterator();
         while (it.hasNext()) {
@@ -258,6 +291,11 @@ public abstract class CommandRunner
         }
     }
 
+    /**
+     * Get the leading string for the result.
+     * @param command The current command
+     * @return An intro.
+     */
     public String getIntro(Command command) {
         switch (command.getAction()) {
             case STATS:
@@ -273,7 +311,7 @@ public abstract class CommandRunner
 
     /**
      * @param command command
-     * @return action
+     * @return An outro.
      */
     public String getOutro(Command command) {
         switch (command.getAction()) {
