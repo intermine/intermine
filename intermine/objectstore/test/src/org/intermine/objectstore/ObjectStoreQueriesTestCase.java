@@ -249,6 +249,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("DynamicClassConstraint", dynamicClassConstraint());
         queries.put("ContainsConstraintNull", containsConstraintNull());
         queries.put("ContainsConstraintNotNull", containsConstraintNotNull());
+        queries.put("ContainsConstraintNullCollection1N", containsConstraintNullCollection1N());
+        queries.put("ContainsConstraintNotNullCollection1N", containsConstraintNotNullCollection1N());
+        queries.put("ContainsConstraintNullCollectionMN", containsConstraintNullCollectionMN());
+        queries.put("ContainsConstraintNotNullCollectionMN", containsConstraintNotNullCollectionMN());
         queries.put("SimpleConstraintNull", simpleConstraintNull());
         queries.put("SimpleConstraintNotNull", simpleConstraintNotNull());
         queries.put("TypeCast", typeCast());
@@ -323,6 +327,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("ConstrainClass1", constrainClass1());
         queries.put("ConstrainClass2", constrainClass2());
         queries.put("MultipleInBagConstraint1", multipleInBagConstraint1());
+
+        // null or not null collections
     }
 
     /*
@@ -1346,6 +1352,67 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q1.addToSelect(qc);
         ContainsConstraint c = new ContainsConstraint(new QueryObjectReference(qc, "address"),
                 ConstraintOp.IS_NOT_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees IS NULL;
+     * Department.employees is a 1:N collection
+     */
+    public static Query containsConstraintNullCollection1N() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees IS NOT NULL;
+     * Department.employees is a 1:N collection
+     */
+    public static Query containsConstraintNotNullCollection1N() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NOT_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+
+    /*
+     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors IS NULL;
+     * Company.contractors is a many to many collection
+     */
+    public static Query containsConstraintNullCollectionMN() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors IS NOT NULL;
+     * Company.contractors is a many to many collection
+     */
+    public static Query containsConstraintNotNullCollectionMN() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NOT_NULL);
         q1.setConstraint(c);
         return q1;
     }
