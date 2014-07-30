@@ -456,7 +456,7 @@ public class GenomicRegionSearchService
                     "extendedRegionSize can't be a negative value: "
                             + extendedRegionSize);
         } else {
-            grsc.setExtededRegionSize(Integer.parseInt(extendedRegionSize));
+            grsc.setExtendedRegionSize(Integer.parseInt(extendedRegionSize));
         }
 
         selectionInfo.add("<b>Selected organism: </b><i>" + organism + "</i>");
@@ -702,7 +702,7 @@ public class GenomicRegionSearchService
      * @return chrInfoMap
      */
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
-        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI, profile);
+        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI);
     }
 
     /**
