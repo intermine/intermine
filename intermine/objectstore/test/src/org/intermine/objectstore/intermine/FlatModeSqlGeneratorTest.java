@@ -271,10 +271,9 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        //ArrayList truncated = new ArrayList();
-        //truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.
-        //return new DatabaseSchema(model, Collections.EMPTY_LIST, true, new HashSet(Arrays.asList(new String[] {"intermineobject", "thing", "importantperson", "employable", "hasaddress", "hassecretarys", "randominterface", "employee", "manager"})));
-        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest")).getSchema();
+        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest")).getSchema();
+        schema.hasBioSeg = true;
+        return schema;
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id";
