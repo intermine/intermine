@@ -76,7 +76,7 @@ public class GenomicRegionSearchConstraint
     /**
      * @param extededRegionSize the extendedRegionSize to set
      */
-    public void setExtededRegionSize(int extededRegionSize) {
+    public void setExtendedRegionSize(int extededRegionSize) {
         this.extendedRegionSize = extededRegionSize;
     }
 
