@@ -30,6 +30,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
@@ -219,6 +220,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * Query the information of all the organisms and their chromosomes' names and length. The
      * results is stored in a Map. The result data will be used to validate users' span data.
      * For each span, its chromosome must match the chrPID and range must not go beyond the length.
+     *
+     * This method will cache its return value.
      *
      * @param im - the InterMineAPI
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value

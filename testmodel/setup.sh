@@ -125,7 +125,7 @@ ant -Ddont.minify=true -Drelease=demo \
 cd $DIR/webapp/main
 
 echo "------> Building and releasing web-app..., nearly done"
-ant -Ddont.minify=true \
+ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     retrieve-objectstore-summary \
