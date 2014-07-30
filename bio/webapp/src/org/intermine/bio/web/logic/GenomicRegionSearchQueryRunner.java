@@ -32,6 +32,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
@@ -228,12 +229,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * results is stored in a Map. The result data will be used to validate users' span data.
      * For each span, its chromosome must match the chrPID and range must not go beyond the length.
      *
+     * This method will cache its return value.
+     *
      * @param im - the InterMineAPI
-     * @param profile a user of webapp
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
-    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(
-            InterMineAPI im, Profile profile) {
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
@@ -252,7 +253,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 // Add orderby
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
 
-                ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+                ExportResultsIterator results = im.getPathQueryExecutor(new AnonProfile())
+                                                  .execute(query);
 
                 // a List contains all the chrInfo (organism, chrPID, length)
                 List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
