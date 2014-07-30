@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -51,7 +50,6 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
@@ -119,14 +117,6 @@ public class Engine extends CommandRunner
             }
         }
         sendMap(stats);
-    }
-
-    private void sendMap(Map<String, Object> map) {
-        Iterator<Entry<String, Object>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, Object> e = it.next();
-            onData(e, it.hasNext());
-        }
     }
 
     @Override
@@ -498,8 +488,9 @@ public class Engine extends CommandRunner
         String type = command.getType("SequenceFeature");
         pq.addView(String.format("%s.id", type));
         pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
-        if (segment != Segment.GLOBAL_SEGMENT)
+        if (segment != Segment.GLOBAL_SEGMENT) {
             pq.addConstraint(makeRangeConstraint(type, segment));
+        }
         return pq;
     }
 
