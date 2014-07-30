@@ -207,18 +207,19 @@ public class GenomicRegionSearchListInput extends ListInput {
 
         public List<GenomicRegion> getGenomicRegions() {
             Set<String> spans = new HashSet<String>(getRegions());
-            List<GenomicRegion> regions = new ArrayList<GenomicRegion>();
-            Map<String, ChromosomeInfo> chromsForOrg
-                = GenomicRegionSearchQueryRunner.getChromosomeInfo(
-                        api, SessionMethods.getProfile(request.getSession())).get(getOrganism());
+            List<GenomicRegion> parsed = new ArrayList<GenomicRegion>();
+            Map<String, ChromosomeInfo> chromsForOrg =
+                    GenomicRegionSearchQueryRunner.getChromosomeInfo(api).get(getOrganism());
+            GenomicRegionSearchUtil.RegionParser parser =
+                    GenomicRegionSearchUtil.getParser(chromsForOrg, isInterbase());
             for (String span : spans) {
                 try {
-                    regions.add(GenomicRegionSearchUtil.parseRegion(span, isInterbase(), chromsForOrg));
+                    parsed.add(parser.parse(span));
                 } catch (RegionParseException e) {
                     invalidSpans.add(span + "; " + e.getMessage());
                 }
             }
-            return regions;
+            return parsed;
         }
 
         public int getExtension() {
@@ -239,7 +240,7 @@ public class GenomicRegionSearchListInput extends ListInput {
             grsc.setOrgName(organism);
             grsc.setFeatureTypes(getFeatureClasses());
             grsc.setGenomicRegionList(getGenomicRegions());
-            grsc.setExtededRegionSize(extension);
+            grsc.setExtendedRegionSize(extension);
             return grsc;
         }
 
