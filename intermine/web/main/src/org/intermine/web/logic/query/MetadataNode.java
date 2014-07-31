@@ -245,8 +245,14 @@ public class MetadataNode extends Node
      * @throws PathException if the query is invalid
      */
     public boolean getCanCreateConstraint() throws PathException {
-        return isAttribute() || getHasSubclasses() || getHasPossibleLoops() || getHasClassKeys()
-            || getHasAvailableBags();
+        // Commented out by rns on 02/07/14 because I think we can always create constraints,
+        // I may be wrong.
+        //return isAttribute() || getHasSubclasses() || getHasPossibleLoops() || getHasClassKeys()
+        //    || getHasAvailableBags();
+
+        // If we always allow NULL/NOT NULL constraints on refs/cols then it looks like we can
+        // always create constraints.
+        return true;
     }
 
     /**

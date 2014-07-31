@@ -25,6 +25,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -36,7 +37,7 @@ import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.metadata.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
@@ -226,6 +227,14 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsConstraintNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("ContainsConstraintNotNull", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NOT NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNotNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results.put("ContainsConstraintNullCollection1N", "SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollection1N", new HashSet(Arrays.asList(new String[] {"Employee", "Department", "InterMineObject"})));
+        results.put("ContainsConstraintNotNullCollection1N", "SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollection1N", new HashSet(Arrays.asList(new String[] {"Employee", "Department", "InterMineObject"})));
+        results.put("ContainsConstraintNullCollectionMN", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollectionMN", new HashSet(Arrays.asList(new String[] {"Company", "CompanysContractors", "InterMineObject"})));
+        results.put("ContainsConstraintNotNullCollectionMN", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollectionMN", new HashSet(Arrays.asList(new String[] {"Company", "CompanysContractors", "InterMineObject"})));
         results.put("ContainsConstraintObjectRefObject", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.departmentId = 5 ORDER BY a1_.id");
         results2.put("ContainsConstraintObjectRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("ContainsConstraintNotObjectRefObject", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.departmentId != 5 ORDER BY a1_.id");
@@ -477,7 +486,14 @@ public class SqlGeneratorTest extends SetupDataTestCase
             }
 
             // TODO: extend sql so that it can represent these
-            if (!("SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type))) {
+            if (!("SubqueryExistsConstraint".equals(type)
+                    || "NotSubqueryExistsConstraint".equals(type)
+                    || "SubqueryExistsConstraintNeg".equals(type)
+                    || "ObjectStoreBagCombination2".equals(type)
+                    || "ContainsConstraintNullCollection1N".equals(type)
+                    || "ContainsConstraintNotNullCollection1N".equals(type)
+                    || "ContainsConstraintNullCollectionMN".equals(type)
+                    || "ContainsConstraintNotNullCollectionMN".equals(type))) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
@@ -885,6 +901,53 @@ public class SqlGeneratorTest extends SetupDataTestCase
             fail("Expected exception");
         } catch (ObjectStoreException e) {
         }
+    }
+
+    public void testContainsConstraintNullCollection1N() throws Exception{
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        String sql = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+        String other = sql;
+        assertEquals("SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id)) ORDER BY a1_.id", sql);
+        //org.intermine.sql.query.Query sqlQ = new org.intermine.sql.query.Query(sql);
+    }
+
+    public void testContainsConstraintNullCollectionMN() throws Exception{
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        String sql = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+        String other = sql;
+        assertEquals("SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id)) ORDER BY a1_.id", sql);
+        //org.intermine.sql.query.Query sqlQ = new org.intermine.sql.query.Query(sql);
+    }
+
+    public void testContainsConstraintNotNullCollection1N() throws Exception{
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        QueryField qf = new QueryField(qc, "name");
+        ConstraintSet cons = new ConstraintSet(ConstraintOp.AND);
+        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("d1"));
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NOT_NULL);
+        cons.addConstraint(sc);
+        cons.addConstraint(c);
+        q1.setConstraint(cons);
+        String sql = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
+        String other = sql;
+        assertEquals("SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE a1_.name = 'd1' AND EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id) ORDER BY a1_.id", sql);
+        //org.intermine.sql.query.Query sqlQ = new org.intermine.sql.query.Query(sql);
     }
 
     private void assertArrayEquals(boolean arg1[], boolean arg2[]) {
