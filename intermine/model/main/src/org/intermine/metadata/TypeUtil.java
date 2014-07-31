@@ -740,7 +740,7 @@ public final class TypeUtil
             return new Character(value.charAt(0));
         }
         if (clazz.equals(Date.class)) {
-            if (value.matches("^\\d+$")) {
+            if (value.matches("^-?\\d+$")) {
                 return new Date(Long.parseLong(value));
             } else {
                 try {
