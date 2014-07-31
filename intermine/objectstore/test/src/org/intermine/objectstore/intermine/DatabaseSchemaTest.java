@@ -34,7 +34,7 @@ public class DatabaseSchemaTest extends TestCase
         truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.Employee"));
         truncated.add(model.getClassDescriptorByName("org.intermine.model.testmodel.Manager"));
         try {
-            new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET, 1, false, null);
+            new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET, 1, false, false);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
@@ -49,7 +49,7 @@ public class DatabaseSchemaTest extends TestCase
         ClassDescriptor importantPerson = model.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson");
         truncated.add(manager);
         truncated.add(employee);
-        DatabaseSchema schema = new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET, 1, false, null);
+        DatabaseSchema schema = new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET, 1, false, false);
 
         assertTrue(schema.isTruncated(manager));
         assertTrue(schema.isTruncated(employee));
@@ -120,7 +120,7 @@ public class DatabaseSchemaTest extends TestCase
         truncated = new ArrayList();
         truncated.add(employee);
         truncated.add(importantPerson);
-        schema = new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET, 1, false, null);
+        schema = new DatabaseSchema(model, truncated, false, Collections.EMPTY_SET, 1, false, false);
 
         assertTrue(schema.isTruncated(employee));
         assertTrue(schema.isTruncated(importantPerson));
@@ -198,7 +198,7 @@ public class DatabaseSchemaTest extends TestCase
         ClassDescriptor importantPerson = model.getClassDescriptorByName("org.intermine.model.testmodel.ImportantPerson");
         truncated.add(manager);
         truncated.add(employee);
-        DatabaseSchema schema = new DatabaseSchema(model, truncated, true, Collections.singleton("intermineobject"), 1, false, null);
+        DatabaseSchema schema = new DatabaseSchema(model, truncated, true, Collections.singleton("intermineobject"), 1, false, false);
 
         assertTrue(schema.isTruncated(manager));
         assertTrue(schema.isTruncated(employee));
@@ -273,7 +273,7 @@ public class DatabaseSchemaTest extends TestCase
         truncated = new ArrayList();
         truncated.add(employee);
         truncated.add(importantPerson);
-        schema = new DatabaseSchema(model, truncated, true, Collections.singleton("intermineobject"), 1, false, null);
+        schema = new DatabaseSchema(model, truncated, true, Collections.singleton("intermineobject"), 1, false, false);
 
         assertTrue(schema.isTruncated(employee));
         assertTrue(schema.isTruncated(importantPerson));

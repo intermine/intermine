@@ -46,7 +46,7 @@ public class DatabaseSchema
     private boolean fetchFromInterMineObject;
     private int version;
     protected boolean hasBioSeg;
-    protected RangeDefinitions rangeDefs;
+    protected boolean useRangeTypes;
 
     private Set<ClassDescriptor> truncatedSet;
     private Map<ClassDescriptor, Fields> tableMasterToFieldDescriptors
@@ -64,11 +64,11 @@ public class DatabaseSchema
      * @param missingTables a Set of lowercase table names which are missing
      * @param version the version number in the database
      * @param hasBioSeg true if the database has the bioseg type installed
-     * @param rangeDefs definitions of
+     * @param useRangeTypes true if we can use Postgres built-in range types
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
     public DatabaseSchema(Model model, List<ClassDescriptor> truncated, boolean noNotXml,
-            Set<String> missingTables, int version, boolean hasBioSeg, RangeDefinitions rangeDefs) {
+            Set<String> missingTables, int version, boolean hasBioSeg, boolean useRangeTypes) {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;
@@ -77,10 +77,7 @@ public class DatabaseSchema
         this.fetchFromInterMineObject = !missingTables.contains("intermineobject");
         this.version = version;
         this.hasBioSeg = hasBioSeg;
-        if (rangeDefs == null) {
-            rangeDefs = new RangeDefinitions();
-        }
-        this.rangeDefs = rangeDefs;
+        this.useRangeTypes = useRangeTypes;
         for (int i = 0; i < truncated.size(); i++) {
             Class<?> cA = truncated.get(i).getType();
             for (int o = 0; o < i; o++) {
@@ -198,13 +195,15 @@ public class DatabaseSchema
     }
 
     /**
-     * Return an object describing any range type columns that have been added to the database, the
-     * configuration may be empty.
-     * @return an object containing any range definitions
+     * Returns true if we can use Postgres built-in range types on this database. Will return false
+     * if this isn't a Postgres database or is earlier than 9.2.
+     * @return true if we can use built in range types
      */
-    public RangeDefinitions getRangeDefinitions() {
-        return rangeDefs;
+    public boolean useRangeTypes() {
+        return useRangeTypes;
     }
+
+
 
     /**
      * Returns a Fields object of FieldDescriptors in the given table-mastering ClassDescriptor. It

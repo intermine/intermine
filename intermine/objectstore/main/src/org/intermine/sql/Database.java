@@ -352,7 +352,7 @@ public class Database implements Shutdownable
      * @param testVersionStr a postgres version number of dot separated integers
      * @return true if the database is the version specified or later
      */
-    public boolean isVersionIsLeast(String testVersionStr) {
+    public boolean isVersionAtLeast(String testVersionStr) {
 
         List<Integer> dbVersion = versionStringToInts(getVersion());
         List<Integer> testVersion = versionStringToInts(testVersionStr);

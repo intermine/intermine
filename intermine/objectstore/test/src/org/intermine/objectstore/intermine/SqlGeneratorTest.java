@@ -422,11 +422,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectWhereBackslash", new HashSet(Arrays.asList("Employee", "InterMineObject")));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("Company", "InterMineObject", "Department", "Contractor", "CompanysContractors")));
-        results.put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
+        results.put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
         results2.put("RangeOverlaps", new HashSet(Arrays.asList("intermine_Range")));
-        results.put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id");
+        results.put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id");
         results2.put("RangeDoesNotOverlap", new HashSet(Arrays.asList("intermine_Range")));
-        results.put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(35, 45) ORDER BY a1_.id");
+        results.put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(35, 45) ORDER BY a1_.id");
         results2.put("RangeOverlapsValues", new HashSet(Arrays.asList("intermine_Range")));
         results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results2.put("ConstrainClass1", new HashSet(Arrays.asList("InterMineObject")));
@@ -641,7 +641,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1, false, null);
+        DatabaseSchema s = new DatabaseSchema(new Model("nothing", "", new HashSet()), Collections.EMPTY_LIST, false, Collections.EMPTY_SET, 1, false, false);
         try {
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, s, db, new HashMap());
             fail("Expected: ObjectStoreException");
@@ -890,59 +890,55 @@ public class SqlGeneratorTest extends SetupDataTestCase
         }
     }
 
-//    results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
-//    results.put("Range2", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND NOT (bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd)) ORDER BY a1_.id, a2_.id");
-
     // range query results are different depending on available features in database schema so
     // need to test separately.
     public void testOverlapQueries() throws Exception {
         DatabaseSchema schema = getSchema();
-        RangeDefinitions originalRangeDefs = schema.getRangeDefinitions();
+        boolean originalUseRangeTypes = schema.useRangeTypes();
         boolean originalBioSeg = schema.hasBioSeg();
 
         try {
             Query q1 = rangeDoesNotOverlap();
             String generated1 = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
 
-            // 1. if there is a range column defined use that
-            RangeDefinitions rangeDefs = new RangeDefinitions();
-            rangeDefs.addRange("intermine_range", "intermine_rangecol", "int8range", "rangeStart", "rangeEnd");
-            schema.rangeDefs = rangeDefs;
-
+            // 1. We can use Postgres built in range types
             Query q = rangeOverlaps();
             String generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
-            String expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND a1_.intermine_rangecol && a2_.intermine_rangecol ORDER BY a1_.id, a2_.id";
+            String expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id";
             assertEquals(expected, generated);
 
             q = rangeDoesNotOverlap();
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
-            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND a1_.intermine_rangecol && a2_.intermine_rangecol)) ORDER BY a1_.id, a2_.id";
+            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id";
             assertEquals(expected, generated);
 
             q = rangeOverlapsValues();
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
-            expected = "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND a1_.intermine_rangecol && int8range(35, 45) ORDER BY a1_.id";
+            expected = "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(35, 45) ORDER BY a1_.id";
             assertEquals(expected, generated);
 
             // 2. if no range column but we have bioseg then use that
-            schema.rangeDefs = new RangeDefinitions();
+            schema.useRangeTypes = false;
             schema.hasBioSeg = true;
 
             // here we can use queries from map
             q = rangeOverlaps();
+            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND create_bioseg(a1_.rangeStart, a1_.rangeEnd) && create_bioseg(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id";
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
-            assertEquals(results.get("RangeOverlaps"), generated);
+            assertEquals(expected, generated);
 
             q = rangeDoesNotOverlap();
+            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND create_bioseg(a1_.rangeStart, a1_.rangeEnd) && create_bioseg(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id";
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
-            assertEquals(results.get("RangeDoesNotOverlap"), generated);
+            assertEquals(expected, generated);
 
             q = rangeOverlapsValues();
+            expected = "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND create_bioseg(a1_.rangeStart, a1_.rangeEnd) && create_bioseg(35, 45) ORDER BY a1_.id";
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
-            assertEquals(results.get("RangeOverlapsValues"), generated);
+            assertEquals(expected, generated);
 
             // 3. not range column or bioseg so fall back to simple constraints on start/end
-            schema.rangeDefs = new RangeDefinitions();
+            schema.useRangeTypes = false;
             schema.hasBioSeg = false;
             q = rangeOverlaps();
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
@@ -960,7 +956,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             assertEquals(expected, generated);
         } finally {
             // reset schema rangeDefs & bioseg when finished
-            schema.rangeDefs = originalRangeDefs;
+            schema.useRangeTypes = originalUseRangeTypes;
             schema.hasBioSeg = originalBioSeg;
         }
     }
@@ -972,8 +968,9 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        //return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET, 1, false);
-        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest")).getSchema();
+        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest")).getSchema();
+        schema.useRangeTypes = true;
+        return schema;
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";

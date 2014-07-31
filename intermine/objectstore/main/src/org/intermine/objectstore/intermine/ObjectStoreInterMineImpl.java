@@ -457,19 +457,22 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     }
                 }
 
+                // if we're above Postgres version 9.2 we can use the built-in range types
+                boolean useRangeTypes = database.isVersionAtLeast("9.2");
+
                 // Check for range columns defined in the db that can be used for range queries
-                String rangeDefStr = null;
-                try {
-                    rangeDefStr = MetadataManager.retrieve(database,
-                            MetadataManager.RANGE_DEFINITIONS);
-                } catch (SQLException e) {
-                    throw new IllegalArgumentException("Couldn't retrieve range definitions from"
-                            + " intermine_metadata table. ERROR: " + e.getMessage());
-                }
-                RangeDefinitions rangeDefs = new RangeDefinitions(rangeDefStr);
+//                String rangeDefStr = null;
+//                try {
+//                    rangeDefStr = MetadataManager.retrieve(database,
+//                            MetadataManager.RANGE_DEFINITIONS);
+//                } catch (SQLException e) {
+//                    throw new IllegalArgumentException("Couldn't retrieve range definitions from"
+//                            + " intermine_metadata table. ERROR: " + e.getMessage());
+//                }
+//                RangeDefinitions rangeDefs = new RangeDefinitions(rangeDefStr);
 
                 DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
-                        missingTables, formatVersion, hasBioSeg, rangeDefs);
+                        missingTables, formatVersion, hasBioSeg, useRangeTypes);
                 os = new ObjectStoreInterMineImpl(database, schema);
                 os.description = osAlias;
 

@@ -326,11 +326,11 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("InterMineObject", "CompanysContractors")));
 
-        results.put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
+        results.put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
         results2.put("RangeOverlaps", new HashSet(Arrays.asList("InterMineObject")));
-        results.put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND (NOT (a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id");
+        results.put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id");
         results2.put("RangeDoesNotOverlap", new HashSet(Arrays.asList("InterMineObject")));
-        results.put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a1_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(35, 45) ORDER BY a1_.id");
+        results.put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(35, 45) ORDER BY a1_.id");
         results2.put("RangeOverlapsValues", new HashSet(Arrays.asList("InterMineObject")));
 
         results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
@@ -344,9 +344,11 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        //return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")), true, Collections.EMPTY_SET, 1, false);
-        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
+        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
+        schema.useRangeTypes = true;
+        return schema;
     }
+
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id";
     }

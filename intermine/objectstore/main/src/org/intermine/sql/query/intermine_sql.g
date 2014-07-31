@@ -42,6 +42,7 @@ tokens {
     INLIST_CONSTRAINT;
     ORDER_DESC;
     BIOSEG_CONSTRAINT;
+    INT4RANGE_CONSTRAINT;
 }
 
 start_rule: sql ;
@@ -481,6 +482,7 @@ safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | constraint
             | not_constraint
             | bioseg_constraint
+            | int4range_constraint
     ;
 
 constraint: (abstract_value comparison_op)=> abstract_value comparison_op abstract_value
@@ -501,6 +503,10 @@ not_constraint: "not"! safe_abstract_constraint
 
 bioseg_constraint: "bioseg_create"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN! (OVERLAP | INSIDE | SURROUND) "bioseg_create"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
         { #bioseg_constraint = #([BIOSEG_CONSTRAINT, "BIOSEG_CONSTRAINT"], #bioseg_constraint); }
+    ;
+
+int4range_constraint: "int4range"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN! (OVERLAP | INSIDE | SURROUND) "int4range"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+        { #int4range_constraint = #([INT4RANGE_CONSTRAINT, "INT4RANGE_CONSTRAINT"], #int4range_constraint); }
     ;
 
 paren_constraint: OPEN_PAREN! abstract_constraint CLOSE_PAREN! ;
