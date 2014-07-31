@@ -281,7 +281,7 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("populate-child-features".equals(operation)) {
                 PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
                 jb.populateCollection();
-            } else if ("create-location-range".equals(operation)) {
+            } else if ("create-location-range-index".equals(operation)) {
                 CreateLocationRange clr = new CreateLocationRange(getObjectStoreWriter());
                 clr.create();
             }
