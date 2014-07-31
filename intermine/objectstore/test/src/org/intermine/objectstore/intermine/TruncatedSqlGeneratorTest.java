@@ -344,9 +344,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
-        schema.useRangeTypes = true;
-        return schema;
+        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
     }
 
     public String getRegisterOffset1() {

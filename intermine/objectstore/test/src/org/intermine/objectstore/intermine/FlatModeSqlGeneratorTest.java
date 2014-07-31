@@ -271,9 +271,7 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest")).getSchema();
-        schema.useRangeTypes = true;
-        return schema;
+        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest")).getSchema();
     }
 
     public String getRegisterOffset1() {
