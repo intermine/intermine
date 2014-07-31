@@ -246,6 +246,8 @@ public final class QueryOptimiser
                                     + " bailing out early (time limit: "
                                     + context.getMaxQueryParseTime() + ")");
                 }
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Optimiser failed to parse query: " + query);
             } finally {
                 if (context.isVerbose()) {
                     System.out .println("Optimised SQL: " + bestQuery.getBestQueryString());
