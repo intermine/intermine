@@ -1984,7 +1984,7 @@ public final class SqlGenerator
 
         if (useRangeFunction) {
             // either built in ranges or bioseg, prefer to use build int ranges
-            String rangeFunction = (schema.useRangeTypes()) ? "int4range(" : "create_bioseg(";
+            String rangeFunction = (schema.useRangeTypes()) ? "int4range(" : "bioseg_create(";
             buffer.append(rangeFunction);
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");

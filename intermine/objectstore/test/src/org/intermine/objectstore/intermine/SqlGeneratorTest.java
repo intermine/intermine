@@ -923,17 +923,17 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
             // here we can use queries from map
             q = rangeOverlaps();
-            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND create_bioseg(a1_.rangeStart, a1_.rangeEnd) && create_bioseg(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id";
+            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id";
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
             assertEquals(expected, generated);
 
             q = rangeDoesNotOverlap();
-            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND create_bioseg(a1_.rangeStart, a1_.rangeEnd) && create_bioseg(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id";
+            expected = "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM intermine_Range AS a1_, intermine_Range AS a2_ WHERE (NOT (a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id";
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
             assertEquals(expected, generated);
 
             q = rangeOverlapsValues();
-            expected = "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND create_bioseg(a1_.rangeStart, a1_.rangeEnd) && create_bioseg(35, 45) ORDER BY a1_.id";
+            expected = "SELECT a1_.id AS a2_ FROM intermine_Range AS a1_ WHERE a1_.parentId = a1_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(35, 45) ORDER BY a1_.id";
             generated = SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap());
             assertEquals(expected, generated);
 
