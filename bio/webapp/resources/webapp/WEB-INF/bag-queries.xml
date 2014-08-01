@@ -10,6 +10,11 @@
         SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM BioEntity AS a1_, Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND lower(a2_.value) in ?)
     </query>
   </bag-type>
+  <bag-type type="OntologyTerm" matchOnFirst="true">
+    <query message="searching synonyms for terms" matchesAreIssues="false" runBeforeDefault="false">
+        SELECT DISTINCT a1_.id as a3_, a2_.name as a4_ FROM OntologyTerm AS a1_, OntologyTermSynonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND a2_.type = 'alt_id' AND lower(a2_.name) in ?)
+    </query>
+  </bag-type>
   <additional-converter class-name="org.intermine.bio.web.logic.OrthologueConverter"
     urlField="orthologue,ortholog"
     constraint-path="Gene.homologues.homologue.organism.shortName"
