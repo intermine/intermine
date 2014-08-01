@@ -914,6 +914,7 @@ public class InitialiserPlugin implements PlugIn
         // cause a memory leak, where tomcat would run out of PermGen space after several deploy
         // cycles.
         Runtime.getRuntime().removeShutdownHook(ShutdownHook.getInstance());
+
     }
 
     /**
