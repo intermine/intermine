@@ -869,12 +869,13 @@ public class InitialiserPlugin implements PlugIn
      * and the mail queue thread pool.
      */
     public void destroy() {
-        InterMineContext.shutdown();
         if (profileManager != null) {
             ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
                 .getDatabase().shutdown();
         }
-        ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
+        if (os != null) {
+            ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
+        }
     }
 
 
