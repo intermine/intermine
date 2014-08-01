@@ -19,7 +19,7 @@ import java.util.Collection;
  */
 public class IncompatibleTypesException extends RuntimeException
 {
-    private Collection<String> types;
+    private Collection<String> types = null;
 
     /**
      * Constructs an IncompatibleBagTypesException with the specified detail message.

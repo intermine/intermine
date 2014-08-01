@@ -41,11 +41,13 @@ public interface IdUpgrader
      * An upgrader that always fails.  For use when upgrading shouldn't be happening.
      */
     IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
+        @Override
         public Set<Integer> getNewIds(@SuppressWarnings("unused") InterMineObject oldObject,
                 @SuppressWarnings("unused") ObjectStore objectStore) {
             throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
         }
 
+        @Override
         public boolean doUpgrade() {
             return false;
         }
