@@ -25,6 +25,8 @@ import java.util.concurrent.Executors;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.Emailer;
+import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
@@ -35,7 +37,7 @@ import org.intermine.web.logic.config.WebConfig;
  * @author rns
  *
  */
-public final class InterMineContext
+public final class InterMineContext implements Shutdownable
 {
     private InterMineContext() {
         // Hidden constructor.
@@ -67,6 +69,7 @@ public final class InterMineContext
         webConfig = wc;
         emailer = EmailerFactory.getEmailer(webProps);
         startMailerThreads(emailer);
+        ShutdownHook.registerObject(new InterMineContext());
     }
 
     private static void checkInit() {
@@ -138,7 +141,7 @@ public final class InterMineContext
     /**
      * Send the signal that shutdown is happening - try and release resources.
      */
-    public static void shutdown() {
+    public void shutdown() {
         checkInit();
         int leftToSend = MAIL_QUEUE.size();
         // Allocate more actors to send the remaining messages.
@@ -147,7 +150,7 @@ public final class InterMineContext
             MAIL_SERVICE.submit(r);
         }
         // Tell the pool to close.
-        MAIL_SERVICE.shutdown();
+        MAIL_SERVICE.shutdownNow();
     }
 
 

@@ -40,6 +40,9 @@ public final class MailDaemon implements Runnable
     @Override
     public void run() {
         while (true) {
+            if (Thread.interrupted()) {
+                return; // Shutdown.
+            }
             try {
                 // Wait here until there is a message to send.
                 MailAction nextAction = mailQueue.take();
