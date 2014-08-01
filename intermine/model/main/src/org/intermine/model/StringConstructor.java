@@ -106,6 +106,7 @@ public class StringConstructor implements CharSequence
     /**
      * {@inheritDoc}
      */
+    @Override
     public int length() {
         return length;
     }
@@ -129,6 +130,7 @@ public class StringConstructor implements CharSequence
     /**
      * {@inheritDoc}
      */
+    @Override
     public char charAt(int index) {
         // If we were using Java 1.6, I could do floorEntry(). Instead, I have to do:
         String component = strings.get(new Integer(index));
@@ -146,6 +148,7 @@ public class StringConstructor implements CharSequence
     /**
      * {@inheritDoc}
      */
+    @Override
     public CharSequence subSequence(int start, int end) {
         throw new UnsupportedOperationException("We probably don't need this method");
     }
