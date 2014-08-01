@@ -35,7 +35,7 @@ public class JWTVerifierTest {
     private static KeyPair testingKeyPair;
     private static KeyPair wso2KeyPair;
     private static KeyStore ks = null;
-    
+
     private Properties options = null;
     private static Properties defaultOptions = new Properties();
     private String token, wso2Token, expired, wrongSig, unknown;
@@ -52,7 +52,7 @@ public class JWTVerifierTest {
     public void setup() throws Exception {
         options = new Properties(defaultOptions);
         // Normally "wso2.org/products/am" => "http://wso2.org/claims/emailaddress"
-        options.setProperty("jwt.key.sub.wso2 issuer", "http://wso2.org/claims/emailaddress"); 
+        options.setProperty("jwt.key.sub.wso2 issuer", "http://wso2.org/claims/emailaddress");
 
         long expirationTime = System.currentTimeMillis() + 1000L * 60 * 60;
         //System.out.println("Expires at: " + expirationTime);
@@ -177,12 +177,12 @@ public class JWTVerifierTest {
     private static X509Certificate generateCertificate(KeyPair keyPair) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         X509V3CertificateGenerator cert = new X509V3CertificateGenerator();
-        cert.setSerialNumber(BigInteger.valueOf(1));   //or generate a random number  
-        cert.setSubjectDN(new X509Principal("CN=localhost"));  //see examples to add O,OU etc  
-        cert.setIssuerDN(new X509Principal("CN=localhost")); //same since it is self-signed  
+        cert.setSerialNumber(BigInteger.valueOf(1));   //or generate a random number
+        cert.setSubjectDN(new X509Principal("CN=localhost"));  //see examples to add O,OU etc
+        cert.setIssuerDN(new X509Principal("CN=localhost")); //same since it is self-signed
         cert.setPublicKey(keyPair.getPublic());
-        cert.setNotBefore(new Date());  
-        cert.setNotAfter(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365));  
+        cert.setNotBefore(new Date());
+        cert.setNotAfter(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365));
         cert.setSignatureAlgorithm("SHA1WithRSAEncryption");
 
         PrivateKey signingKey = keyPair.getPrivate();
