@@ -477,6 +477,7 @@ public final class Util
         try {
             cls = Class.forName(type);
         } catch (Exception e) {
+            // do nothing
         }
         return cls;
     }
@@ -684,6 +685,7 @@ public final class Util
 
     private static class ClassNameComparator implements Comparator<Class<?>>
     {
+        @Override
         public int compare(Class<?> a, Class<?> b) {
             return a.getName().compareTo(b.getName());
         }

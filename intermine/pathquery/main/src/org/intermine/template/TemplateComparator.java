@@ -23,6 +23,7 @@ public class TemplateComparator implements Comparator<TemplateQuery>
      * identical.
      * {@inheritDoc}
      */
+    @Override
     public int compare(TemplateQuery t0, TemplateQuery t1) {
 
         if (t0.getTitle().equals(t1.getTitle())) {

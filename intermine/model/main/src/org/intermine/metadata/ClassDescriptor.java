@@ -843,7 +843,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return sb.toString();
     }
 
-    private void addFields(StringBuffer sb, Collection<? extends FieldDescriptor> fields) {
+    private static void addFields(StringBuffer sb, Collection<? extends FieldDescriptor> fields) {
         Iterator<? extends FieldDescriptor> iter = fields.iterator();
         while (iter.hasNext()) {
             FieldDescriptor fld = iter.next();

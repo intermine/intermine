@@ -462,6 +462,7 @@ public final class TypeUtil
         try {
             cls = Class.forName(type);
         } catch (Exception e) {
+            // do nothing
         }
         return cls;
     }
@@ -661,12 +662,13 @@ public final class TypeUtil
      */
     public static Class<?> getClass(String className, Model model)
         throws ClassNotFoundException {
+        String qualifiedName = className;
         if ("InterMineObject".equals(className)) {
-            className = "org.intermine.model.InterMineObject";
+            qualifiedName = "org.intermine.model.InterMineObject";
         } else {
-            className = model.getPackageName() + "." + className;
+            qualifiedName = model.getPackageName() + "." + qualifiedName;
         }
-        return Class.forName(className);
+        return Class.forName(qualifiedName);
     }
 
     /**

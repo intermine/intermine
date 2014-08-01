@@ -157,7 +157,7 @@ public final class DescriptorUtils
             }
         });
 
-        if (superClasses.isEmpty()) {
+        if (superClasses == null || superClasses.isEmpty()) {
             throw new MetaDataException("No common type");
         }
         return sortClassesBySpecificity(superClasses);
