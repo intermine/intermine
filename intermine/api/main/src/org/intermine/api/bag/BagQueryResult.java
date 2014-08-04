@@ -207,8 +207,9 @@ public class BagQueryResult
     public static class IssueResult
     {
 
-        private final String queryDesc, inputIdent;
-        private final List results;
+        public final String queryDesc;
+        public final String inputIdent;
+        public final List results;
 
         /**
          * @param queryDesc query description
