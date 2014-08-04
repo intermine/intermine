@@ -138,9 +138,5 @@ public abstract class WebServiceServlet extends HttpServlet
         respond(Method.DELETE, request, response);
     }
 
-    @Override
-    public void destroy() {
-        InterMineContext.shutdown();
-    }
 
 }
