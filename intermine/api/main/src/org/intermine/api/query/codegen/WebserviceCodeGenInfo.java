@@ -60,13 +60,13 @@ public class WebserviceCodeGenInfo
     }
 
     /**
-     * @param pq
-     * @param serviceBaseURL
-     * @param projectTitle
-     * @param perlWSModuleVer
-     * @param pathQueryIsPublic
-     * @param profile
-     * @param lineBreak
+     * @param pq a PathQuery to copy
+     * @param serviceBaseURL the base url of web service
+     * @param projectTitle the Title of a local InterMine project
+     * @param perlWSModuleVer the perl web service module version on CPAN
+     * @param pathQueryIsPublic whether this query can be accessed by the public
+     * @param profile the profile of the user who was logged in when this info was generated
+     * @param lineBreak which linebreak to use
      */
     public WebserviceCodeGenInfo(PathQuery pq, String serviceBaseURL,
             String projectTitle, String perlWSModuleVer,
