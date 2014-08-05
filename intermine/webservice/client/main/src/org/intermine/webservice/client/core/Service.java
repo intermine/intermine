@@ -153,13 +153,15 @@ public class Service
 
     private boolean requiresAuthentication(Request request) {
         return !(request != null && request.getServiceUrl() != null
-                && (       request.getServiceUrl().endsWith("/version")
+                && (request.getServiceUrl().endsWith("/version")
                         || request.getServiceUrl().endsWith("/version/release")
                         || request.getServiceUrl().endsWith("/model")));
     }
 
     private void applyAuthentication(Request request) {
-        if (!requiresAuthentication(request)) return;
+        if (!requiresAuthentication(request)) {
+            return;
+        }
 
         if (userName != null && password != null) {
             String authValue = userName + ":" + password;

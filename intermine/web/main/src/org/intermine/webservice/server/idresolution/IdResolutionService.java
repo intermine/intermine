@@ -85,22 +85,27 @@ public class IdResolutionService extends JSONService
             extraValue = requestDetails.optString("extra", null);
         }
 
+        @Override
         public List<String> getIds() {
             return ids;
         }
 
+        @Override
         public String getExtraValue() {
             return extraValue;
         }
 
+        @Override
         public String getType() {
             return type;
         }
 
+        @Override
         public Boolean getCaseSensitive() {
             return caseSensitive;
         }
 
+        @Override
         public Boolean getWildCards() {
             return wildCards;
         }

@@ -179,7 +179,7 @@ public class ResolutionJob implements Job
     }
 
     @Override
-    public Date getStatedAt() {
+    public Date getStartedAt() {
         return startedAt;
     }
 
