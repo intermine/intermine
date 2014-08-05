@@ -107,14 +107,17 @@ public final class SearchResults implements Iterable<SearchResult>
             Map<WebSearchable, Float> hitMap,
             Map<String, WebSearchable> items,
             Map<WebSearchable, String> descriptions,
-            Map<WebSearchable, Set<String>> itemsTags
-            ) {
+            Map<WebSearchable, Set<String>> itemsTags) {
         this.hits.putAll(hitMap);
         this.items.putAll(items);
         this.descs.putAll(descriptions);
         this.tags.putAll(itemsTags);
     }
 
+    /**
+     *
+     * @return size
+     */
     public int size() {
         return items.size();
     }
@@ -196,7 +199,7 @@ public final class SearchResults implements Iterable<SearchResult>
      */
     private static MultiSearcher prepareSearcher(SearchTarget target,
             Directory userDirectory, List<Directory> globalDirectories)
-            throws CorruptIndexException, IOException {
+        throws CorruptIndexException, IOException {
         IndexSearcher userIndexSearcher = new IndexSearcher(userDirectory);
         IndexSearcher[] globalIndexSearchers = new IndexSearcher[globalDirectories.size()];
         for (int i = 0; i < globalDirectories.size(); i++) {

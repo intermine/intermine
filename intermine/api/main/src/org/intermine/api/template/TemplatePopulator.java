@@ -180,8 +180,8 @@ public final class TemplatePopulator
         PathConstraint constraint = template.getEditableConstraints().get(0);
         Path path = getPathOfClass(template, constraint.getPath());
         ClassDescriptor cld = path.getLastClassDescriptor();
-        if (!cld.getUnqualifiedName().equals(bag.getType()) &&
-                !allClasses.contains(cld.getUnqualifiedName())) {
+        if (!cld.getUnqualifiedName().equals(bag.getType())
+                && !allClasses.contains(cld.getUnqualifiedName())) {
             throw new TemplatePopulatorException("The constraint of type "
                     + path.getNoConstraintsString()
                     + " can't be set to a bag (list) of type " + bag.getType()
