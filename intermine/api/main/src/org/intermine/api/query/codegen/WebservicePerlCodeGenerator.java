@@ -1,29 +1,5 @@
 package org.intermine.api.query.codegen;
 
-import java.lang.String;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang.StringUtils;
-
-import org.intermine.metadata.ConstraintOp;
-import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.OuterJoinStatus;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintMultiValue;
-import org.intermine.pathquery.PathConstraintSubclass;
-import org.intermine.pathquery.PathException;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
-import org.intermine.metadata.TypeUtil;
-
 /*
  * Copyright (C) 2002-2014 FlyMine
  *
@@ -35,6 +11,28 @@ import org.intermine.metadata.TypeUtil;
  */
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringUtils;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.OuterJoinStatus;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
+
+
 /**
  * This Class generates Perl source code of web service client for path query and template query.
  *
@@ -44,10 +42,14 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 {
     protected String endl = System.getProperty("line.separator");
 
+    /**
+     * @return error msg
+     */
     protected String getInvalidQuery() {
         return "# Invalid query." + endl
                 + "# ==============" + endl
-                + "# The code to run this query could not be generated for the following reasons:" + endl;
+                + "# The code to run this query could not be generated for the following reasons:"
+                + endl;
     }
     protected static final String PATH_BAG_CONSTRAINT = "This query contains a list constraint, "
         + "which is currently not supported...";
@@ -59,9 +61,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     protected static final String INDENT = "    ";
     protected static final String SPACE = " ";
 
-    private static final String SUBCLASS_EXPLANATION 
+    private static final String SUBCLASS_EXPLANATION
         = "Type constraints must come before all mentions of the paths they constrain";
-    private static final String INTERNAL_USE_CONSTRAINT 
+    private static final String INTERNAL_USE_CONSTRAINT
         = "This query makes use of a constraint type that can only be used internally";
 
     private String getSetFieldSeparator() {
@@ -162,13 +164,13 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         sb.append("# The following import statement sets " + projectTitle + " as your default"
                 + endl);
         if (wsCodeGenInfo.isPublic()) {
-            sb.append("use Webservice::InterMine" 
+            sb.append("use Webservice::InterMine"
                     + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer)
                     + " '" + serviceBaseURL + "';" + endl);
         } else {
             sb.append("# You must also supply your login details here to access this query" + endl);
             sb.append("use Webservice::InterMine"
-                    + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer) 
+                    + (perlWSModuleVer == null ? "" : " " + perlWSModuleVer)
                     + " '" + serviceBaseURL + "', "
                     + "'" + wsCodeGenInfo.getUserToken() + "';" + endl);
         }
@@ -192,7 +194,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         return sb.toString();
     }
 
-    private String q(String input) {
+    private static String q(String input) {
         if (input == null) {
             return "";
         } else {
@@ -200,7 +202,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
     }
 
-    private String qq(String input) {
+    private static String qq(String input) {
         if (input == null) {
             return "";
         } else {
@@ -208,7 +210,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
     }
 
-    private String decapitate(String input) {
+    private static String decapitate(String input) {
         if (input == null) {
             return "";
         } else {
@@ -313,8 +315,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         // Add orderBy
         if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
-            if ( // The default
-                query.getOrderBy().size() == 1
+            if (query.getOrderBy().size() == 1
                     && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
                     && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
                 sb.append("# edit the line below to change the sort order:" + endl);
@@ -325,7 +326,8 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             }
             for (OrderElement oe : query.getOrderBy()) {
                 sb.append("$query->add_sort_order(");
-                sb.append(q(decapitate(oe.getOrderPath())) + ", " + q(oe.getDirection().toString()));
+                sb.append(q(decapitate(oe.getOrderPath())) + ", "
+                        + q(oe.getDirection().toString()));
                 sb.append(");" + endl);
             }
             sb.append(endl);
@@ -334,11 +336,13 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         // Add join status
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
             sb.append("# Outer Joins" + endl);
-            sb.append("# (Show attributes of these relations if they exist, but do not require them to exist.)" + endl);
+            sb.append("# (Show attributes of these relations if they exist, "
+                    + "but do not require them to exist.)" + endl);
             for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
                 // Only outer joins need to be declared.
                 if (entry.getValue() == OuterJoinStatus.OUTER) {
-                    sb.append("$query->add_outer_join(" + q(decapitate(entry.getKey())) + ");" + endl);
+                    sb.append("$query->add_outer_join(" + q(decapitate(entry.getKey()))
+                            + ");" + endl);
                 }
             }
             sb.append(endl);
@@ -512,7 +516,8 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
      * @param opCode operation code
      * @return a line of source code
      */
-    private String templateConstraintUtil(PathConstraint pc, String opCode) throws UnhandledFeatureException {
+    private String templateConstraintUtil(PathConstraint pc, String opCode)
+        throws UnhandledFeatureException {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String op = pc.getOp().toString();
         String value = PathConstraint.getValue(pc);
