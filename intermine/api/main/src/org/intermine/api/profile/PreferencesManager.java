@@ -80,6 +80,11 @@ public class PreferencesManager
         });
     }
 
+    /**
+     * @param profile userprofile
+     * @return user preferences
+     * @throws SQLException if userprofile is unavailable
+     */
     protected Map<String, String> getPreferences(final Profile profile) throws SQLException {
         return osw.performUnsafeOperation(FETCH_PREFS_FOR_USER,
                 new SQLOperation<Map<String, String>>() {
@@ -102,6 +107,12 @@ public class PreferencesManager
     private static final String INSERT_PREFERENCE_SQL = "INSERT INTO " + TABLE_NAME
             + " VALUES (?, ?, ?)";
 
+    /**
+     * @param profile userprofile
+     * @param key key
+     * @param value value
+     * @throws SQLException if something goes wrong
+     */
     protected synchronized void setPreference(final Profile profile, final String key,
             final String value) throws SQLException {
         Integer updated = osw.performUnsafeOperation(UPDATE_PREFERENCE_SQL,
@@ -136,7 +147,13 @@ public class PreferencesManager
     private static final String DELETE_PREFERENCE_SQL =
         "DELETE FROM " + TABLE_NAME + " WHERE userprofileid = ? AND preferencename = ?";
 
-    protected void deletePreference(final Profile profile, final String key) throws SQLException {
+    /**
+     * @param profile userprofile
+     * @param key key
+     * @throws SQLException if something goes wrong
+     */
+    protected void deletePreference(final Profile profile, final String key)
+        throws SQLException {
         osw.performUnsafeOperation(DELETE_PREFERENCE_SQL, new SQLOperation<Void>() {
             @Override
             public Void run(PreparedStatement stm) throws SQLException {
@@ -152,8 +169,8 @@ public class PreferencesManager
             "DELETE FROM " + TABLE_NAME + " WHERE userprofileid = ?";
 
     /**
-     * @param profile
-     * @throws SQLException
+     * @param profile userprofile
+     * @throws SQLException if something goes wrong
      */
     public void deleteAllPreferences(final Profile profile) throws SQLException {
         osw.performUnsafeOperation(DELETE_ALL_PREFERENCES_SQL, new SQLOperation<Void>() {
@@ -171,10 +188,10 @@ public class PreferencesManager
             + " WHERE preferencename = ? AND preferencevalue = ?";
 
     /**
-     * @param key
-     * @param value
-     * @return
-     * @throws SQLException
+     * @param key key
+     * @param value value
+     * @return true if mapping exists
+     * @throws SQLException if something goes wrong
      */
     public synchronized boolean mappingExists(final String key, final String value)
         throws SQLException {
@@ -193,9 +210,15 @@ public class PreferencesManager
     }
 
     private static final String FIND_USER_WITH_MAPPING =
-            "SELECT userprofileid FROM " + TABLE_NAME +
-            " WHERE preferencename = ? AND preferencevalue = ?";
+            "SELECT userprofileid FROM " + TABLE_NAME
+            + " WHERE preferencename = ? AND preferencevalue = ?";
 
+    /**
+     * @param key key
+     * @param value value
+     * @return user id
+     * @throws SQLException something goes wrong
+     */
     public Integer getUserWithUniqueMapping(final String key, final String value)
         throws SQLException {
         return osw.performUnsafeOperation(FIND_USER_WITH_MAPPING, new SQLOperation<Integer>() {

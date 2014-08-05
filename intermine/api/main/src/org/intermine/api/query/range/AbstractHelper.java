@@ -38,12 +38,13 @@ public abstract class AbstractHelper implements RangeHelper
     /**
      * Extending classes may with to override this method if they need to adjust the
      * main constraint set in some way, such as adding an extra constraint.
+     * @param q queryable
+     * @param node query class to constraint
+     * @param con range constraint
+     * @return constraint
      */
     @Override
-    public Constraint createConstraint(
-        Queryable q,
-        QueryNode node,
-        PathConstraintRange con) {
+    public Constraint createConstraint(Queryable q, QueryNode node, PathConstraintRange con) {
         ConstraintOptions options;
 
         if (con.getOp() == ConstraintOp.WITHIN) {
@@ -85,6 +86,7 @@ public abstract class AbstractHelper implements RangeHelper
      * @param options The generated bundle of configured values.
      * @param left The field to be constrained in the left side constraint.
      * @param right The field to be constrained in the right side constraint.
+     * @param node query class to constrain
      * @return A constraint.
      */
     protected Constraint makeRangeConstraint(
@@ -107,7 +109,7 @@ public abstract class AbstractHelper implements RangeHelper
      * @return The options that define what it means for the constrained object to be
      * WITHIN a given set of ranges.
      */
-    abstract protected ConstraintOptions getWithinOptions();
+    protected abstract ConstraintOptions getWithinOptions();
 
     /**
      * By default the OUTSIDE options are the negation of the WITHIN options, with the
@@ -183,6 +185,6 @@ public abstract class AbstractHelper implements RangeHelper
      * @param range A string describing a range (eg: "1 .. 10").
      * @return A parsed range object.
      */
-    abstract protected Range parseRange(String range);
+    protected abstract Range parseRange(String range);
 
 }
