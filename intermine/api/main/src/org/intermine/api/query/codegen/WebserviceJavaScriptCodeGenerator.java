@@ -23,11 +23,11 @@ import org.intermine.pathquery.PathQuery;
  */
 public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerator
 {
-    private String error(String message) {
+    private static String error(String message) {
         return JSStrings.getString("ERROR", message);
     }
 
-    private String errorList(Collection<String> problems) {
+    private static String errorList(Collection<String> problems) {
         StringBuilder sb = new StringBuilder(JSStrings.getString("ERROR_LIST_INTRO"));
         for (String p: problems) {
             sb.append(JSStrings.getString("ERROR_LIST_ITEM", p));
@@ -58,15 +58,17 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         }
 
         final String url = wsCodeGenInfo.getServiceBaseURL();
-        final String cdnLocation = wsCodeGenInfo.getProperty("head.cdn.location", "http://cdn.intermine.org");
+        final String cdnLocation = wsCodeGenInfo.getProperty("head.cdn.location",
+                "http://cdn.intermine.org");
         final String json = query.getJson();
         final String token = wsCodeGenInfo.getUserToken();
 
         StringBuffer sb = new StringBuffer()
-          .append(JSStrings.getString("PRELUDE"))
-          .append(String.format(JSStrings.getString("IMPORTS"), cdnLocation))
-          .append(JSStrings.getString("PLACEHOLDER"))
-          .append(JSStrings.getString("SCRIPT", new StringLiteral(url), new StringLiteral(token), json));
+              .append(JSStrings.getString("PRELUDE"))
+              .append(String.format(JSStrings.getString("IMPORTS"), cdnLocation))
+              .append(JSStrings.getString("PLACEHOLDER"))
+              .append(JSStrings.getString("SCRIPT", new StringLiteral(url),
+                  new StringLiteral(token), json));
 
         return sb.toString().replaceAll("\n", wsCodeGenInfo.getLineBreak());
     }

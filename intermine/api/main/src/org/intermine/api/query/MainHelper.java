@@ -1032,12 +1032,13 @@ public final class MainHelper
      * @return a new logic expression including the new code
      */
     protected static LogicExpression addToConstraintLogic(LogicExpression logic, String code) {
+        LogicExpression newLogic = logic;
         if (logic == null) {
-            logic = new LogicExpression(code);
+            newLogic = new LogicExpression(code);
         } else {
-            logic = new LogicExpression("(" + logic.toString() + ") AND " + code);
+            newLogic = new LogicExpression("(" + logic.toString() + ") AND " + code);
         }
-        return logic;
+        return newLogic;
     }
 
     /**
@@ -1047,14 +1048,15 @@ public final class MainHelper
      * @param code the code to remove
      * @return a new logic expression or null if the expression is now empty
      */
-    protected static LogicExpression removeFromConstraintLogic(LogicExpression logic, String code) {
+    protected static LogicExpression removeFromConstraintLogic(LogicExpression logic,
+            String code) {
         if (logic != null) {
             try {
                 logic.removeVariable(code);
             } catch (IllegalArgumentException e) {
                 // an IllegalArgumentException is thrown if we try to remove the root node, this
                 // would make an empty expression so we can just set it to null
-                logic = null;
+                return null;
             }
         }
         return logic;
@@ -1473,10 +1475,16 @@ public final class MainHelper
         return q;
     }
 
+    /**
+     * @param props properties to configure the range queries
+     */
     public static void loadHelpers(Properties props) {
         RangeConfig.loadHelpers(props);
     }
 
+    /**
+     * @author Alex
+     */
     protected static final class RangeConfig
     {
         private RangeConfig() {
@@ -1489,6 +1497,9 @@ public final class MainHelper
             init();
         }
 
+        /**
+         * reset
+         */
         protected static void reset() {
             init();
         }
@@ -1502,6 +1513,9 @@ public final class MainHelper
             loadHelpers(PropertiesUtil.getProperties());
         }
 
+        /**
+         * @param allProps all properties
+         */
         protected static void loadHelpers(Properties allProps) {
             Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.",
                     allProps);
@@ -1545,10 +1559,18 @@ public final class MainHelper
             }
         }
 
+        /**
+         * @param type class
+         * @return true if there is helper for this class of object
+         */
         public static boolean hasHelperForType(Class<?> type) {
             return rangeHelpers.containsKey(type);
         }
 
+        /**
+         * @param type type
+         * @return helper for given type
+         */
         public static RangeHelper getHelper(Class<?> type) {
             return rangeHelpers.get(type);
         }
@@ -1607,6 +1629,12 @@ public final class MainHelper
         }
     }
 
+    /**
+     * @param q field
+     * @param node class
+     * @param con contraint
+     * @return range constraint
+     */
     public static Constraint makeRangeConstraint(
             Queryable q,
             QueryNode node,
