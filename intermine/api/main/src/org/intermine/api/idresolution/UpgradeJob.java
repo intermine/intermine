@@ -86,7 +86,7 @@ public class UpgradeJob implements Job
     }
 
     @Override
-    public Date getStatedAt() {
+    public Date getStartedAt() {
         return startedAt;
     }
 

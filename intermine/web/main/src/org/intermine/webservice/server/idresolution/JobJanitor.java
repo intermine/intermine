@@ -32,7 +32,7 @@ public class JobJanitor implements Runnable
     public void run() {
         IDResolver idresolver = IDResolver.getInstance();
         while (canContinue) {
-            Iterator<Job> jobs = idresolver.JOBS.values().iterator();
+            Iterator<Job> jobs = idresolver.getJobs().values().iterator();
             Date cutOff = DateUtils.addHours(new Date(), -3);
             while (jobs.hasNext()) {
                 if (Thread.interrupted()) {
