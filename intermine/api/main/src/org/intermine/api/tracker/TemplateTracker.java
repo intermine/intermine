@@ -44,7 +44,8 @@ public class TemplateTracker extends AbstractTracker
     private static TemplatesExecutionMap templatesExecutionCache;
 
     /**
-     * {@inheritDoc}
+     *
+     * @param trackQueue queue
      */
     protected TemplateTracker(Queue<Track> trackQueue) {
         super(trackQueue, TrackerUtil.TEMPLATE_TRACKER_TABLE);
@@ -55,6 +56,7 @@ public class TemplateTracker extends AbstractTracker
     /**
      * Return an instance of the TemplateTracker
      * @param con connection to the database
+     * @param trackQueue queue
      * @return TemplateTracker the template tracker
      */
     public static TemplateTracker getInstance(Connection con, Queue<Track> trackQueue) {
@@ -65,7 +67,7 @@ public class TemplateTracker extends AbstractTracker
             } catch (Exception e) {
                 LOG.error("Error creating the table associated to the TemplateTracker" + e);
             }
-            templateTracker.loadTemplatesExecutionCache(con);
+            TemplateTracker.loadTemplatesExecutionCache(con);
         } else {
             templateTracker.setTrackQueue(trackQueue);
         }
@@ -75,7 +77,7 @@ public class TemplateTracker extends AbstractTracker
     /**
      * Load the tracks retrieved from the database into TemplateExecutionMap object
      */
-    private void loadTemplatesExecutionCache(Connection con) {
+    private static void loadTemplatesExecutionCache(Connection con) {
         Statement stm = null;
         ResultSet rs = null;
         try {
@@ -110,8 +112,8 @@ public class TemplateTracker extends AbstractTracker
         String userName = (profile.getUsername() != null)
                           ? profile.getUsername()
                           : "";
-        TemplateTrack templateTrack = new TemplateTrack(templateName,
-                                      userName, sessionIdentifier, new Timestamp(System.currentTimeMillis()));
+        TemplateTrack templateTrack = new TemplateTrack(templateName, userName, sessionIdentifier,
+                new Timestamp(System.currentTimeMillis()));
         if (templateTracker  != null) {
             templateTracker.storeTrack(templateTrack);
             templatesExecutionCache.addExecution(templateTrack);
@@ -122,6 +124,7 @@ public class TemplateTracker extends AbstractTracker
 
     /**
      * Return the number of executions for each public template
+     * @param con db connection
      * @return map with key the template name and executions number
      */
     protected Map<String, Integer> getAccessCounter(Connection con) {
@@ -167,6 +170,7 @@ public class TemplateTracker extends AbstractTracker
         List<Entry<String, Double>> listOrdered =
             new LinkedList<Entry<String, Double>>(templateMergedRank.entrySet());
         Collections.sort(listOrdered, new Comparator<Entry<String, Double>>() {
+            @Override
             public int compare (Entry<String, Double> e1, Entry<String, Double> e2) {
                 return -e1.getValue().compareTo(e2.getValue());
             }
@@ -219,7 +223,8 @@ public class TemplateTracker extends AbstractTracker
      * @param map2 the map to merge
      * @return a map containing the map1 and map2 merged
      */
-    private Map<String, Double> mergeMap (Map<String, Double> map1, Map<String, Double> map2) {
+    private static Map<String, Double> mergeMap (Map<String, Double> map1,
+            Map<String, Double> map2) {
         Map<String, Double> mergedMap = new HashMap<String, Double>();
         Map<String, Double> tempMap = new HashMap<String, Double>(map2);
         double r1 = 0;
