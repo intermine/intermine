@@ -80,8 +80,11 @@ public class WebserviceCodeGenInfo
         this.lineBreak = lineBreak;
     }
 
-    public void readWebProperties(Properties properties) {
-        this.properties.putAll(properties);
+    /**
+     * @param props properties
+     */
+    public void readWebProperties(Properties props) {
+        this.properties.putAll(props);
         if (properties != null) {
             resultTablesLib = (String) properties.get("ws.imtables.provider");
             baseUrl = properties.get("webapp.baseurl") + "/" + properties.get("webapp.path") + "/";
@@ -99,10 +102,18 @@ public class WebserviceCodeGenInfo
         return properties.getProperty(key, defaultValue);
     }
 
+    /**
+     *
+     * @return results tables
+     */
     public String getResultsTablesLib() {
         return resultTablesLib;
     }
 
+    /**
+     *
+     * @return base URL
+     */
     public String getBaseUrl() {
         return baseUrl;
     }
