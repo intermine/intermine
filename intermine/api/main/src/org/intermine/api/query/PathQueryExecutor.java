@@ -45,6 +45,9 @@ import org.intermine.pathquery.PathQuery;
 public class PathQueryExecutor extends QueryExecutor
 {
 
+    /**
+     * default batch size
+     */
     public static final int DEFAULT_BATCH_SIZE = 5000;
     private static final long MAX_WAIT_TIME = 2000;
     private int batchSize = DEFAULT_BATCH_SIZE;
@@ -87,6 +90,7 @@ public class PathQueryExecutor extends QueryExecutor
      *
      * @param pathQuery path query to be executed
      * @return results
+     * @throws ObjectStoreException if something goes wrong with the database
      */
     public ExportResultsIterator execute(PathQuery pathQuery) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
@@ -107,6 +111,7 @@ public class PathQueryExecutor extends QueryExecutor
      * results from database from index 0 and just throws away all before start index.
      * @param limit maximum number of results
      * @return results
+     * @throws ObjectStoreException if fail to execute query
      */
 
     public ExportResultsIterator execute(PathQuery pathQuery, final int start,
@@ -137,13 +142,14 @@ public class PathQueryExecutor extends QueryExecutor
                 pathToBagQueryResult);
         return q;
     }
-    
+
     /* make this the returned value rather than those stupid maps...
     private class MainHelperResult {
-        final Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
+        final Map<String, BagQueryResult> pathToBagQueryResult
+            = new HashMap<String, BagQueryResult>();
         final Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query query;
-        
+
         MainHelperResult() {
         }
     }
@@ -156,6 +162,7 @@ public class PathQueryExecutor extends QueryExecutor
      * @return The Query to run.
      * @throws ObjectStoreException if there is a problem making the query.
      */
+    @Override
     public Query makeQuery(PathQuery pq) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map<String, BagQueryResult> returnBagQueryResults =

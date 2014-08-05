@@ -42,7 +42,7 @@ public class JobJanitor implements Runnable
                 switch (job.getStatus()) {
                     case ERROR:
                     case SUCCESS:
-                        Date startedAt = job.getStatedAt();
+                        Date startedAt = job.getStartedAt();
                         if (startedAt != null && startedAt.before(cutOff)) {
                             jobs.remove();
                         }

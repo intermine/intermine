@@ -207,9 +207,22 @@ public class BagQueryResult
     public static class IssueResult
     {
 
-        public final String queryDesc;
-        public final String inputIdent;
-        public final List results;
+        /**
+         * query description
+         */
+        private final String queryDesc;
+
+        /**
+         * identifier input
+         */
+        private final String inputIdent;
+
+        /**
+         * matches found
+         */
+        private final List results;
+
+
 
         /**
          * @param queryDesc query description
@@ -228,6 +241,27 @@ public class BagQueryResult
         @Override
         public boolean equals(Object o) {
             return EqualsBuilder.reflectionEquals(this, o);
+        }
+
+        /**
+         * @return query description
+         */
+        public String getQueryDesc() {
+            return queryDesc;
+        }
+
+        /**
+         * @return identifier input by user
+         */
+        public String getInputIdent() {
+            return inputIdent;
+        }
+
+        /**
+         * @return matches found
+         */
+        public List getResults() {
+            return results;
         }
 
         /**

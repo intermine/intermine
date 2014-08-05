@@ -1,6 +1,5 @@
 package org.intermine.api.template;
 
-
 /*
  * Copyright (C) 2002-2014 FlyMine
  *
@@ -31,11 +30,18 @@ import org.intermine.template.TemplateQuery;
  * @author Alex Kalderimis
  *
  */
-public class ApiTemplate extends TemplateQuery implements WebSearchable {
+public class ApiTemplate extends TemplateQuery implements WebSearchable
+{
 
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
 
+    /**
+     * @param name name of template
+     * @param title title of template
+     * @param comment comment
+     * @param query query
+     */
     public ApiTemplate(String name, String title, String comment,
             PathQuery query) {
         super(name, title, comment, query);
@@ -52,9 +58,11 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
 
     /**
      * Clone this ApiQuery
+     * @return template
      */
     @Override
     public synchronized ApiTemplate clone() {
+        super.clone();
         return new ApiTemplate(this);
     }
 
@@ -77,8 +85,19 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
         return savedTemplateQuery;
     }
 
-    // ApiTemplates should compare with strict object equality,
-    // to avoid one user's templates clobbering another's.
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((observers == null) ? 0 : observers.hashCode());
+        result = prime
+                * result
+                + ((savedTemplateQuery == null) ? 0 : savedTemplateQuery
+                        .hashCode());
+        return result;
+    }
+
     @Override
     public boolean equals(Object other) {
         return this == other;
@@ -125,7 +144,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
     }
 
     @Override
-    public void setDescription(String description) {
+    public synchronized void setDescription(String description) {
         super.setDescription(description);
         fireEvent(new PropertyChangeEvent(this));
     }
