@@ -13,7 +13,6 @@ package org.intermine.api.query;
 import java.io.StringReader;
 import java.util.Map;
 
-import org.intermine.api.query.QueryStore;
 import org.intermine.api.util.LimitedMap;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;

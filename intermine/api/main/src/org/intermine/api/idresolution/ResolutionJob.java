@@ -1,11 +1,26 @@
 package org.intermine.api.idresolution;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.util.Date;
 import java.util.UUID;
 
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 
+/**
+ *
+ * @author Alex
+ */
 public class ResolutionJob implements Job
 {
     private final JobInput input;
@@ -19,6 +34,11 @@ public class ResolutionJob implements Job
     private JobStatus status = JobStatus.PENDING;
     private final String uid;
 
+    /**
+     * @param id user id
+     * @param runner bag query runner
+     * @param in input
+     */
     public ResolutionJob(UUID id, BagQueryRunner runner, JobInput in) {
         this.input = in;
         this.runner = runner;
@@ -26,7 +46,7 @@ public class ResolutionJob implements Job
         uid = id.toString();
     }
 
-    /* (non-Javadoc)
+    /*
      * @see org.intermine.api.idresolution.JJob#run()
      */
     @Override
@@ -47,11 +67,15 @@ public class ResolutionJob implements Job
         }
     }
 
+    /**
+     * @return type
+     */
+    @Override
     public String getType() {
         return input.getType();
     }
 
-    /* (non-Javadoc)
+    /*
      * @see org.intermine.api.idresolution.JJob#getResult()
      */
     @Override
@@ -59,19 +83,22 @@ public class ResolutionJob implements Job
         return result;
     }
 
+    /**
+     * @return input
+     */
     public JobInput getInput() {
         return input;
     }
-    
-    /* (non-Javadoc)
+
+    /*
      * @see org.intermine.api.idresolution.JJob#wasSuccessful()
      */
     @Override
     public boolean wasSuccessful() {
         return status == JobStatus.SUCCESS;
     }
-    
-    /* (non-Javadoc)
+
+    /*
      * @see org.intermine.api.idresolution.JJob#getError()
      */
     @Override
@@ -79,22 +106,22 @@ public class ResolutionJob implements Job
         return error;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((input == null) ? 0 : input.hashCode());
-        result = prime * result + uid.hashCode();
-        result = prime * result
+        int res = 1;
+        res = prime * res + ((input == null) ? 0 : input.hashCode());
+        res = prime * res + uid.hashCode();
+        res = prime * res
                 + ((startedAt == null) ? 0 : startedAt.hashCode());
-        
-        return result;
+
+        return res;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -126,7 +153,7 @@ public class ResolutionJob implements Job
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see java.lang.Object#toString()
      */
     @Override
@@ -135,7 +162,7 @@ public class ResolutionJob implements Job
                 + ", startedAt=" + startedAt + "]";
     }
 
-    /* (non-Javadoc)
+    /*
      * @see org.intermine.api.idresolution.JJob#getUid()
      */
     @Override
@@ -143,7 +170,7 @@ public class ResolutionJob implements Job
         return uid;
     }
 
-    /* (non-Javadoc)
+    /*
      * @see org.intermine.api.idresolution.JJob#getStatus()
      */
     @Override
