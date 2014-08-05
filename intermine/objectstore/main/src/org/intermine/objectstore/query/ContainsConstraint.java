@@ -110,37 +110,12 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
-     * Constructor for ContainsConstraint.
+     * Constructor for ContainsConstraint, constrain a reference/collection to be NULL/ NOT NULL
      *
-     * @param ref the target QueryObjectReference
+     * @param ref the target QueryObjectReference or QueryCollectionReference
      * @param op specify IS_NULL or IS_NOT_NULL
      */
-    public ContainsConstraint(QueryObjectReference ref, ConstraintOp op) {
-        if (ref == null) {
-            throw new NullPointerException("ref cannot be null");
-        }
-
-        if (op == null) {
-            throw new NullPointerException("op cannot be null");
-        }
-
-        if (!VALID_OPS_NULL.contains(op)) {
-            throw new IllegalArgumentException("op cannot be " + op);
-        }
-
-        this.ref = ref;
-        this.op = op;
-        this.cls = null;
-        this.obj = null;
-    }
-
-    /**
-     * Constrain a collection to be NULL or NOT NULL.
-     *
-     * @param ref the target QueryObjectReference
-     * @param op specify IS_NULL or IS_NOT_NULL
-     */
-    public ContainsConstraint(QueryCollectionReference ref, ConstraintOp op) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp op) {
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
