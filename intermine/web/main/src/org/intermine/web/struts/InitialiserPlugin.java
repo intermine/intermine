@@ -127,6 +127,7 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
+    @Override
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
 
         // NOTE throwing exceptions other than a ServletException from this class causes the
@@ -183,7 +184,7 @@ public class InitialiserPlugin implements PlugIn
 
         // Verify that the superuser found in the DB matches the user set in the properties file.
         final Profile superProfile = profileManager.getSuperuserProfile();
-        initSuperUser(im, superProfile);
+        initSuperUser(superProfile);
         try {
             startBagUpgrade(im, profileManager.getAllSuperUsers());
         } catch (ObjectStoreException e) {
@@ -218,9 +219,7 @@ public class InitialiserPlugin implements PlugIn
         LOG.debug("LOADED SEARCH REPOSITORY");
     }
 
-    private void initSuperUser(
-            final InterMineAPI im,
-            final Profile superProfile) {
+    private void initSuperUser(final Profile superProfile) {
         if (!superProfile.getUsername()
             .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
             blockingErrorKeys.put("errors.init.superuser", null);
@@ -868,6 +867,7 @@ public class InitialiserPlugin implements PlugIn
      * Destroy method called at Servlet destroy. Close connection pools
      * and the mail queue thread pool.
      */
+    @Override
     public void destroy() {
         if (profileManager != null) {
             ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
