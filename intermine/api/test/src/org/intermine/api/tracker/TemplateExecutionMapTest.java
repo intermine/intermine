@@ -92,7 +92,6 @@ public class TemplateExecutionMapTest extends TestCase
         Profile profile = new Profile(pm, "user", null, "password", new HashMap(),
                 new HashMap(), new HashMap(), null, true, false);
         pm.createProfile(profile);
-        pm.close();
         return profile;
     }
 
