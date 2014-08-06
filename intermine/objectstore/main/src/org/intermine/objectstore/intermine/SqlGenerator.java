@@ -320,21 +320,21 @@ public final class SqlGenerator
             }
         }
         if (reverse) {
-            return new SimpleConstraint((QueryEvaluable) firstOrderBy,
+            return new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
                     ConstraintOp.LESS_THAN, new QueryValue(value));
         } else {
-            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
                     ConstraintOp.GREATER_THAN, new QueryValue(value));
             if (hasNulls) {
                 // if the query aready constrains the first order by field to be
                 // not null it doesn't make sense to add a costraint to null
                 CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
-                        firstOrderBy);
+                        newFirstOrderBy);
                 ConstraintHelper.traverseConstraints(q.getConstraint(), check);
                 if (!check.exists()) {
                     ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
                     cs.addConstraint(sc);
-                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
                                 ConstraintOp.IS_NULL));
                     return cs;
                 }

@@ -47,6 +47,7 @@ public class TrackerLoggerTest extends TestCase {
         super.tearDown();
         removeTracks();
         ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
+        uosw.close();
     }
 
     public void testRun() throws SQLException, InterruptedException {
