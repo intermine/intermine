@@ -56,8 +56,8 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         if (conn != null) {
             conn.close();
         }
-        super.tearDown();
         pm.close();
+        super.tearDown();
     }
 
     private void createTemplates() throws BadTemplateException {
