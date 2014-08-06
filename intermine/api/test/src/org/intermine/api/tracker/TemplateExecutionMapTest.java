@@ -77,9 +77,14 @@ public class TemplateExecutionMapTest extends TestCase
 
     @Override
     public void tearDown() {
-        super.tearDown();
-        removeProfile();
-        uosw.close();
+
+        try {
+            super.tearDown();
+            removeProfile();
+            uosw.close();
+        } catch (Exception e) {
+            throw new RuntimeException("failed to shutdown nicely");
+        }
     }
 
     private Profile setUpProfile() throws Exception {
