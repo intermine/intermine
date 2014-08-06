@@ -47,6 +47,7 @@ public class TemplateExecutionMapTest extends TestCase
     MokaTemplatesExecutionMap templateExecutionsMap = new MokaTemplatesExecutionMap();
     TemplateTrack tt1, tt2, tt3, tt4, tt5, tt6;
     private ObjectStoreWriter uosw;
+    private ObjectStore os;
 
     /**
      * Create some template track objects
@@ -68,41 +69,25 @@ public class TemplateExecutionMapTest extends TestCase
         templateExecutionsMap.addExecution(tt4);
         templateExecutionsMap.addExecution(tt5);
         templateExecutionsMap.addExecution(tt6);
+
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
+        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
+        setUpProfile();
     }
 
-    /**
-     * Test the methd addExecution
-     */
-    public void testAddExecution() {
-        assertEquals(2, templateExecutionsMap.getTemplateExecutions().size());
-        Map<String, Integer> templateExecutions = templateExecutionsMap.getTemplateExecutions()
-                                                                       .get("template1");
-        assertEquals(3, templateExecutions.get("userName1").intValue());
-        assertEquals(1, templateExecutions.get("sessionId1").intValue());
-    }
-
-    /**
-     * Moka class adding the method getTemplateExecutions to the TemplatesExecutionMap class
-     */
-    public class MokaTemplatesExecutionMap extends TemplatesExecutionMap
-    {
-        /**
-         * Return the template execxutions map
-         * @return the map
-         */
-        Map<String, Map<String, Integer>> getTemplateExecutions() {
-            return templateExecutions;
-        }
+    @Override
+    public void tearDown() {
+        super.tearDown();
+        removeProfile();
+        uosw.close();
     }
 
     private Profile setUpProfile() throws Exception {
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        uosw =  ObjectStoreWriterFactory.getObjectStoreWriter(
-                                                           "osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
         Profile profile = new Profile(pm, "user", null, "password", new HashMap(),
                 new HashMap(), new HashMap(), null, true, false);
         pm.createProfile(profile);
+        pm.close();
         return profile;
     }
 
@@ -121,8 +106,20 @@ public class TemplateExecutionMapTest extends TestCase
             InterMineObject o = (InterMineObject) resIter.next();
             uosw.delete(o);
         }
+    }
 
-        uosw.close();
+    /**
+     * Moka class adding the method getTemplateExecutions to the TemplatesExecutionMap class
+     */
+    public class MokaTemplatesExecutionMap extends TemplatesExecutionMap
+    {
+        /**
+         * Return the template execxutions map
+         * @return the map
+         */
+        Map<String, Map<String, Integer>> getTemplateExecutions() {
+            return templateExecutions;
+        }
     }
 
     /**
@@ -147,6 +144,17 @@ public class TemplateExecutionMapTest extends TestCase
         }
     }
 
+    /**
+     * Test the methd addExecution
+     */
+    public void testAddExecution() {
+        assertEquals(2, templateExecutionsMap.getTemplateExecutions().size());
+        Map<String, Integer> templateExecutions = templateExecutionsMap.getTemplateExecutions()
+                                                                       .get("template1");
+        assertEquals(3, templateExecutions.get("userName1").intValue());
+        assertEquals(1, templateExecutions.get("sessionId1").intValue());
+    }
+
     public void testGetLogarithmMap() throws Exception {
         MokaTemplateManager templateManager = new MokaTemplateManager();
         assertEquals(Math.log(4), templateExecutionsMap.getLogarithmMap("userName1",
@@ -162,7 +170,5 @@ public class TemplateExecutionMapTest extends TestCase
                      templateExecutionsMap.getLogarithmMap(null, templateManager).get("template1"));
         assertEquals(Math.log(2),
                     templateExecutionsMap.getLogarithmMap(null, templateManager).get("template2"));
-
-        removeProfile();
     }
 }
