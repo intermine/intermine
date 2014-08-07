@@ -20,9 +20,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
 import org.intermine.dataloader.Source;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -32,7 +32,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -56,11 +55,8 @@ import org.intermine.util.IntPresentSet;
  */
 public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePassthruImpl
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(
-            ObjectStoreFastCollectionsForTranslatorImpl.class);
+
     private IntPresentSet doneAlready = new IntPresentSet();
-    @SuppressWarnings("unused")
     private Source source = null;
 
     /**
@@ -335,79 +331,20 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
                         for (Map.Entry<FastPathObject, Map<String, Object>> fromEntry
                                 : froms.entrySet()) {
                             FastPathObject objToPopulate = fromEntry.getKey();
-                            //String objDescription;
-                            //if (objToPopulate instanceof InterMineObject) {
-                            //    objDescription = "object with ID "
-                            //        + ((InterMineObject) objToPopulate).getId();
-                            //} else {
-                            //    objDescription = "FastPathObject";
-                            //}
                             Map<String, Object> collectionsToPopulate = fromEntry.getValue();
                             for (Map.Entry<String, Object> collectionEntry
                                     : collectionsToPopulate.entrySet()) {
                                 String collectionName = collectionEntry.getKey();
                                 Object contents = collectionEntry.getValue();
                                 if (contents instanceof Collection<?>) {
-                                    Collection<?> collectionContents = (Collection<?>)
-                                        collectionEntry.getValue();
-                                    Collection<InterMineObject> substituteCollection =
-                                        new HashSet<InterMineObject>();
-                                    for (Object idToAddObj : collectionContents) {
-                                        Integer idToAdd = (Integer) idToAddObj;
-                                        InterMineObject objToAdd = (InterMineObject)
-                                            idToObj.get(idToAdd);
-                                        if (objToAdd == null) {
-                                            if (idsToProxy.contains(idToAdd)) {
-                                                objToAdd = new ProxyReference(os, idToAdd,
-                                                        InterMineObject.class);
-                                                //LOG.warn("Did not fetch object with ID " + idToAdd
-                                                //        + " for " + objDescription
-                                                //        + " for collection " + collectionName);
-                                            } else {
-                                                ObjectStoreTranslatingImpl osti =
-                                                    (ObjectStoreTranslatingImpl) os;
-                                                ItemToObjectTranslator itot =
-                                                    (ItemToObjectTranslator) osti.getTranslator();
-                                                String itemIdentifer =
-                                                    (objToPopulate
-                                                     instanceof
-                                                     InterMineObject ? itot.idToIdentifier(
-                                                            ((InterMineObject) objToPopulate)
-                                                            .getId()) : null);
-                                                String idToAddIdentifer =
-                                                    itot.idToIdentifier(idToAdd);
-                                                String message =
-                                                    "Collection " + collectionName + " in object "
-                                                    + (objToPopulate instanceof InterMineObject
-                                                            ? ((InterMineObject) objToPopulate)
-                                                            .getId() : null) + " ("
-                                                    + itemIdentifer + ") refers to object with id "
-                                                    + idToAdd + " (" + idToAddIdentifer
-                                                    + ") which doesn't exist";
-                                                throw new ObjectStoreException(message);
-                                            }
-                                        //} else {
-                                            //LOG.warn("Fetched object with ID " + idToAdd
-                                            //        + " for " + objDescription
-                                            //        + " for collection " + collectionName);
-                                        }
-                                        substituteCollection.add(objToAdd);
-                                    }
-                                    objToPopulate.setFieldValue(collectionName,
-                                            substituteCollection);
+                                    populateCollection(idToObj, idsToProxy, objToPopulate,
+                                            collectionEntry, collectionName);
                                 } else {
                                     Integer id = (Integer) contents;
                                     InterMineObject objToAdd = (InterMineObject)
                                         idToObj.get(id);
                                     if (objToAdd != null) {
                                         objToPopulate.setFieldValue(collectionName, objToAdd);
-                                        //LOG.warn("Fetched object with ID " + id + " for "
-                                        //        + objDescription + " for reference "
-                                        //        + collectionName);
-                                    //} else {
-                                        //LOG.warn("Did not fetch object with ID " + id + " for "
-                                        //        + objDescription + " for reference "
-                                        //        + collectionName);
                                     }
                                 }
                             }
@@ -419,6 +356,47 @@ public class ObjectStoreFastCollectionsForTranslatorImpl extends ObjectStorePass
         } catch (IllegalAccessException e) {
             throw new ObjectStoreException(e);
         }
+    }
+
+    private void populateCollection(Map<Integer, FastPathObject> idToObj,
+            HashSet<Integer> idsToProxy, FastPathObject objToPopulate,
+            Map.Entry<String, Object> collectionEntry, String collectionName)
+        throws ObjectStoreException {
+        Collection<?> collectionContents = (Collection<?>) collectionEntry.getValue();
+        Collection<InterMineObject> substituteCollection = new HashSet<InterMineObject>();
+        for (Object idToAddObj : collectionContents) {
+            Integer idToAdd = (Integer) idToAddObj;
+            InterMineObject objToAdd = (InterMineObject) idToObj.get(idToAdd);
+            if (objToAdd == null) {
+                if (idsToProxy.contains(idToAdd)) {
+                    objToAdd = new ProxyReference(os, idToAdd, InterMineObject.class);
+                    //LOG.warn("Did not fetch object with ID " + idToAdd
+                    //        + " for " + objDescription
+                    //        + " for collection " + collectionName);
+                } else {
+                    ObjectStoreTranslatingImpl osti = (ObjectStoreTranslatingImpl) os;
+                    ItemToObjectTranslator itot = (ItemToObjectTranslator) osti.getTranslator();
+                    String itemIdentifer = (objToPopulate instanceof InterMineObject
+                            ? itot.idToIdentifier(((InterMineObject) objToPopulate).getId())
+                            : null);
+                    String idToAddIdentifer = itot.idToIdentifier(idToAdd);
+                    String message = "Collection " + collectionName + " in object "
+                                    + (objToPopulate instanceof InterMineObject
+                                            ? ((InterMineObject) objToPopulate)
+                                                    .getId() : null) + " ("
+                                                    + itemIdentifer + ") refers to object with id "
+                                                    + idToAdd + " (" + idToAddIdentifer
+                                                    + ") which doesn't exist";
+                    throw new ObjectStoreException(message);
+                }
+                //} else {
+                //LOG.warn("Fetched object with ID " + idToAdd
+                //        + " for " + objDescription
+                //        + " for collection " + collectionName);
+            }
+            substituteCollection.add(objToAdd);
+        }
+        objToPopulate.setFieldValue(collectionName, substituteCollection);
     }
 
     /**
