@@ -11,7 +11,14 @@ package org.intermine.objectstore.translating;
  */
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.MetaDataException;
@@ -125,6 +132,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
             boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         //if (start == 0) {
@@ -176,6 +184,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(translateQuery(q));
     }
@@ -183,6 +192,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(translateQuery(q), sequence);
     }
@@ -212,6 +222,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isMultiConnection() {
         return os.isMultiConnection();
     }
@@ -259,6 +270,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Integer getSerial() throws ObjectStoreException {
         return os.getSerial();
     }

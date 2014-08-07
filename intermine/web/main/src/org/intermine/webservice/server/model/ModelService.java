@@ -161,7 +161,8 @@ public class ModelService extends WebService
         String userName = p.getUsername();
         try {
             for (Map<String, Object> classData: classes.values()) {
-                // Might be a good idea to add in field names as well, but these have sharper edge cases
+                // Might be a good idea to add in field names as well,
+                // but these have sharper edge cases
                 ClassDescriptor cd = model.getClassDescriptorByName((String) classData.get("name"));
                 // Add the display name for this class.
                 classData.put("displayName", WebUtil.formatClass(cd, config));
@@ -180,26 +181,26 @@ public class ModelService extends WebService
         return modelData;
     }
 
-    private String getNodeName(Path node) {
+    private static String getNodeName(Path newNode) {
         WebConfig webConfig = InterMineContext.getWebConfig();
-        if (node.isRootPath()) {
-            return WebUtil.formatPath(node, webConfig);
+        if (newNode.isRootPath()) {
+            return WebUtil.formatPath(newNode, webConfig);
         } else {
-            return WebUtil.formatField(node, webConfig);
+            return WebUtil.formatField(newNode, webConfig);
         }
     }
 
-    private List<String> nodeChildrenToJSON(Path node) {
+    private static List<String> nodeChildrenToJSON(Path newNode) {
         List<String> ret = new LinkedList<String>();
-        if (!node.endIsAttribute()) {
-            ClassDescriptor cd = node.getLastClassDescriptor();
+        if (!newNode.endIsAttribute()) {
+            ClassDescriptor cd = newNode.getLastClassDescriptor();
             List<FieldDescriptor> fields = new LinkedList<FieldDescriptor>();
             fields.addAll(cd.getAllAttributeDescriptors());
             fields.addAll(cd.getAllReferenceDescriptors());
             fields.addAll(cd.getAllCollectionDescriptors());
             for (FieldDescriptor fd: fields) {
                 try {
-                    ret.add(fieldToJSON(node.append(fd.getName())));
+                    ret.add(fieldToJSON(newNode.append(fd.getName())));
                 } catch (PathException e) {
                     throw new ServiceException("While walking model", e);
                 }
@@ -208,7 +209,7 @@ public class ModelService extends WebService
         return ret;
     }
 
-    private String fieldToJSON(Path fieldPath) {
+    private static String fieldToJSON(Path fieldPath) {
 
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"name\":\"" + getNodeName(fieldPath) + "\"");
