@@ -48,6 +48,7 @@ public class TemplateExecutionMapTest extends TestCase
     TemplateTrack tt1, tt2, tt3, tt4, tt5, tt6;
     private ObjectStoreWriter uosw;
     private ObjectStore os;
+    private ProfileManager pm = null;
 
     /**
      * Create some template track objects
@@ -76,19 +77,14 @@ public class TemplateExecutionMapTest extends TestCase
     }
 
     @Override
-    public void tearDown() {
-
-        try {
-            super.tearDown();
-            removeProfile();
-            uosw.close();
-        } catch (Exception e) {
-            throw new RuntimeException("failed to shutdown nicely");
-        }
+    public void tearDown() throws Exception {
+        removeProfile();
+        uosw.close();
+        super.tearDown();
     }
 
     private Profile setUpProfile() throws Exception {
-        ProfileManager pm = new ProfileManager(os, uosw);
+        pm = new ProfileManager(os, uosw);
         Profile profile = new Profile(pm, "user", null, "password", new HashMap(),
                 new HashMap(), new HashMap(), null, true, false);
         pm.createProfile(profile);
