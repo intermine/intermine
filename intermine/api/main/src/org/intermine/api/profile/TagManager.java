@@ -768,7 +768,7 @@ public class TagManager
     }
 
     /**
-     * Close this TagManager
+     * Close this TagManager. Only used for tests.
      *
      * @throws ObjectStoreException in exceptional circumstances
      */
@@ -776,7 +776,7 @@ public class TagManager
         try {
             osWriter.close();
         } catch (Throwable e) {
-            LOG.info("tried to close the db connection", e);
+            //LOG.info("tried to close the db connection", e);
         }
     }
 }
