@@ -113,7 +113,7 @@ public class ProfileManager
         fieldNames.add("username");
 
         try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            superuserProfile = uosw.getObjectByExample(superuserProfile, fieldNames);
             if (superuserProfile != null) {
                 superuser = superuserProfile.getUsername();
             }
@@ -656,6 +656,7 @@ public class ProfileManager
      * Create a new profile in db with username and password given in input
      * @param username the user name
      * @param password the password
+     * @return new profile
      */
     public synchronized Profile createNewProfile(String username, String password) {
         if (this.hasProfile(username)) {
@@ -905,7 +906,7 @@ public class ProfileManager
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
         try {
-            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+            profile = uosw.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to load user profile", e);
         }
@@ -1140,7 +1141,7 @@ public class ProfileManager
          */
         public boolean hasMoreUses() {
             return isValid();
-        };
+        }
 
         public void use() {
             // No op stub.
@@ -1226,8 +1227,7 @@ public class ProfileManager
     public static final class ApiPermission implements Principal
     {
         /**
-         * The possible
-ission levels.
+         * The possible permission levels.
          */
         public enum Level { RO, RW };
 
@@ -1381,6 +1381,11 @@ ission levels.
         return permission;
     }
 
+    /**
+     * @param token
+     * @param classKeys
+     * @return
+     */
     public ApiPermission getPermission(PermanentToken token, Map<String,
             List<FieldDescriptor>> classKeys) {
         if (token.getUserProfile() == null) {
@@ -1404,6 +1409,9 @@ ission levels.
         return new ApiPermission(profile, level);
     }
 
+    /**
+     * @param token
+     */
     public void removePermanentToken(PermanentToken token) {
         try {
             permanentTokens.remove(UUID.fromString(token.getToken()));
@@ -1452,7 +1460,7 @@ ission levels.
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("apiKey");
         try {
-            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+            profile = uosw.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
             return null; // Could not be found.
         }
