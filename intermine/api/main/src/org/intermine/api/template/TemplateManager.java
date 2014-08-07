@@ -381,10 +381,6 @@ public class TemplateManager
             List<Tag> tags = tagManager.getTags(tag, template.getName(), TagTypes.TEMPLATE,
                     profile.getUsername());
             if (tags.size() > 0) {
-                // if filtering by admin tag, don't include this template if it's tagged with ADMIN
-                if (filterOutAdmin && hasTag(profile, TagNames.IM_ADMIN, template)) {
-                    continue;
-                }
                 templatesWithTag.put(entry.getKey(), entry.getValue());
             }
         }
