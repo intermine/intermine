@@ -108,7 +108,7 @@
     </module>
 
     <module name="ParameterNumber">
-      <property name="max" value="11"/>
+      <property name="max" value="12"/>
       <property name="tokens" value="METHOD_DEF,CTOR_DEF"/>
     </module>
 
