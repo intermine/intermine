@@ -19,7 +19,8 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.*;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
 
 /**
  * A List that can understand ResultElement objects.

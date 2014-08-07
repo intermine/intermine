@@ -22,6 +22,8 @@ public interface Tracker
 {
     /**
      * Create the table where the tracker saves data
+     *
+     * @param con database connection
      * @throws Exception when a database error access is verified
      */
     void createTrackerTable(Connection con) throws Exception;

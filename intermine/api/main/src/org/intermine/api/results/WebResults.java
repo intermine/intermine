@@ -27,9 +27,9 @@ import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.results.flatouterjoins.ResultsFlatOuterJoinsImpl;
-import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -48,7 +48,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.metadata.TypeUtil;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -125,6 +124,7 @@ public class WebResults
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSingleBatch() {
         return osResults.isSingleBatch();
     }
@@ -183,14 +183,14 @@ public class WebResults
 
 
     @Override
-    public void addColumns(List<Path> columnPaths) {
-        addColumnsInternal(columnPaths);
+    public void addColumns(List<Path> paths) {
+        addColumnsInternal(paths);
     }
 
-    private void addColumnsInternal(List<Path> columnPaths) {
+    private void addColumnsInternal(List<Path> paths) {
         List<String> types = new ArrayList<String>();
         int i = columns.size();
-        for (Path columnPath : columnPaths) {
+        for (Path columnPath : paths) {
             String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor()
                                                    .getName());
             Class typeCls = columnPath.getLastClassDescriptor().getType();
@@ -224,6 +224,7 @@ public class WebResults
     /**
      * {@inheritDoc}
      */
+    @Override
     public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> get(int index) {
         //throw new RuntimeException("Throwing exception in WebResults.get because it has always "
         //        + "returned an incorrect result.");
@@ -233,6 +234,7 @@ public class WebResults
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getEstimatedSize() {
         try {
             return getInfo().getRows();
@@ -247,6 +249,7 @@ public class WebResults
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSizeEstimate() {
         try {
             return getInfo().getStatus() != ResultsInfo.SIZE;
@@ -268,6 +271,7 @@ public class WebResults
      * @return the ResultsInfo object
      * @throws ObjectStoreException if there is an exception while getting the info
      */
+    @Override
     public ResultsInfo getInfo() throws ObjectStoreException {
         return osResults.getInfo();
     }
@@ -295,6 +299,7 @@ public class WebResults
      *
      * @return a Map
      */
+    @Override
     public Map<String, BagQueryResult> getPathToBagQueryResult() {
         return pathToBagQueryResult;
     }
@@ -326,7 +331,7 @@ public class WebResults
      * @param newBatchSize the new batch size
      * @return a new Results object with a new batch size
      */
-    private Results changeResultBatchSize(Results oldResults, int newBatchSize) {
+    private static Results changeResultBatchSize(Results oldResults, int newBatchSize) {
         Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery(),
                 newBatchSize, true, true, true);
         return newResults;
@@ -353,6 +358,7 @@ public class WebResults
      *
      * @return an int
      */
+    @Override
     public int getMaxRetrievableIndex() {
         return osResults.getObjectStore().getMaxOffset();
     }
@@ -364,6 +370,7 @@ public class WebResults
      * @param index the row of the results to fetch
      * @return the results row as ResultElement objects
      */
+    @Override
     public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> getResultElements(int index) {
         return translateRow(flatResults.get(index));
     }
@@ -458,7 +465,8 @@ public class WebResults
 
                         if (redirector != null) {
                             try {
-                                String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
+                                String linkRedirect =
+                                        redirector.generateLink(im, (InterMineObject) o);
                                 if (linkRedirect != null) {
                                     resultElement.setLinkRedirect(linkRedirect);
                                 }
@@ -491,6 +499,7 @@ public class WebResults
     /**
      * @return iterator over results
      */
+    @Override
     public Iterator<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> iterator() {
         return new Iter();
     }
@@ -508,6 +517,7 @@ public class WebResults
      *
      * @return the columns
      */
+    @Override
     public List<Column> getColumns() {
         return columns;
     }
@@ -520,6 +530,7 @@ public class WebResults
     /**
      * @return path query
      */
+    @Override
     public PathQuery getPathQuery() {
         return pathQuery;
     }
@@ -539,6 +550,7 @@ public class WebResults
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean hasNext() {
             return subIter.hasNext();
         }
@@ -546,6 +558,7 @@ public class WebResults
         /**
          * {@inheritDoc}
          */
+        @Override
         public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> next() {
             return translateRow(subIter.next());
         }
@@ -553,6 +566,7 @@ public class WebResults
         /**
          * {@inheritDoc}
          */
+        @Override
         public void remove() {
             throw (new UnsupportedOperationException());
         }

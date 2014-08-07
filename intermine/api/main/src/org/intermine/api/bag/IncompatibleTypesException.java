@@ -13,7 +13,8 @@ import java.util.Collection;
 
 /**
  * Exception thrown when given bags are of incompatible types, has methods to set and fetch the
- * types
+ * types.
+ *
  * @author Richard Smith
  *
  */

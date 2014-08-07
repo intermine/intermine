@@ -10,6 +10,10 @@ package org.intermine.api.bag.operations;
  *
  */
 
+import static java.util.Arrays.asList;
+import static org.intermine.metadata.DescriptorUtils.findIntersectionType;
+import static org.intermine.metadata.DescriptorUtils.findSumType;
+
 import java.util.Collection;
 
 import org.intermine.api.profile.InterMineBag;
@@ -19,15 +23,22 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 
-import static java.util.Arrays.asList;
-import static org.intermine.metadata.DescriptorUtils.findSumType;
-import static org.intermine.metadata.DescriptorUtils.findIntersectionType;;
-
+/**
+ *
+ * @author Alex
+ *
+ */
 public class RelativeComplement extends BagOperation
 {
 
     private Collection<InterMineBag> excluded;
 
+    /**
+     * @param model data model
+     * @param profile userprofile
+     * @param froms base lists to use in operation
+     * @param exclude lists that contain objects to exclude from product list
+     */
     public RelativeComplement(
         Model model, Profile profile, Collection<InterMineBag> froms,
             Collection<InterMineBag> exclude) {
