@@ -1382,9 +1382,9 @@ public class ProfileManager
     }
 
     /**
-     * @param token
-     * @param classKeys
-     * @return
+     * @param token permanent user token
+     * @param classKeys class keys
+     * @return permission
      */
     public ApiPermission getPermission(PermanentToken token, Map<String,
             List<FieldDescriptor>> classKeys) {
@@ -1410,7 +1410,7 @@ public class ProfileManager
     }
 
     /**
-     * @param token
+     * @param token permanent user token
      */
     public void removePermanentToken(PermanentToken token) {
         try {
