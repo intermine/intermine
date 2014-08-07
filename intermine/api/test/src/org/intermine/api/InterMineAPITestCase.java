@@ -114,7 +114,6 @@ public class InterMineAPITestCase extends TestCase {
                 "org.intermine.api.tracker.KeySearchTracker"};
         trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
 
-
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
 
@@ -128,6 +127,7 @@ public class InterMineAPITestCase extends TestCase {
                 e.printStackTrace();
             }
         }
+
         if (os != null) {
             clearDatabase();
         }
@@ -135,6 +135,9 @@ public class InterMineAPITestCase extends TestCase {
             clearUserprofile();
             uosw.close();
         }
+
+        // should be closed!
+        im.getBagManager().close();
     }
 
     private void clearDatabase() throws Exception {

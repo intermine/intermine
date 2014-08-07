@@ -47,6 +47,7 @@ public class TrackerLoggerTest extends TestCase {
         super.tearDown();
         removeTracks();
         ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
+        con.close();
         uosw.close();
     }
 
