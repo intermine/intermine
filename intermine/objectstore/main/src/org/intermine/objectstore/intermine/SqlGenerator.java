@@ -1535,43 +1535,7 @@ public final class SqlGenerator
             }
             if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
                     .IS_NOT_NULL)) {
-
-                // EXISTS OR NOT EXISTS to wrap this query
-                String arg1Alias = state.getFieldToAlias(arg1.getQueryClass()).get("id");
-                if (c.getOp() == ConstraintOp.IS_NULL) {
-                    buffer.append("(NOT ");
-                }
-                buffer.append("EXISTS(SELECT 1 FROM ");
-                if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
-                    // the referenced class will have an field pointing back to this class, see
-                    // whether anything exists that points back to our id
-                    ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
-                    String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
-
-                    String reverseRefAlias = indirectTableAlias + "."
-                            + DatabaseUtil.getColumnName(reverse);
-
-                    ClassDescriptor referencedClass = schema.getTableMaster(reverse
-                            .getClassDescriptor());
-                    buffer.append(DatabaseUtil.getTableName(referencedClass) + " AS "
-                            + indirectTableAlias);
-                    buffer.append(" WHERE " + reverseRefAlias + " = " + arg1Alias);
-                } else if (arg1Desc.relationType() == FieldDescriptor.M_N_RELATION) {
-                    // We need to see if there are rows in the indirection table that points back
-                    // to our id
-                    CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
-                    String indirectTableAlias = state.getIndirectAlias();
-                    String indirectionTable = DatabaseUtil.getIndirectionTableName(arg1ColDesc);
-                    String inwardIndirectionCol = indirectTableAlias + "."
-                            + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc,
-                                    schema.getVersion());
-                    buffer.append(indirectionTable + " AS " + indirectTableAlias);
-                    buffer.append(" WHERE " + inwardIndirectionCol + " = " + arg1Alias);
-                }
-                buffer.append(")");
-                if (c.getOp() == ConstraintOp.IS_NULL) {
-                    buffer.append(")");
-                }
+                addNullPhrase(state, buffer, c, schema, arg1, arg1Desc);
             } else if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 if (arg2 == null) {
                     ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
@@ -1719,6 +1683,47 @@ public final class SqlGenerator
                 }
                 buffer.append(loseBrackets ? "" : ")");
             }
+        }
+    }
+
+    private static void addNullPhrase(State state, StringBuffer buffer,
+            ContainsConstraint c, DatabaseSchema schema, QueryReference arg1,
+            ReferenceDescriptor arg1Desc) {
+        // EXISTS OR NOT EXISTS to wrap this query
+        String arg1Alias = state.getFieldToAlias(arg1.getQueryClass()).get("id");
+        if (c.getOp() == ConstraintOp.IS_NULL) {
+            buffer.append("(NOT ");
+        }
+        buffer.append("EXISTS(SELECT 1 FROM ");
+        if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
+            // the referenced class will have an field pointing back to this class, see
+            // whether anything exists that points back to our id
+            ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
+            String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
+
+            String reverseRefAlias = indirectTableAlias + "."
+                    + DatabaseUtil.getColumnName(reverse);
+
+            ClassDescriptor referencedClass = schema.getTableMaster(reverse
+                    .getClassDescriptor());
+            buffer.append(DatabaseUtil.getTableName(referencedClass) + " AS "
+                    + indirectTableAlias);
+            buffer.append(" WHERE " + reverseRefAlias + " = " + arg1Alias);
+        } else if (arg1Desc.relationType() == FieldDescriptor.M_N_RELATION) {
+            // We need to see if there are rows in the indirection table that points back
+            // to our id
+            CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
+            String indirectTableAlias = state.getIndirectAlias();
+            String indirectionTable = DatabaseUtil.getIndirectionTableName(arg1ColDesc);
+            String inwardIndirectionCol = indirectTableAlias + "."
+                    + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc,
+                            schema.getVersion());
+            buffer.append(indirectionTable + " AS " + indirectTableAlias);
+            buffer.append(" WHERE " + inwardIndirectionCol + " = " + arg1Alias);
+        }
+        buffer.append(")");
+        if (c.getOp() == ConstraintOp.IS_NULL) {
+            buffer.append(")");
         }
     }
 

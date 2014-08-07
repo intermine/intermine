@@ -13,7 +13,6 @@ package org.intermine.webservice.server.query.result;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +44,12 @@ public class XMLValidator
 
     /**
      * Validates an XML string according to an XML Schema at a given URL.
-     * @param xml an XML string.
+     *
+     * @param xmlToValidate an XML string.
      * @param xmlSchemaUrl the URL of an XML Schema.
      */
-    public void validate(String xml, String xmlSchemaUrl) {
-
+    public void validate(String xmlToValidate, String xmlSchemaUrl) {
+        String xml = xmlToValidate;
         errorHandler = new XMLValidatorErrorHandler();
 
         try {
