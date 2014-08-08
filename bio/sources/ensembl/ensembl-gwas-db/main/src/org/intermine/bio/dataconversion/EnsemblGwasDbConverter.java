@@ -77,15 +77,12 @@ public class EnsemblGwasDbConverter extends BioDBConverter
     public void process() throws Exception {
         Connection connection = getDatabase().getConnection();
 
-        int counter = 0;
         ResultSet res = queryVariationAnnotation(connection);
         while (res.next()) {
             String sourceName = res.getString("s.name");
             if ("HGMD-PUBLIC".equals(sourceName)) {
                 continue;
             }
-
-            counter++;
 
             Item result = createItem("GWASResult");
             setAttributeIfPresent(result, "phenotype", res.getString("p.description"));

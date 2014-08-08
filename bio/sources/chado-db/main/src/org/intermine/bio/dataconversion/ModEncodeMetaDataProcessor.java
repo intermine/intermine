@@ -881,7 +881,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer currentId = pap.next();
             // add the DAG level here only if these are the first AP
             if (step == 1) {
-                appliedProtocolMap.get(currentId).step = step;
+                Integer dag = appliedProtocolMap.get(currentId).step;
+                dag = step;
             }
             outputs.addAll(appliedProtocolMap.get(currentId).outputs);
             Integer submissionId = appliedProtocolMap.get(currentId).submissionId;
@@ -917,8 +918,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 while (nap.hasNext()) {
                     // and fill the map with the chado experiment_id and the DAG level
                     Integer currentAPId = nap.next();
-                    appliedProtocolMap.get(currentAPId).submissionId = submissionId;
-                    appliedProtocolMap.get(currentAPId).step = step + 1;
+                    Integer subId = appliedProtocolMap.get(currentAPId).submissionId;
+                    subId = submissionId;
+                    Integer stepNumber = appliedProtocolMap.get(currentAPId).step;
+                    stepNumber = step + 1;
                     nextIterationProtocols.add(currentAPId);
                     // and set the reference from applied protocol to the submission
                     Reference reference = new Reference();

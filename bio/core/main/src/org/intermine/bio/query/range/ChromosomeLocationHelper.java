@@ -15,17 +15,15 @@ import java.util.regex.Pattern;
 import org.intermine.api.query.RangeHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.HasFromList;
 import org.intermine.objectstore.query.OverlapConstraint;
 import org.intermine.objectstore.query.OverlapRange;
-import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -75,14 +73,12 @@ public class ChromosomeLocationHelper implements RangeHelper
         private final Queryable q;
         private final QueryObjectReference qor, chrOR;
         private final OverlapRange left;
-        private final QueryNode n;
         private final ConstraintOp rangeOp;
 
         ConstraintSetFactory(Queryable q, QueryNode n,
             QueryObjectReference qor, QueryObjectReference chrOR,
             OverlapRange left, ConstraintOp rangeOp) {
             this.q = q;
-            this.n = n;
             this.qor = qor;
             this.chrOR = chrOR;
             this.left = left;

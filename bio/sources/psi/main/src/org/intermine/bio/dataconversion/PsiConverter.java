@@ -137,16 +137,18 @@ public class PsiConverter extends BioFileConverter
             }
             String organism = attributes[0];
 
-            if (config.get(organism) == null) {
-                String[] configs = new String[2];
+            String[] configs = config.get(organism);
+            if (configs == null) {
+                configs = new String[2];
                 configs[0] = DEFAULT_IDENTIFIER;
                 configs[1] = DEFAULT_DATASOURCE;
                 config.put(organism, configs);
             }
+
             if ("identifier".equals(attributes[1])) {
-                config.get(organism)[0] = value;
+                configs[0] = value;
             } else if ("datasource".equals(attributes[1])) {
-                config.get(organism)[1] = value.toLowerCase();
+                configs[1] = value.toLowerCase();
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
                     + ".  This line has not been processed.";
