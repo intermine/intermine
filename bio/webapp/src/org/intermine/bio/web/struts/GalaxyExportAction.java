@@ -34,7 +34,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.HttpExporterBase;
 import org.intermine.web.logic.results.PagedTable;
@@ -159,29 +158,6 @@ public class GalaxyExportAction extends InterMineAction
         out.close();
 
         return null;
-    }
-
-    /**
-     * Colon (:) is outer join and dot (.) is inner join, id replace colon with dot, it will change
-     * the original query but return results which are with chr, start and end.
-     *
-     * @param pathQuery
-     * @param joinPath
-     * @throws PathException
-     * */
-    private static List<Path> getFixedView(List<Path> view) throws PathException {
-        String invalidPath = ":";
-        String validPath = ".";
-        List<Path> ret = new ArrayList<Path>();
-        for (Path path : view) {
-            if (path.toString().contains(invalidPath)) {
-                String newPathString = path.toString().replace(invalidPath,
-                        validPath);
-                path = new Path(path.getModel(), newPathString);
-            }
-            ret.add(path);
-        }
-        return ret;
     }
 }
 
