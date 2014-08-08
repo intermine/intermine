@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
@@ -39,7 +40,7 @@ public class TrackerDelegate
     private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
     protected ObjectStoreWriter osw;
-    protected Connection connection = null;
+    protected final Connection connection;
     protected Thread trackerLoggerThread;
 
     /**
@@ -48,8 +49,9 @@ public class TrackerDelegate
      * @param osw the object store witer used to retrieve the connections
      */
     public TrackerDelegate(String[] trackerClassNames, ObjectStoreWriter osw) {
-        Queue<Track> trackQueue = new LinkedList<Track>();
+        ArrayBlockingQueue<Track> trackQueue = new ArrayBlockingQueue<Track>(10);
         this.osw = osw;
+
         try {
             connection = getConnection();
             Tracker tracker;
@@ -63,8 +65,8 @@ public class TrackerDelegate
                 }
             }
         } catch (SQLException sqle) {
-            LOG.error("Problems retrieving connection. The tracker "
-                      + " hasn't been instatiated", sqle);
+            throw new RuntimeException("Problems retrieving connection. The tracker "
+                      + " hasn't been instantiated", sqle);
         }
 
         TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
@@ -158,15 +160,15 @@ public class TrackerDelegate
      */
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
         TemplateTracker tt = getTemplateTracker();
+        Connection c = null;
         if (tt != null) {
-            connection = null;
             try {
-                connection = getConnection();
-                tt.updateTemplateName(oldTemplateName, newTemplateName, connection);
+                c = getConnection();
+                tt.updateTemplateName(oldTemplateName, newTemplateName, c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getAccessCounter ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
     }
@@ -210,15 +212,15 @@ public class TrackerDelegate
      */
     public List<ListTrack> getListOperations() {
         Tracker lt = getTracker(TrackerUtil.LIST_TRACKER);
+        Connection c = null;
         if (lt != null) {
-            connection = null;
             try {
-                connection = getConnection();
-                return ((ListTracker) lt).getListOperations(connection);
+                c = getConnection();
+                return ((ListTracker) lt).getListOperations(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getListOperations ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -241,15 +243,15 @@ public class TrackerDelegate
      */
     public Map<String, Integer> getUserLogin() {
         Tracker lt = getTracker(TrackerUtil.LOGIN_TRACKER);
+        Connection c = null;
         if (lt != null) {
-            connection = null;
             try {
-                connection = getConnection();
-                return ((LoginTracker) lt).getUserLogin(connection);
+                c = getConnection();
+                return ((LoginTracker) lt).getUserLogin(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getUserLogin ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -275,15 +277,15 @@ public class TrackerDelegate
      */
     public Map<String, Integer> getKeywordSearches() {
         Tracker st = getTracker(TrackerUtil.SEARCH_TRACKER);
+        Connection c = null;
         if (st != null) {
-            connection = null;
             try {
-                connection = getConnection();
-                return ((KeySearchTracker) st).getKeywordSearches(connection);
+                c = getConnection();
+                return ((KeySearchTracker) st).getKeywordSearches(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getKeywordSearches ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -343,6 +345,7 @@ public class TrackerDelegate
      */
     @Override
     public void finalize() throws Throwable {
+        LOG.info("Finalizing tracker delegate");
         super.finalize();
         trackerLoggerThread.interrupt();
         try {
@@ -350,5 +353,6 @@ public class TrackerDelegate
         } catch (InterruptedException ie) {
             LOG.error(ie);
         }
+        close();
     }
 }
