@@ -176,27 +176,32 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         this.curated = curated;
     }
 
-//    /**
-//     * @param name name of datasource
-//     * @throws ObjectStoreException if storing datasource fails
-//     */
-//    public void setBiopaxDatasourcename(String name)
-//        throws ObjectStoreException {
-//        Item datasource = createItem("DataSource");
-//        datasource.setAttribute("name", name);
-//        try {
-//            store(datasource);
-//        } catch (ObjectStoreException e) {
-//            throw new ObjectStoreException(e);
-//        }
-//        dataSourceRefId = datasource.getIdentifier();
-//    }
-//
-//    public void setBiopaxDatasetname(String title)
-//        throws ObjectStoreException {
-//        dataset = createItem("DataSet");
-//        dataset.setAttribute("name", title);
-//    }
+    /**
+     * @param name name of datasource
+     * @throws ObjectStoreException if storing datasource fails
+     */
+    public void setBiopaxDatasourcename(String name)
+        throws ObjectStoreException {
+        Item datasource = createItem("DataSource");
+        datasource.setAttribute("name", name);
+        try {
+            store(datasource);
+        } catch (ObjectStoreException e) {
+            throw new ObjectStoreException(e);
+        }
+        dataSourceRefId = datasource.getIdentifier();
+    }
+
+    /**
+     *
+     * @param title data set title
+     * @throws ObjectStoreException can't store
+     */
+    public void setBiopaxDatasetname(String title)
+        throws ObjectStoreException {
+        dataset = createItem("DataSet");
+        dataset.setAttribute("name", title);
+    }
 
     /**
      * Adds the BioPAX element into the model and traverses the element for its dependent elements.

@@ -30,8 +30,6 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.export.ExportException;
