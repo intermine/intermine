@@ -299,13 +299,11 @@ public class EntrezPublicationsRetriever
     /**
      * Add a Map of pubication information to the Database
      */
-    @SuppressWarnings("rawtypes")
     private void addToDb(Transaction txn, Database db,
                          Map<String, Map<String, Object>> fromServerMap)
         throws IOException, DatabaseException {
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
             String pubMedId = entry.getKey();
-            // System.err .println("adding to cache: " + pubMedId);
             DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
             Map dataMap = entry.getValue();
             ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
