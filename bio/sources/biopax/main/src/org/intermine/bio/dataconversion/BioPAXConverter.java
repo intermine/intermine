@@ -56,8 +56,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private Map<String, Item> bioentities = new HashMap<String, Item>();
     private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet<BioPAXElement>();
-    @SuppressWarnings("unused")
-    private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
     private Set<String> taxonIds = new HashSet<String>();
@@ -194,6 +192,11 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         dataSourceRefId = datasource.getIdentifier();
     }
 
+    /**
+     *
+     * @param title data set title
+     * @throws ObjectStoreException can't store
+     */
     public void setBiopaxDatasetname(String title)
         throws ObjectStoreException {
         dataset = createItem("DataSet");
@@ -224,9 +227,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             }
             if (!visited.contains(bpe)) {
                 visited.add(bpe);
-                depth++;
                 traverser.traverse(bpe, model);
-                depth--;
             }
         }
     }
