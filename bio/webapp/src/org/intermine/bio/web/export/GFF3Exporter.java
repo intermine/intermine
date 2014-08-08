@@ -119,7 +119,7 @@ public class GFF3Exporter implements Exporter
      * @param sourceName name of Mine to put in GFF source column
      * @param organisms taxon id of the organisms
      * @param makeUcscCompatible true if chromosome ids should be prefixed by 'chr'
-     * @param paths
+     * @param paths paths
      */
     public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
             List<String> attributesNames, String sourceName, Set<Integer> organisms,

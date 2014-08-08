@@ -1,5 +1,15 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -17,6 +27,10 @@ public class FastaListService extends FastaQueryService
 
     private static final String LIST_PARAM = "list";
 
+    /**
+     *
+     * @param im intermine API
+     */
     public FastaListService(InterMineAPI im) {
         super(im);
     }
