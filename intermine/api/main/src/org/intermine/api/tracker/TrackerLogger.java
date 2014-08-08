@@ -10,6 +10,7 @@ package org.intermine.api.tracker;
  *
  */
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Queue;
 
 import org.intermine.api.tracker.track.Track;
@@ -40,7 +41,7 @@ public class TrackerLogger implements Runnable
      */
     @Override
     public void run() {
-        for (;;) {
+        while (true) {
             Track track = trackQueue.poll();
             if (track != null) {
                 track.store(connection);
@@ -48,6 +49,12 @@ public class TrackerLogger implements Runnable
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException ie) {
+                    try {
+                        connection.close();
+                    } catch (SQLException e) {
+                        // might be already closed, swallow error
+                    }
+                    Thread.currentThread().interrupt();
                     return;
                 }
             }
