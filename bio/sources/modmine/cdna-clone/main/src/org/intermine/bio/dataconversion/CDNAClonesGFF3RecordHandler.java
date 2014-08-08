@@ -16,8 +16,9 @@ import org.intermine.xml.full.Item;
 
 /**
  * A converter/retriever for the CDNAClones dataset via GFF files.
+ *
+ * @author Fengyuan
  */
-
 public class CDNAClonesGFF3RecordHandler extends GFF3RecordHandler
 {
 
