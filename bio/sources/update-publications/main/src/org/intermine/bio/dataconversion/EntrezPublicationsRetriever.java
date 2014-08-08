@@ -96,7 +96,7 @@ public class EntrezPublicationsRetriever
      * Load summary version of Publication record by default. If this boolean (loadFullRecord)
      * is true, load all data, eg. abstract, MeSH terms etc.
      *
-     * @param fullRecord if TRUE load full record of publication.
+     * @param loadFullRecord if TRUE load full record of publication.
      */
     public void setLoadFullRecord(String loadFullRecord) {
         if ("true".equalsIgnoreCase(loadFullRecord)) {

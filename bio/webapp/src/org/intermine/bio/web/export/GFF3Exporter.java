@@ -33,7 +33,6 @@ import org.intermine.bio.ontology.SequenceOntology;
 import org.intermine.bio.ontology.SequenceOntologyFactory;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;

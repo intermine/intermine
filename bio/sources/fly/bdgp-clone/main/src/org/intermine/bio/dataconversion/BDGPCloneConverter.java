@@ -15,8 +15,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
