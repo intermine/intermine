@@ -56,8 +56,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private Map<String, Item> bioentities = new HashMap<String, Item>();
     private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet<BioPAXElement>();
-    @SuppressWarnings("unused")
-    private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
     private Set<String> taxonIds = new HashSet<String>();
@@ -178,27 +176,27 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         this.curated = curated;
     }
 
-    /**
-     * @param name name of datasource
-     * @throws ObjectStoreException if storing datasource fails
-     */
-    public void setBiopaxDatasourcename(String name)
-        throws ObjectStoreException {
-        Item datasource = createItem("DataSource");
-        datasource.setAttribute("name", name);
-        try {
-            store(datasource);
-        } catch (ObjectStoreException e) {
-            throw new ObjectStoreException(e);
-        }
-        dataSourceRefId = datasource.getIdentifier();
-    }
-
-    public void setBiopaxDatasetname(String title)
-        throws ObjectStoreException {
-        dataset = createItem("DataSet");
-        dataset.setAttribute("name", title);
-    }
+//    /**
+//     * @param name name of datasource
+//     * @throws ObjectStoreException if storing datasource fails
+//     */
+//    public void setBiopaxDatasourcename(String name)
+//        throws ObjectStoreException {
+//        Item datasource = createItem("DataSource");
+//        datasource.setAttribute("name", name);
+//        try {
+//            store(datasource);
+//        } catch (ObjectStoreException e) {
+//            throw new ObjectStoreException(e);
+//        }
+//        dataSourceRefId = datasource.getIdentifier();
+//    }
+//
+//    public void setBiopaxDatasetname(String title)
+//        throws ObjectStoreException {
+//        dataset = createItem("DataSet");
+//        dataset.setAttribute("name", title);
+//    }
 
     /**
      * Adds the BioPAX element into the model and traverses the element for its dependent elements.
@@ -224,9 +222,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             }
             if (!visited.contains(bpe)) {
                 visited.add(bpe);
-                depth++;
                 traverser.traverse(bpe, model);
-                depth--;
             }
         }
     }
