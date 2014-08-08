@@ -49,6 +49,7 @@ public class Batch
     private volatile int lastDutyCycle = 100;
     private boolean closed = false;
     private static final List<FlushJob> CLOSE_DOWN_COMMAND = new ArrayList<FlushJob>();
+    private static int BATCH_ID = 0;
 
     /**
      * Constructs an empty Batch, with no tables.
@@ -57,10 +58,17 @@ public class Batch
      */
     public Batch(BatchWriter batchWriter) {
         this.batchWriter = batchWriter;
+        int id = BATCH_ID++;
         BatchFlusher flusher = new BatchFlusher();
+        Exception e = new Exception();
+        e.fillInStackTrace();
+        // This enables us to track down the allocation context
+        // if/when we need to hunt down memory leaks. Remember kids,
+        // Only YOU can prevent memory leaks (by closing your objectstore writers)
+        LOG.debug("Created batch " + id, e);
         Thread thread = new Thread(flusher);
         thread.setDaemon(true);
-        thread.setName("WriteBatch Flusher");
+        thread.setName("WriteBatch Flusher - " + id);
         thread.start();
     }
 
@@ -354,6 +362,9 @@ public class Batch
         flushJobs = null;
         notifyAll();
         while (flushJobs == null) {
+            if (Thread.interrupted()) {
+                return CLOSE_DOWN_COMMAND;
+            }
             try {
                 wait();
             } catch (InterruptedException e) {

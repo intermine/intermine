@@ -83,6 +83,8 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
@@ -115,6 +117,8 @@ public class InitialiserPlugin implements PlugIn
     Map<String, String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
+
+    private ObjectStoreWriter userprofileOSW;
 
     /**
      * Init method called at Servlet initialisation
@@ -160,7 +164,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webConfig is null");
         }
 
-        final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
+        userprofileOSW = getUserprofileWriter(webProperties);
         if (userprofileOSW == null) {
             throw new ServletException("userprofileOSW is null");
         }
@@ -174,13 +178,13 @@ public class InitialiserPlugin implements PlugIn
         }
 
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
+        
 
         final InterMineAPI im = loadInterMineAPI(
                 servletContext, webProperties, webConfig, userprofileOSW, oss);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
         profileManager = im.getProfileManager();
-        LOG.debug("LOADED PROFILE MANAGER");
 
         // Verify that the superuser found in the DB matches the user set in the properties file.
         final Profile superProfile = profileManager.getSuperuserProfile();
@@ -869,13 +873,26 @@ public class InitialiserPlugin implements PlugIn
      */
     @Override
     public void destroy() {
-        if (profileManager != null) {
-            ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
-                .getDatabase().shutdown();
+        if (userprofileOSW != null) {
+            try {
+                userprofileOSW.close();
+            } catch (ObjectStoreException e) {
+                LOG.warn("Error closing userprofile writer.", e);
+            }
+            ((ObjectStoreWriterInterMineImpl) userprofileOSW).getDatabase().shutdown();
         }
         if (os != null) {
             ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
         }
+        if (trackerDelegate != null) {
+            try {
+                trackerDelegate.finalize();
+            } catch (Throwable e) {
+                LOG.warn("Error while disposing of tracker delegate", e);
+            }
+            trackerDelegate = null;
+        }
+        InterMineContext.doShutdown();
     }
 
 
