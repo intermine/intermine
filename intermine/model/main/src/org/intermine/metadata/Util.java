@@ -141,7 +141,7 @@ public final class Util {
      * @param b an integer
      * @return the gcd of a and b
      */
-    public static int gcd(final int a, int b) {
+    public static int gcd(int a, int b) {
         while (b != 0) {
             int t = b;
             b = a % b;
