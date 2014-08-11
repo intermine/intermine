@@ -320,7 +320,6 @@ public class EntrezPublicationsRetriever
      * @param os The ObjectStore to read from
      * @return a List of publications
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected List<Publication> getPublications(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Publication.class);
