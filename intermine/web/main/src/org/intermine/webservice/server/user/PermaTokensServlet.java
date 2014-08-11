@@ -21,13 +21,17 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
 
-public class PermaTokensServlet extends WebServiceServlet {
+/**
+ * @author Alex Kalderimis
+ */
+public class PermaTokensServlet extends WebServiceServlet
+{
 
-	private static final long serialVersionUID = -2568785122873900456L;
+    private static final long serialVersionUID = -2568785122873900456L;
 
-	@Override
+    @Override
     protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         String uid = getUid(request);
         WebService service = null;
         if (Method.GET == method && uid != null) {
@@ -50,9 +54,9 @@ public class PermaTokensServlet extends WebServiceServlet {
         return null;
     }
 
-	@Override
-	protected WebService getService(Method method) throws NoServiceException {
-		throw new NoServiceException();
-	}
+    @Override
+    protected WebService getService(Method method) throws NoServiceException {
+        throw new NoServiceException();
+    }
 
 }

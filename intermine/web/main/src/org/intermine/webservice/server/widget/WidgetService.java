@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -31,49 +32,86 @@ import org.intermine.webservice.server.output.JSONFormatter;
 public abstract class WidgetService extends JSONService
 {
 
+    /**
+     * Construct the webservice controller.
+     * @param im The API object.
+     */
     public WidgetService(InterMineAPI im) {
         super(im);
     }
 
+    /**
+     * Get the bag in question.
+     * @param bagName The name of the bag.
+     * @return The list.
+     */
     protected InterMineBag retrieveBag(String bagName) {
-        if ("".equals(bagName)) {
+        if (bagName == null || "".equals(bagName)) {
             return null;
         }
         Profile profile = getPermission().getProfile();
         InterMineBag imBag = im.getBagManager().getBag(profile, bagName);
         if (imBag == null) {
-            throw new BadRequestException("You do not have access to a bag named" + bagName);
+            throw new BadRequestException("You do not have access to a bag named " + bagName);
         }
         return imBag;
     }
 
+    /**
+     * Wrapper around addOutputInfo that makes sure we don't add empty values.
+     * @param label The attribute name.
+     * @param value The value of the attribute.
+     */
     protected void addOutputAttribute(String label, String value) {
-        if (value != null && !"".equals(value.trim())){
+        if (StringUtils.isNotBlank(value)) {
             addOutputInfo(label, value);
         }
     }
 
+    /**
+     * Add metadata about the list we are processing.
+     * @param imBag The list object.
+     */
+    @SuppressWarnings("deprecation")
     protected void addOutputListInfo(InterMineBag imBag) {
         addOutputInfo("type", imBag.getType());
         addOutputInfo("list", imBag.getName());
+        // TODO: remove requestedAt - we already output this info.
         addOutputInfo("requestedAt", new Date().toGMTString());
     }
 
+    /**
+     * Add metadata about the widget we are using.
+     * @param config The description of the widget.
+     */
     protected void addOutputConfig(WidgetConfig config) {
         addOutputAttribute("title", config.getTitle());
         addOutputAttribute("description", config.getDescription());
     }
 
-    protected void addOutputFilter(WidgetConfig widgetConfig, String filterSelectedValue,
-        InterMineBag imBag) {
+    /**
+     * Add information about the filters as attributes to the result.
+     * @param widgetConfig The description of the widgets.
+     * @param filterSelectedValue The currently selected value.
+     * @param imBag The list we are processing.
+     */
+    protected void addOutputFilter(
+            WidgetConfig widgetConfig,
+            String filterSelectedValue,
+            InterMineBag imBag) {
         addOutputAttribute("filterLabel", widgetConfig.getFilterLabel());
-        String filters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
-        if (filters != null && !"".equals(filters)) {
-            addOutputAttribute("filters", filters);
+        List<String> filters = getFilters(widgetConfig, imBag);
+        if (filters != null && !filters.isEmpty()) {
+            addOutputAttribute("filters", StringUtils.join(filters, ","));
             addOutputAttribute("filterSelectedValue", filterSelectedValue);
         }
     }
 
+    /**
+     * Send results to the outside world.
+     * @param widget The widget we are processing.
+     * @throws Exception If we can't get results.
+     */
     protected void addOutputResult(Widget widget) throws Exception {
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
@@ -87,6 +125,9 @@ public abstract class WidgetService extends JSONService
         }
     }
 
+    /**
+     * @return A widget result processor for outputting results.
+     */
     protected abstract WidgetResultProcessor getProcessor();
 
     @Override
@@ -98,5 +139,29 @@ public abstract class WidgetService extends JSONService
             attributes.put(JSONFormatter.KEY_OUTRO, "]");
         }
         return attributes;
+    }
+
+    private List<String> cachedFilters = null;
+
+    private List<String> getFilters(WidgetConfig widgetConfig, InterMineBag imBag) {
+        if (cachedFilters == null) {
+            cachedFilters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
+        }
+        return cachedFilters;
+    }
+
+    /**
+     * Get the default filter value for a widget.
+     * @param widgetConfig The widget description.
+     * @param imBag The bag we are thinking of running this widget on.
+     * @return A string (possibly null) which contains the default filter value.
+     */
+    protected String getDefaultFilterValue(WidgetConfig widgetConfig, InterMineBag imBag) {
+        List<String> filters = getFilters(widgetConfig, imBag);
+        String defaultValue = null;
+        if (filters != null && !filters.isEmpty()) {
+            defaultValue = filters.get(0);
+        }
+        return defaultValue;
     }
 }

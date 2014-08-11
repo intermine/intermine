@@ -10,7 +10,6 @@ package org.intermine.pathquery;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -83,6 +82,7 @@ public class LogicExpressionTest extends TestCase
         assertEquals(new LogicExpression("A"), l.validateForGroups(Arrays.asList(Arrays.asList("A"))));
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void test2() {
         LogicExpression l = new LogicExpression("A and B");
         assertEquals(new HashSet(Arrays.asList("A", "B")), l.getVariableNames());

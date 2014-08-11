@@ -13,7 +13,6 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,13 +28,10 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.query.DisplayConstraint;
@@ -102,7 +98,8 @@ public class CreateTemplateAction extends InterMineAction
         Profile superUser = im.getProfileManager().getSuperuserProfile();
         if (!superUser.equals(profile)) {
             if (superUser.getSavedTemplates().containsKey(template.getName())) {
-                recordError(new ActionMessage("errors.createtemplate.existinginpublic", template.getName()),
+                recordError(new ActionMessage(
+                        "errors.createtemplate.existinginpublic", template.getName()),
                         request);
                 seenProblem = true;
             }

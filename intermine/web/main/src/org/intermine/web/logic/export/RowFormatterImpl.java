@@ -43,7 +43,8 @@ public class RowFormatterImpl implements RowFormatter
      * @param row row to be formatted
      * @return resulted string
      */
-    public String format(List<Object> row) {
+    @Override
+    public String format(List<? extends Object> row) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < row.size(); i++) {
             Object o = row.get(i);

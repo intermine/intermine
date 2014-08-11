@@ -29,7 +29,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     private final ExportResultsIterator subIter;
     private final List<Path> viewPaths = new ArrayList<Path>();
-    private final InterMineAPI im;
     private final TableCellFormatter tableCellFormatter;
 
     /**
@@ -39,7 +38,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
      */
     public JSONRowIterator(ExportResultsIterator it, InterMineAPI im) {
         this.subIter = it;
-        this.im = im;
         this.tableCellFormatter = new TableCellFormatter(im);
         init();
     }

@@ -35,6 +35,29 @@ import org.intermine.model.InterMineFastPathObject;
  */
 public class Model
 {
+    /**
+     * A Map<String, Object with slightly more type information.
+     * @author Alex Kalderimis
+     */
+    public class ModelAST extends HashMap<String, Object>
+    {
+        /**
+         * @return The data for the classes of this model.
+         */
+        @SuppressWarnings("unchecked")
+        public Map<String, Map<String, Object>> getClasses() {
+            return (Map<String, Map<String, Object>>) get("classes");
+        }
+
+        /**
+         * @param classes The classes of this model.
+         */
+        public void setClasses(Map<String, Map<String, Object>> classes) {
+            put("classes", classes);
+        }
+
+    }
+
     private static Map<String, Model> models = new HashMap<String, Model>();
     protected static final String ENDL = System.getProperty("line.separator");
     private static final String DEFAULT_PACKAGE = "org.intermine.model";
@@ -55,10 +78,10 @@ public class Model
     private List<ClassDescriptor> topDownOrderClasses = null;
     private List<ClassDescriptor> bottomUpOrderClasses = null;
     private List<String> problems = new ArrayList<String>();
-    
+
     private static final String CLOB_ACCESS = "org.intermine.objectstore.query.ClobAccess";
     private boolean generatedClassesAvailable = true;
-        
+
     /**
      * Return a Model for specified model name (loading Model if necessary)
      * @param name the name of the model
@@ -66,7 +89,7 @@ public class Model
      */
     public static Model getInstanceByName(String name) {
         if (!models.containsKey(name)) {
-        	models.put(name, ModelFactory.loadModel(name));
+            models.put(name, ModelFactory.loadModel(name));
         }
         return models.get(name);
     }
@@ -89,11 +112,15 @@ public class Model
      *
      * @param name name of model
      * @param packageName the package name of the model
-     * @param version 
+     * @param version The version of this model.
      * @param clds a Set of ClassDescriptors in the model
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, String packageName, int version, Set<ClassDescriptor> clds) throws MetaDataException {
+    public Model(String name,
+            String packageName,
+            int version,
+            Set<ClassDescriptor> clds)
+        throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
         }
@@ -159,11 +186,19 @@ public class Model
         }
     }
 
-    public Model(String name, String namespace, Set<ClassDescriptor> classes) throws MetaDataException {
-		this(name, namespace, 0, classes);
-	}
+    /**
+     * Construct a model without a version.
+     * @param name The name of the model.
+     * @param namespace The namespace for this model.
+     * @param classes The classes within this model.
+     * @throws MetaDataException if inconsistencies found in model
+     */
+    public Model(String name, String namespace, Set<ClassDescriptor> classes)
+        throws MetaDataException {
+        this(name, namespace, 0, classes);
+    }
 
-	/**
+    /**
      * Return name of the model's package.
      * @return package name
      */
@@ -283,10 +318,10 @@ public class Model
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<model"
-        		+ " name=\"" + modelName + "\""
-        		+ " package=\"" + packageName + "\""
-        		+ ((version == 0) ? "" : " version=\"" + version + "\"")
-        		+ ">" + ENDL);
+                + " name=\"" + modelName + "\""
+                + " package=\"" + packageName + "\""
+                + ((version == 0) ? "" : " version=\"" + version + "\"")
+                + ">" + ENDL);
         for (ClassDescriptor cld : getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 sb.append(cld.toString());
@@ -297,33 +332,66 @@ public class Model
     }
 
     /**
-     * Returns the JSON serialisation of the model.
-     * @return A JSON formatted string.
+     * Returns a data structure suitable for serialisation, eg. as JSON.
+     * @return Information about this model.
      */
-    public String toJSONString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("\"name\":\"")
-          .append(modelName)
-          .append("\",\"package\":\"")
-          .append(packageName)
-          .append("\",\"version\":")
-          .append(version)
-          .append(",\"classes\":{");
-        boolean needsComma = false;
+    public ModelAST toJsonAST() {
+        ModelAST data = new ModelAST();
+        Map<String, Map<String, Object>> classes = new HashMap<String, Map<String, Object>>();
+        data.put("name", modelName);
+        data.put("package", packageName);
+        data.put("version", version);
+        data.setClasses(classes);
+
         for (ClassDescriptor cld: getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                if (needsComma) {
-                    sb.append(",");
+                Map<String, Object> classData = new HashMap<String, Object>();
+                List<String> parents = new ArrayList<String>();
+                Map<String, Object> attrs = new HashMap<String, Object>();
+                Map<String, Object> refs = new HashMap<String, Object>();
+                Map<String, Object> colls = new HashMap<String, Object>();
+
+                classes.put(cld.getUnqualifiedName(), classData);
+                classData.put("name", cld.getUnqualifiedName());
+                classData.put("extends", parents);
+                for (String parent: cld.getSuperclassNames()) {
+                    parents.add(parent.substring(parent.lastIndexOf(".") + 1));
                 }
-                sb.append("\"")
-                  .append(cld.getUnqualifiedName())
-                  .append("\":")
-                  .append(cld.toJSONString());
-                needsComma = true;
+                classData.put("isInterface", cld.isInterface());
+                classData.put("attributes", attrs);
+                classData.put("references", refs);
+                classData.put("collections", colls);
+                for (AttributeDescriptor a: cld.getAllAttributeDescriptors()) {
+                    Map<String, Object> attr = new HashMap<String, Object>();
+                    attrs.put(a.getName(), attr);
+                    attr.put("name", a.getName());
+                    attr.put("type", a.getType());
+                }
+                for (ReferenceDescriptor r: cld.getAllReferenceDescriptors()) {
+                    Map<String, Object> ref = new HashMap<String, Object>();
+                    refs.put(r.getName(), ref);
+                    ref.put("name", r.getName());
+                    String type = r.getReferencedClassName();
+                    ref.put("referencedType", type.substring(type.lastIndexOf(".") + 1));
+                    String revref = r.getReverseReferenceFieldName();
+                    if (revref != null) {
+                        ref.put("reverseReference", revref);
+                    }
+                }
+                for (CollectionDescriptor c: cld.getAllCollectionDescriptors()) {
+                    Map<String, Object> col = new HashMap<String, Object>();
+                    colls.put(c.getName(), col);
+                    col.put("name", c.getName());
+                    String type = c.getReferencedClassName();
+                    col.put("referencedType", type.substring(type.lastIndexOf(".") + 1));
+                    String revref = c.getReverseReferenceFieldName();
+                    if (revref != null) {
+                        col.put("reverseReference", revref);
+                    }
+                }
             }
         }
-        sb.append("}");
-        return sb.toString();
+        return data;
     }
 
 
@@ -601,7 +669,10 @@ public class Model
         return !problems.isEmpty();
     }
 
-	public int getVersion() {
-		return version;
-	}
+    /**
+     * @return The version of this model.
+     */
+    public int getVersion() {
+        return version;
+    }
 }

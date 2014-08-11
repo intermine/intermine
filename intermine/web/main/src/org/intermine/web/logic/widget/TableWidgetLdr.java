@@ -101,6 +101,7 @@ public class TableWidgetLdr extends WidgetLdr
         setFlattenedResults();
     }
 
+    /** @return the class name of the path this table widget loads. **/
     public String getType() {
         return type;
     }

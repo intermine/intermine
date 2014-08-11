@@ -103,8 +103,8 @@ public class SaveBagForm extends ActionForm
      * @param mapping the mapping
      * @param request the request
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
     }
 

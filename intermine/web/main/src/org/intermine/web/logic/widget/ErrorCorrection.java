@@ -12,13 +12,16 @@ package org.intermine.web.logic.widget;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.AbstractMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.intermine.web.logic.SortableMap;
-
+import java.util.Set;
 
 
 /**
@@ -37,7 +40,7 @@ public final class ErrorCorrection
     protected static final BigDecimal ONE = new BigDecimal(1);
 
     private ErrorCorrection() {
-        // don't instatianiate
+        // hidden constructor.
     }
 
     /**
@@ -63,11 +66,26 @@ public final class ErrorCorrection
         return adjustedResults;
     }
 
+    /**
+     * Sort the map by values.
+     * @param originalMap The map to sort.
+     * @return A similar map, but sorted.
+     */
     public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
-        SortableMap sortedMap = new SortableMap(originalMap);
-        // sort ascending, smallest values first
-        sortedMap.sortValues(false, true);
-        return new LinkedHashMap(sortedMap);
+        final List<Map.Entry<String, BigDecimal>> entries
+            = new ArrayList<Map.Entry<String, BigDecimal>>(originalMap.entrySet());
+        Collections.sort(entries, new Comparator<Map.Entry<String, BigDecimal>>() {
+            @Override
+            public int compare(Entry<String, BigDecimal> a, Entry<String, BigDecimal> b) {
+                return b.getValue().compareTo(a.getValue());
+            }
+        });
+        return new AbstractMap<String, BigDecimal>() {
+            @Override
+            public Set<java.util.Map.Entry<String, BigDecimal>> entrySet() {
+                return new LinkedHashSet<Map.Entry<String, BigDecimal>>(entries);
+            }
+        };
     }
 
     /**

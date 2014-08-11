@@ -1,5 +1,15 @@
 package org.intermine.web.logic.results;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,26 +17,38 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.config.InlineListObject;
 
-public class InlineList {
+/**
+ * @author I would say probably Radek
+ *
+ */
+public class InlineList
+{
 
-	private Set<InlineListObject> listOfObjects = null;
-	private FieldDescriptor fieldDescriptor = null;
-	private Boolean showLinksToObjects = false;
-	private String path = null;
-	private Integer lineLength = null;
-	
+    private Set<InlineListObject> listOfObjects = null;
+    private FieldDescriptor fieldDescriptor = null;
+    private Boolean showLinksToObjects = false;
+    private String path = null;
+    private Integer lineLength = null;
+
     /**
      * Set a set ;) of Objects by turning them into InterMineObjects and then InlineListObjects
-     * @param list received from ReportObject resolver
-     * @param key is a value by which we want to show the objects by,
-     *  "probeSets.primaryIdentifier" => primaryIdentifier
-     */	
-	public InlineList(Set<Object> listOfListObjects, String columnToDisplayBy, Boolean showLinksToObjects, String path, Integer lineLength) {
+     * @param listOfListObjects received from ReportObject resolver
+     * @param columnToDisplayBy No idea - I'm just making checkstyle happy.
+     * @param showLinksToObjects No idea - I'm just making checkstyle happy.
+     * @param path No idea - I'm just making checkstyle happy.
+     * @param lineLength No idea - I'm just making checkstyle happy.
+     */
+    public InlineList(
+            Set<Object> listOfListObjects,
+            String columnToDisplayBy,
+            Boolean showLinksToObjects,
+            String path,
+            Integer lineLength) {
         this.showLinksToObjects = showLinksToObjects;
         this.path = path;
         this.lineLength = lineLength;
-		
-		listOfObjects = new HashSet<InlineListObject>();
+
+        listOfObjects = new HashSet<InlineListObject>();
 
         for (Object listObject : listOfListObjects) {
             InterMineObject interMineListObject = (InterMineObject) listObject;
@@ -47,99 +69,99 @@ public class InlineList {
 
             listOfObjects.add(inlineListObject);
         }
-	}
+    }
 
     /**
     *
     * @return a set of InlineListObjects
     */
-   public Set<InlineListObject> getItems() {
-       return listOfObjects;
-   }	
+    public Set<InlineListObject> getItems() {
+        return listOfObjects;
+    }
 
    /**
    *
    * @return the length of the strings in this list combined, delimiters included!
    */
-  public Integer getLength() {
-      Integer length = 0;
-      Set<InlineListObject> items = getItems();
-      if (items != null) {
-          for (InlineListObject ilObj : getItems()) {
-              Object value = ilObj.getValue();
-              String valueString = value.toString();
-              length += valueString.length() + 2;
-          }
-          length -= 2;
-      }
-      return length;
-  }
-  
-  /**
-  *
-  * @return a size of the collection so we can determine if we
-  *  are outputting a last item in the JSP etc.
-  */
- public int getSize() {
-     return listOfObjects.size();
- }
-   
- /**
- *
- * @return are we to show links to the objects'? report page? the JSP asks...
- */
-public Boolean getShowLinksToObjects() {
-    return showLinksToObjects;
-}
- 
-/**
-*
-* @see our JavaScript (jQuery) expects non set values to be "0"
-* @return total character length (spaces, commas included) to show
-*/
-public Integer getLineLength() {
-   return (lineLength != null) ? lineLength : 0;
-}
+    public Integer getLength() {
+        Integer length = 0;
+        Set<InlineListObject> items = getItems();
+        if (items != null) {
+            for (InlineListObject ilObj : getItems()) {
+                Object value = ilObj.getValue();
+                String valueString = value.toString();
+                length += valueString.length() + 2;
+            }
+            length -= 2;
+        }
+        return length;
+    }
 
- /**
- *
- * @return String path so that ReportObject can resolve the actual Objects
- */
-public String getPath() {
-    return path;
-}
- 
- /**
-  * Set FieldDescriptor so we can work with placements
-  * @param fd FieldDescriptor set by ReportObject on init
-  */
- public void setDescriptor(FieldDescriptor fd) {
-     fieldDescriptor = fd;
- }
+    /**
+     *
+     *   @return a size of the collection so we can determine if we
+     *  are outputting a last item in the JSP etc.
+     */
+    public int getSize() {
+        return listOfObjects.size();
+    }
 
- /**
-  *
-  * @return FieldDecriptor
-  */
- public FieldDescriptor getDescriptor() {
-     return fieldDescriptor;
- }
- 
- /**
- *
- * @return String of everything before the first dot
- */
-public String getPrefix() {
-    String[] parts = path.split("\\.");
-    return parts[0];
-}
- 
- /**
-  * {@inheritDoc}
-  */
- public String toString() {
-     return "path=" + path + " showLinksToObjects=" + showLinksToObjects + " fieldDescriptor="
-         + fieldDescriptor;
- }
- 
+    /**
+     *
+     * @return are we to show links to the objects'? report page? the JSP asks...
+     */
+    public Boolean getShowLinksToObjects() {
+        return showLinksToObjects;
+    }
+
+    /**
+     *
+     * @see our JavaScript (jQuery) expects non set values to be "0"
+     * @return total character length (spaces, commas included) to show
+     */
+    public Integer getLineLength() {
+        return (lineLength != null) ? lineLength : 0;
+    }
+
+    /**
+     * @return String path so that ReportObject can resolve the actual Objects
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Set FieldDescriptor so we can work with placements
+     * @param fd FieldDescriptor set by ReportObject on init
+     */
+    public void setDescriptor(FieldDescriptor fd) {
+        fieldDescriptor = fd;
+    }
+
+    /**
+     *
+     * @return FieldDecriptor
+     */
+    public FieldDescriptor getDescriptor() {
+        return fieldDescriptor;
+    }
+
+    /**
+     *
+     * @return String of everything before the first dot
+     */
+    public String getPrefix() {
+        String[] parts = path.split("\\.");
+        return parts[0];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        return String.format(
+                "<inline-list path=%s, showLinksToObjects=%s, fieldDescriptor=%s>",
+                path, showLinksToObjects, fieldDescriptor);
+    }
+
 }

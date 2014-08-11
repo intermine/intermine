@@ -130,8 +130,8 @@ public class BagUploadConfirmForm extends ActionForm
     * @param mapping the mapping
     * @param request the request
     */
-   @Override
-   public void reset(ActionMapping mapping, HttpServletRequest request) {
-       initialise();
-   }
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        initialise();
+    }
 }

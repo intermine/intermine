@@ -46,6 +46,8 @@ public class InlineResultsTable
 {
     protected Collection<?> results;
     protected List<?> resultsAsList;
+
+    /** @return the results as a list. **/
     public List<?> getResultsAsList() {
         return resultsAsList;
     }
@@ -83,7 +85,6 @@ public class InlineResultsTable
      *  Collection, a Reference object will have null instead and its Type will be resolved
      *  using getListOfTypes()
      */
-    @SuppressWarnings("unchecked")
     public InlineResultsTable(Collection<?> results, Model model,
                               WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
                               int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes) {

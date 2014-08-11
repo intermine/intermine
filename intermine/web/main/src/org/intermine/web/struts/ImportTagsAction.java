@@ -27,8 +27,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.ChangeEvent;
 import org.intermine.api.search.MassTaggingEvent;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.api.xml.TagBinding;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -55,7 +53,7 @@ public class ImportTagsAction extends InterMineAction
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         ImportTagsForm f = (ImportTagsForm) form;
         HttpSession session = request.getSession();

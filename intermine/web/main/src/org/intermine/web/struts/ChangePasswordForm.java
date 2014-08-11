@@ -83,8 +83,7 @@ public class ChangePasswordForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") HttpServletRequest request) {
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
         if (StringUtils.isEmpty(oldpassword) || StringUtils.isEmpty(newpassword)
                         || StringUtils.isEmpty(newpassword2)) {
@@ -99,8 +98,7 @@ public class ChangePasswordForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         oldpassword = null;
         newpassword = null;
         newpassword2 = null;

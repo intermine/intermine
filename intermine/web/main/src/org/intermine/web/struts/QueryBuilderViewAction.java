@@ -12,15 +12,10 @@ package org.intermine.web.struts;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.util.NameUtil;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -44,9 +39,9 @@ public class QueryBuilderViewAction extends InterMineAction
      */
     @Override
     public ActionForward execute(ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         SessionMethods.logQuery(request.getSession());
         return new ForwardParameters(mapping.findForward("results"))

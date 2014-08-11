@@ -151,7 +151,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         QueryField qfCorrection = null;
         if (extraCorrectionCoefficient
             && correctionCoefficient.isApplicable()) {
-            qfCorrection = correctionCoefficient.updateQueryWithCorrectionCoefficient(subQ, startClass);
+            qfCorrection =
+                    correctionCoefficient.updateQueryWithCorrectionCoefficient(subQ, startClass);
         }
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {
