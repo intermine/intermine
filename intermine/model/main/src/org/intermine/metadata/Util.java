@@ -41,8 +41,7 @@ import org.apache.log4j.Logger;
  *
  * @author Matthew Wakeling
  */
-public final class Util
-{
+public final class Util {
 
     private static final Logger LOG = Logger.getLogger(Util.class);
     /**
@@ -54,7 +53,7 @@ public final class Util
      */
     private static final String CLASS_KEYS = "class_keys";
     /**
-     * Name of the key under which to store the serialized version of the model
+     * Name of the key under which to store the serialized version of the model.
      */
     public static final String MODEL = "model";
 
@@ -71,7 +70,7 @@ public final class Util
      * @param b another Object
      * @return true if they are equal or both null
      */
-    public static boolean equals(Object a, Object b) {
+    public static boolean equals(final Object a, Object b) {
         if (a == null) {
             return b == null;
         }
@@ -84,7 +83,7 @@ public final class Util
      * @param obj an object
      * @return the hashCode, or zero if the object is null
      */
-    public static int hashCode(Object obj) {
+    public static int hashCode(final Object obj) {
         if (obj == null) {
             return 0;
         }
@@ -98,21 +97,22 @@ public final class Util
      * @param e an Exception
      * @return a String
      */
-    public static Exception verboseException(Exception e) {
+    public static Exception verboseException(final Exception e) {
         boolean needComma = false;
+        Exception error = e;
         StringWriter message = new StringWriter();
         PrintWriter pMessage = new PrintWriter(message);
-        Class<? extends Exception> c = e.getClass();
-        while (e != null) {
+        Class<? extends Exception> c = error.getClass();
+        while (error != null) {
             if (needComma) {
                 pMessage.println("\n---------------NEXT EXCEPTION");
             }
             needComma = true;
-            e.printStackTrace(pMessage);
-            if (e instanceof SQLException) {
-                e = ((SQLException) e).getNextException();
+            error.printStackTrace(pMessage);
+            if (error instanceof SQLException) {
+                error = ((SQLException) error).getNextException();
             } else {
-                e = null;
+                error = null;
             }
         }
         try {
@@ -141,7 +141,7 @@ public final class Util
      * @param b an integer
      * @return the gcd of a and b
      */
-    public static int gcd(int a, int b) {
+    public static int gcd(final int a, int b) {
         while (b != 0) {
             int t = b;
             b = a % b;
@@ -157,7 +157,7 @@ public final class Util
      * @param b an integer
      * @return the lcm of a and b
      */
-    public static int lcm(int a, int b) {
+    public static int lcm(final int a, int b) {
         return (a / gcd(a, b)) * b;
     }
 
@@ -169,7 +169,7 @@ public final class Util
      * @deprecated I don't think this is used anymore?
      */
     @Deprecated
-    public static String wildcardSqlToUser(String exp) {
+    public static String wildcardSqlToUser(final String exp) {
         StringBuffer sb = new StringBuffer();
 
         // Java needs backslashes to be backslashed in strings.

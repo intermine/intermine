@@ -49,6 +49,8 @@ sourceSets {
         java {
             srcDir 'test'
         }
+    }
 }
 
 defaultTasks 'clean', 'jar'
+
