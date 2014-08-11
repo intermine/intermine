@@ -30,12 +30,24 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class LoginTrackBinding
+/**
+ * @author Daniela Butano
+ */
+public final class LoginTrackBinding
 {
     private static final Logger LOG = Logger.getLogger(LoginTrackBinding.class);
+    /**
+     * label for XML
+     */
     public static final String LOGINTRACKS = "logintracks";
+    /**
+     * label for XML
+     */
     public static final String LOGINTRACK = "logintrack";
 
+    private LoginTrackBinding() {
+        // don't
+    }
 
     /**
      * Convert a LoginTrack to XML and write XML to given writer.
@@ -68,6 +80,7 @@ public class LoginTrackBinding
             try {
                 writer.writeEndElement();
             } catch (XMLStreamException e) {
+                LOG.error("XML broke", e);
             }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling login tracks", e);
@@ -117,7 +130,7 @@ class LoginTrackHandler extends TrackHandler
                 stm = connection.prepareStatement("INSERT INTO "
                       + TrackerUtil.LOGIN_TRACKER_TABLE + " VALUES(?, ?)");
             } catch (SQLException sqle) {
-                new BuildException("Problem to retrieve the connection", sqle);
+                throw new BuildException("Problem to retrieve the connection", sqle);
             }
         }
         if (LoginTrackBinding.LOGINTRACK.equals(qName)) {

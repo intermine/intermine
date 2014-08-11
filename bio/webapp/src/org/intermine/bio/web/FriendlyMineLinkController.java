@@ -54,8 +54,8 @@ public class FriendlyMineLinkController  extends TilesAction
             HttpServletRequest request, HttpServletResponse response) {
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        Collection<String> organismsInBag = BioUtil.getOrganisms(im.getObjectStore(), bag, false,
-                "shortName");
+        Collection<String> organismsInBag = BioUtil.getOrganisms(im.getObjectStore(), bag.getType(),
+                bag.getContentsAsIds(), false, "shortName");
         String organisms = null;
         if (!organismsInBag.isEmpty()) {
             organisms = StringUtil.join(organismsInBag, ",");
@@ -77,7 +77,7 @@ public class FriendlyMineLinkController  extends TilesAction
     }
 
 
-    private String getIdentifierField(InterMineBag bag) {
+    private static String getIdentifierField(InterMineBag bag) {
         Class c = null;
         try {
             c = Class.forName(bag.getQualifiedType());

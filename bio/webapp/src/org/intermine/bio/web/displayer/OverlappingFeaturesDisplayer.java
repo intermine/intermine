@@ -15,14 +15,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.bio.web.model.GeneModelCache;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.SequenceFeature;
@@ -119,8 +117,6 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                 looptyloop:
                     for (Class<?> c : lt) {
 
-                        long loopStartTime = System.currentTimeMillis();
-
                         Iterator<?> resultsIter = collectionList.iterator();
 
                         // new collection of objects of only type "c"
@@ -159,13 +155,12 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                             // create an InlineResultsTable
                             InlineResultsTable t = new InlineResultsTable(s,
                                     fd.getClassDescriptor().getModel(),
-                                    SessionMethods.getWebConfig(request), im.getClassKeys(), s.size(),
-                                    false, lc);
+                                    SessionMethods.getWebConfig(request), im.getClassKeys(),
+                                        s.size(), false, lc);
 
                             // name the table based on the first element contained
                             featureTables.put(type, t);
                         }
-                        long loopTime = System.currentTimeMillis();
                     }
                 }
             }

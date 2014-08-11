@@ -702,6 +702,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
      * @param featureData the FeatureData for the SequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @param featureId id of feature
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */

@@ -159,7 +159,7 @@ public class DisplayLookupMessageHandler
      */
     @SuppressWarnings("rawtypes")
     private static void fillInArrays(BagQueryResult bqr) {
-        unresolved = bqr.getUnresolved().keySet();
+        unresolved = new HashSet<String>(bqr.getUnresolvedIdentifiers());
         duplicates = new HashSet<String>();
         lowQuality = new HashSet<String>();
         translated = new HashSet<String>();

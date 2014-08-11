@@ -19,7 +19,7 @@ import org.intermine.webservice.server.WebService;
  */
 public class FastaQueryServlet extends BioExportServlet
 {
-    
+
     private static final long serialVersionUID = 6807674791573331041L;
 
     @Override

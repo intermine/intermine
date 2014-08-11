@@ -168,6 +168,16 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsConstraintNull", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintNotNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.addressId IS NOT NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNotNull", Collections.singleton("InterMineObject"));
+
+        results.put("ContainsConstraintNullCollection1N", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND (NOT EXISTS(SELECT 1 FROM InterMineObject AS indirect0 WHERE indirect0.departmentId = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollection1N", new HashSet(Arrays.asList(new String[] {"InterMineObject"})));
+        results.put("ContainsConstraintNotNullCollection1N", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND EXISTS(SELECT 1 FROM InterMineObject AS indirect0 WHERE indirect0.departmentId = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollection1N", new HashSet(Arrays.asList(new String[] {"InterMineObject"})));
+        results.put("ContainsConstraintNullCollectionMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND (NOT EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollectionMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
+        results.put("ContainsConstraintNotNullCollectionMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollectionMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
+
         results.put("ContainsConstraintObjectRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.departmentId = 5 ORDER BY a1_.id");
         results2.put("ContainsConstraintObjectRefObject", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintNotObjectRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.departmentId != 5 ORDER BY a1_.id");
@@ -334,8 +344,9 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        //return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")), true, Collections.EMPTY_SET, 1, false);
-        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
+        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
+        schema.hasBioSeg = true;
+        return schema;
     }
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id";

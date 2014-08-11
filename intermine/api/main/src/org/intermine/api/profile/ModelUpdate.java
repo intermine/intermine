@@ -62,9 +62,9 @@ public class ModelUpdate
     /**
      * Construct a ModelUpdate for updating items built in the userprofile with the oldModel
      * given in input
-     * @param os
-     * @param uosw
-     * @param oldModel
+     * @param os objectstore
+     * @param uosw userprofile
+     * @param oldModel old schema
      */
     public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, Model oldModel) {
         this.uosw = uosw;
@@ -89,7 +89,7 @@ public class ModelUpdate
 
         for (Object key : modelUpdateProps.keySet()) {
             keyAsString = (String) key;
-            update = (String) modelUpdateProps.getProperty(keyAsString);
+            update = modelUpdateProps.getProperty(keyAsString);
 
             if (!keyAsString.contains(".")) {
                 //it's a class update
@@ -149,7 +149,7 @@ public class ModelUpdate
         }
     }
 
-    private void verifyClassAndField(String className, String fieldName, Model model) {
+    private static void verifyClassAndField(String className, String fieldName, Model model) {
         String checkFileMsg = "Please check modelUpdate.properties file";
         if ("".equals(className)) {
             throw new BuildException("Class " + className + " can not be blank. " + checkFileMsg);
@@ -208,7 +208,7 @@ public class ModelUpdate
      * if class has been renamed -> update type bags, update savedquery and savedtemplatequery
      * if a field has been renamed -> update savedquery and savedtemplatequery
      * if class has been deleted -> delete bags with that type
-     * @throws PathException
+     * @throws PathException if path is wrong
      */
     public void update() throws PathException {
         if (!deletedClasses.isEmpty()) {
@@ -224,7 +224,7 @@ public class ModelUpdate
         }
     }
 
-    /*
+    /**
      * Delete all bags having as a type one of the classes deleted
      */
     public void deleteBags() {
@@ -243,10 +243,10 @@ public class ModelUpdate
             Profile profile = pm.getProfile(savedBag.getUserProfile().getUsername());
             try {
                 profile.deleteBag(savedBag.getName());
-                System.out.println("Deleted the list: " + savedBag.getName() + " having type "
+                System .out.println("Deleted the list: " + savedBag.getName() + " having type "
                                   + savedBag.getType());
             } catch (ObjectStoreException ose) {
-                System.out.println("Problems deleting bag: " + savedBag.getName());
+                System .out.println("Problems deleting bag: " + savedBag.getName());
             }
         }
     }
@@ -274,10 +274,10 @@ public class ModelUpdate
             try {
                 if (newType != null) {
                     profile.updateBagType(savedBag.getName(), newType);
-                    System.out.println("Updated the type of the list: " + savedBag.getName());
+                    System .out.println("Updated the type of the list: " + savedBag.getName());
                 }
             } catch (ObjectStoreException ose) {
-                System.out.println("Problems updating savedBag " + savedBag.getName()
+                System .out.println("Problems updating savedBag " + savedBag.getName()
                                    + ose.getMessage());
             } catch (UnknownBagTypeException e) {
                 throw new RuntimeException("When trying to correct a bag's type", e);
@@ -287,7 +287,7 @@ public class ModelUpdate
 
     /**
      * Update savedquery and savedtemplatequery when they reeferring to renamed classes or fields
-     * @throws PathException
+     * @throws PathException if path is not found
      */
     public void updateReferredQueryAndTemplate() throws PathException {
         Map<String, SavedQuery> savedQueries;
@@ -360,7 +360,8 @@ public class ModelUpdate
                                 profile.saveTemplate(backupTemplateName, backupTemplateQuery);
                                 profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
                             } catch (BadTemplateException e) {
-                                stdout.println("Problems updating templateQuery " + templateQuery.getName()
+                                stdout.println("Problems updating templateQuery "
+                                        + templateQuery.getName()
                                                + e.getMessage());
                                 continue;
                             }

@@ -179,7 +179,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
 
         String gene1 = getGene(holder1);
         String gene2 = getGene(holder2);
@@ -204,15 +204,15 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String getGene(GeneHolder holder)
-            throws ObjectStoreException {
-        
+        throws ObjectStoreException {
+
         String refId = identifiersToGenes.get(holder.resolvedIdentifier);
         if (refId == null) {
             Item gene = createItem("Gene");
             if (!holder.identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-            	gene.setAttribute(holder.identifierType, holder.resolvedIdentifier);
+                gene.setAttribute(holder.identifierType, holder.resolvedIdentifier);
             } else {
-            	gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, holder.resolvedIdentifier);
+                gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, holder.resolvedIdentifier);
             }
             gene.setReference("organism", getOrganism(holder.taxonId));
             refId = gene.getIdentifier();
@@ -234,7 +234,7 @@ public class TreefamConverter extends BioFileConverter
 
     // the gene is from an organism we want
     // the homologue is from an organism we want
-    private boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
+    private static boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
         if (holder1 == null || holder2 == null) {
             return false;
         }
@@ -278,8 +278,8 @@ public class TreefamConverter extends BioFileConverter
 
             // remove special characters
             symbol = chopSymbol(symbol);
-            
-            String identifierType = DEFAULT_IDENTIFIER_TYPE;  
+
+            String identifierType = DEFAULT_IDENTIFIER_TYPE;
             String identifierColumn = DEFAULT_IDENTIFIER_COLUMN;
 
             if (config.containsKey(taxonId)) {
@@ -287,13 +287,13 @@ public class TreefamConverter extends BioFileConverter
                 identifierColumn = configs[0];
                 identifierType = configs[1];
             }
-            
+
             String resolvedIdentifier = resolveGene(taxonId, geneId, symbol);
             if (StringUtils.isEmpty(resolvedIdentifier)) {
-            	resolvedIdentifier = ("symbol".equalsIgnoreCase(identifierType) ? symbol : geneId);
+                resolvedIdentifier = ("symbol".equalsIgnoreCase(identifierType) ? symbol : geneId);
             }
-            idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier, identifierColumn, 
-            		identifierType, taxonId));
+            idsToGenes.put(id, new GeneHolder(geneId, symbol, resolvedIdentifier, identifierColumn,
+                    identifierType, taxonId));
         }
     }
 
@@ -332,7 +332,7 @@ public class TreefamConverter extends BioFileConverter
     public class GeneHolder
     {
         protected String identifier, symbol, taxonId, identifierType, resolvedIdentifier,
-        	whichColumn;
+        whichColumn;
 
         /**
          * @param identifier gene identifier, eg FBgn from geneid column
@@ -342,8 +342,8 @@ public class TreefamConverter extends BioFileConverter
          * @param resolvedIdentifier the identifer found by the ID resolver
          * @param whichColumn either geneid (4th col) or symbol (6th col)
          */
-        public GeneHolder(String identifier, String symbol, String resolvedIdentifier, 
-        		String whichColumn, String identifierType, String taxonId) {
+        public GeneHolder(String identifier, String symbol, String resolvedIdentifier,
+                String whichColumn, String identifierType, String taxonId) {
             this.identifier = identifier;
             this.symbol = symbol;
             this.taxonId = taxonId;
@@ -366,21 +366,21 @@ public class TreefamConverter extends BioFileConverter
             return homologues.contains(taxonId);
         }
     }
-    
-    private String chopSymbol(String symbol) {
-    	String cleanSymbol = symbol;
+
+    private static String chopSymbol(String symbol) {
+        String cleanSymbol = symbol;
         if (cleanSymbol.contains("_")) {
-        	// to handle this case:  Y65B4BL.6_F2
-        	cleanSymbol = cleanSymbol.split("_")[0];
+            // to handle this case:  Y65B4BL.6_F2
+            cleanSymbol = cleanSymbol.split("_")[0];
         }
         if (cleanSymbol.contains("_")) {
-        	// to handle this case:  Y65B4BL.6_F2
-        	cleanSymbol = cleanSymbol.split("_")[0];
+            // to handle this case:  Y65B4BL.6_F2
+            cleanSymbol = cleanSymbol.split("_")[0];
         }
         if (cleanSymbol.contains("-")) {
-        	// to handle this case:  LIMS3-201            	
-        	cleanSymbol = cleanSymbol.split("-")[0];
-        }            
+            // to handle this case:  LIMS3-201
+            cleanSymbol = cleanSymbol.split("-")[0];
+        }
         return cleanSymbol;
     }
 

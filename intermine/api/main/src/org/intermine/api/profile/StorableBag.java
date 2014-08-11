@@ -142,7 +142,7 @@ public abstract class StorableBag implements WebSearchable
      * delete the bag. They MUST ALSO call this method (as super.delete()). This is to ensure that
      * bag deletion events are registered correctly.
      *
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if can't remove list from database
      */
     public void delete() throws ObjectStoreException {
         fireEvent(new DeletionEvent(this));
@@ -153,16 +153,16 @@ public abstract class StorableBag implements WebSearchable
      * this bag contains. These bag values can then be used later to reconstruct the contents of the
      * bag if when the bag is used with a different production database.
      *
-     * @param profileId the ID of the userprofile
+     * @param profile the ID of the userprofile
      * @param bagValues the list of the key field values of the objects contained by the bag
      * @throws ObjectStoreException if something goes wrong when inserting data into the database.
      */
-    public void saveWithBagValues(Integer profileId, Collection<BagValue> bagValues)
+    public void saveWithBagValues(Integer profile, Collection<BagValue> bagValues)
         throws ObjectStoreException {
-        if (profileId == null) {
+        if (profile == null) {
             throw new NullPointerException("profileId may not be null");
         }
-        this.profileId = profileId;
+        this.profileId = profile;
         SavedBag savedBag = storeSavedBag();
         this.savedBagId = savedBag.getId();
         addBagValues(bagValues);

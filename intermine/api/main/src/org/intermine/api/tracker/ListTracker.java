@@ -26,6 +26,11 @@ import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.api.tracker.util.TrackerUtil;
 
+/**
+ *
+ * @author Daniela
+ *
+ */
 public class ListTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(ListTracker.class);
@@ -34,6 +39,7 @@ public class ListTracker extends AbstractTracker
     /**
      * Build a list tracker
      * @param conn connection to the database
+     * @param trackQueue queue
      */
     protected ListTracker(Connection conn, Queue<Track> trackQueue) {
         super(trackQueue, TrackerUtil.LIST_TRACKER_TABLE);
@@ -42,6 +48,7 @@ public class ListTracker extends AbstractTracker
     /**
      * Return an instance of the ListTracker
      * @param con connection to the database
+     * @param trackQueue queue
      * @return ListTracker the list tracker
      */
     public static ListTracker getInstance(Connection con, Queue<Track> trackQueue) {
@@ -75,6 +82,15 @@ public class ListTracker extends AbstractTracker
         return TrackerUtil.LIST_TRACKER;
     }
 
+    /**
+     *
+     * @param type type
+     * @param count count
+     * @param buildMode build mode
+     * @param event event
+     * @param profile user
+     * @param sessionIdentifier session
+     */
     protected void trackList(String type, int count, ListBuildMode buildMode,
                              ListTrackerEvent event, Profile profile, String sessionIdentifier) {
         String userName = (profile.getUsername() != null)
@@ -117,7 +133,7 @@ public class ListTracker extends AbstractTracker
         return null;
     }
 
-    private ListBuildMode getBuildMode(String buildMode) {
+    private static ListBuildMode getBuildMode(String buildMode) {
         if ("QUERY".equals(buildMode)) {
             return ListBuildMode.QUERY;
         }
@@ -130,7 +146,7 @@ public class ListTracker extends AbstractTracker
         return null;
     }
 
-    private ListTrackerEvent getListEvent(String listEvent) {
+    private static ListTrackerEvent getListEvent(String listEvent) {
         if ("CREATION".equals(listEvent)) {
             return ListTrackerEvent.CREATION;
         }

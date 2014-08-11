@@ -7,7 +7,7 @@
 #     sudo easy_install intermine
 #
 # For further documentation you can visit:
-#     http://www.intermine.org/wiki/PythonClient
+#     http://intermine.readthedocs.org/en/latest/web-services/
 
 # The following two lines will be needed in every python script:
 from intermine.webservice import Service

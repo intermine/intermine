@@ -38,13 +38,13 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
     }
 
     public void testReadConfig() throws Exception {
-        factory.PROP_FILE = idresolverConfig;
+        factory.propFile = idresolverConfig;
         factory.readConfig();
-        assertEquals(5, factory.config_xref.size());
-        assertTrue(factory.config_xref.containsKey("7955"));
-        assertFalse(factory.config_xref.containsValue("OMIM"));
-        assertTrue(factory.config_prefix.containsKey("10090"));
-        assertTrue(factory.config_strains.containsValue("559292"));
+        assertEquals(6, factory.configXref.size());
+        assertTrue(factory.configXref.containsKey("7955"));
+        assertFalse(factory.configXref.containsValue("OMIM"));
+        assertTrue(factory.configPrefix.containsKey("10090"));
+        assertTrue(factory.configStrains.containsValue("559292"));
         assertTrue(factory.ignoredTaxonIds.contains("6239"));
     }
 
@@ -55,7 +55,7 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
 
     public void testCreateIdResolver() throws Exception {
         // resolver cached
-        factory.ID_RESOLVER_CACHED_FILE_NAME = idresolverCache;
+        factory.idResolverCachedFileName = idresolverCache;
 
         factory.createIdResolver(Collections.<String> emptySet());
         assertNull(IdResolverFactory.resolver);

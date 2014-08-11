@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.results.WebResults;
 import org.intermine.api.results.WebTable;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
@@ -79,9 +78,8 @@ public class AddColumnAction extends InterMineAction
         List<Path> paths = new ArrayList<Path>();
         Path path = new Path(model, columnToAdd);
         paths.add(path);
-        WebResults webResults = (WebResults) table;
-        webResults.getColumnsPath().add(path);
-        webResults.addColumns(paths);
+        table.getColumnsPath().add(path);
+        table.addColumns(paths);
 
         // add to path query as well
         PathQuery query = table.getPathQuery();

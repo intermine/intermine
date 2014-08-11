@@ -111,7 +111,7 @@ public final class SequenceOntologyFactory
     /**
      * Remove instance, used for testing only
      */
-    protected void reset() {
+    protected static void reset() {
         so = null;
     }
 }

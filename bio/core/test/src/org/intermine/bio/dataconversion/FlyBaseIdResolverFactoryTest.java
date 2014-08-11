@@ -126,14 +126,14 @@ public class FlyBaseIdResolverFactoryTest extends TestCase {
             IdResolverFactory.resolver.resolveId("7227", "exon", "syn3");
             fail("Expected to Fail to assert");
         } catch(IllegalArgumentException ex) {
-            assertEquals("Catched exception", "exon IdResolver has no data for taxonId: 7227.", ex.getMessage());
+            assertEquals("Catched exception", "exon IdResolver has no data for taxonId: '7227'.", ex.getMessage());
         }
 
         try {
             IdResolverFactory.resolver.resolveId("101", "gene", "syn1");
             fail("Expected to Fail to assert");
         } catch(IllegalArgumentException ex) {
-            assertEquals("Catched exception", "gene IdResolver has no data for taxonId: 101.", ex.getMessage());
+            assertEquals("Catched exception", "gene IdResolver has no data for taxonId: '101'.", ex.getMessage());
         }
     }
 }

@@ -74,20 +74,31 @@ public class QueryExpression implements QueryEvaluable
     private QueryEvaluable arg2;
     private QueryEvaluable arg3;
     private Class<?> type;
-    
+
     private String getOpName(int op) {
         switch(op) {
-            case ADD:      return "ADD";
-            case MULTIPLY: return "MULTIPLY";
-            case SUBTRACT: return "SUBTRACT";
-            case DIVIDE:   return "DIVIDE";
-            case SUBSTRING:return "SUBSTRING";
-            case INDEX_OF: return "INDEX OF";
-            case LOWER:    return "LOWER";
-            case UPPER:    return "UPPER";
-            case GREATEST: return "GREATEST";
-            case LEAST:    return "LEAST";
-            case MODULO:   return "MOD";
+            case ADD:
+                return "ADD";
+            case MULTIPLY:
+                return "MULTIPLY";
+            case SUBTRACT:
+                return "SUBTRACT";
+            case DIVIDE:
+                return "DIVIDE";
+            case SUBSTRING:
+                return "SUBSTRING";
+            case INDEX_OF:
+                return "INDEX OF";
+            case LOWER:
+                return "LOWER";
+            case UPPER:
+                return "UPPER";
+            case GREATEST:
+                return "GREATEST";
+            case LEAST:
+                return "LEAST";
+            case MODULO:
+                return "MOD";
             default:
                 throw new IllegalStateException("Unknown operator: " + op);
         }

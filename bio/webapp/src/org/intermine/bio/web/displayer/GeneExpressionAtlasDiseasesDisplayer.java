@@ -10,7 +10,6 @@ package org.intermine.bio.web.displayer;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,18 +43,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class GeneExpressionAtlasDiseasesDisplayer extends ReportDisplayer
 {
-
-    /** @var column keys we have in the results table */
-    private ArrayList<String> expressionColumns =  new ArrayList<String>() {
-        {
-            add("condition");
-            add("expression");
-            add("pValue");
-            add("tStatistic");
-            add("type");
-        }
-    };
-
     /**
      * Constructor
      * @param config .
@@ -73,7 +60,7 @@ public class GeneExpressionAtlasDiseasesDisplayer extends ReportDisplayer
 
         // API connection
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
         PathQuery query = new PathQuery(model);
 
@@ -96,7 +83,8 @@ public class GeneExpressionAtlasDiseasesDisplayer extends ReportDisplayer
             }
 
             // convert to a map
-            GeneExpressionAtlasDiseasesExpressions geae = new GeneExpressionAtlasDiseasesExpressions(values);
+            GeneExpressionAtlasDiseasesExpressions geae
+                = new GeneExpressionAtlasDiseasesExpressions(values);
 
             // attach to results
             request.setAttribute("expressions", geae);
@@ -114,7 +102,7 @@ public class GeneExpressionAtlasDiseasesDisplayer extends ReportDisplayer
                         collection = (Collection<?>)
                             reportObject.getObject().getFieldValue("atlasExpression");
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        return;
                     }
 
                     List<Class<?>> lc = PathQueryResultHelper.
@@ -143,7 +131,7 @@ public class GeneExpressionAtlasDiseasesDisplayer extends ReportDisplayer
      * @param query
      * @return
      */
-    private PathQuery geneExpressionAtlasQuery(String genePrimaryID, PathQuery query) {
+    private static PathQuery geneExpressionAtlasQuery(String genePrimaryID, PathQuery query) {
         query.addViews(
                 "Gene.atlasExpression.condition",
                 "Gene.atlasExpression.expression",

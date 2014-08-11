@@ -10,10 +10,19 @@ package org.intermine.api.bag.operations;
  *
  */
 
-public class NoContent extends BagOperationException {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class NoContent extends BagOperationException
+{
 
     private static final long serialVersionUID = -1679235731173923331L;
 
+    /**
+     * Constructor
+     */
     public NoContent() {
         super("This operation failed to produce any content");
     }

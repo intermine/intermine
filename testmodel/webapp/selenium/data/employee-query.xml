@@ -1,0 +1,2 @@
+<query name="Employees" model="testmodel" view="Employee.name Employee.age Employee.department.name">
+</query>

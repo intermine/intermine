@@ -13,10 +13,20 @@ import java.sql.Timestamp;
 
 import org.intermine.api.tracker.util.TrackerUtil;
 
+/**
+ *
+ * @author Daniela
+ *
+ */
 public class LoginTrack extends TrackAbstract
 {
     private String user;
 
+    /**
+     *
+     * @param user username
+     * @param timestamp time stamp
+     */
     public LoginTrack(String user, Timestamp timestamp) {
         this.user = user;
         this.timestamp = timestamp;

@@ -11,6 +11,7 @@ package org.intermine.api.profile;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -238,7 +239,8 @@ public class TagManager
      * Returns names of tags of specified user and tag type. For anonymous user returns empty set.
      *
      * <p>
-     * Use of this method is <strong>strongly discouraged</strong>. It is better to use the typed methods
+     * Use of this method is <strong>strongly discouraged</strong>.
+     * It is better to use the typed methods
      * instead. This method will be removed in the future.
      * </p>
      *
@@ -246,7 +248,9 @@ public class TagManager
      * @param userName user name
      * @return tag names
      * @throws UserNotFoundException if user doesn't exist
+     * @deprecated It is better to use the typed methods instead.
      */
+    @Deprecated
     public Set<String> getUserTagNames(String type, String userName) {
         return tagsToTagNames(getTags(null, null, type, userName));
     }
@@ -268,7 +272,7 @@ public class TagManager
     /**
      * Returns tags of specified user.
      *
-     * @param userName user name
+     * @param user user name
      * @return tags
      */
     public List<Tag> getUserTags(Profile user) {
@@ -301,7 +305,8 @@ public class TagManager
      */
     public Set<String> getObjectTagNames(Taggable taggable, Profile profile) {
         if (profile.isLoggedIn()) {
-            return getObjectTagNames(taggable.getName(), taggable.getTagType(), profile.getUsername());
+            return getObjectTagNames(taggable.getName(), taggable.getTagType(),
+                    profile.getUsername());
         } else {
             return Collections.emptySet();
         }
@@ -355,7 +360,8 @@ public class TagManager
      * wildcards.
      *
      * <p>
-     * Use of this method is <strong>strongly discouraged</strong>. There are typed methods that are more
+     * Use of this method is <strong>strongly discouraged</strong>. There are typed methods that
+     * are more
      * suitable. Use them instead.
      * </p>
      *
@@ -365,8 +371,9 @@ public class TagManager
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
      * @param userName the use name this tag is associated with
      * @return the matching Tags
+     * @deprecated There are typed methods that are more suitable. Use them instead.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Deprecated
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
         if (type != null) {
@@ -424,12 +431,13 @@ public class TagManager
         return ((List) results);
     }
 
-    private MultiKey makeKey(String tagName, String objectIdentifier, String type,
+    private static MultiKey makeKey(String tagName, String objectIdentifier, String type,
                              String userName) {
         return new MultiKey(tagName, objectIdentifier, type, userName);
     }
 
-    private void addToCache(Map<MultiKey, List<Tag>> cache, MultiKey key, List<Tag> results) {
+    private static void addToCache(Map<MultiKey, List<Tag>> cache, MultiKey key,
+            List<Tag> results) {
 
         cache.put(key, new ArrayList<Tag>(results));
 
@@ -489,7 +497,8 @@ public class TagManager
         }
 
         //if (tagNameNeedsPermission(tagName) && profile.isSuperuser()
-        //    && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null) {
+        //    && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null)
+        //       {
         //    throw new TagNamePermissionException("You cannot add a tag starting with "
         //        + TagNames.IM_PREFIX + ", you are not the owner.");
         //}
@@ -599,13 +608,13 @@ public class TagManager
         }
     }
 
-    private void checkTagType(String type) {
+    private static void checkTagType(String type) {
         if (!isKnownTagType(type)) {
             throw new IllegalArgumentException("unknown tag type: '" + type + "'");
         }
     }
 
-    private boolean isKnownTagType(String type) {
+    private static boolean isKnownTagType(String type) {
         return ("collection".equals(type)
                 || "reference".equals(type)
                 || "attribute".equals(type)
@@ -621,7 +630,7 @@ public class TagManager
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
         try {
-            profile = (UserProfile) osWriter.getObjectByExample(profile, fieldNames);
+            profile = osWriter.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to load user profile", e);
         }
@@ -717,6 +726,57 @@ public class TagManager
          */
         public TagNamePermissionException(String message) {
             super(message);
+        }
+    }
+
+    /**
+     * Get all the tags that all users have access to.
+     * @param cld The class descriptor that is tagged.
+     * @return The tag names.
+     */
+    public Collection<String> getPublicTagNames(ClassDescriptor cld) {
+        return getPublicTagNames(cld.getName(), TagTypes.CLASS);
+    }
+
+    /**
+     * Get all the tags that all users have access to.
+     * @param taggable The thing that is tagged.
+     * @return The tag names.
+     */
+    public Collection<String> getPublicTagNames(Taggable taggable) {
+        return getPublicTagNames(taggable.getName(), taggable.getTagType());
+    }
+
+    /**
+     * Get the tags for an object that are visible to all users. Public tags are
+     * defined as those that begin with the IM_PREFIX.
+     * @param objectIdentifier The identifier for this object.
+     * @param tagType The type of thing this is.
+     * @return The names of the tags.
+     */
+    public Collection<String> getPublicTagNames(
+            String objectIdentifier,
+            String tagType) {
+        Set<String> ret = new HashSet<String>();
+        for (Tag tag: this.getTags(null, objectIdentifier, tagType, null)) {
+            String name = tag.getTagName();
+            if (name != null && tag.getTagName().startsWith(TagNames.IM_PREFIX)) {
+                ret.add(name);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Close this TagManager. Only used for tests.
+     *
+     * @throws ObjectStoreException in exceptional circumstances
+     */
+    public void close() throws ObjectStoreException {
+        try {
+            osWriter.close();
+        } catch (Throwable e) {
+            //LOG.info("tried to close the db connection", e);
         }
     }
 }

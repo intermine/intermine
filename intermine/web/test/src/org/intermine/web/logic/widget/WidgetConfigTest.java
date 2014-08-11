@@ -11,7 +11,11 @@ package org.intermine.web.logic.widget;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
@@ -25,7 +29,7 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 public class WidgetConfigTest extends WidgetConfigTestCase
 {
     public void testGetFiltersValues() throws Exception {
-        //create employee's list 
+        //create employee's list
         Profile superUser = im.getProfileManager().getSuperuserProfile();
         Employee e1 = new Employee();
         e1.setName("Employee1");
@@ -44,9 +48,19 @@ public class WidgetConfigTest extends WidgetConfigTestCase
         ids.add(e1.getId()); ids.add(e2.getId());
         list.addIdsToBag(ids, "Employee");
 
+        List<String> expected = new ArrayList();
+        expected.add("ContractorA");
+        expected.add("ContractorB");
+
         Map<String, WidgetConfig> widgets = webConfig.getWidgets();
-        assertNull(widgets.get("contractor_enrichment").getFiltersValues(os, list));
-        assertEquals("ContractorA, ContractorB", widgets.get("contractor_enrichment_with_filter2").getFiltersValues(os, list));
-        assertEquals("department", widgets.get("contractor_enrichment_with_filter1").getFiltersValues(os, list));
+        assertEquals(Collections.EMPTY_LIST, widgets.get("contractor_enrichment").getFiltersValues(os, list));
+        assertEquals(Arrays.asList("department"), widgets.get("contractor_enrichment_with_filter1").getFiltersValues(os, list));
+
+        List<String> actuallyAnArray = widgets.get("contractor_enrichment_with_filter2").getFiltersValues(os, list);
+        Iterator<String> it = actuallyAnArray.iterator();
+        String actual = it.next();
+        assertTrue(actual.contains("ContractorA"));
+        actual = it.next();
+        assertTrue(actual.contains("ContractorB"));
     }
 }

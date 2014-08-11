@@ -267,11 +267,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * Convenience wrapper to manage the boilerplate when performing unsafe operations.
      *
-     * @param operation The operation to perform.
-     * @return
-     * @throws SQLException
+     * @param <T> The type of thing to return.
+     * @param sql The sql to perform this operation.
+     * @param operation The operation to perform with the prepared statement.
+     * @return A T of some kind
+     * @throws SQLException if there is a problem running the query.
      */
-    public <T> T performUnsafeOperation(final String sql, SQLOperation<T> operation) throws SQLException {
+    public <T> T performUnsafeOperation(final String sql, SQLOperation<T> operation)
+        throws SQLException {
         Connection con = null;
         PreparedStatement stm = null;
         T retval;
@@ -361,7 +364,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             MetadataManager.OS_FORMAT_VERSION);
                 } catch (SQLException e) {
                     LOG.warn("Error retrieving database format version number", e);
-                    throw new ObjectStoreException("The table intermine_metadata doesn't exist. Please run build-db");
+                    throw new ObjectStoreException(
+                            "The table intermine_metadata doesn't exist. Please run build-db");
                 }
                 if (versionString == null) {
                     formatVersion = 0;

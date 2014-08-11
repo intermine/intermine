@@ -30,11 +30,24 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class ListTrackBinding
+/**
+ * @author Daniela Butano
+ */
+public final class ListTrackBinding
 {
     private static final Logger LOG = Logger.getLogger(ListTrackBinding.class);
+    /**
+     * label for XML
+     */
     public static final String LISTTRACKS = "listtracks";
+    /**
+     * label for XML
+     */
     public static final String LISTTRACK = "listtrack";
+
+    private ListTrackBinding() {
+        // don't
+    }
 
     /**
      * Convert a ListTrack to XML and write XML to given writer.
@@ -73,6 +86,7 @@ public class ListTrackBinding
             try {
                 writer.writeEndElement();
             } catch (XMLStreamException e) {
+                LOG.error("XML broke", e);
             }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling list tracks", e);
@@ -122,7 +136,7 @@ class ListTrackHandler extends TrackHandler
                 stm = connection.prepareStatement("INSERT INTO " + TrackerUtil.LIST_TRACKER_TABLE
                                                  + " VALUES(?, ?, ?, ?, ?, ?, ?)");
             } catch (SQLException sqle) {
-                new BuildException("Problem to retrieve the connection", sqle);
+                throw new BuildException("Problem to retrieve the connection", sqle);
             }
         }
         if (ListTrackBinding.LISTTRACK.equals(qName)) {

@@ -38,4 +38,10 @@ script:
     - sleep 10
     - (cd testmodel/webapp/selenium; nosetests)
     - test ! -s failures.list
+notifications:
+    irc:
+        channels:
+            - "chat.freenode.net#intermine-ci"
+        on_success: change
+        on_error: always
 

@@ -75,10 +75,6 @@ public class RunIqlQueryTask extends Task
             throw new BuildException("Exception while creating ObjectStore", e);
         }
 
-        if (!(os instanceof ObjectStoreInterMineImpl)) {
-            throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
-        }
-
         runIqlQuery(os, query);
     }
 
@@ -87,7 +83,7 @@ public class RunIqlQueryTask extends Task
      * @param os the objectstore
      * @param iql and IQL query string
      */
-    private void runIqlQuery(ObjectStoreInterMineImpl os, String iql) {
+    private static void runIqlQuery(ObjectStoreInterMineImpl os, String iql) {
         System.out .println("Running query in database " + os.getDatabase().getName()
                 + " - " + iql);
         System.out .println("See intermine.log for query execution details.");
