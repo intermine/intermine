@@ -474,12 +474,13 @@ public final class MetadataManager
     public static LargeObjectInputStream readLargeBinary(Database database, String key)
         throws SQLException {
         Connection con = database.getConnection();
+        PreparedStatement s;
         boolean commitMode = con.getAutoCommit();
         try {
             con.setAutoCommit(false); // Large Objects may not be used in auto-commit mode.
-            Statement s = con.createStatement();
-            ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
-                    + key + "'");
+            s = con.prepareStatement("SELECT value FROM " + METADATA_TABLE + " WHERE key = ?");
+            s.setString(1, key);
+            ResultSet r = s.executeQuery();
             long blob = 0;
             if (r.next()) {
                 String blobValue = r.getString(1);
@@ -493,6 +494,7 @@ public final class MetadataManager
                 }
             } else {
                 if (con != null) {
+                    con.rollback();
                     con.setAutoCommit(commitMode);
                     con.close();
                 }
@@ -501,6 +503,7 @@ public final class MetadataManager
         } catch (SQLException e) {
             try {
                 if (con != null) {
+                    con.rollback();
                     con.setAutoCommit(commitMode);
                     con.close();
                 }
@@ -508,7 +511,8 @@ public final class MetadataManager
                 // Ignore - we already have a problem
             }
             throw e;
-        }
+        } // Note the lack of finally - we DO NOT WANT to finally close; that needs
+          // to be handled by the LargeObjectInputStream.
     }
 
 

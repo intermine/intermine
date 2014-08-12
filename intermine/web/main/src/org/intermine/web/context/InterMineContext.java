@@ -143,6 +143,13 @@ public final class InterMineContext implements Shutdownable
      */
     public void shutdown() {
         checkInit();
+        doShutdown();
+    }
+
+    /**
+     * Send the signal that shutdown is happening - try and release resources.
+     */
+    public static void doShutdown() {
         int leftToSend = MAIL_QUEUE.size();
         // Allocate more actors to send the remaining messages.
         for (int i = 0; i < leftToSend; i++) {

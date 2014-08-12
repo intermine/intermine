@@ -22,6 +22,7 @@ import org.intermine.api.tracker.track.Track;
  */
 public class TrackerLogger implements Runnable
 {
+
     private Connection connection;
     private Queue<Track> trackQueue;
 
@@ -33,6 +34,9 @@ public class TrackerLogger implements Runnable
     public TrackerLogger(Connection connection, Queue<Track> trackQueue) {
         this.connection = connection;
         this.trackQueue = trackQueue;
+        if (connection == null || trackQueue == null) {
+            throw new IllegalArgumentException("neither connection or track queue may be null");
+        }
     }
 
     /**
@@ -41,16 +45,15 @@ public class TrackerLogger implements Runnable
     @Override
     public void run() {
         for (;;) {
+            if (Thread.interrupted()) {
+                return;
+            }
+
             Track track = trackQueue.poll();
             if (track != null) {
                 track.store(connection);
-            } else {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ie) {
-                    return;
-                }
             }
+
         }
     }
 }

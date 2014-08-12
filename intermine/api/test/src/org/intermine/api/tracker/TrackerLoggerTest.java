@@ -39,7 +39,7 @@ public class TrackerLoggerTest extends TestCase {
         if (uosw instanceof ObjectStoreWriterInterMineImpl) {
             con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
         }
-        trackQueue = new ArrayBlockingQueue<Track>(10);
+        trackQueue = new ArrayBlockingQueue<Track>(count);
         //create the table if doesn't exist
         LoginTracker.getInstance(con, trackQueue);
     }
