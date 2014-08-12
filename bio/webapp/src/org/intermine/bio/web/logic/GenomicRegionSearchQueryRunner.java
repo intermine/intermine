@@ -231,8 +231,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @param profile a user of webapp
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
-    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(
-            InterMineAPI im, Profile profile) {
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
@@ -244,14 +243,16 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 PathQuery query = new PathQuery(im.getModel());
 
                 // Add views
-                query.addViews("Chromosome.organism.shortName",
-                        "Chromosome.primaryIdentifier",
-                        "Chromosome.length");
+                query.addViews(
+                    "Chromosome.organism.shortName",
+                    "Chromosome.primaryIdentifier",
+                    "Chromosome.length"
+                );
 
                 // Add orderby
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
 
-                ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+                ExportResultsIterator results = im.getPathQueryExecutor().execute(query);
 
                 // a List contains all the chrInfo (organism, chrPID, length)
                 List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
