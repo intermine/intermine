@@ -708,7 +708,7 @@ public class GenomicRegionSearchService
      * @return chrInfoMap
      */
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
-        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI, profile);
+        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI);
     }
 
     /**
