@@ -68,6 +68,7 @@ import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
@@ -83,9 +84,6 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.ShutdownHook;
-import org.intermine.util.Shutdownable;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.Constants;
@@ -786,18 +784,18 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
-        ObjectStoreWriter userprofileOSW = null;
+        ObjectStoreWriter uosw = null;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
-            userprofileOSW = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            uosw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
             LOG.error("Unable to create userprofile - " + e.getMessage(), e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-            return userprofileOSW;
+            return null;
         }
 
-        applyUserProfileUpgrades(userprofileOSW, blockingErrorKeys);
-        return userprofileOSW;
+        applyUserProfileUpgrades(uosw, blockingErrorKeys);
+        return uosw;
     }
 
     private void applyUserProfileUpgrades(ObjectStoreWriter osw,
