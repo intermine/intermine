@@ -39,8 +39,9 @@ public class TrackerDelegate
     private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
     protected ObjectStoreWriter osw;
-    protected Connection connection = null;
+    protected final Connection connection;
     protected Thread trackerLoggerThread;
+    private boolean isClosed = false;
 
     /**
      * Create the tracker manager managing the trackers specified in input
@@ -65,6 +66,7 @@ public class TrackerDelegate
         } catch (SQLException sqle) {
             LOG.error("Problems retrieving connection. The tracker "
                       + " hasn't been instatiated", sqle);
+            throw new RuntimeException(sqle);
         }
 
         TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
@@ -158,15 +160,16 @@ public class TrackerDelegate
      */
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
         TemplateTracker tt = getTemplateTracker();
+
         if (tt != null) {
-            connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                tt.updateTemplateName(oldTemplateName, newTemplateName, connection);
+                c = getConnection();
+                tt.updateTemplateName(oldTemplateName, newTemplateName, c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getAccessCounter ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
     }
@@ -211,14 +214,14 @@ public class TrackerDelegate
     public List<ListTrack> getListOperations() {
         Tracker lt = getTracker(TrackerUtil.LIST_TRACKER);
         if (lt != null) {
-            connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                return ((ListTracker) lt).getListOperations(connection);
+                c = getConnection();
+                return ((ListTracker) lt).getListOperations(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getListOperations ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -242,14 +245,14 @@ public class TrackerDelegate
     public Map<String, Integer> getUserLogin() {
         Tracker lt = getTracker(TrackerUtil.LOGIN_TRACKER);
         if (lt != null) {
-            connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                return ((LoginTracker) lt).getUserLogin(connection);
+                c = getConnection();
+                return ((LoginTracker) lt).getUserLogin(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getUserLogin ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -276,14 +279,14 @@ public class TrackerDelegate
     public Map<String, Integer> getKeywordSearches() {
         Tracker st = getTracker(TrackerUtil.SEARCH_TRACKER);
         if (st != null) {
-            connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                return ((KeySearchTracker) st).getKeywordSearches(connection);
+                c = getConnection();
+                return ((KeySearchTracker) st).getKeywordSearches(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getKeywordSearches ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -331,10 +334,16 @@ public class TrackerDelegate
     }
 
     /**
-     * release the db connection when done
+     * Release the db connection when done. Once this connection is released, it will be sent
+     * back to the connection pool and reassigned to someone else. So we need to be careful to
+     * not close a connection someone else is using!
      */
-    public void close() {
+    public synchronized void close() {
+        if (isClosed) {
+            return;
+        }
         releaseConnection(connection);
+        isClosed = true;
     }
 
     /**
@@ -350,5 +359,6 @@ public class TrackerDelegate
         } catch (InterruptedException ie) {
             LOG.error(ie);
         }
+        close();
     }
 }
