@@ -149,8 +149,7 @@ public class GenomicRegionSearchService extends ListMakerService
         return GenomicRegionSearchUtil.createRegionListQueries(
                 info.getGenomicRegions(),
                 info.getExtension(),
-                GenomicRegionSearchQueryRunner.getChromosomeInfo(im,
-                        SessionMethods.getProfile(request.getSession())).get(info.getOrganism()),
+                GenomicRegionSearchQueryRunner.getChromosomeInfo(im).get(info.getOrganism()),
                 info.getOrganism(),
                 info.getFeatureClasses());
     }
