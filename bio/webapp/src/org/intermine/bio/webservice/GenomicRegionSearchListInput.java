@@ -255,8 +255,7 @@ public class GenomicRegionSearchListInput extends ListInput
             Set<String> spans = new HashSet<String>(getRegions());
             List<GenomicRegion> newRegions = new ArrayList<GenomicRegion>();
             Map<String, ChromosomeInfo> chromsForOrg
-                = GenomicRegionSearchQueryRunner.getChromosomeInfo(
-                        api, SessionMethods.getProfile(request.getSession())).get(getOrganism());
+                = GenomicRegionSearchQueryRunner.getChromosomeInfo(api).get(getOrganism());
             for (String span : spans) {
                 try {
                     newRegions.add(GenomicRegionSearchUtil.parseRegion(

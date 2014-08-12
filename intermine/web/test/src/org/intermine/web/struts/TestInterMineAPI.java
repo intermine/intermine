@@ -17,6 +17,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.types.ClassKeys;
 
@@ -53,5 +54,10 @@ public class TestInterMineAPI extends InterMineAPI
                 pm.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
+    }
+
+    @Override
+    protected void initUserProfileResources(ObjectStoreWriter userProfileWriter) {
+        // no-op.
     }
 }
