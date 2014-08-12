@@ -79,7 +79,6 @@ public class KeywordSearchResultsController extends TilesAction
             intialiseLogging(SessionMethods.getWebProperties(servletContext).getProperty(
                     "project.title", "unknown").toLowerCase());
         }
-        // This method leaves a connection in an uncommitted state!
         KeywordSearch.initKeywordSearch(im, contextPath);
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         int totalHits = 0;
