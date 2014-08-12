@@ -64,8 +64,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
     }
 
     public void tearDown() throws Exception {
-        super.tearDown();
         StoreDataTestCase.removeDataFromStore();
+        super.tearDown();
     }
 
     private void setUpUserProfiles() throws Exception {
