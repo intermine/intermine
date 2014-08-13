@@ -53,6 +53,11 @@ public class TrackerLogger implements Runnable
             if (track != null) {
                 track.store(connection);
             }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                return;
+            }
 
         }
     }

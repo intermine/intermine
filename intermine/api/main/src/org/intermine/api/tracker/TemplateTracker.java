@@ -10,6 +10,7 @@ package org.intermine.api.tracker;
  *
  */
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -75,24 +76,23 @@ public class TemplateTracker extends AbstractTracker
     }
 
     /**
-     * Load the tracks retrieved from the database into TemplateExecutionMap object
+     * Load the tracks retrieved from the database into TemplateExecutionMap object.
      */
     private static void loadTemplatesExecutionCache(Connection con) {
-        Statement stm = null;
+        PreparedStatement stm = null;
         ResultSet rs = null;
         try {
-            stm = con.createStatement();
-            String sql = "SELECT tt.templatename, tt.username, tt.sessionidentifier, t.tagname "
-                         + "FROM templatetrack tt LEFT JOIN tag t "
-                         + "ON tt.templatename = t.objectidentifier "
-                         + "AND t.type='" + TagTypes.TEMPLATE + "' "
-                         + "AND t.tagname='" + TagNames.IM_PUBLIC + "'";
-            rs = stm.executeQuery(sql);
+            String sql = "SELECT tt.templatename, tt.username, tt.sessionidentifier"
+                         + " FROM templatetrack tt"
+                         + " LEFT JOIN tag t ON tt.templatename = t.objectidentifier"
+                         + " WHERE t.type = ? AND t.tagname = ?";
+            stm = con.prepareStatement(sql);
+            stm.setString(1, TagTypes.TEMPLATE);
+            stm.setString(2, TagNames.IM_PUBLIC);
+            rs = stm.executeQuery();
             TemplateTrack tt;
             while (rs.next()) {
-                tt =  new TemplateTrack(rs.getString(1),
-                          rs.getString(2),
-                          rs.getString(3));
+                tt = new TemplateTrack(rs.getString(1), rs.getString(2), rs.getString(3));
                 templatesExecutionCache.addExecution(tt);
             }
         } catch (SQLException sqle) {
