@@ -39,7 +39,7 @@ public class PathQueryBuilderForJSONTest extends TestCase {
     protected void setUp() {
         builder = new PathQueryBuilderForJSONObj();
         savedBags = new HashMap<String, InterMineBag>();
-        schemaUrl = getClass().getResource("webservice/query.xsd").toString();
+        schemaUrl = getClass().getClassLoader().getResource("webservice/query.xsd").toString();
     }
 
     public void testPublicConstructor() {

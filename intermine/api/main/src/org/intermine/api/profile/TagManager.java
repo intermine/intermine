@@ -373,6 +373,7 @@ public class TagManager
      * @return the matching Tags
      * @deprecated There are typed methods that are more suitable. Use them instead.
      */
+    @SuppressWarnings("unchecked")
     @Deprecated
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
@@ -778,5 +779,18 @@ public class TagManager
         } catch (Throwable e) {
             //LOG.info("tried to close the db connection", e);
         }
+    }
+
+    /**
+     * Return all tags of given type.
+     * @param tagType The type of tag to return. Must not be null.
+     * @return A List of tags.
+     */
+    public List<Tag> getTagsByType(String tagType) {
+        if (tagType == null) {
+            throw new IllegalArgumentException(
+                    "tagType must not be null. Please specify a valid tag type.");
+        }
+        return getTags(null, null, tagType, null);
     }
 }

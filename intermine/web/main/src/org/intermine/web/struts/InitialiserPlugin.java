@@ -62,6 +62,7 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
@@ -729,7 +730,11 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Summarize the ObjectStore to get class counts
+     * Summarise the ObjectStore to get class counts
+     *
+     * This method does not actually perform any queries, but relies on the
+     * existence of a existing set of pre-calculated counts, generated as
+     * part of the build process.
      */
     private ObjectStoreSummary summariseObjectStore(ServletContext servletContext) {
         Properties objectStoreSummaryProperties = new Properties();
@@ -747,8 +752,7 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.objectstoresummary.loading", null);
         }
 
-        final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
-        return oss;
+        return new ObjectStoreSummary(objectStoreSummaryProperties);
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
@@ -784,18 +788,18 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
-        ObjectStoreWriter uosw = null;
+        ObjectStoreWriter osw = null;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
-            uosw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
             LOG.error("Unable to create userprofile - " + e.getMessage(), e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-            return null;
+            return osw;
         }
 
-        applyUserProfileUpgrades(uosw, blockingErrorKeys);
-        return uosw;
+        applyUserProfileUpgrades(osw, blockingErrorKeys);
+        return osw;
     }
 
     private void applyUserProfileUpgrades(ObjectStoreWriter osw,
@@ -880,15 +884,12 @@ public class InitialiserPlugin implements PlugIn
             ((ObjectStoreWriterInterMineImpl) userprofileOSW).getDatabase().shutdown();
         }
         if (os != null) {
-            ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
+            if (os instanceof ObjectStoreInterMineImpl) {
+                ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
+            }
         }
         if (trackerDelegate != null) {
-            try {
-                trackerDelegate.finalize();
-            } catch (Throwable e) {
-                LOG.warn("Error while disposing of tracker delegate", e);
-            }
-            trackerDelegate = null;
+            trackerDelegate.close();
         }
         InterMineContext.doShutdown();
     }
@@ -899,11 +900,14 @@ public class InitialiserPlugin implements PlugIn
      * @param tagManager tag manager
      */
     protected static void cleanTags(TagManager tagManager) {
-        List<Tag> classTags = tagManager.getTags(null, null, "class", null);
-
-        for (Tag tag : classTags) {
+        for (Tag tag : tagManager.getTagsByType(TagTypes.CLASS)) {
             // check that class exists
             try {
+                // nb: it has been discussed whether to store fully qualified
+                // or short class names in the tags table. Shorter names would save
+                // some space (but not very much). If that were to ever happen, this
+                // method would have to be changed, as otherwise it would delete all
+                // the class tags in the database.
                 Class.forName(tag.getObjectIdentifier());
             } catch (ClassNotFoundException e) {
                 tagManager.deleteTag(tag);

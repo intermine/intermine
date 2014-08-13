@@ -56,6 +56,7 @@ public class TrackerDelegate
             Tracker tracker;
             for (String trackerClassName : trackerClassNames) {
                 try {
+                    // Warning Will Robinson: this method does not do what you think it does.
                     tracker = TrackerFactory.getTracker(trackerClassName, connection, trackQueue);
                     String key = tracker.getName();
                     trackers.put(key, tracker);
@@ -65,7 +66,7 @@ public class TrackerDelegate
             }
         } catch (SQLException sqle) {
             LOG.error("Problems retrieving connection. The tracker "
-                      + " hasn't been instatiated", sqle);
+                      + " hasn't been instantiated", sqle);
             throw new RuntimeException(sqle);
         }
 
@@ -342,6 +343,12 @@ public class TrackerDelegate
         if (isClosed) {
             return;
         }
+        trackerLoggerThread.interrupt();
+        try {
+            trackerLoggerThread.join();
+        } catch (InterruptedException ie) {
+            LOG.error(ie);
+        }
         releaseConnection(connection);
         isClosed = true;
     }
@@ -352,13 +359,7 @@ public class TrackerDelegate
      */
     @Override
     public void finalize() throws Throwable {
-        super.finalize();
-        trackerLoggerThread.interrupt();
-        try {
-            trackerLoggerThread.join();
-        } catch (InterruptedException ie) {
-            LOG.error(ie);
-        }
         close();
+        super.finalize();
     }
 }
