@@ -508,7 +508,14 @@ public class JavaModelOutput
                     needComma = true;
                     sb.append(field.getName());
                     if (field instanceof AttributeDescriptor) {
-                        sb.append("=\\\"\" + " + field.getName() + " + \"\\\"");
+                        AttributeDescriptor attr = (AttributeDescriptor) field;
+                        if (attr.isPrimitive() || attr.isNumeric()) {
+                            sb.append("=\" + " + field.getName() + " + \"");
+                        } else {
+                            sb.append("=\" + (" + field.getName()
+                                    + " == null ? \"null\" : \"\\\"\" + "
+                                    + field.getName() + " + \"\\\"\") + \"");
+                        }
                     } else {
                         sb.append("=\" + (" + field.getName() + " == null ? \"null\" : ("
                                 + field.getName() + ".getId() == null ? \"no id\" : "

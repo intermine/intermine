@@ -47,14 +47,12 @@ public final class InterMineContext implements Shutdownable
     private static InterMineAPI im;
     private static Properties webProperties;
     private static WebConfig webConfig;
-    private static boolean isInitialised = false;
+    private static volatile boolean isInitialised = false;
     private static Emailer emailer;
     private static final Map<String, Object> ATTRIBUTES = new HashMap<String, Object>();
     private static KeyStore keyStore = null;
-    private static final ArrayBlockingQueue<MailAction> MAIL_QUEUE
-        = new ArrayBlockingQueue<MailAction>(10000);
-    private static final ExecutorService MAIL_SERVICE
-        = Executors.newCachedThreadPool(new DaemonThreadFactory());
+    private static ArrayBlockingQueue<MailAction> mailQueue;
+    private static ExecutorService mailService;
 
     /**
      * Set up the Context with everything it needs.
@@ -62,14 +60,24 @@ public final class InterMineContext implements Shutdownable
      * @param webProps The application properties.
      * @param wc The application configuration.
      */
-    public static void initilise(final InterMineAPI imApi, Properties webProps, WebConfig wc) {
-        isInitialised = true;
+    public static synchronized void initilise(
+            final InterMineAPI imApi,
+            final Properties webProps,
+            final WebConfig wc) {
+
+        if (isInitialised) { // May be initialized multiple times in tests.
+            doShutdown();
+        }
         im = imApi;
         webProperties = webProps;
         webConfig = wc;
         emailer = EmailerFactory.getEmailer(webProps);
+        mailQueue = new ArrayBlockingQueue<MailAction>(10000);
+        mailService = Executors.newCachedThreadPool(new DaemonThreadFactory());
         startMailerThreads(emailer);
         ShutdownHook.registerObject(new InterMineContext());
+
+        isInitialised = true;
     }
 
     private static void checkInit() {
@@ -127,14 +135,14 @@ public final class InterMineContext implements Shutdownable
      * @return Whether the action was successfully queued up.
      */
     public static boolean queueMessage(MailAction action) {
-        return MAIL_QUEUE.offer(action);
+        return mailQueue.offer(action);
     }
 
     /** Start a number of consumer threads that poll for messages to send from the mail queue **/
     private static void startMailerThreads(Emailer emailer) {
         for (int i = 0; i < WORKERS; i++) {
-            Runnable r = new MailDaemon(MAIL_QUEUE, emailer);
-            MAIL_SERVICE.submit(r);
+            Runnable r = new MailDaemon(mailQueue, emailer);
+            mailService.submit(r);
         }
     }
 
@@ -150,14 +158,23 @@ public final class InterMineContext implements Shutdownable
      * Send the signal that shutdown is happening - try and release resources.
      */
     public static void doShutdown() {
-        int leftToSend = MAIL_QUEUE.size();
-        // Allocate more actors to send the remaining messages.
-        for (int i = 0; i < leftToSend; i++) {
-            Runnable r = new MailDaemon(MAIL_QUEUE, emailer);
-            MAIL_SERVICE.submit(r);
+        if (mailQueue != null && mailService != null) {
+            int leftToSend = mailQueue.size();
+            // Allocate more actors to send the remaining messages.
+            for (int i = 0; i < leftToSend; i++) {
+                Runnable r = new MailDaemon(mailQueue, emailer);
+                mailService.submit(r);
+            }
+            // Tell the pool to close.
+            mailService.shutdownNow();
         }
-        // Tell the pool to close.
-        MAIL_SERVICE.shutdownNow();
+        im = null;
+        webProperties = null;
+        webConfig = null;
+        emailer = null;
+        mailQueue = null;
+        mailService = null;
+        isInitialised = false;
     }
 
 
