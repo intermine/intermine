@@ -77,11 +77,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
     @Override
     public void tearDown() throws Exception {
-        super.tearDown();
         iw.commitTransaction();
         iw.getDataTracker().clear();
         removeDataFromStore();
         iw.reset();
+        super.tearDown();
     }
 
     public static void oneTimeSetUp() throws Exception {
