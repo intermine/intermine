@@ -53,7 +53,7 @@ public final class BEDUtil
         int chromStart = -1;
         int chromEnd = -1;
         String name = null;
-        int score = 0;
+        final int score = 0;
         String strand = ".";
 
         if (lsf instanceof Chromosome) {

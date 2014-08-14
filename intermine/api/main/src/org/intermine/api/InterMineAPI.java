@@ -184,6 +184,9 @@ public class InterMineAPI
         }
     }
 
+    /**
+     * @return the pathQueryExecutor
+     */
     public PathQueryExecutor getPathQueryExecutor() {
         return getPathQueryExecutor(new AnonProfile());
     }
