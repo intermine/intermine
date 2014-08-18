@@ -877,15 +877,6 @@ public class InitialiserPlugin implements PlugIn
      */
     @Override
     public void destroy() {
-<<<<<<< HEAD
-        if (profileManager != null) {
-            ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
-                .getDatabase().shutdown();
-        }
-        if (os != null) {
-            ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
-        }
-=======
         if (userprofileOSW != null) {
             try {
                 userprofileOSW.close();
@@ -903,7 +894,6 @@ public class InitialiserPlugin implements PlugIn
             trackerDelegate.close();
         }
         InterMineContext.doShutdown();
->>>>>>> emma
     }
 
 
