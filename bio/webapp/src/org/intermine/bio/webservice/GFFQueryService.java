@@ -49,6 +49,10 @@ public class GFFQueryService extends BioQueryService
         return "text/x-gff3";
     }
 
+    /**
+     * @param pq pathquery
+     * @return the exporter
+     */
     protected GFF3Exporter getExporter(PathQuery pq) {
         String sourceName = webProperties.getProperty("project.title");
         Set<Integer> organisms = null;
@@ -63,12 +67,18 @@ public class GFFQueryService extends BioQueryService
             viewColumns, sourceName, organisms, false, getQueryPaths(pq));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    /**
+     *
+     * @return map of SO class names
+     */
     static Map<String, String> getSoClassNames() {
         return new HashMap<String, String>(
             (Map) InterMineContext.getAttribute(GFF3QueryServlet.SO_CLASS_NAMES));
     }
 
+    /**
+     * @param paths paths
+     */
     static void removeFirstItemInPaths(List<String> paths) {
         for (int i = 0; i < paths.size(); i++) {
             String path = paths.get(i);

@@ -38,6 +38,7 @@ public class InterMineModelParser implements ModelParser
      * @return the InterMine Model created
      * @throws ModelParserException if something goes wrong with parsing the class descriptors.
      */
+    @Override
     public Model process(Reader reader) throws ModelParserException {
         try {
             ModelHandler handler = new ModelHandler();
@@ -59,6 +60,7 @@ public class InterMineModelParser implements ModelParser
      * @return a set of ClassDescriptors
      * @throws ModelParserException if something goes wrong with parsing the class descriptors.
      */
+    @Override
     public Set<ClassDescriptor> generateClassDescriptors(Reader reader,
             String packageName) throws ModelParserException {
         try {

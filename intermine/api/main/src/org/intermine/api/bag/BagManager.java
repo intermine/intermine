@@ -42,6 +42,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.Query;
@@ -684,5 +685,12 @@ public class BagManager
         }
     }
 
-
+    /**
+     * Close the TagManager
+     *
+     * @throws ObjectStoreException in exceptional circumstances
+     */
+    public void close() throws ObjectStoreException {
+        tagManager.close();
+    }
 }

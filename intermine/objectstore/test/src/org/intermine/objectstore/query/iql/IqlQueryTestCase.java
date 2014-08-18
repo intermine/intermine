@@ -146,6 +146,12 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("DynamicClassConstraint", res);
         results.put("ContainsConstraintNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NULL", null));
         results.put("ContainsConstraintNotNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NOT NULL", null));
+
+        results.put("ContainsConstraintNullCollection1N", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees IS NULL", null));
+        results.put("ContainsConstraintNotNullCollection1N", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees IS NOT NULL", null));
+        results.put("ContainsConstraintNullCollectionMN", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.contractors IS NULL", null));
+        results.put("ContainsConstraintNotNullCollectionMN", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.contractors IS NOT NULL", null));
+
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.department CONTAINS ?", null);
         fq.setParameters(Collections.singletonList(data.get("DepartmentA1")));
         results.put("ContainsConstraintObjectRefObject", fq);

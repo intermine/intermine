@@ -165,7 +165,7 @@ public class PortalQueryAction extends InterMineAction
         className = StringUtil.capitalise(className);
         if (model.getClassDescriptorByName(className) == null) {
             recordError(new ActionMessage("errors.badportalclass"), request);
-            return goToNoResults(mapping, session);
+            return goToNoResults(mapping);
         }
 
         PathQuery pathQuery = new PathQuery(model);
@@ -247,34 +247,33 @@ public class PortalQueryAction extends InterMineAction
         }
     }
 
-    private ActionForward goToResults(ActionMapping mapping, HttpSession session,
+    private static ActionForward goToResults(ActionMapping mapping, HttpSession session,
             WebResults webResults) {
         SessionMethods.setQuery(session, webResults.getPathQuery());
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("trail", "").forward();
     }
 
-    private ActionForward goToReport(ActionMapping mapping, String id) {
+    private static ActionForward goToReport(ActionMapping mapping, String id) {
         return new ForwardParameters(mapping.findForward("report"))
             .addParameter("id", id).forward();
     }
 
-    private ActionForward goToNoResults(ActionMapping mapping, HttpSession session) {
+    private static ActionForward goToNoResults(ActionMapping mapping) {
         ActionForward forward = mapping.findForward("noResults");
         return new ForwardParameters(forward).addParameter("trail", "").forward();
     }
 
-    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag,
-            List<Integer> bagList) throws ObjectStoreException {
+    private static ActionForward createBagAndGoToBagDetails(ActionMapping mapping,
+            InterMineBag imBag, List<Integer> bagList) throws ObjectStoreException {
         imBag.addIdsToBag(bagList, imBag.getType());
         return new ForwardParameters(mapping.findForward("bagDetails"))
             .addParameter("bagName", imBag.getName()).forward();
     }
 
-    private void attachMessages(ActionMessages actionMessages, String className,
+    private static void attachMessages(ActionMessages actionMessages, String className,
             int bagQueryResultSize,
             int bagListSize, String extId) {
-        // Attach messages
         if (bagListSize == 0 && bagQueryResultSize == 1) {
             ActionMessage msg = new ActionMessage("results.lookup.noresults.one",
                     new Integer(bagQueryResultSize), className);

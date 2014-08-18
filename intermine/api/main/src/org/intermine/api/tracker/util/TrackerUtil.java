@@ -14,26 +14,30 @@ package org.intermine.api.tracker.util;
  *
  * @author Daniela
  */
-public interface TrackerUtil
+public final class TrackerUtil
 {
     /** name of class that tracks templates **/
-    String TEMPLATE_TRACKER = "TemplateTracker";
+    public static final String TEMPLATE_TRACKER = "TemplateTracker";
     /** name of table that tracks templates **/
-    String TEMPLATE_TRACKER_TABLE = "templatetrack";
+    public static final String TEMPLATE_TRACKER_TABLE = "templatetrack";
     /** name of class that tracks lists **/
-    String LIST_TRACKER = "ListTracker";
+    public static final String LIST_TRACKER = "ListTracker";
     /** name of table that tracks lists **/
-    String LIST_TRACKER_TABLE = "listtrack";
+    public static final String LIST_TRACKER_TABLE = "listtrack";
     /** name of class that tracks lists **/
-    String LOGIN_TRACKER = "LoginTracker";
+    public static final String LOGIN_TRACKER = "LoginTracker";
     /** name of table that tracks logins **/
-    String LOGIN_TRACKER_TABLE = "logintrack";
+    public static final String LOGIN_TRACKER_TABLE = "logintrack";
     /** name of class that tracks searches **/
-    String SEARCH_TRACKER = "SearchTracker";
+    public static final String SEARCH_TRACKER = "SearchTracker";
     /** name of table that tracks searches **/
-    String SEARCH_TRACKER_TABLE = "searchtrack";
+    public static final String SEARCH_TRACKER_TABLE = "searchtrack";
     /** name of class that tracks queries **/
-    String QUERY_TRACKER = "QueryTracker";
+    public static final String QUERY_TRACKER = "QueryTracker";
     /** name of table that tracks queries **/
-    String QUERY_TRACKER_TABLE = "querytrack";
+    public static final String QUERY_TRACKER_TABLE = "querytrack";
+
+    private TrackerUtil() {
+        // just don't
+    }
 }

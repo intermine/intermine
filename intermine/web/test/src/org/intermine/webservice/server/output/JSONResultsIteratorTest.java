@@ -3,7 +3,6 @@ package org.intermine.webservice.server.output;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +49,7 @@ import org.json.JSONObject;
 
 public class JSONResultsIteratorTest extends TestCase {
 
+    private static final int DEFAULT_LIMIT = 5;
     private ObjectStoreDummyImpl os;
     private Company wernhamHogg;
     private CEO jennifer;
@@ -81,7 +81,7 @@ public class JSONResultsIteratorTest extends TestCase {
     protected void setUp() {
         os = new ObjectStoreDummyImpl();
 
-        wernhamHogg = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        wernhamHogg = DynamicUtil.simpleCreateObject(Company.class);
         wernhamHogg.setId(new Integer(1));
         wernhamHogg.setName("Wernham-Hogg");
         wernhamHogg.setVatNumber(101);
@@ -182,7 +182,7 @@ public class JSONResultsIteratorTest extends TestCase {
         trudy.setName("Trudy");
         trudy.setAge(25);
 
-        bms = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        bms = DynamicUtil.simpleCreateObject(Company.class);
         bms.setId(new Integer(23));
         bms.setName("Business Management Seminars");
         bms.setVatNumber(102);
@@ -225,17 +225,21 @@ public class JSONResultsIteratorTest extends TestCase {
         assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
 
     }
-    
-    private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
+
+    private ExportResultsIterator getIterator(PathQuery pq, int limit) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Map<String, InterMineBag> noBags = new HashMap<String, InterMineBag>();
         Query q = MainHelper.makeQuery(pq, noBags, pathToQueryNode, null, null);
         @SuppressWarnings("unchecked")
-        List<Object> resultList = os.execute(q, 0, 5, true, true, new HashMap<Object, Integer>());
+        List<Object> resultList = os.execute(q, 0, limit, true, true, new HashMap<Object, Integer>());
         Results results = new DummyResults(q, resultList);
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
         return iter;
+    }
+
+    private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
+        return getIterator(pq, DEFAULT_LIMIT);
     }
 
     public void testMultipleSimpleObjects() throws Exception {
@@ -272,7 +276,7 @@ public class JSONResultsIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.name", "Employee.age", "Employee.id");
 
-        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq, 10));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
@@ -971,10 +975,12 @@ public class JSONResultsIteratorTest extends TestCase {
         row1.add(wernhamHogg);
         row1.add(address2);
         os.addRow(row1);
+        os.setResultsSize(1);
 
         PathQuery pq = new PathQuery(model);
         pq.addViews(
-                "Employee.age", "Employee.name",
+                "Employee.age",
+                "Employee.name",
                 "Employee.department.name",
                 "Employee.department.manager.name",
                 "Employee.department.manager.address.address",
@@ -1217,11 +1223,12 @@ public class JSONResultsIteratorTest extends TestCase {
         os.addRow(row4);
         os.addRow(row5);
         os.addRow(row6);
+        os.setResultsSize(6);
 
         PathQuery pq = new PathQuery(model);
         pq.addViews("Department.name", "Department.employees.name", "Department.employees.age");
 
-        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq, 10));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
@@ -1237,8 +1244,7 @@ public class JSONResultsIteratorTest extends TestCase {
     }
 
     public void testMultipleObjectsWithRefs() throws Exception {
-        os.setResultsSize(6);
-
+        
         List<String> jsonStrings = new ArrayList<String>();
 
         jsonStrings.add(
@@ -1292,22 +1298,33 @@ public class JSONResultsIteratorTest extends TestCase {
         row4.add(neil);
         row4.add(wernhamHogg);
 
+        os.setResultsSize(4); // Otherwise the DummyObject store will keep pumping out nulls.
         os.addRow(row1);
         os.addRow(row2);
         os.addRow(row3);
         os.addRow(row4);
 
         PathQuery pq = new PathQuery(model);
-        pq.addViews("Department.name", "Department.manager.name", "Department.manager.age", "Department.company.name", "Department.company.vatNumber");
+        pq.addViews(
+            "Department.name",
+            "Department.manager.name",
+            "Department.manager.age",
+            "Department.company.name",
+            "Department.company.vatNumber"
+        );
 
         JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
+        List<String> names = new ArrayList<String>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
+            names.add(gotRow.getString("name"));
             got.add(gotRow);
         }
 
-        assertEquals(4, got.size());
+        int howMany = got.size();
+        String msg = howMany > 4 ? "There are too many results: " + names : "There are too few results: " + names;
+        assertEquals(msg, 4, howMany);
         for (int i = 0; i < jsonStrings.size(); i++) {
             JSONObject jo = new JSONObject(jsonStrings.get(i));
             assertEquals(null, JSONObjTester.getProblemsComparing(jo, got.get(i)));
@@ -1442,18 +1459,27 @@ public class JSONResultsIteratorTest extends TestCase {
 
         os.addRow(row1a);
         os.addRow(row1b);
+
         os.addRow(row2);
+
         os.addRow(row3a);
         os.addRow(row3b);
+
         os.addRow(row4a);
         os.addRow(row4b);
 
         PathQuery pq = new PathQuery(model);
-        pq.addViews("Department.name", "Department.manager.name", "Department.manager.age",
-                        "Department.company.name", "Department.company.vatNumber",
-                        "Department.employees.name", "Department.employees.age");
+        pq.addViews(
+            "Department.name",
+            "Department.manager.name",
+            "Department.manager.age",
+            "Department.company.name",
+            "Department.company.vatNumber",
+            "Department.employees.name",
+            "Department.employees.age"
+        );
 
-        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq, 10));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {

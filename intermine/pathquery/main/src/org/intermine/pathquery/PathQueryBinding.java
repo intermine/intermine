@@ -244,6 +244,7 @@ public class PathQueryBinding
     public void doAdditionalConstraintStuff(PathQuery query,
             PathConstraint constraint,
             XMLStreamWriter writer) throws XMLStreamException {
+        // do stuff
     }
 
     /**

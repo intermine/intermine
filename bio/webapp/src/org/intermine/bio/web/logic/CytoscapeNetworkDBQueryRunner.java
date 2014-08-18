@@ -43,7 +43,7 @@ public class CytoscapeNetworkDBQueryRunner
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return a set of genes
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException can't access the db
      */
     public Set<Integer> getInteractingGenes(String featureType, Set<Integer> startingFeatureSet,
             Model model, PathQueryExecutor executor) throws ObjectStoreException {
@@ -104,7 +104,7 @@ public class CytoscapeNetworkDBQueryRunner
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return raw query results
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException can't access the db
      */
     public ExportResultsIterator getInteractions(Set<Integer> keys, Model model,
             PathQueryExecutor executor) throws ObjectStoreException {
@@ -145,7 +145,8 @@ public class CytoscapeNetworkDBQueryRunner
      * @throws ObjectStoreException If the underlying queries cannot be run.
      */
     public ExportResultsIterator extendNetwork(String geneId,
-            Set<Integer> keys, Model model, PathQueryExecutor executor) throws ObjectStoreException {
+            Set<Integer> keys, Model model, PathQueryExecutor executor)
+        throws ObjectStoreException {
 
         Set<Integer> startingGeneSet = new HashSet<Integer>();
         startingGeneSet.add(Integer.valueOf(geneId));

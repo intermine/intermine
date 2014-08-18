@@ -11,7 +11,6 @@ package org.intermine.webservice.server.idresolution;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -86,7 +85,7 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Map<String, Map<String, Integer>> getStats(BagQueryResult bqr) {
+    private static Map<String, Map<String, Integer>> getStats(BagQueryResult bqr) {
         Map<String, Map<String, Integer>> stats = new HashMap<String, Map<String, Integer>>();
         Map<String, Integer> objectStats = new HashMap<String, Integer>();
         Map<String, Integer> termStats = new HashMap<String, Integer>();
@@ -97,11 +96,11 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter
 
         // Do any processing that needs doing here.
         for (List inputTerms: bqr.getMatches().values()) {
-            goodMatchTerms.addAll((Collection<? extends String>) inputTerms);
+            goodMatchTerms.addAll(inputTerms);
         }
         for (String issue: ISSUES) {
             for (IssueResult ir: bqr.getIssueResults(issue)) {
-                issueMatchTerms.add(ir.inputIdent);
+                issueMatchTerms.add(ir.getInputIdent());
             }
         }
 
@@ -129,11 +128,11 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter
             final Map<String, Object> obj = new HashMap<String, Object>();
             final List<Map<String, Object>> matches = new ArrayList<Map<String, Object>>();
 
-            obj.put("input", issue.inputIdent);
-            obj.put("reason", issue.queryDesc);
+            obj.put("input", issue.getInputIdent());
+            obj.put("reason", issue.getQueryDesc());
             obj.put("matches", matches);
 
-            for (Object match: issue.results) {
+            for (Object match: issue.getResults()) {
                 matches.add(processIssueMatch(match));
             }
             result.add(obj);

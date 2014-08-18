@@ -28,11 +28,7 @@ before_install:
     - sh -e /etc/init.d/xvfb start
     - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
 script:
-    - ant -f intermine/objectstore/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[objectstore] /' >> failures.list)
-    - ant -f intermine/integrate/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[integrate] /' >> failures.list)
-    - ant -f intermine/pathquery/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[pathquery] /' >> failures.list)
-    - ant -f intermine/api/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[api] /' >> failures.list)
-    - ant -f intermine/web/test/build.xml 2>&1 | tee >(grep FAILED | sed -e 's/^/[web] /' >> failures.list)
+    - ant -f intermine/all/build.xml 2>&1 | tee >(grep FAILED >> failures.list)
     - cat failures.list
     - (cd testmodel; PSQL_USER=postgres sh setup.sh)
     - sleep 10

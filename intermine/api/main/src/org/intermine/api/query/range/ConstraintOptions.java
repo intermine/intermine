@@ -1,5 +1,15 @@
 package org.intermine.api.query.range;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.metadata.ConstraintOp;
 import static org.intermine.metadata.ConstraintOp.AND;
 import static org.intermine.metadata.ConstraintOp.OR;
@@ -12,7 +22,8 @@ import static org.intermine.metadata.ConstraintOp.OR;
  * @author Alex Kalderimis
  *
  */
-public class ConstraintOptions {
+public class ConstraintOptions
+{
 
     private final ConstraintOp mainSetOp;
     private final ConstraintOp rangeSetOp;
@@ -24,8 +35,10 @@ public class ConstraintOptions {
     /**
      * Construct a new set of constraint options.
      *
-     * @param mainOp The logical operator to use to combine constraints for ranges together. Expected to be AND or OR
-     * @param rangeOp The logical operator to use to combine left and right constraints together for each range.
+     * @param mainOp The logical operator to use to combine constraints for ranges together.
+     * Expected to be AND or OR
+     * @param rangeOp The logical operator to use to combine left and right constraints together
+     *  for each range.
      * @param leftOp The operator to use in the left side constraint.
      * @param rightOp The operator to use in the right side constraint.
      */
@@ -39,12 +52,14 @@ public class ConstraintOptions {
         this.leftOp = leftOp;
         this.rightOp = rightOp;
     }
-    
+
     /**
      * Construct a new set of constraint options.
      *
-     * @param mainOp The logical operator to use to combine constraints for ranges together. Expected to be AND or OR
-     * @param rangeOp The logical operator to use to combine left and right constraints together for each range.
+     * @param mainOp The logical operator to use to combine constraints for ranges together.
+     *  Expected to be AND or OR
+     * @param rangeOp The logical operator to use to combine left and right constraints together
+     *  for each range.
      * @param leftOp The operator to use in the left side constraint.
      * @param rightOp The operator to use in the right side constraint.
      * @param leftField The field of the QueryNode to evaluate in the left side constraint.
@@ -70,7 +85,8 @@ public class ConstraintOptions {
     }
 
     /**
-     * @return The logical operator to use to combine left and right constraints together for each range.
+     * @return The logical operator to use to combine left and right constraints together
+     * for each range.
      */
     public ConstraintOp getRangeSetOp() {
         return rangeSetOp;
@@ -105,7 +121,7 @@ public class ConstraintOptions {
     public String getRightField() {
         return rightField;
     }
-    
+
     /**
      * Return a new constraint set with each ConstraintOp negated.
      * @return A negated version of this constraint set.
@@ -121,7 +137,8 @@ public class ConstraintOptions {
     }
 
     /**
-     * Return a new constraint set with each ConstraintOp negated, and the left and right fields swapped.
+     * Return a new constraint set with each ConstraintOp negated, and the left and right
+     * fields swapped.
      * @return A negated and swapped version of this constraint set.
      */
     public ConstraintOptions negateAndSwap() {

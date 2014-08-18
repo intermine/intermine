@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.InterMineBag;
@@ -45,7 +47,7 @@ import org.intermine.web.context.InterMineContext;
  * @author Alexis Kalderimis
  *
  */
-public class JSONRowFormatterTest extends InterMineAPITestCase {
+public class JSONRowFormatterTest extends TestCase {
 
     /**
      * @param name
@@ -78,6 +80,7 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
 
     public void setUp() throws Exception {
 
+        //super.setUp();
         testProps = new Properties();
         testProps.load(getClass().getResourceAsStream("JSONRowFormatterTest.properties"));
 
@@ -156,7 +159,7 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(im, webProperties, null);
+        InterMineContext.initilise(dummyAPI, webProperties, null);
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
@@ -174,7 +177,7 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
      */
     @Override
     public void tearDown() throws Exception {
-        super.tearDown();
+        InterMineContext.doShutdown();
     }
 
     public void testJSONRowFormatter() {
@@ -212,6 +215,7 @@ public class JSONRowFormatterTest extends InterMineAPITestCase {
         String executionTime = dateFormatter.format(now);
         String expected = "],\"executionTime\":\"" + executionTime
              + "\",\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        fmtr.formatAttributes(null, new StringBuilder());
         assertEquals(expected, fmtr.formatFooter(null, 200));
 
         expected = "],\"executionTime\":\"" + executionTime

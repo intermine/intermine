@@ -395,7 +395,7 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
             if ("mir-316".endsWith(symbol)) {
                 primaryId = "FBgn0262417";
             } else {
-            	primaryId = resolver.resolveId(FLY_TAXON_ID, symbol).iterator().next();
+                primaryId = resolver.resolveId(FLY_TAXON_ID, symbol).iterator().next();
             }
         }
 

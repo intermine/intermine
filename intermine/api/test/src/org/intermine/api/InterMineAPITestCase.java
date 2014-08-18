@@ -108,12 +108,13 @@ public class InterMineAPITestCase extends TestCase {
                                Profile.NO_TEMPLATES, apiKey, true, false);
         pmTmp.createProfile(testUser);
 
-        String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
+        String[] trackerClassNames = {
+                "org.intermine.api.tracker.TemplateTracker",
                 "org.intermine.api.tracker.ListTracker",
                 "org.intermine.api.tracker.LoginTracker",
-                "org.intermine.api.tracker.KeySearchTracker"};
+                "org.intermine.api.tracker.KeySearchTracker"
+        };
         trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
-
 
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
@@ -128,6 +129,7 @@ public class InterMineAPITestCase extends TestCase {
                 e.printStackTrace();
             }
         }
+
         if (os != null) {
             clearDatabase();
         }
@@ -135,6 +137,9 @@ public class InterMineAPITestCase extends TestCase {
             clearUserprofile();
             uosw.close();
         }
+
+        // should be closed!
+        im.getBagManager().close();
     }
 
     private void clearDatabase() throws Exception {

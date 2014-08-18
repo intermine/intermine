@@ -26,7 +26,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
-import org.intermine.bio.web.model.RegionParseException;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;

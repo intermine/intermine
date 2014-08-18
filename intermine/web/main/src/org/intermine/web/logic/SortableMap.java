@@ -16,11 +16,9 @@ package org.intermine.web.logic;
 
 
 import java.math.BigDecimal;
-import java.util.AbstractMap;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -153,7 +151,7 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
     }
 
     @SuppressWarnings("unchecked") // needs unchecked cast from Comparable<T> to T.
-    private <T> int compareThings(
+    private static <T> int compareThings(
             final boolean checkNumbers,
             final boolean sortAscending,
             Comparable<T> a,

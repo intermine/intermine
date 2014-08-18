@@ -96,7 +96,7 @@ public class EntrezPublicationsRetriever
      * Load summary version of Publication record by default. If this boolean (loadFullRecord)
      * is true, load all data, eg. abstract, MeSH terms etc.
      *
-     * @param fullRecord if TRUE load full record of publication.
+     * @param loadFullRecord if TRUE load full record of publication.
      */
     public void setLoadFullRecord(String loadFullRecord) {
         if ("true".equalsIgnoreCase(loadFullRecord)) {
@@ -299,13 +299,11 @@ public class EntrezPublicationsRetriever
     /**
      * Add a Map of pubication information to the Database
      */
-    @SuppressWarnings("rawtypes")
     private void addToDb(Transaction txn, Database db,
                          Map<String, Map<String, Object>> fromServerMap)
         throws IOException, DatabaseException {
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
             String pubMedId = entry.getKey();
-            // System.err .println("adding to cache: " + pubMedId);
             DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
             Map dataMap = entry.getValue();
             ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
@@ -322,7 +320,6 @@ public class EntrezPublicationsRetriever
      * @param os The ObjectStore to read from
      * @return a List of publications
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected List<Publication> getPublications(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Publication.class);

@@ -59,6 +59,9 @@ public class BagQueryResult
      */
     public static final String WILDCARD = "WILDCARD";
 
+    /**
+     * keys of the map in a set
+     */
     public static final Set<String> ISSUE_KEYS
         = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
                 DUPLICATE, OTHER, TYPE_CONVERTED, WILDCARD)));
@@ -174,6 +177,10 @@ public class BagQueryResult
         return ids;
     }
 
+    /**
+     * @param issueKey key for issue
+     * @return set of issues
+     */
     public Set<IssueResult> getIssueResults(String issueKey) {
         Set<IssueResult> result = new HashSet<IssueResult>();
         Map<String, Map<String, List>> issueTypes = issues.get(issueKey);
@@ -197,27 +204,80 @@ public class BagQueryResult
      * Simple struct to hold three pieces of information together.
      * @author Alex Kalderimis
      */
-    public static class IssueResult {
+    public static class IssueResult
+    {
 
-        public final String queryDesc, inputIdent;
-        public final List results;
+        /**
+         * query description
+         */
+        private final String queryDesc;
 
-        IssueResult(String queryDesc, String inputIdent, List results) {
+        /**
+         * identifier input
+         */
+        private final String inputIdent;
+
+        /**
+         * matches found
+         */
+        private final List results;
+
+
+
+        /**
+         * @param queryDesc query description
+         * @param inputIdent identifier input by user
+         * @param results matches found
+         */
+        protected IssueResult(String queryDesc, String inputIdent, List results) {
             this.queryDesc = queryDesc;
             this.inputIdent = inputIdent;
             this.results = Collections.unmodifiableList(results);
         }
 
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public boolean equals(Object o) {
             return EqualsBuilder.reflectionEquals(this, o);
         }
 
+        /**
+         * @return query description
+         */
+        public String getQueryDesc() {
+            return queryDesc;
+        }
+
+        /**
+         * @return identifier input by user
+         */
+        public String getInputIdent() {
+            return inputIdent;
+        }
+
+        /**
+         * @return matches found
+         */
+        public List getResults() {
+            return results;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public int hashCode() {
             return new HashCodeBuilder().append(queryDesc).append(inputIdent).
                     append(results).hashCode();
         }
     }
 
+    /**
+     * @param issueKey key for the issue
+     * @return set of identifiers
+     */
     public Set<String> getInputIdentifiersForIssue(String issueKey) {
         Set<String> ids = new HashSet<String>();
         for (IssueResult issue : getIssueResults(issueKey)) {
@@ -249,6 +309,7 @@ public class BagQueryResult
      * Changes to the returned map will not affect the information in this bag query result.
      * @deprecated Use getUnresolvedIdentifiers
      */
+    @Deprecated
     public Map<String, Object> getUnresolved() {
         Map<String, Object> ret = new HashMap<String, Object>();
         for (String notFound: unresolved) {

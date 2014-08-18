@@ -115,4 +115,16 @@ public class AttributeDescriptor extends FieldDescriptor
         return "short".equals(type) || "int".equals(type) || "long".equals(type)
             || "float".equals(type) || "double".equals(type) || "boolean".equals(type);
     }
+
+    /**
+     * Returns true if the type of the attribute is some kind of number.
+     * @return true or false.
+     */
+    public boolean isNumeric() {
+        return "short".equals(type)     || "java.lang.Short".equals(type)
+                || "int".equals(type)    || "java.lang.Integer".equals(type)
+                || "long".equals(type)   || "java.lang.Long".equals(type)
+                || "float".equals(type)  || "java.lang.Float".equals(type)
+                || "double".equals(type) || "java.lang.Double".equals(type);
+    }
 }

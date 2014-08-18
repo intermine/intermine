@@ -349,9 +349,9 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         }
         try {
             Query q = IqlQueryParser.parse(new IqlQuery("select Company from Company where Company.departments = Company.vatNumber", "org.intermine.model.testmodel"));
-            fail("Expected: IllegalArgumentException, because departments is a collection");
+            fail("Expected: IllegalArgumentException, because attempt to use SimpleConstraint to compare a collection");
         } catch (IllegalArgumentException e) {
-            assertEquals("Field departments is a collection type", e.getMessage());
+            assertEquals("Cannot compare a QueryObjectReference using a SimpleConstraint - use CONTAINS or DOES NOT CONTAIN instead", e.getMessage());
         }
         try {
             Query q = IqlQueryParser.parse(new IqlQuery("select Company from Company where Company.CEO = Company.vatNumber", "org.intermine.model.testmodel"));

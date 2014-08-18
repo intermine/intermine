@@ -625,7 +625,7 @@ public final class IqlQueryParser
      * There are several possible arrangements:
      * 1. a     where a is a QueryClass.
      * 2. a.b   where a is a QueryClass, and b is a QueryField.
-     * 3. a.b   where a is a QueryClass, and b is a QueryObjectReference.
+     * 3. a.b   where a is a QueryClass, and b is a QueryObjectReference/QueryCollectionReference.
      * 3. a.b   where a is a Query, and b is a QueryEvaluable.
      * 4. a.b.c where a is a Query, b is a QueryClass, and c is a QueryField.
      *
@@ -674,8 +674,14 @@ public final class IqlQueryParser
                                             unescape(ast.getText()));
                                 }
                             } else {
-                                obj = new QueryObjectReference((QueryClass) obj, unescape(ast
-                                            .getText()));
+                                // we need to try both a reference and collection
+                                try {
+                                    obj = new QueryObjectReference((QueryClass) obj,
+                                            unescape(ast.getText()));
+                                } catch (IllegalArgumentException e2) {
+                                    obj = new QueryCollectionReference((QueryClass) obj,
+                                            unescape(ast.getText()));
+                                }
                             }
                         }
                     } else if (obj instanceof QueryObjectPathExpression) {
@@ -1407,6 +1413,8 @@ public final class IqlQueryParser
                 throw new IllegalArgumentException("Cannot compare a class to null");
             } else if (left instanceof QueryObjectReference) {
                 return new ContainsConstraint((QueryObjectReference) left, op);
+            } else if (left instanceof QueryCollectionReference) {
+                return new ContainsConstraint((QueryCollectionReference) left, op);
             } else {
                 return new SimpleConstraint((QueryEvaluable) left, op);
             }

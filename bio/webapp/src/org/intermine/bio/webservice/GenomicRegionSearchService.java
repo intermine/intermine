@@ -92,7 +92,8 @@ public class GenomicRegionSearchService extends ListMakerService
      * @param type The unqualified name of the class of object in the new list.
      * @return A new list
      * @throws ObjectStoreException if there is an error running the queries.
-     * @throws UnknownBagTypeException
+     * @throws UnknownBagTypeException if bad bag type
+     * @throws ClassKeysNotFoundException no class keys
      */
     protected InterMineBag doListCreation(GenomicRegionSearchListInput input, Profile profile,
         String type) throws ObjectStoreException, ClassKeysNotFoundException,

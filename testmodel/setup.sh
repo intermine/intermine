@@ -90,6 +90,7 @@ echo "------> Building and releasing web-application - about 1min left."
 ant -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
+    retrieve-objectstore-summary \
     default \
     release-webapp | tee -a $LOG | grep tomcat-deploy
 

@@ -19,8 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -94,12 +92,12 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                         Arrays.asList(StringUtil.split(dbxref, ",")));
                 for (String ref : refList) {
                     ref = ref.trim();
-                    
+
                     int colonIndex = ref.indexOf(":");
                     if (colonIndex == -1) {
                         throw new RuntimeException("external reference not understood: " + ref);
                     }
-  
+
                     if (ref.startsWith("PMID:")) {
                         pmid = ref.substring(colonIndex + 1);
                     } else {

@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.biojavax.ga.Organism;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
@@ -36,10 +35,10 @@ import org.intermine.api.util.AnonProfile;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -246,15 +245,16 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 PathQuery query = new PathQuery(im.getModel());
 
                 // Add views
-                query.addViews("Chromosome.organism.shortName",
-                        "Chromosome.primaryIdentifier",
-                        "Chromosome.length");
+                query.addViews(
+                    "Chromosome.organism.shortName",
+                    "Chromosome.primaryIdentifier",
+                    "Chromosome.length"
+                );
 
                 // Add orderby
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
 
-                ExportResultsIterator results = im.getPathQueryExecutor(new AnonProfile())
-                                                  .execute(query);
+                ExportResultsIterator results = im.getPathQueryExecutor().execute(query);
 
                 // a List contains all the chrInfo (organism, chrPID, length)
                 List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();

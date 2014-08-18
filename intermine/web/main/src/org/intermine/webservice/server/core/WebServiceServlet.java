@@ -137,6 +137,4 @@ public abstract class WebServiceServlet extends HttpServlet
         throws ServletException, IOException {
         respond(Method.DELETE, request, response);
     }
-
-
 }

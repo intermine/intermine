@@ -1,5 +1,15 @@
 package org.intermine.api.bag;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,9 +22,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class InvitationHandler extends DefaultHandler {
+/**
+ * @author Daniela
+ */
+public class InvitationHandler extends DefaultHandler
+{
 
-    private static class UnresolvedInvite {
+    private static class UnresolvedInvite
+    {
         String bag;
         String invitee;
         String token;
@@ -25,7 +40,7 @@ public class InvitationHandler extends DefaultHandler {
     private final List<UnresolvedInvite> unresolved = new ArrayList<UnresolvedInvite>();
 
     private String currentName = null;
-    private StringBuffer currentValue = null; 
+    private StringBuffer currentValue = null;
     private UnresolvedInvite currentInvite = null;
 
     /**
@@ -53,8 +68,10 @@ public class InvitationHandler extends DefaultHandler {
      */
     @Override
     public void characters(char[] ch, int start, int length)
-            throws SAXException {
-        if (currentValue != null) currentValue.append(ch, start, length);
+        throws SAXException {
+        if (currentValue != null) {
+            currentValue.append(ch, start, length);
+        }
     }
 
     /**
@@ -72,23 +89,30 @@ public class InvitationHandler extends DefaultHandler {
             } else if ("token".equals(currentName)) {
                 currentInvite.token = value;
             } else if ("accepted".equals(currentName)) {
-                currentInvite.accepted = (StringUtils.isBlank(value)) ? null : Boolean.parseBoolean(value);
+                currentInvite.accepted = (StringUtils.isBlank(value))
+                        ? null : Boolean.parseBoolean(value);
             } else if ("acceptedAt".equals(currentName)) {
-                currentInvite.acceptedAt = (StringUtils.isBlank(value)) ? null : new Date(Long.valueOf(value));
+                currentInvite.acceptedAt = (StringUtils.isBlank(value))
+                        ? null : new Date(Long.valueOf(value));
             } else if ("createdAt".equals(currentName)) {
-                currentInvite.createdAt = (StringUtils.isBlank(value)) ? null : new Date(Long.valueOf(value));
+                currentInvite.createdAt = (StringUtils.isBlank(value))
+                        ? null : new Date(Long.valueOf(value));
             }
         }
         currentValue = null;
         currentName = null;
     }
 
+    /**
+     * @param inviter user who sent invite
+     * @throws SQLException if can't save to database
+     */
     public void storeInvites(Profile inviter) throws SQLException {
         for (UnresolvedInvite unres: unresolved) {
             InterMineBag bag = inviter.getSavedBags().get(unres.bag);
             SharingInvite invite = new SharingInvite(
-              bag, unres.invitee, unres.token, unres.createdAt,
-              unres.acceptedAt, unres.accepted);
+                    bag, unres.invitee, unres.token, unres.createdAt,
+                    unres.acceptedAt, unres.accepted);
             invite.save();
         }
     }
