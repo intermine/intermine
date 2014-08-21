@@ -166,7 +166,8 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
          * @param parameters a List of TemplateParameter objects
          */
         public void setTemplateParameters(List<TemplateParameter> parameters) {
-            for (int i = 0; i < parameters.size(); i++) {
+            int size = parameters.size();
+            for (int i = 0; i < size; i++) {
                 TemplateParameter par = parameters.get(i);
                 int index = i + 1;
                 addParameter("constraint" + index, par.getPathId());
