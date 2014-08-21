@@ -354,6 +354,25 @@ public class TagManager
             cs.addConstraint(c);
         }
     }
+    
+    /**
+     * Return all the tags with the given tag name, optionally filtered by tag-type.
+     * @param tagName The name of the tag. Must not be null.
+     * @param tagType The type of tags to return. May be null (with the semantics of returning all tags). If
+     *                not null, this must be a valid tag type.
+     * @param user The user these tags belong to. Must not be null.
+     * @return The tags that match these criteria.
+     * @see TagTypes
+     */
+    public List<Tag> getTagsByName(String tagName, Profile user, String tagType) {
+        if (tagName == null) {
+            throw new NullPointerException("tagName must not be null");
+        }
+        if (user == null) {
+            throw new NullPointerException("user must not be null");
+        }
+        return getTags(tagName, tagType, null, user.getUsername()); 
+    }
 
     /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
@@ -373,7 +392,7 @@ public class TagManager
      * @return the matching Tags
      * @deprecated There are typed methods that are more suitable. Use them instead.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Deprecated
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {

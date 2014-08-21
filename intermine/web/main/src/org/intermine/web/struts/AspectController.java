@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,12 +25,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagMapper;
+import org.intermine.api.profile.TagMapper.Field;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.model.userprofile.Tag;
-
 
 /**
  * Contoller for a single data set tile embedded in a page. Expects the request parameter
@@ -70,12 +72,9 @@ public class AspectController extends TilesAction
         // look up the classes for this aspect
         TagManager tagManager = im.getTagManager();
         String tagName = TagNames.IM_ASPECT_PREFIX + request.getParameter("name");
-        List<Tag> tags = tagManager.getTags(tagName, null, "class",
-                                            im.getProfileManager().getSuperuser());
-        List<String> startingPoints = new ArrayList<String>();
-        for (Tag tag : tags) {
-            startingPoints.add(tag.getObjectIdentifier());
-        }
+        Profile su = im.getProfileManager().getSuperuserProfile();
+        List<Tag> classDescriptorTags = tagManager.getTagsByName(tagName, su, TagTypes.CLASS);
+        List<String> startingPoints = TagMapper.getMapper(Field.ID).map(classDescriptorTags);
         context.putAttribute("startingPoints", startingPoints);
         return null;
     }
