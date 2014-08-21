@@ -354,12 +354,12 @@ public class TagManager
             cs.addConstraint(c);
         }
     }
-    
+
     /**
      * Return all the tags with the given tag name, optionally filtered by tag-type.
      * @param tagName The name of the tag. Must not be null.
-     * @param tagType The type of tags to return. May be null (with the semantics of returning all tags). If
-     *                not null, this must be a valid tag type.
+     * @param tagType The type of tags to return. May be null (with the semantics of returning
+     *                all tags). If not null, this must be a valid tag type.
      * @param user The user these tags belong to. Must not be null.
      * @return The tags that match these criteria.
      * @see TagTypes
@@ -371,7 +371,7 @@ public class TagManager
         if (user == null) {
             throw new NullPointerException("user must not be null");
         }
-        return getTags(tagName, tagType, null, user.getUsername()); 
+        return getTags(tagName, null, tagType, user.getUsername());
     }
 
     /**
@@ -499,7 +499,10 @@ public class TagManager
      * @throws TagNamePermissionException If the user does not have the required
      *         permissions to add this tag.
      */
-    public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
+    public synchronized Tag addTag(
+            String tagName,
+            String objectIdentifier,
+            String type,
             Profile profile)
         throws TagNameException, TagNamePermissionException {
 
@@ -602,7 +605,7 @@ public class TagManager
 
         checkUserExists(username);
         checkTagType(type);
-        tagCache = null;
+
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
         }
@@ -620,10 +623,13 @@ public class TagManager
         tag.setType(type);
         tag.setUserProfile(userProfile);
 
+        CacheMap<MultiKey, List<Tag>> cacheWas = tagCache;
         try {
+            tagCache = null;
             osWriter.store(tag);
             return tag;
         } catch (ObjectStoreException e) {
+            tagCache = cacheWas;
             throw new RuntimeException("cannot set tag", e);
         }
     }

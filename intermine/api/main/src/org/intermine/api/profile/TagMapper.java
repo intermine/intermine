@@ -22,10 +22,20 @@ import org.intermine.model.userprofile.Tag;
  * @author Alex Kalderimis
  *
  */
-public class TagMapper implements Transformer
+public final class TagMapper implements Transformer
 {
 
-    public enum Field {Name, ID, Type, Owner}
+    /** The valid fields that can be read from a tag **/
+    public enum Field {
+        /** The tag name **/
+        Name,
+        /** The identifier of the tagged object. **/
+        ID,
+        /** The type of this tag **/
+        Type,
+        /** The owner of the tag **/
+        Owner
+    }
 
     private final Field field;
 
@@ -47,7 +57,7 @@ public class TagMapper implements Transformer
 
     @Override
     public String transform(Object obj) {
-        if (obj == null || ! (obj instanceof Tag)) {
+        if (obj == null || !(obj instanceof Tag)) {
             throw new IllegalArgumentException("tag must be a Tag, got " + obj);
         }
         return transform((Tag) obj);
@@ -63,16 +73,16 @@ public class TagMapper implements Transformer
             throw new NullPointerException("tag must not be null.");
         }
         switch (field) {
-        case Name:
-            return tag.getTagName();
-        case ID:
-            return tag.getObjectIdentifier();
-        case Type:
-            return tag.getType();
-        case Owner:
-            return tag.getUserProfile().getUsername();
-        default:
-            throw new IllegalStateException("Unknown field: " + field);
+            case Name:
+                return tag.getTagName();
+            case ID:
+                return tag.getObjectIdentifier();
+            case Type:
+                return tag.getType();
+            case Owner:
+                return tag.getUserProfile().getUsername();
+            default:
+                throw new IllegalStateException("Unknown field: " + field);
         }
     }
 
