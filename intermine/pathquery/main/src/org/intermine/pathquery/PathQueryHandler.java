@@ -78,6 +78,20 @@ public class PathQueryHandler extends DefaultHandler
         this.version = version;
     }
 
+    /**
+     * Constructor.
+     * @param queries The accumulator.
+     * @param version The path-query format version.
+     * @param model A default model to use, in preference to the model retrieved
+     *              by <code>Model.getInstanceByName()</code>.
+     */
+    public PathQueryHandler(Map<String, PathQuery> queries, int version, Model model) {
+        this(queries, version);
+        if (model != null) {
+            addModel(model);
+        }
+    }
+
     /** @param m The model to add. **/
     public void addModel(Model m) {
         String name = m.getName();

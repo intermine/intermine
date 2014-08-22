@@ -146,6 +146,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         assertNull(trackerDelegate.getRank(templateManager).get("template2"));
     }
 
+//    TODO: Re-enable these tests.
 //    public void testTrackListCreation() throws SQLException, InterruptedException {
 //
 //        trackerDelegate.trackListCreation("Address", 10, ListBuildMode.IDENTIFIERS, superUser, "sessionId1");

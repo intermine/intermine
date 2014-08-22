@@ -356,6 +356,25 @@ public class TagManager
     }
 
     /**
+     * Return all the tags with the given tag name, optionally filtered by tag-type.
+     * @param tagName The name of the tag. Must not be null.
+     * @param tagType The type of tags to return. May be null (with the semantics of returning
+     *                all tags). If not null, this must be a valid tag type.
+     * @param user The user these tags belong to. Must not be null.
+     * @return The tags that match these criteria.
+     * @see TagTypes
+     */
+    public List<Tag> getTagsByName(String tagName, Profile user, String tagType) {
+        if (tagName == null) {
+            throw new NullPointerException("tagName must not be null");
+        }
+        if (user == null) {
+            throw new NullPointerException("user must not be null");
+        }
+        return getTags(tagName, null, tagType, user.getUsername());
+    }
+
+    /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
      * wildcards.
      *
@@ -373,7 +392,7 @@ public class TagManager
      * @return the matching Tags
      * @deprecated There are typed methods that are more suitable. Use them instead.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Deprecated
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
@@ -480,7 +499,10 @@ public class TagManager
      * @throws TagNamePermissionException If the user does not have the required
      *         permissions to add this tag.
      */
-    public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
+    public synchronized Tag addTag(
+            String tagName,
+            String objectIdentifier,
+            String type,
             Profile profile)
         throws TagNameException, TagNamePermissionException {
 
@@ -583,7 +605,7 @@ public class TagManager
 
         checkUserExists(username);
         checkTagType(type);
-        tagCache = null;
+
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
         }
@@ -601,10 +623,13 @@ public class TagManager
         tag.setType(type);
         tag.setUserProfile(userProfile);
 
+        CacheMap<MultiKey, List<Tag>> cacheWas = tagCache;
         try {
+            tagCache = null;
             osWriter.store(tag);
             return tag;
         } catch (ObjectStoreException e) {
+            tagCache = cacheWas;
             throw new RuntimeException("cannot set tag", e);
         }
     }

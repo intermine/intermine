@@ -33,9 +33,8 @@ public class QueryServiceTest extends TestCase
     private static final String resourcePath = "/query/results";
 
     public void testCreatePathQuery() throws IOException {
-        ServiceFactory factory = new ServiceFactory(TestUtil.getRootUrl(), "");
-        ModelService modelService = factory.getModelService();
-        Model model = modelService.getModel();
+        ModelServiceTest mst = new ModelServiceTest();
+        Model model = mst.getModelService().getModel();
         PathQuery query = new PathQuery(model);
         query.addViews("Employee.name", "Employee.age", "Employee.end", "Employee.fullTime");
         query.addConstraint(Constraints.like("Employee.name","EmployeeA*"));
@@ -51,7 +50,10 @@ public class QueryServiceTest extends TestCase
         TestUtil.checkRow(result.get(0), "EmployeeA1", "10", "1.1", "true");
         TestUtil.checkRow(result.get(1), "EmployeeA2", "20", "2.2", "false");
 
-        queryService.setExpectedRequest(baseUrl + resourcePath + "?" + "start=100" + "&" + "query=" + query.toXml() + "&" + "format=xml" + "&" + "size=200");
+        queryService.setExpectedRequest(baseUrl + resourcePath + "?"
+                + "start=100&size=200"
+                + "&query=" + query.toXml()
+                + "&format=xml");
         result = queryService.getResults(query, new Page(100, 200));
     }
 

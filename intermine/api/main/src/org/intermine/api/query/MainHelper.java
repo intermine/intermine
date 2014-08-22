@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
@@ -106,7 +108,6 @@ public final class MainHelper
     private MainHelper() {
     }
 
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(MainHelper.class);
 
     private static final LookupTokeniser LOOKUP_TOKENISER = LookupTokeniser.getLookupTokeniser();
@@ -700,7 +701,7 @@ public final class MainHelper
         QueryField typeClass = new QueryField((QueryClass) field, "class");
         ConstraintOp op = (pcmt.getOp() == ConstraintOp.ISA)
                 ? ConstraintOp.IN : ConstraintOp.NOT_IN;
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new TreeSet<Class<?>>(new ClassNameComparator());
         for (String name: pcmt.getValues()) {
             ClassDescriptor cd = model.getClassDescriptorByName(name);
             if (cd == null) { // PathQueries should take care of this, but you know.
@@ -1530,6 +1531,15 @@ public final class MainHelper
         RangeConfig.loadHelpers(props);
     }
 
+    // Allow collections with stable orderings by class name.
+    private static final class ClassNameComparator implements Comparator<Class<?>>
+    {
+        @Override
+        public int compare(Class<?> o1, Class<?> o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+
     /**
      * @author Alex
      */
@@ -1564,6 +1574,7 @@ public final class MainHelper
         /**
          * @param allProps all properties
          */
+        @SuppressWarnings("unchecked")
         protected static void loadHelpers(Properties allProps) {
             Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.",
                     allProps);
