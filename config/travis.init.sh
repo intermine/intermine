@@ -6,6 +6,7 @@ psql -c 'create database userprofiletest;' -U postgres
 psql -c 'create database unittest;' -U postgres
 psql -c 'create database biotest;' -U postgres
 psql -c 'create database biofulldatatest;' -U postgres
+touch failures.list # Allowing us to cat it later.
 mkdir ~/.intermine
 cp config/ci.properties ~/.intermine/intermine-test.properties
 sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-test.properties
