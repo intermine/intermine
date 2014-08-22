@@ -14,6 +14,7 @@ cp ~/.intermine/intermine-test.properties ~/.intermine/testmodel.properties
 cp config/ci-bio.properties ~/.intermine/intermine-bio-test.properties
 sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
 sudo pip install -r testmodel/webapp/selenium/requirements.txt
+gem install travis-artifacts
 . config/download_and_configure_tomcat.sh
 ant -f bio/test-all/dbmodel/build.xml build-db
 

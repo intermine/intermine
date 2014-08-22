@@ -18,6 +18,8 @@ script:
     - sleep 10
     - (cd testmodel/webapp/selenium; nosetests)
     - test ! -s failures.list
+after_failure:
+    - config/upload_artifacts.sh
 notifications:
     irc:
         channels:
