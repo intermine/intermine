@@ -19,9 +19,11 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.metadata.Model;
 import org.intermine.metadata.SAXParser;
 import org.intermine.metadata.StringUtil;
 import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Convert PathQueries to and from XML
@@ -248,15 +250,30 @@ public class PathQueryBinding
     }
 
     /**
-     * Parse PathQueries from XML
+     * Parse PathQueries from XML.
      * @param reader the saved queries
      * @param version the version of the xml, an attribute on the profile manager
      * @return a Map from query name to PathQuery
      */
     public static Map<String, PathQuery> unmarshalPathQueries(Reader reader, int version) {
+        return unmarshalPathQueries(reader, version, null);
+    }
+
+    /**
+     * Parse PathQueries from XML, declaring which model should be used in preference to the
+     * default model retrieved by <code>Model::getInstanceByName</code>.
+     * @param reader the saved queries
+     * @param version the version of the xml, an attribute on the profile manager
+     * @param model The model to use in preference. May be null.
+     * @return a Map from query name to PathQuery
+     */
+    public static Map<String, PathQuery> unmarshalPathQueries(
+            Reader reader, int version, Model model) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
-            SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, version));
+            InputSource src = new InputSource(reader);
+            DefaultHandler handler = new PathQueryHandler(queries, version, model);
+            SAXParser.parse(src, handler);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -270,7 +287,19 @@ public class PathQueryBinding
      * @return PathQuery
      */
     public static PathQuery unmarshalPathQuery(Reader reader, int version) {
-        Map<String, PathQuery> map = unmarshalPathQueries(reader, version);
+        return unmarshalPathQuery(reader, version, null);
+    }
+
+    /**
+     * Parses a PathQuery from XML, declaring which model should be used in preference to the
+     * default model retrieved by <code>Model::getInstanceByName</code>.
+     * @param reader The source of the model XML.
+     * @param version The version of the path-query format.
+     * @param model The model to use in preference. May be null.
+     * @return The path-query, or null if none were found.
+     */
+    public static PathQuery unmarshalPathQuery(Reader reader, int version, Model model) {
+        Map<String, PathQuery> map = unmarshalPathQueries(reader, version, model);
         if (map.size() != 0) {
             return map.values().iterator().next();
         }

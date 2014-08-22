@@ -321,7 +321,8 @@ public class Service
     }
 
     /**
-     * @return the server's API version. Will make at most one call, caching the response for future calls.
+     * @return the server's API version. Will make at most one call, caching the response for
+     *         future calls.
      */
     public int getAPIVersion() {
         if (apiVersion  == -1) {
@@ -329,6 +330,15 @@ public class Service
             apiVersion = getIntResponse(r);
         }
         return apiVersion;
+    }
+
+    /**
+     * Clear the cache on this object. You might find this useful if you have a persistent
+     * application with long-lived instances of this class (more than 24 hours or so). You may
+     * wish in such circumstances to periodically clear the cache to avoid stale data.
+     */
+    public void clearCache() {
+        apiVersion = -1;
     }
 
     /**
