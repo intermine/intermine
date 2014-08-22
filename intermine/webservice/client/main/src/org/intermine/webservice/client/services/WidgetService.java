@@ -170,7 +170,7 @@ public class WidgetService extends Service
         JSONObject labels = json.optJSONObject("labels");
         String xLabel = labels == null ? null : labels.getString("x");
         String yLabel = labels == null ? null : labels.getString("y");
-        return new Widget(factory, name, title, description,
+        return new Widget(name, title, description,
                 widgetType, chartType, targets, filters, xLabel, yLabel);
     }
 }

@@ -144,9 +144,11 @@ public class QueryService extends AbstractQueryService<PathQuery>
     public PathQuery createPathQuery(String queryXml) {
         ModelService modelService = new ModelService(getRootUrl(), getApplicationName());
         Model model = modelService.getModel();
-        Model.addModel(model.getName(), model);
+        // We supply the model explicitly to the PathQueryBinding, since model name
+        // clashes are common, and we know here which model this query should be
+        // referring to.
         return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
-                PathQuery.USERPROFILE_VERSION);
+                PathQuery.USERPROFILE_VERSION, model);
     }
 
     @Override

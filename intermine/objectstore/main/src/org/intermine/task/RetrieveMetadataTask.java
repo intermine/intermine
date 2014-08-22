@@ -32,6 +32,8 @@ import org.intermine.util.PropertiesUtil;
  */
 public class RetrieveMetadataTask extends Task
 {
+    private static final String FAILURE_MSG =
+            "Failed to retrieve metadata from %s (%s) - maybe you need to run build-db?\n";
     protected File destDir;
     protected String database;
     protected String osname;
@@ -88,7 +90,7 @@ public class RetrieveMetadataTask extends Task
             throw new BuildException("Configuration error.", e);
         }
 
-        try { 
+        try {
 
             if (keyToRetrieve == null) {
 
@@ -127,8 +129,7 @@ public class RetrieveMetadataTask extends Task
 
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
-            err.printf("Failed to retrieve metadata from %s (%s) - maybe you need to run build-db?\n",
-                    database, db.getName());
+            err.printf(FAILURE_MSG, database, db.getName());
             throw new BuildException(e);
         }
     }
