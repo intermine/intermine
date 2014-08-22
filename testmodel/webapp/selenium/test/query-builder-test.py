@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.ui import Select, WebDriverWait
@@ -28,6 +29,7 @@ class QueryBuilderTestCase(Super):
             self.assertIsNotNone(self.findLink(type_name))
 
         self.findLink('Bank').click()
+        time.sleep(3)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)
 
@@ -42,6 +44,7 @@ class QueryBuilderTestCase(Super):
     def test_query_tree(self):
         Select(self.elem("#queryClassSelector")).select_by_visible_text("Bank")
         self.elem("#submitClassSelect").click()
+        time.sleep(3)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)
         self.assertEquals('Name', self.elem('.attributeField').text)
@@ -260,6 +263,7 @@ class QueryBuilderTestCase(Super):
         self.load_queries_into_history()
 
         self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(2)').click()
+        time.sleep(3)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)
         # Edit a constraint.
@@ -293,6 +297,7 @@ class QueryBuilderTestCase(Super):
         link = self.findLink("Import query from XML")
         self.assertIsNotNone(link)
         link.click()
+        time.sleep(3)
         self.assertIn('Import Query', self.browser.title)
         input_box = self.elem('#xml')
         self.assertIsNotNone(input_box)
