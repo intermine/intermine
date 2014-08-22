@@ -17,6 +17,7 @@ class QueryBuilderTestCase(Super):
         self.browser.get(self.base_url + '/customQuery.do')
 
     def test_on_right_page(self):
+        time.sleep(3)
         self.assertIn('Custom query', self.browser.title)
 
     def test_browse_data_model(self):
@@ -37,6 +38,7 @@ class QueryBuilderTestCase(Super):
         cls = 'Employee'
         Select(self.elem("#queryClassSelector")).select_by_visible_text(cls)
         self.elem("#submitClassSelect").click()
+        time.sleep(3)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals(cls, self.elem('.typeSelected').text)
         self.elem('a[title="Show Employee in results"] > img.arrow').click()
@@ -215,6 +217,7 @@ class QueryBuilderTestCase(Super):
     def test_edit_template(self):
         self.browser.get(self.base_url + '/template.do?name=ManagerLookup&scope=all')
         self.elem('input.editQueryBuilder').click()
+        time.sleep(3)
         self.assertIn('Query builder', self.browser.title)
         # Edit the constraint.
         self.elem('img[title="Edit this constraint"]').click()
@@ -236,6 +239,7 @@ class QueryBuilderTestCase(Super):
 
     def test_query_history(self):
         self.load_queries_into_history()
+        time.sleep(3)
         self.assertIn('Custom query', self.browser.title)
         self.assertEquals(2, len(self.elems('#modifyQueryForm tbody tr')))
         self.assertEquals('query_2', self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(2)').text)
