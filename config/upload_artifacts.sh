@@ -1,12 +1,18 @@
 #!/bin/bash
 
-if [ -z ${ARTIFACTS_AWS_ACCESS_KEY_ID+x} ]; then
-    echo No access key provided.
+set -e
+
+BUILD_REPORT_FILE="./build.tar.gz"
+
+if [ -z $BUILD_REPORT_SERVICE ]; then
+    echo "No service specified."
 else
     echo Uploading build.
-    tar -cf build.tar.gz intermine/all/build/
-    travis-artifacts \
-        upload \
-        --path build.tar.gz
+    rm $BUILD_REPORT_FILE
+    tar -acf $BUILD_REPORT_FILE intermine/all/build/
+    curl --basic \
+        --user TRAVIS:$BUILD_STORAGE_TOKEN \
+        -F report=@${BUILD_REPORT_FILE} $BUILD_REPORT_SERVICE
+    echo upload complete
 fi
 
