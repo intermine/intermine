@@ -8,7 +8,7 @@ if [ -z $BUILD_REPORT_SERVICE ]; then
     echo "No service specified."
 else
     echo Uploading build.
-    rm $BUILD_REPORT_FILE
+    rm -f $BUILD_REPORT_FILE
     tar -acf $BUILD_REPORT_FILE intermine/all/build/
     curl --basic \
         --user TRAVIS:$BUILD_STORAGE_TOKEN \
