@@ -50,14 +50,17 @@ public class AlertFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
 	HttpServletRequest httpReq = (HttpServletRequest) req;
-	
-	check(httpReq);
-        
+	// skip webservice URIs and just alert on actions (not .img or .js, etc.)
+	if((httpReq.getRequestURI().indexOf("service") == -1)&&
+	   (httpReq.getRequestURI().indexOf(".do") != -1)){	
+		check(httpReq);
+        }
 	chain.doFilter(req, response);
     }
 
     
     private void check(HttpServletRequest httpReq){
+
 	String sessionID = httpReq.getSession().getId();        
         long now = System.currentTimeMillis();
         if((now - checkFrequency) > lastCheck){
