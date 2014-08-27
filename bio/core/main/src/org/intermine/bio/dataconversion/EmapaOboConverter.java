@@ -92,7 +92,7 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
 	if(p!=null && c !=null){
 	  int ps = Integer.parseInt(p.getAttribute("startsAt").getValue());
 	  int pe = Integer.parseInt(p.getAttribute("endsAt").getValue());
-	  int cs = Integer.parseInt(c.getAttribute("endsAt").getValue());
+	  int cs = Integer.parseInt(c.getAttribute("startsAt").getValue());
 	  int ce = Integer.parseInt(c.getAttribute("endsAt").getValue());
 	  if( ps <= ce && pe >= cs )
 		super.processRelation(oboRelation);
