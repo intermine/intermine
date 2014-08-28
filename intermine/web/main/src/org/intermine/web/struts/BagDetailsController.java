@@ -126,6 +126,7 @@ public class BagDetailsController extends TilesAction
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = os.getModel();
         Map<String, Type> types = webConfig.getTypes();
+
         Type type = null;
 
         LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
