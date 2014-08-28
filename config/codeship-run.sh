@@ -3,7 +3,8 @@
 touch failures.list
 
 ant -f intermine/all/build.xml \
-    clean fulltest checkstyle \ | tee >(grep FAILED >> failures.list)
+    clean fulltest checkstyle  \
+    | tee >(grep FAILED >> failures.list)
 
 cat failures.list
 
