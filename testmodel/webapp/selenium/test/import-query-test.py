@@ -24,8 +24,7 @@ class ImportQueryTest(QueryBuilderTestCase):
         input_box.send_keys(query)
         self.assertEquals('true', self.elem('#file').get_attribute('disabled'))
         self.elem('#importQueriesForm input[type="submit"]').click()
-        wait = WebDriverWait(self.browser, 10)
-        wait.until(EC.title_contains('Query builder'))
+        time.sleep(3)
 
         self.assertEquals('Bank', self.elem('.typeSelected').text)
         constraints = self.elems('span.constraint')

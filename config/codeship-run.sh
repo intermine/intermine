@@ -10,7 +10,8 @@ cat failures.list
 
 PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmodel/setup.sh
 sleep 10
-(cd testmodel/webapp/selenium; nosetests)
+
+sh config/run-selenium-tests.sh
 
 if [ -z $S3_LOCATION ]; then
     echo no s3 location provided.
