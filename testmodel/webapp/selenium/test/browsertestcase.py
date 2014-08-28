@@ -1,11 +1,19 @@
+import logging
+import os
 import unittest
+
+home_dir = os.getenv('HOME')
+logging.basicConfig(level = logging.DEBUG)
+
 from selenium import webdriver
 
 class BrowserTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.browser = webdriver.Firefox()
+        p = webdriver.FirefoxProfile()
+        p.set_preference('webdriver.log.file', home_dir + '/firefox_console')
+        cls.browser = webdriver.Firefox(p)
         cls.browser.implicitly_wait(30)
 
     @classmethod

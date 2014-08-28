@@ -16,7 +16,7 @@ script:
     - cat failures.list
     - (cd testmodel; PSQL_USER=postgres sh setup.sh)
     - sleep 10
-    - (cd testmodel/webapp/selenium; nosetests)
+    - sh config/run-selenium-tests.sh
     - test ! -s failures.list
 after_failure:
     - config/upload_artifacts.sh
