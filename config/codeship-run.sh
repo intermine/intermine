@@ -1,12 +1,14 @@
 #!/bin/bash
 
-set -e
-
 touch failures.list
-ant -f intermine/all/build.xml clean fulltest checkstyle \
-    | tee >(grep FAILED >> failures.list)
+
+ant -f intermine/all/build.xml \
+    clean fulltest checkstyle \ | tee >(grep FAILED >> failures.list)
+
 cat failures.list
-(cd testmodel; PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh setup.sh); sleep 10
+
+PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmode/setup.sh
+sleep 10
 (cd testmodel/webapp/selenium; nosetests)
 
 if [ -z $S3_LOCATION ]; then
