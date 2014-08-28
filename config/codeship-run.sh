@@ -7,7 +7,7 @@ ant -f intermine/all/build.xml \
 
 cat failures.list
 
-PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmode/setup.sh
+PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmodel/setup.sh
 sleep 10
 (cd testmodel/webapp/selenium; nosetests)
 
