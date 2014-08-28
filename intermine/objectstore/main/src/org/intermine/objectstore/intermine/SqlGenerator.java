@@ -112,14 +112,14 @@ public final class SqlGenerator
     }
 
     private static final Logger LOG = Logger.getLogger(SqlGenerator.class);
-    protected static final int QUERY_NORMAL = 0;
-    protected static final int QUERY_SUBQUERY_FROM = 1;
-    protected static final int QUERY_SUBQUERY_CONSTRAINT = 2;
-    protected static final int ID_ONLY = 2;
-    protected static final int NO_ALIASES_ALL_FIELDS = 3;
-    protected static final int QUERY_FOR_PRECOMP = 4;
-    protected static final int QUERY_SUBQUERY_EXISTS = 5;
-    protected static final int QUERY_FOR_GOFASTER = 6;
+    public static final int QUERY_NORMAL = 0;
+    public static final int QUERY_SUBQUERY_FROM = 1;
+    public static final int QUERY_SUBQUERY_CONSTRAINT = 2;
+    public static final int ID_ONLY = 2;
+    public static final int NO_ALIASES_ALL_FIELDS = 3;
+    public static final int QUERY_FOR_PRECOMP = 4;
+    public static final int QUERY_SUBQUERY_EXISTS = 5;
+    public static final int QUERY_FOR_GOFASTER = 6;
 
     protected static Map<DatabaseSchema, Map<Query, CacheEntry>> sqlCache
         = new WeakHashMap<DatabaseSchema, Map<Query, CacheEntry>>();
