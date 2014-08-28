@@ -12,6 +12,7 @@ else
     tar -acf $BUILD_REPORT_FILE \
         --exclude '*.xml' \
         intermine/all/build/
+    ls -lh $BUILD_REPORT_FILE
     curl --basic \
         --user TRAVIS:$BUILD_STORAGE_TOKEN \
         -F report=@${BUILD_REPORT_FILE} $BUILD_REPORT_SERVICE
