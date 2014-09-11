@@ -547,8 +547,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 logTableConnection = getConnection();
                 if (!DatabaseUtil.tableExists(logTableConnection, tableName)) {
                     logTableConnection.createStatement().execute("CREATE TABLE " + tableName
-                        + "(timestamp bigint, optimise bigint, estimated bigint, "
-                        + "execute bigint, permitted bigint, convert bigint, iql text, sql text)");
+                            + "(timestamp bigint, optimise bigint, estimated bigint, execute "
+                            + "bigint, permitted bigint, convert bigint, iql text, sql text)");
                 }
                 logTableBatch = new Batch(new BatchWriterPostgresCopyImpl());
                 logTableName = tableName;
@@ -1046,7 +1046,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 + ", SQL Optimise: " + statsOptTime + ", Estimate: "
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
-        flushLogTable();
+
+        try {
+            logTableBatch.close(logTableConnection);
+        } catch (SQLException e1) {
+            LOG.error("Couldn't close OS log table.");
+        }
+
         Connection c = null;
         try {
             c = getConnection();
