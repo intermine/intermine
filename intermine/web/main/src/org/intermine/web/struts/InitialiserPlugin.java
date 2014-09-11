@@ -885,6 +885,11 @@ public class InitialiserPlugin implements PlugIn
         }
         if (os != null) {
             if (os instanceof ObjectStoreInterMineImpl) {
+                try {
+                    ((ObjectStoreInterMineImpl) os).close();
+                } catch (ObjectStoreException e) {
+                    LOG.error("Couldn't shut down OS. Memory leaks!");
+                }
                 ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
             }
         }
