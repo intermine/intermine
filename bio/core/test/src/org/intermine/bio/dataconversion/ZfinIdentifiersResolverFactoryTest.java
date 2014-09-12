@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  */
 public class ZfinIdentifiersResolverFactoryTest extends TestCase {
     ZfinIdentifiersResolverFactory factory;
-    String zfinDataFile = "resources/zfin.data.sample";
+    String zfinDataFile = "zfin.data.sample";
 
     public ZfinIdentifiersResolverFactoryTest() {
     }
@@ -33,11 +33,10 @@ public class ZfinIdentifiersResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(zfinDataFile);
+        File f = new File(getClass().getClassLoader().getResource(zfinDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/zfin"));
         assertTrue(IdResolverFactory.resolver.getTaxons().contains("7955"));

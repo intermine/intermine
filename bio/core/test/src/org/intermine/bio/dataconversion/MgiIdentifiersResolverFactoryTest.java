@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  */
 public class MgiIdentifiersResolverFactoryTest extends TestCase {
     MgiIdentifiersResolverFactory factory;
-    String mgiDataFile = "resources/mgi.data.sample";
+    String mgiDataFile = "mgi.data.sample";
 
     public MgiIdentifiersResolverFactoryTest() {
     }
@@ -34,11 +34,10 @@ public class MgiIdentifiersResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(mgiDataFile);
+        File f = new File(getClass().getClassLoader().getResource(mgiDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
 //        IdResolverFactory.resolver.writeToFile(new File("build/mgi"));
 

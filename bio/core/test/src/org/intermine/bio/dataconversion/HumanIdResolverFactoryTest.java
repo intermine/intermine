@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  */
 public class HumanIdResolverFactoryTest extends TestCase {
     HumanIdResolverFactory factory;
-    String humanidDataFile = "resources/humanid.data.sample";
+    String humanidDataFile = "humanid.data.sample";
 
     public HumanIdResolverFactoryTest() {
     }
@@ -34,11 +34,10 @@ public class HumanIdResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(humanidDataFile);
+        File f = new File(getClass().getClassLoader().getResource(humanidDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/humanid"));
         assertTrue(IdResolverFactory.resolver.getTaxons().contains("9606"));

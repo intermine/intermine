@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  */
 public class WormBaseIdResolverFactoryTest extends TestCase {
     WormBaseIdResolverFactory factory;
-    String wormDataFile = "resources/worm.data.sample";
+    String wormDataFile = "worm.data.sample";
 
     public WormBaseIdResolverFactoryTest() {
     }
@@ -33,11 +33,10 @@ public class WormBaseIdResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(wormDataFile);
+        File f = new File(getClass().getClassLoader().getResource(wormDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromWormIdFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/worm"));
         assertTrue(IdResolverFactory.resolver.getTaxons().contains("6239"));

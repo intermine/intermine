@@ -1,6 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,7 +20,7 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
 
     EntrezGeneIdResolverFactory factory;
     String idresolverCache = "resources/resolver.cache.test";
-    String entrezDataFile = "resources/entrez.data.sample";
+    String entrezDataFile = "entrez.data.sample";
     String idresolverConfig = "resolver_config.properties";
 
     public EntrezGeneIdResolverFactoryTest() {
@@ -68,7 +69,13 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"101", "102"})), IdResolverFactory.resolver.getTaxons());
 
         // not cached
-        File f = new File(entrezDataFile);
+        ClassLoader cl = getClass().getClassLoader();
+        URL u = cl.getResource(entrezDataFile);
+        if (u == null) {
+            fail("data file not found");
+        }
+
+        File f = new File(u.toURI());
         if (!f.exists()) {
             fail("data file not found");
         }

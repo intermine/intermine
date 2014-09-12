@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  */
 public class HgncIdResolverFactoryTest extends TestCase {
     HgncIdResolverFactory factory;
-    String hgncDataFile = "resources/hgnc.data.sample";
+    String hgncDataFile = "hgnc.data.sample";
 
     public HgncIdResolverFactoryTest() {
     }
@@ -33,7 +33,7 @@ public class HgncIdResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(hgncDataFile);
+        File f = new File(getClass().getClassLoader().getResource(hgncDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
