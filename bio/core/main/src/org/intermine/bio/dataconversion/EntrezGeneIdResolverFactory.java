@@ -35,23 +35,23 @@ import org.intermine.util.PropertiesUtil;
  */
 public class EntrezGeneIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
-    protected String propKey = "resolver.file.rootpath"; // set in .intermine/MINE.properties
-    protected String resolverFileSymbo = "entrez";
+    private static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
+    private String propKey = "resolver.file.rootpath"; // set in .intermine/MINE.properties
+    private String resolverFileSymbo = "entrez";
 
-    protected String propFile = "entrezIdResolver_config.properties";
-    protected Map<String, String> configXref = new HashMap<String, String>();
-    protected Map<String, String> configNonxref = new HashMap<String, String>();
-    protected Map<String, String> configPrefix = new HashMap<String, String>();
-    protected Map<String, String> configStrains = new HashMap<String, String>();
-    protected Set<String> ignoredTaxonIds = new HashSet<String>();
+    private String propFile = "entrezIdResolver_config.properties";
+    private Map<String, String> configXref = new HashMap<String, String>();
+    private Map<String, String> configNonxref = new HashMap<String, String>();
+    private Map<String, String> configPrefix = new HashMap<String, String>();
+    private Map<String, String> configStrains = new HashMap<String, String>();
+    private Set<String> ignoredTaxonIds = new HashSet<String>();
 
     /**
      * Constructor read pid configuration
      */
     public EntrezGeneIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
-        readConfig();
+        readConfig(propFile);
     }
 
     /**
@@ -273,15 +273,15 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     /**
      * Read pid configurations from entrezIdResolver_config.properties in resources dir
+     * @param properties name of properties file
      */
-    protected void readConfig() {
+    protected void readConfig(String properties) {
         Properties entrezConfig = new Properties();
         try {
-            entrezConfig.load(getClass().getClassLoader().getResourceAsStream(
-                    propFile));
+            entrezConfig.load(getClass().getClassLoader().getResourceAsStream(properties));
         } catch (IOException e) {
             throw new RuntimeException("I/O Problem loading properties '"
-                    + propFile + "'", e);
+                    + properties + "'", e);
         }
 
         for (Map.Entry<Object, Object> entry : entrezConfig.entrySet()) {
@@ -303,7 +303,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 String[] attributes = key.split("\\.");
                 if (attributes.length == 0) {
                     throw new RuntimeException("Problem loading properties '"
-                            + propFile + "' on line " + key);
+                            + properties + "' on line " + key);
                 }
 
                 String taxonId = attributes[0];
@@ -353,5 +353,41 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     @Override
     protected void createIdResolver() {
         // Not implemented. TaxonId is needed as argument
+    }
+
+
+    /** used for testing
+     * @return xrefs from config
+     * **/
+    protected Map<String, String> getXrefs() {
+        return configXref;
+    }
+
+    /** used for testing
+     * @return configNonxref from config
+     * **/
+    protected Map<String, String> getNonXrefs() {
+        return configNonxref;
+    }
+
+    /** used for testing
+     * @return configPrefix from config
+     * **/
+    protected Map<String, String> getPrefixes() {
+        return configPrefix;
+    }
+
+    /** used for testing
+     * @return configStrains from config
+     * **/
+    protected Map<String, String> getStrains() {
+        return configStrains;
+    }
+
+    /** used for testing
+     * @return ignoredTaxonIds
+     * **/
+    protected Set<String> getIgnoredTaxonIds() {
+        return ignoredTaxonIds;
     }
 }

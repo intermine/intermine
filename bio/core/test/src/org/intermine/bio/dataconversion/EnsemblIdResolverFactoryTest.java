@@ -44,18 +44,10 @@ public class EnsemblIdResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-
-        ClassLoader cl = getClass().getClassLoader();
-        URL u = cl.getResource(ensemblDataFile);
-        if (u == null) {
-            fail("data file not found");
-        }
-
-        File f = new File(u.toURI());
+        File f = new File(getClass().getClassLoader().getResource(ensemblDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/ensembl"));
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"9606"})), IdResolverFactory.resolver.getTaxons());
