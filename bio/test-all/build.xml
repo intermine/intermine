@@ -29,18 +29,49 @@
     <subant inheritAll="false">
       <property name="test.results.dir" value="${test.results.dir}"/>
       <property name="generate.report" value="false"/>
-      <property name="no.dep" value="false"/>
-      <!--<property name="test.fork" value="yes"/>-->
+      <property name="no.dep" value="true"/>
+      <property name="test.fork" value="yes"/>
       <fileset dir="../..">
-        <!-- <include name="bio/sources/**/test/build.xml" />-->
-        <!-- bio-core tests pass in eclipse -->
-        <include name="bio/core/test/build.xml"/>
+      
+<!--        <include name="bio/core/test/build.xml"/>
+
+	<include name="bio/sources/biogrid/test/build.xml" />
+	<include name="bio/sources/biopax/test/build.xml" />
+	<include name="bio/sources/chado-db/test/build.xml" />
+	<include name="bio/sources/ensembl/test/build.xml" />
+	<include name="bio/sources/entrez-organism/test/build.xml" />
+	<include name="bio/sources/fasta/test/build.xml" />
+	<include name="bio/sources/gff/test/build.xml" />
+	<include name="bio/sources/go/test/build.xml" />
+	<include name="bio/sources/go-annotation/test/build.xml" />
+	<include name="bio/sources/homologene/test/build.xml" />
+	<include name="bio/sources/intermine-items-large-xml-file/test/build.xml" />
+	<include name="bio/sources/intermine-items-xml-file/test/build.xml" />
+	<include name="bio/sources/interpro/test/build.xml" />
+	<include name="bio/sources/interpro-go/test/build.xml" />
+	<include name="bio/sources/orthodb/test/build.xml" />
+-->
+	<include name="bio/sources/panther/test/build.xml" />
+	<include name="bio/sources/pdb/test/build.xml" />
+	<include name="bio/sources/psi/test/build.xml" />
+	<include name="bio/sources/psi-mi-ontology/test/build.xml" />
+	<include name="bio/sources/pubmed-gene/test/build.xml" />
+	<include name="bio/sources/reactome/test/build.xml" />
+	<include name="bio/sources/so/test/build.xml" />
+	<include name="bio/sources/treefam/test/build.xml" />
+	<include name="bio/sources/uberon/test/build.xml" />
+	<include name="bio/sources/uniprot-keywords/test/build.xml" />
+	<include name="bio/sources/update-data-sources/test/build.xml" />
+	<include name="bio/sources/update-publications/test/build.xml" />
+
+
         <include name="bio/postprocess/test/build.xml"/>
         <include name="bio/tools/test/build.xml"/>
         <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
       </fileset>
     </subant>
   </target>
+
   
   <target name="test-report" depends="init">
     <junitreport todir="${test.results.dir}">
