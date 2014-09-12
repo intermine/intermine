@@ -191,4 +191,11 @@ public class ContainsConstraint extends Constraint
             + 7 * (cls == null ? 0 : cls.hashCode())
             + 11 * (obj == null ? 0 : obj.hashCode());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public String toString() {
+            return ref + " CONTAINS " + cls;
+    }
 }
