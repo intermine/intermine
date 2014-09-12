@@ -59,7 +59,6 @@ public class GenomicRegionSequenceExporter
      * @param grList a list of GenomicRegion objects
      * @throws Exception ex
      */
-    @SuppressWarnings("deprecation")
     public void export(List<GenomicRegion> grList) throws Exception {
         GenomicRegion aRegion = grList.get(0);
         Organism org = (Organism) DynamicUtil.createObject(Collections
