@@ -1,6 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -16,7 +17,7 @@ import junit.framework.TestCase;
  */
 public class EnsemblIdResolverFactoryTest extends TestCase {
     EnsemblIdResolverFactory factory;
-    String ensemblDataFile = "resources/ensembl.data.sample";
+    String ensemblDataFile = "ensembl.data.sample";
 
     public EnsemblIdResolverFactoryTest() {
     }
@@ -36,15 +37,21 @@ public class EnsemblIdResolverFactoryTest extends TestCase {
 
     public void testValidChromosomes() throws Exception {
         Set<String> validedChrs = factory.validChromosomes();
-        assertTrue(validedChrs.contains("12" +
-                ""));
+        assertTrue(validedChrs.contains("12" + ""));
         assertTrue(validedChrs.contains("X"));
         assertFalse(validedChrs.contains("A"));
         assertFalse(validedChrs.contains("23"));
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(ensemblDataFile);
+
+        ClassLoader cl = getClass().getClassLoader();
+        URL u = cl.getResource(ensemblDataFile);
+        if (u == null) {
+            fail("data file not found");
+        }
+
+        File f = new File(u.toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
