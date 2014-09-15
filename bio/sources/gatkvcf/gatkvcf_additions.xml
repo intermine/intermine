@@ -2,27 +2,15 @@
 <!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
 
 <classes>
-   <class name="SNP" is-interface="true">
-     <attribute name="name" type="java.lang.String"/>
+   <class name="SNP" is-interface="true" extends="BioEntity" >
+     <attribute name="reference" type="java.lang.String" />
      <attribute name="alternate" type="java.lang.String"/>
      <attribute name="quality" type="java.lang.Double"/>
      <attribute name="filter" type="java.lang.String"/>
      <attribute name="info" type="java.lang.String"/>
+     <attribute name="genotype" type="java.lang.String"/>
      <attribute name="sampleCount" type="java.lang.Integer" />
      <collection name="consequences" referenced-type="Consequence" reverse-reference="snps" />
-     <collection name="snpDiversitySamples" referenced-type="SNPDiversitySample" reverse-reference="snp" />
-     <reference name="snpLocation" referenced-type="SNPLocation" />
-   </class>
-   <class name="SNPDiversitySample" is-interface="true">
-     <reference name="snp" referenced-type="SNP" reverse-reference="snpDiversitySamples" />
-     <reference name="diversitySample" referenced-type="DiversitySample"/>
-     <attribute name="genotype" type="java.lang.String"/>
-   </class>
-   <class name="SNPLocation" extends="Location" is-interface="true">
-     <attribute name="name" type="java.lang.String" />
-     <attribute name="reference" type="java.lang.String" />
-     <reference name="organism" referenced-type="Organism" />
-     <collection name="snps" referenced-type="SNP" reverse-reference="snpLocation" />
    </class>
    <class name="Consequence" is-interface="true">
      <reference name="gene" referenced-type="Gene"/>
@@ -42,5 +30,11 @@
      <attribute name="latitude" type="java.lang.Double"/>
      <attribute name="elevation" type="java.lang.Double"/>
      <reference name="organism" referenced-type="Organism" />
+   </class>
+   <class name="SNPDiversitySample" is-interface="false" extends="java.lang.Object">
+     <reference name="snp" referenced-type="SNP" />
+     <reference name="diversitySample" referenced-type="DiversitySample"/>
+     <attribute name="genotype" type="java.lang.String"/>
+     <attribute name="format" type="java.lang.String" />
    </class>
 </classes>

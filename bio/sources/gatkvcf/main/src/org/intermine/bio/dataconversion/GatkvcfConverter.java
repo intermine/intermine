@@ -45,29 +45,29 @@ public class GatkvcfConverter extends BioFileConverter
 {
   //
   private static final String DATASET_TITLE = "GATK VCF Data";
-  private static final String DATA_SOURCE_NAME = "GATK Diversity";
+  private static final String DATA_SOURCE_NAME = "Phytozome";
   private static final Logger LOG = Logger.getLogger(GatkvcfConverter.class);
 
   // hashes of inserted things...
   // snpLocation is keyed by (chromosome:start position:reference).
   // Using a multimap was toooooo slow.
   // this is a map to intermineId (Integer)
-  private HashMap<String,Integer> snpLocationIntMap = new HashMap<String,Integer>();
+  //private HashMap<String,Integer> snpLocationIntMap = new HashMap<String,Integer>();
   // this is a map to uniqueIdentifier (String)
   // also using the chromosome:start:reference key
-  private HashMap<String,String> snpLocationIDMap = new HashMap<String,String>();
+  //private HashMap<String,String> snpLocationIDMap = new HashMap<String,String>();
   // snps that go to a snpLocation
-  private HashMap<String,ArrayList<String> > snpLocationCollectionMap = new HashMap<String,ArrayList<String> >();
-  // The chromosomes that we reference. chromosomes keyed by chromosome
+  //private HashMap<String,ArrayList<String> > snpLocationCollectionMap = new HashMap<String,ArrayList<String> >();
+  // The chromosomes that we reference. chromosomes keyed by primaryIdentifier
   private HashMap<String,String> chrMap = new HashMap<String,String>();
   //  the snp keyed by snpLocation and nucleotide substitution
-  private HashMap<String,ArrayList<String>> snpMap = new HashMap<String,ArrayList<String> >();
+  //private HashMap<String,ArrayList<String>> snpMap = new HashMap<String,ArrayList<String> >();
   
-  // the one organism we're working on. taxonId and organismVersion are
-  // set by setters. organism is the registered Item
-  private Integer taxonId;
-  private String organismVersion = "current";
+  // the one organism we're working on. proteomeId is
+  // set by setter. organism is the registered Item
+  private Integer proteomeId;
   private Item organism = null;
+  private boolean makeLinks = true;
   // the referenced consequences and consequence type types.
   private Map<String,String> consequenceMap = new HashMap<String,String>();
   private Map<String,String> consequenceTypeMap = new HashMap<String,String>();
@@ -93,18 +93,21 @@ public class GatkvcfConverter extends BioFileConverter
     effPattern = Pattern.compile("(\\w+)\\((.+)\\)");
   }
 
-  public void setOrganism(String organism) {
+  public void setProteomeId(String proteome) {
     try {
-      taxonId = Integer.valueOf(organism);
+      proteomeId = Integer.valueOf(proteome);
     } catch (NumberFormatException e) {
-      throw new RuntimeException("Cannot find numerical taxon id for: " + organism);
+      throw new RuntimeException("Cannot find numerical proteome id for: " + proteome);
     }
   }
-  public void setVersion(String version) {
-    organismVersion = version;
-  }
-  public String getVersion() {
-    return organismVersion;
+  
+  public void setMakeLinks(String linksYesNo) {
+    if (linksYesNo == null || linksYesNo.isEmpty() || 
+        linksYesNo.equalsIgnoreCase("true") ) {
+      makeLinks = true;
+    } else {
+      makeLinks = false;
+    }
   }
   /**
    * 
@@ -114,16 +117,16 @@ public class GatkvcfConverter extends BioFileConverter
   public void process(Reader reader) throws Exception {
     File theFile = getCurrentFile();
 
-    // register the (versioned) organism if needed
+    // register the organism if needed
     if ( organism == null ) {
-      if (taxonId != null ) {
+      if (proteomeId != null ) {
         organism = createItem("Organism");
-        organism.setAttribute("taxonId", taxonId.toString());
-        organism.setAttribute("version",organismVersion);
+        organism.setAttribute("proteomeId", proteomeId.toString());
         try {
           store(organism);
         } catch (ObjectStoreException e) {
-          throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+          throw new RuntimeException("failed to store organism with proteomeId: " +
+                proteomeId, e);
         }
       } else {
         throw new BuildException("No taxon Id specified.");
@@ -173,7 +176,7 @@ public class GatkvcfConverter extends BioFileConverter
   }
   public void close() throws Exception
   {
-    // now store all snp locations. We've held off in storing until all snpLocations were processed
+    /*// now store all snp locations. We've held off in storing until all snpLocations were processed
     Set<String> snpLocs = (Set<String>)snpLocationIntMap.keySet();
     Iterator<String>snpLocIt = snpLocs.iterator();
     LOG.info("Storing SNP locations...");
@@ -187,7 +190,7 @@ public class GatkvcfConverter extends BioFileConverter
       } catch (ObjectStoreException e) {
         throw new BuildException("Cannot store snplocation: " + e.getMessage());
       }
-    }
+    }*/
   }
 
   private void processHeader(String[] header) throws BuildException
@@ -232,98 +235,104 @@ public class GatkvcfConverter extends BioFileConverter
     //TODO  remove for production
     //if (!chr.equals("Chr01")) return false;
 
-    // look in the FORMAT field to see if the FilTer tag is there. We'll
-    // use it if it's there
-    Pattern checker = Pattern.compile("(.+:)?FT(:.+)?");
-    Pattern goodSamplePattern;
-    if (checker.matcher(fields[formatPosition]).matches()) {
-      goodSamplePattern = Pattern.compile("(.*:)?PASS(:.+)?");
-    } else {
-      // otherwise look for number/number
-      goodSamplePattern = Pattern.compile("(.+:)?\\d+/\\d+(:.+)?");
-    }
     if (lastChromosome==null || !chr.equals(lastChromosome)) {
       lastChromosome = chr;
       LOG.info("Processing "+chr);
     }
-    
+
     Integer pos = new Integer(fields[1]);
     //TODO remove for production
     //if (pos > 100000) return false;
-    
+
     String name = fields[2];
     String ref = fields[3];
     String alt = fields[4];
     String quality = fields[5];
     String filter = fields[6];
     String info = fields[7];
-    
-    String snpLocKey = fields[0]+":"+fields[1]+":"+fields[3];
-    // create this location if we haven't seen this before
-    if (! snpLocationIntMap.containsKey(snpLocKey)) {
-      if (!createSNPLocation(chr,pos,ref)) {
-        throw new BuildException("Cannot create SNP location");
+
+    // create the chromosome if we haven't seen this before
+    if (! chrMap.containsKey(chr) ) {
+      Item chrItem = createItem("Chromosome");
+      chrItem.setAttribute("primaryIdentifier",chr);
+      chrItem.setReference("organism",organism);
+      try {
+        store(chrItem);
+      } catch (ObjectStoreException e) {
+        throw new BuildException("Cannot store chromosome item: " + e);
       }
+      chrMap.put(chr,chrItem.getIdentifier());
     }
-    String snpLocationID = (String)snpLocationIDMap.get(snpLocKey);
+    // make and store the feature
     Item snp = createItem("SNP");
+    snp.setReference("organism",organism);
+    snp.setAttribute("reference",ref);
     snp.setAttribute("alternate", alt);
-    // only add if numerical
     try {
+      // only add if a number
       Integer.parseInt(quality);
       snp.setAttribute("quality", quality);
     } catch ( NumberFormatException e) {}
     snp.setAttribute("name",name);
     snp.setAttribute("filter", filter);
-    snp.setReference("snpLocation", snpLocationID);
-    //@SuppressWarnings("unchecked")
-    ((ArrayList<String>)snpLocationCollectionMap.get(snpLocKey)).add(snp.getIdentifier());
     Integer nSamples = parseInfo(snp,info);
     if (nSamples != null && nSamples > 0) {
       snp.setAttribute("sampleCount", nSamples.toString());
     }
-
+    // create and store the location
+    makeLocation(chrMap.get(chr),snp.getIdentifier(),pos.toString(),
+        Integer.toString(pos+ref.length()),"1",true);
     try {
+      // and store the snp.
       store(snp);
     } catch (ObjectStoreException e) {
       throw new BuildException("Problem storing SNP: " + e);
     }
-    
-    // process the genotype field. First we have attribute:attribute:attribute... 
-    // and value:value:value... Convert these to attribute=value;attribute=value;...
-    String[] attBits = fields[formatPosition].split(":");
-    
-    // look through the different genotype scores for column 9 onward.
-    for(int col=expectedHeaders.length;col<fields.length;col++) {
-      Boolean passField = null;
-      Boolean genoField = null;
-      String[] valBits = fields[col].split(":");
-      StringBuffer genotype = new StringBuffer();
-      if ( (valBits.length != attBits.length) && !fields[col].equals("./."))
-        LOG.warn("Genotype fields have unexpected length.");
-      for(int i=0; i< attBits.length && i<valBits.length;i++) {
-        if ( i > 0) genotype.append(":");
-        genotype.append(attBits[i] + "=" + valBits[i]);
-        if (attBits[i].equals("FT")) {
-          passField = (valBits[i].equals("PASS"))?true:false;
-        } else if (attBits[i].equals("GT")) {
-          genoField = (valBits[i].equals("./."))?false:true;
+
+    if (makeLinks) {
+      // process the genotype field. First we have attribute:attribute:attribute... 
+      // and value:value:value... Convert these to attribute=value;attribute=value;...
+      String[] attBits = fields[formatPosition].split(":");
+
+      // look through the different genotype scores for column 9 onward.
+      for(int col=expectedHeaders.length;col<fields.length;col++) {
+        Boolean passField = null;
+        Boolean genoField = null;
+        String[] valBits = fields[col].split(":");
+        StringBuffer genotype = new StringBuffer();
+        StringBuffer format = new StringBuffer();
+        if ( (valBits.length != attBits.length) && !fields[col].equals("./."))
+          LOG.warn("Genotype fields have unexpected length.");
+        for(int i=0; i< attBits.length && i<valBits.length;i++) {
+          if (attBits[i].equals("GT")) {
+            genoField = (valBits[i].equals("./."))?false:true;
+            genotype = new StringBuffer(valBits[i]);
+          } else {
+            if (format.length() > 0) format.append(":");
+            format.append(attBits[i] + "=" + valBits[i]);
+            if (attBits[i].equals("FT")) {
+              passField = (valBits[i].equals("PASS"))?true:false;
+            }  
+          }
         }
-      }
-      if ((passField != null && passField) ||
-          (passField == null && genoField != null && genoField)) {
-        Item snpSource = createItem("SNPDiversitySample");
-        snpSource.setAttribute("genotype", genotype.toString());
-        snpSource.setReference("diversitySample", sampleList.get(col-expectedHeaders.length));
-        snpSource.setReference("snp",snp.getIdentifier());
-        try {
-          store(snpSource);
-        } catch (ObjectStoreException e) {
-          throw new BuildException("Problem storing SNPDiversitySample: " + e);
+        if ((passField != null && passField) ||
+            (passField == null && genoField != null && genoField)) {
+          Item snpSource = createItem("SNPDiversitySample");
+          if (!genotype.toString().isEmpty()) 
+            snpSource.setAttribute("genotype", genotype.toString());
+          if (!format.toString().isEmpty() )
+            snpSource.setAttribute("format", format.toString());
+          snpSource.setReference("diversitySample", sampleList.get(col-expectedHeaders.length));
+          snpSource.setReference("snp",snp.getIdentifier());
+          try {
+            store(snpSource);
+          } catch (ObjectStoreException e) {
+            throw new BuildException("Problem storing SNPDiversitySample: " + e);
+          }
         }
       }
     }
-    
+
     return true;
   }
   /**
@@ -343,19 +352,7 @@ public class GatkvcfConverter extends BioFileConverter
       String[] kV = keyVal.split("=",2);
       if (kV[0].equals("EFF")) {
         // deal with the SnpEff calls.
-        // snpMap will be linked to all the consequences. If we've seen this
-        // combination again (in a different file), we'll just link to these.
-        // otherwise parse the fields.
-        String snpMapKey = snp.getReference("snpLocation")+":"+snp.getAttribute("alternate");
-        if (snpMap.containsKey(snpMapKey) ) {
-          ArrayList<String> aList = snpMap.get(snpMapKey);
-          for( String con : aList) {
-            snp.addToCollection("consequences", con);
-          }
-        } else {
-          // never seen this substitution at this location before; parse the EFF
-          parseEff(snp,kV[1]);
-        }
+        parseEff(snp,kV[1]);
       } else if (kV[0].equals("set")) {
         // we're going to drop the set= tags. But we will use it to determine
         // the number of samples
@@ -372,9 +369,7 @@ public class GatkvcfConverter extends BioFileConverter
 
   private void parseEff(Item snp, String eff) {
     if (eff == null) return;
-    // save the results for linking again later
-    ArrayList<String> aList = new ArrayList<String>();
-    snpMap.put(snp.getReference("snpLocation")+":"+snp.getAttribute("alternate"),aList);
+    
     for (String bit : eff.split(",") ) {
       Matcher match = effPattern.matcher(bit);
       if (match.matches() ) {
@@ -425,52 +420,10 @@ public class GatkvcfConverter extends BioFileConverter
           consequenceMap.put(conKey.toString(),con.getIdentifier());
         }
         String conID = consequenceMap.get(conKey.toString());
-        aList.add(conID);
         snp.addToCollection("consequences", conID);
-
- 
       }
     }
-  }
-
-  private boolean createSNPLocation(String chromosome,Integer position,String reference) {
-
-    if(reference.length() < 1) {
-      return false;
-    };
-    // make sure the chromosome is registered
-    if (! chrMap.containsKey(chromosome) ) {
-      Item chrItem = createItem("Chromosome");
-      chrItem.setAttribute("primaryIdentifier",chromosome);
-      chrItem.setReference("organism",organism);
-      try {
-        store(chrItem);
-      } catch (ObjectStoreException e) {
-        throw new BuildException("Cannot store chromosome item: " + e);
-      }
-      chrMap.put(chromosome,chrItem.getIdentifier());
-    }
-    // make and store the feature
-    Item snpLocation = createItem("SNPLocation");
-    snpLocation.setReference("organism",organism);
-    snpLocation.setAttribute("reference",reference);
-    snpLocation.setAttribute("start",position.toString());
-    snpLocation.setAttribute("end",(new Integer(position + reference.length()-1)).toString());
-    snpLocation.setReference("locatedOn",chrMap.get(chromosome));
-
-    String snpLocKey = chromosome+":"+position.toString()+":"+reference;
-    Integer intermineID = null;
-    try {
-      intermineID = store(snpLocation);
-    } catch (ObjectStoreException e) {
-      throw new BuildException("Cannot store SNP Location Feature: " + e);
-    }
-    snpLocationIDMap.put(snpLocKey, snpLocation.getIdentifier());
-    snpLocationIntMap.put(snpLocKey, intermineID);
-    snpLocationCollectionMap.put(snpLocKey,new ArrayList<String>());
-    return true;
-  }
-  
+  }  
   private String getGene(String gene_name) {
     if (!geneMap.containsKey(gene_name)) {
       Item gene = createItem("Gene");
