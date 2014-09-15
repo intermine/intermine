@@ -393,7 +393,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         List<?> orgs = im.getObjectStore().executeSingleton(q);
         for (Object o: orgs) {
             org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
-            orgTaxonIdMap.put(org.getName(), org.getTaxonId());
+            orgTaxonIdMap.put(org.getShortName(), org.getTaxonId());
         }
         return orgTaxonIdMap;
     }
