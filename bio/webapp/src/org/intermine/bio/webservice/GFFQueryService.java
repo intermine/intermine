@@ -53,6 +53,7 @@ public class GFFQueryService extends BioQueryService
      * @param pq pathquery
      * @return the exporter
      */
+    @Override
     protected GFF3Exporter getExporter(PathQuery pq) {
         String sourceName = webProperties.getProperty("project.title");
         Set<Integer> organisms = null;
