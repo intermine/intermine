@@ -108,8 +108,8 @@ public class HeatMapController extends TilesAction
         try {
             findExpression(request, model, bag, executor, os);
         } catch (ObjectStoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("ObjectStoreException in HeatMapController.java");
+            return null;
         }
 
         return null;
@@ -151,19 +151,6 @@ public class HeatMapController extends TilesAction
                 CufflinksScoreJSONFpkm);
         request.setAttribute("cufflinksScoreJSONCount",
                 CufflinksScoreJSONCount);
-/*
-        request.setAttribute("minFpkmCufflinksScore",
-            df.format(Math.log(fpkmCufflinksScoreMin+1)/Math.log(2.)));
-        request.setAttribute("maxFpkmCufflinksScore",
-            df.format(Math.log(fpkmCufflinksScoreMax+1)/Math.log(2.)));
-        request.setAttribute("maxFpkmCufflinksScoreCeiling",
-            df.format(Math.ceil(Math.log(fpkmCufflinksScoreMax+1)/Math.log(2.))));
-        request.setAttribute("minCountCufflinksScore",
-            df.format(Math.log(countCufflinksScoreMin+1)/Math.log(2.)));
-        request.setAttribute("maxCountCufflinksScore",
-            df.format(Math.log(countCufflinksScoreMax+1)/Math.log(2.)));
-        request.setAttribute("maxCountCufflinksScoreCeiling",
-            df.format(Math.ceil(Math.log(fpkmCufflinksScoreMax-1)/Math.log(2.))));*/
 
         request.setAttribute("minFpkmCufflinksScore",
             df.format(fpkmCufflinksScoreMin));
@@ -186,7 +173,7 @@ public class HeatMapController extends TilesAction
 
     private String getJSONString (Model model,
         InterMineBag bag, PathQueryExecutor executor,
-        String expressionType, String scoreType) {
+        String expressionType, String scoreType) throws ObjectStoreException {
 
       String CufflinksScoreJSON = null;
 
@@ -197,6 +184,7 @@ public class HeatMapController extends TilesAction
       PathQuery query = new PathQuery(model);
       query = queryCufflinksScore(bag, scoreType, query);
 
+       
       ExportResultsIterator result = executor.execute(query);
       LOG.debug("GGS QUERY: -->" + query + "<--");
 
@@ -214,6 +202,7 @@ public class HeatMapController extends TilesAction
         }
         CufflinksScoreMap.get(id).put(condition,score);
       }
+      
 
       CufflinksScoreJSON = parseToJSON(scoreType,CufflinksScoreMap);
 

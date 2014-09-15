@@ -20,6 +20,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Protein;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -57,9 +58,16 @@ public class ProteinAnalysisDisplayer extends ReportDisplayer {
       PathQuery query = getAnalysisTable(proteinObj.getPrimaryIdentifier());
       Profile profile = SessionMethods.getProfile(session);
       PathQueryExecutor exec = im.getPathQueryExecutor(profile);
-      ExportResultsIterator result = exec.execute(query);
-
       ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
+       
+      ExportResultsIterator result;
+      try {
+        result = exec.execute(query);
+      } catch (ObjectStoreException e) {
+        LOG.warn("ObjectStoreException in ProteinAnalysisDisplayer.java");
+        return;
+      }
+
       while (result.hasNext()) {
         List<ResultElement> row = result.next();
 
@@ -74,6 +82,7 @@ public class ProteinAnalysisDisplayer extends ReportDisplayer {
         }
         list.add(columns);
       }
+      
       
       request.setAttribute("list",list);
   }

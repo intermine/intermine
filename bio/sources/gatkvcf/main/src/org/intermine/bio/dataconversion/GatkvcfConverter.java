@@ -239,8 +239,8 @@ public class GatkvcfConverter extends BioFileConverter
     if (checker.matcher(fields[formatPosition]).matches()) {
       goodSamplePattern = Pattern.compile("(.*:)?PASS(:.+)?");
     } else {
-      // otherwise look for ./.
-      goodSamplePattern = Pattern.compile("(.+:)?\\./\\.(:.+)?");
+      // otherwise look for number/number
+      goodSamplePattern = Pattern.compile("(.+:)?\\d+/\\d+(:.+)?");
     }
     if (lastChromosome==null || !chr.equals(lastChromosome)) {
       lastChromosome = chr;
@@ -268,7 +268,11 @@ public class GatkvcfConverter extends BioFileConverter
     String snpLocationID = (String)snpLocationIDMap.get(snpLocKey);
     Item snp = createItem("SNP");
     snp.setAttribute("alternate", alt);
-    snp.setAttribute("quality", quality);
+    // only add if numerical
+    try {
+      Integer.parseInt(quality);
+      snp.setAttribute("quality", quality);
+    } catch ( NumberFormatException e) {}
     snp.setAttribute("name",name);
     snp.setAttribute("filter", filter);
     snp.setReference("snpLocation", snpLocationID);

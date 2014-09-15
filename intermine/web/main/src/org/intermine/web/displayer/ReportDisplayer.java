@@ -35,7 +35,7 @@ public abstract class ReportDisplayer
 
     protected ReportDisplayerConfig config;
     protected InterMineAPI im;
-    private static final Logger LOG = Logger.getLogger(ReportDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(ReportDisplayer.class);
 
 
     /**

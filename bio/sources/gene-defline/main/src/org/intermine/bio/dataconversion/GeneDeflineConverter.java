@@ -72,8 +72,14 @@ public class GeneDeflineConverter extends BioFileConverter
         String[] fields = (String[]) tsvIter.next();
         String geneId = fields[0];
         String organismId = fields[1];
-        String defLine = fields[2];
-        String description = fields[3];
+        String defLine = null;
+        String description = null;
+        if (fields.length >= 3) {
+          defLine = fields[2];
+          if( fields.length >= 4) {
+            description = fields[3];
+          }
+        }
         if (!organismMap.containsKey(organismId)) {
           Item o = createItem("Organism");
           o.setAttribute("taxonId", organismId);
@@ -90,10 +96,10 @@ public class GeneDeflineConverter extends BioFileConverter
         Item i = createItem("Gene");
         i.setAttribute("primaryIdentifier", geneId);
         i.setReference("organism", organismMap.get(organismId));
-        if(!defLine.isEmpty()) {
+        if(defLine != null && !defLine.isEmpty()) {
           i.setAttribute("briefDescription",defLine);
         }
-        if( !description.isEmpty()){
+        if(description != null &&  !description.isEmpty()){
           i.setAttribute("description",description);
         }
         try {

@@ -16,6 +16,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.ProteinFamily;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -77,7 +78,14 @@ public class FamilyAlignmentDisplayer extends ReportDisplayer {
       PathQuery query = getFamilyMembers(familyObj.getClusterId().toString());
       Profile profile = SessionMethods.getProfile(session);
       PathQueryExecutor exec = im.getPathQueryExecutor(profile);
-      ExportResultsIterator result = exec.execute(query);
+      
+      ExportResultsIterator result;
+      try {
+        result = exec.execute(query);
+      } catch (ObjectStoreException e) {
+        LOG.warn("ObjectStoreException in FamilyAlignmentDisplayer.java");
+        return;
+      }
       StringBuffer bs = new StringBuffer();
       while (result.hasNext()) {
         List<ResultElement> row = result.next();
@@ -88,7 +96,7 @@ public class FamilyAlignmentDisplayer extends ReportDisplayer {
         //bs.append(fullname.substring(0,fullname.indexOf(familyObj.getPrimaryIdentifier().toString())-1));
         bs.append(fullname);
       }
-      request.setAttribute("members",bs.toString());
+      request.setAttribute("members",bs.toString()); 
   }
 
   private PathQuery getFamilyMembers(String identifier) {

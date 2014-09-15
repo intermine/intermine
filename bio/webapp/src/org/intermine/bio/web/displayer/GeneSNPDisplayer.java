@@ -21,6 +21,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
@@ -59,7 +60,14 @@ public class GeneSNPDisplayer extends ReportDisplayer {
       PathQuery query = getConsequenceTable(geneObj.getPrimaryIdentifier());
       Profile profile = SessionMethods.getProfile(session);
       PathQueryExecutor exec = im.getPathQueryExecutor(profile);
-      ExportResultsIterator result = exec.execute(query);
+      ExportResultsIterator result;
+      try {
+        result = exec.execute(query);
+      } catch (ObjectStoreException e) {
+        // silently return
+        LOG.warn("Had an ObjectStoreException in GeneSNPDisplayer.java");
+        return;
+      }
       // we're allowing the genotype to be embedded, but it must be delimited with :'s
       Pattern genotypePattern = Pattern.compile("^(.+:)?GT=(\\d+([|/]\\d+)*)(:.+)?$");
 
@@ -123,6 +131,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
           
       request.setAttribute("list",snpLists);
       request.setAttribute("id",geneObj.getId());
+      
   }
 
   private PathQuery getConsequenceTable(String identifier) {
