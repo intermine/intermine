@@ -5,6 +5,7 @@
   
   <description>wrapper project for build/testing/cleaning everything in bio</description>
 
+  <import file="../../imbuild/tests.xml"/> 
   <import file="../../imbuild/library.xml"/> 
   <import file="../../imbuild/task.xml"/>
   <import file="../../imbuild/objectstore.xml"/>
@@ -37,7 +38,7 @@
        <include name="bio/tools/test/build.xml"/>
        <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
        <exclude name="bio/sources/example-sources/**/test/build.xml"/>
-       <include name="bio/sources/**/build.xml"/>
+       <include name="bio/sources/**/test/build.xml"/>
       </fileset>
     </subant>
   </target>
