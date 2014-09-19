@@ -558,8 +558,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             connInUse = true;
             // remove reference to this writer from the parent ObjectStore
             this.os.writers.remove(this);
-            LOG.info("Closed objectstore writer", new Exception());
-
             notifyAll();
         }
     }
