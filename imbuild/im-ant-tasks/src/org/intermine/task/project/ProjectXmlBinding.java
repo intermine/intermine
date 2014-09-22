@@ -1,5 +1,16 @@
 package org.intermine.task.project;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,59 +25,51 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
-/*
- * Copyright (C) 2002-2014 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-
-
 /**
  * Code for reading project.xml files.
  * @author Kim Rutherford
  */
 public class ProjectXmlBinding
 {
+
+    private ProjectXmlBinding() {
+        // don't
+    }
+
     /**
      * Create a Project object from a project.xml file.
      * @param file the File
      * @return the Project
      */
     public static Project unmarshall(File file) {
-      
-            FileReader reader = null;
-            try {
-            	reader = new FileReader(file);
-            }
-            catch (IOException e) {
-            	throw new RuntimeException (e);
-            }
-            
-            try {
-                ProjectXmlHandler handler = new ProjectXmlHandler();
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                factory.setValidating(true);
-                factory.newSAXParser().parse(new InputSource(reader), handler);
-                Project project = handler.project;
 
-                project.validate(file);
-                return project;
-            }
-            catch (IOException e) {
-            	throw new RuntimeException (e);    	
-            } catch (ParserConfigurationException e) {
-                throw new RuntimeException("The underlying parser does not support "
-                                    + " the requested features", e);
-            } catch (SAXException e) {
-                throw new RuntimeException("Error parsing the project.xml file, please check the format.",
-                        e);
-            }
+        FileReader reader = null;
+        try {
+            reader = new FileReader(file);
+        }
+        catch (IOException e) {
+            throw new RuntimeException (e);
+        }
+
+        try {
+            ProjectXmlHandler handler = new ProjectXmlHandler();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setValidating(true);
+            factory.newSAXParser().parse(new InputSource(reader), handler);
+            Project project = handler.project;
+
+            project.validate(file);
+            return project;
+        }
+        catch (IOException e) {
+            throw new RuntimeException (e);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("The underlying parser does not support "
+                    + " the requested features", e);
+        } catch (SAXException e) {
+            throw new RuntimeException("Error parsing the project.xml file, please check the format.",
+                    e);
+        }
 
     }
 
@@ -74,7 +77,7 @@ public class ProjectXmlBinding
     {
         private final Pattern projectPattern = Pattern.compile(".*project$");
         private final Matcher projectMatcher = projectPattern.matcher("");
-        
+
         Project project;
         Action action;
         //boolean postProcesses = false;
@@ -82,12 +85,12 @@ public class ProjectXmlBinding
         /**
          * @see DefaultHandler#startElement
          */
-        
+
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
-        	if (qName == null) {
-        			return;
-        	}
-        	projectMatcher.reset(qName);
+            if (qName == null) {
+                return;
+            }
+            projectMatcher.reset(qName);
             if (projectMatcher.matches()) {
                 project = new Project();
                 if (attrs.getValue("type") == null) {
@@ -124,9 +127,9 @@ public class ProjectXmlBinding
          * @see DefaultHandler#endElement
          */
         public void endElement(String uri, String localName, String qName) {
-        	if (qName == null) {
-    			return;
-        	}
+            if (qName == null) {
+                return;
+            }
             if ("source".equals(qName) || qName.equals("post-process")) {
                 action = null;
             }
