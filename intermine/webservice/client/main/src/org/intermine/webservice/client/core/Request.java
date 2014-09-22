@@ -24,6 +24,10 @@ import org.intermine.webservice.client.results.Page;
 public interface Request
 {
 
+    /**
+     * @author Jakub
+     *
+     */
     public enum RequestType {
         /**
          * GET type.

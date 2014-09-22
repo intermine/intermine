@@ -194,13 +194,12 @@ public class ServiceFactory
      *
      * @param serviceRelativeUrl the part of the URL specific to this service
      *      Example: query/results
-     * @param applicationName application name, information for server which application uses this
+     * @param name application name, information for server which application uses this
      *      service
      * @return the created service
      */
-    public Service getService(String serviceRelativeUrl,
-            String applicationName) {
-        Service x = new Service(rootUrl, serviceRelativeUrl, applicationName);
+    public Service getService(String serviceRelativeUrl, String name) {
+        Service x = new Service(rootUrl, serviceRelativeUrl, name);
         authoriseAndLink(x);
         return x;
     }

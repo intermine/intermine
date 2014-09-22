@@ -120,12 +120,15 @@ public class ListService extends Service
             super(url);
         }
 
-        /** Add a file as the contents of the request **/
+        /** Add a file as the contents of the request
+         * @param contents
+         * @throws FileNotFoundException **/
         public void addContents(File contents) throws FileNotFoundException {
             getParts().add(new FilePart("identifiers", contents.getName(), contents));
         }
 
-        /** Add a string as the contents of the request **/
+        /** Add a string as the contents of the request
+         * @param content **/
         public void addContents(String content) {
             getParts().add(new FilePart("identifiers",
                     new ByteArrayPartSource("ids.txt", content.getBytes())));
@@ -647,7 +650,7 @@ public class ListService extends Service
         return processListCreationRequest(request);
     }
 
-    private void applyListOperationParameters(Request request, ListOperationInfo info) {
+    private static void applyListOperationParameters(Request request, ListOperationInfo info) {
         request.setParameter("name", info.name);
         request.setParameter("description", info.description);
         request.setParameter("tags", info.getTagString());
@@ -738,10 +741,10 @@ public class ListService extends Service
 
         /**
          * Add some tags to the set of tags to apply.
-         * @param tags The tags to apply.
+         * @param newTags The tags to apply.
          */
-        public void addTags(Collection<? extends String> tags) {
-            this.tags.addAll(tags);
+        public void addTags(Collection<? extends String> newTags) {
+            this.tags.addAll(newTags);
         }
 
         /**
@@ -781,8 +784,6 @@ public class ListService extends Service
      */
     public class ListCreationInfo extends ListOperationInfo
     {
-
-        String type;
         String ids;
         File fileSrc;
         PathQuery querySrc;
