@@ -196,6 +196,6 @@ public class ContainsConstraint extends Constraint
      * {@inheritDoc}
      */
     @Override public String toString() {
-            return ref + " CONTAINS " + cls;
+        return ref + " CONTAINS " + cls;
     }
 }
