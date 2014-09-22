@@ -64,7 +64,7 @@ public final class Queries
      * @return object
      */
     public static Object resolveValue(FastPathObject fpo, String path) {
-        Object o = fpo;
+        FastPathObject o = fpo;
         String[] parts = path.split("\\.");
         Object res = null;
         for (int i = 0; i < parts.length; i++) {
@@ -72,12 +72,12 @@ public final class Queries
                 return res;
             }
             try {
-                res = fpo.getFieldValue(parts[i]);
+                res = o.getFieldValue(parts[i]);
             } catch (IllegalAccessException e) {
                 throw new ServiceException("Could not read object value.", e);
             }
             if (i + 1 < parts.length && res instanceof FastPathObject) {
-                o = res;
+                o = (FastPathObject) res;
             }
         }
         return res;
