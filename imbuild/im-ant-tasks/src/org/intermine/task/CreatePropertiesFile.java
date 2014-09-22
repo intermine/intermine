@@ -35,14 +35,24 @@ public class CreatePropertiesFile extends Task
     private File templateFile;
     private File toFile;
 
+
+    /**
+     * @param file file
+     */
     public void setTemplateFile(File file) {
         this.templateFile = file;
     }
 
+    /**
+     * @param file file
+     */
     public void setToFile(File file) {
         this.toFile = file;
     }
 
+    /**
+     * execute
+     */
     public void execute() throws BuildException {
         if (toFile == null) {
             throw new BuildException("toFile attribute required");
@@ -60,6 +70,9 @@ public class CreatePropertiesFile extends Task
         }
     }
 
+    /**
+     * build file
+     */
     protected void buildFile() throws IOException {
         BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
         BufferedReader fin = new BufferedReader(new FileReader(templateFile));
@@ -72,10 +85,9 @@ public class CreatePropertiesFile extends Task
 
         properties.put("ant.project.name", getProject().getName());
 
-        System.out.println("#### " + toFile.getName() + " does not exist");
-        System.out.println("#### Creating " + toFile.getAbsolutePath());
-        System.out.println("#### (Hit Return to accept the default value)");
-
+        System.out. println("#### " + toFile.getName() + " does not exist");
+        System.out. println("#### Creating " + toFile.getAbsolutePath());
+        System.out. println("#### (Hit Return to accept the default value)");
 
         while ((fline = fin.readLine()) != null) {
             fline = fline.trim();
@@ -123,6 +135,11 @@ public class CreatePropertiesFile extends Task
 
     }
 
+    /**
+     * @param value value
+     * @param properties map of properties
+     * @return expanded variables
+     */
     protected String expandVars(String value, Map properties) {
         Pattern p = Pattern.compile("\\$\\{([^\\}]+)\\}");
         Matcher m = p.matcher(value);
