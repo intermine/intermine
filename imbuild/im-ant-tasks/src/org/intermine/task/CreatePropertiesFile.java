@@ -27,7 +27,7 @@ import org.apache.tools.ant.Task;
 /**
  *
  *
- * @author Thmoas Riley
+ * @author Thomas Riley
  */
 public class CreatePropertiesFile extends Task
 {
@@ -52,6 +52,7 @@ public class CreatePropertiesFile extends Task
 
     /**
      * execute
+     * @throws BuildException can't build
      */
     public void execute() throws BuildException {
         if (toFile == null) {
@@ -72,6 +73,7 @@ public class CreatePropertiesFile extends Task
 
     /**
      * build file
+     * @throws IOException can't write to file
      */
     protected void buildFile() throws IOException {
         BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
@@ -85,9 +87,9 @@ public class CreatePropertiesFile extends Task
 
         properties.put("ant.project.name", getProject().getName());
 
-        System.out. println("#### " + toFile.getName() + " does not exist");
-        System.out. println("#### Creating " + toFile.getAbsolutePath());
-        System.out. println("#### (Hit Return to accept the default value)");
+        System.out .println("#### " + toFile.getName() + " does not exist");
+        System.out .println("#### Creating " + toFile.getAbsolutePath());
+        System.out .println("#### (Hit Return to accept the default value)");
 
         while ((fline = fin.readLine()) != null) {
             fline = fline.trim();
@@ -98,18 +100,17 @@ public class CreatePropertiesFile extends Task
                     comments += fline + "\n";
                 }
             } else if (fline.length() > 0) {
-                String parts[] = fline.split("=");
+                String[] parts = fline.split("=");
                 String var = parts[0].trim();
                 String value = parts[1].trim();
                 value = expandVars(value, properties);
                 if (prompt != null) {
-                    System.out.println(" \n" + prompt);
-                    System.out.print("(Default is \"" + value + "\")");
+                    System.out .println(" \n" + prompt);
+                    System.out .print("(Default is \"" + value + "\")");
                     String input = cin.readLine();
                     if (input.trim().length() > 0) {
                         value = input;
                     }
-                    //System.out.println(var + " = \"" + value + "\"");
                 } else {
                     others += var + " = " + value + "\n";
                 }

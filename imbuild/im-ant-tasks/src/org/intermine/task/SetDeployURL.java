@@ -20,7 +20,8 @@ import org.apache.tools.ant.Project;
  * @author Alex
  *
  */
-public class SetDeployURL extends AbstractCatalinaTask {
+public class SetDeployURL extends AbstractCatalinaTask
+{
 
     private String var;
 

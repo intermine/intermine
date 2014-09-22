@@ -27,9 +27,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Code for reading project.xml files.
+ *
  * @author Kim Rutherford
  */
-public class ProjectXmlBinding
+public final class ProjectXmlBinding
 {
 
     private ProjectXmlBinding() {
@@ -46,8 +47,7 @@ public class ProjectXmlBinding
         FileReader reader = null;
         try {
             reader = new FileReader(file);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException (e);
         }
 
@@ -57,18 +57,16 @@ public class ProjectXmlBinding
             factory.setValidating(true);
             factory.newSAXParser().parse(new InputSource(reader), handler);
             Project project = handler.project;
-
             project.validate(file);
             return project;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException (e);
         } catch (ParserConfigurationException e) {
             throw new RuntimeException("The underlying parser does not support "
                     + " the requested features", e);
         } catch (SAXException e) {
-            throw new RuntimeException("Error parsing the project.xml file, please check the format.",
-                    e);
+            throw new RuntimeException("Error parsing the project.xml file, "
+                    + "please check the format.", e);
         }
 
     }
@@ -130,7 +128,7 @@ public class ProjectXmlBinding
             if (qName == null) {
                 return;
             }
-            if ("source".equals(qName) || qName.equals("post-process")) {
+            if ("source".equals(qName) || "post-process".equals(qName)) {
                 action = null;
             }
         }
