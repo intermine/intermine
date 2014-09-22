@@ -87,10 +87,9 @@ public class Service
         init(rootUrl, serviceRelativeUrl, applicationName);
     }
 
-    private void init(String rootUrl, String serviceRelativeUrl,
-            String applicationName) {
-        this.rootUrl = rootUrl;
-        this.applicationName = applicationName;
+    private void init(String url, String serviceRelativeUrl, String name) {
+        this.rootUrl = url;
+        this.applicationName = name;
         if (!rootUrl.endsWith("/")) {
             rootUrl = rootUrl + "/";
         }
@@ -151,7 +150,7 @@ public class Service
         return connection;
     }
 
-    private boolean requiresAuthentication(Request request) {
+    private static boolean requiresAuthentication(Request request) {
         return !(request != null && request.getServiceUrl() != null
                 && (request.getServiceUrl().endsWith("/version")
                         || request.getServiceUrl().endsWith("/version/release")
@@ -189,7 +188,7 @@ public class Service
         }
     }
 
-    private String getFormatValue(ContentType contentType) {
+    private static String getFormatValue(ContentType contentType) {
         if (contentType == ContentType.TEXT_TAB) {
             return "tab";
         } else if (contentType == ContentType.APPLICATION_JSON_OBJ) {

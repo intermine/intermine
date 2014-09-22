@@ -298,7 +298,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
         return getCount(template.getName(), parameters);
     }
 
-    private List<TemplateParameter> getParametersFor(TemplateQuery template) {
+    private static List<TemplateParameter> getParametersFor(TemplateQuery template) {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
         for (PathConstraint pc: template.getEditableConstraints()) {
             if (template.getSwitchOffAbility(pc) != SwitchOffAbility.OFF) {
@@ -458,7 +458,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public List<List<Object>> getRowsAsLists(String name,
             List<TemplateParameter> params, Page page) {
-        return getRows(name, params, page).getRowsAsLists();
+        return getRows(name, params).getRowsAsLists();
     }
 
     /**
@@ -471,7 +471,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * @return a list of rows, which are each a list of cells.
      */
     public List<List<Object>> getRowsAsLists(String name, List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getRowsAsLists();
+        return getRows(name, params).getRowsAsLists();
     }
 
     /**
@@ -485,7 +485,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public List<Map<String, Object>> getRowsAsMaps(String name, List<TemplateParameter> params,
             Page page) {
-        return getRows(name, params, page).getRowsAsMaps();
+        return getRows(name, params).getRowsAsMaps();
     }
 
     /**
@@ -499,7 +499,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * output column (in alternate long and short form) to value.
      */
     public List<Map<String, Object>> getRowsAsMaps(String name, List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getRowsAsMaps();
+        return getRows(name, params).getRowsAsMaps();
     }
 
     /**
@@ -514,7 +514,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Iterator<List<Object>> getRowListIterator(String name, List<TemplateParameter> params,
             Page page) {
-        return getRows(name, params, page).getListIterator();
+        return getRows(name, params).getListIterator();
     }
 
     /**
@@ -529,7 +529,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * @return an iterator over the rows, where each row is a list of objects.
      */
     public Iterator<List<Object>> getRowListIterator(String name, List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getListIterator();
+        return getRows(name, params).getListIterator();
     }
 
     /**
@@ -543,7 +543,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Iterator<Map<String, Object>> getRowMapIterator(String name,
             List<TemplateParameter> params, Page page) {
-        return getRows(name, params, page).getMapIterator();
+        return getRows(name, params).getMapIterator();
     }
 
     /**
@@ -558,25 +558,25 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Iterator<Map<String, Object>> getRowMapIterator(String name,
             List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getMapIterator();
+        return getRows(name, params).getMapIterator();
     }
 
-    private RowResultSet getRows(String name, List<TemplateParameter> params, Page page) {
+    private RowResultSet getRows(String name, List<TemplateParameter> params) {
         TemplateQuery tq = getTemplate(name);
         if (tq == null) {
             throw new ServiceException("There is no template named " + name);
         }
-        return getRows(name, params, tq.getView(), page);
+        return getRows(name, params, tq.getView());
     }
 
     @Override
     protected RowResultSet getRows(TemplateQuery query, Page page) {
         List<TemplateParameter> parameters = getParametersFor(query);
-        return getRows(query.getName(), parameters, query.getView(), page);
+        return getRows(query.getName(), parameters, query.getView());
     }
 
     private RowResultSet getRows(String name, List<TemplateParameter> params,
-            List<String> views, Page page) {
+            List<String> views) {
         ContentType ct = (getAPIVersion() < 8)
                 ? ContentType.APPLICATION_JSON_ROW
                 : ContentType.APPLICATION_JSON;

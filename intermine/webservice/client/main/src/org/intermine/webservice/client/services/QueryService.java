@@ -408,10 +408,11 @@ public class QueryService extends AbstractQueryService<PathQuery>
      * The column must represent a column of numeric values.
      *
      * @param query The query to summarise.
-     * @param summaryPath The column to summarise.
+     * @param path The column to summarise.
      * @return A summary.
      */
-    public NumericSummary getNumericSummary(PathQuery query, String summaryPath) {
+    public NumericSummary getNumericSummary(PathQuery query, String path) {
+        String summaryPath = path;
         try {
             if (!summaryPath.startsWith(query.getRootClass())) {
                 summaryPath = query.getRootClass() + "." + summaryPath;
@@ -471,11 +472,12 @@ public class QueryService extends AbstractQueryService<PathQuery>
      * the most request value to the least.
      *
      * @param query The query to summarise.
-     * @param summaryPath The column to summarise.
+     * @param path The column to summarise.
      * @param page The subsection of the summary to retrieve.
      * @return A summary.
      */
-    public Map<String, Integer> getSummary(PathQuery query, String summaryPath, Page page) {
+    public Map<String, Integer> getSummary(PathQuery query, String path, Page page) {
+        String summaryPath = path;
         try {
             if (!summaryPath.startsWith(query.getRootClass())) {
                 summaryPath = query.getRootClass() + "." + summaryPath;
