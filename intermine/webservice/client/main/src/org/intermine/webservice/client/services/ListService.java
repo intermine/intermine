@@ -144,8 +144,6 @@ public class ListService extends Service
      * a property, the webservice will resolve the given id to that object.
      * @param type the type of Object. Must be a valid name of a class in the service's
      * data-model (eg: "Gene")
-     * @throws ServiceException if the identifier does not match an object, or matches
-     * more than one.
      * @return A list of ItemList objects that represent lists containing the given object.
      */
     public List<ItemList> getListsWithObject(String publicId, String type) {
