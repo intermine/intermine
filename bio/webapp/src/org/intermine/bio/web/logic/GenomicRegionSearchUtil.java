@@ -171,9 +171,9 @@ public final class GenomicRegionSearchUtil
     }
 
     private static ChromosomeInfo getChromosomeInfo(
-            Map<String, ChromosomeInfo> chromsForOrg, String chr)
+            Map<String, ChromosomeInfo> chromsForOrg, String chromosome)
         throws RegionParseException {
-        chr = chr.toLowerCase();
+        String chr = chromosome.toLowerCase();
         if (chromsForOrg.containsKey(chr)) {
             return chromsForOrg.get(chr);
         } else {

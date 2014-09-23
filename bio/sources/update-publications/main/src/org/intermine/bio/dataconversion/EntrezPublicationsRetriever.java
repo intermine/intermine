@@ -299,7 +299,7 @@ public class EntrezPublicationsRetriever
     /**
      * Add a Map of pubication information to the Database
      */
-    private void addToDb(Transaction txn, Database db,
+    private static void addToDb(Transaction txn, Database db,
                          Map<String, Map<String, Object>> fromServerMap)
         throws IOException, DatabaseException {
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
