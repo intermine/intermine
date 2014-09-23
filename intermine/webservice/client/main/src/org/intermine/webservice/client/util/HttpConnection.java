@@ -233,10 +233,9 @@ public class HttpConnection
 
     /**
      * Handles an error response received while executing a service request.
-     * Throws a {@link ServiceException} or one of its subclasses, depending on
+     * Throws a ServiceException or one of its subclasses, depending on
      * the failure conditions.
      *
-     * @throws ServiceException exception describing the failure.
      * @throws IOException error reading the error response from the
      *         service.
      */

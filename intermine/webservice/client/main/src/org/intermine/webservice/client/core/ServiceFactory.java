@@ -111,7 +111,6 @@ public class ServiceFactory
         this.applicationName = name;
     }
 
-    @SuppressWarnings("deprecation")
     private void authoriseAndLink(Service s) {
         if (authToken != null) {
             s.setAuthentication(authToken);
