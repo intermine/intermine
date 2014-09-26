@@ -12,7 +12,7 @@
     description="Append the struts config modifications to the webapp"
     depends="-pre-init">
 
-    <unwar src="${dist.war}" dest="${build.dir}/webapp">
+    <unwar src="${dist.war}" dest="${build.dir}/webapp/">
       <patternset>
         <include name="WEB-INF/web.xml"/>
       </patternset>
