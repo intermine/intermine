@@ -146,7 +146,7 @@ public class GFF3Exporter implements Exporter
         StringBuffer header = new StringBuffer();
         Properties props = PropertiesUtil.getProperties();
 
-        if (organisms != null) {
+        if (organisms != null && !organisms.isEmpty()) {
             for (Integer taxId : organisms) {
                 if (taxId == 7227) {
                     String fV = props.getProperty("genomeVersion.fly");
