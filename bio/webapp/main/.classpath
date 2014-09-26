@@ -12,7 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-jbrowse-endpoint"/>
 	<classpathentry kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="src" path="/bio-tools-main"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
 	<classpathentry kind="src" path="/intermine-webservice-client"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
