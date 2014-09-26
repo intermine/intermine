@@ -1,1 +1,2 @@
-<!-- Put custom servlets and plugins here. -->
+<!-- this comment is here to prevent ant from setting model.web to null -->
+
