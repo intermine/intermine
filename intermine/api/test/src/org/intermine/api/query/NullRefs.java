@@ -49,7 +49,7 @@ public class NullRefs {
 
     private static ObjectStoreWriter osw;
     private static final String ALIAS = "osw.unittest";
-    
+
     private static final Logger LOG = Logger.getLogger(NullRefs.class);
     private static Set<InterMineObject> madeThings = new HashSet<InterMineObject>();
 
@@ -117,7 +117,7 @@ public class NullRefs {
         } catch (ObjectStoreException e) {
             LOG.error("Could not initialise object-store", e);
             return;
-        } 
+        }
     }
 
     @After
@@ -177,11 +177,11 @@ public class NullRefs {
         Query q = makeQuery(pq);
         doSanityTest(q);
     }
-    
+
     private void doSanityTest(Query q) {
         doTest(q, 4, 22);
     }
-    
+
     @Test
     public void nullRefs() {
         Query q = new Query();
@@ -194,7 +194,7 @@ public class NullRefs {
         q.setConstraint(cons);
         doNullRefTests(q);
     }
-    
+
     @Test
     public void pathQueryNullRefs() {
         PathQuery pq = new PathQuery(osw.getModel());
@@ -247,7 +247,7 @@ public class NullRefs {
     public void nonNullCollections() {
         QueryClass dep = new QueryClass(Department.class);
         QueryClass emp = new QueryClass(Employee.class);
-        
+
         Query q = new Query();
         q.addFrom(dep);
         q.addToSelect(dep);
@@ -255,24 +255,24 @@ public class NullRefs {
         QueryField nameF = new QueryField(dep, "name");
         cons.addConstraint(new SimpleConstraint(nameF, ConstraintOp.MATCHES, new QueryValue("temp-%")));
         q.setConstraint(cons);
-        
+
         Query subQ = new Query();
-        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F. 
+        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F.
         subQ.setDistinct(false);
         subQ.addFrom(emp);
         subQ.addToSelect(new QueryValue(1));
         ConstraintSet subset = new ConstraintSet(ConstraintOp.AND);
-        
+
         //subset.addConstraint(new ContainsConstraint(new QueryObjectReference(emp, "department"), ConstraintOp.CONTAINS, dep));
         subset.addConstraint(new ContainsConstraint(new QueryCollectionReference(dep, "employees"), ConstraintOp.CONTAINS, emp));
         subQ.setConstraint(subset);
         //
-        
+
         cons.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, subQ));
-        
+
         doNonNullCollectionTests(q);
     }
-    
+
     @Test
     public void nonNullPathQueryCollections() {
         PathQuery pq = new PathQuery(osw.getModel());
@@ -309,7 +309,7 @@ public class NullRefs {
         Query q = makeQuery(pq);
         doNonNullCollectionTests(q);
     }
-    
+
     private void doNonNullCollectionTests(Query q) {
         Results res = osw.execute(q, 50000, true, false, true);
         for (Object o: res) {
@@ -322,7 +322,7 @@ public class NullRefs {
         }
         doTest(q, 2, 20);
     }
-    
+
     /**
      * This is possible if the following sql can be generated:
      * <pre>
@@ -345,21 +345,21 @@ public class NullRefs {
         q.setConstraint(cons);
 
         Query subQ = new Query();
-        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F. 
+        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F.
         subQ.setDistinct(false);
         subQ.addFrom(emp);
         subQ.addToSelect(new QueryValue(1));
         ConstraintSet subset = new ConstraintSet(ConstraintOp.AND);
-        
+
         //subset.addConstraint(new ContainsConstraint(new QueryObjectReference(emp, "department"), ConstraintOp.CONTAINS, dep));
         subset.addConstraint(
             new ContainsConstraint(
                 new QueryCollectionReference(dep, "employees"), ConstraintOp.CONTAINS, emp));
         subQ.setConstraint(subset);
         //
-        
+
         cons.addConstraint(new SubqueryExistsConstraint(ConstraintOp.DOES_NOT_EXIST, subQ));
-        
+
         doNullCollectionTests(q);
     }
 

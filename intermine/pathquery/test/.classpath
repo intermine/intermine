@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
