@@ -1,9 +1,0 @@
-<!-- this comment is here to prevent ant from setting model.struts.config to null -->
-
-<form-bean name="sequenceExportForm" type="org.intermine.bio.web.struts.SequenceExportForm"/>
-<form-bean name="gff3ExportForm" type="org.intermine.bio.web.struts.GFF3ExportForm"/>
-<form-bean name="bedExportForm" type="org.intermine.bio.web.struts.BEDExportForm"/>
-<form-bean name="galaxyExportForm" type="org.intermine.bio.web.struts.GalaxyExportForm"/>
-<form-bean name="submissionOverlapsForm" type="org.modmine.web.SubmissionOverlapsForm"/>
-<form-bean name="modMineSearchForm" type="org.modmine.web.ModMineSearchForm"/>
-<form-bean name="spanUploadForm" type="org.modmine.web.SpanUploadForm"/>
