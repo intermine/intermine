@@ -292,6 +292,9 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("rename-ontologies".equals(operation)) {
               OntologyRenamer task = new OntologyRenamer(getObjectStoreWriter());
               task.execute();
+            } else if ("tweak-coordinates".equals(operation)) {
+              CoordinateTweaker task = new CoordinateTweaker(getObjectStoreWriter());
+              task.execute();
             } else if ("add-singleton-sequence".equals(operation)) {
               SingletonSequenceTransfer task = new SingletonSequenceTransfer(getObjectStoreWriter());
               task.execute();

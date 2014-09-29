@@ -28,6 +28,7 @@ import org.intermine.model.bio.GOEvidenceCode;
 import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyTerm;
+import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.ProteinDomain;
 import org.intermine.model.bio.ProteinAnalysisFeature;
@@ -38,8 +39,11 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
@@ -204,7 +208,7 @@ public class TransferGOAnnotations {
             count++;
           }
           
-          if (count%1000 == 0 ) {
+          if ( (count > 0) && (count%1000 == 0) ) {
             LOG.info("Created "+count+" gene/protein records...");
           }
         }

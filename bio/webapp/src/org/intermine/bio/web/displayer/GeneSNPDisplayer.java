@@ -136,16 +136,16 @@ public class GeneSNPDisplayer extends ReportDisplayer {
 
   private PathQuery getConsequenceTable(String identifier) {
     PathQuery query = new PathQuery(im.getModel());
-    query.addViews( "SNP.snpLocation.start",
-                    "SNP.snpLocation.reference",
+    query.addViews( "SNP.locations.start",
+                    "SNP.reference",
                     "SNP.alternate",
                     "SNP.consequences.substitution",
                     "SNP.consequences.type.type",
                     "SNP.consequences.transcript.primaryIdentifier",
                     "SNP.snpDiversitySamples.genotype",
                     "SNP.snpDiversitySamples.diversitySample.name");
-    query.addOrderBy("SNP.snpLocation.start", OrderDirection.ASC);
-    query.addOrderBy("SNP.snpLocation.reference", OrderDirection.ASC);
+    query.addOrderBy("SNP.locations.start", OrderDirection.ASC);
+    query.addOrderBy("SNP.reference", OrderDirection.ASC);
     query.addOrderBy("SNP.alternate", OrderDirection.ASC);
     query.addOrderBy("SNP.consequences.substitution", OrderDirection.ASC);
     query.addOrderBy("SNP.consequences.type.type", OrderDirection.ASC);

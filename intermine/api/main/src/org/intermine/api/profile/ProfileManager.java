@@ -606,11 +606,12 @@ public class ProfileManager
                 }
             } else {
                 // Should not happen
-                throw new RuntimeException("The UserProfile is null");
-//                 userProfile = new UserProfile();
-//                 userProfile.setUsername(profile.getUsername());
-//                 userProfile.setPassword(profile.getPassword());
-//                 userProfile.setId(userId);
+                //throw new RuntimeException("The UserProfile is null");
+              // no. it can happen. For accounts created outside the normal procedures.
+                 userProfile = new UserProfile();
+                 userProfile.setUsername(profile.getUsername());
+                 userProfile.setPassword(profile.getPassword());
+                 userProfile.setId(userId);
             }
 
             for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
