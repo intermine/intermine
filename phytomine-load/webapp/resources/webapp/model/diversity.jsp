@@ -9,27 +9,18 @@
       </div>
       <div class="body">
         <DL>
-          <DT><A href="http://www.ebi.uniprot.org/index.shtml">UniProt
-          Knowledgebase (UniProtKB)</A></DT>
+          <DT>Diversity Data</DT>
           <DD>
-            All proteins from the <A
-            href="http://www.ebi.uniprot.org/index.shtml">UniProt
-            Knowledgebase</A> (version 7.5) for the following organisms have
-            been loaded:
+            Phytozome has compiled a collection of data acquired from individual
+            organisms in natural populations. Next-generation sequencing reads were
+            aligned to reference genomes and the single nucleotied variations (SNV) were
+            classified in the impact on the transcriptome.<p>
+            The data available is:
             <UL>
-              <LI><I>Plasmodium falciparum (isolate 3D7)</I></LI>
-            </UL>
-            For each protein record in UniProt for each species the following
-            information is extracted:
-            <UL>
-              <LI>Entry name</LI>
-              <LI>Primary accession number</LI>
-              <LI>Secondary accession number</LI>
-              <LI>Protein name</LI>
-              <LI>Comments</LI>
-              <LI>Publications</LI>
-              <LI>Sequence</LI>
-              <LI>Gene ORF name</LI>
+              <LI><em>Populus trichocarpa</em> (16 individuals)</LI>
+              <LI><em>Manihot cassava</em> (18 individuals)</LI>
+              <LI><em>Eucalyptus grandis</em> (8 individuals)</LI>
+              <LI><em>Brachipodium distachyon</em> (7 individuals)</LI>
             </UL>
           </DD>
         </DL>
@@ -37,20 +28,12 @@
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download <i>P. falciparum 3d7</i> data
+        Bulk download
       </div>
       <div class="body">
-        <ul>
-          <li>
-            <span style="white-space:nowrap">
-              <im:querylink text="Plasmodium falciparum proteins and corresponding genes:" skipBuilder="true">
-<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.organism.name Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.organism.shortName" sortOrder="Protein.primaryIdentifier asc">
-  <constraint path="Protein.organism.name" op="=" value="Plasmodium falciparum 3D7"/>
-</query>
-              </im:querylink>
-            </span>
-          </li>
-        </ul>
+      Bulk data files for all organisms in Phytozome are available for download from the 
+      <a href="http://genome.jgi.doe.gov/pages/dynamicOrganismDownload.jsf?organism=PhytozomeV10">
+      JGI Download Portal </a>.
       </div>
     </td>
   </tr>

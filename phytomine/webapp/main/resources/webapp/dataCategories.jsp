@@ -17,8 +17,8 @@
              <img border="0" class="arrow" src="images/right-arrow.gif" alt="Go"/>
            </html:link>
       </im:boxarea>
-   </div>
-<div id="rightCol">
+  </div>
+  <div id="rightCol">
    <im:boxarea titleKey="dataCategories.title" stylename="gradientbox">
     <c:choose>
         <c:when test="${!empty ASPECTS}">
@@ -44,7 +44,6 @@
         </c:otherwise>
       </c:choose>
      </im:boxarea>
-</div>
-</div>
+  </div>
 </div>
 <!-- /dataCategories -->

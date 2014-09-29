@@ -9,43 +9,27 @@
       </div>
       <div class="body">
         <DL>
-          <DT><A href="http://www.ebi.uniprot.org/index.shtml">Phytozome
-          Families </A></DT>
+          <DT>Phytozome Families </DT>
           <DD>
-            All proteins from the <A
-            href="http://www.ebi.uniprot.org/index.shtml">UniProt
-            Knowledgebase</A> (version 7.5) for the following organisms have
-            been loaded:
-            <UL>
-              <LI><I>Plasmodium falciparum (isolate 3D7)</I></LI>
-            </UL>
-            For each protein record in UniProt for each species the following
-            information is extracted:
-            <UL>
-              <LI>Entry name</LI>
-              <LI>Primary accession number</LI>
-              <LI>Secondary accession number</LI>
-              <LI>Protein name</LI>
-              <LI>Comments</LI>
-              <LI>Publications</LI>
-              <LI>Sequence</LI>
-              <LI>Gene ORF name</LI>
-            </UL>
+            All proteins from the Phytozome database
+            are grouped into a hierachical structure of related polypeptide sequence. A family
+            consisting of more than one protein also has a computed multiple sequence alignment (MSA)
+            and computed centroid sequence.
           </DD>
         </DL>
       </div>
     </td>
     <td valign="top">
       <div class="heading2">
-        Bulk download <i>P. falciparum 3d7</i> data
+        Bulk download data
       </div>
       <div class="body">
         <ul>
           <li>
             <span style="white-space:nowrap">
-              <im:querylink text="Plasmodium falciparum proteins and corresponding genes:" skipBuilder="true">
-<query name="" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession Protein.organism.name Protein.genes.primaryIdentifier Protein.genes.secondaryIdentifier Protein.genes.organism.shortName" sortOrder="Protein.primaryIdentifier asc">
-  <constraint path="Protein.organism.name" op="=" value="Plasmodium falciparum 3D7"/>
+              <im:querylink text="A bulk query for Protein Families with more than 1 member" skipBuilder="true">
+<query name="" model="genomic" view="ProteinFamily.clusterId ProteinFamily.clusterName ProteinFamily.protein.primaryIdentifier ProteinFamily.methodName" sortOrder="ProteinFamily.clusterId asc">
+  <constraint path="ProteinFamily.memberCount" op="&gt;" value="1"/>
 </query>
               </im:querylink>
             </span>

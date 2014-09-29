@@ -75,17 +75,17 @@ ul#nav a{
 ul#nav a:hover,ul#nav li#mymine a:hover{
   color:#333;}
 
-ul#nav li#mymine a{
-  color:#000;background:url('corner_my_t_r.png') no-repeat top right;}
-
 ul#nav li.activelink a{
   color:white;background:url('corner_act_t_r.png') no-repeat top right;}
 
+ul#nav li.activelink {
+  background:#5B8862 url('corner_act_t_l.png') no-repeat top left;}
+
+ul#nav li#mymine a{
+  color:#000;background:url('corner_my_t_r.png') no-repeat top right;}
+
 ul#nav li#mymine {
   background:#5B8862 url('corner_my_t_l.png') no-repeat;}
-
-ul#nav li.activelink {
-  background:#5B8862 url('corner_act_t_l.png') no-repeat;}
 
 ul#submenulist li#subactive_bag {height:37px;
   font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
@@ -107,7 +107,7 @@ ul#nav li{
   background:#D2CEBF;}
 
 ul#submenulist li a {
-  color:#FFF;text-decoration: none;font-weight: bold;}
+  color:#AAA;text-decoration: none;font-weight: bold;}
 
 ul#submenulist li a:hover {
   color:#FFF;text-decoration: underline;font-weight: bold;}

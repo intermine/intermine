@@ -11,6 +11,16 @@
     <tile-name>model/genomics.jsp</tile-name>
     <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
   </aspect>
+  <aspect name="Transcripts">
+    <subtitle>Transcripts and Expression&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Transcript annotation (including expression) from Phytozome.
+    </intro-text>
+    <tile-name>model/proteins.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+  </aspect>
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
     <icon-image>model/images/proteins.png</icon-image>
@@ -41,4 +51,15 @@
     <tile-name>model/diversity.jsp</tile-name>
     <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
   </aspect>
+  <aspect name="Expression">
+    <subtitle>RNA-Seq&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/expression.png</icon-image>
+    <large-image>model/images/expressioniversity.png</large-image>
+    <intro-text>
+      RNA-Seq data from Phytozome.
+    </intro-text>
+    <tile-name>model/expression.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+  </aspect>
+
 </aspects>

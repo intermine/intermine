@@ -241,6 +241,9 @@ public class PhytozomeProcessor extends ChadoProcessor
     super(parent.getChadoDBConverter());
   }
 
+  public PhytozomeProcessor(Connection connection, String organismIdentifier) {
+    // TODO Auto-generated constructor stub
+  }
   /**
    * {@inheritDoc}
    * We process the chado database by reading each table in turn

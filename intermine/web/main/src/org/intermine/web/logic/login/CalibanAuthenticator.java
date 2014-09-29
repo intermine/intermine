@@ -105,13 +105,21 @@ public class CalibanAuthenticator extends HttpServlet {
         response.sendRedirect(InterMineAction.getWebProperties(request).getProperty("caliban.signon"));
       }
     } else {
-      Profile prof;
+      Profile prof = null;
       // examine the identity hash to see if there is an account set for this 'login'
       if (!profileManager.hasProfile(identity.get("login"))) {
         // if not, create this account.
+        log.debug("ccreating account for user "+identity.get("login"));
         prof = Caliban.createUserAccount(profileManager,identity);
       } else {
+        log.debug("checking profile for user "+identity.get("login"));
         prof = profileManager.getProfile(identity.get("login"));
+        log.debug("user id is "+prof.getUserId());
+      }
+      if (prof==null) {
+        log.debug("Profile is null!");
+      } else {
+        log.debug("Profile id is "+prof.getUserId());
       }
       // (re)assign API token from jgi_session value
       String token = identity.get("token");
@@ -145,6 +153,7 @@ public class CalibanAuthenticator extends HttpServlet {
         }
         // just the token
         calibanSessionId = calibanSessionId.replace("%2Fapi%2Fsessions%2F","");
+        log.debug("Using jgi_session token "+calibanSessionId);
         try {
           identity = Caliban.getIdentityHash(calibanSessionId);
           log.debug("Have an identity hash "+((identity==null)?"which is null":identity.get("login")));

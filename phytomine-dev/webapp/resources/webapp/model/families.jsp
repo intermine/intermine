@@ -27,9 +27,9 @@
         <ul>
           <li>
             <span style="white-space:nowrap">
-              <im:querylink text="A bulk query for Protein Families:" skipBuilder="true">
-<query name="" model="genomic" view="ProteinFamily.clusterId" sortOrder="ProteinFamily.clusterId asc">
-  <constraint path="ProteinFamily.clusterId" op="=" value="47396511"/>
+              <im:querylink text="A bulk query for Protein Families with more than 1 member" skipBuilder="true">
+<query name="" model="genomic" view="ProteinFamily.clusterId ProteinFamily.clusterName ProteinFamily.protein.primaryIdentifier ProteinFamily.methodName" sortOrder="ProteinFamily.clusterId asc">
+  <constraint path="ProteinFamily.memberCount" op="&gt;" value="1"/>
 </query>
               </im:querylink>
             </span>

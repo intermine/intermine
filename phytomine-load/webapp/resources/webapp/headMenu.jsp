@@ -35,12 +35,13 @@
     </div>
   </c:if>
   <div id="header">
-    <a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" alt="Logo" /></a>
+    <a href="${WEB_PROPERTIES['project.homeLink']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" height="35px" width="190px" alt="Logo" /></a>
     <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
     <p id="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span>
     <p><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
     <a style="float:right;" href="http://jgi.doe.gov/" title="DOE Joint Genome Institute" target="_blank">
         <img height="35px" src="model/images/JGI-logo.png" alt="DOE Joint Genome Institute logo">
+     </a>
   </div>
 
     <!-- Tab Menu -->

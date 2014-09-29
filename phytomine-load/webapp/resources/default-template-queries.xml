@@ -144,8 +144,9 @@
 
 <template name="InterproScan_Proteins" title="InterproScan results for specific organism.">
 <query name="InterproScan_Proteins" model="genomic"
-    view="Protein.primaryIdentifier Protein.proteinAnalysisFeatures.programname Protein.proteinAnalysisFeatures.rawscore Protein.proteinAnalysisFeatures.significance Protein.proteinAnalysisFeatures.crossReference.identifier" sortOrder="Protein.primaryIdentifier ASC" constraintLogic="A and B" >
-  <constraint path="Protein.proteinAnalysisFeatures.programname" editable="true" op="=" value="KOG" code="A" />
+    view="Protein.primaryIdentifier Protein.proteinAnalysisFeatures.programname Protein.proteinAnalysisFeatures.rawscore Protein.proteinAnalysisFeatures.significance Protein.proteinAnalysisFeatures.crossReference.identifier Protein.proteinAnalysisFeatures.crossReference.subject.primaryIdentifier" sortOrder="Protein.primaryIdentifier ASC" constraintLogic="A and B" >
+  <join path="Protein.proteinAnalysisFeatures.crossReference.subject" style="OUTER"/>
+  <constraint path="Protein.proteinAnalysisFeatures.programname" editable="true" op="=" value="HMMPfam" code="A" />
   <constraint path="Protein.proteinAnalysisFeatures.organism.shortName" editable="true" op="=" value="P. trichocarpa" code="B" />
 </query>
 </template>
@@ -226,7 +227,7 @@
   <tag name="im:public" objectIdentifier="Organism_MRNA_Sequence" type="template" />
   <tag name="im:public" objectIdentifier="GOtermidentifier_name" type="template" />
   <tag name="im:public" objectIdentifier="Region_Gene" type="template" />
-  <tag name="im:public" objectIdentifier="Chromosome_seq" type="template" />
+  <!--tag name="im:public" objectIdentifier="Chromosome_seq" type="template" /-->
   <tag name="im:public" objectIdentifier="Protein_Domain_GO" type="template" />
   <tag name="im:public" objectIdentifier="Panther_Proteins" type="template" />
   <tag name="im:public" objectIdentifier="InterproScan_Proteins" type="template" />
@@ -306,7 +307,7 @@
   <tag name="im:aspect:Genomes" objectIdentifier="LocatedSequenceFeature.sequence" type="reference" />
   <tag name="im:aspect:Genomes" objectIdentifier="Transcript.gene" type="reference" />
   <tag name="im:aspect:Genomes" objectIdentifier="Region_Gene" type="template" />
-  <tag name="im:aspect:Genomes" objectIdentifier="Chromosome_seq" type="template" />
+  <!--tag name="im:aspect:Genomes" objectIdentifier="Chromosome_seq" type="template" /-->
 
   <tag name="im:aspect:Genes" objectIdentifier="Gene_Protein" type="template" />
   <tag name="im:aspect:Genes" objectIdentifier="Gene_Gene_Sequence" type="template" />

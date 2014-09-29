@@ -4,6 +4,15 @@
 <action path="/sequenceExporter"
   type="org.intermine.bio.web.struts.SequenceExportAction" />
 
+<action path="/directSequenceExporter"
+  type="org.intermine.bio.web.struts.DirectSequenceExportAction" />
+
+<action path="/initHeatMap"
+  type="org.intermine.bio.web.displayer.HeatMapController" />
+
+<action path="/heatMap" forward="heatMap.page" />
+
+
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 

@@ -18,7 +18,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,9 +29,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 
 /**
@@ -141,14 +138,14 @@ public class PacClustersConverter extends BioDBConverter
       }
       LOG.info("Stored "+ctr+" clusters.");
       // now register proteins and genes
-      for( String taxonId : proteinMap.keySet()) {
-        Map<String,Item> prots = proteinMap.get(taxonId);
+      for( String proteomeId : proteinMap.keySet()) {
+        Map<String,Item> prots = proteinMap.get(proteomeId);
         for( String protein: prots.keySet()) {
           store(prots.get(protein));
         }
       }
-      for( String taxonId : geneMap.keySet()) {
-        Map<String,Item> genes = geneMap.get(taxonId);
+      for( String proteomeId : geneMap.keySet()) {
+        Map<String,Item> genes = geneMap.get(proteomeId);
         for( String gene: genes.keySet()) {
           store(genes.get(gene));
         }
@@ -160,50 +157,50 @@ public class PacClustersConverter extends BioDBConverter
       HashMap<String,String> idToName = new HashMap<String,String>();
       Map<String,Integer>organismCount = new HashMap<String,Integer>();
       while( res.next()) {
-        String taxonId = res.getString("taxid");
+        String proteomeId = res.getString("proteomeid");
         idToName.put(res.getString("transcriptId"), res.getString("peptideName"));
-        if (!organismCount.containsKey(taxonId)) {
-          organismCount.put(taxonId, new Integer(1));
+        if (!organismCount.containsKey(proteomeId)) {
+          organismCount.put(proteomeId, new Integer(1));
         } else {
-          Integer j = organismCount.get(taxonId);
-          organismCount.put(taxonId, ++j);
+          Integer j = organismCount.get(proteomeId);
+          organismCount.put(proteomeId, ++j);
         }
-        if (!organismMap.containsKey(taxonId)) {
+        if (!organismMap.containsKey(proteomeId)) {
           Item o = createItem("Organism");
-          o.setAttribute("taxonId", taxonId);
+          o.setAttribute("proteomeId", proteomeId);
           store(o);
-          organismMap.put(taxonId, o.getIdentifier());
-          proteinMap.put(taxonId, new HashMap<String,Item>());
-          geneMap.put(taxonId, new HashMap<String,Item>());
+          organismMap.put(proteomeId, o.getIdentifier());
+          proteinMap.put(proteomeId, new HashMap<String,Item>());
+          geneMap.put(proteomeId, new HashMap<String,Item>());
         }
         String proteinName = res.getString("peptideName");
-        if (!proteinMap.get(taxonId).containsKey(proteinName)) {
+        if (!proteinMap.get(proteomeId).containsKey(proteinName)) {
           Item p = createItem("Protein");
           p.setAttribute("primaryIdentifier",proteinName);
-          p.setReference("organism",organismMap.get(taxonId));
-          proteinMap.get(taxonId).put(proteinName,p);
+          p.setReference("organism",organismMap.get(proteomeId));
+          proteinMap.get(proteomeId).put(proteinName,p);
         }
-        family.addToCollection("protein", proteinMap.get(taxonId).get(proteinName));
-        proteinMap.get(taxonId).get(proteinName).addToCollection("proteinFamily",family.getIdentifier());
+        family.addToCollection("protein", proteinMap.get(proteomeId).get(proteinName));
+        proteinMap.get(proteomeId).get(proteinName).addToCollection("proteinFamily",family.getIdentifier());
         String geneName = res.getString("locusName");
-        if (!geneMap.get(taxonId).containsKey(geneName)) {
+        if (!geneMap.get(proteomeId).containsKey(geneName)) {
           Item g = createItem("Gene");
           g.setAttribute("primaryIdentifier",geneName);
-          g.setReference("organism",organismMap.get(taxonId));
-          geneMap.get(taxonId).put(geneName,g);
+          g.setReference("organism",organismMap.get(proteomeId));
+          geneMap.get(proteomeId).put(geneName,g);
         }
-        family.addToCollection("gene", geneMap.get(taxonId).get(geneName));
+        family.addToCollection("gene", geneMap.get(proteomeId).get(geneName));
        
       }
       res.close();
       // register the organism counts
       Integer memberCount = new Integer(0);
-      for( String taxonId : organismCount.keySet()) {
-        memberCount += organismCount.get(taxonId);
+      for( String proteomeId : organismCount.keySet()) {
+        memberCount += organismCount.get(proteomeId);
         Item count = createItem("ProteinFamilyOrganism");
-        count.setAttribute("count", organismCount.get(taxonId).toString());
+        count.setAttribute("count", organismCount.get(proteomeId).toString());
         count.setReference("proteinFamily",family.getIdentifier());
-        count.setReference("organism",organismMap.get(taxonId));
+        count.setReference("organism",organismMap.get(proteomeId));
         family.addToCollection("proteinFamilyOrganism",count.getIdentifier());
         store(count);
       }
@@ -240,7 +237,6 @@ public class PacClustersConverter extends BioDBConverter
       ResultSet res = null;
       try {
         Statement stmt = connection.createStatement();
-        // we're going to want transcript id and taxon id as strings. so cast them here
         String query = "SELECT peptide FROM "
             + " transcript"
             + " WHERE id="+transcriptId;
@@ -266,11 +262,11 @@ public class PacClustersConverter extends BioDBConverter
       ResultSet res = null;
       try {
         Statement stmt = connection.createStatement();
-        // we're going to want transcript id and taxon id as strings. so cast them here
+        // we're going to want transcript id and proteome id as strings. so cast them here
         String query = "select peptideName,"
                              + " locusName, "
                              + " cast(t.id as char) as transcriptId, "
-                             + " cast(taxid as char) as taxid from"
+                             + " cast(p.id as char) as proteomeid from"
                              + " clusterJoin c, proteome p, transcript t"
                              + " where clusterId="+clusterId 
                              + " and memberId=t.id and c.active=1"
@@ -458,7 +454,7 @@ public class PacClustersConverter extends BioDBConverter
      * {@inheritDoc}
      */
     @Override
-    public String getDataSetTitle(int taxonId) {
+    public String getDataSetTitle(int proteomeId) {
         return DATASET_TITLE;
     }
 }
