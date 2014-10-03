@@ -7,8 +7,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

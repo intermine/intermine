@@ -11,6 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="src" path="/bio-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-webapp-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
