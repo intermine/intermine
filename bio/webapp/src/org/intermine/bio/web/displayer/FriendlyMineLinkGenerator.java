@@ -34,12 +34,12 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.StringUtil;
-import org.intermine.metadata.Util;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.Util;
 import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.webservice.client.results.XMLTableResult;
 import org.json.JSONException;
@@ -109,7 +109,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
         try {
             // query for homologues in remote mine
             PathQuery q = getHomologueQuery(model, organismShortName, primaryIdentifier);
-            Map<String, Set<String[]>> results = runQuery(olm, mine, q);
+            Map<String, Set<String[]>> results = runQuery(olm, mine, q, organismShortName);
             if (results != null && !results.isEmpty()) {
                 genes.putAll(results);
             } else {
@@ -122,7 +122,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                         String identifiers = StringUtil.join(matchingHomologues, ",");
                         // query remote mine for genes found in local mine
                         q = getGeneQuery(model, remoteMineOrganism, identifiers);
-                        results = runQuery(olm, mine, q);
+                        results = runQuery(olm, mine, q, remoteMineOrganism);
                         if (results != null && !results.isEmpty()) {
                             genes.putAll(results);
                         }
@@ -130,7 +130,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 }
             }
             q = getGeneQuery(model, organismShortName, primaryIdentifier);
-            results = runQuery(olm, mine, q);
+            results = runQuery(olm, mine, q, organismShortName);
             if (results != null && !results.isEmpty()) {
                 genes.putAll(results);
             }
@@ -138,13 +138,14 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
             LOG.warn("error generating friendly mine links", e);
             return null;
         }
-        Collection<JSONObject> results = resultsToJSON(genes);
+        Collection<JSONObject> results = resultsToJSON(key, genes);
         olm.addLink(key, results);
         return results;
     }
 
     // TODO just get JSON back from webservice instead
-    private static Collection<JSONObject> resultsToJSON(Map<String, Set<String[]>> results) {
+    private static Collection<JSONObject> resultsToJSON(MultiKey key, Map<String,
+            Set<String[]>> results) {
         Collection<JSONObject> organisms = new ArrayList<JSONObject>();
         // now we have a list of orthologues, add to JSON Organism object
         for (Entry<String, Set<String[]>> entry : results.entrySet()) {
@@ -197,7 +198,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
      *****************************************************************************************/
 
     private static Map<String, Set<String[]>> runQuery(
-            FriendlyMineManager fmm, Mine mine, PathQuery q) {
+            FriendlyMineManager fmm, Mine mine, PathQuery q, String organism) {
         Map<String, Set<String[]>> results = new HashMap<String, Set<String[]>>();
         Set<String> mineOrganisms = mine.getDefaultValues();
         try {

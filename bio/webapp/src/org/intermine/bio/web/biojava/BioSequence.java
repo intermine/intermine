@@ -29,6 +29,7 @@ public class BioSequence extends SimpleSequence
     /**
      * The BioEntity that was passed to the constructor.
      */
+    @SuppressWarnings("unused")
     private BioEntity bioEntity = null;
 
     /**

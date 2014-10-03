@@ -82,9 +82,9 @@ public class GenomicRegionSearchService
     private Map<String, String> classDescrs = null;
     private static String orgFeatureJSONString = "";
     private static final String GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT =
-            "genomic_region_search_options_default";
+        "genomic_region_search_options_default";
     private static final String GENOMIC_REGION_SEARCH_RESULTS_DEFAULT =
-            "genomic_region_search_results_default";
+        "genomic_region_search_results_default";
     private static final int READ_AHEAD_CHARS = 10000;
     private GenomicRegionSearchConstraint grsc = null;
     private static Set<String> featureTypesInOrgs = null;
@@ -93,7 +93,7 @@ public class GenomicRegionSearchService
     private List<String> selectionInfo = new ArrayList<String>();
 
     private static final String CHROMOSOME_LOCATION_MISSING =
-            "Chromosome location information is missing";
+        "Chromosome location information is missing";
 
     /**
      * Constructor
@@ -176,7 +176,7 @@ public class GenomicRegionSearchService
         // Exclude preset feature types (global) to display
         // Data should be comma separated class names
         String excludedFeatureTypes = webProperties.getProperty(
-                "genomicRegionSearch.featureTypesExcluded.global");
+            "genomicRegionSearch.featureTypesExcluded.global");
 
         List<String> excludedFeatureTypeList = new ArrayList<String>();
         if (excludedFeatureTypes == null || "".equals(excludedFeatureTypes)) {
@@ -290,12 +290,12 @@ public class GenomicRegionSearchService
             for (String className : e.getValue()) {
                 Map<String, String> featureTypeAndDespMap = new LinkedHashMap<String, String>();
 
-                //                String soTermDes = "description not avaliable";
-                //                List<String> soInfo = featureTypeToSOTermMap.get(className);
-                //
-                //                if (soInfo != null) {
-                //                    soTermDes = featureTypeToSOTermMap.get(className).get(1);
-                //                }
+//                String soTermDes = "description not avaliable";
+//                List<String> soInfo = featureTypeToSOTermMap.get(className);
+//
+//                if (soInfo != null) {
+//                    soTermDes = featureTypeToSOTermMap.get(className).get(1);
+//                }
 
                 String des = "description not avaliable";
                 if (featureTypeToSOTermMap.containsKey(className)) {
@@ -321,7 +321,7 @@ public class GenomicRegionSearchService
                     (OrganismGenomeBuildLookup
                             .getGenomeBuildbyOrgansimAbbreviation(e.getKey()) == null)
                             ? "not available"
-                                    : OrganismGenomeBuildLookup
+                            : OrganismGenomeBuildLookup
                                     .getGenomeBuildbyOrgansimAbbreviation(e
                                             .getKey()));
 
@@ -337,7 +337,7 @@ public class GenomicRegionSearchService
         //       was called. Replace "\" in java -> "\\\\"
 
         String preDataStr = jo.toString();
-        //        preDataStr = preDataStr.replaceAll("'", "\\\\'");
+//        preDataStr = preDataStr.replaceAll("'", "\\\\'");
 
         return preDataStr;
     }
@@ -686,10 +686,10 @@ public class GenomicRegionSearchService
      */
     public Map<GenomicRegion, Query> createQueryList() {
         return GenomicRegionSearchUtil.createQueryList(
-                grsc.getGenomicRegionList(),
-                grsc.getExtendedRegionSize(),
-                grsc.getOrgName(),
-                grsc.getFeatureTypes());
+            grsc.getGenomicRegionList(),
+            grsc.getExtendedRegionSize(),
+            grsc.getOrgName(),
+            grsc.getFeatureTypes());
     }
 
     /**
@@ -720,7 +720,7 @@ public class GenomicRegionSearchService
             if (!(featureTypesInOrgs.size() == featureTypeToSOTermMap.size() && featureTypesInOrgs
                     .containsAll(featureTypeToSOTermMap.keySet()))) {
                 Map<String, List<String>> newFeatureTypeToSOTermMap =
-                        new HashMap<String, List<String>>();
+                    new HashMap<String, List<String>>();
 
                 for (String ft : featureTypesInOrgs) {
                     if (featureTypeToSOTermMap.keySet().contains(ft)) {
@@ -898,8 +898,8 @@ public class GenomicRegionSearchService
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
 
         GenomicRegion grToExport = GenomicRegionSearchUtil
-                .generateGenomicRegions(Arrays.asList(new String[] {grInfo}))
-                .get(0);
+            .generateGenomicRegions(Arrays.asList(new String[] {grInfo}))
+            .get(0);
 
         for (List<String> sf : resultMap.get(grToExport)) {
             // the first element (0) is InterMine Id, second (1) is PID
@@ -1018,7 +1018,7 @@ public class GenomicRegionSearchService
         }
 
         String clHtml = " or Create List by feature type:"
-                + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
+            + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
 
         for (String ft : ftSet) {
             clHtml += "<option value=\"" + ft + "\">"
@@ -1104,41 +1104,41 @@ public class GenomicRegionSearchService
             String span = s.getExtendedRegionSize() == 0 ? s
                     .getOriginalRegion() : s.getExtendedRegion();
 
-                    /*
-                     * order: 0.id
-                     *        1.feature PID
-                     *        2.symbol
-                     *        3.feature type
-                     *        4.chr
-                     *        5.start
-                     *        6.end
-                     * see query fields in createQueryList method
-                     */
-                    if (features != null) {
-                        if (aboveCutOffFeatureTypeMap == null || aboveCutOffFeatureTypeMap.size() == 0) {
-                            int length = features.size();
-                            addFirstFeatures(baseURL, path, galaxyDisplay,
-                                    exportChromosomeSegment, sb, s, features, ftHtml,
-                                    ftSet, span, length);
+            /*
+             * order: 0.id
+             *        1.feature PID
+             *        2.symbol
+             *        3.feature type
+             *        4.chr
+             *        5.start
+             *        6.end
+             * see query fields in createQueryList method
+             */
+            if (features != null) {
+                if (aboveCutOffFeatureTypeMap == null || aboveCutOffFeatureTypeMap.size() == 0) {
+                    int length = features.size();
+                    addFirstFeatures(baseURL, path, galaxyDisplay,
+                            exportChromosomeSegment, sb, s, features, ftHtml,
+                            ftSet, span, length);
 
-                            for (int i = 1; i < length; i++) {
-                                addFeaturesAboveCutoff(baseURL, path, sb, features, i);
-                            }
-                        } else { // some feature sizes are over cutoff
-                            int length = addFeaturesAboveCutoff(galaxyDisplay,
-                                    exportChromosomeSegment, sb, s, features, ftHtml,
-                                    ftSet, aboveCutOffFeatureTypeMap, span);
-
-                            parseFeaturesAboveCutoff(sb, s, aboveCutOffFeatureTypeMap);
-
-                            parseFeaturesBelowCutoff(baseURL, path, sb, features,
-                                    aboveCutOffFeatureTypeMap, length);
-                        }
-                    } else {
-                        sb.append("<tr><td><b>"
-                                + span
-                                + "</b></td><td colspan='3'><i>No overlap features found</i></td></tr>");
+                    for (int i = 1; i < length; i++) {
+                        addFeaturesAboveCutoff(baseURL, path, sb, features, i);
                     }
+                } else { // some feature sizes are over cutoff
+                    int length = addFeaturesAboveCutoff(galaxyDisplay,
+                            exportChromosomeSegment, sb, s, features, ftHtml,
+                            ftSet, aboveCutOffFeatureTypeMap, span);
+
+                    parseFeaturesAboveCutoff(sb, s, aboveCutOffFeatureTypeMap);
+
+                    parseFeaturesBelowCutoff(baseURL, path, sb, features,
+                            aboveCutOffFeatureTypeMap, length);
+                }
+            } else {
+                sb.append("<tr><td><b>"
+                        + span
+                        + "</b></td><td colspan='3'><i>No overlap features found</i></td></tr>");
+            }
         }
 
         sb.append("</tbody>");
@@ -1171,7 +1171,7 @@ public class GenomicRegionSearchService
             firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
         }
 
-        //                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
+//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
         sb.append("<tr><td valign='top' rowspan='" + length + "'>");
 
@@ -1227,20 +1227,20 @@ public class GenomicRegionSearchService
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {
             sb.append("<span class='galaxy export-region'><a href='javascript: "
-                    + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
+                + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
         }
 
         sb.append("</div>");
 
         // Add create list by feature types link
         sb.append(ftHtml);
-        //
-        //                    // Add JBrowse link
-        //                    if (isJBrowseEnabled()) {
-        //                        sb.append("<div><a target='genome-browser' href='"
-        //                                + generateJBrowseURL(s)
-        //                                + "'>View in genome bowser</a></div>");
-        //                    }
+//
+//                    // Add JBrowse link
+//                    if (isJBrowseEnabled()) {
+//                        sb.append("<div><a target='genome-browser' href='"
+//                                + generateJBrowseURL(s)
+//                                + "'>View in genome bowser</a></div>");
+//                    }
 
         sb.append("</td>");
 
@@ -1259,9 +1259,9 @@ public class GenomicRegionSearchService
             sb.append("<strong>" + firstSymbol + "</strong>");
         } else {
             sb.append("<strong>" + firstSymbol + "</strong>")
-            .append(" ")
-            .append("<span style='font-size: 11px;'>"
-                    + firstPid + "</span>");
+                    .append(" ")
+                    .append("<span style='font-size: 11px;'>"
+                            + firstPid + "</span>");
         }
 
         sb.append("</a></td><td>" + firstSoTerm
@@ -1291,7 +1291,7 @@ public class GenomicRegionSearchService
             firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
         }
 
-        //                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
+//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
         // row span is smaller than the feature size
         int totalDupCount = 0;
@@ -1355,7 +1355,7 @@ public class GenomicRegionSearchService
         // Display galaxy export
         if (!"false".equals(galaxyDisplay)) {
             sb.append("<span class='galaxy export-region'><a href='javascript: "
-                    + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
+                + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
         }
 
         sb.append("</div>");
@@ -1363,12 +1363,12 @@ public class GenomicRegionSearchService
         // Add create list by feature types link
         sb.append(ftHtml);
 
-        //                    // Add JBrowse link
-        //                    if (isJBrowseEnabled()) {
-        //                        sb.append("<div><a target='genome-browser' href='"
-        //                                + generateJBrowseURL(s)
-        //                                + "'>View in genome bowser</a></div>");
-        //                    }
+//                    // Add JBrowse link
+//                    if (isJBrowseEnabled()) {
+//                        sb.append("<div><a target='genome-browser' href='"
+//                                + generateJBrowseURL(s)
+//                                + "'>View in genome bowser</a></div>");
+//                    }
 
         sb.append("</td>");
 
@@ -1416,7 +1416,7 @@ public class GenomicRegionSearchService
             soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
         }
 
-        //                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
+//                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
         String location = chr + ":" + start + ".." + end;
 
@@ -1435,9 +1435,9 @@ public class GenomicRegionSearchService
             sb.append("<strong>" + symbol + "</strong>");
         } else {
             sb.append("<strong>" + symbol + "</strong>")
-            .append(" ")
-            .append("<span style='font-size: 11px;'>"
-                    + pid + "</span>");
+                    .append(" ")
+                    .append("<span style='font-size: 11px;'>"
+                            + pid + "</span>");
         }
 
         sb.append("</a></td><td>"
@@ -1492,8 +1492,8 @@ public class GenomicRegionSearchService
                     sb.append("<strong>" + symbol + "</strong>");
                 } else {
                     sb.append("<strong>" + symbol + "</strong>")
-                    .append(" ")
-                    .append("<span style='font-size: 11px;'>"
+                        .append(" ")
+                        .append("<span style='font-size: 11px;'>"
                             + pid + "</span>");
                 }
 
@@ -1526,23 +1526,23 @@ public class GenomicRegionSearchService
                     soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
                 }
 
-                //                            soTermDes = soTermDes.replaceAll("'", "\\\\'");
+//                            soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
                 int recordCount = aboveCutOffFeatureTypeMap.get(featureType);
 
                 sb.append("<tr><td colspan='3'><b>" + recordCount + "</b> "
-                        + soTerm
-                        + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                        + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
-                        + "';document.getElementById('ctxHelpDiv').style.display='';"
-                        + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
-                        + "\"><img class=\"tinyQuestionMark\" "
-                        + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                        + " records (too many to display all), "
-                        + "please <a href=\"javascript: createList('"
-                        + s.getFullRegionInfo() + "', " + null + ", '"
-                        + featureType
-                        + "');\">create a list</a></td></tr>");
+                    + soTerm
+                    + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                    + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                    + "';document.getElementById('ctxHelpDiv').style.display='';"
+                    + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
+                    + "\"><img class=\"tinyQuestionMark\" "
+                    + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                    + " records (too many to display all), "
+                    + "please <a href=\"javascript: createList('"
+                    + s.getFullRegionInfo() + "', " + null + ", '"
+                    + featureType
+                    + "');\">create a list</a></td></tr>");
             }
         }
     }
@@ -1562,7 +1562,7 @@ public class GenomicRegionSearchService
             return "";
         } else {
             String ftHtml = "<div>Create List by"
-                    + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
+                + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
 
             for (String ft : ftSet) {
                 ftHtml += "<option value=\"" + ft + "\">"
@@ -1572,7 +1572,7 @@ public class GenomicRegionSearchService
 
             ftHtml += "</select>";
             ftHtml += "<button onClick=\"javascript: createList('" + s.getFullRegionInfo()
-                    + "', '" + id + "');\">Go</button>";
+                      + "', '" + id + "');\">Go</button>";
             ftHtml += "</div>";
 
             return ftHtml;

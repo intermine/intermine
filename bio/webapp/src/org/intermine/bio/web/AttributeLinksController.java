@@ -86,12 +86,9 @@ public class AttributeLinksController extends TilesAction
         ObjectStore os = im.getObjectStore();
         Model model = im.getModel();
         Set<ClassDescriptor> classDescriptors;
-        if (imo == null && bag != null) {
+        if (imo == null) {
             classDescriptors = bag.getClassDescriptors();
         } else {
-            if (imo == null) {
-                return null;
-            }
             classDescriptors = model.getClassDescriptorsForClass(imo.getClass());
         }
         StringBuffer sb = new StringBuffer();
@@ -179,9 +176,6 @@ public class AttributeLinksController extends TilesAction
                         } else { //it's a bag!
                             attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
                             if (!"*".equalsIgnoreCase(taxId)) {
-                                if (bag == null) {
-                                    return null;
-                                }
                                 taxIds = BioUtil.getOrganisms(os, bag.getType(),
                                         bag.getContentsAsIds(), false, "taxonId");
 
@@ -282,7 +276,7 @@ public class AttributeLinksController extends TilesAction
      * GET form of url is modified to POST form.
      * @param linkConfigs
      */
-    private static Map<String, ConfigMap> processConfigs(InterMineAPI im,
+    private Map<String, ConfigMap> processConfigs(InterMineAPI im,
             Map<String, ConfigMap> linkConfigs, ReportObject reportObject) {
         Map<String, ConfigMap> newMap = new HashMap<String, ConfigMap>(linkConfigs);
         for (Map.Entry<String, ConfigMap> entry : newMap.entrySet()) {
