@@ -49,25 +49,17 @@ public class GatkvcfConverter extends BioFileConverter
   private static final Logger LOG = Logger.getLogger(GatkvcfConverter.class);
 
   // hashes of inserted things...
-  // snpLocation is keyed by (chromosome:start position:reference).
-  // Using a multimap was toooooo slow.
-  // this is a map to intermineId (Integer)
-  //private HashMap<String,Integer> snpLocationIntMap = new HashMap<String,Integer>();
-  // this is a map to uniqueIdentifier (String)
-  // also using the chromosome:start:reference key
-  //private HashMap<String,String> snpLocationIDMap = new HashMap<String,String>();
-  // snps that go to a snpLocation
-  //private HashMap<String,ArrayList<String> > snpLocationCollectionMap = new HashMap<String,ArrayList<String> >();
   // The chromosomes that we reference. chromosomes keyed by primaryIdentifier
   private HashMap<String,String> chrMap = new HashMap<String,String>();
-  //  the snp keyed by snpLocation and nucleotide substitution
-  //private HashMap<String,ArrayList<String>> snpMap = new HashMap<String,ArrayList<String> >();
   
   // the one organism we're working on. proteomeId is
   // set by setter. organism is the registered Item
   private Integer proteomeId;
   private Item organism = null;
-  private boolean makeLinks = true;
+  // do we make the links with the sample in the integration step?
+  // or the postprocessing step? true means in the integration step
+  // doing this in the integration step is slower, but more 'intermine-y'
+  private boolean makeLinks = false;
   // the referenced consequences and consequence type types.
   private Map<String,String> consequenceMap = new HashMap<String,String>();
   private Map<String,String> consequenceTypeMap = new HashMap<String,String>();
@@ -76,6 +68,7 @@ public class GatkvcfConverter extends BioFileConverter
   private Map<String,String> mRNAMap = new HashMap<String,String>();
   // we'll get this from the header. When parsing, we need to keep these in order
   private ArrayList<String> sampleList = new ArrayList<String>();
+  // what we expect to see in the vcf header
   final static String[] expectedHeaders = {"#CHROM","POS","ID","REF","ALT",
     "QUAL","FILTER","INFO","FORMAT"};
   final static int formatPosition = 8;
@@ -110,9 +103,7 @@ public class GatkvcfConverter extends BioFileConverter
     }
   }
   /**
-   * 
-   *
-   * {@inheritDoc}
+   * the main event
    */
   public void process(Reader reader) throws Exception {
     File theFile = getCurrentFile();
@@ -138,7 +129,7 @@ public class GatkvcfConverter extends BioFileConverter
       LOG.info("Ignoring file " + theFile.getName() + ". Not a SnpEff-processed GATK vcf file.");
     } else {
       // we need to open and find the header line. Since this starts with a "#", the
-      //  FormattedTextParser calls this a comment line and will not return it to us.
+      // FormattedTextParser calls this a comment line and will not return it to us.
       // TODO: replace FormattedTextParser.
       BufferedReader in = new BufferedReader(new FileReader(theFile));
       String line;
@@ -154,6 +145,7 @@ public class GatkvcfConverter extends BioFileConverter
       if (sampleList.size() == 0) {
         throw new BuildException("Cannot find sample names in vcf file.");
       }
+      // now we can proceed with the FormattedTextParser
       Iterator<?> tsvIter;
       try {
         tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -173,24 +165,6 @@ public class GatkvcfConverter extends BioFileConverter
       }
       LOG.info("Processed " + ctr + " lines.");
     }
-  }
-  public void close() throws Exception
-  {
-    /*// now store all snp locations. We've held off in storing until all snpLocations were processed
-    Set<String> snpLocs = (Set<String>)snpLocationIntMap.keySet();
-    Iterator<String>snpLocIt = snpLocs.iterator();
-    LOG.info("Storing SNP locations...");
-    while (snpLocIt.hasNext() ) {
-      String snpLocKey = snpLocIt.next();
-      ReferenceList refList = new ReferenceList();
-      refList.setName("snps");
-      refList.setRefIds((ArrayList<String>)snpLocationCollectionMap.get(snpLocKey));
-      try {
-        store(refList,(Integer)snpLocationIntMap.get(snpLocKey));
-      } catch (ObjectStoreException e) {
-        throw new BuildException("Cannot store snplocation: " + e.getMessage());
-      }
-    }*/
   }
 
   private void processHeader(String[] header) throws BuildException
@@ -232,18 +206,13 @@ public class GatkvcfConverter extends BioFileConverter
       throw new BuildException("Unexpected number of columns in VCF file.");
     }
     String chr = fields[0];
-    //TODO  remove for production
-    //if (!chr.equals("Chr01")) return false;
-
+    
     if (lastChromosome==null || !chr.equals(lastChromosome)) {
       lastChromosome = chr;
       LOG.info("Processing "+chr);
     }
 
     Integer pos = new Integer(fields[1]);
-    //TODO remove for production
-    //if (pos > 100000) return false;
-
     String name = fields[2];
     String ref = fields[3];
     String alt = fields[4];
@@ -269,7 +238,7 @@ public class GatkvcfConverter extends BioFileConverter
     snp.setAttribute("reference",ref);
     snp.setAttribute("alternate", alt);
     try {
-      // only add if a number
+      // only add if a number. Silently ignore non-numbers
       Integer.parseInt(quality);
       snp.setAttribute("quality", quality);
     } catch ( NumberFormatException e) {}
@@ -338,7 +307,9 @@ public class GatkvcfConverter extends BioFileConverter
   /**
    * parseInfo
    * We're taking the INFO field of the VCF record, extracting the EFF tag and
-   * stuffing the remainder into the info attribute
+   * stuffing the remainder into the info attribute. At first we were storing the
+   * info field without all EFF tags. But now we're reverting to saving the full
+   * field
    * @param snp The snp record being processed
    * @param info The info string
    */
@@ -363,7 +334,11 @@ public class GatkvcfConverter extends BioFileConverter
         newInfo.append(keyVal);
       }
     }
-    snp.setAttribute("info",newInfo.toString());
+    // here is where we decide if we're storing the stripped down
+    // info field, or the original stored newInfo.
+    //snp.setAttribute("info",newInfo.toString());
+    // but now were saving the original (without the set tag)
+    snp.setAttribute("info",info);
     return nSamples;
   }
 

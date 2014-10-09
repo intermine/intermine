@@ -45,6 +45,10 @@ import org.intermine.postprocess.PostProcessor;
 import org.intermine.util.FormattedTextParser;
 
 /**
+ * this was orignally written as a test to see if adding the SimpleObject table
+ * linking the SNPs to the samples could be done faster as a postprocessing step
+ * than as an integration step. It can.
+ * There is much code duplication between this and the integration processor. tsk tsk tsk.
  * @author jcarlson
  *
  */
@@ -242,9 +246,15 @@ public class GatkvcfPostProcess extends PostProcessor {
           (passField == null && genoField != null && genoField)) {
         try {
           //TODO: is writing binary faster?
-          out.write(format.toString()+"\t"+genotype.toString()+"\t"+
+          if (format.toString().isEmpty() ) {
+            // a NULL record.
+            format = new StringBuffer("\\N");
+          }
+          out.write(format.toString()+"\t"+
+                    genotype.toString()+"\t"+
               sampleIdMap.get(sampleList.get(col-expectedHeaders.length)).toString()+
-              "\t"+ssIdMap.get(name).toString()+"\n");
+              "\t"+
+              ssIdMap.get(name).toString()+"\n");
         } catch (IOException e) {
           LOG.error("Trouble writing to SQL pipe: "+e.getMessage());
           throw new BuildException("Trouble writing to SQL pipe: "+e.getMessage());
