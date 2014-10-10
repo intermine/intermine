@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.util.PropertiesUtil;
 import org.w3c.dom.Document;
@@ -41,6 +42,10 @@ public class Caliban {
     "address_2", "city", "state", "postal_code", "country", "phone_number",
   "fax_number"};
   
+
+  private static final Logger LOG = Logger.getLogger(Caliban.class);
+
+
   static public HashMap<String,String> getIdentityHash(String token) throws
   MalformedURLException,SAXException,IOException
   {
@@ -82,13 +87,18 @@ public class Caliban {
       // and also stash the cookie in the identity hash. It will be the token.
       newIdentity.put("token",token);
       // and refresh the session
-      HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-      httpCon.setDoOutput(true);
-      httpCon.setRequestMethod("PUT");
-      OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
-      out.write("Resource content");
-      out.close();
-      httpCon.getInputStream();
+      try {
+        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+        httpCon.setDoOutput(true);
+        httpCon.setRequestMethod("PUT");
+        OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+        out.write("Resource content");
+        out.close();
+        httpCon.getInputStream();
+        LOG.info("Updated login timestamp. Response code = "+httpCon.getResponseCode());
+      } catch (Exception e) {
+        LOG.warn("There was an exception trying to refresh login timestamp: "+e.getMessage());
+      }
       return newIdentity;
 
     }

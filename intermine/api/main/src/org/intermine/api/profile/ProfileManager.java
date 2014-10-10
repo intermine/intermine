@@ -1362,7 +1362,8 @@ ission levels.
           Set<String> fieldNames = new HashSet<String>();
           fieldNames.add("username");
           profile = new UserProfile();
-          profile.setUsername(identity.get("login"));  
+          profile.setUsername(identity.get("login"));
+          profile.setApiKey(token);
           try {
             profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
           } catch (ObjectStoreException e1) {
@@ -1374,14 +1375,14 @@ ission levels.
             Caliban.createUserAccount(this,identity);
             // and repeat
             profile = new UserProfile();
-            profile.setUsername(identity.get("login"));  
+            profile.setUsername(identity.get("login"));
+            profile.setApiKey(token);
             try {
               profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
             } catch (ObjectStoreException e1) {
               return null;
             }
           }
-          profile.setApiKey(token);
         }
       }
       if (profile == null) {

@@ -33,7 +33,7 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
   private static final String DATASET_TITLE = "RNAseq Experiment Info";
   private static final String DATA_SOURCE_NAME = "RNAseq Experiment";
   private static final Logger LOG = Logger.getLogger(RnaseqExperimentInfoConverter.class);
-  private Integer taxonId = null;
+  private Integer proteomeId = null;
 
   /**
     /**
@@ -59,9 +59,9 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
       } else {
         // one organism (at most) per file
         String organismIdentifier = null;
-        if (taxonId != null) {
+        if (proteomeId != null) {
           Item org = createItem("Organism");
-          org.setAttribute("taxonId",taxonId.toString());
+          org.setAttribute("proteomeId",proteomeId.toString());
           try {
             store(org);
           } catch (ObjectStoreException e) {
@@ -69,7 +69,7 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
           }
           organismIdentifier = org.getIdentifier();
         } else {
-          throw new BuildException("taxonId must be set for rna-seq experiment.");
+          throw new BuildException("Proteome Id must be set for rna-seq experiment.");
         }
 
         Iterator<?> tsvIter;
@@ -112,9 +112,9 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
         s.setAttribute(field,value);
       }
     }
-    public void setOrganism(String organism) {
+    public void setProteomeId(String organism) {
       try {
-        taxonId = Integer.valueOf(organism);
+        proteomeId = Integer.valueOf(organism);
       } catch (NumberFormatException e) {
         throw new RuntimeException("can't find integer value for: " + organism);
       }
