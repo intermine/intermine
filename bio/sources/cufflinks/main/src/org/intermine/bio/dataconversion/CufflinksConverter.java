@@ -13,33 +13,18 @@ package org.intermine.bio.dataconversion;
 import java.io.Reader;
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.io.IOException;
 import java.util.Iterator;
-import java.lang.Class;
-import java.lang.reflect.Method;
-import java.beans.PropertyDescriptor;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;           
 import org.intermine.xml.full.Item;            
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.bio.dataconversion.BioFileConverter;
-import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
 
 
 /**
@@ -60,11 +45,8 @@ public class CufflinksConverter extends BioFileConverter
   private HashMap<String, Item> experimentMap = new HashMap<String,Item>();
   // the 'column group' correspondence with experiment
   private HashMap<Integer,String> experimentColGroupMap = new HashMap<Integer,String>();
-  // organism records we will refer to
-  private HashMap<Integer, Item> organismMap = new HashMap<Integer, Item>();
   // for now, this can only process files of 1 organism
-  private String organismVersion = "current";
-  private Integer taxonId = null;
+  private Integer proteomeId = null;
   private Item organism;
   // bioentities we record data about
   private HashMap<String,HashMap<String,Item> > bioentityMap = new HashMap<String, HashMap<String, Item> >();
@@ -72,8 +54,6 @@ public class CufflinksConverter extends BioFileConverter
   // the keys are bioentity type (gene or isoform), then bioentity identifier, then the experiment
   private HashMap<String,HashMap<String,HashMap<String,Item>>> scoreMap = 
       new HashMap<String, HashMap<String,HashMap<String,Item>>>();
-
-  private HashMap<Integer,OrganismData> organismsToProcess = new HashMap<Integer,OrganismData>();
 
   private final String[] expectedFPKMHeaders = { "tracking_id" , "class_code",
       "nearest_ref_id" , "gene_id" , "gene_short_name",
@@ -96,72 +76,29 @@ public class CufflinksConverter extends BioFileConverter
     scoreMap.put("MRNA", new HashMap<String,HashMap<String,Item>>());
   }
 
-  /*public void setOrganisms(String organisms) {
-    String[] bits = StringUtil.split(organisms, " ");
-    //for (int i = 0; i < bits.length; i++) {
-    for (String organismIdString: bits) {
-      OrganismData od = null;
-      Integer taxonId;
-      try {
-        taxonId = Integer.valueOf(organismIdString);
-        od = OrganismRepository.getOrganismRepository().getOrganismDataByTaxon(taxonId);
-      } catch (NumberFormatException e) {
-        od = OrganismRepository.getOrganismRepository().getOrganismDataByAbbreviation(organismIdString);
-        taxonId = 999;
-      }
-      if (od == null) {
-        throw new RuntimeException("Can't find organism for: " + organismIdString);
-      }
-      if (!organismsToProcess.containsKey(taxonId) ) {
-        organism = createItem("Organism");
-        organism.setAttribute("taxonId", taxonId.toString());
-        try {
-          store(organism);
-        } catch(ObjectStoreException e) {
-          throw new BuildException("Problem storing organism");
-        }
-      }
-      organismsToProcess.put(taxonId,od);
-    }
-  }*/
-  public void setVersion(String version) {
-    organismVersion = version;
-  }
-  public String getVersion() {
-    return organismVersion;
-  }
-  public void setOrganism(String organism) {
-    try {
-      taxonId = Integer.valueOf(organism);
-    } catch (NumberFormatException e) {
-      throw new RuntimeException("can't find taxon id for: " + organism);
-    }
-  }
   /**
-   * 
-   * 
+   * The main even. Read and process a cufflinks file.
+   * We read each of the files, then store the results in the close() method.
    * {@inheritDoc}
    */ 
 
   public void process(Reader reader) throws Exception {
     File theFile = getCurrentFile();                 
     LOG.info("Processing file "+theFile.getName()+"...");
-    
+
     if (organism==null) {
       // we need to register the organism
-      if (taxonId != null ) {
+      if (proteomeId != null ) {
         organism = createItem("Organism");
-        organism.setAttribute("taxonId", taxonId.toString());
-        if (organismVersion != null) {
-          organism.setAttribute("version",organismVersion);
-        }
+        organism.setAttribute("proteomeId", proteomeId.toString());
         try {
           store(organism);
         } catch (ObjectStoreException e) {
-          throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+          throw new RuntimeException("failed to store organism with proteomeId: "
+              + proteomeId, e);
         }
       } else {
-        throw new BuildException("No taxonId specified.");
+        throw new BuildException("No proteomeId specified.");
       }
     }
     
@@ -180,7 +117,7 @@ public class CufflinksConverter extends BioFileConverter
 
   public void close() throws Exception
   {
-    // store. First an iterator over the types
+    // Now store. First an iterator over the types
     Iterator<Map.Entry<String,HashMap<String, HashMap<String,Item> > > > typeIterator = scoreMap.entrySet().iterator();
     while (typeIterator.hasNext() ) {
       // look at each (name,item) for that type
@@ -202,7 +139,7 @@ public class CufflinksConverter extends BioFileConverter
       throws BuildException, ObjectStoreException {  
 
     int colGroupSize = fileType.equals("FPKM")?expectedFPKMSuffices.length:
-      expectedCountSuffices.length;
+                                               expectedCountSuffices.length;
     String[] expectedHeaders = fileType.equals("FPKM")?
         (String[])expectedFPKMHeaders.clone():(String[])expectedCountHeaders.clone();
         Iterator<?> tsvIter;                             
@@ -272,7 +209,6 @@ public class CufflinksConverter extends BioFileConverter
                   throw new BuildException("Incorrect number of fields (" + i + " to " + (i+3) + ") at line " + lineNumber
                       + " in " + getCurrentFile() );
                 }
-                // score.setAttribute("status",fields[i+4]);
                 score.setReference("bioentity", bioentityMap.get(bioentityType).get(primaryId));
                 score.setReference("experiment", experimentMap.get(experimentColGroupMap.get(colGroup)));
               }
@@ -335,6 +271,10 @@ public class CufflinksConverter extends BioFileConverter
       }
     }
   }
+  
+  /*
+   * Create and store one experiment for the current organism. 
+   */
 
   private Item createExperiment(String name) throws ObjectStoreException {
     Item experiment = createItem("RNAseqExperiment");
@@ -345,5 +285,12 @@ public class CufflinksConverter extends BioFileConverter
     return experiment;
   }
 
+  public void setProteomeId(String organism) {
+    try {
+      proteomeId = Integer.valueOf(organism);
+    } catch (NumberFormatException e) {
+      throw new RuntimeException("can't find integer proteome id for: " + organism);
+    }
+  }
 }
 
