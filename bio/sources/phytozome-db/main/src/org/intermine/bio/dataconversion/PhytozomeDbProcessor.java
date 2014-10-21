@@ -254,8 +254,9 @@ public class PhytozomeDbProcessor {
       String property = res.getString("property");
       Attribute a = new Attribute(PhytozomeDbConfig.getInterminePropertyName(propertyType),property);
       converter.store(a,converter.objectId(featureId));
+      count++;
     }
-    LOG.info("created " + count + " relationships");
+    LOG.info("created " + count + " properties.");
     res.close();
   
   }
@@ -298,16 +299,20 @@ public class PhytozomeDbProcessor {
       String subjectType = config.cvTermInv(res.getInt("subject_type_id"));
       Integer objectId = res.getInt("object_id");
       Integer subjectId = res.getInt("subject_id");
-      if( PhytozomeDbConfig.hasReference(subjectType,objectType)) {
-        String refName = PhytozomeDbConfig.referenceName(subjectType, objectType);
+      String intermineSubjectType = PhytozomeDbConfig.getIntermineType(subjectType);
+      String intermineObjectType = PhytozomeDbConfig.getIntermineType(objectType);
+      
+      if( PhytozomeDbConfig.hasReference(intermineSubjectType,intermineObjectType)) {
+        String refName = PhytozomeDbConfig.referenceName(intermineSubjectType,intermineObjectType);
         Reference r = new Reference(refName,converter.objectIdentifier(objectId));
         converter.store(r,converter.objectId(subjectId));
         LOG.info("Linked types "+objectType+" and "+subjectType+" ids "+objectId+","+subjectId +
-        		" in aSubject-Object reference.");
+            " in aSubject-Object reference.");
         count++;
       }
-      if( PhytozomeDbConfig.hasReference(objectType,subjectType)) {
-        String refName = PhytozomeDbConfig.referenceName(objectType, subjectType);
+      if( PhytozomeDbConfig.hasReference(intermineObjectType,
+          intermineSubjectType)) {
+        String refName = PhytozomeDbConfig.referenceName(intermineObjectType,intermineSubjectType);
         Reference r = new Reference(refName,converter.objectIdentifier(subjectId));
         converter.store(r,converter.objectId(objectId));
         LOG.info("Linked types "+objectType+" and "+subjectType+" ids "+objectId+","+subjectId +
@@ -315,16 +320,16 @@ public class PhytozomeDbProcessor {
         count++;
       }
       
-      if (PhytozomeDbConfig.hasCollection(objectType,subjectType)) {
-        String refName = PhytozomeDbConfig.collectionName(objectType, subjectType);
+      if (PhytozomeDbConfig.hasCollection(intermineObjectType,intermineSubjectType)) {
+        String refName = PhytozomeDbConfig.collectionName(intermineObjectType,intermineSubjectType);
         Reference r = new Reference(refName,converter.objectIdentifier(subjectId));
         MultiKey key = new MultiKey(converter.objectId(objectId),refName);
         if (!collections.containsKey(key)) collections.put(key, new ReferenceList(refName));
         collections.get(key).addRefId(r.getRefId());
         count++;
       }
-      if (PhytozomeDbConfig.hasCollection(subjectType,objectType)) {
-        String refName = PhytozomeDbConfig.collectionName(subjectType, objectType);
+      if (PhytozomeDbConfig.hasCollection(intermineSubjectType,intermineObjectType)) {
+        String refName = PhytozomeDbConfig.collectionName(intermineSubjectType,intermineObjectType);
         Reference r = new Reference(refName,converter.objectIdentifier(objectId));
         MultiKey key = new MultiKey(converter.objectId(subjectId),refName);
         if (!collections.containsKey(key)) collections.put(key, new ReferenceList(refName));
@@ -417,15 +422,23 @@ public class PhytozomeDbProcessor {
       feat.setAttribute("secondaryIdentifier",uniqueName);
       feat.setAttribute("length",Integer.toString(seqlen));
       feat.setReference("organism", orgId);
+      if( feat.canHaveReference("chromosome")) {
+        feat.setReference("chromosome",
+            converter.objectIdentifier(srcFeatureId));
+      }
       if (seqId != null) feat.setReference("sequence", seqId);
-      converter.recordObject(featureId,converter.store(feat));
-      converter.recordObject(featureId,feat.getIdentifier());
-      
+ 
       Item location = converter.makeLocation(converter.objectIdentifier(srcFeatureId),
-          feat.getIdentifier(),fmin, fmax, strand);
+          feat.getIdentifier(),fmin+1, fmax, strand);
       if (location != null) {
         converter.store(location);
       }
+      if (feat.canHaveReference("chromosomeLocation")) {
+        feat.setReference("chromosomeLocation", location.getIdentifier());
+      }
+      
+      converter.recordObject(featureId,converter.store(feat));
+      converter.recordObject(featureId,feat.getIdentifier());
       count++;
     }
     LOG.info("created " + count + " features");
