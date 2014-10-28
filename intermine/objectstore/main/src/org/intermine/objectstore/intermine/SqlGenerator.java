@@ -2486,23 +2486,25 @@ public final class SqlGenerator
                         queryClassToString(buffer, (QueryClass) node, q, schema,
                                 NO_ALIASES_ALL_FIELDS, state);
                     }
-                    if (!seen.contains(buffer.toString())) {
+                    for(String bufferBit : buffer.toString().split(",")) {
+                      if (!seen.contains(bufferBit)) {
                         retval.append(needComma ? ", " : " ORDER BY ");
                         needComma = true;
-                        retval.append(buffer.toString());
-                        seen.add(buffer.toString());
+                        retval.append(bufferBit);
+                        seen.add(bufferBit);
                         if ((!q.getSelect().contains(node))
-                                && (!q.getSelect().contains(new QueryField((QueryClass) node,
-                                                "id")))) {
-                            if (q.isDistinct()) {
-                                throw new ObjectStoreException("Class " + q.getAliases().get(node)
-                                        + " in the ORDER BY list must be in the SELECT list, or its"
-                                        + " id, or the query made non-distinct");
-                            } else if ((kind == QUERY_FOR_PRECOMP)
-                                    || (kind == QUERY_FOR_GOFASTER)) {
-                                state.addToOrderBy(buffer.toString());
-                            }
+                            && (!q.getSelect().contains(new QueryField((QueryClass) node,
+                                "id")))) {
+                          if (q.isDistinct()) {
+                            throw new ObjectStoreException("Class " + q.getAliases().get(node)
+                                + " in the ORDER BY list must be in the SELECT list, or its"
+                                + " id, or the query made non-distinct");
+                          } else if ((kind == QUERY_FOR_PRECOMP)
+                              || (kind == QUERY_FOR_GOFASTER)) {
+                            state.addToOrderBy(bufferBit);
+                          }
                         }
+                      }
                     }
                 } else if (node instanceof QueryObjectReference) {
                     QueryObjectReference ref = (QueryObjectReference) node;
