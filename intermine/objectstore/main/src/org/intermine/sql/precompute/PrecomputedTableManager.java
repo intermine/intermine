@@ -452,7 +452,7 @@ public class PrecomputedTableManager
             Statement stmt = con.createStatement();
             stmt.execute(sql);
         } catch (SQLException e) {
-            LOG.warn("Error while executing " + sql, e);
+            LOG.warn("Error while creating index on " + table + ", table creation will proceed. " + sql);
         }
     }
 
