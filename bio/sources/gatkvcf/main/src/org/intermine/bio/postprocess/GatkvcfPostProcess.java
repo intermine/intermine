@@ -112,11 +112,19 @@ public class GatkvcfPostProcess extends PostProcessor {
           //  FormattedTextParser calls this a comment line and will not return it to us.
           BufferedReader in = new BufferedReader(new FileReader(dataDir+"/"+file));
           // the innie and the outie of the COPY data
-          PipedWriter out = new PipedWriter();
-          PipedReader dbIn = new PipedReader(out);
-          // run the COPY process in a separate thread
-          Thread copyThread = new Thread( new CopyThread(copyManager,dbIn));
-          copyThread.start();
+          //PipedWriter out = new PipedWriter();
+          //PipedReader dbIn = new PipedReader(out);
+          // run the COPY processes in a separate thread
+          // TODO: this code in development. I don't know which table we're going to maintain
+          //Thread copyThread = new Thread( new CopyThread(copyManager,dbIn,
+              //"SNPDiversitySample (format,genotype,diversitysampleid,snpid)"));
+          //copyThread.start();
+          PipedWriter outJSON = new PipedWriter();
+          PipedReader dbInJSON = new PipedReader(outJSON);
+          // run the COPY processes in a separate thread
+          Thread copyThreadJSON = new Thread( new CopyThread(copyManager,dbInJSON,
+              "Genotype (snpid,genotype,sampleinfo)"));
+          copyThreadJSON.start();
 
           String line;
           while ( (line = in.readLine()) != null) {
@@ -130,7 +138,8 @@ public class GatkvcfPostProcess extends PostProcessor {
           // make sure we processed the header at this point
           if (sampleList.size() == 0) {
             in.close();
-            out.close();
+            //out.close();
+            outJSON.close();
             LOG.error("Cannot find sample names in vcf file.");
             throw new BuildException("Cannot find sample names in vcf file.");
           }
@@ -138,9 +147,11 @@ public class GatkvcfPostProcess extends PostProcessor {
           try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(in);
           } catch (Exception e) {
-            out.close();
+            //out.close();
+            outJSON.close();
             in.close();
-            dbIn.close();
+            //dbIn.close();
+            dbInJSON.close();
             LOG.error("Cannot parse file: " + file + ": "+e.getMessage());
             throw new BuildException("Cannot parse file: " + file + ": "+e.getMessage());
           }
@@ -148,7 +159,8 @@ public class GatkvcfPostProcess extends PostProcessor {
           while (tsvIter.hasNext() ) {
             ctr++;
             String[] fields = (String[]) tsvIter.next();
-            if (!processData(out,fields)) {
+            //if (!processData(out,outJSON,fields)) {
+            if (!processData(outJSON,fields)) {
               return;
             }
             if ((ctr%100000) == 0) {
@@ -157,17 +169,27 @@ public class GatkvcfPostProcess extends PostProcessor {
           }
           LOG.info("Processed " + ctr + " lines.");
           in.close();
-          out.flush();
-          out.close();
+          //out.flush();
+          //out.close();
+          outJSON.flush();
+          outJSON.close();
           // make sure the writer thread is done
-          while ( copyThread.getState() != Thread.State.TERMINATED){
+          //while ( copyThread.getState() != Thread.State.TERMINATED){
+            //LOG.info("Writer thread is not finished. Sleeping...");
+            //try {
+              //Thread.sleep(1000);
+            //} catch (InterruptedException e) {
+            //}
+          //}
+          //dbIn.close();
+          while ( copyThreadJSON.getState() != Thread.State.TERMINATED){
             LOG.info("Writer thread is not finished. Sleeping...");
             try {
               Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
           }
-          dbIn.close();
+          dbInJSON.close();
         } catch (IOException e) {
           LOG.error("IO Exception duing processing: "+ e.getMessage());
           throw new BuildException("IO Exception duing processing: "+ e.getMessage());
@@ -207,7 +229,8 @@ public class GatkvcfPostProcess extends PostProcessor {
     }
   }
 
-  private boolean processData(Writer out,String[] fields) throws BuildException
+  //private boolean processData(Writer out1,Writer out2,String[] fields) throws BuildException
+  private boolean processData(Writer out2,String[] fields) throws BuildException
   {
     if (fields.length < expectedHeaders.length + 1) {
       throw new BuildException("Unexpected number of columns in VCF file.");
@@ -220,6 +243,8 @@ public class GatkvcfPostProcess extends PostProcessor {
     // process the genotype field. First we have attribute:attribute:attribute... 
     // and value:value:value... Convert these to attribute=value;attribute=value;...
     String[] attBits = fields[formatPosition].split(":");
+    HashMap<String,HashMap<String,String>> genoHash = new HashMap<String,HashMap<String,String>>();
+    
 
     // look through the different genotype scores for column 9 onward.
     for(int col=expectedHeaders.length;col<fields.length;col++) {
@@ -234,6 +259,8 @@ public class GatkvcfPostProcess extends PostProcessor {
         if (attBits[i].equals("GT")) {
           genoField = (valBits[i].equals("./."))?false:true;
           genotype = new StringBuffer(valBits[i]);
+          if (!genoHash.containsKey(genotype.toString())) 
+            genoHash.put(genotype.toString(), new HashMap<String,String>());
         } else {
           if (format.length() > 0) format.append(":");
           format.append(attBits[i] + "=" + valBits[i]);
@@ -242,27 +269,52 @@ public class GatkvcfPostProcess extends PostProcessor {
           }  
         }
       }
+      genoHash.get(genotype.toString()).put(
+          sampleList.get(col-expectedHeaders.length), "GT="+genotype.toString()+
+          ((format.length()>0)?(":"+format.toString()):""));
       if ((passField != null && passField) ||
           (passField == null && genoField != null && genoField)) {
-        try {
+        //try {
           //TODO: is writing binary faster?
           if (format.toString().isEmpty() ) {
             // a NULL record.
             format = new StringBuffer("\\N");
           }
-          out.write(format.toString()+"\t"+
-                    genotype.toString()+"\t"+
-              sampleIdMap.get(sampleList.get(col-expectedHeaders.length)).toString()+
-              "\t"+
-              ssIdMap.get(name).toString()+"\n");
-        } catch (IOException e) {
-          LOG.error("Trouble writing to SQL pipe: "+e.getMessage());
-          throw new BuildException("Trouble writing to SQL pipe: "+e.getMessage());
-        }
+          //out1.write(format.toString()+"\t"+
+                    //genotype.toString()+"\t"+
+              //sampleIdMap.get(sampleList.get(col-expectedHeaders.length)).toString()+
+              //"\t"+
+              //ssIdMap.get(name).toString()+"\n");
+        //} catch (IOException e) {
+          //LOG.error("Trouble writing to SQL pipe: "+e.getMessage());
+          //throw new BuildException("Trouble writing to SQL pipe: "+e.getMessage());
+        //}
+      }
+    }
+    // now write to the genotype sucker
+    for( String genotype: genoHash.keySet()) {
+      try { 
+        out2.write(ssIdMap.get(name).toString()+"\t"+
+            genotype+"\t"+
+            toJSON(genoHash.get(genotype))+"\n");
+      } catch (IOException e) {
+        LOG.error("Trouble writing to SQL pipe: "+e.getMessage());
+        throw new BuildException("Trouble writing to SQL pipe: "+e.getMessage());
       }
     }
     return true;
   } 
+  
+  private String toJSON(HashMap<String,String> hash) {
+    StringBuilder ret = new StringBuilder("{");
+    for(String key : hash.keySet()) {
+      if (ret.length() > 1) ret.append(",");
+      ret.append("\""+key+"\":\""+hash.get(key)+"\"");
+    }
+    ret.append("}");
+    return ret.toString();
+  }
+  
   private void fillSampleIdHash() throws BuildException {
     try {
       Query q = new Query();
@@ -363,14 +415,16 @@ public class GatkvcfPostProcess extends PostProcessor {
   private class CopyThread implements Runnable {
     Reader r;
     CopyManager cm;
-    CopyThread(CopyManager cm,Reader r) {
+    String sqlTable;
+    CopyThread(CopyManager cm,Reader r,String sqlTable) {
       super();
       this.cm = cm;
       this.r = r;
+      this.sqlTable = sqlTable;
     }
     public void run() {
       try {
-        cm.copyIn("COPY SNPDiversitySample (format,genotype,diversitysampleid,snpid) from STDIN",r,1024*1024);
+        cm.copyIn("COPY "+sqlTable+" from STDIN",r,1024*1024);
       } catch (SQLException e) {
         LOG.error("SQL problem in copy: " + e.getMessage());
         throw new BuildException("SQL problem in copy: " + e.getMessage());

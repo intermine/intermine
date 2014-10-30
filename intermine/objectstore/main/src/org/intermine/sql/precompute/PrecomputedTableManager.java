@@ -287,19 +287,24 @@ public class PrecomputedTableManager
                 indexes.add(orderByField);
             } else {
                 List<AbstractValue> orderBy = pt.getQuery().getOrderBy();
+                // JWC: why are index fields repeated? A hack to eliminate the symptom
+                HashSet<String> inIndex = new HashSet<String>();
                 if (!orderBy.isEmpty()) {
                     boolean needComma = false;
                     StringBuilder sb = new StringBuilder();
                     for (AbstractValue ob : orderBy) {
+                      if (!inIndex.contains(pt.getValueMap().get(ob).getAlias())) {
+                        inIndex.add(pt.getValueMap().get(ob).getAlias());
                         while (ob instanceof OrderDescending) {
-                            ob = ((OrderDescending) ob).getValue();
+                          ob = ((OrderDescending) ob).getValue();
                         }
                         if (needComma) {
-                            sb.append(", ");
+                          sb.append(", ");
                         }
                         needComma = true;
                         SelectValue obv = pt.getValueMap().get(ob);
                         sb.append(obv.getAlias());
+                      }
                     }
                     indexes.add(sb.toString());
                 }
@@ -414,6 +419,18 @@ public class PrecomputedTableManager
         if (simpleField.charAt(0) == '"') {
             simpleField = simpleField.substring(1, simpleField.length() - 1);
         }
+        StringBuffer rewrite = new StringBuffer();
+        HashSet<String> seen = new HashSet();
+        for(String f: field.split(",")) {
+          if (!seen.contains(f.trim())) {
+            if (!rewrite.toString().isEmpty()) {
+              rewrite.append(",");
+            }
+            rewrite.append(f);
+            seen.add(f);
+          }
+        }
+        field = rewrite.toString();
         String simpleTable = table;
         if (simpleTable.length() > 30) {
             MessageDigest md;
@@ -447,7 +464,8 @@ public class PrecomputedTableManager
                 .replace(')', '_');
         }
         String sql = "CREATE INDEX " + simpleTable + "_" + simpleField + " ON "
-            + table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
+            //jwc huh?+ table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
+            + table + " (" + field
             + ")";
         try {
             Statement stmt = con.createStatement();

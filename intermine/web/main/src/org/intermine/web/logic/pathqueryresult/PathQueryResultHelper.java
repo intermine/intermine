@@ -94,7 +94,9 @@ public final class PathQueryResultHelper
             if (fieldConfig.getShowInResults()) {
                 try {
                     Path path = new Path(model, prefix + "." + relPath);
-                    if (path.isOnlyAttribute()) {
+                    // JWC check attribute relative to converted to type
+                    Path checkIsOnlyAttribute = new Path(model,type+"."+relPath);
+                    if (checkIsOnlyAttribute.isOnlyAttribute()) {
                         view.add(path.getNoConstraintsString());
                     }
                 } catch (PathException e) {

@@ -21,6 +21,7 @@
    </class>
    <class name="ConsequenceType" is-interface="true">
      <attribute name="type" type="java.lang.String"/>
+     <attribute name="effectImpact" type="java.lang.String"/>
    </class>
   <class name="DiversitySample" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
@@ -36,5 +37,10 @@
      <reference name="diversitySample" referenced-type="DiversitySample"/>
      <attribute name="genotype" type="java.lang.String"/>
      <attribute name="format" type="java.lang.String" />
+   </class>
+   <class name="Genotype" is-interface="false" extends="java.lang.Object">
+     <reference name="snp" referenced-type="SNP" />
+     <attribute name="sampleInfo" type="java.lang.String"/>
+     <attribute name="genotype" type="java.lang.String"/>
    </class>
 </classes>

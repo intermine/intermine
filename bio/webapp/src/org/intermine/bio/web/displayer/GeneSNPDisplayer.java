@@ -68,8 +68,6 @@ public class GeneSNPDisplayer extends ReportDisplayer {
         LOG.warn("Had an ObjectStoreException in GeneSNPDisplayer.java");
         return;
       }
-      // we're allowing the genotype to be embedded, but it must be delimited with :'s
-      Pattern genotypePattern = Pattern.compile("^(.+:)?GT=(\\d+([|/]\\d+)*)(:.+)?$");
 
       // go through the results and coalesce. Join together everything with the same
       // columns 0-4 and make the genotype/sample a sub table
@@ -83,34 +81,14 @@ public class GeneSNPDisplayer extends ReportDisplayer {
 
         // copy columns 1-6:
         // position, reference, alternate, substitution, classification and transcript
-        // and column 8: sample name.
-        // column 7 has the genotype. we'll be rewriting that
-        for(int i=0;i<8;i++) {
+        for(int i=0;i<6;i++) {
           if ( (resElement.get(i) != null) && (resElement.get(i).getField() != null)) {
             thisRow.add(resElement.get(i).getField().toString());
           } else {
             thisRow.add("&nbsp;");
           }
         }
-        // column 6 has the genotype (N/M) along with other tags and field ids.
-        // We want to extract the N/M and toss the rest
-        String fullGenotype = thisRow.get(6);
-        if (fullGenotype != null) {
-          Matcher match = genotypePattern.matcher(fullGenotype);
-          boolean gotIt = false;
-          while (match.find()) {
-            // there should only be 1. The genotype field is in the second capturing group
-            thisRow.set(6,fullGenotype.substring(match.start(2),match.end(2)));
-            gotIt = true;
-            break;
-          }
-          if (!gotIt) {
-            thisRow.set(6,"&nbsp;");
-          }
-        } else {
-          thisRow.set(6,"&nbsp;");
-        }
-
+        
         if (lastSNPList == null ) {
           lastSNPList = new SNPList(thisRow);
         } else {
@@ -136,22 +114,38 @@ public class GeneSNPDisplayer extends ReportDisplayer {
 
   private PathQuery getConsequenceTable(String identifier) {
     PathQuery query = new PathQuery(im.getModel());
+    // this was the old query that was OK sometime, but not for lots
+    // of samples.
+    /*query.addViews( "SNPDiversitySample.snp.locations.start",
+                    "SNPDiversitySample.snp.reference",
+                    "SNPDiversitySample.snp.alternate",
+                    "SNPDiversitySample.snp.consequences.substitution",
+                    "SNPDiversitySample.snp.consequences.type.type",
+                    "SNPDiversitySample.snp.consequences.transcript.primaryIdentifier",
+                    "SNPDiversitySample.genotype",
+                    "SNPDiversitySample.diversitySample.name");
+    query.addOrderBy("SNPDiversitySample.snp.locations.start", OrderDirection.ASC);
+    query.addOrderBy("SNPDiversitySample.snp.reference", OrderDirection.ASC);
+    query.addOrderBy("SNPDiversitySample.snp.alternate", OrderDirection.ASC);
+    query.addOrderBy("SNPDiversitySample.snp.consequences.substitution", OrderDirection.ASC);
+    query.addOrderBy("SNPDiversitySample.snp.consequences.type.type", OrderDirection.ASC);
+    query.addOrderBy("SNPDiversitySample.snp.consequences.transcript.primaryIdentifier", OrderDirection.ASC);
+    query.addOrderBy("SNPDiversitySample.genotype", OrderDirection.DESC);
+    query.addConstraint(Constraints.eq("SNPDiversitySample.snp.consequences.gene.primaryIdentifier",identifier));*/
     query.addViews( "SNP.locations.start",
-                    "SNP.reference",
-                    "SNP.alternate",
-                    "SNP.consequences.substitution",
-                    "SNP.consequences.type.type",
-                    "SNP.consequences.transcript.primaryIdentifier",
-                    "SNP.snpDiversitySamples.genotype",
-                    "SNP.snpDiversitySamples.diversitySample.name");
-    query.addOrderBy("SNP.locations.start", OrderDirection.ASC);
-    query.addOrderBy("SNP.reference", OrderDirection.ASC);
-    query.addOrderBy("SNP.alternate", OrderDirection.ASC);
-    query.addOrderBy("SNP.consequences.substitution", OrderDirection.ASC);
-    query.addOrderBy("SNP.consequences.type.type", OrderDirection.ASC);
-    query.addOrderBy("SNP.consequences.transcript.primaryIdentifier", OrderDirection.ASC);
-    query.addOrderBy("SNP.snpDiversitySamples.genotype", OrderDirection.DESC);
-    query.addConstraint(Constraints.eq("SNP.consequences.gene.primaryIdentifier",identifier));
+        "SNP.reference",
+        "SNP.alternate",
+        "SNP.consequences.substitution",
+        "SNP.consequences.type.type",
+        "SNP.consequences.transcript.primaryIdentifier");
+query.addOrderBy("SNP.locations.start", OrderDirection.ASC);
+query.addOrderBy("SNP.reference", OrderDirection.ASC);
+query.addOrderBy("SNP.alternate", OrderDirection.ASC);
+query.addOrderBy("SNP.consequences.substitution", OrderDirection.ASC);
+query.addOrderBy("SNP.consequences.type.type", OrderDirection.ASC);
+query.addOrderBy("SNP.consequences.transcript.primaryIdentifier", OrderDirection.ASC);
+//query.addOrderBy("SNPDiversitySample.genotype", OrderDirection.DESC);
+query.addConstraint(Constraints.eq("SNP.consequences.gene.primaryIdentifier",identifier));
     return query;
   }
 

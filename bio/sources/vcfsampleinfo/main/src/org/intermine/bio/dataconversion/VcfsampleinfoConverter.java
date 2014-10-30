@@ -36,7 +36,7 @@ public class VcfsampleinfoConverter extends BioFileConverter
     private static final String DATASET_TITLE = "VCF Sample Info";
     private static final String DATA_SOURCE_NAME = "VCF Sample";
     private static final Logger LOG = Logger.getLogger(VcfsampleinfoConverter.class);
-    private Integer taxonId = null;
+    private Integer proteomeId = null;
 
     /**
      * Constructor
@@ -61,9 +61,9 @@ public class VcfsampleinfoConverter extends BioFileConverter
       } else {
         // one organism (at most) per file
         String organismIdentifier = null;
-        if (taxonId != null) {
+        if (proteomeId != null) {
           Item org = createItem("Organism");
-          org.setAttribute("taxonId",taxonId.toString());
+          org.setAttribute("proteomeId",proteomeId.toString());
           try {
             store(org);
           } catch (ObjectStoreException e) {
@@ -116,9 +116,9 @@ public class VcfsampleinfoConverter extends BioFileConverter
         s.setAttribute(field,value);
       }
     }
-    public void setOrganism(String organism) {
+    public void setProteomeId(String organism) {
       try {
-        taxonId = Integer.valueOf(organism);
+        proteomeId = Integer.valueOf(organism);
       } catch (NumberFormatException e) {
         throw new RuntimeException("can't find integer value for: " + organism);
       }

@@ -82,21 +82,21 @@ public class TsvSynonymsConverter extends BioFileConverter
 
         while (tsvIter.hasNext()) {
           String[] fields = (String[]) tsvIter.next();
-          String taxonId = fields[1];
+          String proteomeId = fields[0];
           String geneName = fields[2];
           String which = fields[3];
           String synonym = fields[4];
           try {
-            Integer taxon = Integer.parseInt(taxonId);
-            if (!organismMap.containsKey(taxonId)) {
+            //Integer taxon = Integer.parseInt(proteomeId);
+            if (!organismMap.containsKey(proteomeId)) {
               Item o = createItem("Organism");
-              o.setAttribute("taxonId", taxonId);
+              o.setAttribute("proteomeId", proteomeId);
               try {
                 store(o);
               } catch (ObjectStoreException e) {
                 throw new BuildException("Trouble storing organism: "+e.getMessage());
               }
-              organismMap.put(taxonId, o.getIdentifier());
+              organismMap.put(proteomeId, o.getIdentifier());
             }
             if (StringUtils.isEmpty(geneName)) {
               break;
@@ -104,7 +104,7 @@ public class TsvSynonymsConverter extends BioFileConverter
             if (!geneMap.containsKey(geneName)) {     
               Item i = createItem("Gene");
               i.setAttribute("primaryIdentifier", geneName);
-              i.setReference("organism", organismMap.get(taxonId));
+              i.setReference("organism", organismMap.get(proteomeId));
               if (which.equals("symbol") ) {
                 i.setAttribute("symbol",synonym);
               }
