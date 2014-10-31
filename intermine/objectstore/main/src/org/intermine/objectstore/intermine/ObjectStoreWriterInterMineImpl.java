@@ -1011,12 +1011,17 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     obj.setId(getSerialWithConnection(c));
                 }
             } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
-                @SuppressWarnings("unchecked") Collection<InterMineObject> coll
-                    = (Collection<InterMineObject>) o.getFieldValue(fieldInfo.getName());
+                @SuppressWarnings("unchecked") Collection<Object> coll
+                        = (Collection<Object>) o.getFieldValue(fieldInfo.getName());
+
                 if (!(coll instanceof Lazy)) {
-                    for (InterMineObject obj : coll) {
-                        if (obj.getId() == null) {
-                            obj.setId(getSerialWithConnection(c));
+                    for (Object obj : coll) {
+                        // the collection may contain simple objects which don't have ids
+                        if (obj instanceof InterMineObject) {
+                            InterMineObject imo = (InterMineObject) obj;
+                            if (imo.getId() == null) {
+                                imo.setId(getSerialWithConnection(c));
+                            }
                         }
                     }
                 }

@@ -8,17 +8,17 @@
     <collection name="collections" referenced-type="ReferenceList" reverse-reference="item"/>
     <collection name="references" referenced-type="Reference" reverse-reference="item"/>
   </class>
-  <class name="Attribute" is-interface="false">
+  <class name="Attribute" is-interface="false" extends="java.lang.Object">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="value" type="java.lang.String"/>
     <reference name="item" referenced-type="Item" reverse-reference="attributes"/>
   </class>
-  <class name="ReferenceList" is-interface="false">
+  <class name="ReferenceList" is-interface="false" extends="java.lang.Object">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="refIds" type="java.lang.String"/>
     <reference name="item" referenced-type="Item" reverse-reference="collections"/>
   </class>
-  <class name="Reference" is-interface="false">
+  <class name="Reference" is-interface="false" extends="java.lang.Object">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="refId" type="java.lang.String"/>
     <reference name="item" referenced-type="Item" reverse-reference="references"/>

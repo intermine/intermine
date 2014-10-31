@@ -56,7 +56,6 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(ReferenceList refList, Integer itemId) {
-        refList.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
         refList.setItem(item);
         item.addCollections(refList);
@@ -66,7 +65,6 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(Reference ref, Integer itemId) {
-        ref.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
         ref.setItem(item);
         item.addReferences(ref);
@@ -76,7 +74,6 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(Attribute att, Integer itemId) {
-        att.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
         att.setItem(item);
         item.addAttributes(att);
