@@ -112,13 +112,21 @@ public final class SqlGenerator
     }
 
     private static final Logger LOG = Logger.getLogger(SqlGenerator.class);
+    /** normal query **/
     public static final int QUERY_NORMAL = 0;
+    /** subquery in FROM **/
     public static final int QUERY_SUBQUERY_FROM = 1;
+    /** subquery in CONSTRAINT **/
     public static final int QUERY_SUBQUERY_CONSTRAINT = 2;
+    /** IDs only **/
     public static final int ID_ONLY = 2;
+    /** I DON'T KNOW **/
     public static final int NO_ALIASES_ALL_FIELDS = 3;
+    /** query for precomputing **/
     public static final int QUERY_FOR_PRECOMP = 4;
+    /** subquery exists **/
     public static final int QUERY_SUBQUERY_EXISTS = 5;
+    /** query for go faster **/
     public static final int QUERY_FOR_GOFASTER = 6;
 
     protected static Map<DatabaseSchema, Map<Query, CacheEntry>> sqlCache
@@ -616,7 +624,7 @@ public final class SqlGenerator
         throws ObjectStoreException {
         Set<Object> retvalO = findTableNames(q, schema, false);
         // If the last argument is false, we know that the result only contains Strings.
-        @SuppressWarnings("unchecked") Set<String> retval = (Set) retvalO;
+        Set<String> retval = (Set) retvalO;
         return retval;
     }
 
