@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="/intermine-model-main/lib/cglib-3.1.jar"/>
 	<classpathentry kind="lib" path="/intermine-model-main/lib/asm-4.2.jar"/>
 	<classpathentry kind="lib" path="/intermine-model-main/lib/asm-util-4.2.jar"/>
+	<classpathentry kind="src" path="/intermine-integrate-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
