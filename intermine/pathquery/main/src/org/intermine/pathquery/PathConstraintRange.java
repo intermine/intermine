@@ -24,7 +24,7 @@ public class PathConstraintRange extends PathConstraintMultiValue
      *
      * @param path the path that the constraint is attached to
      * @param op the type of operation
-     * @param range the value to constrain to, as a String - it will be validated later when the
+     * @param ranges the value to constrain to, as a String - it will be validated later when the
      * query is validated, as we do not know the attribute type at this stage.
      * @throws NullPointerException if path, op, or value are null
      * @throws IllegalArgumentException if the path contains colons or square brackets, or is
