@@ -1,9 +1,16 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+
 <div class="body">
   <div id="leftCol">
     <div id="pageDesc" class="pageDesc">
       <p><fmt:message key="dataCategories.intro"/></p>
     </div>
-    
+
     <im:boxarea title="Actions" stylename="plainbox" >
          <html:link action="/templates">
            <fmt:message key="dataCategories.viewTemplates"/>
@@ -25,13 +32,13 @@
             <div class="heading">
               <c:out value="${category}"/>
             </div>
-            
+
             <div class="body">
               <c:set var="classes" value="${CATEGORY_CLASSES[category]}"/>
               <c:forEach items="${classes}" var="classname" varStatus="status">
                 <a href="<html:rewrite page="/queryClassSelect.do"/>?action=<fmt:message key="button.selectClass"/>&amp;className=${classname}" title="<c:out value="${classDescriptions[classname]}"/>">${classname}</a><c:if test="${!status.last}">,</c:if>
               </c:forEach>
-              
+
               <c:if test="${!empty CATEGORY_TEMPLATES[category]}">
                 <br/>
                 <span class="smallnote"><fmt:message key="begin.or"/> <html:link action="/templates" paramId="category" paramName="category"><fmt:message key="begin.related.templates"/></html:link></span>
