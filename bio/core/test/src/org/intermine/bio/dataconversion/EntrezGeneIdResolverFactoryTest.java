@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -40,10 +42,10 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
     public void testReadConfig() throws Exception {
         factory.PROP_FILE = idresolverConfig;
         factory.readConfig();
-        assertEquals(5, factory.config_xref.size());
+        assertEquals(6, factory.config_xref.size());
         assertTrue(factory.config_xref.containsKey("7955"));
         assertFalse(factory.config_xref.containsValue("OMIM"));
-        assertTrue(factory.config_prefix.containsKey("10090"));
+        assertTrue(factory.config_prefix.containsKey("10116"));
         assertTrue(factory.config_strains.containsValue("559292"));
         assertTrue(factory.ignoredTaxonIds.contains("6239"));
     }
@@ -76,6 +78,7 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
         factory.createFromFile(f, new HashSet<String>(Arrays.asList(new String[] {"7227", "4932", "10090", "7955"})));
         assertTrue(IdResolverFactory.resolver.getTaxons().size() == 5);
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"7955", "102", "4932", "101", "10090"})), IdResolverFactory.resolver.getTaxons());
-        assertTrue(IdResolverFactory.resolver.resolveId("10090", "gene", "Abca2").iterator().next().startsWith("MGI"));
+        String mouseGene = IdResolverFactory.resolver.resolveId("10090", "gene", "Abca2").iterator().next();
+        assertTrue("MGI:99606".equals(mouseGene));
     }
 }
