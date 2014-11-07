@@ -195,7 +195,8 @@ public class NcbiGeneInfoParser
         Map<String, Set<String>> xrefMap = new HashMap<String, Set<String>>();
         for (String xref : xrefs.split("\\|")) {
             if (!xref.startsWith("-")) {
-                Util.addToSetMap(xrefMap, xref.split(":")[0], xref.split(":")[1]);
+                String[] bits = xref.split(":", 2);
+                Util.addToSetMap(xrefMap, bits[0], bits[1]);
             }
         }
         return xrefMap;
