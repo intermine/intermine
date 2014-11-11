@@ -84,6 +84,7 @@ echo "------> Building and releasing web-app..."
 ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
+    retrieve-objectstore-summary \
     default \
     release-webapp | tee -a $LOG | grep tomcat-deploy
 

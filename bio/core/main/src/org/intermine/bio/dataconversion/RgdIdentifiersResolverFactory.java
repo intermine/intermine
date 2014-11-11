@@ -49,8 +49,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Construct with SO term of the feature type.
-     * TODO as class name is fixed as gene, this method is not useful
-     * @param soTerm the feature type to resolve
+     * @param clsName the feature type to resolve
      */
     public RgdIdentifiersResolverFactory(String clsName) {
         this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
@@ -62,13 +61,12 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                 && resolver.hasTaxonAndClassName(taxonId, this.clsCol
                         .iterator().next())) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) {
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 
@@ -90,7 +88,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f);
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
                 }
@@ -100,6 +98,12 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Populate the ID resolver from a tab delimited file
+     *
+     * @param f the file
+     * @throws IOException if we can't read from the file
+     */
     protected void createFromFile(File f) throws IOException {
         Iterator<?> lineIter = FormattedTextParser.
                 parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
@@ -132,7 +136,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
         }
     }
 
-    private Set<String> parseEnsemblIds(String fromFile) {
+    private static Set<String> parseEnsemblIds(String fromFile) {
         Set<String> ensembls = new HashSet<String>();
         if (!StringUtils.isBlank(fromFile)) {
             ensembls.addAll(Arrays.asList(fromFile.split(";")));

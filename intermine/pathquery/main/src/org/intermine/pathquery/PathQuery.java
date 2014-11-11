@@ -1267,8 +1267,7 @@ public class PathQuery implements Cloneable
         // Remove things from view
         for (String viewPath : getView()) {
             try {
-                @SuppressWarnings("unused")
-                Path viewPathObj = new Path(model, viewPath, subclasses);
+                new Path(model, viewPath, subclasses);
             } catch (PathException e) {
                 // This one is now invalid. Remove
                 removeView(viewPath);
@@ -1278,12 +1277,10 @@ public class PathQuery implements Cloneable
         }
         for (PathConstraint con : getConstraints().keySet()) {
             try {
-                @SuppressWarnings("unused")
-                Path constraintPath = new Path(model, con.getPath(), subclasses);
+                new Path(model, con.getPath(), subclasses);
                 if (con instanceof PathConstraintLoop) {
                     try {
-                        @SuppressWarnings("unused")
-                        Path loopPath = new Path(model, ((PathConstraintLoop) con).getLoopPath(),
+                        new Path(model, ((PathConstraintLoop) con).getLoopPath(),
                                 subclasses);
                     } catch (PathException e) {
                         removeConstraint(con);
@@ -1299,8 +1296,7 @@ public class PathQuery implements Cloneable
         }
         for (OrderElement order : getOrderBy()) {
             try {
-                @SuppressWarnings("unused")
-                Path orderPath = new Path(model, order.getOrderPath(), subclasses);
+                new Path(model, order.getOrderPath(), subclasses);
             } catch (PathException e) {
                 removeOrderBy(order.getOrderPath());
                 messages.add("Removed path " + order.getOrderPath() + " from ORDER BY, because you "
@@ -1309,16 +1305,14 @@ public class PathQuery implements Cloneable
         }
         for (String join : getOuterJoinStatus().keySet()) {
             try {
-                @SuppressWarnings("unused")
-                Path joinPath = new Path(model, join, subclasses);
+                new Path(model, join, subclasses);
             } catch (PathException e) {
                 setOuterJoinStatus(join, null);
             }
         }
         for (String desc : getDescriptions().keySet()) {
             try {
-                @SuppressWarnings("unused")
-                Path descPath = new Path(model, desc, subclasses);
+                new Path(model, desc, subclasses);
             } catch (PathException e) {
                 setDescription(desc, null);
                 messages.add("Removed description on path " + desc + ", because you removed the "
@@ -1680,11 +1674,15 @@ public class PathQuery implements Cloneable
                             problems.add(String.format(
                                     "Type '%s' named in [%s] is not in the model",
                                     typeName, constraint));
-                        } else if (!cd.getAllSuperDescriptors().contains(
-                                path.getEndClassDescriptor())) {
-                            problems.add(String.format(
-                                    "%s is not a subtype of %s, as required by %s",
-                                    typeName, path.getEndClassDescriptor(), constraint));
+                        } else {
+                            ClassDescriptor mustBeA = path.getEndClassDescriptor();
+                            Set<ClassDescriptor> isa = cd.getAllSuperDescriptors();
+                            isa.add(cd);
+                            if (!isa.contains(mustBeA)) {
+                                problems.add(String.format(
+                                        "%s is not a subtype of %s, as required by %s",
+                                        typeName, mustBeA.getUnqualifiedName(), constraint));
+                            }
                         }
                     }
                 } else if (constraint instanceof PathConstraintRange) {

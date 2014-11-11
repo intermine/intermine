@@ -33,6 +33,7 @@ public class HeaderFilter implements Filter
      * Do the filtering.
      * {@inheritDoc}
      */
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
@@ -53,6 +54,7 @@ public class HeaderFilter implements Filter
      * Initialise this Filter.
      * {@inheritDoc}
      */
+    @Override
     public void init(FilterConfig filterConfig) {
         this.fc = filterConfig;
     }
@@ -60,6 +62,7 @@ public class HeaderFilter implements Filter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void destroy() {
        // empty
     }

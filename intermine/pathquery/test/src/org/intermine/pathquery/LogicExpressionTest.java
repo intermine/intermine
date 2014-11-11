@@ -82,10 +82,10 @@ public class LogicExpressionTest extends TestCase
         assertEquals(new LogicExpression("A"), l.validateForGroups(Arrays.asList(Arrays.asList("A"))));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ })
     public void test2() {
         LogicExpression l = new LogicExpression("A and B");
-        assertEquals(new HashSet(Arrays.asList("A", "B")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B")), l.getVariableNames());
         assertEquals("A and B", l.toString());
         assertEquals(Arrays.asList(new LogicExpression("A"), new LogicExpression("B")), l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B"))));
         try {
@@ -111,7 +111,7 @@ public class LogicExpressionTest extends TestCase
 
     public void test3() {
         LogicExpression l = new LogicExpression("A or B");
-        assertEquals(new HashSet(Arrays.asList("A", "B")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B")), l.getVariableNames());
         assertEquals("A or B", l.toString());
         try {
             l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B")));
@@ -136,14 +136,14 @@ public class LogicExpressionTest extends TestCase
 
     public void test4() {
         LogicExpression l = new LogicExpression("A and (B and C)");
-        assertEquals(new HashSet(Arrays.asList("A", "B", "C")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "C")), l.getVariableNames());
         assertEquals("A and B and C", l.toString());
         assertEquals(Arrays.asList(new LogicExpression("A and C"), new LogicExpression("B")), l.split(Arrays.asList(Arrays.asList("A", "C"), Arrays.asList("B"))));
     }
 
     public void test5() {
         LogicExpression l = new LogicExpression("A and (B or C)");
-        assertEquals(new HashSet(Arrays.asList("A", "B", "C")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "C")), l.getVariableNames());
         assertEquals("A and (B or C)", l.toString());
         assertEquals(Arrays.asList(new LogicExpression("A"), new LogicExpression("B or C"), null), l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B", "C"), empty)));
         assertEquals(new LogicExpression("A and (B or C)"), l.getSection(Arrays.asList("A", "B", "C")));
@@ -155,7 +155,7 @@ public class LogicExpressionTest extends TestCase
 
     public void test6() {
         LogicExpression l = new LogicExpression("A and (B or C and D)");
-        assertEquals(new HashSet(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
         assertEquals("A and (B or (C and D))", l.toString());
         assertEquals(Arrays.asList(new LogicExpression("A"), new LogicExpression("B or (C and D)")), l.split(Arrays.asList(Arrays.asList("A"), Arrays.asList("B", "C", "D"))));
         try {
@@ -167,7 +167,7 @@ public class LogicExpressionTest extends TestCase
 
     public void testRemoveVariables1() {
         LogicExpression l = new LogicExpression("(A or B) and (C or D)");
-        assertEquals(new HashSet(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
         assertEquals("(A or B) and (C or D)", l.toString());
         l.removeAllVariablesExcept(Arrays.asList("C", "D"));
         assertEquals("C or D", l.toString());
@@ -175,7 +175,7 @@ public class LogicExpressionTest extends TestCase
 
     public void testRemoveVariables2() {
         LogicExpression l = new LogicExpression("(A or B) and (C or D)");
-        assertEquals(new HashSet(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "C", "D")), l.getVariableNames());
         assertEquals("(A or B) and (C or D)", l.toString());
         l.removeVariable("A");
         assertEquals("B and (C or D)", l.toString());
@@ -198,6 +198,7 @@ public class LogicExpressionTest extends TestCase
         assertEquals("(A and B) or C", l.toString());
     }
 
+    @SuppressWarnings("unused")
     public void testPrecedence() {
         assertTrue(true || true && false);
         assertTrue(true || (true && false));

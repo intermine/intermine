@@ -1,5 +1,15 @@
 package org.intermine.api.util;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -10,11 +20,15 @@ import java.util.Map;
  * @param <K> The type of the keys.
  * @param <V> The type of the values.
  */
-public class LimitedMap<K, V> extends LinkedHashMap<K, V> {
+public class LimitedMap<K, V> extends LinkedHashMap<K, V>
+{
 
     private static final long serialVersionUID = 4102004209918022983L;
     private final int maxEntries;
 
+    /**
+     * @param maxNoOfEntries maximum number of entries
+     */
     public LimitedMap(int maxNoOfEntries) {
         this.maxEntries = maxNoOfEntries;
     }

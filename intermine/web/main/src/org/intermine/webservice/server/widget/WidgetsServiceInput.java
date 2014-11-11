@@ -87,6 +87,20 @@ public class WidgetsServiceInput implements EnrichmentOptions
         return extraAttribute;
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            "WidgetServiceInput("
+                + "widgetId = %s, bagName = %s,"
+                + " maxP = %s, correction = %s,"
+                + " pop = %s, savePop = %s, filter = %s,"
+                + " extra = %s)",
+                widgetId, bagName,
+                maxP, correction,
+                populationBagName, savePopulation, filter,
+                extraAttribute);
+    }
+
     /**
      * Class to build Inputs for the Widget Service. This class contains all the
      * setters.

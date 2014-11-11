@@ -19,7 +19,6 @@ import org.intermine.bio.web.export.GAFExporter;
 import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.bio.web.logic.SequenceFeatureExportUtil.InvalidQueryException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
@@ -51,13 +50,14 @@ public class GAFQueryService extends BioQueryService
 
     @Override
     protected GAFExporter getExporter(PathQuery pq) {
-        Set<String> orgSet = SequenceFeatureExportUtil.getTaxonIds(pq, im, getPermission().getProfile());
+        Set<String> orgSet = SequenceFeatureExportUtil.getTaxonIds(pq, im,
+                getPermission().getProfile());
         List<String> viewColumns = new ArrayList<String>(pq.getView());
 
         return new GAFExporter(getPrintWriter(), indices(viewColumns), orgSet);
     }
 
-    private List<Integer> indices(List<?> list) {
+    private static List<Integer> indices(List<?> list) {
         List<Integer> indices = new ArrayList<Integer>();
         int size = list.size();
         for (int i = 0; i < size; i++) {

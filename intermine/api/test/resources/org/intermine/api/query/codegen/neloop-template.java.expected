@@ -1,0 +1,6 @@
+/**
+ * Invalid query.
+ * =============
+ * The java code for this query could not be generated for the following reasons:
+ * 1. Loop constraints cannot be used with templates.
+ **/

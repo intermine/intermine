@@ -30,6 +30,13 @@ import org.intermine.model.InterMineObject;
  */
 public class ContainsConstraint extends Constraint
 {
+    /** List of possible operations */
+    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
+    /** List of possible null operations */
+    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
+
     protected QueryReference ref;
     protected QueryClass cls;
     protected InterMineObject obj;
@@ -103,12 +110,12 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
-     * Constructor for ContainsConstraint.
+     * Constructor for ContainsConstraint, constrain a reference/collection to be NULL/ NOT NULL
      *
-     * @param ref the target QueryObjectReference
+     * @param ref the target QueryObjectReference or QueryCollectionReference
      * @param op specify IS_NULL or IS_NOT_NULL
      */
-    public ContainsConstraint(QueryObjectReference ref, ConstraintOp op) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp op) {
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
@@ -185,10 +192,10 @@ public class ContainsConstraint extends Constraint
             + 11 * (obj == null ? 0 : obj.hashCode());
     }
 
-    /** List of possible operations */
-    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
-        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
-    /** List of possible null operations */
-    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
-        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
+    /**
+     * {@inheritDoc}
+     */
+    @Override public String toString() {
+        return ref + " CONTAINS " + cls;
+    }
 }

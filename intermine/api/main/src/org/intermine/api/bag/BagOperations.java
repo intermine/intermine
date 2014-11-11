@@ -11,11 +11,8 @@ package org.intermine.api.bag;
  */
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.bag.operations.BagOperation;
 import org.intermine.api.bag.operations.BagOperationException;
 import org.intermine.api.bag.operations.Intersection;
@@ -25,7 +22,6 @@ import org.intermine.api.bag.operations.Union;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.types.ClassKeys;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -86,10 +82,13 @@ public final class BagOperations
      * Create a bag that is the INTERSECTION of all the bags provided, if the intersection is the
      * empty set then don't create the new bag.
      * @param bags the bags to operate on
+     * @param model the data model
+     * @param classKeys the class keys
      * @param newBagName name of the new bag to create
      * @param profile the user that will own the new bag
      * @return the size of the new bag or 0 if no bag created
-     * @throws ObjectStoreException if problems storing bag
+     * @throws BagOperationException if problems merging list
+     * @throws MetaDataException if problems storing bag
      */
     public static int intersect(Model model, Collection<InterMineBag> bags, String newBagName,
             Profile profile, ClassKeys classKeys)
@@ -103,9 +102,12 @@ public final class BagOperations
      * bags.
      * @param bags the bags to operate on
      * @param newBagName name of the new bag to create
+     * @param classKeys the class keys
+     * @param model the data model
      * @param profile the user that will own the new bag
      * @return the size of the new bag or 0 if no bag created
-     * @throws ObjectStoreException if problems storing bag
+     * @throws BagOperationException if problems merging list
+     * @throws MetaDataException if problems storing bag
      */
     public static int subtract(Model model, Collection<InterMineBag> bags, String newBagName,
         Profile profile, ClassKeys classKeys)
@@ -114,6 +116,17 @@ public final class BagOperations
         return performBagOperation(operation, newBagName, classKeys);
     }
 
+    /**
+     * @param include list of bags to include
+     * @param exclude list of bags to exclude
+     * @param model the data model
+     * @param classKeys the class keys
+     * @param newBagName name of the new bag to create
+     * @param profile the user that will own the new bag
+     * @return the size of the new bag or 0 if no bag created
+     * @throws BagOperationException if problems merging list
+     * @throws MetaDataException if problems storing bag
+     */
     public static int asymmetricSubtract(Model model, Collection<InterMineBag> include,
         Collection<InterMineBag> exclude, String newBagName,
         Profile profile, ClassKeys classKeys)
@@ -124,7 +137,7 @@ public final class BagOperations
 
     private static int performBagOperation(
         BagOperation operation, String newBagName, ClassKeys classKeys)
-        throws BagOperationException, MetaDataException {
+        throws BagOperationException {
         if (StringUtils.isNotBlank(newBagName)) {
             operation.setNewBagName(newBagName);
         }
@@ -135,7 +148,7 @@ public final class BagOperations
     }
 
     private static int performBagOperation(BagOperation operation)
-        throws BagOperationException, MetaDataException {
+        throws BagOperationException {
         InterMineBag newBag = operation.operate();
         try {
             return newBag.size();

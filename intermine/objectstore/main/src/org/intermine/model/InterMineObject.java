@@ -1,7 +1,5 @@
 package org.intermine.model;
 
-import org.intermine.objectstore.ObjectStore;
-
 /*
  * Copyright (C) 2002-2014 FlyMine
  *
@@ -11,6 +9,8 @@ import org.intermine.objectstore.ObjectStore;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import org.intermine.objectstore.ObjectStore;
 
 /**
  * A root interface for all objects that can be stored in a InterMine database.
@@ -57,8 +57,7 @@ public interface InterMineObject extends InterMineFastPathObject
      * @param os an ObjectStore from which to create proxies
      */
     void setoBJECT(String[] notXml, ObjectStore os);
-  
-    
+
     /**
      * Returns the element type of a collection by name.
      *

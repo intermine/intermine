@@ -1,0 +1,56 @@
+<queries>
+
+<query name="for-bag"
+       model="testmodel"
+       view="Employee.name
+             Employee.department.name
+             Employee.department.company.name
+             Employee.age
+             Employee.fullTime">
+    <constraint path="Employee" op="IN" value="Fred"/>
+</query>
+
+<query name="default-view"
+       model="testmodel"
+       view="Department.employees.title
+             Department.employees.fullTime
+             Department.employees.age
+             Department.employees.end
+             Department.employees.name
+             Department.employees.seniority">
+    <constraint path="Department.employees" type="Manager"/>
+</query>
+
+<query name="for-collection-Department.employees"
+       model="testmodel"
+       view="Department.employees.name
+             Department.employees.department.name
+             Department.employees.department.company.name
+             Department.employees.age
+             Department.employees.fullTime"
+       longDescription="">
+    <join path="Department.employees.department" style="OUTER"/>
+    <join path="Department.employees.department.company" style="OUTER"/>
+    <constraint path="Department.id" op="=" value="1"/>
+</query>
+
+<query name="for-reference-Employee.address"
+       model="testmodel"
+       view="Employee.address.address" longDescription="">
+    <constraint path="Employee.id" op="=" value="2"/>
+</query>
+
+<query name="for-collection-Department.managers"
+       model="testmodel"
+       view="Department.employees.title
+             Department.employees.fullTime
+             Department.employees.age
+             Department.employees.end
+             Department.employees.name
+             Department.employees.seniority"
+       longDescription="">
+    <constraint path="Department.employees" type="Manager"/>
+    <constraint path="Department.id" op="=" value="1"/>
+</query>
+
+</queries>

@@ -93,6 +93,7 @@ public abstract class SearchRepository implements WebSearchWatcher
 
     /**
      * Get the search repository registered as global repositories for the user specified in input.
+     * @param profile user profile
      * @return the global search repositories.
      */
     public static SearchRepository getGlobalSearchRepository(Profile profile) {
@@ -104,10 +105,16 @@ public abstract class SearchRepository implements WebSearchWatcher
         return null;
     }
 
+    /**
+     * clear global repositories
+     */
     static void clearGlobalRepositories() {
         GLOBALS.clear();
     }
 
+    /**
+     * Add a global repository
+     */
     public void addGlobalRepository() {
         GLOBALS.add(this);
     }

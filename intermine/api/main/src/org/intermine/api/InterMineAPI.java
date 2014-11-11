@@ -11,7 +11,6 @@ package org.intermine.api;
  */
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.bag.BagManager;
@@ -29,7 +28,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.types.ClassKeys;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -94,18 +93,27 @@ public class InterMineAPI
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
         this.oss = oss;
-        this.profileManager = new ProfileManager(objectStore, userProfileWriter);
-        Profile superUser = profileManager.getSuperuserProfile(classKeys);
-        this.bagManager = new BagManager(superUser, model);
-        this.templateManager = new TemplateManager(superUser, model,
-                trackerDelegate.getTemplateTracker());
-        this.templateSummariser = new TemplateSummariser(objectStore,
-                profileManager.getProfileObjectStoreWriter(), oss);
-        this.bagQueryRunner =
-            new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
         this.trackerDelegate = trackerDelegate;
         this.linkRedirector = linkRedirector;
         this.queryStore = new MemoryQueryStore(1024);
+        initUserProfileResources(userProfileWriter);
+    }
+
+    /**
+     * Initialise parts of this object that require connection to a user-profile
+     * object store.
+     * @param userProfileWriter The object store for the users and their stuff.
+     */
+    protected void initUserProfileResources(ObjectStoreWriter userProfileWriter) {
+        this.profileManager = new ProfileManager(objectStore, userProfileWriter);
+        Profile superUser = profileManager.getSuperuserProfile(classKeys);
+        this.bagManager = new BagManager(superUser, model);
+        this.templateManager =
+                new TemplateManager(superUser, model, trackerDelegate.getTemplateTracker());
+        this.templateSummariser =
+                new TemplateSummariser(objectStore, userProfileWriter, oss);
+        this.bagQueryRunner =
+                new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
     }
 
     /**
@@ -174,6 +182,13 @@ public class InterMineAPI
             }
             return retval;
         }
+    }
+
+    /**
+     * @return the pathQueryExecutor
+     */
+    public PathQueryExecutor getPathQueryExecutor() {
+        return getPathQueryExecutor(new AnonProfile());
     }
 
     /**

@@ -32,7 +32,6 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Utility methods for LocatedSequenceFeature exporting.
@@ -43,10 +42,6 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 public final class SequenceFeatureExportUtil
 {
     private static final Logger LOG = Logger.getLogger(SequenceFeatureExportUtil.class);
-
-    @SuppressWarnings("unused")
-    private static final Object ERROR_MSG = "Error happened during fetching organism information"
-        + " for SequenceFeature export.";
 
     private SequenceFeatureExportUtil() {
         super();
@@ -102,7 +97,13 @@ public final class SequenceFeatureExportUtil
         return getOrganisms(pathQuery, im, profile);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+
+    /**
+     * @param pathQuery query
+     * @param im API
+     * @param profile userprofile
+     * @return set of organism short names
+     */
     public static Set<String> getOrganisms(PathQuery pathQuery, InterMineAPI im, Profile profile) {
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
@@ -130,18 +131,30 @@ public final class SequenceFeatureExportUtil
         return organismShortNames;
     }
 
-    public static class InvalidQueryException extends RuntimeException {
-        private static final long serialVersionUID = -4552483251561758438L;
-
+    /**
+     *
+     * @author Fengyuan
+     */
+    public static class InvalidQueryException extends RuntimeException
+    {
+        /**
+         * @param msg error message
+         */
         InvalidQueryException(String msg) {
             super(msg);
         }
 
+        /**
+         * @param t throwable
+         */
         InvalidQueryException(Throwable t) {
             super("Invalid query", t);
         }
     }
 
+    /**
+     * @param pq pathquery
+     */
     public static void isValidFastaQuery(PathQuery pq) {
         if (pq.getView().size() > 1) {
             throw new InvalidQueryException("Queries to this service may only have one view.");
@@ -155,12 +168,18 @@ public final class SequenceFeatureExportUtil
         ClassDescriptor klazz = path.getLastClassDescriptor();
         ClassDescriptor sf = pq.getModel().getClassDescriptorByName("SequenceFeature");
         ClassDescriptor protein = pq.getModel().getClassDescriptorByName("Protein");
-        if (sf == klazz || protein == klazz || klazz.getAllSuperDescriptors().contains(sf) || klazz.getAllSuperDescriptors().contains(protein)) {
+        if (sf == klazz || protein == klazz || klazz.getAllSuperDescriptors().contains(sf)
+                || klazz.getAllSuperDescriptors().contains(protein)) {
             return; // OK
         } else {
             throw new InvalidQueryException("Unsuitable type for export: " + klazz);
         }
     }
+
+    /**
+     * true if valid feature
+     * @param pq pathquery
+     */
 
     public static void isValidSequenceFeatureQuery(PathQuery pq) {
         ClassDescriptor sf = pq.getModel().getClassDescriptorByName("SequenceFeature");
@@ -193,7 +212,12 @@ public final class SequenceFeatureExportUtil
         return getTaxonIds(pathQuery, im, profile);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    /**
+     * @param pathQuery query
+     * @param im API
+     * @param profile userprofile
+     * @return set of taxon IDs
+     */
     public static Set<String> getTaxonIds(PathQuery pathQuery, InterMineAPI im, Profile profile) {
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 

@@ -12,6 +12,7 @@ package org.intermine.objectstore.translating;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -131,6 +132,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
             boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         //if (start == 0) {
@@ -182,6 +184,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public ResultsInfo estimate(Query q) throws ObjectStoreException {
         return os.estimate(translateQuery(q));
     }
@@ -189,6 +192,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public int count(Query q, Map<Object, Integer> sequence) throws ObjectStoreException {
         return os.count(translateQuery(q), sequence);
     }
@@ -202,20 +206,23 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         return retval;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public InterMineObject getObjectByExample(@SuppressWarnings("unused") InterMineObject o,
-            @SuppressWarnings("unused") Set<String> fieldNames)
-        throws ObjectStoreException {
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames) {
         throw new UnsupportedOperationException("getObjectByExample not supported by"
                 + "ObjectStoreTranslatingImpl");
     }
 
+    @Override
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(T o, Set<String> fs) {
+        throw new UnsupportedOperationException("getObjectsByExample not supported by"
+                    + "ObjectStoreTranslatingImpl");
+    }
+
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isMultiConnection() {
         return os.isMultiConnection();
     }
@@ -224,7 +231,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
      * {@inheritDoc}
      */
     @Override
-    public Set<Object> getComponentsForQuery(@SuppressWarnings("unused") Query q) {
+    public Set<Object> getComponentsForQuery(Query q) {
         return Collections.emptySet();
     }
 
@@ -263,6 +270,7 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public Integer getSerial() throws ObjectStoreException {
         return os.getSerial();
     }

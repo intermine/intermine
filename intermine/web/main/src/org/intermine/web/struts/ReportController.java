@@ -94,7 +94,7 @@ public class ReportController extends InterMineAction
             request.setAttribute("requestedObject", requestedObject);
 
             // hell starts here
-            TagManager tagManager = im.getTagManager();
+            TagManager tm = im.getTagManager();
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = im.getObjectStore();
             String superuser = im.getProfileManager().getSuperuser();
@@ -112,9 +112,7 @@ public class ReportController extends InterMineAction
                 // assign lists to any aspects they are tagged to or put in unplaced lists
                 String fieldPath = fd.getClassDescriptor().getUnqualifiedName()
                     + "." + fd.getName();
-                List<Tag> tags = tagManager.getTags(null, fieldPath, taggedType, superuser);
-                for (Tag tag : tags) {
-                    String tagName = tag.getTagName();
+                for (String tagName: tm.getObjectTagNames(fieldPath, taggedType, superuser)) {
                     if (AspectTagUtil.isAspectTag(tagName)) {
                         List<InlineList> listsForAspect = placedInlineLists.get(tagName);
                         if (listsForAspect == null) {
@@ -122,7 +120,7 @@ public class ReportController extends InterMineAction
                             placedInlineLists.put(tagName, listsForAspect);
                         }
                         listsForAspect.add(list);
-                    } else if (tagName.equals(TagNames.IM_SUMMARY)) {
+                    } else if (TagNames.IM_SUMMARY.equals(tagName)) {
                         List<InlineList> summaryLists = placedInlineLists.get(tagName);
                         if (summaryLists == null) {
                             summaryLists = new ArrayList<InlineList>();
@@ -172,11 +170,11 @@ public class ReportController extends InterMineAction
                 DisplayField df = entry.getValue();
                 if (df instanceof DisplayReference) {
                     categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
-                            "reference", df, miscRefs, tagManager, superuser,
+                            "reference", df, miscRefs, tm, superuser,
                             placementRefsAndCollections, SessionMethods.isSuperUser(session));
                 } else if (df instanceof DisplayCollection) {
                     categoriseBasedOnTags(((DisplayCollection) df).getDescriptor(),
-                            "collection", df, miscRefs, tagManager, superuser,
+                            "collection", df, miscRefs, tm, superuser,
                             placementRefsAndCollections, SessionMethods.isSuperUser(session));
                 }
             }

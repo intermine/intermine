@@ -64,6 +64,7 @@ public class ResidueFieldExporter implements FieldExporter
      * @param response The HTTP response we are creating - used to get the OutputStream to write to
      * @throws ExportException if the application business logic throws an exception
      */
+    @Override
     public void exportField(InterMineObject object, String fieldName, ObjectStore os,
             HttpServletResponse response) {
         if (!(object instanceof Sequence)) {

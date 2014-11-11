@@ -48,7 +48,6 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.mines.FriendlyMineManager;
-import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
@@ -751,7 +750,8 @@ public class AjaxServices
         }
         final String xmlQuery = getXMLQuery("FriendlyMinesPathways.xml", orthologues);
         try {
-            JSONObject results = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            JSONObject results = linkManager.getQueryRunner()
+                                            .runJSONWebServiceQuery(mine, xmlQuery);
             if (results == null) {
                 LOG.error("Couldn't query " + mine.getName() + " for pathways");
                 return null;
@@ -814,7 +814,8 @@ public class AjaxServices
         }
         final String xmlQuery = getXMLQuery("RatDiseases.xml", orthologues);
         try {
-            JSONObject results = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            JSONObject results = linkManager.getQueryRunner()
+                                            .runJSONWebServiceQuery(mine, xmlQuery);
             if (results != null) {
                 results.put("mineURL", mine.getUrl());
                 results.put("status", "online");

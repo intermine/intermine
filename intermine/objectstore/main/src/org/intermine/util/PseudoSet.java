@@ -26,6 +26,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean add(@SuppressWarnings("unused") E o) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -33,6 +34,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean addAll(@SuppressWarnings("unused") Collection<? extends E> c) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -40,6 +42,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void clear() {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -47,6 +50,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean containsAll(Collection<?> c) {
         for (Object o : c) {
             if (!contains(o)) {
@@ -59,6 +63,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEmpty() {
         return false;
     }
@@ -66,6 +71,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Iterator<E> iterator() {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -73,6 +79,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean remove(@SuppressWarnings("unused") Object o) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -80,6 +87,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean removeAll(@SuppressWarnings("unused") Collection<?> c) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -87,6 +95,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean retainAll(@SuppressWarnings("unused") Collection<?> c) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -94,6 +103,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int size() {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -101,6 +111,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Object[] toArray() {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }
@@ -108,6 +119,7 @@ public abstract class PseudoSet<E> implements Set<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> T[] toArray(@SuppressWarnings("unused") T[] o) {
         throw new UnsupportedOperationException("Immutable virtual PseudoSet");
     }

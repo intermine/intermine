@@ -12,16 +12,12 @@ package org.intermine.web.logic.widget;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.AbstractMap;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+
+import org.intermine.web.logic.SortableMap;
 
 
 /**
@@ -36,6 +32,30 @@ import java.util.Set;
  */
 public final class ErrorCorrection
 {
+
+    public static enum Strategy {
+
+        /** The Bonferroni error correction strategy **/
+        BONFERRONI("Bonferroni"),
+        /** The Benjamini Hochberg error correction strategy **/
+        BENJAMINI_HOCHBERG("Benjamini Hochberg"),
+        /** The Holm-Bonferroni error correction strategy **/
+        HOLM_BONFERRONI("Holm-Bonferroni"),
+        /** Do not perform error correction **/
+        NONE("");
+
+        private final String algorithm;
+
+        private Strategy(String name) {
+            this.algorithm = name;
+        }
+
+        /** @return the algorithm name. **/
+        public String getAlgorithm() {
+            return algorithm;
+        }
+    }
+
     protected static final BigDecimal ZERO = new BigDecimal(0);
     protected static final BigDecimal ONE = new BigDecimal(1);
 
@@ -50,42 +70,34 @@ public final class ErrorCorrection
      * @param errorCorrection which error correction to use
      * @return map containing adjusted p-values
      */
-    public static Map<String, BigDecimal> adjustPValues(String errorCorrection,
+    public static Map<String, BigDecimal> adjustPValues(
+            Strategy errorCorrection,
             Map<String, BigDecimal> results, Double max, int testCount) {
-        Map<String, BigDecimal> adjustedResults;
-
-        if ("Bonferroni".equals(errorCorrection)) {
-            adjustedResults = calculateBonferroni(results, testCount, max);
-        } else if ("Benjamini Hochberg".equals(errorCorrection)) {
-            adjustedResults = calculateBenjaminiHochberg(results, testCount, max);
-        } else if ("Holm-Bonferroni".equals(errorCorrection)) {
-            adjustedResults = calculateBonferroniHolm(results, testCount, max);
-        } else {
-            adjustedResults = calculate(results, max);
+        switch (errorCorrection) {
+            case NONE:
+                return calculate(results, max);
+            case BONFERRONI:
+                return calculateBonferroni(results, testCount, max);
+            case BENJAMINI_HOCHBERG:
+                return calculateBenjaminiHochberg(results, testCount, max);
+            case HOLM_BONFERRONI:
+                return calculateBonferroniHolm(results, testCount, max);
+            default:
+                throw new IllegalArgumentException("Unsupported strategy: " + errorCorrection);
         }
-        return adjustedResults;
     }
 
     /**
      * Sort the map by values.
+     *
      * @param originalMap The map to sort.
      * @return A similar map, but sorted.
      */
     public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
-        final List<Map.Entry<String, BigDecimal>> entries
-            = new ArrayList<Map.Entry<String, BigDecimal>>(originalMap.entrySet());
-        Collections.sort(entries, new Comparator<Map.Entry<String, BigDecimal>>() {
-            @Override
-            public int compare(Entry<String, BigDecimal> a, Entry<String, BigDecimal> b) {
-                return b.getValue().compareTo(a.getValue());
-            }
-        });
-        return new AbstractMap<String, BigDecimal>() {
-            @Override
-            public Set<java.util.Map.Entry<String, BigDecimal>> entrySet() {
-                return new LinkedHashSet<Map.Entry<String, BigDecimal>>(entries);
-            }
-        };
+        SortableMap sortedMap = new SortableMap(originalMap);
+        // sort ascending, smallest values first
+        sortedMap.sortValues(false, true);
+        return new LinkedHashMap(sortedMap);
     }
 
     /**

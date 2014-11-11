@@ -5,8 +5,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,7 @@ import junit.framework.Test;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStore;
@@ -28,7 +31,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 
@@ -197,7 +199,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         List input = Arrays.asList(new Object[] {nonMatchingString});
         BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         assertEquals(0, res.getMatches().values().size());
-        Map resUnresolved = res.getUnresolved();
+        Map<String, Object> resUnresolved = res.getUnresolved();
         assertTrue(resUnresolved.size() == 1);
         assertTrue(resUnresolved.containsKey(nonMatchingString));
         assertNull(resUnresolved.get(nonMatchingString));
@@ -206,16 +208,14 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     // test searching for an input string that only matches an object of the wrong type and can't
     // be converted
     public void testObjectWrongType() throws Exception {
-        String contractorName = "EmployeeA2";
-        List input = Arrays.asList(new Object[] {contractorName});
+        String ceoName = "Tatjana Berkel";
+        List<String> input = Arrays.asList(ceoName);
         BagQueryResult res = runner.searchForBag("Contractor", input, null, true);
         assertEquals(0, res.getMatches().values().size());
-        //fail("" + res.getIssues());
-        Map resUnresolved = res.getUnresolved();
+        Collection<String> resUnresolved = res.getUnresolvedIdentifiers();
         assertEquals(1, resUnresolved.size());
-        assertTrue(resUnresolved.containsKey(contractorName));
-        Set contractors = (Set) resUnresolved.get(contractorName);
-        assertEquals(contractorName, ((Employee) contractors.iterator().next()).getName());
+        assertTrue(resUnresolved.contains(ceoName));
+        assertEquals(ceoName, resUnresolved.iterator().next());
     }
 
     // test searching for an input string that has to be converted
@@ -276,7 +276,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     // test that getMatchandIssueIds returns all ids - expect one match, one
     // duplicate (two ids) and one unresolved
     public void testGetMatchAndIssueIds() throws Exception {
-        List input = Arrays.asList(new Object[] {"EmployeeA1", "Mr.", "gibbon"});
+        List<String> input = Arrays.asList("EmployeeA1", "Mr.", "gibbon");
         BagQueryResult res = runner.searchForBag("Manager", input, null, true);
         assertEquals(1, res.getMatches().size());
         Set<Integer> ids = new HashSet<Integer>(Arrays.asList(new Integer[] {
@@ -284,17 +284,17 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
             eIds.get("EmployeeA1").getId(),
             eIds.get("EmployeeB3").getId()}));
         assertEquals(ids, res.getMatchAndIssueIds());
-        assertEquals(1, res.getUnresolved().size());
+        assertEquals(1, res.getUnresolvedIdentifiers().size());
+        assertEquals(Collections.singleton("gibbon"), res.getUnresolvedIdentifiers());
     }
 
     public void testWildcards() throws Exception {
-        List input = Arrays.asList("EmployeeA*", "EmployeeB3");
+        List<String> input = Arrays.asList("EmployeeA*", "EmployeeB3");
         BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         Set<Integer> ids = new HashSet<Integer>(Arrays.asList(eIds.get("EmployeeA3").getId(), eIds.get("EmployeeA2").getId(), eIds.get("EmployeeA1").getId()));
         assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("searching key fields").get("EmployeeA*")));
         assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("Employable by name").get("EmployeeA*")));
     }
-
 
     // we need to test a query that matches a different type.  Probably
     // need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml

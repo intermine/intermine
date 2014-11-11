@@ -13,11 +13,9 @@ package org.intermine.bio.web.struts;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,18 +30,10 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.PropertiesUtil;
-import org.intermine.metadata.TypeUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
-import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.http.HttpExporterBase;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
@@ -66,9 +56,7 @@ public class GalaxyExportAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Model model = im.getModel();
-        WebConfig webConfig = SessionMethods.getWebConfig(request);
-
-        String  tableName = (String) request.getParameter("tableName");
+        String  tableName = request.getParameter("tableName");
         PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
         PathQuery query = pt.getWebTable().getPathQuery();
@@ -169,29 +157,6 @@ public class GalaxyExportAction extends InterMineAction
 
         return null;
     }
-
-    /**
-     * Colon (:) is outer join and dot (.) is inner join, id replace colon with dot, it will change
-     * the original query but return results which are with chr, start and end.
-     *
-     * @param pathQuery
-     * @param joinPath
-     * @throws PathException
-     * */
-    private List<Path> getFixedView(List<Path> view) throws PathException {
-        String invalidPath = ":";
-        String validPath = ".";
-        List<Path> ret = new ArrayList<Path>();
-        for (Path path : view) {
-            if (path.toString().contains(invalidPath)) {
-                String newPathString = path.toString().replace(invalidPath,
-                        validPath);
-                path = new Path(path.getModel(), newPathString);
-            }
-            ret.add(path);
-        }
-        return ret;
-    }
 }
 
 /**
@@ -235,7 +200,7 @@ class ResultManipulater extends HttpExporterBase
 
     }
 
-    private List<ResultElement> getResultElements(List<ResultElement> row, int index) {
+    private static List<ResultElement> getResultElements(List<ResultElement> row, int index) {
         List<ResultElement> els = new ArrayList<ResultElement>();
         if (row.get(index) != null) {
             els.add(row.get(index));

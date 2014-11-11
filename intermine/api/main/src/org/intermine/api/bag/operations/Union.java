@@ -19,8 +19,20 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 
-public class Union extends BagOperation {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class Union extends BagOperation
+{
 
+    /**
+     *
+     * @param model data model
+     * @param profile userprofile
+     * @param bags lists to union
+     */
     public Union(Model model, Profile profile, Collection<InterMineBag> bags) {
         super(model, profile, bags);
     }

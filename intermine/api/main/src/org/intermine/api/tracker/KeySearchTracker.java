@@ -24,6 +24,11 @@ import org.intermine.api.tracker.track.KeySearchTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
+/**
+ *
+ * @author Daniela
+ *
+ */
 public class KeySearchTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(KeySearchTracker.class);
@@ -75,9 +80,9 @@ public class KeySearchTracker extends AbstractTracker
 
     /**
      * Record the search.
-     * @param keyword
-     * @param profile
-     * @param sessionIdentifier
+     * @param keyword keyword
+     * @param profile user
+     * @param sessionIdentifier session
      */
     protected void trackSearch(String keyword, Profile profile, String sessionIdentifier) {
         String userName = (profile.getUsername() != null)

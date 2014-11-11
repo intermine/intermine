@@ -10,7 +10,6 @@ package org.intermine.api.query.codegen;
  *
  */
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -21,6 +20,7 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -89,7 +89,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
         String got = cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
 
-        assertEquals(expected, got);
+        assertEquals("Generated query is incorrect.", expected, got);
     }
 
     private void doPrivateComparison(String xml, String resource) {
@@ -130,7 +130,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
     }
     private WebserviceCodeGenInfo getGenInfo(PathQuery pq, boolean isPrivate) {
         return new WebserviceCodeGenInfo(pq, serviceRootURL, projectTitle, perlWSVersion,
-                !isPrivate, null);
+                !isPrivate, new AnonProfile());
     }
 
     //****************************** Test PathQuery *********************************
@@ -219,10 +219,11 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
      * </pre>
      */
     public void testPathQueryCodeGenerationWithNoConstraints() {
-        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-                "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-                "sortOrder=\"Gene.primaryIdentifier asc\"></query>";
-        // Parse xml to PathQuery - PathQueryBinding
+        String queryXml =
+                "<query model=\"genomic\""
+                + " view=\"Gene.primaryIdentifier Gene.secondaryIdentifier"
+                + " Gene.symbol Gene.name Gene.organism.shortName\""
+                + " sortOrder=\"Gene.primaryIdentifier asc\"/>";
         doComparison(queryXml, "no-constraints");
     }
 
@@ -626,7 +627,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         pq.addViews("Employee.name", "Employee.age");
         pq.addConstraint(Constraints.notInIds("Employee", Arrays.asList(1, 2, 3, 4, 5)));
 
-        doComparison(pq, "inids-query");
+        doComparison(pq, "notinids-query");
     }
 
     /**
@@ -894,7 +895,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
         tq.setEditable(tq.getConstraintForCode(code), true);
 
-        doTemplateComparison(tq, "inids-query");
+        doTemplateComparison(tq, "inids-template");
 
     }
 
@@ -913,7 +914,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
         tq.setEditable(tq.getConstraintForCode(code), true);
 
-        doTemplateComparison(tq, "inids-query");
+        doTemplateComparison(tq, "notinids-template");
     }
 
     /**
@@ -963,7 +964,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
         TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
         tq.setEditable(tq.getConstraintForCode(code), true);
 
-        doTemplateComparison(tq, "loop-template");
+        doTemplateComparison(tq, "neloop-template");
     }
 
     // Other private methods can be added...

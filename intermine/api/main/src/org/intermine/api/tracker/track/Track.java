@@ -30,6 +30,7 @@ public interface Track
 
     /**
      * Save into the table the track object representing the user activity
+     * @param con database connection
      */
     void store(Connection con);
 

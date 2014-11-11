@@ -187,6 +187,9 @@ public class Path
             currentPath.append(thisPart);
             elements.add(thisPart);
             if (!("".equals(clsName))) {
+                if (cld == null) {
+                    throw new PathException("Unable to resolve path " + thisPart, path);
+                }
                 FieldDescriptor fld = cld.getFieldDescriptorByName(thisPart);
                 if (fld == null) {
                     throw new PathException("Unable to resolve path '" + path + "': field '"

@@ -520,7 +520,8 @@ public class BioGridConverter extends BioFileConverter
 
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
-                    if (SPOKE_MODEL.equalsIgnoreCase(role1) && SPOKE_MODEL.equalsIgnoreCase(role2)) {
+                    if (SPOKE_MODEL.equalsIgnoreCase(role1)
+                            && SPOKE_MODEL.equalsIgnoreCase(role2)) {
                         // spoke!  not storing bait - bait, only bait - prey
                         continue;
                     }
@@ -744,7 +745,7 @@ public class BioGridConverter extends BioFileConverter
                 if (eh.description != null && !eh.description.equals("")) {
                     exp.setAttribute("description", eh.description);
                 }
-                if (name != null && !name.equals("")) {
+                if (StringUtils.isNotEmpty(name)) {
                     exp.setAttribute("name", name);
                 } else {
                     exp.setAttribute("name", BLANK_EXPERIMENT_NAME);

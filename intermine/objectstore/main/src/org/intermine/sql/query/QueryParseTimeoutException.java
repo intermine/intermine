@@ -15,6 +15,7 @@ package org.intermine.sql.query;
  * @author Richard Smith
  *
  */
-public class QueryParseTimeoutException extends RuntimeException {
+public class QueryParseTimeoutException extends RuntimeException
+{
 
 }

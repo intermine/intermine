@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 public class ReferenceDescriptorTest extends TestCase
 {
-    private static final Set EMPTY_SET = Collections.EMPTY_SET;
+    private ClassDescriptorFactory cldFac = new ClassDescriptorFactory("package.name");
 
     public ReferenceDescriptorTest(String arg) {
         super(arg);
@@ -27,33 +27,32 @@ public class ReferenceDescriptorTest extends TestCase
 
     public void testNullConstructorFields() throws Exception {
         try {
-            ReferenceDescriptor rfd = new ReferenceDescriptor(null, "String", "String");
+            new ReferenceDescriptor(null, "String", "String");
             fail("Expected: IllegalArgumentException, name parameter");
         } catch (IllegalArgumentException e) {
         }
 
         try {
-            ReferenceDescriptor rfd = new ReferenceDescriptor("", "String", "String");
+            new ReferenceDescriptor("", "String", "String");
             fail("Expected: IllegalArgumentException, name parameter");
         } catch (IllegalArgumentException e) {
         }
 
         try {
-            ReferenceDescriptor rfd = new ReferenceDescriptor("name", null, "String");
+            new ReferenceDescriptor("name", null, "String");
             fail("Expected: IllegalArgumentException, referencedType parameter");
         } catch (IllegalArgumentException e) {
         }
 
         try {
-            ReferenceDescriptor rfd = new ReferenceDescriptor("name", "", "String");
+            new ReferenceDescriptor("name", "", "String");
             fail("Expected: IllegalArgumentException, referencedType parameter");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testSetClassDescriptor() throws Exception {
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
-                                                  new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld = cldFac.makeClass("Class1");
         ReferenceDescriptor rfd = new ReferenceDescriptor("name", "String", "String");
         try {
             rfd.setClassDescriptor(cld);
@@ -69,12 +68,14 @@ public class ReferenceDescriptorTest extends TestCase
 
     public void testReferencedClassNotSet() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "Class2", null);
-        Set references = Collections.singleton(rfd1);
+        Set<ReferenceDescriptor> references = Collections.singleton(rfd1);
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), references, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
+        new ClassDescriptor("Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, references, ClassDescriptorFactory.NO_COLLS);
+        new ClassDescriptor("Class2", null, false,
+                ClassDescriptorFactory.NO_ATTRS, ClassDescriptorFactory.NO_REFS, ClassDescriptorFactory.NO_COLLS);
         try {
-            ClassDescriptor refCld = rfd1.getReferencedClassDescriptor();
+            rfd1.getReferencedClassDescriptor();
             fail("Expected IllegalStateException, model has not yet been set");
         } catch (IllegalStateException e) {
         }
@@ -82,11 +83,12 @@ public class ReferenceDescriptorTest extends TestCase
 
     public void testGetReferencedClass() throws Exception {
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", null);
-        Set references = Collections.singleton(rfd1);
+        Set<ReferenceDescriptor> references = Collections.singleton(rfd1);        
         // cld1 has a ReferenceDescriptor that points to Class2
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), references, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, references, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld2 = cldFac.makeClass("Class2");
+        new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
             ClassDescriptor refCld = rfd1.getReferencedClassDescriptor();
             assertTrue("ClassDescriptor was null", refCld != null);
@@ -100,11 +102,13 @@ public class ReferenceDescriptorTest extends TestCase
         // rfd1 in Class1 points to Class2, rfd2 in Class2 points to Class1
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfd2");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "package.name.Class1", "rfd1");
-        Set refs1 = Collections.singleton(rfd1);
-        Set refs2 = Collections.singleton(rfd2);
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
-        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
+        Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+        new Model("model", "package.name", Arrays.asList(cld1, cld2));
         try {
             ReferenceDescriptor rfdReverse = rfd1.getReverseReferenceDescriptor();
             assertEquals(rfd2, rfdReverse);
@@ -119,12 +123,14 @@ public class ReferenceDescriptorTest extends TestCase
         // rfd1 points to Class2 but has reverse reference (rfdDummy) that is not a field of Class1
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfdDummy");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "package.name.Class1", "rfd1");
-        Set refs1 = Collections.singleton(rfd1);
-        Set refs2 = Collections.singleton(rfd2);
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
+        Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
+        Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
         try {
-            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+            new Model("model", "package.name", Arrays.asList(cld1, cld2));
             fail("Expected a MetaDataException to be thrown");
         } catch (MetaDataException e) {
         }
@@ -136,11 +142,13 @@ public class ReferenceDescriptorTest extends TestCase
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfd2");
         ReferenceDescriptor rfdOther1 = new ReferenceDescriptor("rfdOther1", "package.name.Class2", "rfd2");
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "package.name.Class1", "rfdOther1");
-        Set refs1 = new HashSet(Arrays.asList(new ReferenceDescriptor[] {rfd1, rfdOther1}));
-        Set refs2 = new HashSet(Arrays.asList(new ReferenceDescriptor[] {rfd2}));
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
-        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        Set<ReferenceDescriptor> refs1 = new HashSet<ReferenceDescriptor>(Arrays.asList(rfd1, rfdOther1));
+        Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+        Model model = new Model("model", "package.name", Arrays.asList(cld1, cld2));
         // this no longer throws an exception , instead creates the model but adds a problem
         assertEquals(1, model.getProblems().size());
     }
@@ -150,12 +158,14 @@ public class ReferenceDescriptorTest extends TestCase
         // rfd1 points to Class2.atd2 which is an attribute
         ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "atd2");
         AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "java.lang.String");
-        Set refs1 = Collections.singleton(rfd1);
-        Set atts = Collections.singleton(atd2);
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, atts, new HashSet(), new HashSet());
+        Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
+        Set<AttributeDescriptor> atts = Collections.singleton(atd2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, atts,
+                ClassDescriptorFactory.NO_REFS, ClassDescriptorFactory.NO_COLLS);
         try {
-            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+            new Model("model", "package.name", Arrays.asList(cld1, cld2));
             fail("Expected a MetaDataException to be thrown");
         } catch (MetaDataException e) {
         }
@@ -169,41 +179,45 @@ public class ReferenceDescriptorTest extends TestCase
         ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "package.name.Class3", "rfd1");
         ReferenceDescriptor rfd3 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfd2");
         //ReferenceDescriptor rfdOther2 = new ReferenceDescriptor("rfdOther2", "package.name.Class1", "rfd2");
-        Set refs1 = Collections.singleton(rfd1);
-        Set refs2 = Collections.singleton(rfd2);
-        Set refs3 = Collections.singleton(rfd3);
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
-        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", null, false, new HashSet(), refs3, new HashSet());
+        Set<ReferenceDescriptor> refs1 = Collections.singleton(rfd1);
+        Set<ReferenceDescriptor> refs2 = Collections.singleton(rfd2);
+        Set<ReferenceDescriptor> refs3 = Collections.singleton(rfd3);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs1, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs2, ClassDescriptorFactory.NO_COLLS);
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs3, ClassDescriptorFactory.NO_COLLS);
 
-        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        Model model = new Model("model", "package.name", Arrays.asList(cld1, cld2, cld3));
         assertEquals(1, model.getProblems().size());
     }
 
     public void testRelationTypeOneToOne() throws Exception {
         ReferenceDescriptor ref1  = new ReferenceDescriptor("ref1", "package.name.Class1", "ref2");
         ReferenceDescriptor ref2  = new ReferenceDescriptor("ref2", "package.name.Class1", null);
-        Set refs = new HashSet(Arrays.asList(new Object[] { ref1, ref2 }));
-        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, EMPTY_SET, refs, EMPTY_SET);
-        Model model = new Model("model1", "package.name", Collections.singleton(cld));
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, Arrays.asList(ref1, ref2), ClassDescriptorFactory.NO_COLLS);
+        new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.ONE_ONE_RELATION, ref1.relationType());
     }
 
     public void testRelationTypeManyToOne() throws Exception {
         CollectionDescriptor col = new CollectionDescriptor("col1", "package.name.Class1", null);
         ReferenceDescriptor ref  = new ReferenceDescriptor("ref1", "package.name.Class1", "col1");
-        Set cols = Collections.singleton(col);
-        Set refs = Collections.singleton(ref);
-        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, EMPTY_SET, refs, cols);
-        Model model = new Model("model1", "package.name", Collections.singleton(cld));
+        Set<CollectionDescriptor> cols = Collections.singleton(col);
+        Set<ReferenceDescriptor> refs = Collections.singleton(ref);
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, refs, cols);
+        new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
     }
 
     public void testRelationTypeUnidirectional() throws Exception {
         ReferenceDescriptor ref = new ReferenceDescriptor("ref1", "package.name.Class1", null);
-        Set refs = Collections.singleton(ref);
-        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false, EMPTY_SET, refs, EMPTY_SET);
-        Model model = new Model("model1", "package.name", Collections.singleton(cld));
+        ClassDescriptor cld = new ClassDescriptor("package.name.Class1", null, false,
+                ClassDescriptorFactory.NO_ATTRS, Collections.singleton(ref), ClassDescriptorFactory.NO_COLLS);
+        new Model("model1", "package.name", Collections.singleton(cld));
         assertEquals(FieldDescriptor.N_ONE_RELATION, ref.relationType());
     }
 

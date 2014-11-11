@@ -11,6 +11,7 @@ package org.intermine.web.context;
  */
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.intermine.util.Emailer;
@@ -40,11 +41,16 @@ public final class MailDaemon implements Runnable
     @Override
     public void run() {
         while (true) {
+            if (Thread.interrupted()) {
+                return; // Shutdown.
+            }
             try {
                 // Wait here until there is a message to send.
-                MailAction nextAction = mailQueue.take();
+                MailAction nextAction = mailQueue.poll(1, TimeUnit.SECONDS);
                 // Send it.
-                nextAction.act(emailer);
+                if (nextAction != null) {
+                    nextAction.act(emailer);
+                }
             } catch (InterruptedException e) {
                 return; // Most likely shutdown.
             } catch (Exception e) {

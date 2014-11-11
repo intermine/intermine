@@ -88,4 +88,14 @@ public class OverlapConstraint extends Constraint
     public int hashCode() {
         return left.hashCode() + 5 * op.hashCode() + 7 * right.hashCode();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return left.toString() + " " + op.toString() + " " + right.toString();
+    }
+
+
 }

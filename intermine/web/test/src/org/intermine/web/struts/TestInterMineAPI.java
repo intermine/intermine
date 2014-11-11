@@ -17,6 +17,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.types.ClassKeys;
 
@@ -35,9 +36,11 @@ public class TestInterMineAPI extends InterMineAPI
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
      */
-    public TestInterMineAPI(ObjectStore objectStore, ProfileManager pm,
+    public TestInterMineAPI(ObjectStore objectStore,
+            ProfileManager pm,
             ClassKeys classKeys,
-            BagQueryConfig bagQueryConfig, ObjectStoreSummary oss) {
+            BagQueryConfig bagQueryConfig,
+            ObjectStoreSummary oss) {
         super(objectStore, null, classKeys, bagQueryConfig, oss, null, null);
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
@@ -51,5 +54,10 @@ public class TestInterMineAPI extends InterMineAPI
                 pm.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
+    }
+
+    @Override
+    protected void initUserProfileResources(ObjectStoreWriter userProfileWriter) {
+        // no-op.
     }
 }

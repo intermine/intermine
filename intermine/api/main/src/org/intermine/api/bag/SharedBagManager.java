@@ -297,8 +297,8 @@ public final class SharedBagManager
      * @throws UserAlreadyShareBagException If this user already has access to this resource.
      * @throws NotFoundException If the resource itself does not exist.
      */
-    public void rejectInvitation(SharingInvite invitation)
-            throws UserNotFoundException, UserAlreadyShareBagException, NotFoundException {
+    public static void rejectInvitation(SharingInvite invitation)
+        throws UserNotFoundException, UserAlreadyShareBagException, NotFoundException {
         try { // Try this first, as we don't want to share unless this worked.
             invitation.setAccepted(false);
         } catch (SQLException e) {
@@ -392,7 +392,7 @@ public final class SharedBagManager
         fieldNames.add("name");
         fieldNames.add("dateCreated");
         try {
-            bag = (SavedBag) uosw.getObjectByExample(bag, fieldNames);
+            bag = uosw.getObjectByExample(bag, fieldNames);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to load user profile", e);
         }

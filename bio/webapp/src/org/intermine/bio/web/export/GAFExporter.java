@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
@@ -31,19 +30,18 @@ public class GAFExporter implements Exporter
 {
     // Format guide: http://www.geneontology.org/GO.format.gaf-2_0.shtml
 
-    private static final Logger LOG = Logger.getLogger(GAFExporter.class);
-
     PrintWriter out;
     private int writtenCount = 0;
     private List<Integer> featureIndexes;
     private Collection<String> taxonIds;
 
-    private static final String HEADER ="!gaf-version: 2.0";
+    private static final String HEADER = "!gaf-version: 2.0";
 
     /**
      * Constructor.
      * @param out output stream
      * @param featureIndexes index of column with exported sequence
+     * @param taxonIds taxonIDs to export
      */
     public GAFExporter(PrintWriter out, List<Integer> featureIndexes, Collection<String> taxonIds) {
         this.out = out;

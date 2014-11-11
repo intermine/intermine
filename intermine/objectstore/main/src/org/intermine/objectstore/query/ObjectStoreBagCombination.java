@@ -53,6 +53,9 @@ public class ObjectStoreBagCombination implements QuerySelectable
         bags.add(bag);
     }
 
+    /**
+     * @param combo a combination of ObjectStoreBags.
+     */
     public void addBagCombination(ObjectStoreBagCombination combo) {
         bags.add(combo);
     }
@@ -78,6 +81,7 @@ public class ObjectStoreBagCombination implements QuerySelectable
     /**
      * {@inheritDoc}
      */
+    @Override
     public Class<?> getType() {
         return Integer.class;
     }
