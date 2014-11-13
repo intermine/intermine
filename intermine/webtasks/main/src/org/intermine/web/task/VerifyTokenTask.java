@@ -20,9 +20,10 @@ import org.intermine.webservice.server.JWTVerifier.VerificationError;
 
 public class VerifyTokenTask extends Task {
 
+    private static final String KEY_STORE_ERR = "Error creating key-store: ";
+    private static final String KEYSTORE = "security.keystore.password";
     private String keystoreFile;
     private String optionsFile;
-    private String password;
     private String token;
 
     /**
@@ -31,14 +32,6 @@ public class VerifyTokenTask extends Task {
      */
     public void setKeystoreFile(String filename) {
         this.keystoreFile = filename;
-    }
-
-    /**
-     * Bean-style setter for password, as per ant spec.
-     * @param password The password.
-     */
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /**
@@ -69,22 +62,22 @@ public class VerifyTokenTask extends Task {
         }
     }
 
-    private KeyStore createKeyStore() {
+    private KeyStore createKeyStore(char[] password) {
         KeyStore ks;
         try {
             ks = KeyStore.getInstance("jks");
         } catch (KeyStoreException e) {
-            throw new BuildException("Error creating key-store.", e);
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
         }
         InputStream is = readKeystore();
         try {
-            ks.load(is, password.toCharArray());
+            ks.load(is, password);
         } catch (NoSuchAlgorithmException e) {
-            throw new BuildException("Error creating key-store.", e);
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
         } catch (CertificateException e) {
-            throw new BuildException("Error creating key-store.", e);
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
         } catch (IOException e) {
-            throw new BuildException("Error creating key-store.", e);
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
         } finally {
             if (is != null) {
                 try {
@@ -100,7 +93,8 @@ public class VerifyTokenTask extends Task {
     @Override
     public void execute() {
         Properties options = getOptions();
-        JWTVerifier verifier = new JWTVerifier(createKeyStore(), options);
+        char[] password = options.getProperty(KEYSTORE, "").toCharArray();
+        JWTVerifier verifier = new JWTVerifier(createKeyStore(password), options);
 
         try {
             Verification result = verifier.verify(token);

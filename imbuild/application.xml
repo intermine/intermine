@@ -249,19 +249,11 @@
       </or>
     </condition>
   </target>
-  <target name="-jwt-prompt-for-password" depends="-jwt-check-keystore" if="keystore">
-    <fail if="keystore.missing" message="Please provide a key-store"/>
-    <input message="Keystore password:"
-           addproperty="keystore.password">
-      <handler type="secure"/>
-    </input>
-  </target>
   <target name="verify-jwt"
-          depends="-init-properties, compile, -init-task-xml, -jwt-prompt-for-password">
+          depends="-init-properties, compile, -init-task-xml">
     <fail unless="jwt" message="Please provide a token to verify"/>
     <verify-jwt options="${build.task.dir}/intermine.properties"
                 keystoreFile="${keystore}"
-                password="${keystore.password}"
                 token="${jwt}"/>
   </target>
 
