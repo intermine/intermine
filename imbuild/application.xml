@@ -229,13 +229,40 @@
       </sequential>
     </macrodef>
   </target>
-	
+
+  <!-- Create the Lucene Index -->
   <target name="create-quicksearch-index" depends="-init-build-db, -init-properties">
   	<create-quicksearch-index oSAlias="${objectstore.name}"/>
   </target>
-	
+
+  <!-- Garbage collect unconnected business objects in the UserProfile -->
   <target name="evict-orphans" depends="-init-properties, -init-build-db">
   	<evict-orphans objectStoreAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
+  <!-- Verify a JWT token -->
+  <target name="-jwt-check-keystore">
+    <condition property="keystore.missing">
+      <or>
+        <not><isset property="keystore"/></not>
+        <not><resourceexists><file file="${keystore}"/></resourceexists></not>
+      </or>
+    </condition>
+  </target>
+  <target name="-jwt-prompt-for-password" depends="-jwt-check-keystore" if="keystore">
+    <fail if="keystore.missing" message="Please provide a key-store"/>
+    <input message="Keystore password:"
+           addproperty="keystore.password">
+      <handler type="secure"/>
+    </input>
+  </target>
+  <target name="verify-jwt"
+          depends="-init-properties, compile, -init-task-xml, -jwt-prompt-for-password">
+    <fail unless="jwt" message="Please provide a token to verify"/>
+    <verify-jwt options="${build.task.dir}/intermine.properties"
+                keystoreFile="${keystore}"
+                password="${keystore.password}"
+                token="${jwt}"/>
   </target>
 
 </project>

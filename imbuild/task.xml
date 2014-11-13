@@ -38,7 +38,7 @@
   </target>
 
   <target name="-pre-init">
-      <!-- Consuming projects should implements this target. -->
+      <!-- Consuming projects should implement this target. -->
   </target>
 
 

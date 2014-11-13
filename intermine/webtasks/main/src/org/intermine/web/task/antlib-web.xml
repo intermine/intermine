@@ -38,4 +38,8 @@
     <typedef
         name="evict-orphans"
         classname="org.intermine.web.task.EvictOrphansTask"/>
+    <typedef
+        name="verify-jwt"
+        classname="org.intermine.web.task.VerifyTokenTask"/>
+    
 </antlib>
