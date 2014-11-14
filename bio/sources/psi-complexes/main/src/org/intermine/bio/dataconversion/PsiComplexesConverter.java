@@ -31,7 +31,6 @@ import psidev.psi.mi.jami.commons.MIDataSourceOptionFactory;
 import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
 import psidev.psi.mi.jami.commons.PsiJami;
 import psidev.psi.mi.jami.datasource.InteractionStream;
-import psidev.psi.mi.jami.datasource.InteractionWriter;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
 import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.Interaction;
@@ -113,8 +112,6 @@ public class PsiComplexesConverter extends BioFileConverter
         Map<String, Object> parsingOptions = optionfactory.getDefaultOptions(reader);
 
         InteractionStream interactionSource = null;
-        InteractionWriter xmlInteractionWriter = null;
-        InteractionWriter mitabInteractionWriter = null;
         try {
             // Get the stream of interactions knowing the default options for this file
             interactionSource = dataSourceFactory.
@@ -156,6 +153,7 @@ public class PsiComplexesConverter extends BioFileConverter
                         item.setAttribute("name", complex.getRecommendedName());
                         item.setAttribute("systemicName", complex.getSystematicName());
                         item.setAttribute("properties", complex.getPhysicalProperties());
+                        store(item);
                     }
                 }
 
@@ -166,27 +164,5 @@ public class PsiComplexesConverter extends BioFileConverter
                 interactionSource.close();
             }
         }
-    }
-
-    /**
-     * create and store protein interaction terms
-     * @param identifier identifier for interaction term
-     * @return id representing term object
-     * @throws SAXException if term can't be stored
-     */
-    private String getTerm(String identifier) throws SAXException {
-        String itemId = terms.get(identifier);
-        if (itemId == null) {
-            try {
-                Item term = createItem("InteractionTerm");
-                term.setAttribute("identifier", identifier);
-                itemId = term.getIdentifier();
-                terms.put(identifier, itemId);
-                store(term);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return itemId;
     }
 }
