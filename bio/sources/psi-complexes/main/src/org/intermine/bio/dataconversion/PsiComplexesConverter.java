@@ -145,9 +145,8 @@ public class PsiComplexesConverter extends BioFileConverter
 //                        ModelledInteraction modelledInteraction
                     // = (ModelledInteraction) interaction;
 //                        // process the modelled interaction
-                    } else if (interaction instanceof ModelledInteraction) {
+                    } else if (interaction instanceof Complex) {
                         Complex complex = (Complex) interaction;
-
 
                         Item item = createItem("Complex");
                         item.setAttribute("name", complex.getRecommendedName());
