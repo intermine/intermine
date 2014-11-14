@@ -21,12 +21,14 @@ import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
 import org.postgresql.largeobject.LargeObject;
@@ -120,6 +122,11 @@ public final class MetadataManager
     public static final String SERIAL_NUMBER = "serialNumber";
 
     /**
+     * Description of range type columns defined in the database.
+     */
+    public static final String RANGE_DEFINITIONS = "rangeDefinitions";
+
+    /**
      * Store a (key, value) pair in the metadata table of the database
      * @param database the database
      * @param key the key
@@ -149,7 +156,7 @@ public final class MetadataManager
                 connection.rollback();
             }
         } finally {
-
+            
             if (insert != null) {
                 insert.close();
             }
@@ -412,8 +419,8 @@ public final class MetadataManager
          * @param con a database Connection, to which this object will have exclusive access, and
          * which must not be in autocommit mode. The connection will be closed when this object is
          * closed
+         * * @param commitMode whether autoCommit should be on or off when restoring object
          * @param obj a LargeObject to write to
-         * @param commitMode The commit mode to leave the connection in.
          */
         public LargeObjectOutputStream(Connection con, LargeObject obj, boolean commitMode) {
             this.con = con;
@@ -549,7 +556,7 @@ public final class MetadataManager
          *
          * @param con a Connection that will be exclusively used by this object until it is closed
          * @param obj a LargeObject
-         * @param commitMode the commit mode to restore the connection to.
+         * @param commitMode whether autoCommit should be on or off when restoring object
          */
         public LargeObjectInputStream(Connection con, LargeObject obj, boolean commitMode) {
             this.con = con;
