@@ -37,7 +37,20 @@ public class TemplateValue
     /**
      * Possible values for TemplateValue type.
      */
-    public enum ValueType { SIMPLE_VALUE, BAG_VALUE, OBJECT_VALUE };
+    public enum ValueType {
+        /**
+         * a simple value, like a string
+         */
+        SIMPLE_VALUE,
+        /**
+         * e.g. a list
+         */
+        BAG_VALUE,
+        /**
+         * e.g. an object
+         */
+        OBJECT_VALUE
+    }
 
     /**
      * Constructor.Construct with details of what we are constraining, but without the value.

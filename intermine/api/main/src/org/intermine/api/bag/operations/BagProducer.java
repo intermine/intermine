@@ -15,10 +15,16 @@ import org.intermine.metadata.MetaDataException;
 
 /**
  * Functional interface for BagOperations, so we can be all forward looking.
+ *
  * @author Alex Kalderimis.
  */
 public interface BagProducer
 {
 
+    /**
+     * @return list
+     * @throws BagOperationException if bag operation fails
+     * @throws MetaDataException if something goes wrong
+     */
     InterMineBag operate() throws BagOperationException, MetaDataException;
 }

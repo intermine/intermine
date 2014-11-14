@@ -10,15 +10,10 @@ package org.intermine.metadata;
  *
  */
 
-import java.util.Collections;
-import java.util.Set;
-
 import junit.framework.TestCase;
 
 public class AttributeDescriptorTest extends TestCase
 {
-    private static final Set EMPTY_SET = Collections.EMPTY_SET;
-
     public AttributeDescriptorTest(String arg) {
         super(arg);
     }

@@ -12,7 +12,9 @@ package org.intermine.task;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.PrintStream;
 import java.io.StringReader;
+import java.sql.SQLException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
@@ -30,6 +32,8 @@ import org.intermine.util.PropertiesUtil;
  */
 public class RetrieveMetadataTask extends Task
 {
+    private static final String FAILURE_MSG =
+            "Failed to retrieve metadata from %s (%s) - maybe you need to run build-db?\n";
     protected File destDir;
     protected String database;
     protected String osname;
@@ -76,9 +80,17 @@ public class RetrieveMetadataTask extends Task
             throw new BuildException("couldn't find database property: " + osname + ".db - "
                                      + "osName property is: " + osname);
         }
+        PrintStream err = System.err;
+        Database db;
+        try {
+            db = DatabaseFactory.getDatabase(database);
+        } catch (SQLException e) {
+            throw new BuildException("Could not connect to " + database, e);
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("Configuration error.", e);
+        }
 
         try {
-            Database db = DatabaseFactory.getDatabase(database);
 
             if (keyToRetrieve == null) {
 
@@ -117,8 +129,7 @@ public class RetrieveMetadataTask extends Task
 
             //MetadataManager.saveClassDescriptions(classDescs, destDir, model.getName());
         } catch (Exception e) {
-            System.err .println("Failed to retrieve metadata from " + database
-                                + " - maybe you need to run build-db?");
+            err.printf(FAILURE_MSG, database, db.getName());
             throw new BuildException(e);
         }
     }

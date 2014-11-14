@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -65,8 +66,8 @@ import org.intermine.sql.writebatch.Batch;
 import org.intermine.sql.writebatch.BatchWriter;
 import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.ShutdownHook;
-import org.intermine.util.Shutdownable;
 
 /**
  * An SQL-backed implementation of the ObjectStoreWriter interface, backed by
@@ -76,7 +77,7 @@ import org.intermine.util.Shutdownable;
  * @author Andrew Varley
  */
 public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
-    implements ObjectStoreWriter, Shutdownable
+    implements ObjectStoreWriter
 {
     private static final Logger LOG = Logger.getLogger(ObjectStoreWriterInterMineImpl.class);
     private static final String[] CLOB_COLUMNS = new String[] {CLOBID_COLUMN, CLOBPAGE_COLUMN,
@@ -93,6 +94,18 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     protected Map<String, Set<CollectionDescriptor>> tableToCollections;
     protected String connectionTakenBy = null;
     protected Set<Object> tablesAltered = new HashSet<Object>();
+
+    private Long cumulativeWait = new Long(0);    // just for diagnostic, can be removed
+    private Integer getConnectionCalls = 0;       // as above
+
+    // if the property is set to true (recommended for the webapp), getConncetion() will get a new
+    // connection if the current one has been closed by the back-end.
+    // add osw.userprofile-production.robustConnection=true to default.intermine.webapp.properties
+    // default is false
+    Properties props = PropertiesUtil.getPropertiesStartingWith("osw.userprofile-production");
+    private String robustConnection =
+            PropertiesUtil.stripStart("osw.userprofile-production", props).
+            getProperty("robustConnection", "false");
 
     /**
      * Constructor for this ObjectStoreWriter. This ObjectStoreWriter is bound to a single SQL
@@ -213,12 +226,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     }
 
     /**
-     * Returns the log used by this objctstore.
+     * Returns the log used by this objectstore.
      *
      * @return the log
      */
     @Override
-    public Writer getLog() {
+    public synchronized Writer getLog() {
         return os.getLog();
     }
 
@@ -228,7 +241,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param log ignored
      */
     @Override
-    public void setLog(@SuppressWarnings("unused") Writer log) {
+    public synchronized void setLog(Writer log) {
         throw new UnsupportedOperationException("Cannot change the log on a writer");
     }
 
@@ -238,7 +251,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * @param tableName ignored
      */
     @Override
-    public void setLogTableName(@SuppressWarnings("unused") String tableName) {
+    public synchronized void setLogTableName(String tableName) {
         throw new UnsupportedOperationException("Cannot change the log table name on a writer");
     }
 
@@ -246,8 +259,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    protected void dbLog(long optimise, long estimated, long execute, long permitted, long convert,
-            Query q, String sql) {
+    protected synchronized void dbLog(long optimise, long estimated, long execute,
+            long permitted, long convert, Query q, String sql) {
         os.dbLog(optimise, estimated, execute, permitted, convert, q, sql);
     }
 
@@ -255,7 +268,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setLogEverything(@SuppressWarnings("unused") boolean logEverything) {
+    public void setLogEverything(boolean logEverything) {
         throw new UnsupportedOperationException("Cannot change logEverything on a writer");
     }
 
@@ -271,7 +284,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setVerboseQueryLog(@SuppressWarnings("unused") boolean verboseQueryLog) {
+    public void setVerboseQueryLog(boolean verboseQueryLog) {
         throw new UnsupportedOperationException("Cannot change verboseQueryLog on a writer");
     }
 
@@ -287,7 +300,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setLogExplains(@SuppressWarnings("unused") boolean logExplains) {
+    public void setLogExplains(boolean logExplains) {
         throw new UnsupportedOperationException("Cannot change logExplains on a writer");
     }
 
@@ -303,7 +316,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setLogBeforeExecute(@SuppressWarnings("unused") boolean logBeforeExecute) {
+    public void setLogBeforeExecute(boolean logBeforeExecute) {
         throw new UnsupportedOperationException("Cannot change logBeforeExecute on a writer");
     }
 
@@ -319,7 +332,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * {@inheritDoc}
      */
     @Override
-    public void setDisableResultsCache(@SuppressWarnings("unused") boolean disableResultsCache) {
+    public void setDisableResultsCache(boolean disableResultsCache) {
         throw new UnsupportedOperationException("Cannot change disableResultsCache on a writer");
     }
 
@@ -406,14 +419,23 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             loops++;
         }
 
-        // If the connection has been closed by the backend replace it with a new connection.
-        // NOTE this has a really long timeout (60 seconds) as during the build we sometimes need
-        // to wait for a flush to complete before the connection can be checked.
-        if (!conn.isValid(60)) {
+        Long start = System.currentTimeMillis();
+        // If the connection has been closed by the back-end replace it with a new connection.
+        // NOTE this has a timeout of 30 seconds. Should this check happens during builds
+        // (robustConnection=true, mis-configuration) it would increase significantly building time.
+
+        if ("true".equals(robustConnection) && !conn.isValid(30)) {
             LOG.info("ObjectStoreWriter connection was closed, fetching new connection");
             conn = this.os.getConnection();
         }
+        Long end = System.currentTimeMillis();
+        getConnectionCalls++;
 
+        if (end > start) {
+            cumulativeWait = cumulativeWait + (end - start);
+            LOG.debug("Spent " + (end - start) + " ms checking connections, for a total of "
+                    + cumulativeWait + " ms after " + getConnectionCalls + " getConnection calls");
+        }
         connInUse = true;
 
         // //
@@ -536,7 +558,6 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             connInUse = true;
             // remove reference to this writer from the parent ObjectStore
             this.os.writers.remove(this);
-
             notifyAll();
         }
     }
@@ -544,6 +565,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public ObjectStore getObjectStore() {
         return os;
     }
@@ -551,6 +573,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void store(Object o) throws ObjectStoreException {
         Connection c = null;
         try {
@@ -814,6 +837,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addToCollection(Integer hasId, Class<?> clazz, String fieldName, Integer hadId)
         throws ObjectStoreException {
         Connection c = null;
@@ -1033,6 +1057,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addToBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
         addAllToBag(osb, Collections.singleton(element));
     }
@@ -1040,6 +1065,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addAllToBag(ObjectStoreBag osb,
             Collection<Integer> coll) throws ObjectStoreException {
         try {
@@ -1094,6 +1120,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void removeFromBag(ObjectStoreBag osb, Integer element) throws ObjectStoreException {
         removeAllFromBag(osb, Collections.singleton(element));
     }
@@ -1101,6 +1128,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void removeAllFromBag(ObjectStoreBag osb,
             Collection<Integer> coll) throws ObjectStoreException {
         try {
@@ -1155,6 +1183,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void addToBagFromQuery(ObjectStoreBag osb, Query query) throws ObjectStoreException {
         List<QuerySelectable> select = query.getSelect();
         if (select.size() != 1) {
@@ -1261,6 +1290,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void replaceClob(Clob clob, String text) throws ObjectStoreException {
         try {
             Connection c = null;
@@ -1318,6 +1348,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete(InterMineObject o) throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1377,6 +1408,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete(QueryClass qc, Constraint c) throws ObjectStoreException {
         Connection con = null;
         try {
@@ -1437,6 +1469,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isInTransaction() throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1467,6 +1500,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void beginTransaction() throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1500,6 +1534,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void commitTransaction() throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1536,6 +1571,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void abortTransaction() throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1572,6 +1608,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void batchCommitTransaction() throws ObjectStoreException {
         Connection c = null;
         try {
@@ -1606,7 +1643,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * This method should never be called on an ObjectStoreWriter.
      */
     @Override
-    public void databaseAltered(@SuppressWarnings("unused") Set<Object> tablesAltered) {
+    public void databaseAltered(Set<Object> tablesChanged) {
         throw new IllegalArgumentException("databaseAltered should never be called on an "
                 + "ObjectStoreWriter");
     }
@@ -1616,7 +1653,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * Delegate to the parent ObjectStore.
      */
     @Override
-    public Map<Object, Integer> getSequence(Set<Object> tables) {
+    public synchronized Map<Object, Integer> getSequence(Set<Object> tables) {
         return os.getSequence(tables);
     }
 
@@ -1625,7 +1662,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
      * Delegate to the parent ObjectStore.
      */
     @Override
-    public void checkSequence(Map<Object, Integer> sequence, Query q,
+    public synchronized void checkSequence(Map<Object, Integer> sequence, Query q,
             String message) throws DataChangedException {
         //if ((!tablesAltered.isEmpty()) && (!sequence.isEmpty())) {
         //    throw new DataChangedException("Cannot query a writer with uncommitted changes");

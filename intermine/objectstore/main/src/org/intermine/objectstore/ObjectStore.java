@@ -235,10 +235,26 @@ public interface ObjectStore
      *
      * @param o an example object
      * @param fieldNames a Set of fieldnames
-     * @return a InterMineObject from the objectstore, or null if none fits
+     * @param <T> The actual type to return.
+     * @return an InterMineObject from the objectstore, or null if none fits
      * @throws ObjectStoreException if an underlying error occurs
      */
-    InterMineObject getObjectByExample(InterMineObject o, Set<String> fieldNames)
+    <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames)
+        throws ObjectStoreException;
+
+    /**
+     * Return an object from the objectstore that has the fields mentioned in the list set to the
+     * same values as the fields in the provided example object. If there are no objects in the
+     * objectstore like that, then this method returns null. If there are more than one object, then
+     * this method throws an IllegalArgumentException.
+     *
+     * @param o an example object
+     * @param fieldNames a Set of fieldnames
+     * @param <T> The actual type to return.
+     * @return zero or more InterMineObjects from the objectstore
+     * @throws ObjectStoreException if an underlying error occurs
+     */
+    <T extends InterMineObject> Collection<T> getObjectsByExample(T o, Set<String> fieldNames)
         throws ObjectStoreException;
 
     /**

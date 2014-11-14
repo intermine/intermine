@@ -308,6 +308,7 @@ public class ItemToObjectTranslator extends Translator
         try {
             obj.setFieldValue("id", identifierToId(item.getIdentifier()));
         } catch (IllegalArgumentException e) {
+            // that's not good
         }
         time1 = System.currentTimeMillis();
         timeSpentCreate += time1 - time2;
@@ -324,7 +325,7 @@ public class ItemToObjectTranslator extends Translator
                     throw new MetaDataException(message);
                 }
                 Class<?> attrClass = info.getType();
-                if (!attr.getName().equalsIgnoreCase("id")) {
+                if (!"id".equalsIgnoreCase(attr.getName())) {
                     Object value = null;
                     if (ClobAccess.class.equals(attrClass)) {
                         if (attr.getValue() != null) {

@@ -127,7 +127,7 @@ public class MergeSourceModelsTask extends Task
 
         for (Source source: sources) {
             String additionsFileName = source.getType() + "_additions.xml";
-            
+
             File additionsFile = new File(source.getLocation(), additionsFileName);
             addToAdditionsList(pathsToMerge, additionsFile);
         }

@@ -1,6 +1,0 @@
-
-<project name="modmine-tools" default="default" basedir=".">
-  <description>build modmine tools</description>
-  <import file="../../../imbuild/library.xml"/> 
-</project>
-

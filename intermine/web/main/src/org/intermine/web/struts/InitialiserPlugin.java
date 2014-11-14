@@ -62,12 +62,14 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
@@ -83,7 +85,6 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.Constants;
@@ -116,6 +117,8 @@ public class InitialiserPlugin implements PlugIn
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
 
+    private ObjectStoreWriter userprofileOSW;
+
     /**
      * Init method called at Servlet initialisation
      *
@@ -127,6 +130,7 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
+    @Override
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
 
         // NOTE throwing exceptions other than a ServletException from this class causes the
@@ -159,7 +163,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webConfig is null");
         }
 
-        final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
+        userprofileOSW = getUserprofileWriter(webProperties);
         if (userprofileOSW == null) {
             throw new ServletException("userprofileOSW is null");
         }
@@ -174,16 +178,21 @@ public class InitialiserPlugin implements PlugIn
 
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
 
+
         final InterMineAPI im = loadInterMineAPI(
                 servletContext, webProperties, webConfig, userprofileOSW, oss);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
         profileManager = im.getProfileManager();
-        LOG.debug("LOADED PROFILE MANAGER");
 
         // Verify that the superuser found in the DB matches the user set in the properties file.
         final Profile superProfile = profileManager.getSuperuserProfile();
-        initSuperUser(im, superProfile);
+        initSuperUser(superProfile);
+        try {
+            startBagUpgrade(im, profileManager.getAllSuperUsers());
+        } catch (ObjectStoreException e) {
+            throw new ServletException("Could not read from userprofile data store", e);
+        }
 
         initSearch(servletContext, superProfile);
 
@@ -213,20 +222,25 @@ public class InitialiserPlugin implements PlugIn
         LOG.debug("LOADED SEARCH REPOSITORY");
     }
 
-    private void initSuperUser(
-            final InterMineAPI im,
-            final Profile superProfile) {
+    private void initSuperUser(final Profile superProfile) {
         if (!superProfile.getUsername()
             .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
             blockingErrorKeys.put("errors.init.superuser", null);
         }
 
-        if (!im.getBagManager().isAnyBagInState(superProfile, BagState.UPGRADING)) {
-            UpgradeBagList upgrade = new UpgradeBagList(superProfile, im.getBagQueryRunner());
-            LoginHandler.runBagUpgrade(upgrade, im, superProfile);
-        }
-
         LOG.debug("CHECKED SUPER PROFILE");
+    }
+
+    private void startBagUpgrade(final InterMineAPI im, final Collection<Profile> users) {
+
+        // Start the bag upgrade for all of a set of users.
+        for (Profile user: users) {
+            if (!im.getBagManager().isAnyBagInState(user, BagState.UPGRADING)) {
+                UpgradeBagList upgrade = new UpgradeBagList(user, im.getBagQueryRunner());
+                LoginHandler.runBagUpgrade(upgrade, im, user);
+            }
+            LOG.info("UPGRADING BAGS FOR " + user.getUsername());
+        }
     }
 
     private void initKeylessClasses(
@@ -716,7 +730,11 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Summarize the ObjectStore to get class counts
+     * Summarise the ObjectStore to get class counts
+     *
+     * This method does not actually perform any queries, but relies on the
+     * existence of a existing set of pre-calculated counts, generated as
+     * part of the build process.
      */
     private ObjectStoreSummary summariseObjectStore(ServletContext servletContext) {
         Properties objectStoreSummaryProperties = new Properties();
@@ -734,8 +752,7 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.objectstoresummary.loading", null);
         }
 
-        final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
-        return oss;
+        return new ObjectStoreSummary(objectStoreSummaryProperties);
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
@@ -771,18 +788,18 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
-        ObjectStoreWriter userprofileOSW = null;
+        ObjectStoreWriter osw = null;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
-            userprofileOSW = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
             LOG.error("Unable to create userprofile - " + e.getMessage(), e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-            return userprofileOSW;
+            return osw;
         }
 
-        applyUserProfileUpgrades(userprofileOSW, blockingErrorKeys);
-        return userprofileOSW;
+        applyUserProfileUpgrades(osw, blockingErrorKeys);
+        return osw;
     }
 
     private void applyUserProfileUpgrades(ObjectStoreWriter osw,
@@ -856,13 +873,30 @@ public class InitialiserPlugin implements PlugIn
      * Destroy method called at Servlet destroy. Close connection pools
      * and the mail queue thread pool.
      */
+    @Override
     public void destroy() {
-        InterMineContext.shutdown();
-        if (profileManager != null) {
-            ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
-                .getDatabase().shutdown();
+        if (userprofileOSW != null) {
+            try {
+                userprofileOSW.close();
+            } catch (ObjectStoreException e) {
+                LOG.warn("Error closing userprofile writer.", e);
+            }
+            ((ObjectStoreWriterInterMineImpl) userprofileOSW).getDatabase().shutdown();
         }
-        ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
+        if (os != null) {
+            if (os instanceof ObjectStoreInterMineImpl) {
+                try {
+                    ((ObjectStoreInterMineImpl) os).close();
+                } catch (ObjectStoreException e) {
+                    LOG.error("Couldn't shut down OS. Memory leaks!");
+                }
+                ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
+            }
+        }
+        if (trackerDelegate != null) {
+            trackerDelegate.close();
+        }
+        InterMineContext.doShutdown();
     }
 
 
@@ -871,11 +905,14 @@ public class InitialiserPlugin implements PlugIn
      * @param tagManager tag manager
      */
     protected static void cleanTags(TagManager tagManager) {
-        List<Tag> classTags = tagManager.getTags(null, null, "class", null);
-
-        for (Tag tag : classTags) {
+        for (Tag tag : tagManager.getTagsByType(TagTypes.CLASS)) {
             // check that class exists
             try {
+                // nb: it has been discussed whether to store fully qualified
+                // or short class names in the tags table. Shorter names would save
+                // some space (but not very much). If that were to ever happen, this
+                // method would have to be changed, as otherwise it would delete all
+                // the class tags in the database.
                 Class.forName(tag.getObjectIdentifier());
             } catch (ClassNotFoundException e) {
                 tagManager.deleteTag(tag);

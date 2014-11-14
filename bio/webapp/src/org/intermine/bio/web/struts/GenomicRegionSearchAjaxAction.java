@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -44,9 +43,9 @@ import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.export.http.HttpExportUtil;
@@ -66,10 +65,6 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class GenomicRegionSearchAjaxAction extends Action
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger
-            .getLogger(GenomicRegionSearchAjaxAction.class);
-
     private String spanUUIDString;
     private GenomicRegionSearchService grsService;
     private Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap;
@@ -81,8 +76,7 @@ public class GenomicRegionSearchAjaxAction extends Action
     private InterMineAPI api;
 
     @SuppressWarnings("unchecked")
-    private void init(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
+    private void init(HttpServletRequest request, HttpServletResponse response) {
         this.session = request.getSession();
         this.spanUUIDString = request.getParameter("spanUUIDString");
         this.grsService = GenomicRegionSearchUtil
@@ -119,10 +113,10 @@ public class GenomicRegionSearchAjaxAction extends Action
                 && request.getParameter("fromIdx") != null
                 && request.getParameter("toIdx") != null) {
 
-            int fromIdx = Integer.parseInt((String) request
+            int fromIdx = Integer.parseInt(request
                     .getParameter("fromIdx"));
             int toIdx = Integer
-                    .parseInt((String) request.getParameter("toIdx"));
+                    .parseInt(request.getParameter("toIdx"));
 
             getData(fromIdx, toIdx, response);
         }
@@ -502,6 +496,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
     private void createListByFeatureType(String criteria, String facet,
             HttpServletResponse response) throws Exception {
+        String newCriteria = criteria;
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
         Map<GenomicRegion, List<List<String>>> featureMap = spanOverlapFullResultMap
                 .get(spanUUIDString);
@@ -510,20 +505,18 @@ public class GenomicRegionSearchAjaxAction extends Action
             featureIdSet = grsService.getAllGenomicRegionOverlapFeaturesByType(
                     featureMap, facet);
 
-            criteria = criteria + "_regions";
+            newCriteria = criteria + "_regions";
         } else {
             featureIdSet = grsService.getGenomicRegionOverlapFeaturesByType(
                     criteria, featureMap, facet);
 
-            criteria = criteria.split("\\|")[0].replaceAll(":", "_").replaceAll("\\.\\.", "_");
+            newCriteria = criteria.split("\\|")[0].replaceAll(":", "_").replaceAll("\\.\\.", "_");
         }
 
-        // TODO Move creating bag code to a util class?
-        String bagName = criteria + "_" + facet + "_list";
+        String bagName = newCriteria + "_" + facet + "_list";
         bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(),
                 bagName);
 
-        // Create bag
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         try {

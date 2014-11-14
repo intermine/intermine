@@ -34,7 +34,8 @@ import org.intermine.util.DynamicUtil;
  *
  * @author Matthew Wakeling
  */
-public class QueryCollectionPathExpression implements QueryPathExpressionWithSelect, Queryable
+public class QueryCollectionPathExpression
+    implements QueryPathExpressionWithSelect, Queryable, HasFromList
 {
     private QueryClass qc;
     private String fieldName;
@@ -209,6 +210,7 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      *
      * @param node a QueryNode
      */
+    @Override
     public void addFrom(FromElement node) {
         additionalFromList.add(node);
     }

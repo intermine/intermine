@@ -14,6 +14,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +57,7 @@ import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermsFilter;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
@@ -317,12 +319,12 @@ public final class KeywordSearch
 
             if (index == null) {
                 // try to load index from database first
-                loadIndexFromDatabase(im.getObjectStore(), path);
+                index = loadIndexFromDatabase(im.getObjectStore(), path);
+            }
 
-                if (index == null) {
-                    LOG.error("lucene index missing!");
-                    return;
-                }
+            if (index == null) {
+                LOG.error("lucene index missing!");
+                return;
             }
 
             if (properties == null) {
@@ -578,11 +580,17 @@ public final class KeywordSearch
         return matches;
     }
 
+    /**
+     * @param result search result
+     * @param facetVector facets for search results
+     * @param facetValues values for facets
+     * @return search result for given facet
+     */
     public static Vector<KeywordSearchFacet> parseFacets(BrowseResult result,
-            Vector<KeywordSearchFacetData> facets, Map<String, String> facetValues) {
+            Vector<KeywordSearchFacetData> facetVector, Map<String, String> facetValues) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
-        for (KeywordSearchFacetData facet : facets) {
+        for (KeywordSearchFacetData facet : facetVector) {
             FacetAccessible boboFacet = result.getFacetMap().get(facet.getField());
             if (boboFacet != null) {
                 searchResultsFacets.add(new KeywordSearchFacet(facet.getField(), facet
@@ -595,8 +603,12 @@ public final class KeywordSearch
         return searchResultsFacets;
     }
 
-    public static Vector<KeywordSearchHit> getSearchHits(
-            BrowseHit[] browseHits,
+    /**
+     * @param browseHits search results
+     * @param objMap object map
+     * @return matching object
+     */
+    public static Vector<KeywordSearchHit> getSearchHits(BrowseHit[] browseHits,
             Map<Integer, InterMineObject> objMap) {
         long time = System.currentTimeMillis();
         Vector<KeywordSearchHit> searchHits = new Vector<KeywordSearchHit>();
@@ -619,6 +631,11 @@ public final class KeywordSearch
         return searchHits;
     }
 
+    /**
+     * @param browseHits the query results.
+     *
+     * @return set of IDs found in the search results
+     */
     public static Set<Integer> getObjectIds(BrowseHit[] browseHits) {
         long time = System.currentTimeMillis();
         Set<Integer> objectIds = new HashSet<Integer>();
@@ -837,122 +854,25 @@ public final class KeywordSearch
         return sb.toString().trim();
     }
 
-    private static void loadIndexFromDatabase(ObjectStore os, String path) {
-        long time = System.currentTimeMillis();
+    private static LuceneIndexContainer loadIndexFromDatabase(ObjectStore os, String path) {
         LOG.debug("Attempting to restore search index from database...");
         if (os instanceof ObjectStoreInterMineImpl) {
             Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
+            LuceneIndexContainer ret = null;
             try {
-                InputStream is = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX);
+                ret = restoreIndex(db);
 
-                if (is != null) {
-                    GZIPInputStream gzipInput = new GZIPInputStream(is);
-                    ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
-
-                    try {
-                        Object object = objectInput.readObject();
-
-                        if (object instanceof LuceneIndexContainer) {
-                            index = (LuceneIndexContainer) object;
-
-                            LOG.info("Successfully restored search index information"
-                                    + " from database in " + (System.currentTimeMillis() - time)
-                                    + " ms");
-                            LOG.debug("Index: " + index);
-                        } else {
-                            LOG.warn("Object from DB has wrong class:"
-                                    + object.getClass().getName());
-                        }
-                    } finally {
-                        objectInput.close();
-                        gzipInput.close();
+                if (ret != null) {
+                    String indexDirectoryType = ret.getDirectoryType();
+                    Directory dir = restoreSearchDirectory(indexDirectoryType, path, db);
+                    if (dir == null) {
+                        LOG.error("Could not load directory");
+                        return null;
                     }
-                } else {
-                    LOG.warn("IS is null");
+                    ret.setDirectory(dir);
+                    return ret;
                 }
 
-                if (index != null) {
-                    time = System.currentTimeMillis();
-                    LOG.debug("Attempting to restore search directory from database...");
-                    is = MetadataManager.readLargeBinary(
-                            db, MetadataManager.SEARCH_INDEX_DIRECTORY);
-
-                    if (is != null) {
-                        if ("FSDirectory".equals(index.getDirectoryType())) {
-                            final int bufferSize = 2048;
-                            File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
-                            LOG.debug("Directory path: " + directoryPath);
-
-                            // make sure we start with a new index
-                            if (directoryPath.exists()) {
-                                String[] files = directoryPath.list();
-                                for (int i = 0; i < files.length; i++) {
-                                    LOG.info("Deleting old file: " + files[i]);
-                                    new File(directoryPath.getAbsolutePath() + File.separator
-                                            + files[i]).delete();
-                                }
-                            } else {
-                                directoryPath.mkdir();
-                            }
-
-                            ZipInputStream zis = new ZipInputStream(is);
-                            ZipEntry entry;
-                            while ((entry = zis.getNextEntry()) != null) {
-                                LOG.info("Extracting: " + entry.getName() + " (" + entry.getSize()
-                                        + " MB)");
-
-                                FileOutputStream fos =
-                                        new FileOutputStream(directoryPath.getAbsolutePath()
-                                                + File.separator + entry.getName());
-                                BufferedOutputStream bos =
-                                        new BufferedOutputStream(fos, bufferSize);
-
-                                int count;
-                                byte[] data = new byte[bufferSize];
-
-                                while ((count = zis.read(data, 0, bufferSize)) != -1) {
-                                    bos.write(data, 0, count);
-                                }
-
-                                bos.flush();
-                                bos.close();
-                            }
-
-                            FSDirectory directory = FSDirectory.open(directoryPath);
-                            index.setDirectory(directory);
-
-                            LOG.info("Successfully restored FS directory from database in "
-                                    + (System.currentTimeMillis() - time) + " ms");
-                            time = System.currentTimeMillis();
-                        } else if ("RAMDirectory".equals(index.getDirectoryType())) {
-                            GZIPInputStream gzipInput = new GZIPInputStream(is);
-                            ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
-
-                            try {
-                                Object object = objectInput.readObject();
-
-                                if (object instanceof FSDirectory) {
-                                    RAMDirectory directory = (RAMDirectory) object;
-                                    index.setDirectory(directory);
-
-                                    time = System.currentTimeMillis() - time;
-                                    LOG.info("Successfully restored RAM directory"
-                                            + " from database in " + time + " ms");
-                                }
-                            } finally {
-                                objectInput.close();
-                                gzipInput.close();
-                            }
-                        } else {
-                            LOG.warn("Unknown directory type specified: "
-                                    + index.getDirectoryType());
-                        }
-
-                        LOG.debug("Directory: " + index.getDirectory());
-                    } else {
-                        LOG.warn("index is null!");
-                    }
-                }
             } catch (ClassNotFoundException e) {
                 LOG.error("Could not load search index", e);
             } catch (SQLException e) {
@@ -962,6 +882,148 @@ public final class KeywordSearch
             }
         } else {
             LOG.error("ObjectStore is of wrong type!");
+        }
+        return null;
+    }
+
+    private static Directory restoreSearchDirectory(String dirType, String path, Database db)
+        throws SQLException, IOException, FileNotFoundException, ClassNotFoundException {
+        InputStream is;
+        LOG.debug("Attempting to restore search directory from database...");
+        is = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX_DIRECTORY);
+
+
+        if (is != null) {
+            try {
+                if ("FSDirectory".equals(dirType)) {
+                    return readFSDirectory(path, is);
+                } else if ("RAMDirectory".equals(dirType)) {
+                    return readRAMDirectory(is);
+                } else {
+                    LOG.warn("Unknown directory type specified: " + dirType);
+                }
+            } finally {
+                is.close();
+            }
+
+        } else {
+            LOG.warn("Could not find search directory!");
+        }
+        return null;
+    }
+
+    private static FSDirectory readFSDirectory(String path, InputStream is)
+        throws IOException, FileNotFoundException {
+        long time = System.currentTimeMillis();
+        final int bufferSize = 2048;
+        File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
+        LOG.debug("Directory path: " + directoryPath);
+
+        // make sure we start with a new index
+        if (directoryPath.exists()) {
+            String[] files = directoryPath.list();
+            for (int i = 0; i < files.length; i++) {
+                LOG.info("Deleting old file: " + files[i]);
+                new File(directoryPath.getAbsolutePath() + File.separator
+                        + files[i]).delete();
+            }
+        } else {
+            directoryPath.mkdir();
+        }
+
+        ZipInputStream zis = new ZipInputStream(is);
+        ZipEntry entry;
+        try {
+            while ((entry = zis.getNextEntry()) != null) {
+                LOG.info("Extracting: " + entry.getName() + " (" + entry.getSize()
+                        + " MB)");
+
+                FileOutputStream fos =
+                        new FileOutputStream(directoryPath.getAbsolutePath()
+                                + File.separator + entry.getName());
+                BufferedOutputStream bos =
+                        new BufferedOutputStream(fos, bufferSize);
+
+                int count;
+                byte[] data = new byte[bufferSize];
+
+                try {
+                    while ((count = zis.read(data, 0, bufferSize)) != -1) {
+                        bos.write(data, 0, count);
+                    }
+                } finally {
+                    bos.flush();
+                    bos.close();
+                }
+            }
+        } finally {
+            zis.close();
+        }
+
+        FSDirectory directory = FSDirectory.open(directoryPath);
+
+        LOG.info("Successfully restored FS directory from database in "
+                + (System.currentTimeMillis() - time) + " ms");
+        return directory;
+    }
+
+    private static RAMDirectory readRAMDirectory(InputStream is)
+        throws IOException, ClassNotFoundException {
+        long time = System.currentTimeMillis();
+        GZIPInputStream gzipInput = new GZIPInputStream(is);
+        ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
+
+        try {
+            Object object = objectInput.readObject();
+
+            if (object instanceof FSDirectory) {
+                RAMDirectory directory = (RAMDirectory) object;
+
+                time = System.currentTimeMillis() - time;
+                LOG.info("Successfully restored RAM directory"
+                        + " from database in " + time + " ms");
+                return directory;
+            }
+        } finally {
+            objectInput.close();
+            gzipInput.close();
+        }
+        return null;
+    }
+
+    private static LuceneIndexContainer restoreIndex(Database db)
+        throws IOException, ClassNotFoundException, SQLException {
+
+        long time = System.currentTimeMillis();
+        InputStream is = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX);
+
+        if (is == null) {
+            LOG.warn("No search index stored in this DB.");
+            return null;
+        } else {
+            GZIPInputStream gzipInput = new GZIPInputStream(is);
+            ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
+
+            try {
+                Object object = objectInput.readObject();
+
+                if (object instanceof LuceneIndexContainer) {
+
+                    LOG.info("Successfully restored search index information"
+                            + " from database in " + (System.currentTimeMillis() - time)
+                            + " ms");
+                    LOG.debug("Index: " + index);
+                    return (LuceneIndexContainer) object;
+                } else {
+                    LOG.warn("Object from DB has wrong class:"
+                            + object.getClass().getName());
+                    return null;
+                }
+            } finally {
+                objectInput.close();
+                gzipInput.close();
+                is.close();
+            }
         }
     }
 
@@ -1073,21 +1135,21 @@ public final class KeywordSearch
 
     /**
      * recurse into class descriptor and add all subclasses to ignoredClasses
-     * @param ignoredClasses
+     * @param ignoredClassMap
      *            set of classes
      * @param cld
      *            super class descriptor
      */
     @SuppressWarnings("unchecked")
-    private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClasses,
+    private static void addCldToIgnored(Set<Class<? extends InterMineObject>> ignoredClassMap,
             ClassDescriptor cld) {
         if (cld == null) {
             LOG.error("cld is null!");
         } else if (InterMineObject.class.isAssignableFrom(cld.getType())) {
-            ignoredClasses.add((Class<? extends InterMineObject>) cld.getType());
+            ignoredClassMap.add((Class<? extends InterMineObject>) cld.getType());
 
             for (ClassDescriptor subCld : cld.getSubDescriptors()) {
-                addCldToIgnored(ignoredClasses, subCld);
+                addCldToIgnored(ignoredClassMap, subCld);
             }
         } else {
             LOG.error("cld " + cld + " is not IMO!");
@@ -1095,7 +1157,7 @@ public final class KeywordSearch
     }
 
     private static void addToIgnoredFields(
-            Map<Class<? extends InterMineObject>, Set<String>> ignoredFields, ClassDescriptor cld,
+            Map<Class<? extends InterMineObject>, Set<String>> ignoredFieldMap, ClassDescriptor cld,
             String fieldName) {
         if (cld == null) {
             LOG.error("ClassDesriptor was null when attempting to add an ignored field.");
@@ -1107,13 +1169,13 @@ public final class KeywordSearch
             }
 
             for (ClassDescriptor ignoreCld : clds) {
-                Set<String> fields = ignoredFields.get(ignoreCld.getType());
+                Set<String> fields = ignoredFieldMap.get(ignoreCld.getType());
                 @SuppressWarnings("unchecked")
                 Class<? extends InterMineObject> cls =
                     (Class<? extends InterMineObject>) ignoreCld.getType();
                 if (fields == null) {
                     fields = new HashSet<String>();
-                    ignoredFields.put(cls, fields);
+                    ignoredFieldMap.put(cls, fields);
                 }
                 fields.add(fieldName);
             }

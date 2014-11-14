@@ -1,7 +1,0 @@
-#!/bin/csh -f
-if (! -e .mvnclasspath) then
-    mvn dependency:build-classpath
-endif
-set CLASSPATH=target/classes:`cat .mvnclasspath`
-java -ea -Xmx256M -classpath $CLASSPATH org.intermine.modelviewer.IntermineModelViewer $*
-

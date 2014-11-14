@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -37,7 +36,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.types.ClassKeys;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -98,9 +96,7 @@ public class InterMineAPITestCase extends TestCase {
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), configStream);
 
         ProfileManager pmTmp = new ProfileManager(os, uosw);
-        Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(),
-                                        new HashMap(), new HashMap(), true, true);
-        pmTmp.createProfile(superUser);
+        pmTmp.createSuperUser("superUser", "password", null);
 
         String apiKey = "abcdef012345";
         Integer userId = null;
@@ -108,16 +104,17 @@ public class InterMineAPITestCase extends TestCase {
         Map<String, InterMineBag> validBags = new HashMap<String, InterMineBag>();
 
         testUser = new Profile(pmTmp, "testUser", userId, "password",
-                               new HashMap(), new BagSet(validBags, invalidBags),
-                               new HashMap(), apiKey, true, false);
+                               Profile.NO_QUERIES, new BagSet(validBags, invalidBags),
+                               Profile.NO_TEMPLATES, apiKey, true, false);
         pmTmp.createProfile(testUser);
 
-        String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
+        String[] trackerClassNames = {
+                "org.intermine.api.tracker.TemplateTracker",
                 "org.intermine.api.tracker.ListTracker",
                 "org.intermine.api.tracker.LoginTracker",
-                "org.intermine.api.tracker.KeySearchTracker"};
+                "org.intermine.api.tracker.KeySearchTracker"
+        };
         trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
-
 
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
@@ -125,8 +122,14 @@ public class InterMineAPITestCase extends TestCase {
     public void tearDown() throws Exception {
         if (trackerDelegate != null) {
             trackerDelegate.close();
-            trackerDelegate.finalize();
+            try {
+                trackerDelegate.finalize();
+            } catch (Throwable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
+
         if (os != null) {
             clearDatabase();
         }
@@ -134,6 +137,9 @@ public class InterMineAPITestCase extends TestCase {
             clearUserprofile();
             uosw.close();
         }
+
+        // should be closed!
+        im.getBagManager().close();
     }
 
     private void clearDatabase() throws Exception {
@@ -143,7 +149,7 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         SingletonResults res = os.executeSingleton(q, 20000, false, false, true);
         ObjectStoreWriter osw = os.getNewWriter();
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             osw.delete(o);
@@ -159,7 +165,7 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         ObjectStore uos = uosw.getObjectStore();
         SingletonResults res = uos.executeSingleton(q, 1000, false, false, false);
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             UserProfile userProfile = (UserProfile) resIter.next();
             pm.deleteProfile(userProfile.getId());

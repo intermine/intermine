@@ -43,10 +43,17 @@ import org.xml.sax.SAXException;
 public final class TemplateTrackBinding
 {
     private TemplateTrackBinding() {
+        // don't
     }
 
     private static final Logger LOG = Logger.getLogger(TemplateTrackBinding.class);
+    /**
+     * label for XML
+     */
     public static final String TEMPLATETRACKS = "templatetracks";
+    /**
+     * label for XML
+     */
     public static final String TEMPLATETRACK = "templatetrack";
     /**
      * Convert a TemplateTrack to XML and write XML to given writer.
@@ -85,6 +92,7 @@ public final class TemplateTrackBinding
             try {
                 writer.writeEndElement();
             } catch (XMLStreamException e) {
+                LOG.error("XML broke", e);
             }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling template tracks", e);
@@ -150,7 +158,7 @@ class TemplateTrackHandler extends TrackHandler
                 stm = connection.prepareStatement("INSERT INTO "
                       + TrackerUtil.TEMPLATE_TRACKER_TABLE + " VALUES(?, ?, ?, ?)");
             } catch (SQLException sqle) {
-                new BuildException("Problem to retrieve the connection", sqle);
+                throw new BuildException("Problem to retrieve the connection", sqle);
             }
         }
         if (TemplateTrackBinding.TEMPLATETRACK.equals(qName)) {

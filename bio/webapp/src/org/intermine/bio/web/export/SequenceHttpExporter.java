@@ -71,6 +71,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * Method called to export a PagedTable object using the BioJava sequence and feature writers.
      * {@inheritDoc}
      */
+    @Override
     public void export(PagedTable pt, HttpServletRequest request,
             HttpServletResponse response, TableExportForm form,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
@@ -152,6 +153,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * {@inheritDoc}
      * @throws PathException
      */
+    @Override
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
 
@@ -178,6 +180,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(PagedTable pt) {
         return SequenceExporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }

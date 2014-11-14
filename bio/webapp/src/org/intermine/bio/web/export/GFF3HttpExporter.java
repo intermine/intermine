@@ -30,13 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.GFF3ExportForm;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
@@ -57,9 +56,6 @@ import org.intermine.web.struts.TableExportForm;
 
 public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExporter
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GFF3HttpExporter.class);
-
     /**
      * The batch size to use when we need to iterate through the whole result set.
      */
@@ -71,6 +67,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      * attributes (rather than objects).
      * {@inheritDoc}
      */
+    @Override
     public void export(PagedTable pt, HttpServletRequest request,
             HttpServletResponse response, TableExportForm form,
             Collection<Path> unionPathCollection,
@@ -156,14 +153,14 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
 //        }
     }
 
-    private void removeFirstItemInPaths(List<String> paths) {
+    private static void removeFirstItemInPaths(List<String> paths) {
         for (int i = 0; i < paths.size(); i++) {
             String path = paths.get(i);
             paths.set(i, path.substring(path.indexOf(".") + 1, path.length()));
         }
     }
 
-    private void setGFF3Header(HttpServletResponse response) {
+    private static void setGFF3Header(HttpServletResponse response) {
         ResponseUtil.setTabHeader(response, "table" + StringUtil.uniqueString() + ".gff3");
     }
 
@@ -171,6 +168,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      * The intial export path list is just the paths from the columns of the PagedTable.
      * {@inheritDoc}
      */
+    @Override
     public List<Path> getInitialExportPaths(PagedTable pt) {
         return ExportHelper.getColumnPaths(pt);
     }
@@ -181,7 +179,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      * @throws ServletException if the SO class names properties file cannot be found
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Map<String, String> getSoClassNames(ServletContext servletContext)
+    private static Map<String, String> getSoClassNames(ServletContext servletContext)
         throws ServletException {
         final String soClassNames = "SO_CLASS_NAMES";
         Properties soNameProperties;
@@ -206,6 +204,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(PagedTable pt) {
         return GFF3Exporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 
 /**
@@ -31,6 +32,8 @@ import org.apache.commons.math3.distribution.HypergeometricDistribution;
  */
 public final class EnrichmentCalculation
 {
+    private static final String UNKNOWN_STRATEGY = "Unknown error correction strategy: ";
+
     private EnrichmentCalculation() {
     }
 
@@ -57,21 +60,11 @@ public final class EnrichmentCalculation
         Map<String, PopulationInfo> annotatedPopulationInfo =
             input.getAnnotatedCountsInPopulation();
 
-        Map<String, BigDecimal> rawResults = new HashMap<String, BigDecimal>();
-        for (Map.Entry<String, Integer> entry : sampleCounts.entrySet()) {
-            String attribute = entry.getKey();
+        Map<String, BigDecimal> rawResults =
+                getRawResults(sampleSize, populationSize, sampleCounts, annotatedPopulationInfo);
+        ErrorCorrection.Strategy strategy = getStrategy(errorCorrection);
 
-            Integer sampleCount = entry.getValue();
-            PopulationInfo pi = annotatedPopulationInfo.get(attribute);
-            Integer populationCount = (pi != null) ? pi.getSize() : 0;
-
-            HypergeometricDistribution h =
-                new HypergeometricDistribution(populationSize, populationCount, sampleSize);
-            Double pValue = h.upperCumulativeProbability(sampleCount);
-            rawResults.put(attribute, new BigDecimal(pValue));
-        }
-
-        Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
+        Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(strategy,
                 rawResults, maxValue, input.getTestCount());
         if (extraCorrectionCoefficient && correctionCoefficient.isApplicable()) {
             correctionCoefficient.apply(
@@ -85,6 +78,43 @@ public final class EnrichmentCalculation
                 input.getAnnotatedCountsInSample(), input.getLabels(), widgetTotal);
 
         return results;
+    }
+
+    private static Map<String, BigDecimal> getRawResults(int sampleSize,
+            int populationSize, Map<String, Integer> sampleCounts,
+            Map<String, PopulationInfo> annotatedPopulationInfo) {
+        Map<String, BigDecimal> rawResults = new HashMap<String, BigDecimal>();
+        for (Map.Entry<String, Integer> entry : sampleCounts.entrySet()) {
+            String attribute = entry.getKey();
+
+            Integer sampleCount = entry.getValue();
+            PopulationInfo pi = annotatedPopulationInfo.get(attribute);
+            Integer populationCount = (pi != null) ? pi.getSize() : 0;
+
+            HypergeometricDistribution h =
+                new HypergeometricDistribution(populationSize, populationCount, sampleSize);
+            Double pValue = h.upperCumulativeProbability(sampleCount);
+            rawResults.put(attribute, new BigDecimal(pValue));
+        }
+        return rawResults;
+    }
+
+    private static ErrorCorrection.Strategy getStrategy(String errorCorrection) {
+        ErrorCorrection.Strategy strategy = null;
+        if (StringUtils.isBlank(errorCorrection)) {
+            strategy = ErrorCorrection.Strategy.NONE;
+        } else {
+            for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
+                if (s.getAlgorithm().equalsIgnoreCase(errorCorrection)) {
+                    strategy = s;
+                    break;
+                }
+            }
+        }
+        if (strategy == null) {
+            throw new IllegalArgumentException(UNKNOWN_STRATEGY + errorCorrection);
+        }
+        return strategy;
     }
 }
 

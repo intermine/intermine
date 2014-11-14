@@ -63,22 +63,21 @@ public final class GFF3Parser
             public Object next() {
                 if (currentLine == null) {
                     throw new NoSuchElementException();
-                } else {
-                    Object objectToReturn = null;
-                    try {
-                        objectToReturn = new GFF3Record(currentLine);
-                        while ((currentLine = reader.readLine()) != null) {
-                            String trimmedLine = currentLine.trim();
-                            if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
-                                continue;
-                            }
-                            break;
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException("IOException while getting next GFF record", e);
-                    }
-                    return objectToReturn;
                 }
+                Object objectToReturn = null;
+                try {
+                    objectToReturn = new GFF3Record(currentLine);
+                    while ((currentLine = reader.readLine()) != null) {
+                        String trimmedLine = currentLine.trim();
+                        if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
+                            continue;
+                        }
+                        break;
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("IOException while getting next GFF record", e);
+                }
+                return objectToReturn;
             }
 
             @Override

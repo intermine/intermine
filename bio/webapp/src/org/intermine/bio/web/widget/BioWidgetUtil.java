@@ -35,8 +35,8 @@ public class BioWidgetUtil implements WidgetHelper
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
-        return BioUtil.getOrganisms(os, bag, false);
+        return BioUtil.getOrganisms(os, bag.getType(), bag.getContentsAsIds(), false);
     }
-
 }

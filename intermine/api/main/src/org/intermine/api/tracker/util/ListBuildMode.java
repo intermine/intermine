@@ -10,4 +10,21 @@ package org.intermine.api.tracker.util;
  *
  */
 
-public enum ListBuildMode { QUERY, IDENTIFIERS, OPERATION };
+/**
+ *
+ * @author Alex
+  */
+public enum ListBuildMode {
+    /**
+     * query
+     */
+    QUERY,
+    /**
+     * identifiers in list
+     */
+    IDENTIFIERS,
+    /**
+     * list operation
+     */
+    OPERATION
+}

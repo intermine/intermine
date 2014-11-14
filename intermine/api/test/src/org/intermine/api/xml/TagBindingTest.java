@@ -47,6 +47,11 @@ public class TagBindingTest extends InterMineAPITestCase
         pm = im.getProfileManager();
     }
 
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+
     public void testUnMarshal() throws Exception {
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                 .getResourceAsStream("TagBindingTest.xml"));

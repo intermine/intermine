@@ -20,6 +20,11 @@ import org.intermine.api.tracker.track.QueryTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
+/**
+ *
+ * @author Daniela
+ *
+ */
 public class QueryTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(QueryTracker.class);
@@ -66,10 +71,16 @@ public class QueryTracker extends AbstractTracker
      */
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName + "(type text, username text, sessionidentifier text, "
-               + "timestamp timestamp)";
+        return "CREATE TABLE " + trackTableName
+                + "(type text, username text, sessionidentifier text, "
+                + "timestamp timestamp)";
     }
 
+    /**
+     * @param type type of query
+     * @param profile userprofile
+     * @param sessionIdentifier session
+     */
     protected void trackQuery(String type, Profile profile, String sessionIdentifier) {
         String userName = (profile.getUsername() != null)
                           ? profile.getUsername()

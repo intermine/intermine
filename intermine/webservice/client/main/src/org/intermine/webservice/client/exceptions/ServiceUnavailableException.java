@@ -24,7 +24,6 @@ public class ServiceUnavailableException extends ServiceException
 {
 
     private static final long serialVersionUID = 1L;
-    protected static final int ERROR_CODE = HttpURLConnection.HTTP_UNAVAILABLE;
 
     /**
      * @param message message
@@ -59,6 +58,6 @@ public class ServiceUnavailableException extends ServiceException
 
     @Override
     public int getHttpErrorCode() {
-        return ERROR_CODE;
+        return HttpURLConnection.HTTP_UNAVAILABLE;
     }
 }

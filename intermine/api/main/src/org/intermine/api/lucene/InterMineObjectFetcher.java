@@ -92,6 +92,7 @@ public class InterMineObjectFetcher extends Thread
      * @param ignoredClasses
      *            classes that should not be indexed (as specified in config +
      *            subclasses)
+     * @param ignoredFields fields to ignore
      * @param specialReferences
      *            map of classname to references to index in additional to
      *            normal attributes
@@ -101,6 +102,7 @@ public class InterMineObjectFetcher extends Thread
      * @param facets
      *            fields used for faceting - will be indexed untokenized in
      *            addition to the normal indexing
+     * @param attributePrefixes prefixes to be ignored
      */
     public InterMineObjectFetcher(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             ObjectPipe<Document> indexingQueue,
@@ -373,8 +375,6 @@ public class InterMineObjectFetcher extends Thread
             }
 
             for (InterMineObject object : row) {
-                long time2 = System.currentTimeMillis();
-
                 Document doc = handleObject(object, seenClasses, referenceResults);
 
                 // finally add doc to queue
@@ -485,14 +485,12 @@ public class InterMineObjectFetcher extends Thread
             return null;
         }
         // for performance avoid joining strings in most cases
-        Set<String> classesWithPrefix = null;
-        if (classesWithPrefix == null) {
-            classesWithPrefix = new HashSet<String>();
-            for (String clsAndAtt : attributePrefixes.keySet()) {
-                String clsWithPrefix = clsAndAtt.substring(0, clsAndAtt.indexOf('.'));
-                classesWithPrefix.add(clsWithPrefix);
-            }
+        Set<String> classesWithPrefix = new HashSet<String>();
+        for (String clsAndAtt : attributePrefixes.keySet()) {
+            String clsWithPrefix = clsAndAtt.substring(0, clsAndAtt.indexOf('.'));
+            classesWithPrefix.add(clsWithPrefix);
         }
+
         if (classesWithPrefix.contains(className)) {
             StringBuilder clsAndAttribute = new StringBuilder();
             clsAndAttribute.append(className).append('.').append(attributeName);
@@ -588,8 +586,10 @@ public class InterMineObjectFetcher extends Thread
                 q.addToSelect(topId);
                 q.addToOrderBy(topId); // important for optimization in run()
             } else {
+                if (parentClassDescriptor == null) {
+                    continue;
+                }
                 String fieldName = fields.get(i - 1);
-
                 if (parentClassDescriptor.getReferenceDescriptorByName(fieldName, true) != null) {
                     LOG.info(parentClassDescriptor.getType().getSimpleName() + " -> " + fieldName
                             + " (OBJECT)");

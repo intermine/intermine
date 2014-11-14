@@ -105,7 +105,7 @@ public class BioLinkRedirectManager extends LinkRedirectManager
                 String dataSourceUrl = null;
                 try {
                     dataSourceName = (String) ds.getFieldValue("name");
-                     dataSourceUrl = (String) ds.getFieldValue("url");
+                    dataSourceUrl = (String) ds.getFieldValue("url");
                 } catch (IllegalAccessException e) {
                     // Do nothing
                 }

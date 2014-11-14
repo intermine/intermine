@@ -74,14 +74,14 @@ public class SOClassNameMapMakerTask extends Task
         }
 
         OboParser oboParser = new OboParser();
-        Map termIdNameMap;
+        Map<?, ?> termIdNameMap;
         try {
             termIdNameMap = oboParser.getTermIdNameMap(reader);
         } catch (IOException e) {
             throw new BuildException("error while reading SO file: " + soFile, e);
         }
 
-        Iterator termNameIter = termIdNameMap.values().iterator();
+        Iterator<?> termNameIter = termIdNameMap.values().iterator();
 
         try {
             FileWriter fw = new FileWriter(outputFile);

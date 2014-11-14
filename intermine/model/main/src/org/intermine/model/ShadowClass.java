@@ -17,4 +17,5 @@ package org.intermine.model;
  */
 public interface ShadowClass
 {
+    // just a shadow
 }

@@ -27,7 +27,7 @@ public class PrimaryKeyTest extends TestCase {
     public void testConstructor() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         ClassDescriptor cld = model.getClassDescriptorByName("org.intermine.model.testmodel.Company");
-        Set expected = new HashSet();
+        Set<String> expected = new HashSet<String>();
         expected.add("name");
         expected.add("vatNumber");
         assertEquals(expected, new PrimaryKey("key1", "name, vatNumber", cld).getFieldNames());

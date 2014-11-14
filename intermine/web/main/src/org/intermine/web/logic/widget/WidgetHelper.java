@@ -11,6 +11,7 @@ package org.intermine.web.logic.widget;
  */
 
 import java.util.Collection;
+
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 

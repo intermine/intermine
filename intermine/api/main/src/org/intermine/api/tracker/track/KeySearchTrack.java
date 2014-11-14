@@ -13,11 +13,22 @@ import java.sql.Timestamp;
 
 import org.intermine.api.tracker.util.TrackerUtil;
 
-
-
-public class KeySearchTrack extends TrackAbstract {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class KeySearchTrack extends TrackAbstract
+{
     private String keyword;
 
+    /**
+     *
+     * @param keyword keyword searched for
+     * @param username user
+     * @param sessionIdentifier session
+     * @param timestamp time
+     */
     public KeySearchTrack(String keyword, String username,
             String sessionIdentifier, Timestamp timestamp) {
         this.keyword = keyword;

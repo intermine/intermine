@@ -10,7 +10,10 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -41,11 +44,12 @@ public class XMLValidator
 
     /**
      * Validates an XML string according to an XML Schema at a given URL.
-     * @param xml an XML string.
+     *
+     * @param xmlToValidate an XML string.
      * @param xmlSchemaUrl the URL of an XML Schema.
      */
-    public void validate(String xml, String xmlSchemaUrl) {
-
+    public void validate(String xmlToValidate, String xmlSchemaUrl) {
+        String xml = xmlToValidate;
         errorHandler = new XMLValidatorErrorHandler();
 
         try {
@@ -59,7 +63,9 @@ public class XMLValidator
             }
 
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new StreamSource(new StringReader(xmlSchemaUrl)));
+            URL schemaLocation = new URL(xmlSchemaUrl);
+            Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
+            Schema schema = factory.newSchema(new StreamSource(schemaReader));
 
             Validator validator = schema.newValidator();
             validator.setErrorHandler(errorHandler);

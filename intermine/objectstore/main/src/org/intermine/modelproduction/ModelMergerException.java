@@ -18,11 +18,11 @@ package org.intermine.modelproduction;
 public class ModelMergerException extends Exception
 {
     /**
-	 * Serial ID demanded by His Highness Lord Eclipse
-	 */
-	private static final long serialVersionUID = 7068567716197037627L;
+     * Serial ID demanded by His Highness Lord Eclipse
+     */
+    private static final long serialVersionUID = 7068567716197037627L;
 
-	/**
+    /**
      * Constructs a ModelMergerException
      */
     public ModelMergerException() {

@@ -3,18 +3,15 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-dbcp-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jakarta-regexp-1.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-core-main"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-webapp"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-tools-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="src" path="/intermine-web"/>
 	<classpathentry kind="src" path="/intermine-jbrowse-endpoint"/>
+	<classpathentry kind="src" path="/intermine-api-main"/>
+	<classpathentry kind="src" path="/intermine-webservice-client"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

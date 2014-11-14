@@ -41,7 +41,7 @@ public class ${camel-case-source-name}GFF3RecordHandler extends GFF3RecordHandle
         //
         //     Item feature = getFeature();
         //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttrinte("symbol", symbol);
+        //     feature.setAttribute("symbol", symbol);
         //
         // Any new Items created can be stored by calling addItem().  For example:
         // 

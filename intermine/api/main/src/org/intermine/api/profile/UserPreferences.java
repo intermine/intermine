@@ -1,39 +1,73 @@
 package org.intermine.api.profile;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.SQLException;
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.util.PropertiesUtil;
 
-public class UserPreferences extends AbstractMap<String, String> {
+/**
+ *
+ * @author Alex Kalderimis
+ */
+public class UserPreferences extends AbstractMap<String, String>
+{
 
 //    /* Some commonly used preference names */
-//    public static final String NO_SPAM = "do_not_spam"; // If this key is set at all, then we should not send extra emails to the user.
-//    public static final String HIDDEN = "hidden"; // If this key is set at all, then we should not let other users discover this one.
+    // If this key is set at all, then we should not send extra emails to the user.
+    // If this key is set at all, then we should not let other users discover this one.
+//    public static final String NO_SPAM = "do_not_spam";
+//    public static final String HIDDEN = "hidden";
 
-    public static final String ALIAS = "alias"; // The alias of this user.
-    public static final String AKA = "aka"; // What we should call the user.
+    /**
+     * The alias of this user.
+     */
+    public static final String ALIAS = "alias";
 
-    // This is known to the API as the Profile needs to read this to provide getEmailAddress().
-    public static final String EMAIL = "email"; // The preferred address to send emails to.
+    /**
+     * What we should call the user.
+     */
+    public static final String AKA = "aka";
 
+
+    /**
+     * This is known to the API as the Profile needs to read this to provide getEmailAddress().
+     * The preferred address to send emails to.
+     */
+    public static final String EMAIL = "email";
+    /**
+     * Common keys
+     */
     public static final Set<String> COMMON_KEYS;
+    /**
+     * Common keys
+     */
     public static final Set<String> BOOLEAN_KEYS;
+    /**
+     * Common keys
+     */
     public static final Set<String> UNIQUE_KEYS;
 
     static {
-        Properties props = PropertiesUtil.getPropertiesStartingWith("api.profile.preferences.names");
+        Properties props = PropertiesUtil.getPropertiesStartingWith(
+                "api.profile.preferences.names");
         Set<String> all = new LinkedHashSet<String>(),
                 bools = new LinkedHashSet<String>(),
                 uniques = new LinkedHashSet<String>();
@@ -48,7 +82,7 @@ public class UserPreferences extends AbstractMap<String, String> {
                 uniques.add(value);
             }
         }
-        /* 
+        /*
          * START OF HACK
          * For now, this is a total hack. But this should be replaced by a working
          * properties based solution.
@@ -66,12 +100,15 @@ public class UserPreferences extends AbstractMap<String, String> {
         UNIQUE_KEYS = Collections.unmodifiableSet(uniques);
     }
 
-    public static final Logger LOG = Logger.getLogger(UserPreferences.class);
-
     private final Map<String, String> backingMap;
     private final PreferencesManager manager;
     private final Profile profile;
 
+    /**
+     * @param manager preferences manager
+     * @param profile userprofile
+     * @throws SQLException if we can't get to the database
+     */
     protected UserPreferences(PreferencesManager manager, Profile profile) throws SQLException {
         this.backingMap = new HashMap<String, String>();
         this.manager = manager;

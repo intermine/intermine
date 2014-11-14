@@ -26,8 +26,6 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
-import org.biojavax.ga.Organism;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
@@ -35,10 +33,10 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -57,9 +55,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class GenomicRegionSearchQueryRunner implements Runnable
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
-
     private HttpServletRequest request = null;
     private String spanUUIDString = null;
     private GenomicRegionSearchConstraint grsc = null;
@@ -126,11 +121,9 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     /**
      * The method to run all the queries.
      */
-    @SuppressWarnings("rawtypes")
     private void queryExecutor() {
 
         // Use spanOverlapFullResultMap to store the data in the session
-        @SuppressWarnings("unchecked")
         Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap =
              (Map<String, Map<GenomicRegion, List<List<String>>>>) request
                             .getSession().getAttribute("spanOverlapFullResultMap");
@@ -140,7 +133,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 new HashMap<String, Map<GenomicRegion, List<List<String>>>>();
         }
 
-        @SuppressWarnings("unchecked")
         // map of sequence feature statistics: key - class name. value - count of feature
         Map<String, Map<GenomicRegion, Map<String, Integer>>> spanOverlapFullStatMap =
              (Map<String, Map<GenomicRegion, Map<String, Integer>>>) request
@@ -229,11 +221,9 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * For each span, its chromosome must match the chrPID and range must not go beyond the length.
      *
      * @param im - the InterMineAPI
-     * @param profile a user of webapp
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
-    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(
-            InterMineAPI im, Profile profile) {
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
@@ -245,14 +235,16 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 PathQuery query = new PathQuery(im.getModel());
 
                 // Add views
-                query.addViews("Chromosome.organism.shortName",
-                        "Chromosome.primaryIdentifier",
-                        "Chromosome.length");
+                query.addViews(
+                    "Chromosome.organism.shortName",
+                    "Chromosome.primaryIdentifier",
+                    "Chromosome.length"
+                );
 
                 // Add orderby
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
 
-                ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+                ExportResultsIterator results = im.getPathQueryExecutor().execute(query);
 
                 // a List contains all the chrInfo (organism, chrPID, length)
                 List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
@@ -393,7 +385,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         List<?> orgs = im.getObjectStore().executeSingleton(q);
         for (Object o: orgs) {
             org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
-            orgTaxonIdMap.put(org.getName(), org.getTaxonId());
+            orgTaxonIdMap.put(org.getShortName(), org.getTaxonId());
         }
         return orgTaxonIdMap;
     }

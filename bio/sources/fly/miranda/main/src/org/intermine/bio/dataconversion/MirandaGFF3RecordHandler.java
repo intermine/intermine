@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
@@ -52,7 +50,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         // Id resolver
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver(new HashSet<String>(
-                    Arrays.asList(new String[] { "gene", "mRNA" })));
+                    Arrays.asList(new String[] {"gene", "mRNA"})));
         }
 
         Item feature = getFeature();

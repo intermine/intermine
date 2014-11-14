@@ -1,15 +1,5 @@
 package org.intermine.bio.web.model;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
-
 /*
  * Copyright (C) 2002-2014 FlyMine
  *
@@ -20,11 +10,23 @@ import org.intermine.api.results.ResultElement;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.api.results.ResultElement;
+
 /**
  * Gene Expression Atlas Tissues Expressions
+ *
+ * @author Fengyuan
  */
-@SuppressWarnings("serial")
-public class GeneExpressionAtlasDiseasesExpressions {
+public class GeneExpressionAtlasDiseasesExpressions
+{
 
     /** @var holds mapped queue of mapped results
      *
@@ -34,14 +36,21 @@ public class GeneExpressionAtlasDiseasesExpressions {
      */
     private Map<String, ExpressionList> results;
 
-    /** @var column keys we have in the results table */
-    private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
-        add("condition");
-        add("expression");
-        add("pValue");
-        add("tStatistic");
-        add("type");
-    }};
+    /** column keys we have in the results table */
+    private ArrayList<String> expressionColumns =  new ArrayList<String>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
+        {
+            add("condition");
+            add("expression");
+            add("pValue");
+            add("tStatistic");
+            add("type");
+        }
+    };
 
     /**
      *
@@ -56,7 +65,8 @@ public class GeneExpressionAtlasDiseasesExpressions {
     * @return the map of lists sorted by highest t-statistic of a cell type expression
     */
     public Map<String, ExpressionList> getByTStatistic() {
-        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByTStatisticComparator());
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(
+                new ByTStatisticComparator());
         n.putAll(results);
         return n;
     }
@@ -66,14 +76,15 @@ public class GeneExpressionAtlasDiseasesExpressions {
     * @return the map of lists sorted by lowest p-value of a cell type expression
     */
     public Map<String, ExpressionList> getByPValue() {
-        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByPValueComparator());
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(
+                new ByPValueComparator());
         n.putAll(results);
         return n;
     }
 
     /**
      * Convert Path results into a List (ProteinAtlasDisplayer.java)
-     * @param values
+     * @param values values
      */
     public GeneExpressionAtlasDiseasesExpressions(ExportResultsIterator values) {
         results = new TreeMap<String, ExpressionList>(new CaseInsensitiveComparator());
@@ -84,7 +95,7 @@ public class GeneExpressionAtlasDiseasesExpressions {
 
             // convert into a map
             HashMap<String, String> resultRow = new HashMap<String, String>();
-            for (int i=0; i < expressionColumns.size(); i++) {
+            for (int i = 0; i < expressionColumns.size(); i++) {
                 resultRow.put(expressionColumns.get(i), valuesRow.get(i).getField().toString());
             }
 
@@ -111,22 +122,26 @@ public class GeneExpressionAtlasDiseasesExpressions {
      * @author radek
      *
      */
-    public class ExpressionList {
+    public class ExpressionList
+    {
 
         /** @List store the values */
         private List<Map<String, String>> values;
         /** @float the highest t-statistic */
-        public float tStatistic = -1000;
+        private float tStatistic = -1000;
         /** @float the lowest p-value */
-        public double pValue = 1;
+        private double pValue = 1;
 
+        /**
+         * Constructor
+         */
         public ExpressionList() {
             values = new ArrayList<Map<String, String>>();
         }
 
         /**
          * Put/add to the list
-         * @param resultRow
+         * @param resultRow results
          */
         public void add(Map<String, String> resultRow) {
             updateTStatistic(resultRow.get("tStatistic"));
@@ -137,7 +152,7 @@ public class GeneExpressionAtlasDiseasesExpressions {
 
         /**
          * Get the internal list of expressions
-         * @return
+         * @return values
          */
         public List<Map<String, String>> getValues() {
             return values;
@@ -163,7 +178,8 @@ public class GeneExpressionAtlasDiseasesExpressions {
      * @author radek
      *
      */
-    public class CaseInsensitiveComparator implements Comparator<String> {
+    public class CaseInsensitiveComparator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {
@@ -176,7 +192,8 @@ public class GeneExpressionAtlasDiseasesExpressions {
      * @author radek
      *
      */
-    public class ByTStatisticComparator implements Comparator<String> {
+    public class ByTStatisticComparator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {
@@ -201,7 +218,8 @@ public class GeneExpressionAtlasDiseasesExpressions {
      * @author radek
      *
      */
-    public class ByPValueComparator implements Comparator<String> {
+    public class ByPValueComparator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {

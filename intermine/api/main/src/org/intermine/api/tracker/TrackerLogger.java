@@ -12,7 +12,6 @@ package org.intermine.api.tracker;
 import java.sql.Connection;
 import java.util.Queue;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.tracker.track.Track;
 
 /**
@@ -23,31 +22,43 @@ import org.intermine.api.tracker.track.Track;
  */
 public class TrackerLogger implements Runnable
 {
-    private static final Logger LOG = Logger.getLogger(TrackerLogger.class);
+
     private Connection connection;
     private Queue<Track> trackQueue;
 
     /**
      * Construct a TrackerLogger for a specific connection and table
      * @param connection the connection to the database
+     * @param trackQueue track queue
      */
     public TrackerLogger(Connection connection, Queue<Track> trackQueue) {
         this.connection = connection;
         this.trackQueue = trackQueue;
+        if (connection == null || trackQueue == null) {
+            throw new IllegalArgumentException("neither connection or track queue may be null");
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void run() {
         for (;;) {
+            if (Thread.interrupted()) {
+                return;
+            }
+
             Track track = trackQueue.poll();
             if (track != null) {
                 track.store(connection);
-            } else {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException ie) {
-                    return;
-                }
             }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                return;
+            }
+
         }
     }
 }

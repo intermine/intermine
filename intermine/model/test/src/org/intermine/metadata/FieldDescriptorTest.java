@@ -11,13 +11,19 @@ package org.intermine.metadata;
  */
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
 public class FieldDescriptorTest extends TestCase
 {
-    private static final Set EMPTY_SET = Collections.EMPTY_SET;
+    private static final Set<AttributeDescriptor> noAttrs =
+            Collections.unmodifiableSet(new HashSet<AttributeDescriptor>());
+    private static final Set<ReferenceDescriptor> noRefs =
+            Collections.unmodifiableSet(new HashSet<ReferenceDescriptor>());
+    private static final Set<CollectionDescriptor> noColls =
+            Collections.unmodifiableSet(new HashSet<CollectionDescriptor>());
 
     public FieldDescriptorTest(String arg) {
         super(arg);
@@ -48,10 +54,13 @@ public class FieldDescriptorTest extends TestCase
         }
     }
 
+    private ClassDescriptor makeClass(String name) {
+        return new ClassDescriptor("Class1", null, false, noAttrs, noRefs, noColls);
+    }
+
     public void testSetClassDescriptorValid() throws Exception {
         FieldDescriptor fd = new TestFieldDescriptor("name");
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
-                                                  EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor cld = makeClass("Class1");
         try {
             fd.setClassDescriptor(cld);
         } catch (IllegalStateException e) {
@@ -61,8 +70,7 @@ public class FieldDescriptorTest extends TestCase
 
     public void testSetClassDescriptorTwice() throws Exception {
         FieldDescriptor fd = new TestFieldDescriptor("name");
-        ClassDescriptor cld = new ClassDescriptor("Class1", null, false,
-                                                  EMPTY_SET, EMPTY_SET, EMPTY_SET);
+        ClassDescriptor cld = makeClass("Class1");
         fd.setClassDescriptor(cld);
         try {
             fd.setClassDescriptor(cld);

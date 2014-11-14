@@ -101,7 +101,7 @@ public class HttpConnection
         return executedMethod.getResponseHeader(name).getValue();
     }
 
-    private void throwNotConnectedException() {
+    private static void throwNotConnectedException() {
         throw new NotConnectedException();
     }
 
@@ -153,7 +153,7 @@ public class HttpConnection
         }
     }
 
-    private void setProxy(HttpClient client) {
+    private static void setProxy(HttpClient client) {
         Properties systemProps = System.getProperties();
         if (systemProps.containsKey("http.proxyHost")) {
             String server = systemProps.getProperty("http.proxyHost");
@@ -163,7 +163,7 @@ public class HttpConnection
         }
     }
 
-    private void setMultiPartPostEntity(PostMethod postMethod, MultiPartRequest req) {
+    private static void setMultiPartPostEntity(PostMethod postMethod, MultiPartRequest req) {
         List<Part> parts = req.getParts();
         if (!parts.isEmpty()) {
             RequestEntity entity = new MultipartRequestEntity(
@@ -172,7 +172,7 @@ public class HttpConnection
         }
     }
 
-    private void setPostMethodParameters(PostMethod postMethod,
+    private static void setPostMethodParameters(PostMethod postMethod,
             Map<String, List<String>> parameterMap) {
         for (String name : parameterMap.keySet()) {
             for (String value : parameterMap.get(name)) {
@@ -218,8 +218,6 @@ public class HttpConnection
     /**
      * Called to check the response and generate an appropriate exception (on failure).
      * If the connection is not opened then it is opened and response checked.
-     *
-     * @throws ServiceException when an error happens
      */
     protected void checkResponse() {
         if (executedMethod.getStatusCode() >= 300) {
@@ -235,10 +233,9 @@ public class HttpConnection
 
     /**
      * Handles an error response received while executing a service request.
-     * Throws a {@link ServiceException} or one of its subclasses, depending on
+     * Throws a ServiceException or one of its subclasses, depending on
      * the failure conditions.
      *
-     * @throws ServiceException exception describing the failure.
      * @throws IOException error reading the error response from the
      *         service.
      */

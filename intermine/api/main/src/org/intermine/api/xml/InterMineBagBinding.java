@@ -89,6 +89,7 @@ public class InterMineBagBinding
      * @param uosw UserProfile ObjectStoreWriter
      * @param osw ObjectStoreWriter used to resolve object id's and write to ObjectStoreBags
      * @param userId an Integer
+     * @return map of queries read from XML
      */
     public static Map unmarshal(final Reader reader, final ObjectStoreWriter uosw,
             final ObjectStoreWriter osw, Integer userId) {

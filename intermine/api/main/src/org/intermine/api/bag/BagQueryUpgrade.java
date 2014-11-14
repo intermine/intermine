@@ -1,6 +1,7 @@
 package org.intermine.api.bag;
+
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,26 +15,37 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
-import org.intermine.api.bag.BagQueryResult;
-import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagValue;
+import org.intermine.api.profile.InterMineBag;
 
+/**
+ * @author Daniela
+ */
 public class BagQueryUpgrade
 {
     private static final Logger LOG = Logger.getLogger(BagQueryUpgrade.class);
     BagQueryRunner bagQueryRunner;
     private InterMineBag bag;
 
+    /**
+     * @param bagQueryRunner the bag query runner
+     * @param bag list to upgrade
+     */
     public BagQueryUpgrade(BagQueryRunner bagQueryRunner, InterMineBag bag) {
         this.bagQueryRunner = bagQueryRunner;
         this.bag = bag;
     }
 
+    /**
+     * @return type of bag
+     */
     public String getType() {
         return bag.getType();
     }
 
+    /**
+     * @return results of list upgrade
+     */
     public BagQueryResult getBagQueryResult() {
         BagQueryResult bagQueryResult = null;
         LOG.warn("ContentsOrderByExtraValue before: " + bag.getName());
@@ -57,7 +69,8 @@ public class BagQueryUpgrade
                         if (prevExtra.equals(extra)) {
                             primaryIdentifiersList.add(bagValue.getValue());
                         } else {
-                            bagQueryResultList.add(bagQueryRunner.searchForBag(bag.getType(), primaryIdentifiersList, prevExtra, false));
+                            bagQueryResultList.add(bagQueryRunner.searchForBag(bag.getType(),
+                                    primaryIdentifiersList, prevExtra, false));
                             prevExtra = extra;
                             primaryIdentifiersList = new ArrayList<String>();
                             primaryIdentifiersList.add(bagValue.getValue());
@@ -66,7 +79,8 @@ public class BagQueryUpgrade
                 }
             }
             LOG.warn("after bagValueListCycle: " + bag.getName());
-            bagQueryResultList.add(bagQueryRunner.searchForBag(bag.getType(), primaryIdentifiersList, prevExtra, false));
+            bagQueryResultList.add(bagQueryRunner.searchForBag(bag.getType(),
+                    primaryIdentifiersList, prevExtra, false));
             bagQueryResult = combineBagQueryResult(bagQueryResultList);
         } catch (ClassNotFoundException cnfe) {
             LOG.warn("The type " + bag.getType() + "isn't in the model."
@@ -74,11 +88,11 @@ public class BagQueryUpgrade
         } catch (InterMineException ie) {
             LOG.warn("Cannot upgrade the list " + bag.getTitle(), ie);
         }
-        LOG.warn("before returning bagQueryResult: " + bag.getName()); 
+        LOG.warn("before returning bagQueryResult: " + bag.getName());
         return bagQueryResult;
     }
 
-    private BagQueryResult combineBagQueryResult(List<BagQueryResult> bagQueryResultList) {
+    private static BagQueryResult combineBagQueryResult(List<BagQueryResult> bagQueryResultList) {
         BagQueryResult bagQueryResult = new BagQueryResult();
         for (BagQueryResult bqr : bagQueryResultList) {
             bagQueryResult.getMatches().putAll(bqr.getMatches());
