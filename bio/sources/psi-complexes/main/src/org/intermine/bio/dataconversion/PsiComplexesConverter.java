@@ -137,6 +137,12 @@ public class PsiComplexesConverter extends BioFileConverter
                         InteractionEvidence interactionEvidence = (InteractionEvidence) interaction;
                         // process the interaction evidence
 
+System.out.println(interactionEvidence.getShortName());
+
+                        Item item = createItem("Complex");
+                        item.setAttribute("name", interactionEvidence.getShortName());
+                        store(item);
+
                     // modelled interactions are equivalent to abstractInteractions in PSI-MI XML
                     // 3.0. They are returned when the interaction is not an
                     // experimental interaction but a 'modelled' one extracted from any
