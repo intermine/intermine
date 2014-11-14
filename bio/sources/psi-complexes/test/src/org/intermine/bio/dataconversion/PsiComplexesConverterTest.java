@@ -39,8 +39,8 @@ public class PsiComplexesConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
 
-        Reader reader = new InputStreamReader(getClass().getClassLoader()
-                                            .getResourceAsStream("PsiComplexesConverterTest_src.xml"));
+        //Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("PsiComplexesConverterTest_src.xml"));
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("aas_yeast.xml"));
         converter.process(reader);
         converter.close();
 

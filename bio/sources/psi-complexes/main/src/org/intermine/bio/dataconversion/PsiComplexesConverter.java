@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,6 +14,7 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,13 +28,21 @@ import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
 import psidev.psi.mi.jami.commons.MIDataSourceOptionFactory;
+import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
 import psidev.psi.mi.jami.commons.PsiJami;
+import psidev.psi.mi.jami.datasource.InteractionStream;
+import psidev.psi.mi.jami.datasource.InteractionWriter;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
+import psidev.psi.mi.jami.model.Complex;
+import psidev.psi.mi.jami.model.Interaction;
+import psidev.psi.mi.jami.model.InteractionEvidence;
+import psidev.psi.mi.jami.model.ModelledInteraction;
 
 
 /**
+ * Converter to parse complexes. May expand to handle others later.
  *
- * @author
+ * @author Julie Sullivan
  */
 public class PsiComplexesConverter extends BioFileConverter
 {
@@ -95,11 +104,68 @@ public class PsiComplexesConverter extends BioFileConverter
         MIDataSourceFactory dataSourceFactory = MIDataSourceFactory.getInstance();
 
 
-        // get default options for a file. It will identify if the file is MITAB or PSI-MI XML file and then it will load the appropriate options.
-        // By default, the datasource will be streaming (only returns an iterator of interactions), and returns a source of Interaction objects.
-        // The default options can be overridden using the optionfactory or by manually adding options listed in MitabDataSourceOptions or PsiXmlDataSourceOptions
-        Map<String, Object> parsingOptions = optionfactory.getDefaultOptions(new File(fileName));
+        // get default options for a file. It will identify if the file is MITAB or PSI-MI XML file
+        // and then it will load the appropriate options.
+        // By default, the datasource will be streaming (only returns an iterator of interactions),
+        // and returns a source of Interaction objects.
+        // The default options can be overridden using the optionfactory or by manually adding
+        // options listed in MitabDataSourceOptions or PsiXmlDataSourceOptions
+        Map<String, Object> parsingOptions = optionfactory.getDefaultOptions(reader);
 
+        InteractionStream interactionSource = null;
+        InteractionWriter xmlInteractionWriter = null;
+        InteractionWriter mitabInteractionWriter = null;
+        try {
+            // Get the stream of interactions knowing the default options for this file
+            interactionSource = dataSourceFactory.
+                    getInteractionSourceWith(parsingOptions);
+
+            // writing MITAB and PSI-XML files
+
+            // the option factory for reading files and other datasources
+            MIWriterOptionFactory optionwriterFactory = MIWriterOptionFactory.getInstance();
+
+            // parse the stream and write as we parse
+            // the interactionSource can be null if the file is not recognized or the provided
+            // options are not matching any existing/registered datasources
+            if (interactionSource != null) {
+                Iterator interactionIterator = interactionSource.getInteractionsIterator();
+
+                while (interactionIterator.hasNext()) {
+                    Interaction interaction = (Interaction) interactionIterator.next();
+
+                    // most of the interactions will have experimental data attached to them
+                    // so they will be of type InteractionEvidence
+                    if (interaction instanceof InteractionEvidence) {
+                        InteractionEvidence interactionEvidence = (InteractionEvidence) interaction;
+                        // process the interaction evidence
+
+                    // modelled interactions are equivalent to abstractInteractions in PSI-MI XML
+                    // 3.0. They are returned when the interaction is not an
+                    // experimental interaction but a 'modelled' one extracted from any
+                    // experimental context
+//                    else if (interaction instanceof ModelledInteraction) {
+//                        ModelledInteraction modelledInteraction
+                    // = (ModelledInteraction) interaction;
+//                        // process the modelled interaction
+                    } else if (interaction instanceof ModelledInteraction) {
+                        Complex complex = (Complex) interaction;
+
+
+                        Item item = createItem("Complex");
+                        item.setAttribute("name", complex.getRecommendedName());
+                        item.setAttribute("systemicName", complex.getSystematicName());
+                        item.setAttribute("properties", complex.getPhysicalProperties());
+                    }
+                }
+
+            }
+        } finally {
+            // always close the opened interaction stream
+            if (interactionSource != null) {
+                interactionSource.close();
+            }
+        }
     }
 
     /**
