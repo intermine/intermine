@@ -17,5 +17,10 @@
 	<classpathentry kind="lib" path="main/lib/jami-xml-1.0.0.jar"/>
 	<classpathentry kind="lib" path="main/lib/jgrapht-0.8.3.jar"/>
 	<classpathentry kind="lib" path="main/lib/woodstox-core-asl-4.0.6.jar"/>
+	<classpathentry kind="lib" path="main/lib/jaxb-api-2.2.7.jar"/>
+	<classpathentry kind="lib" path="main/lib/jaxb-impl-2.2.7.jar"/>
+	<classpathentry kind="lib" path="main/lib/stax-utils-20070216.jar"/>
+	<classpathentry kind="lib" path="main/lib/stax2-api-3.0.3.jar"/>
+	<classpathentry kind="lib" path="main/lib/jaxb-core-2.2.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
