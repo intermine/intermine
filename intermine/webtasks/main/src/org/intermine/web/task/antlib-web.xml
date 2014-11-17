@@ -41,5 +41,7 @@
     <typedef
         name="verify-jwt"
         classname="org.intermine.web.task.VerifyTokenTask"/>
-    
+    <typedef
+        name="issue-jwt"
+        classname="org.intermine.web.task.IssueTokenTask"/>
 </antlib>
