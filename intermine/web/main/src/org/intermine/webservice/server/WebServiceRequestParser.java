@@ -41,9 +41,9 @@ public class WebServiceRequestParser
     private static final Integer DEFAULT_START = new Integer(0);
 
     /** 10 000 000 default size actually means that web service will return all results */
-    public static final Integer DEFAULT_MAX_COUNT = new Integer(10000000);
+    public static final Integer DEFAULT_LIMIT = new Integer(10000000);
 
-    private static final Integer MAX_COUNT_LIMIT = new Integer(10000000);
+    private static final Integer MAX_LIMIT = new Integer(10000000);
 
     /** Value of parameter when user wants xml output to be returned. **/
     public static final String FORMAT_PARAMETER_XML = "xml";
@@ -151,7 +151,7 @@ public class WebServiceRequestParser
      * @param input web service input in which the parameters are set
      */
     public void parseRequest(HttpServletRequest request, WebServiceInput input) {
-        input.setMaxCount(DEFAULT_MAX_COUNT);
+        input.setLimit(DEFAULT_LIMIT);
         input.setStart(DEFAULT_START);
 
         Integer start = parseInteger(request.getParameter(START_PARAMETER), START_PARAMETER, 0,
@@ -160,10 +160,10 @@ public class WebServiceRequestParser
             input.setStart(start);
         }
 
-        Integer maxCount = parseInteger(request.getParameter(LIMIT_PARAMETER),
-                LIMIT_PARAMETER, 1, MAX_COUNT_LIMIT.intValue());
-        if (maxCount != null) {
-            input.setMaxCount(maxCount);
+        Integer limit = parseInteger(request.getParameter(LIMIT_PARAMETER),
+                LIMIT_PARAMETER, 1, MAX_LIMIT.intValue());
+        if (limit != null) {
+            input.setLimit(limit);
         }
     }
 

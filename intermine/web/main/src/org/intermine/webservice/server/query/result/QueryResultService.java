@@ -102,8 +102,8 @@ public class QueryResultService extends AbstractQueryService
         QueryResultInput input = getInput();
         PathQueryBuilder builder = getQueryBuilder(input.getXml());
         PathQuery query = builder.getQuery();
-        setHeaderAttributes(query, input.getStart(), input.getMaxCount());
-        runPathQuery(query, input.getStart(), input.getMaxCount());
+        setHeaderAttributes(query, input.getStart(), input.getLimit());
+        runPathQuery(query, input.getStart(), input.getLimit());
     }
 
     @Override
@@ -304,9 +304,9 @@ public class QueryResultService extends AbstractQueryService
     }
 
     private void runResults(PathQuery pq,  int firstResult, int maxResults) {
-        boolean canGoFaster = false;
+        final boolean canGoFaster = maxResults > (BATCH_SIZE * 2);
         Iterator<List<ResultElement>> it;
-        String summaryPath = getOptionalParameter("summaryPath");
+        final String summaryPath = getOptionalParameter("summaryPath");
         if (isNotBlank(summaryPath)) {
             Integer uniqs = (Integer) attributes.get("uniqueValues");
             boolean occurancesOnly = (uniqs == null) || (uniqs < 2);
@@ -329,8 +329,6 @@ public class QueryResultService extends AbstractQueryService
                 throw new ServiceException("Problem getting summary.", e);
             }
         } else {
-            // Going faster means writing to the DB. Don't do this if it is pointless.
-            canGoFaster = firstResult > BATCH_SIZE || maxResults > BATCH_SIZE;
             executor.setBatchSize(BATCH_SIZE);
             try {
                 it = executor.execute(pq, firstResult, maxResults);
@@ -345,6 +343,7 @@ public class QueryResultService extends AbstractQueryService
         if (it.hasNext()) { // Prime the batch fetching pumps
             try {
                 if (canGoFaster) {
+                    // Going faster means writing to the DB. Don't do this if it is pointless.
                     ((ExportResultsIterator) it).goFaster();
                 }
                 processor.write(it, output);
