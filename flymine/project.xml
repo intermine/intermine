@@ -103,6 +103,13 @@
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
 
+    <source name="protein2ipr" type="protein2ipr">
+     <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
+     <property name="src.data.dir.includes" value="protein2ipr.dat"/>
+     <property name="organisms" value="7227"/>
+     <property name="osAlias" value="os.production"/>
+    </source>
+
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/micklem/data/metabolic/omim/current"/>
     </source>
