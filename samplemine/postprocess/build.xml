@@ -1,7 +1,0 @@
-<project name="samplemine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for samplemine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>
