@@ -484,5 +484,7 @@ public class QueryBuilderConstraintForm extends ActionForm
         useJoin = null;
         editingConstraintCode = null;
         ranges = new HashSet<String>();
+        rangeOp = null;
+        rangeConstraint = null;
     }
 }
