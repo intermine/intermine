@@ -293,7 +293,7 @@ public class QueryBuilderConstraintForm extends ActionForm
      * @param rangeConstraint the range constraint value
      */
     public void setRangeConstraint(String rangeConstraint) {
-        this.rangeConstraint = rangeConstraint;
+        this.rangeConstraint = rangeConstraint.trim();
     }
 
     /**

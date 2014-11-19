@@ -371,7 +371,7 @@
                     </html:select>&nbsp;
 
         <!-- Ranges -->
-        <html:text styleId="range2" property="rangeConstraint" disabled="true"></html:text>
+        <html:text styleId="range2" property="rangeConstraint" value="${dec.selectedValue}" disabled="true"></html:text>
 
         &nbsp;
         <html:submit property="range" styleId="rangeSubmit" disabled="true">
