@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import os.path
+import xml.sax
+from contextlib import closing
+
+import intermine.model
+import itemxml.document
+import itemxml.io
+
+import book.handlers
+
+model_file = sys.argv[1]
+handler = getattr(book.handlers, sys.argv[2])
+book_xml = sys.argv[3]
+output = sys.argv[4]
+
+model = intermine.model.Model(model_file)
+
+item_factory = itemxml.document.Factory(model)
+parser = handler.BookHandler(item_factory)
+if os.environ.get('DEBUG'):
+    parser.debug = True
+
+xml.sax.parse(book_xml, parser)
+
+try:
+    with closing(open(output, 'w')) as out, itemxml.io.XMLWriter(out, allow_none = False) as writer:
+        writer.write_items(item_factory)
+except:
+    os.remove(output)
+    raise

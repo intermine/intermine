@@ -16,6 +16,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 
 /**
  * A representation of a table cell.
@@ -79,8 +80,7 @@ public final class TableCell implements ResultCell
         if (fpo == null) {
             return null;
         }
-        String cls = DynamicUtil.getSimpleClassName(fpo.getClass());
-        return TypeUtil.unqualifiedName(cls);
+        return Util.getFriendlyName(fpo.getClass());
     }
 
     @Override

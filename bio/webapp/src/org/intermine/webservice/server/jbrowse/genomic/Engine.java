@@ -10,7 +10,6 @@ package org.intermine.webservice.server.jbrowse.genomic;
  *
  */
 
-
 import static java.lang.String.format;
 import static org.intermine.pathquery.Constraints.eq;
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
@@ -22,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -58,38 +56,46 @@ import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 import org.intermine.webservice.server.jbrowse.Command;
 import org.intermine.webservice.server.jbrowse.CommandRunner;
+import org.intermine.webservice.server.jbrowse.QueryCounter;
+import org.intermine.webservice.server.jbrowse.Queries;
 import org.intermine.webservice.server.jbrowse.Segment;
 
 /**
  * An adaptor for running JBrowse queries against a genomic database.
  *
  * <p>
- * This engine is written in such a way that it does not need reference to the compiled model
- * classes to be deployed; in order to do that it makes a number of assumptions about the shape of
- * the core model, namely it expects that:
+ * This engine is written in such a way that it does not need reference to the
+ * compiled model classes to be deployed; in order to do that it makes a number
+ * of assumptions about the shape of the core model, namely it expects that:
  * </p>
  * <ul>
- *  <li>SequenceFeatures have a <code>chromosomeLocation</code> reference, which can be used in
- *  range queries</li>
- *  <li>SequenceFeatures have an organism reference which has a <code>taxonId :: integer</code>
- *  field.</li>
- *  <li>SequenceFeatures have name, symbol, primaryIdentifer, and score fields.</li>
+ * <li>SequenceFeatures have a <code>chromosomeLocation</code> reference, which
+ * can be used in range queries</li>
+ * <li>SequenceFeatures have an organism reference which has a
+ * <code>taxonId :: integer</code> field.</li>
+ * <li>SequenceFeatures have name, symbol, primaryIdentifer, and score fields.</li>
  * </ul>
+ * 
  * @author Alex Kalderimis
  *
  */
-public class Engine extends CommandRunner
-{
+public class Engine extends CommandRunner {
+
+    private static final String CHROM_LOC_FIELD = "chromosomeLocation";
+
+    private static final String SUB_FEATURE_FIELD = "childFeatures";
 
     private static final Logger LOG = Logger.getLogger(CommandRunner.class);
 
     private final Model model;
-    private static final Map<Command, Map<String, Object>> STATS_CACHE =
-            new CacheMap<Command, Map<String, Object>>("jbrowse.genomic.engine.STATS_CACHE");
+    private static final Map<Command, Map<String, Object>> STATS_CACHE = new CacheMap<Command, Map<String, Object>>(
+            "jbrowse.genomic.engine.STATS_CACHE");
 
     /**
      * constructor
-     * @param api The API
+     * 
+     * @param api
+     *            The API
      */
     public Engine(InterMineAPI api) {
         super(api);
@@ -100,17 +106,18 @@ public class Engine extends CommandRunner
     public void stats(Command command) {
         Map<String, Object> stats;
         Query q = getStatsQuery(command);
-        // Stats can be expensive to calculate, so they are independently cached.
+        // Stats can be expensive to calculate, so they are independently
+        // cached.
         synchronized (STATS_CACHE) {
             stats = STATS_CACHE.get(command);
             if (stats == null) {
                 stats = new HashMap<String, Object>();
                 try {
-                    List<?> results = getAPI().getObjectStore().execute(q, 0, 1, false, false,
-                            ObjectStore.SEQUENCE_IGNORE);
+                    List<?> results = getAPI().getObjectStore().execute(q, 0,
+                            1, false, false, ObjectStore.SEQUENCE_IGNORE);
                     List<?> row = (List<?>) results.get(0);
                     stats.put("featureDensity", row.get(0));
-                    stats.put("featureCount",   row.get(1));
+                    stats.put("featureCount", row.get(1));
                 } catch (ObjectStoreException e) {
                     throw new RuntimeException("Error getting statistics.", e);
                 }
@@ -119,14 +126,6 @@ public class Engine extends CommandRunner
             }
         }
         sendMap(stats);
-    }
-
-    private void sendMap(Map<String, Object> map) {
-        Iterator<Entry<String, Object>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, Object> e = it.next();
-            onData(e, it.hasNext());
-        }
     }
 
     @Override
@@ -156,44 +155,9 @@ public class Engine extends CommandRunner
         }
     }
 
-    private static List<Segment> sliceUp(int n, Segment segment) {
-        if (n < 1) {
-            throw new IllegalArgumentException("n must be greater than 0");
-        }
-        if (segment == null || segment.getWidth() == null) {
-            throw new IllegalArgumentException("segment must be non null with defined width");
-        }
-        List<Segment> subsegments = new ArrayList<Segment>();
-        int sliceWidth = segment.getWidth() / n;
-        int inital = Math.max(0, segment.getStart());
-        int end = segment.getEnd();
-        for (int i = inital; i < end; i += sliceWidth) {
-            subsegments.add(segment.subsegment(i, Math.min(end, i + sliceWidth)));
-        }
-        return subsegments;
-    }
-
-    private static final class PathQueryCounter implements Callable<Integer>
-    {
-        final PathQuery pq;
-        final ObjectStore os;
-
-        PathQueryCounter(PathQuery pq, ObjectStore os) {
-            this.pq = pq.clone();
-            this.os = os;
-        }
-
-        @Override
-        public Integer call() throws Exception {
-            Query q = pathQueryToOSQ(pq);
-            return os.count(q, ObjectStore.SEQUENCE_IGNORE);
-        }
-    }
-
-    private static Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
-
     /**
-     * @param command command to run
+     * @param command
+     *            command to run
      */
     @Override
     public void densities(Command command) {
@@ -203,7 +167,7 @@ public class Engine extends CommandRunner
         List<Integer> results = new ArrayList<Integer>();
 
         int max = 0, sum = 0;
-        for (Future<Integer> future: pending) {
+        for (Future<Integer> future : pending) {
             try {
                 Integer r = future.get();
                 if (r != null && r > max) {
@@ -219,38 +183,57 @@ public class Engine extends CommandRunner
         }
         double mean = Double.valueOf(sum) / results.size();
 
-        Map<String, Object> result = new HashMap<String, Object>();
         Map<String, Number> binStats = new HashMap<String, Number>();
         Integer currentMax = 0;
         if (command.getSegment() != Segment.NEGATIVE_SEGMENT) {
             Integer bpb = command.getSegment().getWidth() / nSlices;
             binStats.put("basesPerBin", bpb);
-            MultiKey maxKey = new MultiKey(// Key by domain, type, ref-seq and band size
-                    command.getDomain(),
-                    command.getType("SequenceFeature"),
-                    command.getSegment().getSection(),
-                    bpb);
+            MultiKey maxKey = new MultiKey(
+                    // Key by domain, type, ref-seq and band size
+                    command.getDomain(), command.getType("SequenceFeature"),
+                    command.getSegment().getSection(), bpb);
             currentMax = maxima.get(maxKey);
             if (currentMax == null || max > currentMax) {
-                maxima.put(maxKey, Integer.valueOf(max));
+                currentMax = Integer.valueOf(max);
+                maxima.put(maxKey, currentMax);
             }
         }
-        binStats.put("max", (currentMax != null && max < currentMax) ? currentMax : max);
+        binStats.put("max", currentMax);
         binStats.put("mean", mean);
 
+        Map<String, Object> result = new HashMap<String, Object>();
         result.put("bins", results);
         result.put("stats", binStats);
         sendMap(result);
     }
 
-    //------------ PRIVATE METHODS --------------------//
+    // ------------ PRIVATE METHODS --------------------//
+
+    private static List<Segment> sliceUp(int n, Segment segment) {
+        if (n < 1) {
+            throw new IllegalArgumentException("n must be greater than 0");
+        }
+        if (segment == null || segment.getWidth() == null) {
+            throw new IllegalArgumentException(
+                    "segment must be non null with defined width");
+        }
+        List<Segment> subsegments = new ArrayList<Segment>();
+        int sliceWidth = segment.getWidth() / n;
+        int inital = Math.max(0, segment.getStart());
+        int end = segment.getEnd();
+        for (int i = inital; i < end; i += sliceWidth) {
+            subsegments
+                    .add(segment.subsegment(i, Math.min(end, i + sliceWidth)));
+        }
+        return subsegments;
+    }
+
+    private static Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
 
     private static int getNumberOfSlices(Command command) {
         int defaultNum = 10;
         String bpb = command.getParameter("basesPerBin");
-        if (command == null
-                || bpb == null
-                || command.getSegment() == null
+        if (command == null || bpb == null || command.getSegment() == null
                 || command.getSegment().getWidth() == null) {
             return defaultNum;
         }
@@ -265,24 +248,14 @@ public class Engine extends CommandRunner
         }
         List<Segment> slices = sliceUp(nSlices, command.getSegment());
         List<PathQuery> segmentQueries = new ArrayList<PathQuery>();
-        for (Segment s: slices) {
+        for (Segment s : slices) {
             segmentQueries.add(getSFPathQuery(command, s));
         }
         return segmentQueries;
     }
 
     private List<Future<Integer>> countInParallel(List<PathQuery> segmentQueries) {
-        if (segmentQueries.isEmpty()) {
-            return Collections.emptyList();
-        }
-        ExecutorService executor = Executors.newFixedThreadPool(segmentQueries.size());
-        List<Future<Integer>> pending = new ArrayList<Future<Integer>>();
-        for (PathQuery pq: segmentQueries) {
-            Callable<Integer> counter = new PathQueryCounter(pq, getAPI().getObjectStore());
-            pending.add(executor.submit(counter));
-        }
-        executor.shutdown();
-        return pending;
+        return Queries.countInParallel(getAPI().getObjectStore(), segmentQueries);
     }
 
     private PathQuery getSFPathQuery(Command command) {
@@ -293,41 +266,44 @@ public class Engine extends CommandRunner
         PathQuery pq = new PathQuery(model);
         String type = command.getType("SequenceFeature");
         pq.addView(String.format("%s.id", type));
-        pq.addConstraint(eq(String.format("%s.organism.taxonId", type), command.getDomain()));
+        pq.addConstraint(eq(String.format("%s.organism.taxonId", type),
+                command.getDomain()));
         if (segment != Segment.GLOBAL_SEGMENT) {
             pq.addConstraint(makeRangeConstraint(type, segment));
         }
         return pq;
     }
 
-    private static ConstraintSet constrainToOrganism(QueryClass features, QueryClass organisms,
-            String taxonId) {
+    private static ConstraintSet constrainToOrganism(QueryClass features,
+            QueryClass organisms, String taxonId) {
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-        cs.addConstraint(new ContainsConstraint(
-            new QueryObjectReference(features, "organism"),
-            ConstraintOp.CONTAINS, organisms));
-        cs.addConstraint(new SimpleConstraint(
-            new QueryField(organisms, "taxonId"),
-            ConstraintOp.EQUALS,
-            new QueryValue(Integer.valueOf(taxonId))));
+        cs.addConstraint(new ContainsConstraint(new QueryObjectReference(
+                features, "organism"), ConstraintOp.CONTAINS, organisms));
+        cs.addConstraint(new SimpleConstraint(new QueryField(organisms,
+                "taxonId"), ConstraintOp.EQUALS, new QueryValue(Integer
+                .valueOf(taxonId))));
         return cs;
     }
 
-    // A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
+    // A Query that produces a single row: (featureDensity :: double,
+    // featureCount :: integer)
     private Query getStatsQuery(Command command) {
 
         String featureType = command.getType("SequenceFeature");
-        ClassDescriptor seqf = model.getClassDescriptorByName("SequenceFeature");
+        ClassDescriptor seqf = model
+                .getClassDescriptorByName("SequenceFeature");
         ClassDescriptor fcd = model.getClassDescriptorByName(featureType);
         // Check type conditions.
         if (fcd == null) {
             throw new RuntimeException(featureType + " is not in the model.");
         }
         if (fcd != seqf && !fcd.getAllSuperDescriptors().contains(seqf)) {
-            throw new RuntimeException(featureType + " is not a sequence feature");
+            throw new RuntimeException(featureType
+                    + " is not a sequence feature");
         }
 
-        QueryClass organisms = new QueryClass(model.getClassDescriptorByName("Organism").getType());
+        QueryClass organisms = new QueryClass(model.getClassDescriptorByName(
+                "Organism").getType());
 
         // A query to get the feature-count for the current domain.
         Query countQ = pathQueryToOSQ(getSFPathQuery(command));
@@ -340,28 +316,30 @@ public class Engine extends CommandRunner
         QueryEvaluable length;
         Segment seg = command.getSegment();
         if (seg.getWidth() == null || seg == Segment.GLOBAL_SEGMENT) {
-            QueryClass chromosomes = new QueryClass(
-                    model.getClassDescriptorByName("Chromosome").getType());
+            QueryClass chromosomes = new QueryClass(model
+                    .getClassDescriptorByName("Chromosome").getType());
 
             subqTwo.addFrom(chromosomes);
             subqTwo.addFrom(organisms);
 
-            length = new QueryFunction(new QueryField(chromosomes, "length"), QueryFunction.SUM);
+            length = new QueryFunction(new QueryField(chromosomes, "length"),
+                    QueryFunction.SUM);
             if (seg.getStart() != null) {
-                subqTwo.addToSelect(new QueryExpression(length, QueryExpression.SUBTRACT,
+                subqTwo.addToSelect(new QueryExpression(length,
+                        QueryExpression.SUBTRACT,
                         new QueryValue(seg.getStart())));
             } else if (seg.getEnd() != null) {
-                subqTwo.addToSelect(new QueryExpression(new QueryValue(seg.getStart()),
-                        QueryExpression.SUBTRACT, length));
+                subqTwo.addToSelect(new QueryExpression(new QueryValue(seg
+                        .getStart()), QueryExpression.SUBTRACT, length));
             } else {
                 subqTwo.addToSelect(length);
             }
 
-            ConstraintSet cs = constrainToOrganism(chromosomes, organisms, command.getDomain());
+            ConstraintSet cs = constrainToOrganism(chromosomes, organisms,
+                    command.getDomain());
             if (seg.getSection() != null) {
-                cs.addConstraint(new SimpleConstraint(
-                        new QueryField(chromosomes, "primaryIdentifier"),
-                        ConstraintOp.EQUALS,
+                cs.addConstraint(new SimpleConstraint(new QueryField(
+                        chromosomes, "primaryIdentifier"), ConstraintOp.EQUALS,
                         new QueryValue(seg.getSection())));
             }
 
@@ -375,18 +353,19 @@ public class Engine extends CommandRunner
         Query q = new Query();
         q.addFrom(countQ);
         q.addFrom(subqTwo);
-        q.addToSelect(new QueryExpression(
-            new QueryCast(new QueryField(countQ, count), Double.class),
-            QueryExpression.DIVIDE,
-            new QueryCast(new QueryField(subqTwo, length), Double.class)));
+        q.addToSelect(new QueryExpression(new QueryCast(new QueryField(countQ,
+                count), Double.class), QueryExpression.DIVIDE, new QueryCast(
+                new QueryField(subqTwo, length), Double.class)));
         q.addToSelect(new QueryField(countQ, count));
 
         return q;
     }
 
-    private static PathConstraintRange makeRangeConstraint(String type, Segment seg) {
-        return new PathConstraintRange(String.format("%s.chromosomeLocation", type),
-                ConstraintOp.OVERLAPS, Collections.singleton(seg.toRangeString()));
+    private static PathConstraintRange makeRangeConstraint(String type,
+            Segment seg) {
+        return new PathConstraintRange(String.format("%s.chromosomeLocation",
+                type), ConstraintOp.OVERLAPS, Collections.singleton(seg
+                .toRangeString()));
     }
 
     // Run a query and get the list of objects it returns.
@@ -394,8 +373,8 @@ public class Engine extends CommandRunner
         return getAPI().getObjectStore().executeSingleton(q);
     }
 
-    private static Map<String, Object> makeReferenceFeature(FastPathObject fpo, Integer start,
-            Integer end) {
+    private static Map<String, Object> makeReferenceFeature(FastPathObject fpo,
+            Integer start, Integer end) {
         CharSequence cs;
         try {
             cs = (CharSequence) fpo.getFieldValue("residues");
@@ -403,7 +382,8 @@ public class Engine extends CommandRunner
             throw new RuntimeException("Could not fetch reference sequence.", e);
         }
         int featureLength = cs.length();
-        Integer featEnd = (end == null) ? featureLength : Math.min(end, featureLength);
+        Integer featEnd = (end == null) ? featureLength : Math.min(end,
+                featureLength);
         CharSequence subSequence = cs.subSequence(start, featEnd);
 
         Map<String, Object> refFeature = new HashMap<String, Object>();
@@ -417,25 +397,12 @@ public class Engine extends CommandRunner
         return makeFeature(fpo, true);
     }
 
-    private Map<String, Object> makeFeature(FastPathObject fpo, boolean includeSubfeatures) {
+    private Map<String, Object> makeFeature(FastPathObject fpo,
+            boolean includeSubfeatures) {
         try {
             Map<String, Object> feature = new HashMap<String, Object>();
-            try {
-                feature.put("type", DynamicUtil.getSimpleClassName(fpo));
-            } catch (Exception e) {
-                feature.put("type", fpo.getClass().getSimpleName());
-            }
-            FastPathObject sot = null;
-            try {
-                sot = (FastPathObject) fpo.getFieldValue("sequenceOntologyTerm");
-            } catch (IllegalAccessException e) {
-                // Not all BioEntities have SO terms. ignore.
-            }
-            if (sot != null) {
-                feature.put("type", sot.getFieldValue("name"));
-            }
 
-            String name, symbol, primId;
+            String name, symbol, primId, seqOntType = null;
 
             try {
                 name = (String) fpo.getFieldValue("name");
@@ -445,31 +412,49 @@ public class Engine extends CommandRunner
                 throw new RuntimeException("Expected a BioEntity, got a "
                         + fpo.getClass().getName());
             }
-
-            feature.put("name", (name != null) ? name : ((symbol != null) ? symbol : primId));
+            try {
+                FastPathObject sot = (FastPathObject) fpo
+                        .getFieldValue("sequenceOntologyTerm");
+                seqOntType = (String) sot.getFieldValue("name");
+            } catch (IllegalAccessException e) {
+                // Not all BioEntities have SO terms. ignore.
+            }
+            if (seqOntType == null) {
+                try {
+                    seqOntType = DynamicUtil.getSimpleClassName(fpo);
+                } catch (Exception e) {
+                    seqOntType = fpo.getClass().getSimpleName();
+                }
+            }
+            feature.put("type", seqOntType);
+            feature.put("name", (name != null) ? name
+                    : ((symbol != null) ? symbol : primId));
             feature.put("symbol", symbol);
             // uniqueID is not displayed to the user.
             // Use primaryID where available - fall-back to object-id
-            feature.put("uniqueID", (primId != null) ? primId : fpo.getFieldValue("id"));
+            feature.put("uniqueID", (primId != null) ? primId : fpo
+                    .getFieldValue("id").toString());
             feature.put("score", fpo.getFieldValue("score"));
             try {
                 feature.put("description", fpo.getFieldValue("description"));
             } catch (IllegalAccessException e) {
                 // Ignore.
             }
-            FastPathObject chrLoc = (FastPathObject) fpo.getFieldValue("chromosomeLocation");
+            FastPathObject chrLoc = (FastPathObject) fpo
+                    .getFieldValue(CHROM_LOC_FIELD);
             if (chrLoc != null) {
                 // Convert Base -> Interbase Co-ords: start - 1
-                feature.put("start",  ((Integer) chrLoc.getFieldValue("start")) - 1);
-                feature.put("end",    chrLoc.getFieldValue("end"));
+                feature.put("start",
+                        ((Integer) chrLoc.getFieldValue("start")) - 1);
+                feature.put("end", chrLoc.getFieldValue("end"));
                 feature.put("strand", chrLoc.getFieldValue("strand"));
             }
             if (includeSubfeatures) {
                 List<Map<String, Object>> subFeatures = new ArrayList<Map<String, Object>>();
-                Collection<FastPathObject> childFeatures = (Collection<FastPathObject>)
-                        fpo.getFieldValue("childFeatures");
+                Collection<FastPathObject> childFeatures = (Collection<FastPathObject>) fpo
+                        .getFieldValue(SUB_FEATURE_FIELD);
                 if (childFeatures != null) {
-                    for (FastPathObject child: childFeatures) {
+                    for (FastPathObject child : childFeatures) {
                         subFeatures.add(makeFeatureWithSubFeatures(child));
                     }
                 }
@@ -485,9 +470,10 @@ public class Engine extends CommandRunner
         PathQuery pq = new PathQuery(model);
         String type = command.getType("Chromosome");
         pq.addView(format("%s.sequence.id", type));
-        pq.addConstraint(eq(format("%s.organism.taxonId", type), command.getDomain()));
-        pq.addConstraint(eq(format("%s.primaryIdentifier", type),
-                command.getSegment().getSection()));
+        pq.addConstraint(eq(format("%s.organism.taxonId", type),
+                command.getDomain()));
+        pq.addConstraint(eq(format("%s.primaryIdentifier", type), command
+                .getSegment().getSection()));
         return pathQueryToOSQ(pq);
     }
 
@@ -495,7 +481,8 @@ public class Engine extends CommandRunner
         PathQuery pq = new PathQuery(model);
         String type = command.getType("SequenceFeature");
         pq.addView(format("%s.id", type));
-        pq.addConstraint(Constraints.eq(format("%s.organism.taxonId", type), command.getDomain()));
+        pq.addConstraint(Constraints.eq(format("%s.organism.taxonId", type),
+                command.getDomain()));
         pq.addConstraint(makeRangeConstraint(type, command.getSegment()));
         return pathQueryToOSQ(pq);
     }

@@ -10,11 +10,19 @@ package org.intermine.webservice.server.jbrowse;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.query.MainHelper;
 import org.intermine.model.FastPathObject;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
@@ -38,6 +46,21 @@ public final class Queries
      */
     public static Query pathQueryToOSQ(PathQuery pq) {
         return pathQueryToOSQ(pq, null);
+    }
+
+    public static List<Future<Integer>> countInParallel(ObjectStore os, List<PathQuery> queries) {
+        if (queries.isEmpty()) {
+            return Collections.emptyList();
+        }
+        ExecutorService executor = Executors.newFixedThreadPool(queries
+                .size());
+        List<Future<Integer>> pending = new ArrayList<Future<Integer>>();
+        for (PathQuery pq : queries) {
+            Callable<Integer> counter = new QueryCounter(pathQueryToOSQ(pq), os);
+            pending.add(executor.submit(counter));
+        }
+        executor.shutdown();
+        return pending;
     }
 
     /**

@@ -1599,8 +1599,7 @@ public final class MainHelper
                 try {
                     helperType = (Class<RangeHelper>) Class.forName(helperName);
                 } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Cannot find class named in congfig: '" + helperName
-                            + "'");
+                    throw new RuntimeException("Cannot find class named in config: " + helperName);
                 }
                 RangeHelper helper;
                 try {
@@ -1613,8 +1612,8 @@ public final class MainHelper
                             + "'", e);
                 }
                 rangeHelpers.put(targetType, helper);
-                LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName()
-                        + ")");
+                LOG.info("ADDED RANGE HELPER FOR "
+                        + targetType + " (" + helperType.getName() + ")");
             }
         }
 
