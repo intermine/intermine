@@ -52,7 +52,6 @@ public class QueryBuilderConstraintController extends TilesAction
         PathQuery query = SessionMethods.getQuery(session);
         DisplayConstraintFactory factory = getFactory(session);
 
-
         if (session.getAttribute("newConstraintPath") != null) {
             // ADDING A NEW CONSTRAINT
             DisplayPath displayPath = (DisplayPath) session.getAttribute("newConstraintPath");
