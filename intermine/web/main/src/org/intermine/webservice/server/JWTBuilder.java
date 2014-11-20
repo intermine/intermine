@@ -1,5 +1,15 @@
 package org.intermine.webservice.server;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -13,16 +23,12 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.intermine.api.profile.Profile;
 import org.json.JSONObject;
 
-/*
- * Copyright (C) 2002-2014 FlyMine
+/**
+ * A class that encapsulates the logic required to generate JWT tokens
+ * for users.
  *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
+ * @author Alex Kalderimis
  */
-
 public final class JWTBuilder {
 
     private static final String TO_STR_FMT =
