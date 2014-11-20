@@ -51,7 +51,7 @@ public class LogoutAction extends InterMineAction
         HttpSession session = request.getSession();
         for( Cookie cookie : request.getCookies() ) {
           if (cookie.getName().equals("jgi_session")) {
-            cookie.setDomain("phytozome.net");
+            cookie.setDomain(InterMineAction.getWebProperties(request).getProperty("project.siteDomain"));
             cookie.setPath("/");
             cookie.setValue("");
             cookie.setMaxAge(0);
