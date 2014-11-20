@@ -45,7 +45,7 @@ public class VerifyTokenTask extends KeyStoreTask {
 
         try {
             Verification result = verifier.verify(token);
-            logMessage("IDENTITY = " + result.getIdentity());
+            logMessage(String.format("IDENTITY = %s<%s>", result.getIdentity(), result.getEmail()));
         } catch (VerificationError e) {
             throw new BuildException("Token failed to verify: " + e.getMessage());
         }

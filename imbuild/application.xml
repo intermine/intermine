@@ -250,7 +250,7 @@
     </condition>
   </target>
   <target name="verify-jwt"
-    depends="-init-properties, compile, -init-task-xml, -jwt-check-keystore">
+    depends="-init-properties, -jwt-check-keystore, compile, -init-task-xml">
     <fail if="keystore.missing" message="Keystore not found"/>
     <fail unless="jwt" message="Please provide a token to verify"/>
     <verify-jwt options="${build.task.dir}/intermine.properties"
@@ -260,17 +260,27 @@
   
   <!-- Issue a JWT token, and save it in the build.dir -->
   <target name="issue-jwt"
-    depends="-init-properties, compile, -init-task-xml, -jwt-check-keystore">
+    depends="-init-properties, -jwt-check-keystore, compile, -init-task-xml">
     <fail if="keystore.missing" message="Keystore not found"/>
-    <fail unless="expiry" message="expiry is required"/>
-    <fail unless="identity" message="identity is required"/>
-    <fail unless="email" message="email is required"/>
+    <condition property="bad.usage">
+      <or>
+        <not><isset property="sub"/></not>
+        <not><isset property="exp"/></not>
+        <not><isset property="email"/></not>
+      </or>
+    </condition>
+    <fail if="bad.usage">
+Usage: issue-jwt -Dkeystore=$PATH_TO_KEYSTORE
+                 -Dsub=$USERNAME
+                 -Dexp=$TOKEN_LIFETIME_IN_SECS
+                 -Demail=$USER_EMAIL
+</fail>
     <issue-jwt options="${build.task.dir}/intermine.properties"
+               keystoreFile="${keystore}"
                buildDir="${build.dir}"
-               identity="${identity}"
+               subject="${sub}"
                email="${email}"
-               expiry="${expiry}"
-               keystoreFile="${keystore}"/>
+               expiry="${exp}"/>
   </target>
 
 </project>

@@ -72,7 +72,7 @@ public class JWTVerifierTest {
         wso2Token = wso2Builder.issueToken(profile, expiry);
         unknown = unknownBuilder.issueToken(profile, expiry);
         wrongSig = mismatchBuilder.issueToken(profile, expiry);
-        expired = testBuilder.issueToken(profile, -1);
+        expired = testBuilder.issueToken(profile.getUsername(), profile.getEmailAddress(), -1L);
     }
 
     private static KeyPair generateKeyPair(String alias)
