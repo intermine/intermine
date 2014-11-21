@@ -244,7 +244,14 @@ public class OboParser
         for (Iterator<Map> iter = typeTagValuesList.iterator(); iter.hasNext();) {
             Map<?, ?> tvs = iter.next();
             String id = (String) ((List<?>) tvs.get("id")).get(0);
-            String name = (String) ((List<?>) tvs.get("name")).get(0);
+
+            String name = "UNKNOWN";
+            List<?> names = (List<?>) tvs.get("name");
+            if (names != null && !names.isEmpty()) {
+                name = (String) names.get(0);
+            } else {
+                LOG.error("Ontology term did not have a name:" + id);
+            }
             boolean isTransitive = isTrue(tvs, "is_transitive");
             oboType = new OboTypeDefinition(id, name, isTransitive);
             types.put(oboType.getId() , oboType);
