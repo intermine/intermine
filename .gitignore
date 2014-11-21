@@ -198,3 +198,5 @@ malariamine/
 nbproject/
 nb-build.xml
 .idea/
+apache-tomcat*
+prefixed
