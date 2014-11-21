@@ -69,6 +69,11 @@ public class NcbiGeneInfoParser
             String officialSymbol = line[10].trim();
             String officialName = line[11].trim();
 
+            if (!"protein coding".equals(geneType)) {
+		// only load protein coding genes
+		//continue;
+	    }
+
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
                     defaultSymbol, officialName, defaultName, mapLocation, geneType, locusTag);
 
