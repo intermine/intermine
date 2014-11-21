@@ -12,14 +12,18 @@ package org.intermine.api.mines;
 
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.beans.PartnerLink;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 import org.json.JSONObject;
@@ -29,37 +33,34 @@ import org.json.JSONObject;
  *
  * @author Julie Sullivan
  */
-public class FriendlyMineManager
-{
+public class FriendlyMineManager {
     private static final boolean DEBUG = false;
-    private static boolean cached = false;
     private static FriendlyMineManager linkManager = null;
-    private static long lastCacheRefresh = 0;
-    private static final long ONE_HOUR = 3600000;
     private static final Logger LOG = Logger.getLogger(FriendlyMineManager.class);
-    private static Map<String, Mine> mines = null;
-    private static Mine localMine = null;
+    private static Map<String, Mine> mines = new HashMap<String, Mine>();
+    private static LocalMine localMine = null;
     private static Properties webProperties;
     private static InterMineAPI im;
-    private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
-        = new CacheMap<MultiKey, Collection<JSONObject>>();
-    private FriendlyMineQueryRunner queryRunner;
+    private static Map<MultiKey, Collection<PartnerLink>> intermineLinkCache
+        = new CacheMap<MultiKey, Collection<PartnerLink>>();
 
-/**
- * @param interMineAPI intermine api
- * @param props the web properties
- */
+
+    /**
+     * @param interMineAPI
+     *            intermine api
+     * @param props
+     *            the web properties
+     */
     public FriendlyMineManager(InterMineAPI interMineAPI, Properties props) {
         webProperties = props;
         im = interMineAPI;
-        final String localMineName = webProperties.getProperty("project.title");
-        localMine = new Mine(localMineName);
-        mines = readConfig(im, localMineName);
-        queryRunner = new FriendlyMineQueryRunner();
+        localMine = new LocalMine(im, webProperties);
+        mines.putAll(readConfig());
     }
 
     /**
      * Used in Ajax requests
+     * 
      * @return InterMineAPI used
      */
     public InterMineAPI getInterMineAPI() {
@@ -67,26 +68,32 @@ public class FriendlyMineManager
     }
 
     /**
-     * @param imAPI intermine api
-     * @param properties the web properties
+     * @param imAPI
+     *            intermine api
+     * @param properties
+     *            the web properties
      * @return OrthologueLinkManager the link manager
      */
-    public static synchronized FriendlyMineManager getInstance(InterMineAPI imAPI,
-            Properties properties) {
+    public static synchronized FriendlyMineManager getInstance(
+            InterMineAPI imAPI, Properties properties) {
         if (linkManager == null || DEBUG) {
             linkManager = new FriendlyMineManager(imAPI, properties);
-            linkManager.primeCache();
         }
         return linkManager;
     }
 
     /**
-     * Return a list of Mines listed in config.  Used for intermine links on report pages.
+     * Return a list of Mines listed in config. Used for intermine links on
+     * report pages.
+     *
+     * This collection does not include the local instance.
      *
      * @return Collection of all friendly mines listed in config
      */
     public Collection<Mine> getFriendlyMines() {
-        return mines.values();
+        Set<Mine> ret = new HashSet<Mine>(mines.values());
+        ret.remove(localMine);
+        return ret;
     }
 
     /**
@@ -97,129 +104,72 @@ public class FriendlyMineManager
     }
 
     /**
-     * if an hour has passed, update data
-     */
-    public synchronized void primeCache() {
-        long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
-        if (timeSinceLastRefresh > ONE_HOUR || !cached || DEBUG) {
-            lastCacheRefresh = System.currentTimeMillis();
-            cached = true;
-            queryRunner.updateReleaseVersion(mines);
-        }
-    }
-
-    /**
-     * @param key mine + identifier + organism
+     * @param key
+     *            mine + identifier + organism
      * @return homologues for this key combo
      */
-    public Collection<JSONObject> getLink(MultiKey key) {
+    public Collection<PartnerLink> getLinks(MultiKey key) {
         return intermineLinkCache.get(key);
     }
 
     /**
-     * @param key mine + identifier + organism
-     * @param results homologues for this key combo
+     * @param key
+     *            mine + identifier + organism
+     * @param results
+     *            homologues for this key combo
      */
-    public void addLink(MultiKey key, Collection<JSONObject> results) {
+    public void cacheLinks(MultiKey key, Collection<PartnerLink> results) {
         intermineLinkCache.put(key, results);
     }
 
     /**
      * @param imAPI intermine API
      */
-    private static Map<String, Mine> readConfig(InterMineAPI imAPI, String localMineName) {
-        mines = new LinkedHashMap<String, Mine>();
+    private Map<String, ConfigurableMine> readConfig() {
+        int timeout = Integer.parseInt(webProperties.getProperty("friendlymines.requests.timeout"), 10);
+        int refreshInterval = Integer.parseInt(webProperties.getProperty("friendlymines.refresh.interval"), 10);
+        MineRequester httpRequester = new HttpRequester(timeout);
+        Map<String, ConfigurableMine> mines = new LinkedHashMap<String, ConfigurableMine>();
+        mines.put(localMine.getID(), localMine);
+
         Properties props = PropertiesUtil.stripStart("intermines",
-                PropertiesUtil.getPropertiesStartingWith("intermines", webProperties));
+                PropertiesUtil.getPropertiesStartingWith("intermines",
+                        webProperties));
 
         Enumeration<?> propNames = props.propertyNames();
 
         while (propNames.hasMoreElements()) {
-            String mineId =  (String) propNames.nextElement();
+            String mineId = (String) propNames.nextElement();
             mineId = mineId.substring(0, mineId.indexOf("."));
             Properties mineProps = PropertiesUtil.stripStart(mineId,
                     PropertiesUtil.getPropertiesStartingWith(mineId, props));
 
-            String mineName = mineProps.getProperty("name");
-            String url = mineProps.getProperty("url");
-            String logo = mineProps.getProperty("logo");
-            String defaultValues = mineProps.getProperty("defaultValues");
-            String bgcolor = mineProps.getProperty("bgcolor");
-            String frontcolor = mineProps.getProperty("frontcolor");
-            String description = mineProps.getProperty("description");
-
-            if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)) {
-                final String msg = "InterMine configured incorrectly in web.properties.  "
-                        + "Cannot generate friendly mine linkouts: " + mineId;
-                LOG.error(msg);
-                continue;
+            ConfigurableMine mine = mines.get(mineId);
+            if (mine == null) {
+                mine = new RemoteMine(mineId, httpRequester, refreshInterval);
             }
-
-            if (mineName.equals(localMineName)) {
-                if (localMine.getUrl() == null) {
-                    parseLocalConfig(url, logo, defaultValues, bgcolor, frontcolor, description);
-                }
-            } else {
-                Mine mine = mines.get(mineId);
-                if (mine == null) {
-                    parseRemoteConfig(mineName, mineId, defaultValues, url, logo, bgcolor,
-                            frontcolor, description);
-                }
+            try {
+                mine.configure(mineProps);
+                mines.put(mineId, mine);
+                mines.put(mine.getName(), mine);
+            } catch (ConfigurationException e) {
+                LOG.error("Bad configuration for " + mineId, e);
+                continue;
             }
         }
         return mines;
     }
 
-    private static void parseLocalConfig(String url, String logo, String defaultValues,
-            String bgcolor, String frontcolor, String description) {
-        if (localMine.getUrl() == null) {
-            localMine.setUrl(url);
-            localMine.setLogo(logo);
-            localMine.setBgcolor(bgcolor);
-            localMine.setFrontcolor(frontcolor);
-            localMine.setDefaultValues(defaultValues);
-            localMine.setDescription(description);
-        }
-    }
-
-    private static void parseRemoteConfig(String mineName, String mineId, String defaultValues,
-            String url, String logo, String bgcolor, String frontcolor, String description) {
-        Mine mine = new Mine(mineName);
-        mine.setUrl(url);
-        mine.setLogo(logo);
-        mine.setBgcolor(bgcolor);
-        mine.setFrontcolor(frontcolor);
-        mine.setDefaultValues(defaultValues);
-        mine.setDescription(description);
-        mines.put(mineId, mine);
-    }
-
     /**
-     * @param mineName name of mine
+     * @param mineName
+     *            name of mine
      * @return The mine properties object.
      */
     public Mine getMine(String mineName) {
         if (mineName == null) {
             throw new NullPointerException("mineName must not be null");
         }
-        if (mines.containsKey(mineName)) {
-            return mines.get(mineName);
-        }
-        for (Mine mine : mines.values()) {
-            if (mineName.equals(mine.getName())) {
-                mines.put(mineName, mine); // Save loop next time.
-                return mine;
-            }
-        }
-        return null;
+        return mines.get(mineName);
     }
 
-    /**
-     * @return An object capable of running friendly mine queries.
-     */
-    public FriendlyMineQueryRunner getQueryRunner() {
-        return queryRunner;
-    }
 }
-
-

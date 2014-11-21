@@ -12,7 +12,11 @@ package org.intermine.web.displayer;
 
 import java.util.Collection;
 
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.beans.PartnerLink;
 import org.intermine.api.mines.FriendlyMineManager;
+import org.intermine.api.mines.Mine;
+import org.intermine.api.mines.ObjectRequest;
 import org.json.JSONObject;
 
 /**
@@ -20,18 +24,14 @@ import org.json.JSONObject;
  *
  * @author Julie Sullivan
  */
-public abstract class InterMineLinkGenerator
+public interface InterMineLinkGenerator
 {
-
     /**
      * Query other intermines for this object
      *
-     * @param olm class resonsible for generating links
-     * @param filterValue value of query constraint, eg. organism(s) or department name
-     * @param identifier identifier(s) for the object on report page or in list
-     * @param mineName name of mine (NULL if all mines are being queried)
+     * @param mine The mine object where we want to get the data from.
+     * @param request The information about the things we want to get.
      * @return map of mines to objects to link to
      */
-    public abstract Collection<JSONObject> getLinks(FriendlyMineManager olm, String mineName,
-            String filterValue, String identifier);
+    public abstract Collection<PartnerLink> getLinks(Mine thisMine, Mine thatMine, ObjectRequest request);
 }

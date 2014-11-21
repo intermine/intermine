@@ -5,15 +5,25 @@
     <create creator="new" javascript="JDate">
       <param name="class" value="java.util.Date"/>
     </create>
-    <create creator="new"  javascript="AjaxServices">
+    <create creator="new" javascript="AjaxServices">
       <param name="class" value="org.intermine.dwr.AjaxServices"/>
     </create>
-    <create creator="new"  javascript="TrackAjaxServices">
+    <create creator="new" javascript="TrackAjaxServices">
       <param name="class" value="org.intermine.dwr.TrackAjaxServices"/>
     </create>
+
+    <!--  Allow DWR to send actual objects, and not just strings. -->
+    <convert converter="collection" match="java.util.Collection"/>
+    <convert converter="map" match="java.util.Map"/>
+
+    <!--  Allow any of our beans to be marshalled. -->
+    <convert converter="bean" match="org.intermine.web.logic.bean.*"/>
+    <convert converter="bean" match="org.intermine.api.bean.*"/>
+
     <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
+    <convert converter="bean" match="org.intermine.dwr.TrackAjaxServices"/>
     <convert converter="bean" match="org.intermine.web.logic.results.*"/>
     <convert converter="bean" match="org.intermine.web.logic.widget.*"/>
-    <convert converter="bean" match="org.intermine.dwr.TrackAjaxServices"/>
+
   </allow>
 </dwr>

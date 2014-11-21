@@ -10,52 +10,54 @@ package org.intermine.bio.web.displayer;
  *
  */
 
-import java.io.BufferedReader;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.mines.FriendlyMineManager;
+import org.intermine.api.beans.ObjectDetails;
+import org.intermine.api.beans.PartnerLink;
 import org.intermine.api.mines.Mine;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.api.mines.ObjectRequest;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.Util;
 import org.intermine.web.displayer.InterMineLinkGenerator;
-import org.intermine.webservice.client.results.XMLTableResult;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.intermine.webservice.server.core.Predicate;
 
 /**
  * Helper class for intermine links generated on report and lists pages
  *
  * @author Julie Sullivan
  */
-public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
+public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
 {
-    private static final String WEBSERVICE_URL = "/service";
+
+    private class MustBeIn implements Predicate<List<Object>> {
+
+        private final Set<String> collection;
+
+        MustBeIn(Set<String> coll) {
+            this.collection = coll;
+        }
+
+        @Override
+        public Boolean call(List<Object> row) {
+            return (row != null) && collection.contains(row.get(2));
+        }
+
+    }
+
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
+
     private boolean debug = false;
-    private static final String QUERY_PATH = "/query/results?format=xml&query=";
 
     /**
      * Constructor
@@ -64,218 +66,152 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
         super();
     }
 
-    /**
-     * Generate a list of genes and orthologues for remote mines.
-     *
-     * 1. Query local mine for orthologues for genes given.
-     * 2. if orthologue found query remote mine for genes
-     * 3. if orthologue not found query remote mine for orthologues
-     *
-     * @param olm LinkManager
-     * @param organismShortName organism.shortName, eg. C. elegans
-     * @param primaryIdentifier identifier for gene
-     * @param mineName name of mine to query
-     * @return map from mine to organism-->genes
-     */
     @Override
-    public Collection<JSONObject> getLinks(FriendlyMineManager olm, String mineName,
-            String organismShortName, String primaryIdentifier) {
+    public Collection<PartnerLink> getLinks(Mine thisMine, Mine mine, ObjectRequest req) {
 
-        if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organismShortName)
-                || StringUtils.isEmpty(primaryIdentifier)) {
-            return null;
+        String organismShortName = req.getDomain();
+        String primaryIdentifier = req.getIdentifier();
+
+        if (StringUtils.isEmpty(organismShortName) || StringUtils.isEmpty(primaryIdentifier)) {
+            return Collections.emptySet();
         }
 
         // FIXME temporarily ignoring lists with more than one organism
         if (organismShortName.contains(",")) {
-            return null;
+            return Collections.emptySet();
         }
 
-        MultiKey key = new MultiKey(mineName, primaryIdentifier, organismShortName);
-        Collection<JSONObject> cachedResults = olm.getLink(key);
-        if (cachedResults != null && !debug) {
-            return cachedResults;
-        }
-
-        Mine mine = olm.getMine(mineName);
-        if (mine == null || mine.getReleaseVersion() == null) {
-            LOG.info(mineName + " seems to be dead");
-            return null;
-        }
-
-        Model model = olm.getInterMineAPI().getModel();
-
-        Map<String, Set<String[]>> genes = new HashMap<String, Set<String[]>>();
-        try {
-            // query for homologues in remote mine
-            PathQuery q = getHomologueQuery(model, organismShortName, primaryIdentifier);
-            Map<String, Set<String[]>> results = runQuery(olm, mine, q, organismShortName);
-            if (results != null && !results.isEmpty()) {
-                genes.putAll(results);
-            } else {
-                // no luck, query local mine
-                Map<String, Set<String>> localHomologues = getLocalHomologues(olm,
-                        organismShortName, primaryIdentifier);
-                for (String remoteMineOrganism : mine.getDefaultValues()) {
-                    Set<String> matchingHomologues = localHomologues.get(remoteMineOrganism);
-                    if (matchingHomologues != null && !matchingHomologues.isEmpty()) {
-                        String identifiers = StringUtil.join(matchingHomologues, ",");
-                        // query remote mine for genes found in local mine
-                        q = getGeneQuery(model, remoteMineOrganism, identifiers);
-                        results = runQuery(olm, mine, q, remoteMineOrganism);
-                        if (results != null && !results.isEmpty()) {
-                            genes.putAll(results);
-                        }
-                    }
-                }
-            }
-            q = getGeneQuery(model, organismShortName, primaryIdentifier);
-            results = runQuery(olm, mine, q, organismShortName);
-            if (results != null && !results.isEmpty()) {
-                genes.putAll(results);
-            }
-        } catch (Exception e) {
-            LOG.warn("error generating friendly mine links", e);
-            return null;
-        }
-        Collection<JSONObject> results = resultsToJSON(key, genes);
-        olm.addLink(key, results);
-        return results;
+        // Wrapping up in a sub object means we don't need a messy web of static calls.
+        LinkFetcher fetcher = new LinkFetcher(thisMine, mine);
+        return fetcher.fetch(req);
     }
+    
+    private class LinkFetcher {
 
-    // TODO just get JSON back from webservice instead
-    private static Collection<JSONObject> resultsToJSON(MultiKey key, Map<String,
-            Set<String[]>> results) {
-        Collection<JSONObject> organisms = new ArrayList<JSONObject>();
-        // now we have a list of orthologues, add to JSON Organism object
-        for (Entry<String, Set<String[]>> entry : results.entrySet()) {
-            String organismName = entry.getKey();
-            Set<String[]> genes = entry.getValue();
-            JSONObject organism = new JSONObject();
-            try {
-                organism.put("shortName", organismName);
-                // used on report pages
-                Set<JSONObject> jsonGenes = genesToJSON(genes);
-                if (jsonGenes != null && !jsonGenes.isEmpty()) {
-                    organism.put("genes", jsonGenes);
-                }
-                // used on list analysis pages
-                List<String> identifiers = identifiersToJSON(genes);
-                if (identifiers != null && !identifiers.isEmpty()) {
-                    organism.put("identifiers", identifiers);
-                }
-            } catch (JSONException e) {
-                LOG.warn("Problem reading JSON", e);
-                return null;
+        final private Mine thisMine, thatMine;
+        private MustBeIn predicate;
+
+        LinkFetcher(Mine thisMine, Mine mine) {
+            this.thisMine = thisMine; // The local mine, where the idents come from
+            this.thatMine = mine; // The remote mine, where we want to find things.
+            this.predicate = new MustBeIn(thatMine.getDefaultValues());
+        }
+
+        Collection<PartnerLink> fetch(ObjectRequest req) {
+
+            // Phase one -- query the remote mine for homologues.
+            Map<String, Set<ObjectDetails>> genes = remoteHomologueStrategy(req);
+            // Phase two -- query this mine for homologues.
+            if (genes == null || genes.isEmpty()) {
+                genes = localHomologueStrategy(req);
             }
-            organisms.add(organism);
-        }
-        return organisms;
-    }
 
-    private static List<String> identifiersToJSON(Set<String[]> genes) {
-        List<String> identifiers = new ArrayList<String>();
-        for (String[] identifier : genes) {
-            identifiers.add(identifier[0]);
-        }
-        return identifiers;
-    }
-
-    private static Set<JSONObject> genesToJSON(Set<String[]> genes)
-        throws JSONException {
-        Set<JSONObject> jsonGenes = new HashSet<JSONObject>();
-        for (String[] identifier : genes) {
-            JSONObject gene = new JSONObject();
-            gene.put("primaryIdentifier", identifier[0]);
-            gene.put("displayIdentifier", identifier[1]);
-            jsonGenes.add(gene);
-        }
-        return jsonGenes;
-    }
-
-    /*****************************************************************************************
-                GENES
-     *****************************************************************************************/
-
-    private static Map<String, Set<String[]>> runQuery(
-            FriendlyMineManager fmm, Mine mine, PathQuery q, String organism) {
-        Map<String, Set<String[]>> results = new HashMap<String, Set<String[]>>();
-        Set<String> mineOrganisms = mine.getDefaultValues();
-        try {
-            final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH
-                    + URLEncoder.encode("" + q.toXml(), "UTF-8");
-            BufferedReader reader = fmm.getQueryRunner().runWebServiceQuery(webserviceURL);
-            if (reader == null) {
-                LOG.warn(mine.getName() + " could not run query " + webserviceURL);
-                return null;
+            // Phase three - check if the remote mine contains this actual object.
+            PathQuery q = getGeneQuery(thatMine, req);
+            Map<String, Set<ObjectDetails>> matches = runQuery(thatMine, q);
+            if (matches != null) {
+                genes.putAll(matches);
             }
-            Iterator<List<String>> table = new XMLTableResult(reader).getIterator();
-            while (table.hasNext()) {
-                List<String> row = table.next();
-                String[] identifiers = new String[2];
 
-                String organismName = row.get(2);
-                if (!mineOrganisms.contains(organismName)) {
-                    // we only want genes and homologues that are relevant to mine
+            return toLinks(genes);
+        }
+
+        /**
+         * Look for homologues to the requested objects in the remote mine, but only accept
+         * homologues for organisms that mine specialises in.
+         * @param req The definition of the thing we are looking for.
+         * @return A mapping from organisms to groups of identifiers.
+         */
+        private Map<String, Set<ObjectDetails>> remoteHomologueStrategy(ObjectRequest req) {
+            PathQuery q = getHomologueQuery(thatMine, req);
+            return runQuery(thatMine, q);
+        }
+
+        /**
+         * Look for homologues to the requested objects in the local mine, and accept
+         * all answers.
+         * @param req The definition of the thing we are looking for.
+         * @return A mapping from organisms to groups of identifiers.
+         */
+        private Map<String, Set<ObjectDetails>> localHomologueStrategy(ObjectRequest req) {
+            PathQuery q = getHomologueQuery(thisMine, req);
+            return runQuery(thisMine, q);
+        }
+
+        private PathQuery getHomologueQuery(Mine mine, ObjectRequest req) {
+            PathQuery q = new PathQuery(mine.getModel());
+            q.addViews(
+                "Gene.homologues.homologue.primaryIdentifier",
+                "Gene.homologues.homologue.symbol",
+                "Gene.homologues.homologue.organism.shortName"
+            );
+            q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
+            q.addConstraint(Constraints.lookup("Gene", req.getIdentifier(), req.getDomain()));
+            q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
+            return q;
+        }
+
+        /**
+         * Processes the results of queries produced by getHomologueQuery - ie. they 
+         * have three views: Gene.primaryIdentifier, Gene.symbol, Organism.shortName
+         * @param mine The data source
+         * @param q The query
+         * @return
+         */
+        private Map<String, Set<ObjectDetails>> runQuery(
+                Mine mine,
+                PathQuery q) {
+            Map<String, Set<ObjectDetails>> retval = new HashMap<String, Set<ObjectDetails>>();
+
+            List<List<Object>> results = mine.getRows(q);
+
+            for (List<Object> row: results) {
+                if (!predicate.call(row)) {
                     continue;
                 }
-                final String ident = StringUtils.isBlank(row.get(0)) ? row.get(1) : row.get(0);
-                final String symbol = StringUtils.isBlank(row.get(1)) ? row.get(0) : row.get(1);
-                identifiers[0] = ident;
-                identifiers[1] = symbol;
+                ObjectDetails details = new ObjectDetails();
+                details.setType("Gene");
+                if (row.get(1) != null) {
+                    details.setName((String) row.get(1));
+                }
+                if (row.get(0) != null) {
+                    details.setIdentifier((String) row.get(0));
+                }
 
-                Util.addToSetMap(results, organismName, identifiers);
+                Util.addToSetMap(retval, String.valueOf(row.get(2)), details);
             }
-        } catch (Exception e) {
-            LOG.error("Unable query " + mine.getName() + " for genes", e);
-            return null;
+            return retval;
         }
-        return results;
-    }
 
-    private static PathQuery getGeneQuery(Model model, String organism, String identifier) {
-        PathQuery q = new PathQuery(model);
-        q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.shortName");
-        q.addOrderBy("Gene.symbol", OrderDirection.ASC);
-        q.addConstraint(Constraints.lookup("Gene", identifier, organism));
-        return q;
-    }
-
-    /*****************************************************************************************
-        HOMOLOGUES
-     * @throws ObjectStoreException
-     *****************************************************************************************/
-
-    // query local mine for orthologues - results cache is handling
-    private static Map<String, Set<String>> getLocalHomologues(FriendlyMineManager olm,
-            String constraintValue, String identifier) throws ObjectStoreException {
-        Map<String, Set<String>> organismToHomologues = new HashMap<String, Set<String>>();
-        InterMineAPI im = olm.getInterMineAPI();
-        ProfileManager profileManager = im.getProfileManager();
-        PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
-        PathQuery q = getHomologueQuery(im.getModel(), constraintValue, identifier);
-        if (!q.isValid()) {
-            return Collections.emptyMap();
-        }
-        ExportResultsIterator it = executor.execute(q);
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            String orthologuePrimaryIdentifier = (String) row.get(0).getField();
-            String organismName = (String) row.get(2).getField();
-            if (!StringUtils.isEmpty(orthologuePrimaryIdentifier)) {
-                Util.addToSetMap(organismToHomologues, organismName, orthologuePrimaryIdentifier);
+        /*
+         * Turn the orthologueMapping into a collection of PartnerLinks
+         */
+        private Collection<PartnerLink> toLinks(Map<String, Set<ObjectDetails>> orthologueMapping) {
+            Set<PartnerLink> retVal = new HashSet<PartnerLink>();
+            for (Entry<String, Set<ObjectDetails>> entry : orthologueMapping.entrySet()) {
+                String organismName = entry.getKey();
+                Set<ObjectDetails> genes = entry.getValue();
+                PartnerLink link = new PartnerLink();
+                link.setDomain(organismName);
+                link.setObjects(genes);
+                retVal.add(link);
             }
+            return retVal;
         }
-        return organismToHomologues;
+
+        /*****************************************************************************************
+                    GENES
+         *****************************************************************************************/
+
+        private PathQuery getGeneQuery(Mine mine, ObjectRequest req) {
+            PathQuery q = new PathQuery(mine.getModel());
+            q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.organism.shortName");
+            q.addOrderBy("Gene.symbol", OrderDirection.ASC);
+            q.addConstraint(Constraints.lookup("Gene", req.getIdentifier(), req.getDomain()));
+            return q;
+        }
+
     }
 
-    private static PathQuery getHomologueQuery(Model model, String organism, String identifier) {
-        PathQuery q = new PathQuery(model);
-        q.addViews("Gene.homologues.homologue.primaryIdentifier",
-                "Gene.homologues.homologue.symbol", "Gene.homologues.homologue.organism.shortName");
-        q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
-        q.addConstraint(Constraints.lookup("Gene", identifier, organism));
-        q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
-        return q;
-    }
+
 }

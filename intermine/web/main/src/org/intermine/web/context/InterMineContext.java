@@ -179,7 +179,7 @@ public final class InterMineContext implements Shutdownable
 
 
     private static char[] getKeyStorePassword() {
-        return getWebProperties().getProperty("security.keystore.password").toCharArray();
+        return getWebProperties().getProperty("security.keystore.password", "").toCharArray();
     }
 
     /**

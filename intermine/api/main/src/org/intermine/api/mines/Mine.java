@@ -1,161 +1,63 @@
 package org.intermine.api.mines;
 
-/*
- * Copyright (C) 2002-2014 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-/**
- * Represents an instance of an InterMine.  Contains generic data structures to populate with
- * queryable values.
- *
- * @author Julie Sullivan
- */
-public class Mine
-{
-//    private static final Logger LOG = Logger.getLogger(Mine.class);
-    protected String name = null;
-    protected String url = null;
-    protected String logo = null;
-    protected String bgcolor, frontcolor;
-    protected Set<String> defaultValues = new HashSet<String>();
-    protected String releaseVersion = null;
-    protected String description = null;
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.PathQuery;
 
-    /**
-     * Constructor
-     *
-     * @param name name of mine, eg FlyMine
-     */
-    public Mine(String name) {
-        this.name = name;
-    }
+public interface Mine {
 
     /**
      * @return the name of the mine
      */
-    public String getName() {
-        return name;
-    }
-
+    public abstract String getName();
 
     /**
      * @return the description of the mine
      */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description of the mine
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public abstract String getDescription();
 
     /**
      * @return the url to the mine
      */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * @param url the url to set
-     */
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    public abstract String getUrl();
 
     /**
      * @return the logo
      */
-    public String getLogo() {
-        return logo;
-    }
-
-    /**
-     * @param logo the logo to set
-     */
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
+    public abstract String getLogo();
 
     /**
      * @return bgcolor
      */
-    public String getBgcolor() {
-        return bgcolor;
-    }
-
-    /**
-     * @param bgcolor background color
-     */
-    public void setBgcolor(String bgcolor) {
-        this.bgcolor = bgcolor;
-    }
+    public abstract String getBgcolor();
 
     /**
      * @return frontcolor
      */
-    public String getFrontcolor() {
-        return frontcolor;
-    }
-
-    /**
-     * @param frontcolor front color
-     */
-    public void setFrontcolor(String frontcolor) {
-        this.frontcolor = frontcolor;
-    }
+    public abstract String getFrontcolor();
 
     /**
      * @return the releaseVersion
      */
-    public String getReleaseVersion() {
-        return releaseVersion;
-    }
-    /**
-     * @param releaseVersion the releaseVersion to set
-     */
-    public void setReleaseVersion(String releaseVersion) {
-        this.releaseVersion = releaseVersion;
-    }
+    public abstract String getReleaseVersion();
+
+    public abstract Model getModel();
 
     /**
      * @return the defaultValue
      */
-    public Set<String> getDefaultValues() {
-        return defaultValues;
-    }
+    public abstract Set<String> getDefaultValues();
 
     /**
-     * get first default value.  used in querybuilder to select default extra value
+     * get first default value. used in querybuilder to select default extra value
      * @return the defaultValue
      */
-    public String getDefaultValue() {
-        for (String value : defaultValues) {
-            return value;
-        }
-        return null;
-    }
+    public abstract String getDefaultValue();
 
-    /**
-     * @param defaultValue the defaultValues to set, comma delim
-     */
-    public void setDefaultValues(String defaultValue) {
-        String[] bits = defaultValue.split(",");
-        for (String bit : bits) {
-            defaultValues.add(bit.trim());
-        }
-    }
+    public List<List<Object>> getRows(PathQuery query);
+
+    public List<List<Object>> getRows(String xml);
+
 }

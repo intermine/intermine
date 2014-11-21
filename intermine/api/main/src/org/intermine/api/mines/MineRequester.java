@@ -14,24 +14,18 @@ import java.io.BufferedReader;
 
 /**
  * The type of objects that can request data from mines.
- * @author alex
+ *
+ * @author Alex Kalderimis
  *
  */
 public interface MineRequester
 {
-    /**
-     * Run a query, and return a reader for the result.
-     * @param mine The description of the mine.
-     * @param xmlQuery The query description.
-     * @return A reader over the result.
-     */
-    BufferedReader runQuery(Mine mine, String xmlQuery);
 
     /**
      * Request information as encoded in a string.
      * @param urlString The data to request.
      * @return A reader over the data.
      */
-    BufferedReader requestURL(String urlString);
+    BufferedReader requestURL(String urlString, ContentType contentType);
 
 }

@@ -43,7 +43,7 @@ public class FriendlyMineManagerTest extends InterMineAPITestCase
         assertEquals("modminelogo.png", modMine.getLogo());
         assertEquals("#396A81", modMine.getBgcolor());
         assertEquals("#FFF", modMine.getFrontcolor());
-        Set values = modMine.getDefaultValues();
+        Set<String> values = modMine.getDefaultValues();
         assertTrue(values.size() == 2);
         assertEquals(null, modMine.getReleaseVersion());
     }
