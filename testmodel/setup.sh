@@ -1,4 +1,5 @@
-#!/usr/bin/bash
+#!/bin/bash
+
 # Build and deploy the testmodel webapp
 # This script requires the standard InterMine dependencies:
 #  * psql (createdb, psql) - your user should have a postgres
@@ -36,6 +37,21 @@ if test -z $TOMCAT_PWD; then
     TOMCAT_PWD=manager
 fi
 
+if test -z $(which psql); then
+  echo "ERROR: psql not found - please make sure postgres is configured correctly"
+  exit 1
+fi
+
+if test ! -z $DEBUG; then
+  echo "------> CONFIGURATION SETTINGS:"
+  echo '# $IMDIR       = '$IMDIR
+  echo '# $SERVER      = '$SERVER
+  echo '# $PORT        = '$PORT
+  echo '# $PSQL_USER   = '$PSQL_USER
+  echo '# $PSQL_PWD    = '$PSQL_PWD
+  echo '# $TOMCAT_USER = '$TOMCAT_USER
+  echo '# $TOMCAT_PWD  = '$TOMCAT_PWD
+fi
 
 cd $HOME
 
@@ -44,8 +60,9 @@ if test ! -d $IMDIR; then
     mkdir $IMDIR
 fi
 
+echo "------> Checking config..."
 if test ! -f $PROP_FILE; then
-    echo $PROP_FILE not found. Providing default properties file.
+    echo "-- $PROP_FILE not found. Providing default properties file."
     cd $IMDIR
     cp $DIR/testmodel.properties $PROP_FILE
     sed -i "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
