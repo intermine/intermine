@@ -37,10 +37,12 @@ if test -z $TOMCAT_PWD; then
     TOMCAT_PWD=manager
 fi
 
-if test -z $(which psql); then
-  echo "ERROR: psql not found - please make sure postgres is configured correctly"
-  exit 1
-fi
+for dep in psql createdb ant; do
+  if test -z $(which $dep); then
+    echo "ERROR: $dep not found - please make sure $dep is installed and configured correctly"
+    exit 1
+  fi
+done
 
 if test ! -z $DEBUG; then
   echo "------> CONFIGURATION SETTINGS:"
