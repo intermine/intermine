@@ -67,15 +67,15 @@ if test ! -f $PROP_FILE; then
     echo "-- $PROP_FILE not found. Providing default properties file."
     cd $IMDIR
     cp $DIR/testmodel.properties $PROP_FILE
-    sed -i "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
-    sed -i "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
-    sed -i "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
-    sed -i "s/TOMCAT_PWD/$TOMCAT_PWD/g" $PROP_FILE
-    sed -i "s/USERPROFILEDB/$USERPROFILEDB/g" $PROP_FILE
-    sed -i "s/PRODDB/$PRODDB/g" $PROP_FILE
-    sed -i "s/SERVER/$SERVER/g" $PROP_FILE
-    sed -i "s/8080/$PORT/g" $PROP_FILE
-    sed -i "s/USER/$USER/g" $PROP_FILE
+    sed -i=bak -e "s/PSQL_USER/$PSQL_USER/g" $PROP_FILE
+    sed -i=bak -e "s/PSQL_PWD/$PSQL_PWD/g" $PROP_FILE
+    sed -i=bak -e "s/TOMCAT_USER/$TOMCAT_USER/g" $PROP_FILE
+    sed -i=bak -e "s/TOMCAT_PWD/$TOMCAT_PWD/g" $PROP_FILE
+    sed -i=bak -e "s/USERPROFILEDB/$USERPROFILEDB/g" $PROP_FILE
+    sed -i=bak -e "s/PRODDB/$PRODDB/g" $PROP_FILE
+    sed -i=bak -e "s/SERVER/$SERVER/g" $PROP_FILE
+    sed -i=bak -e "s/8080/$PORT/g" $PROP_FILE
+    sed -i=bak -e "s/USER/$USER/g" $PROP_FILE
 fi
 
 echo "------> Checking databases..."
