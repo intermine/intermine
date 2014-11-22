@@ -13,14 +13,14 @@ DIR="$(cd $(dirname "$0"); pwd)"
 LOG=$DIR/../init.log
 DBS="unittest truncunittest fulldatatest flatmodetest notxmltest bio-test bio-fulldata-test"
 
-function build {
+build () {
   echo '#--- building '$1
   cd $DIR/../$2
   ant clean >> $LOG
   ant >> $LOG
 }
 
-function build_db {
+build_db () {
   build $1 $2
   ant build-db >> $LOG
 }
