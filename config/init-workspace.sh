@@ -12,23 +12,47 @@ BIO_FILE=intermine-bio-test.properties
 DIR="$(cd $(dirname "$0"); pwd)"
 LOG=$DIR/../init.log
 DBS="unittest truncunittest fulldatatest flatmodetest notxmltest bio-test bio-fulldata-test"
+DEFAULT_ANT_OPTS='-server -XX:MaxPermSize=256M -Xmx1700m -XX:+UseParallelGC -Xms1700m -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99'
 
-build () {
-  echo '#--- building '$1
-  cd $DIR/../$2
+run_ant () {
+  echo "#--- ENTERING $DIR/../$1" >> $LOG
+  cd $DIR/../$1
   ant clean >> $LOG
   ant >> $LOG
 }
 
 build_db () {
-  build $1 $2
+  echo "#--- building $1 db"
+  cd $DIR/../$2
+  ant clean >> $LOG
   ant build-db >> $LOG
 }
 
+build () {
+  echo "#--- building $1"
+  run_ant "$2"
+}
+
+run_build () {
+  echo '#--- building '$1
+  run_ant "$1/main"
+}
+
+run_tests () {
+  echo "#--- testing $1"
+  run_ant "$1/test"
+}
+
+build_and_test () {
+  run_build "$1"
+  run_tests "$1"
+}
+
 # ANT_OPTS must be set for tests to run.
-if test -z $ANT_OPTS; then
-  ANT_OPTS='-server -XX:MaxPermSize=256M -Xmx1700m -XX:+UseParallelGC -Xms1700m -XX:SoftRefLRUPolicyMSPerMB=1 -XX:MaxHeapFreeRatio=99'
+if test -z "$ANT_OPTS"; then
+  ANT_OPTS=$DEFAULT_ANT_OPTS
 fi
+
 if test -z $PSQL_USER; then
     PSQL_USER=$USER
 fi
@@ -64,32 +88,26 @@ for db in $DBS; do
     fi
 done
 
-build model intermine/model/main
+build_and_test intermine/model
 
-build "model tests" intermine/model/test
-
-build objectstore intermine/objectstore/main
+run_build intermine/objectstore
 
 build testmodel intermine/objectstore/model/testmodel
 
-build 'objectstore tests' intermine/objectstore/test
+run_tests intermine/objectstore
 
-build integrate intermine/integrate/main
+run_build intermine/integrate
 
 build 'fulldata model' intermine/integrate/model/fulldata
 
-build 'integrate tests' intermine/integrate/test
+run_tests intermine/integrate
 
-build pathquery intermine/pathquery/main
+build_and_test intermine/pathquery
 
-build api intermine/api/main
-
-build 'api tests' intermine/api/test
+build_and_test intermine/api
 
 build 'userprofile' intermine/api/model/userprofile
 
 build_db 'bio model' bio/test-all/dbmodel
 
-build 'bio core' bio/core/main
-
-build 'core tests' bio/core/test
+build_and_test bio/core
