@@ -18,6 +18,7 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
@@ -35,8 +36,11 @@ import org.json.JSONObject;
 public class JWTVerifier
 {
     private static final String EMAIL_CLAIM = "http://wso2.org/claims/emailaddress";
+	private static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
+	private static final String WHITELIST = "jwt.alias.whitelist";
     private final Properties options;
     private final KeyStore keyStore;
+	private final String strategy;
 
     /**
      * Construct a verifier.
@@ -46,6 +50,13 @@ public class JWTVerifier
     public JWTVerifier(KeyStore keyStore, Properties options) {
         this.keyStore = keyStore;
         this.options = options;
+        if (keyStore == null) {
+        	throw new NullPointerException("keyStore must not be null");
+        }
+        if (options == null) {
+        	throw new NullPointerException("options must not be null");
+        }
+        this.strategy = this.options.getProperty(VERIFICATION_STRATEGY, "NAMED_ALIAS");
     }
 
     /**
@@ -83,7 +94,7 @@ public class JWTVerifier
                     String.format("This token expired %d seconds ago", secondsSinceExpiry));
         }
 
-        if (!verifySignature(
+        if (!canVerify(
                 header,
                 claims,
                 pieces[0] + "." + pieces[1],
@@ -125,12 +136,8 @@ public class JWTVerifier
         }
     }
 
-    private KeyStore getKeyStore() throws VerificationError {
-        return keyStore;
-    }
-
     /* A veritable cornucopia of trying and catching */
-    private boolean verifySignature(
+    private boolean canVerify(
             JSONObject header,
             JSONObject claims,
             String signed,
@@ -146,49 +153,99 @@ public class JWTVerifier
             issuer = claims.getString("iss");
             algorithm = header.getString("alg");
         } catch (JSONException e) {
-            throw new VerificationError("Missing required property.");
+            throw new VerificationError("Missing required property: " + e.getMessage());
         }
+       // algorithm should be something like "SHA256withRSA"
+        if (!algorithm.endsWith("withRSA")) {
+        	throw new VerificationError("Unsupported signing algorithm: " + algorithm);
+        }
+        
+        if ("NAMED_ALIAS".equals(strategy)) {
+        	return verifyNamedAlias(signed, toVerify, issuer, algorithm);
+        } else if ("ANY".equals(strategy)) {
+        	return verifyAnyAlias(signed, toVerify, algorithm);
+        } else if ("WHITELIST".equals(strategy)) {
+        	return verifyWhitelistedAliases(signed, toVerify, algorithm);
+        } else {
+        	throw new VerificationError("Unknown verification strategy: " + strategy);
+        }
+        
+    }
 
-        KeyStore ks = getKeyStore();
+	private boolean verifyWhitelistedAliases(String signed, byte[] toVerify, String algorithm)
+		throws VerificationError {
+		for (String alias: options.getProperty(WHITELIST, "").split(",")) {
+			if (verifySignature(alias, algorithm, signed, toVerify)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-        // algorithm should be something like "SHA256withRSA"
-        Signature signature;
+	private boolean verifyAnyAlias(String signed, byte[] toVerify, String algorithm)
+		throws VerificationError {
+		try {
+			for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+				if (verifySignature(aliases.nextElement(), algorithm, signed, toVerify)) {
+					return true;
+				}
+			}
+			return false;
+		} catch (KeyStoreException e) {
+			throw new VerificationError("Could not read key store: " + e.getMessage());
+		}
+	}
+
+	private boolean verifyNamedAlias(String signed, byte[] toVerify, String issuer, String algorithm)
+		throws VerificationError {
+		String keyAlias = getKeyAlias(issuer);
+		if (StringUtils.isBlank(keyAlias)) {
+		    throw new VerificationError("Unknown identity issuer: " + issuer);
+		}
+		return verifySignature(keyAlias, algorithm, signed, toVerify);
+	}
+    
+    private boolean verifySignature(String keyAlias, String algorithm, String signed, byte[] toVerify) throws VerificationError {
+        Certificate cert;
+		try {
+			cert = keyStore.getCertificate(keyAlias);
+		} catch (KeyStoreException e) {
+	        throw new VerificationError("Could not retrieve key. " + e.getMessage());
+	    }
+		if (cert == null) {
+			throw new VerificationError(keyAlias + " is not in this key store");
+		}
+		PublicKey key = cert.getPublicKey();
+		return verifySignature(signed, toVerify, algorithm, key);
+    }
+
+	private boolean verifySignature(String signed, byte[] toVerify,
+			String algorithm, PublicKey key) throws VerificationError {
+		Signature signature;
         try {
             signature = Signature.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new VerificationError(e.getMessage());
         }
-        String keyAlias = getKeyAlias(issuer);
-        if (StringUtils.isBlank(keyAlias)) {
-            throw new VerificationError("Unknown identity issuer: " + issuer);
-        }
-
-        if (algorithm.endsWith("withRSA")) {
-            try {
-                Certificate cert = ks.getCertificate(keyAlias);
-                PublicKey key = cert.getPublicKey();
-                signature.initVerify(key);
-            } catch (InvalidKeyException e) {
-                throw new VerificationError("Key is invalid. " + e.getMessage());
-            } catch (KeyStoreException e) {
-                throw new VerificationError("Could not retrieve key. " + e.getMessage());
-            }
-        } else {
-            throw new VerificationError("Unsupported signing algorithm: " + algorithm);
+        
+        try {       
+            signature.initVerify(key);
+        } catch (InvalidKeyException e) {
+            throw new VerificationError("Key is invalid. " + e.getMessage());
         }
 
         try {
             signature.update(signed.getBytes());
         } catch (SignatureException e) {
-            throw new VerificationError(e.getMessage());
+            throw new VerificationError("Error creating signature: " + e.getMessage());
         }
 
         try {
             return signature.verify(toVerify);
         } catch (SignatureException e) {
-            throw new VerificationError(e.getMessage());
+            throw new VerificationError("Error during verification: " + e.getMessage());
         }
-    }
+	}
 
     /**
      * The result of a successful verification.

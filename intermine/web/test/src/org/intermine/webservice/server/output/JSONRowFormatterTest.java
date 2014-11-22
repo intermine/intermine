@@ -42,6 +42,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
+import org.intermine.web.logic.config.WebConfig;
 
 /**
  * @author Alexis Kalderimis
@@ -150,16 +152,16 @@ public class JSONRowFormatterTest extends TestCase {
         iterator = getIterator(pq);
         processor = new JSONRowResultProcessor(dummyAPI);
 
-
-        Properties webProperties = new Properties();
+        Properties props = new Properties();
+        WebConfig wc = new WebConfig();
         try {
-            webProperties.load(this.getClass().getClassLoader()
+            props.load(this.getClass().getClassLoader()
                     .getResourceAsStream("web.properties"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(dummyAPI, webProperties, null);
+        InterMineContext.initilise(dummyAPI, props, wc, new ClassResourceOpener(getClass()));
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {

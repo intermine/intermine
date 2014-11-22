@@ -284,7 +284,7 @@ public class InitialiserPlugin implements PlugIn
         }
         SessionMethods.setInterMineAPI(servletContext, im);
 
-        InterMineContext.initilise(im, webProperties, webConfig);
+        InterMineContext.initilise(im, webProperties, webConfig, new ResourceFinder(servletContext));
         return im;
     }
 
