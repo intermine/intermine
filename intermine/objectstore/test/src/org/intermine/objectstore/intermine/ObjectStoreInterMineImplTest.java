@@ -22,11 +22,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Test;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.CEO;
@@ -42,7 +44,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreQueriesTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
@@ -283,7 +284,11 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         indexes.add(qc1);
         indexes.add(f1);
         indexes.add(f2);
-        String tableName = String.valueOf(((ObjectStoreInterMineImpl) os).precompute(q, indexes, "test").get(0));
+
+        ObjectStoreInterMineImpl objectStoreInterMineImpl = ((ObjectStoreInterMineImpl) os);
+        List<String> precomputes = objectStoreInterMineImpl.precompute(q, indexes, "test");
+        String tableName = String.valueOf(precomputes.get(0));
+
         Connection con = null;
         Map indexMap = new HashMap();
         try {
