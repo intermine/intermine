@@ -11,18 +11,16 @@ package org.intermine.webservice.server;
  */
 
 import java.security.InvalidKeyException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.cert.Certificate;
-import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.web.security.KeySourceException;
+import org.intermine.web.security.PublicKeySource;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,7 +37,7 @@ public class JWTVerifier
 	private static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
 	private static final String WHITELIST = "jwt.alias.whitelist";
     private final Properties options;
-    private final KeyStore keyStore;
+    private final PublicKeySource publicKeys;
 	private final String strategy;
 
     /**
@@ -47,11 +45,11 @@ public class JWTVerifier
      * @param keyStore All our trusted keys.
      * @param options Configurable options.
      */
-    public JWTVerifier(KeyStore keyStore, Properties options) {
-        this.keyStore = keyStore;
+    public JWTVerifier(PublicKeySource publicKeys, Properties options) {
+        this.publicKeys = publicKeys;
         this.options = options;
-        if (keyStore == null) {
-        	throw new NullPointerException("keyStore must not be null");
+        if (publicKeys == null) {
+        	throw new NullPointerException("publicKeys must not be null");
         }
         if (options == null) {
         	throw new NullPointerException("options must not be null");
@@ -159,23 +157,27 @@ public class JWTVerifier
         if (!algorithm.endsWith("withRSA")) {
         	throw new VerificationError("Unsupported signing algorithm: " + algorithm);
         }
-        
-        if ("NAMED_ALIAS".equals(strategy)) {
-        	return verifyNamedAlias(signed, toVerify, issuer, algorithm);
-        } else if ("ANY".equals(strategy)) {
-        	return verifyAnyAlias(signed, toVerify, algorithm);
-        } else if ("WHITELIST".equals(strategy)) {
-        	return verifyWhitelistedAliases(signed, toVerify, algorithm);
-        } else {
-        	throw new VerificationError("Unknown verification strategy: " + strategy);
+        try {
+	        if ("NAMED_ALIAS".equals(strategy)) {
+	        	return verifyNamedAlias(signed, toVerify, issuer, algorithm);
+	        } else if ("ANY".equals(strategy)) {
+	        	return verifyAnyAlias(signed, toVerify, algorithm);
+	        } else if ("WHITELIST".equals(strategy)) {
+	        	return verifyWhitelistedAliases(signed, toVerify, algorithm);
+	        } else {
+	        	throw new VerificationError("Unknown verification strategy: " + strategy);
+	        }
+        } catch (KeySourceException e) {
+        	throw new VerificationError("Could not retrieve public key");
         }
         
     }
 
 	private boolean verifyWhitelistedAliases(String signed, byte[] toVerify, String algorithm)
-		throws VerificationError {
-		for (String alias: options.getProperty(WHITELIST, "").split(",")) {
-			if (verifySignature(alias, algorithm, signed, toVerify)) {
+		throws VerificationError, KeySourceException {
+		String[] names = options.getProperty(WHITELIST, "").split(",");
+		for (PublicKey key: publicKeys.getSome(names)) {
+			if (verifySignature(key, algorithm, signed, toVerify)) {
 				return true;
 			}
 		}
@@ -183,44 +185,26 @@ public class JWTVerifier
 	}
 
 	private boolean verifyAnyAlias(String signed, byte[] toVerify, String algorithm)
-		throws VerificationError {
-		try {
-			for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
-				if (verifySignature(aliases.nextElement(), algorithm, signed, toVerify)) {
-					return true;
-				}
+		throws VerificationError, KeySourceException {
+		for (PublicKey key: publicKeys.getAll()) {
+			if (verifySignature(key, algorithm, signed, toVerify)) {
+				return true;
 			}
-			return false;
-		} catch (KeyStoreException e) {
-			throw new VerificationError("Could not read key store: " + e.getMessage());
 		}
+		return false;
 	}
 
 	private boolean verifyNamedAlias(String signed, byte[] toVerify, String issuer, String algorithm)
-		throws VerificationError {
+		throws VerificationError, KeySourceException {
 		String keyAlias = getKeyAlias(issuer);
 		if (StringUtils.isBlank(keyAlias)) {
 		    throw new VerificationError("Unknown identity issuer: " + issuer);
 		}
-		return verifySignature(keyAlias, algorithm, signed, toVerify);
+		return verifySignature(publicKeys.get(keyAlias), algorithm, signed, toVerify);
 	}
-    
-    private boolean verifySignature(String keyAlias, String algorithm, String signed, byte[] toVerify) throws VerificationError {
-        Certificate cert;
-		try {
-			cert = keyStore.getCertificate(keyAlias);
-		} catch (KeyStoreException e) {
-	        throw new VerificationError("Could not retrieve key. " + e.getMessage());
-	    }
-		if (cert == null) {
-			throw new VerificationError(keyAlias + " is not in this key store");
-		}
-		PublicKey key = cert.getPublicKey();
-		return verifySignature(signed, toVerify, algorithm, key);
-    }
 
-	private boolean verifySignature(String signed, byte[] toVerify,
-			String algorithm, PublicKey key) throws VerificationError {
+	private boolean verifySignature(PublicKey key, String algorithm, String signed, byte[] toVerify)
+		throws VerificationError {
 		Signature signature;
         try {
             signature = Signature.getInstance(algorithm);

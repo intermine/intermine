@@ -10,9 +10,12 @@ package org.intermine.web.task;
  *
  */
 
+import java.security.KeyStore;
 import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
+import org.intermine.web.security.KeyStorePublicKeySource;
+import org.intermine.web.security.PublicKeySource;
 import org.intermine.webservice.server.JWTVerifier;
 import org.intermine.webservice.server.JWTVerifier.Verification;
 import org.intermine.webservice.server.JWTVerifier.VerificationError;
@@ -41,7 +44,9 @@ public class VerifyTokenTask extends KeyStoreTask {
     @Override
     public void execute() {
         Properties options = getOptions();
-        JWTVerifier verifier = new JWTVerifier(createKeyStore(), options);
+        KeyStore ks = createKeyStore();
+        PublicKeySource pks = new KeyStorePublicKeySource(ks);
+        JWTVerifier verifier = new JWTVerifier(pks, options);
 
         try {
             Verification result = verifier.verify(token);

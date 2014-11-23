@@ -45,6 +45,8 @@ import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.security.KeyStorePublicKeySource;
+import org.intermine.web.security.PublicKeySource;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
@@ -444,9 +446,10 @@ public abstract class WebService
 
     private JWTVerifier.Verification getIdentityFromBearerToken(final String rawString) {
         JWTVerifier verifier;
+        PublicKeySource keys;
+        
         try {
-            verifier = new JWTVerifier(InterMineContext.getKeyStore(), webProperties);
-            return verifier.verify(rawString);
+        	keys = new KeyStorePublicKeySource(InterMineContext.getKeyStore());
         } catch (KeyStoreException e) {
             throw new ServiceException("Failed to load key store.", e);
         } catch (NoSuchAlgorithmException e) {
@@ -455,6 +458,10 @@ public abstract class WebService
             throw new ServiceException("Key store incorrectly configured", e);
         } catch (IOException e) {
             throw new ServiceException("Failed to load key store.", e);
+        }
+        try {
+            verifier = new JWTVerifier(keys, webProperties);
+            return verifier.verify(rawString);
         } catch (JWTVerifier.VerificationError e) {
             throw new UnauthorizedException(e.getMessage());
         }

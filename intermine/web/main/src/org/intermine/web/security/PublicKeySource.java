@@ -11,20 +11,18 @@ package org.intermine.web.security;
  */
 
 import java.security.PublicKey;
+import java.util.Collection;
 
 /**
- * Classes that can decode public keys from strings.
+ * An object that can provide public keys by name, or all known keys, or a subset of keys.
  * @author Alex Kalderimis
  *
  */
-public interface KeyDecoder {
-	
-	/**
-	 * Decode the string and make the key.
-	 * @param input The public key, in an encoded form.
-	 * @return the decoded key.
-	 * @throws DecodingException If we cannot decode the key.
-	 */
-	PublicKey decode(String input) throws DecodingException;
+public interface PublicKeySource {
 
+	public PublicKey get(String name) throws KeySourceException;
+
+	public Collection<PublicKey> getAll() throws KeySourceException;
+
+	public Collection<PublicKey> getSome(String... names) throws KeySourceException;
 }

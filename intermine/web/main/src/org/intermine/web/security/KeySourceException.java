@@ -10,21 +10,21 @@ package org.intermine.web.security;
  *
  */
 
-import java.security.PublicKey;
-
 /**
- * Classes that can decode public keys from strings.
+ * Errors encountered when using a PublicKeySource
  * @author Alex Kalderimis
  *
  */
-public interface KeyDecoder {
-	
-	/**
-	 * Decode the string and make the key.
-	 * @param input The public key, in an encoded form.
-	 * @return the decoded key.
-	 * @throws DecodingException If we cannot decode the key.
-	 */
-	PublicKey decode(String input) throws DecodingException;
+public class KeySourceException extends Exception
+{
 
+	private static final long serialVersionUID = 1861648517209072150L;
+
+	/**
+	 * An error caused by another error
+	 * @param cause The reason we could not continue.
+	 **/
+	public KeySourceException(Throwable cause) {
+		super(cause);
+	}
 }

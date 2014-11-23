@@ -24,6 +24,8 @@ import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.web.logic.ResourceOpener;
+import org.intermine.web.security.KeyStoreBuilder;
 
 /**
  * Base task for tasks that require a key store.
@@ -73,35 +75,33 @@ public abstract class KeyStoreTask extends Task { private static final String
      * @return The key store.
      */
     protected KeyStore createKeyStore() {
-        char[] password = getOptions().getProperty(KEYSTORE).toCharArray();
-        KeyStore ks;
+        KeyStoreBuilder builder = new KeyStoreBuilder(getOptions(), getOpener());
         try {
-            ks = KeyStore.getInstance("JKS");
-        } catch (KeyStoreException e) {
-            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-        }
-        InputStream is = readKeystore();
-        try {
-            ks.load(is, password);
-        } catch (NoSuchAlgorithmException e) {
-            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-        } catch (CertificateException e) {
-            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    logError("Error closing keystore");
-                }
-            }
-        }
-        return ks;
+			return builder.buildKeyStore();
+		} catch (KeyStoreException e) {
+			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+		} catch (CertificateException e) {
+			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+		}
     }
 
-    /**
+    private ResourceOpener getOpener() {
+    	// An opener that only opens one resource - the keystore.
+		return new ResourceOpener() {
+
+			@Override
+			public InputStream openResource(String resourceName) {
+				return readKeystore();
+			}
+			
+		};
+	}
+
+	/**
      * Get the options as configured for this task
      * @return The project properties.
      */

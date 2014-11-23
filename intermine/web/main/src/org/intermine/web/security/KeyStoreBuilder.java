@@ -1,5 +1,15 @@
 package org.intermine.web.security;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -22,17 +32,54 @@ import org.apache.log4j.Logger;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.ResourceOpener;
 
-public class KeyStoreBuilder {
+/**
+ * Build a key store from some options and possibly a keystore file.
+ * 
+ * The following properties are read - all properties are optional:
+ * <ul>
+ *   <li><code>project.title</code></li>
+ *   <li><code>security.keystore.password</code></li>
+ *   <li><code>security.privatekey.alias</code></li>
+ *   <li><code>security.privatekey.password</code></li>
+ *   <li><code>security.publickey.*</code></li>
+ *   <li><code>keystore.strictpublickeydecoding</code></li>
+ * </ul>
+ * 
+ * The keystore file itself is optional.
+ * 
+ * @author Alex Kalderimis
+ *
+ */
+public class KeyStoreBuilder
+{
 
 	private static final Logger LOG = Logger.getLogger(KeyStoreBuilder.class);
-    private static final String KS_PASSWORD = "security.keystore.password";
+
+	private static final String SECURITY_PRIVATEKEY_PASSWORD = "security.privatekey.password";
+	private static final String DEFAULT_TITLE                = "InterMine";
+	private static final String PROJECT_TITLE                = "project.title";
+	private static final String SECURITY_PRIVATEKEY_ALIAS    = "security.privatekey.alias";
+    private static final String KS_PASSWORD                  = "security.keystore.password";
+    private static final String PREFIX                       = "security.publickey.";
+    private static final String STRICT_DECODING              = "keystore.strictpublickeydecoding";
     
 	private Properties options;
 	private ResourceOpener opener;
     
+	/**
+	 * Construct a new KeyStoreBuilder.
+	 * @param options The options to read. NOT NULL
+	 * @param opener Where I can get access to the key store file. NOT NULL
+	 */
     public KeyStoreBuilder(Properties options, ResourceOpener opener) {
     	this.options = options;
     	this.opener = opener;
+    	if (options == null) {
+    		throw new NullPointerException("options must not be null");
+    	}
+    	if (opener == null) {
+    		throw new NullPointerException("opener must not be null");
+    	}
     }
 
     private char[] getKeyStorePassword() {
@@ -43,6 +90,14 @@ public class KeyStoreBuilder {
         return null;
     }
 
+    /**
+     * Build the key store.
+     * @return A fully initialised and configured key store.
+     * @throws KeyStoreException
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
+     * @throws CertificateException
+     */
 	public KeyStore buildKeyStore() throws KeyStoreException, IOException,
 			NoSuchAlgorithmException, CertificateException {
 		KeyStore store = KeyStore.getInstance("JKS");
@@ -62,12 +117,11 @@ public class KeyStoreBuilder {
 		}
 		Map<String, PublicKey> publicKeys = getConfiguredPublicKeys();
 		if (!publicKeys.isEmpty()) {
-			
-			String dn = options.getProperty("project.title");
+			String dn = "CN=" + options.getProperty(PROJECT_TITLE, DEFAULT_TITLE);
 			int oneYear = 365;
-			String alias = options.getProperty("security.privatekey.alias");
+			String alias = options.getProperty(SECURITY_PRIVATEKEY_ALIAS);
 			PrivateKey signingKey = getOrGeneratePrivateKey(store, alias);
-			KeySigner signer = new KeySigner(signingKey, dn, oneYear, "SHA256withRSA");
+			KeySigner signer = new KeySigner(signingKey, dn, oneYear, KeySigner.DEFAULT_ALGORITHM);
 
 		    for (Entry<String, PublicKey> pair: publicKeys.entrySet()) {
 		    	try {
@@ -83,7 +137,7 @@ public class KeyStoreBuilder {
 	private PrivateKey getOrGeneratePrivateKey(KeyStore store, String alias) throws KeyStoreException, NoSuchAlgorithmException {
 		PrivateKey signingKey = null;
 		if (alias != null && store.containsAlias(alias)) {
-			String password = options.getProperty("security.privatekey.password");
+			String password = options.getProperty(SECURITY_PRIVATEKEY_PASSWORD);
 			try {
 				signingKey = (PrivateKey) store.getKey(alias,
 						(password != null) ? password.toCharArray() : null);
@@ -103,10 +157,10 @@ public class KeyStoreBuilder {
 	}
 
 	private Map<String, PublicKey> getConfiguredPublicKeys() {
-		String prefix = "security.publickey.";
-		Properties ps = PropertiesUtil.getPropertiesStartingWith(prefix, options);
-		ps = PropertiesUtil.stripStart(prefix, ps);
+		Properties ps = PropertiesUtil.getPropertiesStartingWith(PREFIX, options);
+		ps = PropertiesUtil.stripStart(PREFIX, ps);
 		KeyDecoder decoder = new Base64PublicKeyDecoder();
+		boolean skipBadKeys = !"true".equalsIgnoreCase(options.getProperty(STRICT_DECODING));
 		Map<String, PublicKey> retVal = new HashMap<String, PublicKey>();
 		for (Enumeration<?> names = ps.propertyNames(); names.hasMoreElements();) {
 			String name = (String) names.nextElement();
@@ -114,8 +168,13 @@ public class KeyStoreBuilder {
 				PublicKey key = decoder.decode(ps.getProperty(name));
 				retVal.put(name, key);
 			} catch (DecodingException e) {
-				LOG.error("Could not decode key for " + name);
-				continue;
+				String msg = "Could not decode key for " + name;
+				if (skipBadKeys) {
+					LOG.error(msg);
+					continue;
+				} else {
+					throw new RuntimeException(msg, e);
+				}
 			}
 		}
 		return retVal;
