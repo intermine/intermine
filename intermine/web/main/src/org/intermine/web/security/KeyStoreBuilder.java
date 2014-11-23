@@ -55,12 +55,12 @@ public class KeyStoreBuilder
 
 	private static final Logger LOG = Logger.getLogger(KeyStoreBuilder.class);
 
-	private static final String SECURITY_PRIVATEKEY_PASSWORD = "security.privatekey.password";
 	private static final String DEFAULT_TITLE                = "InterMine";
 	private static final String PROJECT_TITLE                = "project.title";
 	private static final String SECURITY_PRIVATEKEY_ALIAS    = "security.privatekey.alias";
+	private static final String SECURITY_PRIVATEKEY_PASSWORD = "security.privatekey.password";
     private static final String KS_PASSWORD                  = "security.keystore.password";
-    private static final String PREFIX                       = "security.publickey.";
+    private static final String PREFIX                       = "security.publickey";
     private static final String STRICT_DECODING              = "keystore.strictpublickeydecoding";
     
 	private Properties options;
@@ -117,6 +117,7 @@ public class KeyStoreBuilder
 		}
 		Map<String, PublicKey> publicKeys = getConfiguredPublicKeys();
 		if (!publicKeys.isEmpty()) {
+			LOG.info("Found " + publicKeys.size() + " encoded keys");
 			String dn = "CN=" + options.getProperty(PROJECT_TITLE, DEFAULT_TITLE);
 			int oneYear = 365;
 			String alias = options.getProperty(SECURITY_PRIVATEKEY_ALIAS);
@@ -157,13 +158,13 @@ public class KeyStoreBuilder
 	}
 
 	private Map<String, PublicKey> getConfiguredPublicKeys() {
-		Properties ps = PropertiesUtil.getPropertiesStartingWith(PREFIX, options);
-		ps = PropertiesUtil.stripStart(PREFIX, ps);
+		Properties ps = PropertiesUtil.stripStart(PREFIX, options);
 		KeyDecoder decoder = new Base64PublicKeyDecoder();
 		boolean skipBadKeys = !"true".equalsIgnoreCase(options.getProperty(STRICT_DECODING));
 		Map<String, PublicKey> retVal = new HashMap<String, PublicKey>();
 		for (Enumeration<?> names = ps.propertyNames(); names.hasMoreElements();) {
 			String name = (String) names.nextElement();
+			LOG.info("found encoded key called " + name);
 			try {
 				PublicKey key = decoder.decode(ps.getProperty(name));
 				retVal.put(name, key);
@@ -177,6 +178,7 @@ public class KeyStoreBuilder
 				}
 			}
 		}
+		
 		return retVal;
 
 	}
