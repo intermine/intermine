@@ -3,12 +3,15 @@ import time
 from test.querybuildertestcase import QueryBuilderTestCase
 
 from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.support.ui import WebDriverWait
 
 class QueryHistoryTest(QueryBuilderTestCase):
 
     def test_query_history(self):
         self.load_queries_into_history()
-        time.sleep(3)
+        wait = WebDriverWait(self.browser, 15)
+        wait.until(lambda d: 'query' in d.title.lower())
+
         self.assertIn('Custom query', self.browser.title)
         self.assertEquals(2, len(self.elems('#modifyQueryForm tbody tr')))
         self.assertEquals('query_2', self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(2)').text)
@@ -55,7 +58,10 @@ class QueryHistoryTest(QueryBuilderTestCase):
         self.load_queries_into_history()
 
         self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(2)').click()
-        time.sleep(3)
+
+        wait = WebDriverWait(self.browser, 15)
+        wait.until(lambda d: 'query' in d.title.lower())
+
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)
         # Edit a constraint.
