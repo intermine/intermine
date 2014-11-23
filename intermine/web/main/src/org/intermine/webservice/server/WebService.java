@@ -477,10 +477,36 @@ public abstract class WebService
     }
 
     /**
-     * If user name and password is specified in request, then it setups user
-     * profile in session. User was authenticated. It uses HTTP basic access
-     * authentication.
+     * This method is responsible for setting the Permission for the current
+     * request. It can be derived in a number of ways:
+     * 
+     * <ul>
+     *   <li>
+     *     <h4>Basic Authentication</h3>
+     *     Standard username and password stuff - best avoided.
+     *   </li>
+     *   <li>
+     *     <h4>Token authentication</h4>
+     *     User passes back an opaque token which has no meaning outside of this
+     *     application. Recommended. The token can be either passed as the value of the
+     *     <code>token</code> query parameter, or provided in the
+     *     <code>Authorization</code> header with the string <code>"Token "</code>
+     *     preceding it, i.e.:
+     *     <code>Authorization: Token somelongtokenstring</code>
+     *   </li>
+     *   <li>
+     *     <h4>JWT bearer tokens</h4>
+     *     The user passes back a bearer token issued by someone we trust (could
+     *     include ourselves). This requires the configuration of a keystore
+     *     {@see KeyStoreBuilder}. Provides delegated authentication capabilities.
+     *     Overkill for most users. The token must be provided in the <code>Authorization</code>
+     *     header, preceded by the string <code>"Bearer "</code>, e.g.:
+     *     <code>Authorization: Bearer yourjwttokenhere</code>  
+     *   </li>
+     * </ul>
+     * 
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
+     * {@link "http://jwt.io/"}
      */
     private void authenticate() {
 
