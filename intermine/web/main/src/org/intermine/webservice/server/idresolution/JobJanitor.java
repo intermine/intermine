@@ -32,7 +32,7 @@ public class JobJanitor implements Runnable
     public void run() {
         IDResolver idresolver = IDResolver.getInstance();
         while (canContinue) {
-            Iterator<Job> jobs = idresolver.JOBS.values().iterator();
+            Iterator<Job> jobs = idresolver.getJobs().values().iterator();
             Date cutOff = DateUtils.addHours(new Date(), -3);
             while (jobs.hasNext()) {
                 if (Thread.interrupted()) {
@@ -42,7 +42,7 @@ public class JobJanitor implements Runnable
                 switch (job.getStatus()) {
                     case ERROR:
                     case SUCCESS:
-                        Date startedAt = job.getStatedAt();
+                        Date startedAt = job.getStartedAt();
                         if (startedAt != null && startedAt.before(cutOff)) {
                             jobs.remove();
                         }

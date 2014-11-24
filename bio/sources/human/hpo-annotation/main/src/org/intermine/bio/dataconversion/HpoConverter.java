@@ -27,12 +27,11 @@ import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -42,8 +41,6 @@ import org.intermine.xml.full.Item;
  */
 public class HpoConverter extends BioDirectoryConverter
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(HpoConverter.class);
 
     private static final String DATASET_TITLE = "HPO Annotation";
     private static final String DATA_SOURCE_NAME = "HPO";
@@ -84,6 +81,7 @@ public class HpoConverter extends BioDirectoryConverter
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
+     * @throws Exception if something goes wrong
      */
     public HpoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
@@ -113,7 +111,7 @@ public class HpoConverter extends BioDirectoryConverter
         parseAnnotation();
     }
 
-    private Map<String, File> readFilesInDir(File dir) {
+    private static Map<String, File> readFilesInDir(File dir) {
         Map<String, File> files = new HashMap<String, File>();
         for (File file : dir.listFiles()) {
             files.put(file.getName(), file);
@@ -121,6 +119,11 @@ public class HpoConverter extends BioDirectoryConverter
         return files;
     }
 
+    /**
+     * @param reader file reader
+     * @throws IOException if can't read file
+     * @throws ObjectStoreException if can't store to db
+     */
     protected void processGeneFile(Reader reader) throws IOException, ObjectStoreException {
         Iterator<?> lineIter = FormattedTextParser.
                 parseTabDelimitedReader(new BufferedReader(reader));
@@ -212,8 +215,8 @@ public class HpoConverter extends BioDirectoryConverter
         }
     }
 
-    private void storeGene(Map<String, Set<String>> geneToDiseaseMap) throws ObjectStoreException {
-        for (Entry<String, Set<String>> e : geneToDiseaseMap.entrySet()) {
+    private void storeGene(Map<String, Set<String>> geneDisease) throws ObjectStoreException {
+        for (Entry<String, Set<String>> e : geneDisease.entrySet()) {
             Item gene = createItem("Gene");
             gene.setAttribute("symbol", e.getKey());
             gene.setReference("organism", organism);
@@ -228,6 +231,11 @@ public class HpoConverter extends BioDirectoryConverter
         }
     }
 
+    /**
+     * @param reader file reader
+     * @throws IOException if can't read file
+     * @throws ObjectStoreException if can't store to db
+     */
     protected void processAnnoFile(Reader reader) throws IOException, ObjectStoreException {
         BufferedReader br = new BufferedReader(reader);
         String line = null;
@@ -280,6 +288,9 @@ public class HpoConverter extends BioDirectoryConverter
         }
     }
 
+    /**
+     * @throws ObjectStoreException if can't store to db
+     */
     protected void parseAnnotation() throws ObjectStoreException {
         for (MultiKey mKey : annoMap.keySet()) {
 
@@ -293,25 +304,25 @@ public class HpoConverter extends BioDirectoryConverter
 //            }
 //            annoItem.setReference("disease", diseaseMap.get((String)mKey.getKey(0)));
 
-            if (diseaseToHpoAnnoItemMap.get((String)mKey.getKey(0)) == null) {
+            if (diseaseToHpoAnnoItemMap.get(mKey.getKey(0)) == null) {
                 Set<String> annoItemSet = new HashSet<String>();
                 annoItemSet.add(annoItem.getIdentifier());
-                diseaseToHpoAnnoItemMap.put((String)mKey.getKey(0), annoItemSet);
+                diseaseToHpoAnnoItemMap.put((String) mKey.getKey(0), annoItemSet);
             } else {
-                diseaseToHpoAnnoItemMap.get((String)mKey.getKey(0)).add(annoItem.getIdentifier());
+                diseaseToHpoAnnoItemMap.get(mKey.getKey(0)).add(annoItem.getIdentifier());
             }
 
-            if (hpoTermMap.get((String)mKey.getKey(1)) == null) {
+            if (hpoTermMap.get(mKey.getKey(1)) == null) {
                 Item item = createItem("HPOTerm");
-                item.setAttribute("identifier", (String)mKey.getKey(1));
+                item.setAttribute("identifier", (String) mKey.getKey(1));
                 item.setReference("ontology", ontologyItemId);
-                hpoTermMap.put((String)mKey.getKey(1), item);
+                hpoTermMap.put((String) mKey.getKey(1), item);
             }
-            annoItem.setReference("hpoTerm", hpoTermMap.get((String)mKey.getKey(1)));
-            hpoTermMap.get((String)mKey.getKey(1)).setReference("hpoAnnotation", annoItem);
+            annoItem.setReference("hpoTerm", hpoTermMap.get(mKey.getKey(1)));
+            hpoTermMap.get(mKey.getKey(1)).setReference("hpoAnnotation", annoItem);
 
-            if (!((String)mKey.getKey(2)).isEmpty()) {
-                annoItem.setAttribute("qualifier", (String)mKey.getKey(2));
+            if (!((String) mKey.getKey(2)).isEmpty()) {
+                annoItem.setAttribute("qualifier", (String) mKey.getKey(2));
             }
 
             List<String> eviIdList = new ArrayList<String>();

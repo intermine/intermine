@@ -33,7 +33,7 @@ import org.intermine.xml.full.Item;
  * TFs have three data fields: symbol, primaryId, level.
  * miRNAs have three data fields: symbol, full names, position.
  *
- * @author
+ * @author Sergio
  *
  * TODO: merge with the fly one
  */
@@ -249,7 +249,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
                                 regulation.setReference("target", geneItems.get(targetGenePid));
                                 store(regulation);
-                            }else if (miRNAMap.containsKey(targetIdentifier)) {
+                            } else if (miRNAMap.containsKey(targetIdentifier)) {
                                 // Create regulation for both genes
                                 Item regulation = createRegulation(INTERACTION_TYPE_TF_MIRNA);
 
@@ -315,11 +315,11 @@ public class WormNetworkConverter extends BioDirectoryConverter
                                     miRNAMap.get(targetIdentifier)[1];
                                 String targetGenePid = createGene(null, targetIdentifier);
 
-                                // Create networkProperty for target gene
-                                Item targetNetworkPropertyVpos = addNetworkProperty(TOPOS_VPOS,
-                                        targetVpos, targetGenePid);
-                                Item targetNetworkPropertyHpos = addNetworkProperty(TOPOS_HPOS,
-                                        targetHpos, targetGenePid);
+//                                // Create networkProperty for target gene
+//                                Item targetNetworkPropertyVpos = addNetworkProperty(TOPOS_VPOS,
+//                                        targetVpos, targetGenePid);
+//                                Item targetNetworkPropertyHpos = addNetworkProperty(TOPOS_HPOS,
+//                                        targetHpos, targetGenePid);
 
                                 regulation.setReference("source", geneItems.get(sourceGenePid));
                                 regulation.setReference("target", geneItems.get(targetGenePid));
@@ -347,7 +347,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
      * @throws ObjectStoreException
      */
     private Item addNetworkProperty(String type, String value, String genePid)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         // Create networkProperties for source gene
         Item sourceNetworkProperty =
             createNetworkProperty(type, value);

@@ -37,7 +37,6 @@ import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
@@ -446,6 +445,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
         Object expected = results.get(type);
+
         if (expected instanceof Failure) {
             try {
                 SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
@@ -902,53 +902,6 @@ public class SqlGeneratorTest extends SetupDataTestCase
         }
     }
 
-    public void testContainsConstraintNullCollection1N() throws Exception{
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Department.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NULL);
-        q1.setConstraint(c);
-        String sql = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
-        String other = sql;
-        assertEquals("SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id)) ORDER BY a1_.id", sql);
-        //org.intermine.sql.query.Query sqlQ = new org.intermine.sql.query.Query(sql);
-    }
-
-    public void testContainsConstraintNullCollectionMN() throws Exception{
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Company.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NULL);
-        q1.setConstraint(c);
-        String sql = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
-        String other = sql;
-        assertEquals("SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id)) ORDER BY a1_.id", sql);
-        //org.intermine.sql.query.Query sqlQ = new org.intermine.sql.query.Query(sql);
-    }
-
-    public void testContainsConstraintNotNullCollection1N() throws Exception{
-        Query q1 = new Query();
-        QueryClass qc = new QueryClass(Department.class);
-        q1.addFrom(qc);
-        q1.addToSelect(qc);
-        QueryField qf = new QueryField(qc, "name");
-        ConstraintSet cons = new ConstraintSet(ConstraintOp.AND);
-        SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue("d1"));
-        ContainsConstraint c = new ContainsConstraint(
-                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NOT_NULL);
-        cons.addConstraint(sc);
-        cons.addConstraint(c);
-        q1.setConstraint(cons);
-        String sql = SqlGenerator.generate(q1, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
-        String other = sql;
-        assertEquals("SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE a1_.name = 'd1' AND EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id) ORDER BY a1_.id", sql);
-        //org.intermine.sql.query.Query sqlQ = new org.intermine.sql.query.Query(sql);
-    }
-
     private void assertArrayEquals(boolean arg1[], boolean arg2[]) {
         String s1 = "(" + arg1[0] + ", " + arg1[1] + ")";
         String s2 = "(" + arg2[0] + ", " + arg2[1] + ")";
@@ -956,9 +909,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        //return new DatabaseSchema(model, Collections.EMPTY_LIST, true, Collections.EMPTY_SET, 1, false);
-        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest")).getSchema();
+        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest")).getSchema();
+        schema.hasBioSeg = true;
+        return schema;
     }
+
     public String getRegisterOffset1() {
         return "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";
     }

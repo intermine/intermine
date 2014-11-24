@@ -1,15 +1,28 @@
 package org.intermine.webservice.client.widget;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.webservice.client.core.ServiceFactory;
-
+/**
+ * A representation of a list analysis widget, containing the metadata necessary
+ * to describe its usage and to choose how and whether to display its results.
+ * @author Alex Kalderimis
+ *
+ */
 public class Widget
 {
-    private final ServiceFactory factory;
     private final String name;
     private final String title;
     private final String description;
@@ -24,7 +37,6 @@ public class Widget
      *
      * Intended for use by the widget parser.
      *
-     * @param factory the main service object for this web service.
      * @param name The Name of this widget.
      * @param title The title of this widget.
      * @param description the description of this widget.
@@ -36,12 +48,10 @@ public class Widget
      * @param yLabel The label for the Y-Axis if a chart widget.
      */
     public Widget(
-            ServiceFactory factory,
             String name, String title, String description,
             String widgetType, String chartType,
             Collection<String> targets, Collection<String> filters,
             String xLabel, String yLabel) {
-        this.factory = factory;
         this.name = name;
         this.title = title;
         this.description = description;
@@ -55,46 +65,61 @@ public class Widget
         this.yLabel = yLabel;
     }
 
+    /** @return the name of the widget **/
     public String getName() {
         return name;
     }
 
+    /** @return the human readable descriptive title of the widget **/
     public String getTitle() {
         return title;
     }
 
+    /** @return the longer description of this widget, if any **/
     public String getDescription() {
         return description;
     }
 
+    /** @return the type of widget this object describes (eg. 'enrichment', 'chart'). **/
     public String getWidgetType() {
         return widgetType;
     }
 
+    /** @return whether or not this is an enrichment widget **/
     public boolean isEnrichment() {
         return "enrichment".equals(widgetType);
     }
 
+    /** @return whether or not this is a chart widget **/
     public boolean isChart() {
         return "chart".equals(widgetType);
     }
 
+    /**
+     * @return the type of chart widget this object represents. Only makes sense for chart widgets.
+     */
     public String getChartType() {
         return chartType;
     }
 
+    /**
+     * @return The names of classes this widget can analyse.
+     */
     public Set<String> getTargets() {
         return targets;
     }
 
+    /** @return the valid values of the 'filter' property. **/
     public Set<String> getFilters() {
         return filters;
     }
 
+    /** @return the label for the domain (X) axis. Only makes sense for chart widgets. **/
     public String getXAxisLabel() {
         return xLabel;
     }
 
+    /** @return the label for the range (Y) axis. Only makes sense for chart widgets. **/
     public String getYAxisLabel() {
         return yLabel;
     }

@@ -19,8 +19,11 @@ import org.intermine.objectstore.ObjectStore;
  *
  * @author Daniela Butano
  */
-public class TrackManagerBinding
+public final class TrackManagerBinding
 {
+    private TrackManagerBinding() {
+        // don't
+    }
 
     /**
      * Convert all tracks to XML and write XML to given writer.

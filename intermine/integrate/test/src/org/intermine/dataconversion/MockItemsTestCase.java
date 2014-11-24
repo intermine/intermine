@@ -57,7 +57,7 @@ public abstract class MockItemsTestCase extends TestCase
      * @param b
      * @throws Exception
      */
-    public static void assertEquals(Set a, Set b) throws Exception
+    public static void assertEquals(Set<Item> a, Set<Item> b) throws Exception
     {
         Set<MockItem> mockA = createMockItems(a);
         Set<MockItem> mockB = createMockItems(b);
@@ -69,9 +69,9 @@ public abstract class MockItemsTestCase extends TestCase
 
     // use identifiers to map relationships, then throw identifier away
     private static Set<MockItem> createMockItems(Set<Item> a) {
-        Set<MockItem> items = new LinkedHashSet();
-        Map<String, MockItem> identifiers = new HashMap();
-        Iterator iter = a.iterator();
+        Set<MockItem> items = new LinkedHashSet<MockItem>();
+        Map<String, MockItem> identifiers = new HashMap<String, MockItem>();
+        Iterator<Item> iter = a.iterator();
 
         // map identifier - mockItem
         while (iter.hasNext()) {
@@ -83,11 +83,11 @@ public abstract class MockItemsTestCase extends TestCase
         }
 
         // replace identifier with referenced item
-        Iterator iterator = a.iterator();
+        Iterator<Item> iterator = a.iterator();
         while (iterator.hasNext()) {
             Item item = (Item) iterator.next();
             MockItem mockItem = identifiers.get(item.getIdentifier());
-            Iterator it = item.getReferences().iterator();
+            Iterator<?> it = item.getReferences().iterator();
             while (it.hasNext()) {
                 Reference reference = (Reference) it.next();
                 MockItem referencedItem = identifiers.get(reference.getRefId());
@@ -97,7 +97,7 @@ public abstract class MockItemsTestCase extends TestCase
             it = item.getCollections().iterator();
             while (it.hasNext()) {
                 ReferenceList collection = (ReferenceList) it.next();
-                List<MockItem> collectedItems = new ArrayList();
+                List<MockItem> collectedItems = new ArrayList<MockItem>();
                 List<String> refIds = collection.getRefIds();
                 for (String refId : refIds) {
                     collectedItems.add(identifiers.get(refId));
@@ -109,7 +109,7 @@ public abstract class MockItemsTestCase extends TestCase
         return items;
     }
 
-    private static String compareItemSets(Set a, Set b) {
+    private static String compareItemSets(Set<MockItem> a, Set<MockItem> b) {
 
         // now have compatible collections of items, compare them
         StringBuffer message = new StringBuffer();
@@ -167,12 +167,12 @@ public abstract class MockItemsTestCase extends TestCase
      * @param b a set of Items
      * @return the set of Items in a but not in b
      */
-    public static Set diffItemSets(Set a, Set b) {
-        Set diff = new HashSet(a);
-        Iterator i = a.iterator();
+    public static Set<MockItem> diffItemSets(Set<MockItem> a, Set<MockItem> b) {
+        Set<MockItem> diff = new HashSet<MockItem>(a);
+        Iterator<MockItem> i = a.iterator();
         while (i.hasNext()) {
             MockItem itemA = (MockItem) i.next();
-            Iterator j = b.iterator();
+            Iterator<MockItem> j = b.iterator();
             while (j.hasNext()) {
                 MockItem itemB = (MockItem) j.next();
                 if (itemA.equals(itemB)) {
@@ -193,9 +193,9 @@ public abstract class MockItemsTestCase extends TestCase
     public static String countItemClasses(Collection<MockItem> items) {
         Map<String, List> counts = new TreeMap<String, List>();
         for(MockItem item : items) {
-            List clsItems = counts.get(item.getClassName());
+            List<String> clsItems = counts.get(item.getClassName());
             if (clsItems == null) {
-                clsItems = new ArrayList();
+                clsItems = new ArrayList<String>();
                 counts.put(item.getClassName(), clsItems);
             }
             clsItems.add(item.getIdentifier());

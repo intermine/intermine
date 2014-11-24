@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.jbrowse;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.HashMap;
 
 import org.intermine.api.bag.BagQueryRunner;
@@ -10,7 +20,16 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
-public class Queries {
+/**
+ *
+ * @author Alex
+ *
+ */
+public final class Queries
+{
+    private Queries() {
+        // don't
+    }
 
     /**
      * For making queries that will not require LOOKUP constraints.
@@ -38,11 +57,20 @@ public class Queries {
         return q;
     }
 
-    public static Object resolveValue(FastPathObject o, String path) {
+    /**
+     *
+     * @param fpo fastpath object
+     * @param path path
+     * @return object
+     */
+    public static Object resolveValue(FastPathObject fpo, String path) {
+        FastPathObject o = fpo;
         String[] parts = path.split("\\.");
         Object res = null;
         for (int i = 0; i < parts.length; i++) {
-            if (o == null) return res;
+            if (o == null) {
+                return res;
+            }
             try {
                 res = o.getFieldValue(parts[i]);
             } catch (IllegalAccessException e) {

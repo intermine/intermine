@@ -10,20 +10,13 @@ package org.intermine.util;
  *
  */
 
-import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import net.sf.cglib.proxy.Factory;
 
@@ -86,7 +79,7 @@ public final class DynamicUtil
                         + clazz.getName());
             }
             Class<? extends FastPathObject> fpclazz = (Class<? extends FastPathObject>) clazz;
-            if (fpclazz != null) {
+            if (clazz != null && fpclazz != null) {
                 interfaces.removeAll(Arrays.asList(clazz.getInterfaces()));
             }
             if (interfaces.isEmpty()) {

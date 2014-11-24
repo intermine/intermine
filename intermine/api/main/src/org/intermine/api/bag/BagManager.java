@@ -42,6 +42,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.ObjectStoreBagsForObject;
 import org.intermine.objectstore.query.Query;
@@ -201,10 +202,9 @@ public class BagManager
      */
     public List<Tag> getTagsForBag(InterMineBag bag, Profile profile) {
         // Add on the public tag, if this bag is tagged with it.
-        Set<Tag> tags = new HashSet<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
-            TagTypes.BAG, null));
-        tags.addAll(tagManager.getObjectTags(bag, profile));
-        return new ArrayList<Tag>(tags);
+        //Set<Tag> tags = new HashSet<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
+        //    TagTypes.BAG, null));
+        return new ArrayList<Tag>(tagManager.getObjectTags(bag, profile));
     }
 
     /**
@@ -386,10 +386,11 @@ public class BagManager
 
         allBags.putAll(getGlobalBags());
         if (profile != null) {
-            Map<String, InterMineBag> savedBags = profile.getSavedBags();
-            allBags.putAll(savedBags);
             Map<String, InterMineBag> sharedBags = sharedBagManager.getSharedBags(profile);
             allBags.putAll(sharedBags);
+            // A user's own lists take precedence over everything else.
+            Map<String, InterMineBag> savedBags = profile.getSavedBags();
+            allBags.putAll(savedBags);
         }
 
         return allBags;
@@ -610,7 +611,8 @@ public class BagManager
         return bagsContainingId;
     }
 
-    private Map<Integer, InterMineBag> getOsBagIdToInterMineBag(Collection<InterMineBag> imBags) {
+    private static Map<Integer, InterMineBag> getOsBagIdToInterMineBag(
+            Collection<InterMineBag> imBags) {
         Map<Integer, InterMineBag> osBagIdToInterMineBag = new HashMap<Integer, InterMineBag>();
 
         for (InterMineBag imBag : imBags) {
@@ -619,7 +621,7 @@ public class BagManager
         return osBagIdToInterMineBag;
     }
 
-    private Collection<ObjectStoreBag> getObjectStoreBags(Collection<InterMineBag> imBags) {
+    private static Collection<ObjectStoreBag> getObjectStoreBags(Collection<InterMineBag> imBags) {
         Set<ObjectStoreBag> objectStoreBags = new HashSet<ObjectStoreBag>();
         for (InterMineBag imBag : imBags) {
             objectStoreBags.add(imBag.getOsb());
@@ -683,5 +685,12 @@ public class BagManager
         }
     }
 
-
+    /**
+     * Close the TagManager
+     *
+     * @throws ObjectStoreException in exceptional circumstances
+     */
+    public void close() throws ObjectStoreException {
+        tagManager.close();
+    }
 }

@@ -38,7 +38,7 @@ public class FriendlyMineManagerTest extends InterMineAPITestCase
 
     public void testGetMine() throws Exception {
         assertEquals(null, linkManager.getMine("MonkeyMine"));
-        Mine modMine = linkManager.getMine("modMine");
+        Mine modMine = linkManager.getMine("modmine");
         assertEquals("modMine", modMine.getName());
         assertEquals("modminelogo.png", modMine.getLogo());
         assertEquals("#396A81", modMine.getBgcolor());

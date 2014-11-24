@@ -13,10 +13,9 @@ package org.intermine.metadata;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,9 +26,11 @@ import org.intermine.model.testmodel.SimpleObject;
 
 public class ModelTest extends TestCase
 {
-    private static final Set EMPTY_SET = Collections.EMPTY_SET;
     protected static final String ENDL = System.getProperty("line.separator");
     protected static final String INDENT = ENDL + "\t";
+    private Collection<ClassDescriptor> noClasses = Collections.emptySet();
+    private ClassDescriptorFactory cdMaker = new ClassDescriptorFactory("org.intermine.model.testmodel");
+
     public ModelTest(String arg) {
         super(arg);
     }
@@ -128,11 +129,10 @@ public class ModelTest extends TestCase
         assertEquals(expectedCdNames, resultCdNames);
     }
 
-    public void testGetClassDescriptorByName() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Arrays.asList(new ClassDescriptor[] {cld1, cld2}));
-        Model model = new Model("model", "package.name", clds);
+    public void testGetClassDescriptorByName() throws MetaDataException {
+        ClassDescriptor cld1 = cdMaker.makeClass("Class1");
+        ClassDescriptor cld2 = cdMaker.makeClass("Class2");
+        Model model = new Model("model", cdMaker.getPackageName(), Arrays.asList(cld1, cld2));
 
         assertEquals(cld1, model.getClassDescriptorByName("Class1"));
         assertEquals(cld2, model.getClassDescriptorByName("Class2"));
@@ -149,18 +149,17 @@ public class ModelTest extends TestCase
     }
 
     public void testGetClassDescriptorByWrongName() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Arrays.asList(new ClassDescriptor[] {cld1, cld2}));
-        Model model = new Model("model", "package.name", clds);
+        ClassDescriptor cld1 = cdMaker.makeClass("Class1");
+        ClassDescriptor cld2 = cdMaker.makeClass("Class2");
+        Model model = new Model("model", cdMaker.getPackageName(), Arrays.asList(cld1, cld2));
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));
     }
 
     public void testGetClassDescriptorsForClass() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        Set cds = model.getClassDescriptorsForClass(org.intermine.model.testmodel.CEO.class);
-        Set expectedCdNames = new HashSet();
+        Set<ClassDescriptor> cds = model.getClassDescriptorsForClass(org.intermine.model.testmodel.CEO.class);
+        Set<String> expectedCdNames = new HashSet<String>();
         expectedCdNames.add("org.intermine.model.testmodel.ImportantPerson");
         expectedCdNames.add("org.intermine.model.testmodel.Employable");
         expectedCdNames.add("org.intermine.model.testmodel.HasAddress");
@@ -170,18 +169,19 @@ public class ModelTest extends TestCase
         expectedCdNames.add("org.intermine.model.InterMineObject");
         expectedCdNames.add("org.intermine.model.testmodel.HasSecretarys");
         expectedCdNames.add("org.intermine.model.testmodel.Manager");
-        Set cdNames = new HashSet();
-        for (Iterator iter = cds.iterator(); iter.hasNext(); ) {
-            cdNames.add(((ClassDescriptor) iter.next()).getName());
+        Set<String> cdNames = new HashSet<String>();
+        for (ClassDescriptor cd: cds) {
+            cdNames.add(cd.getName());
         }
         assertEquals(expectedCdNames, cdNames);
     }
 
     public void testEquals() throws Exception {
-        Model m1 = new Model("flibble", "package.name", EMPTY_SET);
-        Model m2 = new Model("flibble", "package.name", EMPTY_SET);
-        Model m3 = new Model("flobble", "package.name", EMPTY_SET);
-        Model m4 = new Model("flibble", "package.name", Collections.singleton(new ClassDescriptor("package.name.Class1", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET)));
+        String packageName = cdMaker.getPackageName();
+        Model m1 = new Model("flibble", packageName, noClasses);
+        Model m2 = new Model("flibble", packageName, noClasses);
+        Model m3 = new Model("flobble", packageName, noClasses);
+        Model m4 = new Model("flibble", packageName, Collections.singleton(cdMaker.makeClass("Class1")));
 
         assertEquals(m1, m2);
         assertEquals(m1.hashCode(), m2.hashCode());
@@ -191,12 +191,12 @@ public class ModelTest extends TestCase
     }
 
     public void testToString() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new LinkedHashSet(Arrays.asList(new Object[] {cld1, cld2}));
-        Model model = new Model("model", "package.name", clds);
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor cld1 = cdMaker.makeClass("Class1");
+        ClassDescriptor cld2 = cdMaker.makeClass("Class2");
+        Model model = new Model("model", packageName, Arrays.asList(cld1, cld2));
 
-        String expected = "<model name=\"model\" package=\"package.name\">" + ENDL
+        String expected = "<model name=\"model\" package=\"" + packageName + "\">" + ENDL
             + "<class name=\"Class1\" is-interface=\"false\"></class>" + ENDL
             + "<class name=\"Class2\" is-interface=\"false\"></class>" + ENDL
             + "</model>";
@@ -206,29 +206,58 @@ public class ModelTest extends TestCase
 
     // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
     // MidClass < SubClass and BaseClass < MidClass
-    public void testRemoveRedundantClasses() throws Exception {
-        String baseName = "org.intermine.model.testmodel.BaseClass";
-        String subName = "org.intermine.model.testmodel.SubClass";
-        String midName = "org.intermine.model.testmodel.MidClass";
-        ClassDescriptor base = new ClassDescriptor(baseName, null, true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor sub = new ClassDescriptor(subName, "org.intermine.model.testmodel.BaseClass org.intermine.model.testmodel.MidClass", true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor mid = new ClassDescriptor(midName, baseName, true, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new HashSet(Arrays.asList(new Object[] {base, mid, sub}));
-        Model model = new Model("model", "org.intermine.model.testmodel", clds);
+    public void testRemoveRedundantInterfaces() throws MetaDataException {
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor base = cdMaker.makeInterface("BaseClass");
+        ClassDescriptor sub = cdMaker.makeInterface("SubClass", "BaseClass", "MidClass");
+        ClassDescriptor mid = cdMaker.makeInterface("MidClass", "BaseClass");
+        Model model = new Model("model", packageName, Arrays.asList(base, sub, mid));
 
-        ClassDescriptor subCD = model.getClassDescriptorByName(subName);
+        ClassDescriptor subCD = model.getClassDescriptorByName("SubClass");
 
         assertEquals(1, subCD.getSuperclassNames().size());
-        assertEquals(midName, subCD.getSuperclassNames().iterator().next());
+        assertEquals(packageName + ".MidClass", subCD.getSuperclassNames().iterator().next());
+
+    }
+ 
+    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
+    // MidClass < SubClass and BaseClass < MidClass
+    public void testRemoveRedundantClasses() throws MetaDataException {
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor base = cdMaker.makeClass("BaseClass");
+        ClassDescriptor sub = cdMaker.makeClass("SubClass", "BaseClass", "MidClass");
+        ClassDescriptor mid = cdMaker.makeClass("MidClass", "BaseClass");
+        Model model = new Model("model", packageName, Arrays.asList(base, sub, mid));
+
+        ClassDescriptor subCD = model.getClassDescriptorByName("SubClass");
+
+        assertEquals(1, subCD.getSuperclassNames().size());
+        assertEquals(packageName + ".MidClass", subCD.getSuperclassNames().iterator().next());
 
     }
 
-    public void testCircularDependencyFail() throws Exception {
-        ClassDescriptor c1 = new ClassDescriptor("org.intermine.model.testmodel.Class1", "org.intermine.model.testmodel.Class2", true, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor c2 = new ClassDescriptor("org.intermine.model.testmodel.Class2", "org.intermine.model.testmodel.Class1", true, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new HashSet(Arrays.asList(new Object[] {c1, c2}));
+    // test that we end up with BaseClass < MidClass < SubClass from BaseClass < SubClass,
+    // MidClass < SubClass and BaseClass < MidClass
+    public void testRemoveRedundantMixed() throws MetaDataException {
+        String packageName = cdMaker.getPackageName();
+        ClassDescriptor base = cdMaker.makeInterface("BaseClass");
+        ClassDescriptor sub = cdMaker.makeClass("SubClass", "BaseClass", "MidClass");
+        ClassDescriptor mid = cdMaker.makeInterface("MidClass", "BaseClass");
+        Model model = new Model("model", packageName, Arrays.asList(base, sub, mid));
+
+        ClassDescriptor subCD = model.getClassDescriptorByName("SubClass");
+
+        assertEquals(1, subCD.getSuperclassNames().size());
+        assertEquals(packageName + ".MidClass", subCD.getSuperclassNames().iterator().next());
+
+    }
+
+    public void testCircularDependencyFail() {
+        ClassDescriptor c1 = cdMaker.makeInterface("Class1", "Class2");
+        ClassDescriptor c2 = cdMaker.makeInterface("Class2", "Class1");
+
         try {
-            Model model = new Model("model", "org.intermine.model.testmodel", clds);
+            new Model("model", "org.intermine.model.testmodel", Arrays.asList(c1, c2));
             fail("expected exception");
         } catch (MetaDataException e) {
             // expected
@@ -239,7 +268,9 @@ public class ModelTest extends TestCase
         Model model = Model.getInstanceByName("testmodel");
         ClassDescriptor cld = model.getClassDescriptorByName("SimpleObject");
         assertEquals(2, cld.getAllFieldDescriptors().size());
-        assertEquals(new HashSet(Arrays.asList("employee", "name")), model.getFieldDescriptorsForClass(SimpleObject.class).keySet());
+        assertEquals(
+                new HashSet<String>(Arrays.asList("employee", "name")),
+                model.getFieldDescriptorsForClass(SimpleObject.class).keySet());
     }
 
     public void testGetQualifiedTypeName() throws Exception {
@@ -406,36 +437,24 @@ public class ModelTest extends TestCase
      */
     private Model getSmallModel() throws MetaDataException {
         Set<ClassDescriptor> smallModelClds = new HashSet<ClassDescriptor>();
-        ClassDescriptor a = new ClassDescriptor("A", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(a);
-        ClassDescriptor b = new ClassDescriptor("B", "A", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(b);
-        ClassDescriptor c = new ClassDescriptor("C", "B", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(c);
-        ClassDescriptor d = new ClassDescriptor("D", "C", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(d);
-        ClassDescriptor e = new ClassDescriptor("E", "B", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(e);
-        ClassDescriptor f = new ClassDescriptor("F", "G E", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(f);
-        ClassDescriptor g = new ClassDescriptor("G", "A", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        smallModelClds.add(g);
+        ClassDescriptorFactory fac = new ClassDescriptorFactory();
+        smallModelClds.add(fac.makeInterface("A"));
+        smallModelClds.add(fac.makeInterface("B", "A"));
+        smallModelClds.add(fac.makeInterface("C", "B"));
+        smallModelClds.add(fac.makeInterface("D", "C"));
+        smallModelClds.add(fac.makeInterface("E", "B"));
+        smallModelClds.add(fac.makeInterface("F", "G", "E"));
+        smallModelClds.add(fac.makeInterface("G", "A"));
 
-        Model smallModel = new Model("small", "", smallModelClds);
-        return smallModel;
+        return new Model("small", "", smallModelClds);
     }
 
     private Model getSimpleObjectModel() throws MetaDataException {
-        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
-        ClassDescriptor a = new ClassDescriptor("A", null, true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        clds.add(a);
-        ClassDescriptor b = new ClassDescriptor("B", "A", true, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        clds.add(b);
-        ClassDescriptor s = new ClassDescriptor("Simple", "java.lang.Object", false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
-        clds.add(s);
-
-        Model simpleObjectModel = new Model("simple", "", clds);
-        return simpleObjectModel;
+        ClassDescriptorFactory fac = new ClassDescriptorFactory();
+        return new Model("simple", "", Arrays.asList(
+                fac.makeInterface("A"),
+                fac.makeInterface("B", "A"),
+                fac.makeClass("Simple", "java.lang.Object")));
     }
 
 }

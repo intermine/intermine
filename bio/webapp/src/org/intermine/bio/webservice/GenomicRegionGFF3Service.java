@@ -35,7 +35,11 @@ public class GenomicRegionGFF3Service extends AbstractRegionExportService
     public GenomicRegionGFF3Service(InterMineAPI im) {
         super(im);
     }
-    
+
+    /**
+     * @param pq pathquery
+     * @return the exporter
+     */
     protected GFF3Exporter getExporter(PathQuery pq) {
         String sourceName = webProperties.getProperty("project.title");
         Set<Integer> organisms = null;

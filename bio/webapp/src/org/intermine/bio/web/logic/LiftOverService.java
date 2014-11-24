@@ -14,7 +14,6 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +23,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * Communication between intermine and liftover server in a way as
@@ -48,24 +45,24 @@ public class LiftOverService
         ORGANISM_COMMON_NAME_MAP = Collections.unmodifiableMap(tempMap);
     }
 
-    private static final Map<String, String> HUMAN_GENOME_BUILD_MAP;
-    static {
-        Map<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("GRCh37", "hg19");
-        tempMap.put("NCBI36", "hg18");
-        tempMap.put("NCBI35", "hg17");
-        tempMap.put("NCBI34", "hg16");
-        HUMAN_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
-    }
-
-    private static final Map<String, String> MOUSE_GENOME_BUILD_MAP;
-    static {
-        Map<String, String> tempMap = new HashMap<String, String>();
-        tempMap.put("GRCm38", "mm10");
-        tempMap.put("NCBIM37", "mm9");
-        tempMap.put("NCBIM36", "mm8");
-        MOUSE_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
-    }
+//    private static final Map<String, String> HUMAN_GENOME_BUILD_MAP;
+//    static {
+//        Map<String, String> tempMap = new HashMap<String, String>();
+//        tempMap.put("GRCh37", "hg19");
+//        tempMap.put("NCBI36", "hg18");
+//        tempMap.put("NCBI35", "hg17");
+//        tempMap.put("NCBI34", "hg16");
+//        HUMAN_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
+//    }
+//
+//    private static final Map<String, String> MOUSE_GENOME_BUILD_MAP;
+//    static {
+//        Map<String, String> tempMap = new HashMap<String, String>();
+//        tempMap.put("GRCm38", "mm10");
+//        tempMap.put("NCBIM37", "mm9");
+//        tempMap.put("NCBIM36", "mm8");
+//        MOUSE_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
+//    }
 
     /**
      * Send a HTTP POST request to liftOver service.

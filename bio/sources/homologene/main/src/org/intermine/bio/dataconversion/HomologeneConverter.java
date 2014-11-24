@@ -67,7 +67,7 @@ public class HomologeneConverter extends BioFileConverter
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
-    public HomologeneConverter(ItemWriter writer, Model model) throws ObjectStoreException {
+    public HomologeneConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
     }
@@ -96,6 +96,7 @@ public class HomologeneConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         /*
             homologene.data is a tab delimited file containing the following
@@ -108,7 +109,7 @@ public class HomologeneConverter extends BioFileConverter
             5) Protein gi
             6) Protein accession
         */
-    	setUpResolver();
+        setUpResolver();
         String previousGroup = null;
 
         Set<GeneRecord> genes = new HashSet<GeneRecord>();
@@ -160,7 +161,7 @@ public class HomologeneConverter extends BioFileConverter
             rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
     }
-    
+
     private void readConfig() {
         try {
             props.load(getClass().getClassLoader().getResourceAsStream(
@@ -185,7 +186,7 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private void processHomologues(Set<GeneRecord> genes)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Set<GeneRecord> notProcessed = new HashSet<GeneRecord>(genes);
         for (GeneRecord gene : genes) {
             notProcessed.remove(gene);
@@ -199,12 +200,12 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private void createHomologue(String gene1, String taxonId1, String gene2, String taxonId2)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.addToCollection("evidence", getEvidence());
-        homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
+        homologue.setAttribute("type", taxonId1.equals(taxonId2) ? PARALOGUE : ORTHOLOGUE);
         store(homologue);
     }
 
@@ -231,10 +232,10 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private String getGene(String ncbiId, String symbol, String taxonId)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (identifierType == null) {
-        	identifierType = DEFAULT_IDENTIFIER_TYPE;
+            identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
         String resolvedIdentifier = resolveGene(taxonId, ncbiId, symbol);
         if (resolvedIdentifier == null) {
@@ -280,10 +281,10 @@ public class HomologeneConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String ncbi, String identifier) {
-    	if (taxonId.equals("9606")) {
-    		// use entrez-gene identifier for human
-    		return ncbi;
-    	}
+        if ("9606".equals(taxonId)) {
+            // use entrez-gene identifier for human
+            return ncbi;
+        }
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;
@@ -298,9 +299,18 @@ public class HomologeneConverter extends BioFileConverter
         return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 
-    protected class GeneRecord {
+    /**
+     * represents a gene record in the data files
+     * @author Julie
+     */
+    protected class GeneRecord
+    {
         protected String geneRefId;
         protected String taxonId;
+        /**
+         * @param geneRefId the reference number of the gene
+         * @param taxonId taxon ID
+         */
         public GeneRecord(String geneRefId, String taxonId) {
             this.geneRefId = geneRefId;
             this.taxonId = taxonId;

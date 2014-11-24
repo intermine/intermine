@@ -34,6 +34,7 @@ public class SynchronisedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized boolean hasNext() {
         return iterator.hasNext();
     }
@@ -41,6 +42,7 @@ public class SynchronisedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized E next() {
         return iterator.next();
     }
@@ -48,6 +50,7 @@ public class SynchronisedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void remove() {
         iterator.remove();
     }

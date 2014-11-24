@@ -19,20 +19,37 @@ import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
 
-public abstract class CommandRunner {
+/**
+ *
+ * @author Alex
+ *
+ */
+public abstract class CommandRunner
+{
 
     private InterMineAPI api;
 
     private Set<MapListener<String, Object>> listeners = new HashSet<MapListener<String, Object>>();
 
+    /**
+     * @param api InterMine API
+     */
     public CommandRunner(InterMineAPI api) {
         this.api = api;
     }
 
+    /**
+     * @return api InterMine API
+     */
     protected InterMineAPI getAPI() {
         return api;
     }
 
+    /**
+     * @param className class name
+     * @param im InterMine API
+     * @return command runner
+     */
     public static CommandRunner getRunner(String className, InterMineAPI im) {
         CommandRunner runner;
         try {
@@ -58,71 +75,105 @@ public abstract class CommandRunner {
         return runner;
     }
 
+    /**
+     * @param command command
+     * @return action
+     */
     public String getIntro(Command command) {
         switch (command.getAction()) {
-        case STATS:
-        case DENSITIES:
-            return null;
-        case REFERENCE:
-        case FEATURES:
-            return "\"features\":[";
-        default:
-            throw new IllegalArgumentException("Unknown action: " + command.getAction());
+            case STATS:
+            case DENSITIES:
+                return null;
+            case REFERENCE:
+            case FEATURES:
+                return "\"features\":[";
+            default:
+                throw new IllegalArgumentException("Unknown action: " + command.getAction());
         }
     }
 
+    /**
+     * @param command command
+     * @return action
+     */
     public String getOutro(Command command) {
         switch (command.getAction()) {
-        case STATS:
-        case DENSITIES:
-            return null;
-        case REFERENCE:
-        case FEATURES:
-            return "]";
-        default:
-            throw new IllegalArgumentException("Unknown action: " + command.getAction());
+            case STATS:
+            case DENSITIES:
+                return null;
+            case REFERENCE:
+            case FEATURES:
+                return "]";
+            default:
+                throw new IllegalArgumentException("Unknown action: " + command.getAction());
         }
     }
 
+    /**
+     * @param command command
+     */
     public void run(Command command) {
         switch (command.getAction()) {
-        case STATS:
-            stats(command);
-            break;
-        case REFERENCE:
-            reference(command);
-            break;
-        case FEATURES:
-            features(command);
-            break;
-        case DENSITIES:
-            densities(command);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown action: " + command.getAction());
+            case STATS:
+                stats(command);
+                break;
+            case REFERENCE:
+                reference(command);
+                break;
+            case FEATURES:
+                features(command);
+                break;
+            case DENSITIES:
+                densities(command);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown action: " + command.getAction());
         }
     }
 
+    /**
+     * @param command command
+     */
     public abstract void stats(Command command);
 
+    /**
+     * @param command command
+     */
     public abstract void reference(Command command);
 
+    /**
+     * @param command command
+     */
     public abstract void features(Command command);
 
+    /**
+     * @param command command
+     */
     public abstract void densities(Command command);
 
+    /**
+     * @param datum data
+     * @param hasMore true if has more
+     */
     protected void onData(Map<String, Object> datum, boolean hasMore) {
         for (MapListener<String, Object> listener: listeners) {
             listener.add(datum, hasMore);
         }
     }
 
+    /**
+     * @param datum data
+     * @param hasMore true if has more
+     */
     protected void onData(Entry<String, Object> datum, boolean hasMore) {
         for (MapListener<String, Object> listener: listeners) {
             listener.add(datum, hasMore);
         }
     }
 
+    /**
+     * @param listener listener
+     */
     public void addListener(MapListener<String, Object> listener) {
         listeners.add(listener);
     }

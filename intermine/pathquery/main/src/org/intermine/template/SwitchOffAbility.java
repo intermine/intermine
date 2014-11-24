@@ -16,4 +16,17 @@ package org.intermine.template;
  *
  * @author Matthew Wakeling
  */
-public enum SwitchOffAbility { ON, OFF, LOCKED }
+public enum SwitchOffAbility {
+    /**
+     * the template constraint is active
+     */
+    ON,
+    /**
+     * template constraint is not active
+     */
+    OFF,
+    /**
+     * template constraint can't be edited by the user
+     */
+    LOCKED
+}

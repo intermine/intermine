@@ -139,8 +139,8 @@ public class GFF3ParserTest extends TestCase
     }
 
     public void testToGFF3() throws Exception {
-        String original="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013%3A2;Parent=CG32013-RA\n"
-            + "4\t.\texon\t22335\t22528\t1000.0\t-\t1\tID=CG32013%3A2;Parent=CG32013-RA\n";
+        String original="4\t.\texon\t22335\t22528\t.\t-\t.\tID=CG32013:2;Parent=CG32013-RA\n"
+            + "4\t.\texon\t22335\t22528\t1000.0\t-\t1\tID=CG320132;Parent=CG32013-RA\n";
         StringBuffer sb = new StringBuffer();
         Iterator iter = GFF3Parser.parse(new BufferedReader(new StringReader(original)));
         while (iter.hasNext()) {

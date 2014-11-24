@@ -49,6 +49,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
     private String endl          = System.getProperty("line.separator");
 
+    /**
+     * @return error message
+     */
     protected String getInvalidQuery() {
         StringBuffer message = new StringBuffer()
             .append("# Invalid query.").append(endl)
@@ -80,7 +83,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             + "#     sudo easy_install intermine" + endl
             + "#" + endl
             + "# For further documentation you can visit:" + endl
-            + "#     http://www.intermine.org/wiki/PythonClient" + endl + endl
+            + "#     http://intermine.readthedocs.org/en/latest/web-services/" + endl + endl
             + "# The following two lines will be needed in every python script:" + endl
             + "from intermine.webservice import Service" + endl;
         return boilerplate;
@@ -88,8 +91,8 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
     private static final String OUTER_JOINS_TITLE = "Outer Joins";
     private static final String[] OUTER_JOINS_EXPLANATION = new String[] {
-            "(display properties of these relations if they exist,",
-            "but also show objects without these relationships)"};
+        "(display properties of these relations if they exist,",
+        "but also show objects without these relationships)"};
     private static final String UNHANDLED_CONSTRAINT =
             "It contains a constraint type that can only be used internally";
 
@@ -119,9 +122,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
         StringBuffer sb = new StringBuffer(getBoilerPlate());
 
-        sb.append("service = Service(\"")
-          .append(info.getServiceBaseURL())
-          .append("/service\"");
+        sb.append("service = Service(\"").append(info.getServiceBaseURL()).append("/service\"");
 
         if (!info.isPublic()) {
             sb.append(", token = \"YOUR-API-KEY\"");
@@ -169,7 +170,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         return sb.toString();
     }
 
-    private String decapitate(String longPath) {
+    private static String decapitate(String longPath) {
         return longPath.substring(longPath.indexOf(".") + 1);
     }
 
@@ -299,7 +300,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
     }
 
 
-    private List<String> generateOuterJoinSection(
+    private static List<String> generateOuterJoinSection(
             Map<String, OuterJoinStatus> outerJoinStatus) {
         List<String> lines = new LinkedList<String>();
         for (Entry<String, OuterJoinStatus> entry : outerJoinStatus.entrySet()) {
@@ -370,7 +371,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
         return null;
     }
 
-    private void listFormatUtil(StringBuffer sb, Collection<String> coll) {
+    private static void listFormatUtil(StringBuffer sb, Collection<String> coll) {
         Iterator<String> it = coll.iterator();
         while (it.hasNext()) {
             sb.append("\"" + it.next() + "\"");
@@ -485,7 +486,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
      *            operation code
      * @return a line of source code
      */
-    private String templateConstraintUtil(PathConstraint pc, String opCode)
+    private static String templateConstraintUtil(PathConstraint pc, String opCode)
         throws UnhandledFeatureException {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String op = pc.getOp().toString();

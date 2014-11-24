@@ -85,7 +85,7 @@ public class EnsemblGwasDbPostprocess extends PostProcessor
             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
             InterMineObject gwas = (InterMineObject) rr.get(0);
             InterMineObject pub = (InterMineObject) rr.get(1);
-            
+
             InterMineObject tempGwas;
             try {
                 tempGwas = PostProcessUtil.cloneInterMineObject(gwas);
@@ -97,7 +97,7 @@ public class EnsemblGwasDbPostprocess extends PostProcessor
                 if (!StringUtils.isBlank(pubTitle)) {
                     tempGwas.setFieldValue("name", pubTitle);
                 }
-                
+
                 String pubAuthor = (String) pub.getFieldValue("firstAuthor");
                 if (!StringUtils.isBlank(pubAuthor)) {
                     tempGwas.setFieldValue("firstAuthor", pubAuthor);
@@ -105,7 +105,7 @@ public class EnsemblGwasDbPostprocess extends PostProcessor
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-            
+
             osw.store(tempGwas);
             count++;
         }

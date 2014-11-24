@@ -73,18 +73,16 @@ public class ModelMergerTask extends Task
      */
     @Override
     public void execute() {
-    	InterMineModelParser parser = new InterMineModelParser();
-    	Model mergedModel;
-    	try {
-    		mergedModel = ModelFileMerger.mergeModelFromFiles(inputModelFile, additionsFiles, parser);
-    	} catch (MetaDataException e) {
-    		throw new BuildException("Failed to parse model from input files", e);
-    	}
-        
+        InterMineModelParser parser = new InterMineModelParser();
+
         try {
+            Model merged =
+                    ModelFileMerger.mergeModelFromFiles(inputModelFile, additionsFiles, parser);
             FileWriter writer = new FileWriter(outputModelFile);
-            writer.write(mergedModel.toString());
+            writer.write(merged.toString());
             writer.close();
+        } catch (MetaDataException e) {
+            throw new BuildException("Failed to parse model from input files", e);
         } catch (IOException e) {
             throw new BuildException("failed to write model file: " + outputModelFile, e);
         }

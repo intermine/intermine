@@ -103,7 +103,10 @@ public final class PathQueryResultHelper
             if (fieldConfig.getShowInResults()) {
                 try {
                     Path path = new Path(model, prefix + "." + relPath);
-                    if (path.isOnlyAttribute()) {
+                    // use type (e.g. Protein) not prefix (e.g. Gene.proteins) to do
+                    // attribute check
+                    Path checkIsOnlyAttribute = new Path(model, type + "." + relPath);
+                    if (checkIsOnlyAttribute.isOnlyAttribute()) {
                         view.add(path.getNoConstraintsString());
                     }
                 } catch (PathException e) {
@@ -247,9 +250,13 @@ public final class PathQueryResultHelper
      * @param field the name of the field for the collection in the InterMineObject
      * @return a PathQuery
      */
-    public static PathQuery makePathQueryForCollection(WebConfig webConfig, ObjectStore os,
+    public static PathQuery makePathQueryForCollection(
+            WebConfig webConfig,
+            ObjectStore os,
             InterMineObject object,
-            String referencedClassName, String field) {
+            String referencedClassName,
+            String field) {
+
         String className = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
                 .getClass()));
         Path path;
@@ -261,7 +268,11 @@ public final class PathQueryResultHelper
         }
         List<Class<?>> types = new ArrayList<Class<?>>();
         if (path.endIsCollection()) {
-            types = queryForTypesInCollection(object, field, os);
+            CollectionDescriptor end = (CollectionDescriptor) path.getEndFieldDescriptor();
+            // Only look for types if the refClass exactly matches the path type.
+            if (end.getReferencedClassName().equals(referencedClassName)) {
+                types = queryForTypesInCollection(object, field, os);
+            }
             if (types.isEmpty()) {
                 // the collection was empty, but still generate a query with the collection type
                 types.add(os.getModel().getClassDescriptorByName(referencedClassName).getType());

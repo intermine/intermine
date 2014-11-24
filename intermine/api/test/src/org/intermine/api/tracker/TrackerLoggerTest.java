@@ -15,7 +15,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+import junit.framework.TestCase;
 
 import org.intermine.api.tracker.track.LoginTrack;
 import org.intermine.api.tracker.track.Track;
@@ -23,12 +26,10 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 
-import junit.framework.TestCase;
-
 public class TrackerLoggerTest extends TestCase {
     ObjectStoreWriter uosw;
     Connection con;
-    Queue<Track> trackQueue;
+    BlockingQueue<Track> trackQueue;
     TrackerLogger trackerLogger = null;
     private int count = 100;
 
@@ -38,7 +39,7 @@ public class TrackerLoggerTest extends TestCase {
         if (uosw instanceof ObjectStoreWriterInterMineImpl) {
             con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
         }
-        trackQueue = new LinkedList<Track>();
+        trackQueue = new ArrayBlockingQueue<Track>(count);
         //create the table if doesn't exist
         LoginTracker.getInstance(con, trackQueue);
     }
@@ -47,6 +48,8 @@ public class TrackerLoggerTest extends TestCase {
         super.tearDown();
         removeTracks();
         ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
+        con.close();
+        uosw.close();
     }
 
     public void testRun() throws SQLException, InterruptedException {

@@ -13,8 +13,6 @@ package org.intermine.metadata;
 import java.io.Reader;
 import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 
 /**
  * Common interface for parsing source models into InterMine model format.
@@ -28,16 +26,18 @@ public interface ModelParser
      * Read source model information and construct a InterMine Model object.
      * @param reader the source model to parse
      * @return the InterMine Model created
-     * @throws Exception if Model not created successfully
+     * @throws ModelParserException if Model not created successfully
      */
     Model process(Reader reader) throws ModelParserException;
 
     /**
      * Read source information and construct a list of InterMine ClassDescriptors
-     * @param fileReader
-     * @param packageName
-     * @return
+     * @param fileReader The object to read data from.
+     * @param packageName The name of the package to load classes into.
+     *
+     * @throws ModelParserException if Model not created successfully
+     * @return the class descriptors constructed from their serialised form.
      */
-	Set<ClassDescriptor> generateClassDescriptors(Reader fileReader,
-			String packageName) throws ModelParserException;
+    Set<ClassDescriptor> generateClassDescriptors(Reader fileReader, String packageName)
+        throws ModelParserException;
 }

@@ -46,7 +46,8 @@ public final class ClassKeyHelper
         extends HashMap<String, List<FieldDescriptor>>
         implements ClassKeys
     {
-    };
+        // don't instantiate
+    }
 
     /**
      * Read class keys from a properties into a map from classname to set of

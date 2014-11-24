@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +44,9 @@ public class RequestImpl implements Request
 
     private ContentType contentType;
 
-    private Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+    // Linked map because we need reliable parameter order for pretty URLs (self-documenting
+    // code) and sane tests.
+    private final Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
 
     private final Map<String, String> headers = new HashMap<String, String>();
 
@@ -160,7 +163,8 @@ public class RequestImpl implements Request
     public void setUrl(String url) {
         try {
             this.serviceUrl = URLParser.parseServiceUrl(url);
-            this.parameters = URLParser.parseParameterMap(url);
+            parameters.clear();
+            this.parameters.putAll(URLParser.parseParameterMap(url));
         } catch (MalformedURLException e) {
             throw new ServiceException("Invalid url: " + url, e);
         }
@@ -240,7 +244,7 @@ public class RequestImpl implements Request
      */
     @Override
     public Map<String, List<String>> getParameterMap() {
-        Map<String, List<String>> params = new HashMap<String, List<String>>(parameters);
+        Map<String, List<String>> params = new LinkedHashMap<String, List<String>>(parameters);
         if (authToken != null) {
             params.put("token", Collections.singletonList(authToken));
         }
@@ -258,7 +262,7 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}
+     * get URL
      */
     private String getUrl(boolean encode) {
         StringBuilder sb = new StringBuilder();
@@ -281,7 +285,7 @@ public class RequestImpl implements Request
         return sb.toString();
     }
 
-    private String format(String str, boolean encode) {
+    private static String format(String str, boolean encode) {
         if (encode) {
             try {
                 return URLEncoder.encode(str, "UTF-8");
@@ -338,6 +342,7 @@ public class RequestImpl implements Request
      * Specify what section of the result set you wish to retrieve.
      * @param page the subsection of the result set you want.
      */
+    @Override
     public void setPage(Page page) {
         setStart(page.getStart());
         if (page.getSize() != null) {

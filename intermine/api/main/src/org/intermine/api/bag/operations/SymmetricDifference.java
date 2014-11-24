@@ -19,8 +19,20 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 
-public class SymmetricDifference extends BagOperation {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class SymmetricDifference extends BagOperation
+{
 
+    /**
+     *
+     * @param model data model
+     * @param profile userprofile
+     * @param bags lists to diff
+     */
     public SymmetricDifference(Model model, Profile profile, Collection<InterMineBag> bags) {
         super(model, profile, bags);
     }

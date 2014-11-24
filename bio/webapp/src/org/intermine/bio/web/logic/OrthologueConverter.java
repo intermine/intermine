@@ -71,7 +71,7 @@ public class OrthologueConverter extends BagConverter
      * @param bagList list of intermine object IDs
      * @param organismName name of homologue's organism
      * @return list of intermine IDs
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException if can't store to database
      */
     public List<Integer> getConvertedObjectIds(Profile profile, String bagType,
             List<Integer> bagList, String organismName) throws ObjectStoreException {
@@ -92,7 +92,8 @@ public class OrthologueConverter extends BagConverter
      * {@inheritDoc}
      * @throws ObjectStoreException if the query cannot be run.
      */
-    public Map<String, String> getCounts(Profile profile, InterMineBag bag) throws ObjectStoreException {
+    public Map<String, String> getCounts(Profile profile, InterMineBag bag)
+        throws ObjectStoreException {
         PathQuery pathQuery = constructPathQuery(null);
         pathQuery.addConstraint(Constraints.inIds("Gene", bag.getContentsAsIds()));
         pathQuery.addView("Gene.homologues.homologue.organism.shortName");

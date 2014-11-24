@@ -45,7 +45,7 @@ public class DatabaseSchema
     private Set<String> missingTables;
     private boolean fetchFromInterMineObject;
     private int version;
-    private boolean hasBioSeg;
+    protected boolean hasBioSeg; // protected so we can set in test
 
     private Set<ClassDescriptor> truncatedSet;
     private Map<ClassDescriptor, Fields> tableMasterToFieldDescriptors

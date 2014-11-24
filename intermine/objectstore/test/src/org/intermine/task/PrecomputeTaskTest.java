@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -122,7 +123,14 @@ public class PrecomputeTaskTest extends QueryTestCase
         for (int i = 0; i < expectedQueries.length; i++) {
             expected.add(expectedQueries[i]);
             Query q = new IqlQuery(expectedQueries[i], null).toQuery();
-            String generatedSql = SqlGenerator.generate(q, ((ObjectStoreInterMineImpl) os).getSchema(), ((ObjectStoreInterMineImpl) os).getDatabase(), null, 4, Collections.EMPTY_MAP);
+            ObjectStoreInterMineImpl osi = (ObjectStoreInterMineImpl) os;
+            String generatedSql = SqlGenerator.generate(
+                    q,
+                    osi.getSchema(),
+                    osi.getDatabase(),
+                    null,
+                    SqlGenerator.QUERY_FOR_PRECOMP,
+                    new HashMap<Object, String>());
             assertEquals(expectedSql[i], generatedSql);
         }
 
@@ -134,9 +142,8 @@ public class PrecomputeTaskTest extends QueryTestCase
     }
 
     public void testConstructQueries() throws Exception {
-        PrecomputeTask pt = new PrecomputeTask();
-        List actual = pt.constructQueries(true, os, "Employee department Department", "flibble");
-
+        List<Query> actual = PrecomputeTask.constructQueries(
+                true, os, "Employee department Department", "flibble");
 
         QueryClass qcEmpl = new QueryClass(Employee.class);
         QueryClass qcDept = new QueryClass(Department.class);
@@ -164,15 +171,15 @@ public class PrecomputeTaskTest extends QueryTestCase
         q2.addToOrderBy(qcEmpl);
 
         // List of queries in both possible orders
-        List expected = new ArrayList(Arrays.asList(new Query[] {q2, q1}));
+        List<Query> expected = Arrays.asList(q2, q1);
 
         compareQueryLists(expected, actual);
     }
 
-    protected void compareQueryLists(List a, List b) {
+    protected void compareQueryLists(List<Query> a, List<Query> b) {
         assertEquals(a.size(), b.size());
         for (int i = 0; i< a.size(); i++) {
-            assertEquals((Query) a.get(i), (Query) b.get(i));
+            assertEquals(a.get(i), b.get(i));
         }
     }
 }

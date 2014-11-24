@@ -114,7 +114,8 @@ public class StoreMetadataTask extends Task
                 MetadataManager.store(db, MetadataManager.MISSING_TABLES, missingTablesString);
             }
             MetadataManager.store(db, MetadataManager.NO_NOTXML, "" + noNotXml);
-            MetadataManager.store(db, MetadataManager.SERIAL_NUMBER, Long.toString(new Random().nextLong()));
+            MetadataManager.store(db, MetadataManager.SERIAL_NUMBER, Long.toString(
+                    new Random().nextLong()));
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;

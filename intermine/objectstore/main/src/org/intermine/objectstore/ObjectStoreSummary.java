@@ -104,21 +104,7 @@ public class ObjectStoreSummary
         LOG.info("Collecting class counts...");
         for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
             nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
-
-            if (!classCountsMap.containsKey(cld.getName())) {
-                int classCount = countClass(os, cld.getType());
-                LOG.info("Adding class count: " + cld.getUnqualifiedName() + " = " + classCount);
-                classCountsMap.put(cld.getName(), new Integer(classCount));
-
-                // if this class is empty all subclasses MUST be empty as well
-                if (classCount == 0) {
-                    for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                        if (!classCountsMap.containsKey(subCld.getName())) {
-                            classCountsMap.put(subCld.getName(), new Integer(classCount));
-                        }
-                    }
-                }
-            }
+            countAndStore(os, model, cld);
         }
 
         // fieldValues - find all attributes with few unique values for populating dropdowns,
@@ -256,6 +242,25 @@ public class ObjectStoreSummary
                                 notEmptyFields.add(superClsField);
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void countAndStore(ObjectStore os, Model model, ClassDescriptor cld)
+        throws ObjectStoreException {
+        if (!classCountsMap.containsKey(cld.getName())) {
+            int classCount = countClass(os, cld.getType());
+            LOG.info("Adding class count: " + cld.getUnqualifiedName() + " = " + classCount);
+            classCountsMap.put(cld.getName(), new Integer(classCount));
+
+            // if this class is empty all subclasses MUST be empty as well
+            if (classCount == 0) {
+                for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                    if (!classCountsMap.containsKey(subCld.getName())) {
+                        classCountsMap.put(subCld.getName(), new Integer(classCount));
                     }
                 }
             }
