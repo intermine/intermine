@@ -27,9 +27,7 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ant -f 'intermine/all/build.xml' checkstyle \
         | tee >(grep FAILED >> failures.list)
 elif [ "$TEST_SUITE" = "selenium" ]; then
-    PSQL_USER=postgres sh testmodel/setup.sh
-    sleep 10 # wait for the webapp to come on line
-    sh config/run-selenium-tests.sh
+    ./config/run-selenium-tests.sh
 fi
 
 cat failures.list
