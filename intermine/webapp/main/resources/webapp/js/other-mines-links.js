@@ -18,11 +18,13 @@ var OtherMines = (function ($, _, AjaxServices) {
     AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, handleResults);
       
     function handleResults (results) {
+      console.log('other mine results', mine.name, results);
       $loading.removeClass('loading');
       if (results && results.length) {
         display(results);
       } else {
-        $loading.html('<p>No results found.</p>');
+        $loading.remove();
+        $('.apology', $context).show();
       }
     }
 
@@ -33,13 +35,13 @@ var OtherMines = (function ($, _, AjaxServices) {
         var n = (group.objects && group.objects.length);
         if (!n) return;
         var $groupLi = $(createGroupLi(group));
+        $resultsList.append($groupLi);
         var $entries = $('.entries', $groupLi);
 
         group.objects.forEach(function (obj) {
           var itemLi = createItemLi(group, obj, mine, request);
           $entries.append(itemLi);
         });
-        $resultsList.append($groupLi);
       });
     }
   }
@@ -76,7 +78,7 @@ var OtherMines = (function ($, _, AjaxServices) {
       });
     }
     var data = {
-      identifier: (obj.name || obj.identifier),
+      name: (obj.name || obj.identifier),
       mineLink: mine.url + '/portal.do?' + queryString(params)
     };
     return itemLiTempl(data);

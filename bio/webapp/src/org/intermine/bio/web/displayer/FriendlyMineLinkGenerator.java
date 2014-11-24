@@ -40,7 +40,8 @@ import org.intermine.webservice.server.core.Predicate;
 public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
 {
 
-    private class MustBeIn implements Predicate<List<Object>> {
+    private class MustBeIn implements Predicate<List<Object>>
+    {
 
         private final Set<String> collection;
 
@@ -56,8 +57,6 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
     }
 
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
-
-    private boolean debug = false;
 
     /**
      * Constructor

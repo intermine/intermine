@@ -16,20 +16,32 @@ package org.intermine.api.mines;
  *
  */
 public enum ContentType {
-    XML("application/xml"), PlainText("text/plain"), JSON("application/json");
+    /** The XML content type **/
+    XML("application/xml", "xml"),
+    /** The plain text content type **/
+    PlainText("text/plain", "text"),
+    /** The JSON content type **/
+    JSON("application/json", "json");
 
-    private final String mimeType;
+    private final String mimeType, format;
 
     /**
      * A content type is associated with a mime-type.
      * @param mimeType Which is passed to the constructor.
+     * @param format The value which the 'format' query string parameter should have.
      */
-    ContentType(String mimeType) {
+    ContentType(String mimeType, String format) {
         this.mimeType = mimeType;
+        this.format = format;
     }
 
-    /** @return and retrieved from the accessor **/
+    /** @return The mimetype associated with this content type **/
     public String getMimeType() {
-       return mimeType;
+        return mimeType;
+    }
+
+    /** @return The format parameter value associated with this content type **/
+    public String getFormat() {
+        return format;
     }
 }

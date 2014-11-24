@@ -1,8 +1,24 @@
 package org.intermine.api.mines;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class ObjectRequest {
+/**
+ * A generic container for a request for information about an object.
+ * @author Alex Kalderimis
+ *
+ */
+public class ObjectRequest
+{
 
     private final String domain, identifier;
 
@@ -29,6 +45,8 @@ public class ObjectRequest {
     public String getDomain() {
         return domain;
     }
+
+    // -- object contract.
 
     @Override
     public int hashCode() {

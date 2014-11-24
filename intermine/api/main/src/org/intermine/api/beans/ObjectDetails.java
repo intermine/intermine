@@ -1,11 +1,26 @@
 package org.intermine.api.beans;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 import java.io.Serializable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class ObjectDetails implements Serializable {
+/**
+ * An object that describes an object.
+ * @author alex
+ *
+ */
+public class ObjectDetails implements Serializable
+{
 
     private String name, identifier, type;
 
@@ -68,10 +83,14 @@ public class ObjectDetails implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null) { return false; }
-        if (other == this) { return true; }
+        if (other == null) {
+            return false;
+        }
+        if (other == this) {
+            return true;
+        }
         if (other.getClass() != getClass()) {
-          return false;
+            return false;
         }
         ObjectDetails rhs = (ObjectDetails) other;
         return new EqualsBuilder().append(type, rhs.type)

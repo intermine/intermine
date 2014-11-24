@@ -1,63 +1,94 @@
 package org.intermine.api.mines;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.util.List;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.PathQuery;
 
-public interface Mine {
+/**
+ * The type of objects that represent InterMine instances.
+ * @author Alex Kalderimis
+ *
+ */
+public interface Mine
+{
 
     /**
      * @return the name of the mine
      */
-    public abstract String getName();
+    String getName();
 
     /**
      * @return the description of the mine
      */
-    public abstract String getDescription();
+    String getDescription();
 
     /**
      * @return the url to the mine
      */
-    public abstract String getUrl();
+    String getUrl();
 
     /**
      * @return the logo
      */
-    public abstract String getLogo();
+    String getLogo();
 
     /**
      * @return bgcolor
      */
-    public abstract String getBgcolor();
+    String getBgcolor();
 
     /**
      * @return frontcolor
      */
-    public abstract String getFrontcolor();
+    String getFrontcolor();
 
     /**
      * @return the releaseVersion
      */
-    public abstract String getReleaseVersion();
+    String getReleaseVersion();
 
-    public abstract Model getModel();
+    /**
+     * Get the main model associated with this application.
+     * @return The data model.
+     */
+    Model getModel();
 
     /**
      * @return the defaultValue
      */
-    public abstract Set<String> getDefaultValues();
+    Set<String> getDefaultValues();
 
     /**
      * get first default value. used in querybuilder to select default extra value
      * @return the defaultValue
      */
-    public abstract String getDefaultValue();
+    String getDefaultValue();
 
-    public List<List<Object>> getRows(PathQuery query);
+    /**
+     * Run a path query and get back all the results.
+     * @param query The query to run.
+     * @return A list of rows.
+     */
+    List<List<Object>> getRows(PathQuery query);
 
-    public List<List<Object>> getRows(String xml);
+    /**
+     * Run a path query and get back all the results.
+     * @param xml The query to run, in XML format.
+     * @return A list of rows.
+     */
+    List<List<Object>> getRows(String xml);
 
 }

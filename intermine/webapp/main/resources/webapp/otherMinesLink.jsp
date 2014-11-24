@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <!-- This section is rendered with Ajax to improve responsiveness -->
-<c:if test="${!empty linkManager.friendlyMines}">
+<c:if test="${!empty mines}">
 <script type="text/javascript" charset="utf-8" src="js/other-mines-links.js"></script>
 <h3 class="goog"><fmt:message key="othermines.title"/></h3>
 <div id="friendlyMines">
@@ -16,9 +16,10 @@
       </span>
 
       <div class="loading-indicator"></div>
+
       <span class="apology" style="display:none">
           <fmt:message key="noResults.title"/>
-      </div>
+      </span>
 
       <ul class="results"></ul>
 

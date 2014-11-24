@@ -17,6 +17,8 @@
 //   ]
 var FriendlyMines = (function ($, AjaxServices) {
 
+    'use strict';
+
     // TODO: make DOMAIN_PARAMETER and OBJECT_TYPE configurable
     // Exported object
     return {
@@ -40,7 +42,7 @@ var FriendlyMines = (function ($, AjaxServices) {
         });
 
         function display(results) {
-            resultsList = $('.results', context);
+            var resultsList = $('.results', context);
 
             // for each organism for which the mine has orthologues
             // show links to each set of matching identifiers, only showing
@@ -120,7 +122,7 @@ var FriendlyMines = (function ($, AjaxServices) {
     }
 
     // Render a group element.
-    function createGroupLi (group, element, show) {
+    function createGroupLi (group, activate, show) {
       return $('<li/>', {
         'class': 'partner-link-result-group',
         style: (show ? '' : 'display:none;'),

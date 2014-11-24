@@ -1,5 +1,15 @@
 package org.intermine.api.mines;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +27,12 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 
-public class LocalMine implements ConfigurableMine 
+/**
+ * A mine that refers to the local application instance.
+ * @author Alex Kalderimis
+ *
+ */
+public class LocalMine implements ConfigurableMine
 {
     private final InterMineAPI api;
     private final String id;
@@ -30,18 +45,26 @@ public class LocalMine implements ConfigurableMine
     private String frontcolor;
     private String description;
 
+    /**
+     * Construct a mine that refers to the local application instance.
+     * @param api The InterMine API of this application
+     * @param props The web-properties.
+     */
     public LocalMine(InterMineAPI api, Properties props) {
-        this.name = props.getProperty("project.title");
-        this.url = props.getProperty("webapp.baseurl") + "/" + props.getProperty("webapp.path");
-        this.release = props.getProperty("project.releaseVersion");
-        this.api = api;
-        this.id = this.name.toLowerCase();
         if (api == null) {
             throw new NullPointerException("api is null");
         }
-        if (id == null) {
+        if (props == null) {
+            throw new NullPointerException("props is null");
+        }
+        this.name = props.getProperty("project.title");
+        if (name == null) {
             throw new NullPointerException("id is null");
         }
+        this.url = props.getProperty("webapp.baseurl") + "/" + props.getProperty("webapp.path");
+        this.release = props.getProperty("project.releaseVersion");
+        this.api = api;
+        this.id = this.name.toLowerCase().replaceAll("\\s", "");
     }
 
     @Override
@@ -53,6 +76,9 @@ public class LocalMine implements ConfigurableMine
         description = props.getProperty("description");
     }
 
+    /**
+     * @return The identifier of this mine.
+     */
     public String getID() {
         return id;
     }

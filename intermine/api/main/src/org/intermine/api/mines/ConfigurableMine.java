@@ -1,5 +1,15 @@
 package org.intermine.api.mines;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Properties;
 
 /**
@@ -8,12 +18,13 @@ import java.util.Properties;
  * @author Alex Kalderimis
  *
  */
-public interface ConfigurableMine extends Mine {
+public interface ConfigurableMine extends Mine
+{
 
     /**
      * Configure this mine with a the properties provided.
      * @param props The properties to consume.
      * @throws ConfigurationException If this mine has been configured wrong.
      */
-    public void configure(Properties props) throws ConfigurationException;
+    void configure(Properties props) throws ConfigurationException;
 }

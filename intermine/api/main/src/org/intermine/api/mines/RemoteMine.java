@@ -1,5 +1,15 @@
 package org.intermine.api.mines;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,11 +32,19 @@ import org.intermine.pathquery.PathQuery;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
-public class RemoteMine implements ConfigurableMine {
+/**
+ * An object that represents an InterMine application hosted somewhere else.
+ * @author Alex Kalderimis
+ *
+ */
+public class RemoteMine implements ConfigurableMine
+{
 
-    public final static long MAX_UPDATE_INTERVAL = 24L * 60L * 60L * 1000L; // At least once a day.
-
+    private static final String AN_ARG_IS_NULL
+        = "all arguments must have values, got id = %s, requester = %s";
+    private static final long MAX_UPDATE_INTERVAL = 24L * 60L * 60L * 1000L; // At least once a day.
     private static final String RELEASE_VERSION_URL = "/service/version/release";
     private static final String MODEL_URL           = "/service/model";
     private static final String QUERY_RESULTS_PATH  = "/service/query/results";
@@ -49,9 +67,15 @@ public class RemoteMine implements ConfigurableMine {
     private long lastReleaseUpdate = System.currentTimeMillis() - MAX_UPDATE_INTERVAL;
     private long lastModelUpdate = System.currentTimeMillis() - MAX_UPDATE_INTERVAL;
 
+    /**
+     * Create a representation of a remotely accessible mine.
+     * @param id The identifier of the mine.
+     * @param requester Something to use to make requests with.
+     * @param updateInterval The maximum number of seconds we can accept stale data for.
+     */
     public RemoteMine(String id, MineRequester requester, int updateInterval) {
         if (id == null || requester == null) {
-            throw new NullPointerException("all arguments must have values.");
+            throw new NullPointerException(String.format(AN_ARG_IS_NULL, id, requester));
         }
         this.updateInterval = Math.min(MAX_UPDATE_INTERVAL, updateInterval * 1000L);
         this.id = id;
@@ -63,7 +87,7 @@ public class RemoteMine implements ConfigurableMine {
         name = props.getProperty("name");
         url = props.getProperty("url");
         logo = props.getProperty("logo");
-        defaultValues.addAll(Arrays.asList(props.getProperty("defaultValues").split(",")));
+        defaultValues.addAll(Arrays.asList(props.getProperty("defaultValues", "").split(",")));
         bgcolor = props.getProperty("bgcolor");
         frontcolor = props.getProperty("frontcolor");
         description = props.getProperty("description");
@@ -194,28 +218,40 @@ public class RemoteMine implements ConfigurableMine {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Could not encode query", e);
         }
-        String url = getUrl() + QUERY_RESULTS_PATH + "?" + params;
-        
+        String reqUrl = getUrl() + QUERY_RESULTS_PATH + "?" + params;
         BufferedReader reader = null;
         List<List<Object>> ret = null;
         try {
-            reader = requester.requestURL(url, ContentType.JSON);
-            JSONObject response = new JSONObject(reader);
+            reader = requester.requestURL(reqUrl, ContentType.JSON);
+            if (reader == null) {
+                throw new RuntimeException("reader is null");
+            }
+            JSONTokener jreader = new JSONTokener(reader);
+            Object nextValue = jreader.nextValue();
+            if (!(nextValue instanceof JSONObject)) {
+                throw new RuntimeException("Unexpected value: " + nextValue);
+            }
+            JSONObject response = (JSONObject) nextValue;
             JSONArray results = response.getJSONArray("results");
             int c = results.length();
             ret = new ArrayList<List<Object>>(c);
-            
+
             for (int i = 0; i < c; i++) {
                 JSONArray row = results.getJSONArray(i);
                 List<Object> parsed = new ArrayList<Object>();
                 for (int j = 0; j < row.length(); j++) {
-                    parsed.add(row.get(j));
+                    Object o = row.get(j);
+                    if (JSONObject.NULL.equals(o)) {
+                        parsed.add(null);
+                    } else {
+                        parsed.add(o);
+                    }
                 }
                 ret.add(parsed);
             }
-         
+
         } catch (JSONException e) {
-            throw new RuntimeException("Error getting rows", e);
+            throw new RuntimeException("Error getting rows " + e.getMessage());
         } finally {
             if (reader != null) {
                 try {

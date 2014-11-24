@@ -9,7 +9,7 @@
 <c:set var="interMineObject" value="${object}"/>
 
 <!--  provides FriendlyMines global object. -->
-<script type="text/javascript" charset="utf-8" src="js/friendly-mines.js"></script>
+<script type="text/javascript" charset="utf-8" src="model/js/friendly-mines.js"></script>
 
 <h3 class="goog">View homologues in other Mines:</h3>
 

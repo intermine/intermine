@@ -13,13 +13,12 @@ package org.intermine.dwr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -77,7 +76,6 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -88,7 +86,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.Emailer;
 import org.intermine.metadata.StringUtil;
@@ -695,12 +692,14 @@ public class AjaxServices
      * remote mine.
      *
      * @param mineName name of mine to query
-     * @param domains The domain - for a 
-     * @param idents identifiers for gene
+     * @param domains The domains the domains these identifiers are valid for (eg. organisms).
+     * @param idents The external object identifiers.
      * @return the links to friendly intermines
      */
-    public static Collection<PartnerLink> getFriendlyMineLinks(String mineName, String domains, String idents) {
-        if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(domains)
+    public static Collection<PartnerLink>
+        getFriendlyMineLinks(String mineName, String domains, String idents) {
+        if (StringUtils.isEmpty(mineName)
+                || StringUtils.isEmpty(domains)
                 || StringUtils.isEmpty(idents)) {
             return null;
         }
@@ -709,29 +708,29 @@ public class AjaxServices
         final ServletContext servletContext = WebContextFactory.get().getServletContext();
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
         final FriendlyMineManager fmm = FriendlyMineManager.getInstance(im, webProperties);
+        final String linkGeneratorClass = webProperties.getProperty("friendlymines.linkgenerator");
 
         final Mine mine = fmm.getMine(mineName);
+        Collection<PartnerLink> results = Collections.emptySet();
         if (mine == null || mine.getReleaseVersion() == null) {
-            LOG.info(mineName + " seems to be dead");
-            return null;
-        }
-        ObjectRequest req = new ObjectRequest(domains, idents);
-        MultiKey key = new MultiKey(mine.getName(), req);
-        Collection<PartnerLink> cachedResults = fmm.getLinks(key);
-        if (cachedResults != null) {
-            return cachedResults;
-        }
-
-        final String linkGeneratorClass = webProperties.getProperty("friendlymines.linkgenerator");
-        InterMineLinkGenerator linkGen = TypeUtil.createNew(linkGeneratorClass);
-        if (linkGen != null) {
-            Collection<PartnerLink> results = linkGen.getLinks(fmm.getLocalMine(), mine, req);
-            if (results != null) {
-                fmm.cacheLinks(key, results);
-                return results;
+            LOG.error(mineName + " seems to be dead");
+        } else {
+            // Mine is alive
+            LOG.debug(mine.getName() + " is at " + mine.getReleaseVersion());
+            ObjectRequest req = new ObjectRequest(domains, idents);
+            MultiKey key = new MultiKey(mine.getName(), req);
+            // From cache, or from service.
+            results = fmm.getLinks(key);
+            if (results == null) {
+                InterMineLinkGenerator linkGen = TypeUtil.createNew(linkGeneratorClass);
+                if (linkGen != null) {
+                    results = linkGen.getLinks(fmm.getLocalMine(), mine, req);
+                }
             }
+            fmm.cacheLinks(key, results);
         }
-        return null;
+        LOG.debug("Links: " + results);
+        return results;
     }
 
     private static String getXMLQuery(String filename, Object... positionalArgs) {

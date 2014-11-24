@@ -12,13 +12,16 @@
       <param name="class" value="org.intermine.dwr.TrackAjaxServices"/>
     </create>
 
+    <!--  Convert exceptions when debugging - disable in production -->
+    <convert match="java.lang.Exception" converter="exception"/>
+
     <!--  Allow DWR to send actual objects, and not just strings. -->
     <convert converter="collection" match="java.util.Collection"/>
     <convert converter="map" match="java.util.Map"/>
 
     <!--  Allow any of our beans to be marshalled. -->
     <convert converter="bean" match="org.intermine.web.logic.bean.*"/>
-    <convert converter="bean" match="org.intermine.api.bean.*"/>
+    <convert converter="bean" match="org.intermine.api.beans.*"/>
 
     <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
     <convert converter="bean" match="org.intermine.dwr.TrackAjaxServices"/>

@@ -24,6 +24,7 @@ public interface MineRequester
     /**
      * Request information as encoded in a string.
      * @param urlString The data to request.
+     * @param contentType The content type.
      * @return A reader over the data.
      */
     BufferedReader requestURL(String urlString, ContentType contentType);
