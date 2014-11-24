@@ -153,7 +153,6 @@ public class JSONRowResultProcessorTest extends TestCase {
 
     public void testZeroResults() {
         List<String> inner = new ArrayList<String>();
-        @SuppressWarnings("unchecked")
         List<List<String>> expected = Arrays.asList(inner);
 
         MemoryOutput out  = new MemoryOutput();

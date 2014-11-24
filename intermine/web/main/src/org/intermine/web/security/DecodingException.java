@@ -15,15 +15,16 @@ package org.intermine.web.security;
  * @author Alex Kalderimis
  *
  */
-public class DecodingException extends Exception {
+public class DecodingException extends Exception
+{
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor.
-	 * @param cause The reason we could not decode the thing.
-	 */
-	public DecodingException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * Constructor.
+     * @param cause The reason we could not decode the thing.
+     */
+    public DecodingException(Throwable cause) {
+        super(cause);
+    }
 }

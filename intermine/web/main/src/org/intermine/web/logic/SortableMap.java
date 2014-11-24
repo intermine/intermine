@@ -46,11 +46,12 @@ import java.util.TreeMap;
  * @param <K> The type of keys.
  * @param <V> The type of values.
  */
-public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V>>
+public class SortableMap<K extends Comparable<K>, V extends Comparable<V>>
+    extends LinkedHashMap<K, V>
 {
     // Constructors -----------------------------------------------------------
 
-    private final class ValueComparator implements Comparator<Comparable<K>>
+    private final class ValueComparator implements Comparator<K>
     {
         private final boolean sortAscending;
         private final boolean checkNumbers;
@@ -61,9 +62,9 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
         }
 
         @Override
-        public int compare(Comparable<K> key1, Comparable<K> key2) {
-            Comparable<V> value1 = get(key1);
-            Comparable<V> value2 = get(key2);
+        public int compare(K key1, K key2) {
+            V value1 = get(key1);
+            V value2 = get(key2);
 
             if (value1 == null || value2 == null || value1.equals(value2)) {
                 // Values are null or equal. Sort on its keys then.
@@ -75,7 +76,7 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
         }
     }
 
-    private final class KeyComparator implements Comparator<Comparable<K>>
+    private final class KeyComparator implements Comparator<K>
     {
         private final boolean checkNumbers;
         private final boolean sortAscending;
@@ -86,7 +87,7 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
         }
 
         @Override
-        public int compare(Comparable<K> key1, Comparable<K> key2) {
+        public int compare(K key1, K key2) {
             return compareThings(checkNumbers, sortAscending, key1, key2);
         }
     }
@@ -102,7 +103,7 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
      * Create new SortableMap based on the given Map.
      * @param map Any map.
      */
-    public SortableMap(Map<Comparable<K>, Comparable<V>> map) {
+    public SortableMap(Map<K, V> map) {
         super(map);
     }
 
@@ -121,9 +122,8 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
      * @param sortAscending Sort ascending?
      */
     public void sortKeys(final boolean checkNumbers, final boolean sortAscending) {
-        Comparator<Comparable<K>> comparator = new KeyComparator(checkNumbers, sortAscending);
-        Map<Comparable<K>, Comparable<V>> treeMap =
-                new TreeMap<Comparable<K>, Comparable<V>>(comparator);
+        Comparator<K> comparator = new KeyComparator(checkNumbers, sortAscending);
+        Map<K, V> treeMap = new TreeMap<K, V>(comparator);
         treeMap.putAll(this);
         this.clear();
         this.putAll(treeMap);
@@ -142,20 +142,15 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
      * @param sortAscending Sort ascending?
      */
     public void sortValues(final boolean checkNumbers, final boolean sortAscending) {
-        Comparator<Comparable<K>> comparator = new ValueComparator(sortAscending, checkNumbers);
-        Map<Comparable<K>, Comparable<V>> treeMap =
-                new TreeMap<Comparable<K>, Comparable<V>>(comparator);
+        Comparator<K> comparator = new ValueComparator(sortAscending, checkNumbers);
+        Map<K, V> treeMap = new TreeMap<K, V>(comparator);
         treeMap.putAll(this);
         this.clear();
         this.putAll(treeMap);
     }
 
-    @SuppressWarnings("unchecked") // needs unchecked cast from Comparable<T> to T.
-    private static <T> int compareThings(
-            final boolean checkNumbers,
-            final boolean sortAscending,
-            Comparable<T> a,
-            Comparable<T> b) {
+    private static <T extends Comparable<T>>
+        int compareThings(final boolean checkNumbers, final boolean sortAscending, T a, T b) {
         if (checkNumbers) {
             // Check numeric values in keys.
             try {
@@ -175,10 +170,10 @@ public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V
         }
         if (sortAscending) {
             // Sort keys ascending.
-            return a.compareTo((T) b);
+            return a.compareTo(b);
         } else {
             // Sort keys descending.
-            return b.compareTo((T) a);
+            return b.compareTo(a);
         }
     }
 }

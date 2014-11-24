@@ -106,6 +106,8 @@ build_and_test intermine/pathquery
 
 build_and_test intermine/api
 
+build_and_test intermine/web
+
 build 'userprofile' intermine/api/model/userprofile
 
 build_db 'bio model' bio/test-all/dbmodel

@@ -19,7 +19,6 @@ public class ResultProcessorTest {
         row.add(null);
         row.add(null);
         row.add(null);
-        @SuppressWarnings("unchecked")
         List<List<ResultElement>> table = Arrays.asList(row);
         MemoryOutput output = new MemoryOutput();
         ResultProcessor processor = new ResultProcessor();

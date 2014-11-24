@@ -447,9 +447,9 @@ public abstract class WebService
     private JWTVerifier.Verification getIdentityFromBearerToken(final String rawString) {
         JWTVerifier verifier;
         PublicKeySource keys;
-        
+
         try {
-        	keys = new KeyStorePublicKeySource(InterMineContext.getKeyStore());
+            keys = new KeyStorePublicKeySource(InterMineContext.getKeyStore());
         } catch (KeyStoreException e) {
             throw new ServiceException("Failed to load key store.", e);
         } catch (NoSuchAlgorithmException e) {
@@ -479,7 +479,7 @@ public abstract class WebService
     /**
      * This method is responsible for setting the Permission for the current
      * request. It can be derived in a number of ways:
-     * 
+     *
      * <ul>
      *   <li>
      *     <h4>Basic Authentication</h3>
@@ -501,10 +501,10 @@ public abstract class WebService
      *     {@see KeyStoreBuilder}. Provides delegated authentication capabilities.
      *     Overkill for most users. The token must be provided in the <code>Authorization</code>
      *     header, preceded by the string <code>"Bearer "</code>, e.g.:
-     *     <code>Authorization: Bearer yourjwttokenhere</code>  
+     *     <code>Authorization: Bearer yourjwttokenhere</code>
      *   </li>
      * </ul>
-     * 
+     *
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
      * {@link "http://jwt.io/"}
      */

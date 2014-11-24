@@ -18,11 +18,28 @@ import java.util.Collection;
  * @author Alex Kalderimis
  *
  */
-public interface PublicKeySource {
+public interface PublicKeySource
+{
 
-	public PublicKey get(String name) throws KeySourceException;
+    /**
+     * Get a specific key by name.
+     * @param name The name of the key.
+     * @return The key.
+     * @throws KeySourceException If we can't get that key.
+     */
+    PublicKey get(String name) throws KeySourceException;
 
-	public Collection<PublicKey> getAll() throws KeySourceException;
+    /**
+     * @return All the keys in this key source.
+     * @throws KeySourceException If we have issues getting any of them.
+     */
+    Collection<PublicKey> getAll() throws KeySourceException;
 
-	public Collection<PublicKey> getSome(String... names) throws KeySourceException;
+    /**
+     * Get multiple keys given a set of names.
+     * @param names The names of the keys we want.
+     * @return The matching keys.
+     * @throws KeySourceException If we can't get any of the keys.
+     */
+    Collection<PublicKey> getSome(String... names) throws KeySourceException;
 }

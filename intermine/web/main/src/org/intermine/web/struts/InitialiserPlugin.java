@@ -283,8 +283,9 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Super user not found");
         }
         SessionMethods.setInterMineAPI(servletContext, im);
+        ResourceFinder finder = new ResourceFinder(servletContext);
 
-        InterMineContext.initilise(im, webProperties, webConfig, new ResourceFinder(servletContext));
+        InterMineContext.initilise(im, webProperties, webConfig, finder);
         return im;
     }
 
@@ -434,8 +435,8 @@ public class InitialiserPlugin implements PlugIn
         WebConfig retval = null;
         InputStream xmlInputStream = servletContext
             .getResourceAsStream("/WEB-INF/webconfig-model.xml");
-        InputStream xmlInputStreamForValidation = servletContext
-        .getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        InputStream xmlInputStreamForValidation =
+                servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (xmlInputStream == null) {
             LOG.error("Unable to find /WEB-INF/webconfig-model.xml.");
             blockingErrorKeys.put("errors.init.webconfig.notfound", null);

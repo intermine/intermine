@@ -60,7 +60,7 @@ public class KeySignerTest {
 
 	@Test
 	public void testPutYourCertificateInPullYourCertificateOut() throws Exception {
-		X509Certificate cert = signer.generateCertificate(trustedKey);
+		X509Certificate cert = signer.generateCertificate("trusted", trustedKey);
 		store.setCertificateEntry(ALIAS, cert);
 		Certificate retrieved = store.getCertificate(ALIAS);
 		PublicKey fromStore = retrieved.getPublicKey();

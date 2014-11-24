@@ -104,7 +104,6 @@ public class JSONObjResultProcessorTest extends TestCase {
         assertTrue(processor != null);
     }
 
-    @SuppressWarnings("unchecked")
     public void testWrite() {
         List<List<String>> expected = Arrays.asList(
             Arrays.asList("{\"objectId\":5,\"name\":\"Tim Canterbury\",\"age\":30,\"class\":\"Employee\"}", ""),

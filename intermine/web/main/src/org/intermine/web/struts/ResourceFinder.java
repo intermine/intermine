@@ -44,13 +44,13 @@ public class ResourceFinder implements ResourceOpener
     public ResourceFinder(ServletContext context) {
         this.context = context;
         if (this.context == null) {
-        	throw new NullPointerException("context must not be null");
+            throw new NullPointerException("context must not be null");
         }
     }
 
     @Override
     public InputStream openResource(String resourceName) {
-    	return context.getResourceAsStream("/WEB_INF/" + resourceName);
+        return context.getResourceAsStream("/WEB_INF/" + resourceName);
     }
 
     /**

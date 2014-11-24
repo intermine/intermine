@@ -34,25 +34,25 @@ import org.json.JSONObject;
 public class JWTVerifier
 {
     private static final String EMAIL_CLAIM = "http://wso2.org/claims/emailaddress";
-	private static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
-	private static final String WHITELIST = "jwt.alias.whitelist";
+    private static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
+    private static final String WHITELIST = "jwt.alias.whitelist";
     private final Properties options;
     private final PublicKeySource publicKeys;
-	private final String strategy;
+    private final String strategy;
 
     /**
      * Construct a verifier.
-     * @param keyStore All our trusted keys.
+     * @param publicKeys All our trusted keys.
      * @param options Configurable options.
      */
     public JWTVerifier(PublicKeySource publicKeys, Properties options) {
         this.publicKeys = publicKeys;
         this.options = options;
         if (publicKeys == null) {
-        	throw new NullPointerException("publicKeys must not be null");
+            throw new NullPointerException("publicKeys must not be null");
         }
         if (options == null) {
-        	throw new NullPointerException("options must not be null");
+            throw new NullPointerException("options must not be null");
         }
         this.strategy = this.options.getProperty(VERIFICATION_STRATEGY, "NAMED_ALIAS");
     }
@@ -155,64 +155,62 @@ public class JWTVerifier
         }
        // algorithm should be something like "SHA256withRSA"
         if (!algorithm.endsWith("withRSA")) {
-        	throw new VerificationError("Unsupported signing algorithm: " + algorithm);
+            throw new VerificationError("Unsupported signing algorithm: " + algorithm);
         }
         try {
-	        if ("NAMED_ALIAS".equals(strategy)) {
-	        	return verifyNamedAlias(signed, toVerify, issuer, algorithm);
-	        } else if ("ANY".equals(strategy)) {
-	        	return verifyAnyAlias(signed, toVerify, algorithm);
-	        } else if ("WHITELIST".equals(strategy)) {
-	        	return verifyWhitelistedAliases(signed, toVerify, algorithm);
-	        } else {
-	        	throw new VerificationError("Unknown verification strategy: " + strategy);
-	        }
+            if ("NAMED_ALIAS".equals(strategy)) {
+                return verifyNamedAlias(signed, toVerify, issuer, algorithm);
+            } else if ("ANY".equals(strategy)) {
+                return verifyAnyAlias(signed, toVerify, algorithm);
+            } else if ("WHITELIST".equals(strategy)) {
+                return verifyWhitelistedAliases(signed, toVerify, algorithm);
+            } else {
+                throw new VerificationError("Unknown verification strategy: " + strategy);
+            }
         } catch (KeySourceException e) {
-        	throw new VerificationError("Could not retrieve public key");
+            throw new VerificationError("Could not retrieve public key");
         }
-        
     }
 
-	private boolean verifyWhitelistedAliases(String signed, byte[] toVerify, String algorithm)
-		throws VerificationError, KeySourceException {
-		String[] names = options.getProperty(WHITELIST, "").split(",");
-		for (PublicKey key: publicKeys.getSome(names)) {
-			if (verifySignature(key, algorithm, signed, toVerify)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean verifyWhitelistedAliases(String signed, byte[] toVerify, String algorithm)
+        throws VerificationError, KeySourceException {
+        String[] names = options.getProperty(WHITELIST, "").split(",");
+        for (PublicKey key: publicKeys.getSome(names)) {
+            if (verifySignature(key, algorithm, signed, toVerify)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private boolean verifyAnyAlias(String signed, byte[] toVerify, String algorithm)
-		throws VerificationError, KeySourceException {
-		for (PublicKey key: publicKeys.getAll()) {
-			if (verifySignature(key, algorithm, signed, toVerify)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean verifyAnyAlias(String signed, byte[] toVerify, String algorithm)
+        throws VerificationError, KeySourceException {
+        for (PublicKey key: publicKeys.getAll()) {
+            if (verifySignature(key, algorithm, signed, toVerify)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private boolean verifyNamedAlias(String signed, byte[] toVerify, String issuer, String algorithm)
-		throws VerificationError, KeySourceException {
-		String keyAlias = getKeyAlias(issuer);
-		if (StringUtils.isBlank(keyAlias)) {
-		    throw new VerificationError("Unknown identity issuer: " + issuer);
-		}
-		return verifySignature(publicKeys.get(keyAlias), algorithm, signed, toVerify);
-	}
+    private boolean verifyNamedAlias(String signed, byte[] toVerify, String issuer, String alg)
+        throws VerificationError, KeySourceException {
+        String keyAlias = getKeyAlias(issuer);
+        if (StringUtils.isBlank(keyAlias)) {
+            throw new VerificationError("Unknown identity issuer: " + issuer);
+        }
+        return verifySignature(publicKeys.get(keyAlias), alg, signed, toVerify);
+    }
 
-	private boolean verifySignature(PublicKey key, String algorithm, String signed, byte[] toVerify)
-		throws VerificationError {
-		Signature signature;
+    private boolean verifySignature(PublicKey key, String algorithm, String signed, byte[] toVerify)
+        throws VerificationError {
+        Signature signature;
         try {
             signature = Signature.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
             throw new VerificationError(e.getMessage());
         }
-        
-        try {       
+        try {
             signature.initVerify(key);
         } catch (InvalidKeyException e) {
             throw new VerificationError("Key is invalid. " + e.getMessage());
@@ -229,7 +227,7 @@ public class JWTVerifier
         } catch (SignatureException e) {
             throw new VerificationError("Error during verification: " + e.getMessage());
         }
-	}
+    }
 
     /**
      * The result of a successful verification.

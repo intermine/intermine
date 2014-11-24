@@ -29,7 +29,8 @@ import org.json.JSONObject;
  *
  * @author Alex Kalderimis
  */
-public final class JWTBuilder {
+public final class JWTBuilder
+{
 
     private static final String TO_STR_FMT =
             "JWTBuilder(algorithm = %s, key = %s, issuer = %s)";
@@ -46,8 +47,16 @@ public final class JWTBuilder {
      *
      */
     public enum Algorithm {
-        SHA256withRSA, SHA384withRSA, SHA512withRSA;
+        /** SHA256withRSA **/
+        SHA256withRSA,
+        /** SHA384withRSA **/
+        SHA384withRSA,
+        /** SHA512withRSA **/
+        SHA512withRSA;
 
+        /**
+         * @return A signature, ready to start performing validation.
+         */
         public Signature createSignature() {
             try {
                 return Signature.getInstance(name());

@@ -27,7 +27,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;

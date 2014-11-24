@@ -63,6 +63,7 @@ public class MyMineController extends TilesAction
      * Set up attributes for the myMine page.
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

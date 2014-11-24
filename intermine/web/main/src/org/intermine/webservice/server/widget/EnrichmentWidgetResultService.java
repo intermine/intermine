@@ -290,6 +290,7 @@ public class EnrichmentWidgetResultService extends WidgetService
             TagManager tm = im.getTagManager();
             String prefixTagPopulation = TagNames.IM_WIDGET + TagNames.SEPARATOR
                                        + input.getWidgetId() + TagNames.SEPARATOR;
+            @SuppressWarnings("deprecation")
             List<Tag> tags = tm.getTags(null, null,
                              TagTypes.BAG, profile.getUsername());
             for (Tag tag : tags) {

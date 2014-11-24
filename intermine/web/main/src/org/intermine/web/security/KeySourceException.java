@@ -18,13 +18,13 @@ package org.intermine.web.security;
 public class KeySourceException extends Exception
 {
 
-	private static final long serialVersionUID = 1861648517209072150L;
+    private static final long serialVersionUID = 1861648517209072150L;
 
-	/**
-	 * An error caused by another error
-	 * @param cause The reason we could not continue.
-	 **/
-	public KeySourceException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * An error caused by another error
+     * @param cause The reason we could not continue.
+     **/
+    public KeySourceException(Throwable cause) {
+        super(cause);
+    }
 }

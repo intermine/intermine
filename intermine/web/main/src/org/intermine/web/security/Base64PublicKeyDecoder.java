@@ -23,33 +23,34 @@ import org.apache.commons.codec.binary.Base64;
  * @author Alex Kalderimis
  *
  */
-public class Base64PublicKeyDecoder implements KeyDecoder {
+public class Base64PublicKeyDecoder implements KeyDecoder
+{
 
-	Base64 decoder;
-	KeyFactory fact;
+    Base64 decoder;
+    KeyFactory fact;
 
-	/**
-	 * Construct a new decoder.
-	 */
-	public Base64PublicKeyDecoder() {
-		decoder = new Base64();
-		try {
-			fact = KeyFactory.getInstance("RSA");
-		} catch (NoSuchAlgorithmException e) {
-			throw new IllegalStateException("This JVM cannot create RSA keys.");
-		}
-	}
+    /**
+     * Construct a new decoder.
+     */
+    public Base64PublicKeyDecoder() {
+        decoder = new Base64();
+        try {
+            fact = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("This JVM cannot create RSA keys.");
+        }
+    }
 
-	@Override
-	public PublicKey decode(String input) throws DecodingException {
-		byte[] decoded = decoder.decode(input);
-		X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(decoded);
-		
-		try {
-			return fact.generatePublic(x509KeySpec);
-		} catch (InvalidKeySpecException e) {
-			throw new DecodingException(e);
-		}
-	}
+    @Override
+    public PublicKey decode(String input) throws DecodingException {
+        byte[] decoded = decoder.decode(input);
+        X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(decoded);
+
+        try {
+            return fact.generatePublic(x509KeySpec);
+        } catch (InvalidKeySpecException e) {
+            throw new DecodingException(e);
+        }
+    }
 
 }

@@ -11,23 +11,12 @@ package org.intermine.web.context;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -35,17 +24,11 @@ import java.util.concurrent.Executors;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.Emailer;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
 import org.intermine.web.logic.ResourceOpener;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.security.Base64PublicKeyDecoder;
-import org.intermine.web.security.DecodingException;
-import org.intermine.web.security.KeyDecoder;
-import org.intermine.web.security.KeySigner;
 import org.intermine.web.security.KeyStoreBuilder;
-import org.jfree.util.Log;
 
 /**
  * A context object that doesn't require the session.
@@ -85,8 +68,8 @@ public final class InterMineContext implements Shutdownable
             final Properties webProps,
             final WebConfig wc,
             final ResourceOpener resourceOpener) {
-    	if (imApi == null || webProps == null || wc == null || resourceOpener == null) {
-        	throw new NullPointerException("None of the arguments to this method may be null.");
+        if (imApi == null || webProps == null || wc == null || resourceOpener == null) {
+            throw new NullPointerException("None of the arguments to this method may be null.");
         }
         if (isInitialised) { // May be initialized multiple times in tests.
             doShutdown();
@@ -202,7 +185,7 @@ public final class InterMineContext implements Shutdownable
         mailService = null;
         isInitialised = false;
     }
-    
+
     /**
      * @return A key-store containing the keys we trust.
      * @throws KeyStoreException If this platform doesn't support JKS.
@@ -214,10 +197,10 @@ public final class InterMineContext implements Shutdownable
         throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         checkInit();
         if (keyStore == null) {
-        	KeyStoreBuilder builder = new KeyStoreBuilder(getWebProperties(), opener);
+            KeyStoreBuilder builder = new KeyStoreBuilder(getWebProperties(), opener);
             keyStore = builder.buildKeyStore();
         }
-        
+
         return keyStore;
     }
 

@@ -36,11 +36,12 @@ import org.intermine.web.security.KeyStoreBuilder;
  * @author Alex Kalderimis
  *
  */
-public abstract class KeyStoreTask extends Task { private static final String
-    KEY_STORE_ERR = "Error creating key-store: "; private static final String
-        KEYSTORE = "security.keystore.password"; private String keystoreFile;
-    private String optionsFile; private final Properties options = new
-        Properties();
+public abstract class KeyStoreTask extends Task
+{
+    private static final String KEY_STORE_ERR = "Error creating key-store: ";
+    private String keystoreFile;
+    private String optionsFile;
+    private final Properties options = new Properties();
 
     /**
      * Bean-style setter for keystoreFile, as per ant spec.

@@ -214,7 +214,7 @@ public final class TypeConverter
                                 && (tq.getEditableConstraints().size() == 1)) {
                             // Editable constraint is okay.
                             Class typeB = tq.makePath(view.get(1)).getLastClassDescriptor()
-                            .getType();
+                                    .getType();
                             TemplateQuery prevTq = retval.get(typeB);
                             if (prevTq != null) {
                                 Class prevTypeA = prevTq.makePath(prevTq.getView().get(0))

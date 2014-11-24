@@ -17,14 +17,15 @@ import java.security.PublicKey;
  * @author Alex Kalderimis
  *
  */
-public interface KeyDecoder {
-	
-	/**
-	 * Decode the string and make the key.
-	 * @param input The public key, in an encoded form.
-	 * @return the decoded key.
-	 * @throws DecodingException If we cannot decode the key.
-	 */
-	PublicKey decode(String input) throws DecodingException;
+public interface KeyDecoder
+{
+
+    /**
+     * Decode the string and make the key.
+     * @param input The public key, in an encoded form.
+     * @return the decoded key.
+     * @throws DecodingException If we cannot decode the key.
+     */
+    PublicKey decode(String input) throws DecodingException;
 
 }
