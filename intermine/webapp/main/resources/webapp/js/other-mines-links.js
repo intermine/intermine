@@ -18,7 +18,6 @@ var OtherMines = (function ($, _, AjaxServices) {
     AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, handleResults);
       
     function handleResults (results) {
-      console.log('other mine results', mine.name, results);
       $loading.removeClass('loading');
       if (results && results.length) {
         display(results);
@@ -91,7 +90,6 @@ var OtherMines = (function ($, _, AjaxServices) {
       DOMAIN_PARAMETER_NAME: 'orthologue'
     };
   } else {
-    console.error("Cannot run other mines services - missing dependencies");
     return {getLinks: function () {}};
   }
 

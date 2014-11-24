@@ -13,6 +13,7 @@ package org.intermine.dwr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -81,11 +82,13 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.Emailer;
 import org.intermine.metadata.StringUtil;
@@ -746,7 +749,7 @@ public class AjaxServices
             throw new RuntimeException(filename + " not found", npe);
         } catch (Throwable e) {
             LOG.error(e);
-            throw new RuntimeException("Unexpected exception", e);
+            throw new RuntimeException("Unexpected exception " + e.getMessage());
         }
     }
 
@@ -755,7 +758,7 @@ public class AjaxServices
      * JSONObject as string with ID (intermine ID) and name (ontologyTerm.name)
      *
      * @param orthologues list of rat genes
-     * @return JSONobject.toString of JSON object
+     * @return JSONObject of the shape {status :: string, mineUrl :: string, results :: [[string]]}
      */
     public static Map<String, Object> getRatDiseases(String orthologues) {
         if (StringUtils.isEmpty(orthologues)) {
@@ -766,20 +769,25 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         final ServletContext servletContext = WebContextFactory.get().getServletContext();
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
-        final Mine mine = linkManager.getMine("RatMine");
+        final FriendlyMineManager mines = FriendlyMineManager.getInstance(im, webProperties);
+        final Mine ratMine = mines.getMine("RatMine");
 
-        if (mine == null || mine.getReleaseVersion() == null) {
+        if (ratMine == null || ratMine.getReleaseVersion() == null) {
             map.put("status", "offline"); // mine is dead
             return map;
         }
 
         // It lives!
         map.put("status", "online");
-        map.put("mineURL", mine.getUrl());
+        map.put("mineURL", ratMine.getUrl());
 
-        final String xmlQuery = getXMLQuery("RatDiseases.xml", orthologues);
-        map.put("results", mine.getRows(xmlQuery));
+        final String xmlQuery = getXMLQuery("RatDiseases.xml");
+        // As object rather than string to get proper escaping.
+        PathQuery pq = PathQueryBinding.unmarshalPathQuery(
+                new StringReader(xmlQuery), PathQuery.USERPROFILE_VERSION, ratMine.getModel());
+        pq.addConstraint(Constraints.lookup("Gene", orthologues, null));
+
+        map.put("results", ratMine.getRows(pq));
 
         return map;
     }

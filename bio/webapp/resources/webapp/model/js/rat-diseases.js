@@ -1,6 +1,10 @@
 var Rat = (function($, _, AjaxServices) {
+  'use strict';
 
   var $context = $('#mine-rat-disease');
+  if (!$context.length) return {getDiseases: function () {}};
+  var container = $('.intermine_rat_disease', $context);
+  if (!container.length) return {getDiseases: function () {}};
 
   // requires link and name
   var diseaseTemplate = _.template('<li class="<%= className %>"><a href="<%- link %>" target="_blank"><%= name %></a></li>');
@@ -23,7 +27,7 @@ var Rat = (function($, _, AjaxServices) {
     response.results.forEach(function (row, index) {
       var diseaseTerm = {id: row[0], name: row[1]};
       diseaseTerm.link = url + '/report.do?id=' + diseaseTerm.id;
-      diseaseTerm.className = (index >= 12 : 'less' : '');
+      diseaseTerm.className = (index >= 12 ? 'less' : '');
       var li = diseaseTemplate(diseaseTerm);
       $ul.append(li);
     });
@@ -42,7 +46,6 @@ var Rat = (function($, _, AjaxServices) {
   function main (ratGenes) { 
     AjaxServices.getRatDiseases(ratGenes, function(response) {
       $('.loading', $context).removeClass('loading');
-      var container = $('.intermine_rat_disease', $context);
       if (response && response.status === 'online') {
         if (response.results && response.results.length) {
           display(response, container);

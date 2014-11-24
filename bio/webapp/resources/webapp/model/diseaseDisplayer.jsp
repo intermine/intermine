@@ -24,8 +24,8 @@
         </tbody>
     </table>
 
-    <link type="text/css" rel="stylesheet" href="css/rat-diseases.css">
-    <script type="text/javascript" charset="utf-8" src="js/rat-diseases.js"></script>
+    <link type="text/css" rel="stylesheet" href="model/css/rat-diseases.css">
+    <script type="text/javascript" charset="utf-8" src="model/js/rat-diseases.js"></script>
     <script type="text/javascript" charset="utf-8">Rat.getDiseases('${ratGenes}');</script>
 
   </c:when>
