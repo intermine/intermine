@@ -12,8 +12,9 @@
       <param name="class" value="org.intermine.dwr.TrackAjaxServices"/>
     </create>
 
-    <!--  Convert exceptions when debugging - disable in production -->
+    <!--  Convert exceptions when debugging - disable in production
     <convert match="java.lang.Exception" converter="exception"/>
+    -->
 
     <!--  Allow DWR to send actual objects, and not just strings. -->
     <convert converter="collection" match="java.util.Collection"/>
