@@ -1593,6 +1593,7 @@ public class JSONResultsIteratorTest extends TestCase {
         Types typeContainer = new Types();
         typeContainer.setId(new Integer(100));
         Calendar cal = Calendar.getInstance();
+        // Around noon on 6 July 2008
         cal.set(Calendar.YEAR, 2008);
         cal.set(Calendar.MONTH, 6);
         cal.set(Calendar.DATE, 6);
