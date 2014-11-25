@@ -43,6 +43,8 @@ class QueryHistoryTest(QueryBuilderTestCase):
         for q in [query_1, query_2]:
             self.browser.get(self.base_url + '/customQuery.do')
             self.findLink("Import query from XML").click()
+            wait = WebDriverWait(self.browser, 15)
+            wait.until(lambda driver: driver.find_element_by_id('xml'))
             self.elem('#xml').send_keys(q)
             self.elem('#importQueriesForm input[type="submit"]').click()
             self.elem('#showResult').click()
