@@ -35,8 +35,8 @@ elif [ "$TEST_SUITE" = "web" ]; then
 elif [ "$TEST_SUITE" = "bio" ]; then
     ant_test 'bio/core'
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
-    ant -f 'intermine/all/build.xml' checkstyle \
-        | tee >(grep FAILED >> failures.list)
+    ant -f 'intermine/all/build.xml' checkstyle
+    ./config/lib/parse_checkstyle_report.py 'intermine/all/build/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "selenium" ]; then
     . config/run-selenium-tests.sh
 fi
