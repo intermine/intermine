@@ -6,6 +6,9 @@ home_dir = os.getenv('HOME')
 logging.basicConfig(level = logging.DEBUG)
 
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+
+TIMEOUT = 10
 
 class BrowserTestCase(unittest.TestCase):
 
@@ -36,3 +39,12 @@ class BrowserTestCase(unittest.TestCase):
     def findLink(self, name):
         """Alias for self.browser.find_element_by_link_text"""
         return self.browser.find_element_by_link_text(name)
+
+    def wait(self):
+        """Convenience for creating waits"""
+        return WebDriverWait(self.browser, TIMEOUT)
+
+    def wait_to_interact(self, find_element, action):
+        """Wait for an element, then act on it"""
+        self.wait().until(find_element)
+        action(find_element(self.browser))
