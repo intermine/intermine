@@ -2,7 +2,6 @@
 
 set -e
 
-
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
@@ -19,13 +18,18 @@ else
     # Set up properties
     source config/create-ci-properties-files.sh
 
+    # Initialise a python virtual environment
+    virtualenv venv
+    source venv/bin/activate
+
     # Install lib requirements
-    sudo pip install -r config/lib/requirements.txt
+    pip install -r config/lib/requirements.txt
 
     # Build resources we might require
     if [ "$TEST_SUITE" = "selenium" ]; then
+        # We will need python requirements for selenium tests
+        pip install -r testmodel/webapp/selenium/requirements.txt
         # Selenium requires a running webapp
-        sudo pip install -r testmodel/webapp/selenium/requirements.txt
         source config/download_and_configure_tomcat.sh
         sleep 10 # wait for tomcat to come on line
         PSQL_USER=postgres sh testmodel/setup.sh
