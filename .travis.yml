@@ -1,12 +1,12 @@
 language: java
 env:
     - TEST_SUITE=model
-    - TEST_SUITE=objectstore
+#    - TEST_SUITE=objectstore
     - TEST_SUITE=integrate
     - TEST_SUITE=api
     - TEST_SUITE=pathquery
     - TEST_SUITE=web
-    - TEST_SUITE=bio
+#    - TEST_SUITE=bio
     - TEST_SUITE=selenium
     - TEST_SUITE=checkstyle
 jdk:
