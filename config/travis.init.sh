@@ -17,10 +17,10 @@ touch failures.list # Allowing us to cat it later.
 # Set up properties
 mkdir ~/.intermine
 cp config/ci.properties ~/.intermine/intermine-test.properties
-sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-test.properties
+sed -i .bak -e 's/PG_USER/postgres/' ~/.intermine/intermine-test.properties
 cp ~/.intermine/intermine-test.properties ~/.intermine/testmodel.properties
 cp config/ci-bio.properties ~/.intermine/intermine-bio-test.properties
-sed -i 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
+sed -i .bak -e 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
 
 gem install travis-artifacts
 
