@@ -30,6 +30,7 @@ class QueryHistoryTest(QueryBuilderTestCase):
         self.assertEquals(1, len(self.elems('#modifyQueryForm tbody tr')))
 
     def load_queries_into_history(self):
+        wait = WebDriverWait(self.browser, 15)
         query_1 = ''.join([
             '<query model="testmodel" view="Bank.debtors.debt" sortOrder="Bank.debtors.debt asc">',
             '</query>'
@@ -39,13 +40,15 @@ class QueryHistoryTest(QueryBuilderTestCase):
             '<constraint path="Bank.debtors.debt" op="&gt;" value="35,000,000"/>',
             '</query>'
             ])
+        import_query = "Import query from XML"
         # Load queries into session history.
         for q in [query_1, query_2]:
             self.browser.get(self.base_url + '/customQuery.do')
-            self.findLink("Import query from XML").click()
-            wait = WebDriverWait(self.browser, 15)
+            wait.until(lambda driver: driver.find_element_by_link_text(import_query))
+            self.findLink(import_query).click()
             wait.until(lambda driver: driver.find_element_by_id('xml'))
             self.elem('#xml').send_keys(q)
+            wait.until(lambda driver: driver.find_element_by_id('showResult'))
             self.elem('#importQueriesForm input[type="submit"]').click()
             self.elem('#showResult').click()
         self.browser.get(self.base_url + '/customQuery.do')
