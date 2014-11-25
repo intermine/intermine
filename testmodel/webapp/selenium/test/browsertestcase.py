@@ -28,8 +28,8 @@ class BrowserTestCase(unittest.TestCase):
         else:
             capabilities = DesiredCapabilities.FIREFOX.copy()
             capabilities = {"tunnel-identifier": travis_job}
-            capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-            capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI", "TRAVIS"]
+            capabilities["build"] = os.getenv("TRAVIS_BUILD_NUMBER")
+            capabilities["tags"] = [, "CI", "TRAVIS"]
             hub_url = "%s:%s@localhost:4445" % (sauce_user, sauce_key)
             driver = webdriver.Remote(desired_capabilities=capabilities, command_executor="http://%s/wd/hub" % hub_url)
         cls.browser = driver
