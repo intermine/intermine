@@ -30,13 +30,17 @@ class CheckStyleHandler(ContentHandler):
         elif name == "error":
             self.handleError(attrs)
 
+    def can_ignore(self, err):
+        return 'Unable to get class information' in err.message:
+
     def handleError(self, attrs):
         err = Error(
                 attrs.get('severity'),
                 attrs.get('line'),
                 attrs.get('column'),
                 attrs.get('message'))
-        self.errors[self.currentFile].append(err)
+        if not self.can_ignore(err):
+            self.errors[self.currentFile].append(err)
 
 class NervousErrorHandler(object):
 
@@ -51,8 +55,6 @@ ERROR_FMT = '  line: {0.line:>4}, column: {0.column:>3} - {0.severity} - {0.mess
 report = sys.argv[1]
 
 error_count = 0
-
-print("Parsing", report)
 
 with open(report) as f:
     handler = CheckStyleHandler()
