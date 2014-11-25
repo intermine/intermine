@@ -26,7 +26,7 @@ gem install travis-artifacts
 
 if [ "$TEST_SUITE" = "selenium" ]; then
     sudo pip install -r testmodel/webapp/selenium/requirements.txt
-    ./config/download_and_configure_tomcat.sh
+    source config/download_and_configure_tomcat.sh
     sleep 10 # wait for tomcat to come on line
     PSQL_USER=postgres sh testmodel/setup.sh
     sleep 10 # wait for the webapp to come on line

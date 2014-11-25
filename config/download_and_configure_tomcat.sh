@@ -13,6 +13,7 @@ done
 if test -z $(which wget); then
   if test -z $(which curl); then
     echo 'ERROR: neither wget or curl are available - cannot fetch tomcat'
+    exit 1
   else # curl is available - use that
     alias download='curl -O'
     alias readurl='curl'
@@ -23,6 +24,12 @@ else # use wget
 fi
 
 TOMCAT_VERSION=$(readurl http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/ | grep folder.gif | perl -ne 'm/v(7\.\d+\.\d+)/; print $1;')
+
+if test -z $TOMCAT_VERSION; then
+  echo '#--- Error reading tomcat version'
+  exit 1
+fi
+
 echo "#--- Using tomcat $TOMCAT_VERSION"
 download http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.zip
 unzip apache-tomcat-${TOMCAT_VERSION}.zip
