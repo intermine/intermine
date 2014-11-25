@@ -18,7 +18,8 @@ for filename in os.listdir(directory):
             failures = [testcase for testcase in suite if not testcase.good]
 
             for testcase in failures:
-                print('FAILURE: Class %s, method %s' % (testcase.classname, testcase.methodname))
+                print('%s: Class %s, method %s' % (testcase.result.upper(), testcase.classname, testcase.methodname))
+                print(testcase.trace)
 
             failure_count += len(failures)
 
