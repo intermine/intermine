@@ -1597,7 +1597,8 @@ public class JSONResultsIteratorTest extends TestCase {
         cal.set(Calendar.MONTH, 6);
         cal.set(Calendar.DATE, 6);
         cal.set(Calendar.ZONE_OFFSET, 0);
-        cal.set(Calendar.HOUR, 12); // Midnight counts as the day before.
+        cal.set(Calendar.HOUR_OF_DAY, 12);
+        cal.set(Calendar.MINUTE, 0);
         typeContainer.setDateObjType(cal.getTime());
 
         ResultsRow<Object> row = new ResultsRow<Object>();
