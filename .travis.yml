@@ -6,7 +6,7 @@ env:
     - TEST_SUITE=pathquery
     - TEST_SUITE=api
     - TEST_SUITE=web
-#    - TEST_SUITE=bio
+    - TEST_SUITE=bio
     - TEST_SUITE=selenium
     - TEST_SUITE=checkstyle
 jdk:
@@ -20,13 +20,10 @@ before_install:
     - ./config/travis-before-install.sh
 script:
     - ./config/travis-run.sh
-
-# after_failure:
-#   - config/upload_artifacts.sh
-# notifications:
-#   irc:
-#       channels:
-#           - "chat.freenode.net#intermine-ci"
-#       on_success: change
-#       on_error: always
+notifications:
+  irc:
+      channels:
+          - "chat.freenode.net#intermine-ci"
+      on_success: change
+      on_error: change
 

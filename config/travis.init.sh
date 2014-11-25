@@ -35,6 +35,3 @@ elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" ]; then
     ant -f testmodel/dbmodel/build.xml build-db
 fi
 
-gem install travis-artifacts
-
-
