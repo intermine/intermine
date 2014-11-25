@@ -8,7 +8,7 @@ logging.basicConfig(level = logging.DEBUG)
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 
-TIMEOUT = 10
+TIMEOUT = 60
 
 class BrowserTestCase(unittest.TestCase):
 
