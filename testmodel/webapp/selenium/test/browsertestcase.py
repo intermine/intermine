@@ -12,13 +12,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 TIMEOUT = 60
 
+sauce_user = os.getenv("SAUCE_USERNAME")
+sauce_key = os.getenv("SAUCE_ACCESS_KEY")
+travis_job = os.getenv("TRAVIS_JOB_NUMBER")
+
 class BrowserTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        p = webdriver.FirefoxProfile()
-        p.set_preference('webdriver.log.file', home_dir + '/firefox_console')
-        cls.browser = webdriver.Firefox(p)
+        if sauce_user is None:
+            p = webdriver.FirefoxProfile()
+            p.set_preference('webdriver.log.file', home_dir + '/firefox_console')
+            driver = webdriver.Firefox(p)
+        else:
+            capabilities = {"tunnel-identifier": travis_job}
+            hub_url = "%s:%s@localhost:4445" % (sauce_user, sauce_key)
+            driver = webdriver.Remote(desired_capabilities=capabilities, command_executor="http://%s/wd/hub" % hub_url)
+        cls.browser = driver
         cls.browser.implicitly_wait(TIMEOUT)
 
     @classmethod
