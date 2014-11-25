@@ -323,10 +323,17 @@ public class BioGridConverter extends BioFileConverter
                     }
 
                     Config config = configs.get(taxId);
-                    String identifierField = config.getIdentifierName();
-                    String identifierSource = config.getXref();
-                    setGene(taxId, interactorHolder, identifierField, identifierSource,
+                    if (config == null) {
+                        if (taxonIds.contains(taxId)) {
+                            throw new RuntimeException("Entry in configuration file for " + taxId
+                                + " not found");
+                        }
+                    } else {
+                        String identifierField = config.getIdentifierName();
+                        String identifierSource = config.getXref();
+                        setGene(taxId, interactorHolder, identifierField, identifierSource,
                             config.getPrefix());
+                    }
                 }
             /*********************************** INTERACTIONS ***********************************/
             // <interaction>
