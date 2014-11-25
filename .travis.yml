@@ -1,4 +1,4 @@
-language: java
+language: python # needed to get access to virtualenv
 env:
     - TEST_SUITE=model
     - TEST_SUITE=objectstore
