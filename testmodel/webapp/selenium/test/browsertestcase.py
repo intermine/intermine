@@ -2,6 +2,8 @@ import logging
 import os
 import unittest
 
+from contextlib import contextmanager
+
 home_dir = os.getenv('HOME')
 logging.basicConfig(level = logging.DEBUG)
 
@@ -44,7 +46,8 @@ class BrowserTestCase(unittest.TestCase):
         """Convenience for creating waits"""
         return WebDriverWait(self.browser, TIMEOUT)
 
-    def wait_to_interact(self, find_element, action):
+    @contextmanager
+    def wait_for(self, find_element):
         """Wait for an element, then act on it"""
         self.wait().until(find_element)
-        action(find_element(self.browser))
+        yield find_element(self.browser)

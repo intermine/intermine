@@ -30,25 +30,27 @@ class QueryHistoryTest(QueryBuilderTestCase):
         self.assertEquals(1, len(self.elems('#modifyQueryForm tbody tr')))
 
     def load_queries_into_history(self):
-        query_1 = ''.join([
-            '<query model="testmodel" view="Bank.debtors.debt" sortOrder="Bank.debtors.debt asc">',
-            '</query>'
-            ])
-        query_2 = ''.join([
-            '<query model="testmodel" view="Bank.name Bank.debtors.debt" sortOrder="Bank.debtors.debt asc">',
-            '<constraint path="Bank.debtors.debt" op="&gt;" value="35,000,000"/>',
-            '</query>'
-            ])
+        query_1 = """<query model="testmodel" view="Bank.debtors.debt" sortOrder="Bank.debtors.debt asc"/>"""
+        query_2 = """
+            <query model="testmodel" view="Bank.name Bank.debtors.debt" sortOrder="Bank.debtors.debt asc">
+                <constraint path="Bank.debtors.debt" op="&gt;" value="35,000,000"/>
+            </query>
+        """
         import_query = "Import query from XML"
         click = actions.click
+        xml_text_field = conditions.find_by_id('xml')
+        show_result_button = conditions.find_by_id('showResult')
+
         # Load queries into session history.
         for q in [query_1, query_2]:
             self.browser.get(self.base_url + '/customQuery.do')
-            send_query = lambda e: e.send_keys(q)
-            self.wait_to_interact(lambda d: d.find_element_by_link_text(import_query), click)
-            self.wait_to_interact(conditions.find_by_id('xml'), send_query)
-            self.elem('#importQueriesForm input[type="submit"]').click()
-            self.wait_to_interact(conditions.find_by_id('showResult'), click)
+            with self.wait_for(lambda d: d.find_element_by_link_text(import_query)) as link:
+                link.click()
+            with self.wait_for(xml_text_field) as field:
+                field.send_keys(q)
+                self.elem('#importQueriesForm input[type="submit"]').click()
+            with self.wait_for(show_result_button) as button:
+                button.click()
         self.browser.get(self.base_url + '/customQuery.do')
 
     def test_run_query_in_query_history(self):
