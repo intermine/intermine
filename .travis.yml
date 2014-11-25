@@ -21,10 +21,6 @@ before_install:
     - ./config/travis-before-install.sh
 script:
     - ./config/travis-run.sh
-addons:
-    sauce_connect:
-        username: "ajk59"
-        access_key: "28fedb2c-35b4-4bbc-b4f3-735ad303ed71"
 notifications:
   irc:
       channels:
