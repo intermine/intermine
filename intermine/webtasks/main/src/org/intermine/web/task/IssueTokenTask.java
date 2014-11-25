@@ -39,7 +39,8 @@ import org.intermine.webservice.server.JWTBuilder;
  * @author Alex Kalderimis
  *
  */
-public class IssueTokenTask extends KeyStoreTask {
+public class IssueTokenTask extends KeyStoreTask
+{
 
     // The following three properties are required in the project properties.
     private static final String PUBLICIDENTITY = "jwt.publicidentity";
@@ -161,6 +162,11 @@ public class IssueTokenTask extends KeyStoreTask {
 
         private String username, email;
 
+        /**
+         * Construct a fake profile so we can pass it to the JWTBuilder
+         * @param username The of the user
+         * @param email The email of the user
+         */
         public FakeProfile(String username, String email) {
             super(null, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
