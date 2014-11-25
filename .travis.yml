@@ -10,7 +10,7 @@ env:
     - TEST_SUITE=selenium
     - TEST_SUITE=checkstyle
 jdk:
-    - oraclejdk7
+#    - oraclejdk7
     - openjdk7
     - openjdk6
 before_script:
