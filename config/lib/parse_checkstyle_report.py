@@ -31,7 +31,7 @@ class CheckStyleHandler(ContentHandler):
             self.handleError(attrs)
 
     def can_ignore(self, err):
-        return 'Unable to get class information' in err.message:
+        return 'Unable to get class information' in err.message
 
     def handleError(self, attrs):
         err = Error(
