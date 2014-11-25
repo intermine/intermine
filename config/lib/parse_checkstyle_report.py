@@ -15,7 +15,7 @@ class Error(object):
     def __init__(self, severity, line, column, message):
         self.severity = severity
         self.line = line
-        self.column = column
+        self.column = (column if column is not None else '-')
         self.message = message
 
 class CheckStyleHandler(ContentHandler):
@@ -30,8 +30,15 @@ class CheckStyleHandler(ContentHandler):
         elif name == "error":
             self.handleError(attrs)
 
+    # TODO - compile the classes so we don't have to do this.
     def can_ignore(self, err):
-        return 'Unable to get class information' in err.message
+        if 'Unable to get class information' in err.message:
+            return True
+        if 'Redundant throws' in err.message:
+            return True
+        if 'Unused @throws tag' in err.message:
+            return True
+        return False
 
     def handleError(self, attrs):
         err = Error(
