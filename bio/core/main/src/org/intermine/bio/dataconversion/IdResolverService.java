@@ -62,9 +62,10 @@ public final class IdResolverService
         IdResolverService.getWormIdResolver();
         // HACK - resolve human ids to HGNC symbols
         IdResolverService.getHumanIdResolver();
-        taxonIds.remove("6239");
-        taxonIds.remove("9606");
-        return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
+        Set<String> taxonIdsToResolve = new HashSet<String>(taxonIds);
+        taxonIdsToResolve.remove("6239");
+        taxonIdsToResolve.remove("9606");
+        return new EntrezGeneIdResolverFactory().getIdResolver(taxonIdsToResolve);
     }
 
     /**
