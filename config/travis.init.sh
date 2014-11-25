@@ -26,6 +26,7 @@ sed -i.bak -e 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
 ant -f intermine/objectstore/model/testmodel/build.xml
 ant -f intermine/integrate/model/fulldata/build.xml
 ant -f intermine/api/model/userprofile/build.xml
+ant -f testmodel/dbmodel/build.xml build-db
 ant -f bio/test-all/dbmodel/build.xml build-db
 
 gem install travis-artifacts
