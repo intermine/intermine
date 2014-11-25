@@ -5,12 +5,16 @@ from test.querybuildertestcase import QueryBuilderTestCase
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.support.ui import WebDriverWait
 
+TIMEOUT = 10
+
 class QueryHistoryTest(QueryBuilderTestCase):
+
+    def wait(self):
+        return WebDriverWait(self.browser, TIMEOUT)
 
     def test_query_history(self):
         self.load_queries_into_history()
-        wait = WebDriverWait(self.browser, 15)
-        wait.until(lambda d: 'query' in d.title.lower())
+        self.wait().until(lambda d: 'query' in d.title.lower())
 
         self.assertIn('Custom query', self.browser.title)
         self.assertEquals(2, len(self.elems('#modifyQueryForm tbody tr')))
@@ -29,8 +33,11 @@ class QueryHistoryTest(QueryBuilderTestCase):
         Alert(self.browser).accept()
         self.assertEquals(1, len(self.elems('#modifyQueryForm tbody tr')))
 
+    def wait_to_interact(self, find_element, action):
+        self.wait().until(find_element)
+        action(find_element(self.browser))
+
     def load_queries_into_history(self):
-        wait = WebDriverWait(self.browser, 15)
         query_1 = ''.join([
             '<query model="testmodel" view="Bank.debtors.debt" sortOrder="Bank.debtors.debt asc">',
             '</query>'
@@ -41,16 +48,15 @@ class QueryHistoryTest(QueryBuilderTestCase):
             '</query>'
             ])
         import_query = "Import query from XML"
+        click = lambda e: e.click()
         # Load queries into session history.
         for q in [query_1, query_2]:
             self.browser.get(self.base_url + '/customQuery.do')
-            wait.until(lambda driver: driver.find_element_by_link_text(import_query))
-            self.findLink(import_query).click()
-            wait.until(lambda driver: driver.find_element_by_id('xml'))
-            self.elem('#xml').send_keys(q)
-            wait.until(lambda driver: driver.find_element_by_id('showResult'))
+            send_query = lambda e: e.send_keys(q)
+            self.wait_to_interact(lambda d: d.find_element_by_link_text(import_query), click)
+            self.wait_to_interact(lambda d: d.find_element_by_id('xml'), send_query)
             self.elem('#importQueriesForm input[type="submit"]').click()
-            self.elem('#showResult').click()
+            self.wait_to_interact(lambda d: d.find_element_by_id('showResult'), click)
         self.browser.get(self.base_url + '/customQuery.do')
 
     def test_run_query_in_query_history(self):
@@ -64,8 +70,7 @@ class QueryHistoryTest(QueryBuilderTestCase):
 
         self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(2)').click()
 
-        wait = WebDriverWait(self.browser, 15)
-        wait.until(lambda d: 'query' in d.title.lower())
+        self.wait().until(lambda d: 'query' in d.title.lower())
 
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)
