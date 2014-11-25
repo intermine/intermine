@@ -2,6 +2,7 @@
 # Hackily scrape the currently available tomcat-7 version.
 
 set -e
+shopt -s expand_aliases
 
 for dep in perl unzip; do
   if test -z $(which $dep); then
