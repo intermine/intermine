@@ -15,21 +15,12 @@ psql -c 'create database biofulldatatest;' -U postgres
 touch failures.list # Allowing us to safely cat it later.
 
 # Set up properties
-mkdir ~/.intermine
-cp config/ci.properties ~/.intermine/intermine-test.properties
-sed -i.bak -e 's/PG_USER/postgres/' ~/.intermine/intermine-test.properties
-cp ~/.intermine/intermine-test.properties ~/.intermine/testmodel.properties
-cp config/ci-bio.properties ~/.intermine/intermine-bio-test.properties
-sed -i.bak -e 's/PG_USER/postgres/' ~/.intermine/intermine-bio-test.properties
+source config/create-ci-properties-files.sh
 
 # Build any models we might require.
 ant -f intermine/objectstore/model/testmodel/build.xml
 ant -f intermine/integrate/model/fulldata/build.xml
 ant -f intermine/api/model/userprofile/build.xml
-ant -f testmodel/dbmodel/build.xml build-db
-ant -f bio/test-all/dbmodel/build.xml build-db
-
-gem install travis-artifacts
 
 if [ "$TEST_SUITE" = "selenium" ]; then
     sudo pip install -r testmodel/webapp/selenium/requirements.txt
@@ -37,5 +28,12 @@ if [ "$TEST_SUITE" = "selenium" ]; then
     sleep 10 # wait for tomcat to come on line
     PSQL_USER=postgres sh testmodel/setup.sh
     sleep 10 # wait for the webapp to come on line
+elif [ "$TEST_SUITE" = "bio" ]; then
+    ant -f bio/test-all/dbmodel/build.xml build-db
+else
+    ant -f testmodel/dbmodel/build.xml build-db
 fi
+
+gem install travis-artifacts
+
 
