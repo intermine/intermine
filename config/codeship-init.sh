@@ -1,7 +1,7 @@
+#!/bin/bash
+
 # Errors are fatal.
 set -e
-
-export TOMCAT_VERSION=7.0.53
 
 # Create databases.
 psql -c 'create database notxmltest;'
@@ -24,12 +24,11 @@ sed -i "s/PG_USER/$PG_USER/" $HOME/.intermine/intermine-bio-test.properties
 sed -i "s/PG_PASS/$PG_PASSWORD/" $HOME/.intermine/intermine-bio-test.properties
 
 # Install requirements for running selenium test.
+pip install -r config/lib/requirements.txt
 pip install -r testmodel/webapp/selenium/requirements.txt
 
 # Install and configure tomcat 7.0.53
-sh config/download_and_configure_tomcat.sh
+source config/download_and_configure_tomcat.sh
 
-# Start tomcat on the default port (8080)
-nohup bash -c "sh apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh 2>&1 " && sleep 4; cat nohup.out
-
+ant -f testmodel/dbmodel/build.xml build-db
 ant -f bio/test-all/dbmodel/build.xml build-db

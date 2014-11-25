@@ -1,28 +1,12 @@
 #!/bin/bash
 
-touch failures.list
+set -e
 
-ant -f intermine/all/build.xml \
-    clean fulltest checkstyle  \
-    | tee >(grep FAILED >> failures.list)
+ant -f intermine/all/build.xml clean fulltest checkstyle
 
-cat failures.list
+./config/lib/parse_test_report.py "intermine/all/build/test/results"
 
 PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmodel/setup.sh
-sleep 10
+sleep 10 # Wait for the webapp to come online
 
-sh config/run-selenium-tests.sh
-
-if [ -z $S3_LOCATION ]; then
-    echo no s3 location provided.
-else
-    echo uploading results to s3
-    # Requires AWS config. See codeship docs.
-    pip install awscli
-    NOW=$(date --iso-8601=seconds | sed 's/:/-/g')
-    ARCHIVE="test-results-${NOW}.tar.gz"
-    tar -acf "$ARCHIVE" intermine/all/build/
-    aws s3 cp "$ARCHIVE" s3://${S3_LOCATION}/"$ARCHIVE"
-fi
-
-test ! -s failures.list
+./config/run-selenium-tests.sh

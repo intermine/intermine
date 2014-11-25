@@ -41,5 +41,10 @@ cat apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh >> prefixed
 cp prefixed apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh
 sed -i=bak -e 's!<Context>!<Context sessionCookiePath="/" useHttpOnly="false">!' apache-tomcat-${TOMCAT_VERSION}/conf/context.xml
 chmod +x apache-tomcat-${TOMCAT_VERSION}/bin/catalina.sh # startup.sh won't work unless catalina.sh is executable.
-sh apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh 2>&1 & sleep 3
+
+# Start tomcat on the default port (8080)
+touch nohup.out
+nohup bash -c "apache-tomcat-${TOMCAT_VERSION}/bin/startup.sh 2>&1" && sleep 3
+cat nohup.out
+
 echo "#--- Started tomcat application container"
