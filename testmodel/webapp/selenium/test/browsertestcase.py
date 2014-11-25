@@ -19,7 +19,7 @@ class BrowserTestCase(unittest.TestCase):
         p = webdriver.FirefoxProfile()
         p.set_preference('webdriver.log.file', home_dir + '/firefox_console')
         cls.browser = webdriver.Firefox(p)
-        cls.browser.implicitly_wait(30)
+        cls.browser.implicitly_wait(TIMEOUT)
 
     @classmethod
     def tearDownClass(cls):

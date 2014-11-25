@@ -5,6 +5,7 @@ import test.conditions as conditions
 import test.actions as actions
 
 from selenium.webdriver.common.alert import Alert
+from selenium.webdriver.support import expected_conditions as EC
 
 class QueryHistoryTest(QueryBuilderTestCase):
 
@@ -44,13 +45,11 @@ class QueryHistoryTest(QueryBuilderTestCase):
         # Load queries into session history.
         for q in [query_1, query_2]:
             self.browser.get(self.base_url + '/customQuery.do')
-            with self.wait_for(lambda d: d.find_element_by_link_text(import_query)) as link:
-                link.click()
-            with self.wait_for(xml_text_field) as field:
-                field.send_keys(q)
-                self.elem('#importQueriesForm input[type="submit"]').click()
-            with self.wait_for(show_result_button) as button:
-                button.click()
+            link = self.browser.find_element_by_link_text(import_query)
+            link.click()
+            self.elem('#xml').send_keys(q)
+            self.elem('#importQueriesForm input[type="submit"]').click()
+            self.elem('#showResult').click()
         self.browser.get(self.base_url + '/customQuery.do')
 
     def test_run_query_in_query_history(self):
