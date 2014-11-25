@@ -11,8 +11,8 @@ env:
     - TEST_SUITE=checkstyle
 jdk:
     - oraclejdk7
-#    - openjdk7
-#    - openjdk6
+    - openjdk7
+    - openjdk6
 before_script:
     - ./config/travis.init.sh
 before_install:
