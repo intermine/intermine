@@ -40,6 +40,3 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
 elif [ "$TEST_SUITE" = "selenium" ]; then
     . config/run-selenium-tests.sh
 fi
-
-cat $FAILURES
-test ! -s $FAILURES
