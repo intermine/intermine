@@ -32,7 +32,10 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  **/
 public class WebServiceRequestParser
 {
-    /** Name of start parameter that determines index of first returned result. */
+	/** The smallest legal result size you can request **/
+    public static final int MIN_LIMIT = 1;
+
+	/** Name of start parameter that determines index of first returned result. */
     public static final String START_PARAMETER = "start";
 
     /** Name of size parameter that determines number of returned results. */
@@ -161,7 +164,7 @@ public class WebServiceRequestParser
         }
 
         Integer limit = parseInteger(request.getParameter(LIMIT_PARAMETER),
-                LIMIT_PARAMETER, 1, MAX_LIMIT.intValue());
+                LIMIT_PARAMETER, MIN_LIMIT, MAX_LIMIT.intValue());
         if (limit != null) {
             input.setLimit(limit);
         }

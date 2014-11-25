@@ -389,6 +389,14 @@ public class QueryResultService extends AbstractQueryService
 
 
     private QueryResultInput getInput() {
-        return new QueryResultRequestParser(im.getQueryStore(), request).getInput();
+        QueryResultInput qri = new QueryResultRequestParser(im.getQueryStore(),
+                request).getInput();
+        // Table format doesn't actually fetch any rows but we want it to trigger a query in
+        // ObjectStore so results are in cache when Row processors need to fetch them. We need
+        // to set a limit here to prevent runResults() from calling goFaster() and precomputing.
+        if (getFormat() == Format.TABLE) {
+            qri.setLimit(WebServiceRequestParser.MIN_LIMIT);
+        }
+        return qri;
     }
 }
