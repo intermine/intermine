@@ -1,18 +1,23 @@
 #!/bin/bash
 
-
 set -e
 
 export ANT_OPTS='-server'
 
+FAILURES=$PWD/failures.list
+
 ant_test () {
     if [ -d "$1/main" ]; then
+      echo RUNNING ant -f "$1/main/build.xml" clean
       ant -f "$1/main/build.xml" clean
+      echo RUNNING ant -f "$1/main/build.xml"
       ant -f "$1/main/build.xml"
     fi
+    echo RUNNING ant -f "$1/test/build.xml" clean
     ant -f "$1/test/build.xml" clean
+    echo RUNNING ant -f "$1/test/build.xml"
     ant -f "$1/test/build.xml" -Ddont.minify=true 2>&1 \
-        | tee >(grep FAILED >> failures.list)
+        | tee >(grep FAILED >> $FAILURES)
 }
 
 if [ "$TEST_SUITE" = "model" ]; then
@@ -36,5 +41,5 @@ elif [ "$TEST_SUITE" = "selenium" ]; then
     . config/run-selenium-tests.sh
 fi
 
-cat failures.list
-test ! -s failures.list
+cat $FAILURES
+test ! -s $FAILURES
