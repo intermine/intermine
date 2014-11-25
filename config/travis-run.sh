@@ -16,8 +16,8 @@ ant_test () {
     echo RUNNING ant -f "$1/test/build.xml" clean
     ant -f "$1/test/build.xml" clean
     echo RUNNING ant -f "$1/test/build.xml"
-    ant -f "$1/test/build.xml" -Ddont.minify=true 2>&1 \
-        | tee >(grep FAILED >> $FAILURES)
+    ant -f "$1/test/build.xml" -Ddont.minify=true
+    ./config/lib/parse_test_report.py "$1/test/build/test/results"
 }
 
 if [ "$TEST_SUITE" = "model" ]; then

@@ -1,7 +1,7 @@
 language: java
 env:
     - TEST_SUITE=model
-#    - TEST_SUITE=objectstore
+    - TEST_SUITE=objectstore
     - TEST_SUITE=integrate
     - TEST_SUITE=pathquery
     - TEST_SUITE=api

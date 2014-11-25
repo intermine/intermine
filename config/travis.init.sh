@@ -17,6 +17,9 @@ touch failures.list # Allowing us to safely cat it later.
 # Set up properties
 source config/create-ci-properties-files.sh
 
+# Install lib requirements
+sudo pip install -r config/lib/requirements.txt
+
 # Build resources we might require
 if [ "$TEST_SUITE" = "selenium" ]; then
     # Selenium requires a running webapp
