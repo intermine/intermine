@@ -39,7 +39,7 @@ class AddConstraintSetTest(Super):
         self.elem('#attributeSubmit').click()
         # Check that the query is as expected.
         self.elem('a[title="Export this query as XML"]').click()
-        self.wait().until(lambda d: not d.find_element_by_id('header'))
+        self.wait().until(lambda d: not len(d.title))
         self.assertEquals(expected_query.strip(), self.elem('body').text)
         self.browser.back()
         # Check that the results are as expected.
