@@ -2,6 +2,13 @@
 
 set -e
 
+if [ -z $(which wget) ]; then
+    # use curl
+    GET='curl'
+else
+    GET='wget -O -'
+fi
+
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
@@ -45,6 +52,8 @@ else
 
     if [[ "$TEST_SUITE" = "ws-integration" ]] ; then
         # We need the imjs code to exercise the webservices
+        # Warm up the keyword search by requesting results, but ignoring the results
+        $GET $TESTMODEL_URL/service/search > /dev/null
         git clone https://github.com/intermine/imjs.git imjs
     fi
 fi
