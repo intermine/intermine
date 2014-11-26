@@ -21,7 +21,9 @@ ant_test () {
     ant -f "$1/test/build.xml" clean
     echo RUNNING ant -f "$1/test/build.xml"
     ant -f "$1/test/build.xml" -Ddont.minify=true
+    echo CHECKING results
     ./config/lib/parse_test_report.py "$1/test/build/test/results"
+    echo ALL TESTS PASSED
 }
 
 if [ "$TEST_SUITE" = "model" ]; then
