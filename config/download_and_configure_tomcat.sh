@@ -6,6 +6,8 @@ set -e
 SCRIPT=${BASH_SOURCE[@]}
 DIR=$(dirname $SCRIPT)
 
+echo "Working relative to $DIR"
+
 for dep in perl unzip; do
   if test -z $(which $dep); then
     echo "ERROR: $dep not found - please install $dep"
@@ -36,7 +38,7 @@ fi
 echo "#--- Using tomcat $TOMCAT_VERSION"
 TOMCAT=apache-tomcat-${TOMCAT_VERSION}
 $DOWNLOAD http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/${TOMCAT}.zip
-unzip ${TOMCAT}.zip
+unzip -q ${TOMCAT}.zip
 cp $DIR/tomcat-users.xml ${TOMCAT}/conf/tomcat-users.xml
 echo 'JAVA_OPTS="$JAVA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"' >> prefixed
 echo 'export JAVA_OPTS' >> prefixed
