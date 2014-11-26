@@ -27,8 +27,12 @@ sed -i "s/PG_PASS/$PG_PASSWORD/" $HOME/.intermine/intermine-bio-test.properties
 pip install -r config/lib/requirements.txt
 pip install -r testmodel/webapp/selenium/requirements.txt
 
-# Install and configure tomcat 7.0.53
-source config/download_and_configure_tomcat.sh
-
+# Build models we need.
 ant -f testmodel/dbmodel/build.xml build-db
 ant -f bio/test-all/dbmodel/build.xml build-db
+
+# Install and configure tomcat 7.0.53
+source config/download_and_configure_tomcat.sh
+sleep 5 # Wait for tomcat to be available
+PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmodel/setup.sh
+sleep 10 # Wait for the webapp to come online
