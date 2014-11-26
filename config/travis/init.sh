@@ -26,7 +26,7 @@ else
     pip install -r config/lib/requirements.txt
 
     # Build resources we might require
-    if [[ "$TEST_SUITE" = "selenium" ]] || [["$TEST_SUITE" = "ws-integration"]]; then
+    if [ "$TEST_SUITE" = "selenium" -o "$TEST_SUITE" = "ws-integration" ]; then
         # We will need python requirements for selenium tests
         pip install -r testmodel/webapp/selenium/requirements.txt
         # We need a running webapp
