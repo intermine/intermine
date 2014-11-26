@@ -60,6 +60,15 @@ class BrowserTestCase(unittest.TestCase):
         """Convenience for creating waits"""
         return WebDriverWait(self.browser, TIMEOUT)
 
+    def click_and_wait_for_refresh(self, elem):
+        """Given an element, it clicks it and waits for the page to reload"""
+        prev_url = self.browser.current_url
+        if hasattr(elem, 'click'):
+            elem.click()
+        else:
+            self.elem(elem).click()
+        self.wait().until(lambda d: d.current_url != prev_url)
+
     @contextmanager
     def wait_for(self, find_element):
         """Wait for an element, then act on it"""
