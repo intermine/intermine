@@ -44,7 +44,6 @@ else
 
     if [[ "$TEST_SUITE" = "ws-integration" ]] ; then
         # We need the imjs code to exercise the webservices
-        export TESTMODEL_URL=http://localhost:8080/intermine-demo
         git clone https://github.com/intermine/imjs.git imjs
     fi
 fi
