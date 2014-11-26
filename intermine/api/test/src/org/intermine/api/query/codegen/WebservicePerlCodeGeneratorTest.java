@@ -36,6 +36,9 @@ public class WebservicePerlCodeGeneratorTest extends WebserviceJavaCodeGenerator
     /*
      * The tests are defined in the parent class. This subclass simply redefines the language
      * to be used for the generator.
+     *
+     * The expectations are defined as files named *.perl.expected in the resources directory,
+     * under the org.intermine.api.query.codegen namespace.
      */
 
 }

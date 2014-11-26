@@ -1,9 +1,18 @@
 package org.intermine.api.query;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.StringReader;
 import java.util.Map;
 
-import org.intermine.api.query.QueryStore;
 import org.intermine.api.util.LimitedMap;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -19,27 +28,38 @@ import org.intermine.pathquery.PathQueryBinding;
  * @author Alex Kalderimis
  *
  */
-public class MemoryQueryStore implements QueryStore {
+public class MemoryQueryStore implements QueryStore
+{
 
     private final long startTime = System.currentTimeMillis();
     private final Map<Long, String> idToXML;
     private final Map<String, Long> xmlToId;
     private final int maxSize;
 
+    /**
+     * @param maxSize maximum size
+     */
     public MemoryQueryStore(int maxSize) {
         this.maxSize = maxSize;
         idToXML = new LimitedMap<Long, String>(maxSize);
         xmlToId = new LimitedMap<String, Long>(maxSize);
     }
-    
 
+
+    /**
+     * @param xml xml
+     * @return id
+     * @throws BadQueryException if query is bad
+     */
+    @Override
     public synchronized String putQuery(String xml) throws BadQueryException {
         Long id = xmlToId.get(xml);
         if (id != null) {
             return id.toString();
         }
         try {
-            PathQueryBinding.unmarshalPathQuery(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
+            PathQueryBinding.unmarshalPathQuery(new StringReader(xml),
+                    PathQuery.USERPROFILE_VERSION);
         } catch (Exception e) {
             String message = "XML is not well formatted.";
             throw new BadQueryException(message, e);
@@ -53,7 +73,15 @@ public class MemoryQueryStore implements QueryStore {
         return id.toString();
     }
 
-    public String getQuery(String key) throws KeyFormatException, NotPresentException {
+    /**
+     * @param key key
+     * @return query
+     * @throws KeyFormatException if something goes wrong
+     * @throws NotPresentException if key is not in query store
+     */
+    @Override
+    public String getQuery(String key)
+        throws KeyFormatException, NotPresentException {
         Long id;
         try {
             id = Long.valueOf(key, 10);
@@ -61,7 +89,8 @@ public class MemoryQueryStore implements QueryStore {
             throw new KeyFormatException("The key for this query store must be a 64bit number", e);
         }
         if (id < startTime) {
-            String message = "Key not in query store. This key may have come from an expired session";
+            String message = "Key not in query store. "
+                    + "This key may have come from an expired session";
             throw new NotPresentException(message);
         }
         if (!idToXML.containsKey(id)) {

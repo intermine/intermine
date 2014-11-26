@@ -41,14 +41,14 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(WormBaseIdResolverFactory.class);
 
     private final String taxonId = "6239";
-    @SuppressWarnings("unused")
-    private final String propKeyDb = "db.wormbase";
-
     private final String propKeyFile = "resolver.file.rootpath";
     private final String resolverFileSymboWormId = "wormid";
     // HACK
     private final String resolverFileSymboWb2Ncbi = "wb2ncbi";
 
+    /**
+     * constructor
+     */
     public WormBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
     }
@@ -63,7 +63,6 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
     /**
      * Build an IdResolver for WormBase by accessing a WormBase chado database.
-     * @return an IdResolver for WormBase
      */
     @Override
     protected void createIdResolver() {
@@ -71,13 +70,12 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 && resolver.hasTaxonAndClassName(taxonId, this.clsCol
                         .iterator().next())) {
             return;
-        } else {
-            if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+        }
+        if (resolver == null) {
+            if (clsCol.size() > 1) {
+                resolver = new IdResolver();
+            } else {
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 
@@ -101,27 +99,27 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("To process WormId file");
-                String WormIdFileName =  resolverFileRoot.trim() + resolverFileSymboWormId;
-                File wormIdDataFile = new File(WormIdFileName);
+                String wormIdFileName =  resolverFileRoot.trim() + resolverFileSymboWormId;
+                File wormIdDataFile = new File(wormIdFileName);
 
                 if (wormIdDataFile.exists()) {
                     createFromWormIdFile(wormIdDataFile);
 
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
-                    String Wb2NcbiFileName = resolverFileRoot.trim() + resolverFileSymboWb2Ncbi;
-                    File wb2NcbiDataFile = new File(Wb2NcbiFileName);
+                    String wb2NcbiFileName = resolverFileRoot.trim() + resolverFileSymboWb2Ncbi;
+                    File wb2NcbiDataFile = new File(wb2NcbiFileName);
 
                     if (wb2NcbiDataFile.exists()) {
                         createFromWb2NcbiFile(wb2NcbiDataFile);
                     } else {
-                        LOG.warn("Resolver file not exists: " + Wb2NcbiFileName);
+                        LOG.warn("Resolver file not exists: " + wb2NcbiFileName);
                     }
                     // END OF HACK
 
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
-                    LOG.warn("Resolver file not exists: " + WormIdFileName);
+                    LOG.warn("Resolver file not exists: " + wormIdFileName);
                 }
 
             }
@@ -232,6 +230,12 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Populate the ID resolver from a tab delimited file
+     *
+     * @param wormIdDataFile the file
+     * @throws IOException if we can't read from the file
+     */
     protected void createFromWormIdFile(File wormIdDataFile) throws IOException {
         Iterator<?> lineIter = FormattedTextParser
                 .parseTabDelimitedReader(new BufferedReader(new FileReader(
@@ -257,7 +261,12 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
-    // HACK
+    /**
+     * Populate the ID resolver from a tab delimited file
+     *
+     * @param wb2NcbiDataFile the file
+     * @throws IOException if we can't read from the file
+     */
     protected void createFromWb2NcbiFile(File wb2NcbiDataFile) throws IOException {
         Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(
                 new BufferedReader(new FileReader(wb2NcbiDataFile)), ' ');

@@ -144,8 +144,10 @@ public class Callback extends LoginHandler
         }
     }
 
-    private OAuthProvider getOAuthProvider(ActionMapping mapping,
-            HttpServletRequest request, Properties webProperties,
+    private OAuthProvider getOAuthProvider(
+            ActionMapping mapping,
+            HttpServletRequest request,
+            Properties webProperties,
             String providerName) throws ForseenProblem {
         OAuthProvider provider;
         try {

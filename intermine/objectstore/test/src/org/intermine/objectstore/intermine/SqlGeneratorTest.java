@@ -480,6 +480,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     public void executeTest(String type) throws Exception {
         Query q = (Query) queries.get(type);
         Object expected = results.get(type);
+
         if (expected instanceof Failure) {
             try {
                 SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
@@ -1009,6 +1010,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     protected DatabaseSchema getSchema() throws Exception {
         return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.unittest")).getSchema();
     }
+
     public String getRegisterOffset1() {
         return "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id";
     }

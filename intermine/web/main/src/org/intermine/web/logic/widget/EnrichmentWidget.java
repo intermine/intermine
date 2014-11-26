@@ -142,9 +142,6 @@ public class EnrichmentWidget extends Widget
                 + "list of %s ", config.getId(), config.getTypeClass(), bag.getType()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process() {
         checkNotProcessed();
@@ -157,18 +154,7 @@ public class EnrichmentWidget extends Widget
                                            extraCorrectionCoefficient, correctionCoefficient);
             setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-            throw e;
+            throw new RuntimeException(e);
         }
     }
 

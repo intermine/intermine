@@ -184,7 +184,7 @@ public class ItemFactory
                 } else if (value instanceof InterMineObject) {
                     item.setReference(fieldname, ((InterMineObject) value).getId().toString());
                 } else {
-                    if (!fieldname.equalsIgnoreCase("id")) {
+                    if (!"id".equalsIgnoreCase(fieldname)) {
                         if (value instanceof ClobAccess) {
                             item.setAttribute(fieldname, ((ClobAccess) value).toString());
                         } else {

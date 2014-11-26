@@ -33,12 +33,11 @@ import org.intermine.objectstore.intermine.SQLOperation;
 
 /**
  * A representation of an invitation to share a resource.
- * @author Alex Kalderimis
  *
+ * @author Alex Kalderimis
  */
 public class SharingInvite
 {
-
     private static final class FetchInviteData extends SQLOperation<IntermediateRepresentation>
     {
         private final String token;
@@ -128,10 +127,23 @@ public class SharingInvite
 
     private boolean inDB = false;
 
+    /**
+     * Constructor.
+     *
+     * @param bag the bag to share
+     * @param invitee the person to share the list with
+     */
     protected SharingInvite(InterMineBag bag, String invitee) {
         this(bag, invitee, TextUtil.generateRandomUniqueString(20));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param bag the bag to share
+     * @param invitee the person to share the list with
+     * @param token the User token
+     */
     protected SharingInvite(
             InterMineBag bag,
             String invitee,
@@ -139,6 +151,16 @@ public class SharingInvite
         this(bag, invitee, token, null, null, null);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param bag the bag to share
+     * @param invitee the person to share the list with
+     * @param token the User token
+     * @param createdAt date created
+     * @param acceptedAt date accepted
+     * @param accepted true if accepted
+     */
     protected SharingInvite(
             InterMineBag bag, String invitee, String token,
             Date createdAt, Date acceptedAt, Boolean accepted) {
@@ -170,6 +192,10 @@ public class SharingInvite
         }
     }
 
+    /**
+     * @throws SQLException database has wrong model
+     * @throws NotFoundException invite not found
+     */
     public void delete() throws SQLException, NotFoundException {
         if (!inDB) {
             throw new NotFoundException("This invite is not stored in the DB");
@@ -186,6 +212,11 @@ public class SharingInvite
         });
     }
 
+    /**
+     *
+     * @param wasAccepted true if accepted
+     * @throws SQLException database has wrong model
+     */
     protected void setAccepted(final Boolean wasAccepted) throws SQLException {
         if (acceptedAt != null) {
             throw new IllegalStateException("This invitation has already been accepted");
@@ -205,6 +236,10 @@ public class SharingInvite
         });
     }
 
+    /**
+    * @throws SQLException database has wrong model
+    */
+
     protected void unaccept() throws SQLException {
         if (acceptedAt == null) {
             throw new IllegalStateException("This invitation has not been accepted");
@@ -219,11 +254,14 @@ public class SharingInvite
         });
     }
 
+    /**
+    * @throws SQLException database has wrong model
+    */
     protected void save() throws SQLException {
         if (inDB) {
             return;
         }
-        if (createdAt == null) { // New - we can go ahead and only save the interesting bits. 
+        if (createdAt == null) { // New - we can go ahead and only save the interesting bits.
             os.performUnsafeOperation(SAVE_SQL, new SQLOperation<Void>() {
                 @Override
                 public Void run(PreparedStatement stm) throws SQLException {
@@ -265,24 +303,33 @@ public class SharingInvite
         }
     }
 
-    public static Collection<IntermediateRepresentation> getInviteData(
-            final ProfileManager pm,
+    /**
+     * @param pm profile manager
+     * @param inviter user who send the invite
+     * @return collection of objects holding the invite data
+     * @throws SQLException userprofile database doesn't have the correct model
+     */
+    public static Collection<IntermediateRepresentation> getInviteData(final ProfileManager pm,
             final Profile inviter)
-            throws SQLException {
-        ObjectStoreWriterInterMineImpl osw = (ObjectStoreWriterInterMineImpl) pm.getProfileObjectStoreWriter();
-        return osw.performUnsafeOperation(FETCH_MINE_SQL, new SQLOperation<Collection<IntermediateRepresentation>>() {
-            @Override
-            public Collection<IntermediateRepresentation> run(PreparedStatement stm) throws SQLException {
-                stm.setInt(1, inviter.getUserId());
-                ResultSet rs = stm.executeQuery();
+        throws SQLException {
+        ObjectStoreWriterInterMineImpl osw = (ObjectStoreWriterInterMineImpl)
+                pm.getProfileObjectStoreWriter();
+        return osw.performUnsafeOperation(FETCH_MINE_SQL,
+                new SQLOperation<Collection<IntermediateRepresentation>>() {
+                @Override
+                public Collection<IntermediateRepresentation> run(PreparedStatement stm)
+                    throws SQLException {
+                    stm.setInt(1, inviter.getUserId());
+                    ResultSet rs = stm.executeQuery();
 
-                final List<IntermediateRepresentation> results = new ArrayList<IntermediateRepresentation>();
-                while (rs.next()) {
-                    results.add(toIntermediateReps(rs));
+                    final List<IntermediateRepresentation> results
+                        = new ArrayList<IntermediateRepresentation>();
+                    while (rs.next()) {
+                        results.add(toIntermediateReps(rs));
+                    }
+                    return results;
                 }
-                return results;
-            }
-        });
+            });
     }
 
     /**
@@ -291,7 +338,7 @@ public class SharingInvite
      * @param inviter The profile of the user that made the invitations.
      * @return A list of invitations
      * @throws SQLException If a connection cannot be established, or the SQL is bad.
-     * @throws ObjectStoreException If the bag referenced by the invitation doesn't exist. 
+     * @throws ObjectStoreException If the bag referenced by the invitation doesn't exist.
      */
     public static Collection<SharingInvite> getInvites(final InterMineAPI im, final Profile inviter)
         throws SQLException, ObjectStoreException {
@@ -300,15 +347,14 @@ public class SharingInvite
 
     /**
      * Get the invitations this profile has made.
-     * @param im The API of the data-warehouse
+     * @param pm profile manager
+     * @param bm bag manager
      * @param inviter The profile of the user that made the invitations.
      * @return A list of invitations
      * @throws SQLException If a connection cannot be established, or the SQL is bad.
-     * @throws ObjectStoreException If the bag referenced by the invitation doesn't exist. 
+     * @throws ObjectStoreException If the bag referenced by the invitation doesn't exist.
      */
-    public static Collection<SharingInvite> getInvites(
-            final ProfileManager pm,
-            final BagManager bm,
+    public static Collection<SharingInvite> getInvites(final ProfileManager pm, final BagManager bm,
             final Profile inviter)
         throws SQLException, ObjectStoreException {
         Collection<IntermediateRepresentation> rows = getInviteData(pm, inviter);
@@ -345,24 +391,45 @@ public class SharingInvite
         Date createdAt;
         Boolean accepted;
 
+        /**
+         * @return id of the bag shared
+         */
         public int getBagId() {
             return bagId;
         }
+        /**
+         * @return id of user who sent invite
+         */
         public int getInviterId() {
             return inviterId;
         }
+        /**
+         * @return user token
+         */
         public String getToken() {
             return token;
         }
+        /**
+         * @return user invited to share the list
+         */
         public String getInvitee() {
             return invitee;
         }
+        /**
+         * @return date invitee accepted the invitation
+         */
         public Date getAcceptedAt() {
             return acceptedAt;
         }
+        /**
+         * @return data the user sent the invitation
+         */
         public Date getCreatedAt() {
             return createdAt;
         }
+        /**
+         * @return true if the invitee accepted the invitation
+         */
         public Boolean getAccepted() {
             return accepted;
         }
@@ -381,6 +448,14 @@ public class SharingInvite
         return rep;
     }
 
+    /**
+     * @param im API for databases
+     * @param token user auth token
+     * @return object representing the invite
+     * @throws ObjectStoreException error storing the data
+     * @throws SQLException database has wrong model
+     * @throws NotFoundException invite not found
+     */
     public static SharingInvite getByToken(final InterMineAPI im, final String token)
         throws SQLException, ObjectStoreException, NotFoundException {
         // Unpack what we want from the API.
@@ -402,37 +477,56 @@ public class SharingInvite
         return invite;
     }
 
+
+    /**
+     * @return token
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * @return list being shared
+     */
     public InterMineBag getBag() {
         return bag;
     }
 
+    /**
+     * @return user that received the invite
+     */
     public String getInvitee() {
         return invitee;
     }
 
+    /**
+     * @return date invite created
+     */
     public Date getCreatedAt() {
         return createdAt;
     }
-    
+
+    /**
+     * @return data invite accepted by recipient
+     */
     public Date getAcceptedAt() {
         return acceptedAt;
     }
-    
+
+    /**
+     * @return true if recipient accepted the invite
+     */
     public Boolean getAccepted() {
         return accepted;
     }
-    
+
     @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
         }
         if (!(other instanceof SharingInvite)) {
-            return other.equals(this);
+            return this.equals(other);
         }
         if (other == this) {
             return true;
@@ -440,12 +534,12 @@ public class SharingInvite
         SharingInvite oi = (SharingInvite) other;
         return token.equals(oi.getToken());
     }
-    
+
     @Override
     public int hashCode() {
         return ObjectUtils.hashCode(token);
     }
-    
+
     @Override
     public String toString() {
         return String.format("[%s: token=%s bag=%s invitee=%s]",

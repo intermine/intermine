@@ -18,16 +18,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.StringUtil;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
@@ -46,20 +45,23 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  */
 public abstract class BioQueryService extends AbstractQueryService
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(BioQueryService.class);
-
     private static final String XML_PARAM = "query";
     private static final String VIEW_PARAM = "view";
 
     private PrintWriter pw;
 
+    /**
+     * @return print writer
+     */
     public PrintWriter getPrintWriter() {
         return pw;
     }
 
     private OutputStream os;
 
+    /**
+     * @return output stream
+     */
     public OutputStream getOutputStream() {
         return os;
     }
@@ -77,14 +79,20 @@ public abstract class BioQueryService extends AbstractQueryService
         return "results" + StringUtil.uniqueString() + getSuffix();
     }
 
+    /**
+     * @return suffix
+     */
     protected abstract String getSuffix();
 
+    /**
+     * @return content type
+     */
     protected abstract String getContentType();
 
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String sep) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream outputstream, String sep) {
         // Most exporters need direct access to these.
-        this.os = os;
+        this.os = outputstream;
         this.pw = out;
         output = new StreamedOutput(out, new PlainFormatter(), sep);
         if (isUncompressed()) {
@@ -135,8 +143,17 @@ public abstract class BioQueryService extends AbstractQueryService
         return pq;
     }
 
+    /**
+     * @param pq pathquery
+     * @return exporter
+     */
     protected abstract Exporter getExporter(PathQuery pq);
 
+    /**
+     * No-op stub. Put query validation here.
+     * @param pq pathquery
+     * @throws Exception if something goes wrong
+     */
     protected void checkPathQuery(PathQuery pq) throws Exception {
         // No-op stub. Put query validation here.
     }
@@ -186,7 +203,7 @@ public abstract class BioQueryService extends AbstractQueryService
     /**
      * Parse path query views from request parameter "view" comma-separated
      *
-     * @param pathQuery
+     * @param views views in pathquery
      * @return a list of query view as string
      */
     protected static List<String> getPathQueryViews(String[] views) {
@@ -205,7 +222,7 @@ public abstract class BioQueryService extends AbstractQueryService
     /**
      * Parse view strings to Path objects
      *
-     * @param views
+     * @param pq pathquery
      * @return a list of query path
      */
     protected List<Path> getQueryPaths(PathQuery pq) {

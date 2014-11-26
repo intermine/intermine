@@ -40,7 +40,7 @@ public final class XmlUtil
      * not cope well with anything but the simplest XML (no CDATA etc). The algorithm used does
      * not look at element names and does not actually parse the XML. It also assumes that the
      * forward slash and greater-than at the end of a self-terminating tag and not seperated by
-     * ant whitespace.
+     * any whitespace.
      *
      * @param xmlString input XML fragment
      * @return indented XML fragment
@@ -62,7 +62,7 @@ public final class XmlUtil
             } else if (bytes[i] == '/' && bytes[i + 1] == '>') {
                 indent--;
             } else if (bytes[i] == '>') {
-
+                // assumes terminating tag
             }
             os.write(bytes[i++]);
         }

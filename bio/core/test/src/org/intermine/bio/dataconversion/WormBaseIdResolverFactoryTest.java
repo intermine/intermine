@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  */
 public class WormBaseIdResolverFactoryTest extends TestCase {
     WormBaseIdResolverFactory factory;
-    String wormDataFile = "resources/worm.data.sample";
+    String wormDataFile = "worm.data.sample";
 
     public WormBaseIdResolverFactoryTest() {
     }
@@ -33,14 +33,13 @@ public class WormBaseIdResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(wormDataFile);
+        File f = new File(getClass().getClassLoader().getResource(wormDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromWormIdFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/worm"));
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"6239"})), IdResolverFactory.resolver.getTaxons());
+        assertTrue(IdResolverFactory.resolver.getTaxons().contains("6239"));
         assertTrue(IdResolverFactory.resolver.isPrimaryIdentifier("6239", "WBGene00000006"));
         assertEquals("WBGene00000011", IdResolverFactory.resolver.resolveId("6239", "abc-1").iterator().next());
         assertEquals("WBGene00000008", IdResolverFactory.resolver.resolveId("6239", "gene", "F54D12.3").iterator().next());

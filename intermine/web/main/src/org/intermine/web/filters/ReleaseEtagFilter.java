@@ -40,6 +40,9 @@ public class ReleaseEtagFilter implements Filter
 {
 
     private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
+    /**
+     * When the server is started up
+     */
     static final Date START_UP = new Date(); // Default visibility for testing.
     private static String release = null;
 

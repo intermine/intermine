@@ -150,8 +150,10 @@ public final class NotXmlParser
                             throw new RuntimeException("failed to get field " + fieldName
                                     + " for object from XML: " + xml);
                         }
-                        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
-                            (Class) ref.getReferencedClassDescriptor().getType();
+                        @SuppressWarnings("unchecked")
+                        Class<? extends InterMineObject> tmpType =
+                            (Class<? extends InterMineObject>) ref.getReferencedClassDescriptor()
+                                                                   .getType();
                         valueMap.put(fieldName, new ProxyReference(os, id, tmpType));
                     }
                 }
@@ -224,8 +226,10 @@ public final class NotXmlParser
                             throw new RuntimeException("failed to get field " + fieldName
                                     + " for object from XML: " + xml);
                         }
-                        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
-                            (Class) ref.getReferencedClassDescriptor().getType();
+                        @SuppressWarnings("unchecked")
+                        Class<? extends InterMineObject> tmpType =
+                            (Class<? extends InterMineObject>) ref.getReferencedClassDescriptor()
+                                                                   .getType();
                         retval.setFieldValue(fieldName, new ProxyReference(os, id, tmpType));
                     }
                 }

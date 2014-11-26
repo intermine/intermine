@@ -13,18 +13,27 @@ package org.intermine.metadata;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class ModelFactory {
+/**
+ * A class that loads a model given a name.
+ * @author Alex Kalderimis
+ *
+ */
+public final class ModelFactory
+{
 
+    private ModelFactory() {
+        // Hidden.
+    }
     /**
      * Name of the key under which to store the serialized version of the model
      */
     private static final String MODEL = "model";
-	
-	/**
-	 * Load a named model from the classpath
-	 * @param name the model name
-	 * @return the model
-	 */
+
+    /**
+     * Load a named model from the classpath
+     * @param name the model name
+     * @return the model
+     */
     public static Model loadModel(String name) {
         String filename = Util.getFilename(MODEL, name);
         InputStream is = Model.class.getClassLoader().getResourceAsStream(filename);
@@ -40,5 +49,5 @@ public class ModelFactory {
         }
         return model;
     }
-	
+
 }

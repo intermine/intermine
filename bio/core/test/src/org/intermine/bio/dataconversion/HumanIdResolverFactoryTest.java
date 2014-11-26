@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  */
 public class HumanIdResolverFactoryTest extends TestCase {
     HumanIdResolverFactory factory;
-    String humanidDataFile = "resources/humanid.data.sample";
+    String humanidDataFile = "humanid.data.sample";
 
     public HumanIdResolverFactoryTest() {
     }
@@ -34,14 +34,13 @@ public class HumanIdResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(humanidDataFile);
+        File f = new File(getClass().getClassLoader().getResource(humanidDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/humanid"));
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"9606"})), IdResolverFactory.resolver.getTaxons());
+        assertTrue(IdResolverFactory.resolver.getTaxons().contains("9606"));
         assertTrue(IdResolverFactory.resolver.isPrimaryIdentifier("9606", "CDKN1B"));
         assertEquals("NBN", IdResolverFactory.resolver.resolveId("9606", "ENSG00000104320").iterator().next());
         assertEquals("LIX1", IdResolverFactory.resolver.resolveId("9606", "OMIM:610466").iterator().next());

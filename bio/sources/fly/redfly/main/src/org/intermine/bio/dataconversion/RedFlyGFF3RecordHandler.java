@@ -20,8 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -81,10 +79,10 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             List<String> anatomyItems = new ArrayList<String>();
             // string is a quoted list
             for (String commaListOfIds : ontologyTerm) {
-            	List<String> ontologyTermIds = new ArrayList<String>(
-            			Arrays.asList(StringUtil.split(commaListOfIds, ",")));
+                List<String> ontologyTermIds = new ArrayList<String>(
+                        Arrays.asList(StringUtil.split(commaListOfIds, ",")));
                 for (String ontologyTermId : ontologyTermIds) {
-                	anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
+                    anatomyItems.add(getAnatomy(ontologyTermId).getIdentifier());
                 }
             }
 
@@ -102,47 +100,47 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
             Iterator<String> dbxrefsIter = dbxrefs.iterator();
 
             while (dbxrefsIter.hasNext()) {
-            	String dbxref = dbxrefsIter.next();
+                String dbxref = dbxrefsIter.next();
 
-            	List<String> refList = new ArrayList<String>(
-            			Arrays.asList(StringUtil.split(dbxref, ",")));
-            	for (String ref : refList) {
-            		ref = ref.trim();
-            		int colonIndex = ref.indexOf(":");
-            		if (colonIndex == -1) {
-            			throw new RuntimeException("external reference not understood: " + ref);
-            		}
+                List<String> refList = new ArrayList<String>(
+                        Arrays.asList(StringUtil.split(dbxref, ",")));
+                for (String ref : refList) {
+                    ref = ref.trim();
+                    int colonIndex = ref.indexOf(":");
+                    if (colonIndex == -1) {
+                        throw new RuntimeException("external reference not understood: " + ref);
+                    }
 
-            		if (ref.startsWith("FB:")) {
-            			geneName = ref.substring(colonIndex + 1);
-            		} else {
-            			if (ref.startsWith("PMID:")) {
-            				pubmedId = ref.substring(colonIndex + 1);
-            			} else {
-            				if (ref.startsWith(REDFLY_PREFIX)) {
-            					redflyID = ref.substring(colonIndex + 1);
-            				} else {
-            					throw new RuntimeException("unknown external reference type: "
-            							+ ref);
-            				}
-            			}
-            		}
-            	}
+                    if (ref.startsWith("FB:")) {
+                        geneName = ref.substring(colonIndex + 1);
+                    } else {
+                        if (ref.startsWith("PMID:")) {
+                            pubmedId = ref.substring(colonIndex + 1);
+                        } else {
+                            if (ref.startsWith(REDFLY_PREFIX)) {
+                                redflyID = ref.substring(colonIndex + 1);
+                            } else {
+                                throw new RuntimeException("unknown external reference type: "
+                                        + ref);
+                            }
+                        }
+                    }
+                }
 
             }
         }
 
         if (geneName == null) {
             throw new RuntimeException("gene name not found when processing " + name
-                                       + " found these dbxrefs: " + dbxrefs);
+                    + " found these dbxrefs: " + dbxrefs);
         }
         if (pubmedId == null) {
             throw new RuntimeException("pubmed ID not found when processing " + name
-                                       + " found these dbxrefs: " + dbxrefs);
+                    + " found these dbxrefs: " + dbxrefs);
         }
         if (redflyID == null) {
             throw new RuntimeException("REDfly ID not found when processing " + name
-                                       + " found these dbxrefs: " + dbxrefs);
+                    + " found these dbxrefs: " + dbxrefs);
         }
 
         if (StringUtils.isEmpty(geneName)) {

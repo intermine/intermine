@@ -21,12 +21,14 @@ import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
 import org.postgresql.largeobject.LargeObject;
@@ -135,15 +137,15 @@ public final class MetadataManager
         Connection connection = database.getConnection();
         PreparedStatement insert = null, delete = null;
         boolean autoCommit = connection.getAutoCommit();
+        String removeExisting = "DELETE FROM " + METADATA_TABLE + " where key = ?";
+        String insertNew = "INSERT INTO " + METADATA_TABLE + " (key, value) " + " VALUES (?,?)";
         try {
             connection.setAutoCommit(false);
-            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE
-                    + " where key = ?");
+            delete = connection.prepareStatement(removeExisting);
             delete.setString(1, key);
             delete.executeUpdate();
             if (value != null) {
-                insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE
-                        + " (key, value) " + " VALUES (?,?)");
+                insert = connection.prepareStatement(insertNew);
                 insert.setString(1,  key);
                 insert.setString(2, value);
                 insert.executeUpdate();
@@ -154,7 +156,7 @@ public final class MetadataManager
                 connection.rollback();
             }
         } finally {
-
+            
             if (insert != null) {
                 insert.close();
             }
@@ -186,20 +188,20 @@ public final class MetadataManager
         try {
             connection.setAutoCommit(false);
 
-            columnResult = connection.getMetaData().getColumns(null, null, METADATA_TABLE,
-                    "blob_value");
+            columnResult =
+                    connection.getMetaData().getColumns(null, null, METADATA_TABLE, "blob_value");
             if (!columnResult.next()) {
-                connection.createStatement().execute("ALTER TABLE " + METADATA_TABLE
-                        + " ADD blob_value BYTEA");
+                String ddl = "ALTER TABLE " + METADATA_TABLE + " ADD blob_value BYTEA";
+                connection.createStatement().execute(ddl);
             }
 
-            delete = connection.prepareStatement("DELETE FROM " + METADATA_TABLE
-                    + " where key = ?");
+            String deleteExisting = "DELETE FROM " + METADATA_TABLE + " where key = ?";
+            delete = connection.prepareStatement(deleteExisting);
             delete.setString(1, key);
             delete.executeUpdate();
 
-            insert = connection.prepareStatement("INSERT INTO " + METADATA_TABLE
-                    + " (key, blob_value) VALUES (?, ?)");
+            String sql = "INSERT INTO " + METADATA_TABLE + " (key, blob_value) VALUES (?, ?)";
+            insert = connection.prepareStatement(sql);
             insert.setString(1, key);
             insert.setBytes(2, value);
             insert.executeUpdate();
@@ -479,12 +481,13 @@ public final class MetadataManager
     public static LargeObjectInputStream readLargeBinary(Database database, String key)
         throws SQLException {
         Connection con = database.getConnection();
+        PreparedStatement s;
         boolean commitMode = con.getAutoCommit();
         try {
             con.setAutoCommit(false); // Large Objects may not be used in auto-commit mode.
-            Statement s = con.createStatement();
-            ResultSet r = s.executeQuery("SELECT value FROM " + METADATA_TABLE + " WHERE key = '"
-                    + key + "'");
+            s = con.prepareStatement("SELECT value FROM " + METADATA_TABLE + " WHERE key = ?");
+            s.setString(1, key);
+            ResultSet r = s.executeQuery();
             long blob = 0;
             if (r.next()) {
                 String blobValue = r.getString(1);
@@ -498,6 +501,7 @@ public final class MetadataManager
                 }
             } else {
                 if (con != null) {
+                    con.rollback();
                     con.setAutoCommit(commitMode);
                     con.close();
                 }
@@ -506,6 +510,7 @@ public final class MetadataManager
         } catch (SQLException e) {
             try {
                 if (con != null) {
+                    con.rollback();
                     con.setAutoCommit(commitMode);
                     con.close();
                 }
@@ -513,7 +518,8 @@ public final class MetadataManager
                 // Ignore - we already have a problem
             }
             throw e;
-        }
+        } // Note the lack of finally - we DO NOT WANT to finally close; that needs
+          // to be handled by the LargeObjectInputStream.
     }
 
 

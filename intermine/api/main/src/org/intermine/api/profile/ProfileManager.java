@@ -10,11 +10,15 @@ package org.intermine.api.profile;
  *
  */
 
+import static java.util.Collections.singleton;
+
+import java.io.Reader;
 import java.io.StringReader;
 import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -23,13 +27,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.SharedBagManager;
@@ -38,15 +40,15 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.TextUtil;
 import org.intermine.api.xml.SavedQueryBinding;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
+import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
-import org.intermine.model.userprofile.PermanentToken;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -54,7 +56,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -112,7 +113,7 @@ public class ProfileManager
         fieldNames.add("username");
 
         try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            superuserProfile = uosw.getObjectByExample(superuserProfile, fieldNames);
             if (superuserProfile != null) {
                 superuser = superuserProfile.getUsername();
             }
@@ -520,22 +521,20 @@ public class ProfileManager
             new HashMap<String, org.intermine.api.profile.SavedQuery>();
         for (SavedQuery query : userProfile.getSavedQuerys()) {
             try {
-                Map queries = SavedQueryBinding.unmarshal(
-                            new StringReader(query.getQuery()), savedBags,
-                            pathQueryFormat);
-                if (queries.size() == 0) {
-                    queries = PathQueryBinding.unmarshalPathQueries(
+                Reader r = new StringReader(query.getQuery());
+                savedQueries = SavedQueryBinding.unmarshal(r, savedBags, pathQueryFormat);
+                if (savedQueries.isEmpty()) {
+                    Map<String, PathQuery> pqs = PathQueryBinding.unmarshalPathQueries(
                             new StringReader(query.getQuery()),
                             pathQueryFormat);
-                    if (queries.size() == 1) {
-                        Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
+                    if (pqs.size() == 1) {
+                        Map.Entry<String, PathQuery> entry = pqs.entrySet().iterator().next();
                         String name = (String) entry.getKey();
-                        savedQueries.put(name,
-                                         new org.intermine.api.profile.SavedQuery(name, null,
-                                                                  (PathQuery) entry.getValue()));
+                        savedQueries.put(
+                                name,
+                                new org.intermine.api.profile.SavedQuery(name, null,
+                                                                  entry.getValue()));
                     }
-                } else {
-                    savedQueries.putAll(queries);
                 }
             } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
@@ -593,56 +592,14 @@ public class ProfileManager
         try {
             UserProfile userProfile = getUserProfile(userId);
 
-            if (userProfile != null) {
-                userProfile.setApiKey(profile.getApiKey());
-                for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
-                    uosw.delete((InterMineObject) i.next());
-                }
-
-                for (Iterator i = userProfile.getSavedTemplateQuerys().iterator();
-                     i.hasNext();) {
-                    uosw.delete((InterMineObject) i.next());
-                }
-            } else {
-                // Should not happen
-                throw new RuntimeException("The UserProfile is null");
-//                 userProfile = new UserProfile();
-//                 userProfile.setUsername(profile.getUsername());
-//                 userProfile.setPassword(profile.getPassword());
-//                 userProfile.setId(userId);
+            if (userProfile == null) {
+                throw new RuntimeException("Cannot save this profile: The UserProfile is null");
             }
 
-            for (Iterator i = profile.getSavedQueries().entrySet().iterator(); i.hasNext();) {
-                org.intermine.api.profile.SavedQuery query = null;
-                try {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    query = (org.intermine.api.profile.SavedQuery) entry.getValue();
-                    SavedQuery savedQuery = new SavedQuery();
-                    savedQuery.setQuery(SavedQueryBinding.marshal(query, pathQueryFormat));
-                    savedQuery.setUserProfile(userProfile);
-                    uosw.store(savedQuery);
-                } catch (Exception e) {
-                    LOG.error("Failed to marshal and save query: " + query, e);
-                }
-            }
+            userProfile.setApiKey(profile.getApiKey());
 
-            for (Entry<String, ApiTemplate> entry: profile.getSavedTemplates().entrySet()) {
-                ApiTemplate template = null;
-                try {
-                    template = entry.getValue();
-                    SavedTemplateQuery savedTemplate = template.getSavedTemplateQuery();
-                    if (savedTemplate == null) {
-                        savedTemplate = new SavedTemplateQuery();
-                    }
-                    savedTemplate.setTemplateQuery(TemplateQueryBinding.marshal(template,
-                            pathQueryFormat));
-                    savedTemplate.setUserProfile(userProfile);
-                    uosw.store(savedTemplate);
-                    template.setSavedTemplateQuery(savedTemplate);
-                } catch (Exception e) {
-                    LOG.error("Failed to marshal and save template: " + template, e);
-                }
-            }
+            syncSavedQueries(profile, userProfile);
+            syncTemplates(profile, userProfile);
 
             uosw.store(userProfile);
             profile.setUserId(userProfile.getId());
@@ -651,24 +608,66 @@ public class ProfileManager
         }
     }
 
+    private void syncTemplates(Profile profile, UserProfile userProfile) {
+        for (Entry<String, ApiTemplate> entry: profile.getSavedTemplates().entrySet()) {
+            ApiTemplate template = entry.getValue();
+            SavedTemplateQuery savedTemplate = template.getSavedTemplateQuery();
+            if (savedTemplate == null) {
+                savedTemplate = new SavedTemplateQuery();
+                savedTemplate.setUserProfile(userProfile);
+            }
+            String xml = TemplateQueryBinding.marshal(template, pathQueryFormat);
+            if (!xml.equals(savedTemplate.getTemplateQuery())) { // Different - needs update.
+                try {
+                    savedTemplate.setTemplateQuery(xml);
+                    uosw.store(savedTemplate);
+                    template.setSavedTemplateQuery(savedTemplate);
+                } catch (Exception e) {
+                    LOG.error("Failed to marshal and save template: " + template, e);
+                }
+            }
+        }
+    }
+
+    private void syncSavedQueries(Profile profile, UserProfile userProfile)
+        throws ObjectStoreException {
+        // Index the currently saved queries by their query XML,
+        // so we know if we need to update them.
+        Map<String, SavedQuery> toDelete = new HashMap<String, SavedQuery>();
+        for (SavedQuery sq: userProfile.getSavedQuerys()) {
+            //uosw.delete(sq);
+            toDelete.put(sq.getQuery(), sq);
+        }
+
+        for (Entry<String, org.intermine.api.profile.SavedQuery> entry
+                : profile.getSavedQueries().entrySet()) {
+            org.intermine.api.profile.SavedQuery query = entry.getValue();
+            try {
+                String xml = SavedQueryBinding.marshal(query, pathQueryFormat);
+                SavedQuery savedQuery = toDelete.remove(xml);
+                if (savedQuery == null) { // Need to write a new one.
+                    savedQuery = new SavedQuery();
+                    savedQuery.setQuery(xml);
+                    savedQuery.setUserProfile(userProfile);
+                    uosw.store(savedQuery);
+                }
+            } catch (Exception e) {
+                LOG.error("Failed to marshal and save query: " + query, e);
+            }
+        }
+        for (SavedQuery delendum: toDelete.values()) {
+            uosw.delete(delendum);
+        }
+    }
+
     /**
      * Create a new profile in db with username and password given in input
      * @param username the user name
      * @param password the password
+     * @return new profile
      */
     public synchronized Profile createNewProfile(String username, String password) {
-        if (this.hasProfile(username)) {
-            throw new RuntimeException("Cannot create account: there already exists a user"
-                    + " with that name");
-        }
-
-        // Let the arcane flaggage commence!
-        Profile p = new Profile(this, username, null, password,
-                new HashMap(), new HashMap(), new HashMap(),
-                null, true, false);
-
-        this.createProfile(p);
-        return p;
+        return createBasicLocalProfile(username, password, null);
     }
 
     /**
@@ -687,6 +686,51 @@ public class ProfileManager
                 new HashMap<String, org.intermine.api.profile.SavedQuery>(),
                 new HashMap<String, InterMineBag>(),
                 new HashMap<String, ApiTemplate>(), token, isLocal, isSuperUser);
+        return p;
+    }
+
+    /**
+     * Create a new Profile with the given username, password and
+     * api-key. This profile will be a local standard user.
+     * @param username  The name for this user.
+     * @param password The password for this user.
+     * @param apiKey The API key for this user.
+     * @return The profile.
+     */
+    public synchronized Profile createBasicLocalProfile(
+            String username,
+            String password,
+            String apiKey) {
+        if (this.hasProfile(username)) {
+            throw new RuntimeException("Cannot create account: there already exists a user"
+                    + " with that name");
+        }
+
+        Profile p = new Profile(
+                this, username, null, password,
+                Profile.NO_QUERIES, Profile.NO_BAGS, Profile.NO_TEMPLATES,
+                apiKey, true, false);
+        createProfile(p);
+        return p;
+    }
+
+    /**
+     * Create a super-user with the given username, password and API-key. The user will be
+     * marked as a local super-user.
+     * @param username  The name for this user.
+     * @param password The password for this user.
+     * @param apiKey The API key for this user.
+     * @return The profile.
+     */
+    public synchronized Profile createSuperUser(
+            String username,
+            String password,
+            String apiKey) {
+        Profile p = new Profile(
+                this, username, null, password,
+                Profile.NO_QUERIES, Profile.NO_BAGS, Profile.NO_TEMPLATES,
+                apiKey, true, true);
+        createProfile(p);
         return p;
     }
 
@@ -864,7 +908,7 @@ public class ProfileManager
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("username");
         try {
-            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+            profile = uosw.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Unable to load user profile", e);
         }
@@ -943,6 +987,28 @@ public class ProfileManager
      */
     public Profile getSuperuserProfile() {
         return getProfile(superuser);
+    }
+
+    /**
+     * @return All the profiles of users who are super-users.
+     * @throws ObjectStoreException If we have trouble accessing the data-store.
+     */
+    public Collection<Profile> getAllSuperUsers() throws ObjectStoreException {
+        Set<Profile> superUsers = new HashSet<Profile>();
+        for (String name: getAllSuperNames()) {
+            superUsers.add(getProfile(name));
+        }
+        return superUsers;
+    }
+
+    private Iterable<String> getAllSuperNames() throws ObjectStoreException {
+        Set<String> names = new HashSet<String>();
+        UserProfile example = new UserProfile();
+        example.setSuperuser(true);
+        for (UserProfile up: uosw.getObjectsByExample(example, singleton("superuser"))) {
+            names.add(up.getUsername());
+        }
+        return names;
     }
 
     /**
@@ -1077,7 +1143,7 @@ public class ProfileManager
          */
         public boolean hasMoreUses() {
             return isValid();
-        };
+        }
 
         public void use() {
             // No op stub.
@@ -1163,8 +1229,7 @@ public class ProfileManager
     public static final class ApiPermission implements Principal
     {
         /**
-         * The possible
-ission levels.
+         * The possible permission levels.
          */
         public enum Level { RO, RW };
 
@@ -1318,6 +1383,11 @@ ission levels.
         return permission;
     }
 
+    /**
+     * @param token permanent user token
+     * @param classKeys class keys
+     * @return permission
+     */
     public ApiPermission getPermission(PermanentToken token, Map<String,
             List<FieldDescriptor>> classKeys) {
         if (token.getUserProfile() == null) {
@@ -1341,6 +1411,9 @@ ission levels.
         return new ApiPermission(profile, level);
     }
 
+    /**
+     * @param token permanent user token
+     */
     public void removePermanentToken(PermanentToken token) {
         try {
             permanentTokens.remove(UUID.fromString(token.getToken()));
@@ -1389,7 +1462,7 @@ ission levels.
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("apiKey");
         try {
-            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+            profile = uosw.getObjectByExample(profile, fieldNames);
         } catch (ObjectStoreException e) {
             return null; // Could not be found.
         }
@@ -1414,25 +1487,16 @@ ission levels.
      * @return the user list
      */
     public List<String> getSuperUsers() {
-        List<String> superusers = new ArrayList<String>();
-        Query q = new Query();
-        QueryClass qc = new QueryClass(UserProfile.class);
-        QueryField qfName = new QueryField(qc, "username");
-        q.addToSelect(qfName);
-        q.addFrom(qc);
-        QueryField qf = new QueryField(qc, "superuser");
-        Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(true));
-        q.setConstraint(c);
+        Query q = getSuperUserQuery();
 
-        // Multiple attempts to access the userprofile (create/delete bags, for instance)
-        // will cause this to fail. Allow three retries.
+        // Multiple concurrent attempts to access the userprofile (creating/deleting bags,
+        // for instance) will cause this to fail. Allow three retries.
         ConcurrentModificationException lastError = null;
         for (int attemptsRemaining = 3; attemptsRemaining >= 0; attemptsRemaining--) {
+            List<String> superusers = new ArrayList<String>();
             try {
-                Results res = uosw.execute(q);
-                Iterator<Object> iterator = res.iterator();
-                while (iterator.hasNext()) {
-                    superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+                for (Object o: uosw.executeSingleton(q)) {
+                    superusers.add(String.valueOf(o));
                 }
                 return superusers;
             } catch (ConcurrentModificationException e) {
@@ -1440,6 +1504,22 @@ ission levels.
             }
         }
         throw lastError;
+    }
+
+    private volatile Query superUserQuery = null;
+
+    private Query getSuperUserQuery() {
+        if (superUserQuery == null) {
+            superUserQuery = new Query();
+            QueryClass qc = new QueryClass(UserProfile.class);
+            QueryField qfName = new QueryField(qc, "username");
+            superUserQuery.addToSelect(qfName);
+            superUserQuery.addFrom(qc);
+            QueryField qf = new QueryField(qc, "superuser");
+            Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, QueryValue.TRUE);
+            superUserQuery.setConstraint(c);
+        }
+        return superUserQuery;
     }
 
     /**

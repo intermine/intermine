@@ -17,15 +17,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.bed.BEDRecord;
 import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
@@ -37,9 +36,6 @@ import org.intermine.web.logic.export.Exporter;
  */
 public class BEDExporter implements Exporter
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(BEDExporter.class);
-
     PrintWriter out;
     private boolean makeUcscCompatible = true;
     private int writtenResultsCount = 0;
@@ -124,8 +120,7 @@ public class BEDExporter implements Exporter
         }
     }
 
-    private void exportRow(List<ResultElement> row)
-        throws ObjectStoreException, IllegalAccessException {
+    private void exportRow(List<ResultElement> row) {
 
         List<ResultElement> elWithObject = getResultElements(row);
         if (elWithObject == null) {
@@ -181,9 +176,7 @@ public class BEDExporter implements Exporter
         }
 
         header.append(FORMAT);
-        if ("".equals(sourceName) || sourceName == null) {
-
-        } else {
+        if (StringUtils.isNotEmpty(sourceName)) {
             header.append(SOURCE_PRE)
                 .append(sourceName);
         }

@@ -22,11 +22,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -42,7 +40,6 @@ import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -116,12 +113,7 @@ public class ListUploadService extends ListMakerService
      * @return The matcher to use.
      */
     protected StrMatcher getMatcher() {
-        final HttpSession session = request.getSession();
-        final Properties webProperties
-            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-
-        final String bagUploadDelims =
-            (String) webProperties.get("list.upload.delimiters") + " ";
+        final String bagUploadDelims = getProperty("list.upload.delimiters") + " ";
         final StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
         return matcher;
     }

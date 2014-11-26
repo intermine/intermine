@@ -69,8 +69,10 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
      * @throws IllegalArgumentException if fields are null
      */
     public ClassDescriptor(String name, String supers,
-            boolean isInterface, Set<AttributeDescriptor> atts, Set<ReferenceDescriptor> refs,
-            Set<CollectionDescriptor> cols) {
+            boolean isInterface,
+            Collection<AttributeDescriptor> atts,
+            Collection<ReferenceDescriptor> refs,
+            Collection<CollectionDescriptor> cols) {
         if (name == null || "".equals(name) || (!name.equals(name.trim()))) {
             throw new IllegalArgumentException("'name' parameter must be a valid String");
         }
@@ -807,13 +809,16 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return sb.toString();
     }
 
+    /**
+     * @return a representation of this class descriptor as JSON.
+     */
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
         Set<String> superClassNames = getSuperclassNames();
         String name = className.substring(className.lastIndexOf(".") + 1);
         sb.append("{\"name\":\"")
-          .append(name)
-          .append("\",\"extends\":[");
+            .append(name)
+            .append("\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {
             sb.append("\"");
@@ -838,8 +843,8 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return sb.toString();
     }
 
-    private void addFields(StringBuffer sb, Collection fields) {
-        Iterator<FieldDescriptor> iter = ((Collection<FieldDescriptor>) fields).iterator();
+    private static void addFields(StringBuffer sb, Collection<? extends FieldDescriptor> fields) {
+        Iterator<? extends FieldDescriptor> iter = fields.iterator();
         while (iter.hasNext()) {
             FieldDescriptor fld = iter.next();
             sb.append("\"" + fld.getName() + "\":");

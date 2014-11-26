@@ -21,17 +21,30 @@ public class InternalBagOperationException extends BagOperationException
 
     private static final long serialVersionUID = -5954984605945169071L;
 
+    /**
+     * Constructor
+     */
     public InternalBagOperationException() {
     }
 
+    /**
+     * @param message error message
+     */
     public InternalBagOperationException(String message) {
         super(message);
     }
 
+    /**
+     * @param cause exception
+     */
     public InternalBagOperationException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * @param message error message
+     * @param cause exception
+     */
     public InternalBagOperationException(String message, Throwable cause) {
         super(message, cause);
     }

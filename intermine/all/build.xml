@@ -22,7 +22,6 @@
     <subant inheritAll="false">
       <property name="test.results.dir" value="${test.results.dir}"/>
       <property name="generate.report" value="false"/>
-      <!--<property name="test.fork" value="yes"/>-->
       <fileset dir="../.." includes="intermine/model/test/build.xml"/>
       <fileset dir="../.." includes="intermine/objectstore/test/build.xml"/>
       <fileset dir="../.." includes="intermine/integrate/test/build.xml"/>
@@ -47,12 +46,17 @@
     <lib:checkstyle>
       <customize>
         <fileset dir="../..">
-	  <include name="intermine/api/main/src/**/*.java"/>
+          <include name="intermine/model/main/src/**/*.java"/>
+          <include name="imbuild/im-ant-tasks/src/**/*.java"/>
           <include name="intermine/objectstore/main/src/**/*.java"/>
+          <include name="intermine/objectstore/model/logmodel/src/**/*.java"/>
+	  <include name="intermine/api/main/src/**/*.java"/>
+          <include name="intermine/pathquery/main/src/**/*.java"/>
           <include name="intermine/integrate/main/src/**/*.java"/>
           <include name="intermine/web/main/src/**/*.java"/>
-          <include name="intermine/webapp/main/src/**/*.java"/>
-          <include name="intermine/objectstore/model/logmodel/src/**/*.java"/>
+          <include name="intermine/webtasks/main/src/**/*.java"/>
+          <include name="intermine/jbrowse-endpoint/main/src/**/*.java"/>
+          <include name="intermine/webservice/client/main/src/**/*.java"/>
         </fileset>
       </customize>
     </lib:checkstyle>

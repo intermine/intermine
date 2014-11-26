@@ -165,15 +165,15 @@ public class UniprotKeywordConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
-		@Override
+        @Override
         public void characters(char[] ch, int start, int length) {
             if (attName != null) {
                 if (length > 0) {
-                	StringBuffer s = new StringBuffer();
-                	s.append(ch, start, length);
-                	String str = s.toString();
-                	str = str.replaceAll("[\n\r]", " ");
-                	attValue.append(str);
+                    StringBuffer s = new StringBuffer();
+                    s.append(ch, start, length);
+                    String str = s.toString();
+                    str = str.replaceAll("[\n\r]", " ");
+                    attValue.append(str);
                 }
             }
         }

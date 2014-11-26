@@ -1,5 +1,15 @@
 package org.intermine.bio.web.model;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -22,8 +32,10 @@ import org.intermine.api.results.ResultElement;
 
 /**
  * Protein Atlas Expressions
+ * @author Fengyuan
  */
-public class ProteinAtlasExpressions {
+public class ProteinAtlasExpressions
+{
 
     /** @var holds mapped queue of mapped results (organ -> queue of results by db column key) */
     private TreeMap<String, ExpressionList> results;
@@ -35,14 +47,16 @@ public class ProteinAtlasExpressions {
     private ExpressionType type;
 
     /** @var column keys we have in the results table */
-    private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
-        add("cellType");
-        add("expressionType");
-        add("level");
-        add("reliability");
-        add("tissue");
-        add("organ");
-    }};
+    private ArrayList<String> expressionColumns =  new ArrayList<String>() {
+        {
+            add("cellType");
+            add("expressionType");
+            add("level");
+            add("reliability");
+            add("tissue");
+            add("organ");
+        }
+    };
 
     /**
      *
@@ -57,7 +71,8 @@ public class ProteinAtlasExpressions {
     * @return the map of lists sorted by Cell types count
     */
     public Map<String, ExpressionList> getByCells() {
-        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByCellCountComparator());
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(
+                new ByCellCountComparator());
         n.putAll(results);
         return n;
     }
@@ -67,7 +82,8 @@ public class ProteinAtlasExpressions {
     * @return the map of lists sorted by Overall level count
     */
     public Map<String, ExpressionList> getByLevel() {
-        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(new ByOverallLevelComparator());
+        TreeMap<String, ExpressionList> n = new TreeMap<String, ExpressionList>(
+                new ByOverallLevelComparator());
         n.putAll(results);
         return n;
     }
@@ -81,16 +97,16 @@ public class ProteinAtlasExpressions {
     }
 
     /**
-    *
-    * @return the expressions type (Staining vs APE)
-    */
-   public ExpressionType getType() {
-       return type;
-   }
+     *
+     * @return the expressions type (Staining vs APE)
+     */
+    public ExpressionType getType() {
+        return type;
+    }
 
     /**
      * Convert Path results into a List (ProteinAtlasDisplayer.java)
-     * @param values
+     * @param values values to export
      */
     public ProteinAtlasExpressions(ExportResultsIterator values) {
         results = new TreeMap<String, ExpressionList>();
@@ -102,7 +118,7 @@ public class ProteinAtlasExpressions {
 
             LinkedHashMap<String, String> resultRow = new LinkedHashMap<String, String>();
             // convert into a map
-            for (int i=0; i < expressionColumns.size(); i++)  {
+            for (int i = 0; i < expressionColumns.size(); i++)  {
                 resultRow.put(expressionColumns.get(i), valuesRow.get(i).getField().toString());
             }
 
@@ -136,24 +152,37 @@ public class ProteinAtlasExpressions {
      * @author radek
      *
      */
-    public class ExpressionType {
+    public class ExpressionType
+    {
 
         private String text;
         private String clazz;
 
+        /**
+         * @param dbString type of expression
+         */
         public ExpressionType(String dbString) {
             this.text = dbString;
             this.clazz = (this.text.toLowerCase().indexOf("ape") >= 0) ? "ape" : "staining";
         }
 
+        /**
+         * @return true of type is ape
+         */
         public Boolean getIsApe() {
             return ("ape".equals(this.clazz));
         }
 
+        /**
+         * @return text
+         */
         public String getText() {
             return this.text;
         }
 
+        /**
+         * @return class
+         */
         public String getClazz() {
             return this.clazz;
         }
@@ -164,13 +193,17 @@ public class ProteinAtlasExpressions {
      * @author radek
      *
      */
-    public class ExpressionList {
-
-        public ByLevelComparator comparator;
-        public StainingLevel stainingLevel;
+    public class ExpressionList
+    {
+        private ByLevelComparator comparator;
+        private StainingLevel stainingLevel;
         private String organName;
         private TreeMap<String, Map<String, String>> values;
 
+        /**
+         * Constructor
+         * @param comparator object used to compare
+         */
         public ExpressionList(Comparator<String> comparator) {
             this.comparator = (ByLevelComparator) comparator;
 
@@ -180,7 +213,7 @@ public class ProteinAtlasExpressions {
 
         /**
          * Put/add to the map of expressions
-         * @param resultRow
+         * @param resultRow results row
          */
         public void add(Map<String, String> resultRow) {
             values.put(resultRow.get("level"), resultRow);
@@ -188,20 +221,29 @@ public class ProteinAtlasExpressions {
 
         /**
          * Get the internal map of expressions
-         * @return
+         * @return the internal map of expressions
          */
         public Map<String, Map<String, String>> getValues() {
             return values;
         }
 
+        /**
+         * @param string name of organ
+         */
         public void setOrganName(String string) {
             this.organName = string;
         }
 
+        /**
+         * @return name of organ
+         */
         public String getOrganName() {
             return organName;
         }
 
+        /**
+         * @return staining level
+         */
         public StainingLevel getStainingLevel() {
             return stainingLevel;
         }
@@ -211,16 +253,23 @@ public class ProteinAtlasExpressions {
          * @author radek
          *
          */
-        public class StainingLevel {
+        public class StainingLevel
+        {
 
             private Integer overall = 0;
             private Integer count = 0;
-            private ByLevelComparator comparator;
+            private ByLevelComparator levelComparator;
 
-            public StainingLevel(ByLevelComparator comparator) {
-                this.comparator = comparator;
+            /**
+             * @param levelComparator comparator
+             */
+            public StainingLevel(ByLevelComparator levelComparator) {
+                this.levelComparator = levelComparator;
             }
 
+            /**
+             * @param level level
+             */
             public void add(Integer level) {
                 this.overall += level;
                 this.count += 1;
@@ -228,22 +277,23 @@ public class ProteinAtlasExpressions {
 
             /**
              * Get the float value representing the average Expression level
-             * @return
+             * @return the float value representing the average Expression level
              */
             public float getLevelValue() {
-                return overall.floatValue()/count;
+                return overall.floatValue() / count;
             }
 
             /**
-             * Convert the overall staining level of all Expressions into an average (ceiled/floored) value
-             * @return
+             * Convert the overall staining level of all Expressions into an average
+             * (ceiled/floored) value
+             * @return average value
              */
             public String getLevelClass() {
-                double doubleValue = (double) getLevelValue();
+                double doubleValue = getLevelValue();
                 if (doubleValue % 1 > 0.5) {
-                    return comparator.reverseEvaluate((int) Math.ceil(doubleValue));
+                    return levelComparator.reverseEvaluate((int) Math.ceil(doubleValue));
                 } else {
-                    return comparator.reverseEvaluate((int) Math.floor(doubleValue));
+                    return levelComparator.reverseEvaluate((int) Math.floor(doubleValue));
                 }
             }
 
@@ -255,25 +305,26 @@ public class ProteinAtlasExpressions {
      * @author radek
      *
      */
-    public class StainingLevelEvaluator {
+    public class StainingLevelEvaluator
+    {
 
-        public static final int STRONG = 3;
-        public static final int HIGH = 3;
-        public static final int MODERATE = 2;
-        public static final int MEDIUM = 2;
-        public static final int WEAK = 1;
-        public static final int LOW = 1;
-        public static final int NEGATIVE = -1;
-        public static final int NONE = -1;
-        public static final int OTHER = -2;
+        //private static final int STRONG = 3;
+        private static final int HIGH = 3;
+        //private static final int MODERATE = 2;
+        private static final int MEDIUM = 2;
+        //private static final int WEAK = 1;
+        private static final int LOW = 1;
+        //private static final int NEGATIVE = -1;
+        private static final int NONE = -1;
+        private static final int OTHER = -2;
 
         /**
          * String representing the level to integer conversion
-         * @param level
-         * @return
+         * @param strLevel level
+         * @return  level to integer conversion
          */
-        public Integer evaluate(String level) {
-            level = level.toLowerCase();
+        public Integer evaluate(String strLevel) {
+            String level = strLevel.toLowerCase();
 
             if ("strong".equals(level) || "high".equals(level)) {
                 return HIGH;
@@ -289,8 +340,9 @@ public class ProteinAtlasExpressions {
 
         /**
          * Integer value to string conversion
-         * @param levelValue
-         * @return
+         *
+         * @param levelValue integer representation of the level
+         * @return value in word form
          */
         public String reverseEvaluate(Integer levelValue) {
             switch (levelValue) {
@@ -312,7 +364,8 @@ public class ProteinAtlasExpressions {
      * @author radek
      *
      */
-    public class ByLevelComparator extends StainingLevelEvaluator implements Comparator<String> {
+    public class ByLevelComparator extends StainingLevelEvaluator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {
@@ -336,12 +389,13 @@ public class ProteinAtlasExpressions {
      * @author radek
      *
      */
-    public class ByCellCountComparator implements Comparator<String> {
+    public class ByCellCountComparator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {
-            Integer aSize = (Integer)results.get(aK).getValues().size();
-            Integer bSize = (Integer)results.get(bK).getValues().size();
+            Integer aSize = results.get(aK).getValues().size();
+            Integer bSize = results.get(bK).getValues().size();
 
             if (aSize < bSize) {
                 return 1;
@@ -360,7 +414,8 @@ public class ProteinAtlasExpressions {
      * @author radek
      *
      */
-    public class ByOverallLevelComparator implements Comparator<String> {
+    public class ByOverallLevelComparator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {

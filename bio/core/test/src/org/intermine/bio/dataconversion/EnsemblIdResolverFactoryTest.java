@@ -1,6 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -16,7 +17,7 @@ import junit.framework.TestCase;
  */
 public class EnsemblIdResolverFactoryTest extends TestCase {
     EnsemblIdResolverFactory factory;
-    String ensemblDataFile = "resources/ensembl.data.sample";
+    String ensemblDataFile = "ensembl.data.sample";
 
     public EnsemblIdResolverFactoryTest() {
     }
@@ -36,19 +37,17 @@ public class EnsemblIdResolverFactoryTest extends TestCase {
 
     public void testValidChromosomes() throws Exception {
         Set<String> validedChrs = factory.validChromosomes();
-        assertTrue(validedChrs.contains("12" +
-                ""));
+        assertTrue(validedChrs.contains("12" + ""));
         assertTrue(validedChrs.contains("X"));
         assertFalse(validedChrs.contains("A"));
         assertFalse(validedChrs.contains("23"));
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(ensemblDataFile);
+        File f = new File(getClass().getClassLoader().getResource(ensemblDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/ensembl"));
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"9606"})), IdResolverFactory.resolver.getTaxons());

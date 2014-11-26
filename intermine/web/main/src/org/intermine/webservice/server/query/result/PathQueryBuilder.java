@@ -114,7 +114,7 @@ public class PathQueryBuilder
             }
         } else {
             logger.debug("Received invalid xml: " + xml);
-            throw new BadRequestException("Query does not pass XML validation:\n"
+            throw new BadRequestException("Query does not pass XML validation. "
                     + formatMessage(validator.getErrorsAndWarnings()));
         }
     }

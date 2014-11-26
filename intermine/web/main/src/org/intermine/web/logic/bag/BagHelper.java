@@ -15,18 +15,18 @@ import java.util.List;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -36,7 +36,6 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 
 /**
  * Helper methods for bags.
@@ -61,7 +60,7 @@ public final class BagHelper
      *
      * The name will be made unique with "_n" if it already exists in the profile.
      *
-     * @param pathQuery the query to create the bag from
+     * @param query the query to create the bag from
      * @param bagName name of new bag
      * @param bagDescription a description for the new bag
      * @param pathString path used to create list
@@ -71,9 +70,10 @@ public final class BagHelper
      * @return the new bag, already saved
      * @throws ObjectStoreException if persistence problem
      */
-    public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
+    public static InterMineBag createBagFromPathQuery(PathQuery query, String bagName,
             String bagDescription, String pathString, Profile profile, InterMineAPI im)
         throws ObjectStoreException {
+        PathQuery pathQuery = query;
         pathQuery = pathQuery.clone(); // Since we may be changing its view.
         String bagType = pathString;
         try {
@@ -106,8 +106,6 @@ public final class BagHelper
                            keyFielNames);
         } catch (UnknownBagTypeException e) {
             throw new RuntimeException("Bag type determined from query is invalid", e);
-        } catch (ClassKeysNotFoundException cke) {
-            throw new RuntimeException("Bag has not class key set", cke);
         }
         bag.addToBagFromQuery(q);
         profile.saveBag(bag.getName(), bag);

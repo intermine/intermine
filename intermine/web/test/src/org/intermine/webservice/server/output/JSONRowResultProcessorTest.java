@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -29,6 +30,7 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * @author alex
@@ -130,6 +132,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
+        InterMineContext.initilise(api, new Properties(), null);
     }
 
     /**
@@ -137,6 +140,7 @@ public class JSONRowResultProcessorTest extends TestCase {
      */
     @Override
     protected void tearDown() throws Exception {
+        InterMineContext.doShutdown();
         super.tearDown();
     }
 

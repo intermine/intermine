@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.jbrowse.util;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -16,7 +26,8 @@ import java.util.Properties;
  * @author Alex Kalderimis.
  *
  */
-public class NameSpacedProperties extends Properties {
+public class NameSpacedProperties extends Properties
+{
 
     private static final long serialVersionUID = -4232852922218752169L;
     private final String namespace;
@@ -79,7 +90,8 @@ public class NameSpacedProperties extends Properties {
                 while (!finished && next == null) {
                     if (parentNames.hasMoreElements()) {
                         Object nextParentName = parentNames.nextElement();
-                        if (nextParentName != null && String.valueOf(nextParentName).startsWith(namespace)) {
+                        if (nextParentName != null
+                                && String.valueOf(nextParentName).startsWith(namespace)) {
                             next = String.valueOf(nextParentName).replace(namespace, "");
                         }
                     } else {
@@ -94,17 +106,17 @@ public class NameSpacedProperties extends Properties {
     /* This object is read only. Fail fast at write methods. */
 
     @Override
-    public Object setProperty(String key, String value) {
+    public synchronized Object setProperty(String key, String value) {
         throw new RuntimeException("This object is read only.");
     }
 
     @Override
-    public Object put(Object key, Object value) {
+    public synchronized Object put(Object key, Object value) {
         throw new RuntimeException("This object is read only.");
     }
 
     @Override
-    public void putAll(Map<? extends Object, ? extends Object> mapping) {
+    public synchronized void putAll(Map<? extends Object, ? extends Object> mapping) {
         throw new RuntimeException("This object is read only.");
     }
 }

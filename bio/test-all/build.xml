@@ -5,9 +5,12 @@
   
   <description>wrapper project for build/testing/cleaning everything in bio</description>
 
+  <import file="../../imbuild/tests.xml"/> 
+  <import file="../../imbuild/library.xml"/> 
   <import file="../../imbuild/task.xml"/>
   <import file="../../imbuild/objectstore.xml"/>
-  
+   
+
   <target name="-pre-init" depends="library.-pre-init">
     <property name="test.results.dir" location="${build.dir}/test/results"/>
   </target>
@@ -19,23 +22,29 @@
   <target name="-init-fulltest" depends="-init-properties, build-db.bio-test, init">
     <mkdir dir="${test.results.dir}"/>
   </target>
-  
-  <target name="fulltest" depends="init, -init-fulltest, -do-fulltest, test-report"/>
+
+ 
+  <target name="fulltest" depends="init, -init-properties, -init-fulltest, -do-fulltest, test-report"/>
   
   <target name="-do-fulltest">
     <subant inheritAll="false">
       <property name="test.results.dir" value="${test.results.dir}"/>
       <property name="generate.report" value="false"/>
-      <property name="no.dep" value="false"/>
-      <!--<property name="test.fork" value="yes"/>-->
+      <property name="no.dep" value="true"/>
+      <property name="test.fork" value="yes"/>
       <fileset dir="../..">
-        <include name="bio/sources/**/test/build.xml" />
-        <include name="bio/*/test/build.xml"/>
-        <include name="bio/postprocess/core/test/build.xml"/>
-        <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
+       <include name="bio/core/test/build.xml"/>
+       <include name="bio/postprocess/test/build.xml"/>
+       <include name="bio/tools/test/build.xml"/>
+       <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
+       <exclude name="bio/sources/example-sources/**/test/build.xml"/>
+       <!-- I don't know how to get this to work
+       <include name="bio/sources/*/test/build.xml"/>
+       -->
       </fileset>
     </subant>
   </target>
+
   
   <target name="test-report" depends="init">
     <junitreport todir="${test.results.dir}">
@@ -49,9 +58,16 @@
   <target name="do-checkstyle" depends="-init-macrodef-checkstyle">
     <lib:checkstyle>
       <customize>
-        <fileset dir="..">
-          <include name="sources/*/test/**/*.java"/>
-        </fileset>
+      <fileset dir="../..">
+        <include name="bio/core/**/*.java" />
+        <include name="bio/postprocess/**/*.java" />
+        <include name="bio/sources/**/*.java" />
+        <include name="bio/tools/**/*.java" />
+        <include name="bio/webapp/**/*.java" />
+        <exclude name="bio/**/*Test.java" />
+        <exclude name="bio/**/Test*" />
+        <exclude name="bio/sources/experimental-sources/**/*.java"/>
+      </fileset>
       </customize>
     </lib:checkstyle>
   </target>
@@ -60,5 +76,5 @@
   
   <target name="compile" depends="init, -init-deps"/>
   
-  <target name="default" depends="fulltest"/>
+
 </project>

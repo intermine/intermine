@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.jbrowse;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,11 +21,21 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
-public class Endpoint extends JSONService {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class Endpoint extends JSONService
+{
 
     private static final String CMD_RUNNER = "webservice.jbrowse.commandrunner.";
     private Map<String, Object> attrs = new HashMap<String, Object>();
 
+    /**
+     *
+     * @param im InterMine API
+     */
     public Endpoint(InterMineAPI im) {
         super(im);
     }
@@ -24,7 +44,8 @@ public class Endpoint extends JSONService {
     protected void execute() throws ServiceException {
         Command cmd = getCommand();
 
-        CommandRunner runner = CommandRunner.getRunner(getProperty(CMD_RUNNER + im.getModel().getName()), im);
+        CommandRunner runner = CommandRunner.getRunner(getProperty(CMD_RUNNER
+                + im.getModel().getName()), im);
         runner.addListener(getListener());
 
         String intro = runner.getIntro(cmd);

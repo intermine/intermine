@@ -126,6 +126,7 @@ public class CalculateLocations
             this.number = number;
         }
 
+        @Override
         public int compareTo(Object o) {
             int retval = ((SortElement) o).number - number;
             if (retval == 0) {
@@ -134,6 +135,7 @@ public class CalculateLocations
             return retval;
         }
 
+        @Override
         public String toString() {
             return number + " overlap" + (number == 1 ? "" : "s") + " for " + text;
         }
@@ -610,6 +612,7 @@ public class CalculateLocations
          * @see Object#toString()
          * @return String representation of location object
          */
+        @Override
         public String toString() {
             return "parent " + parentId + " child " + childId + " start " + start
                 + " end " + end + " strand " + strand;

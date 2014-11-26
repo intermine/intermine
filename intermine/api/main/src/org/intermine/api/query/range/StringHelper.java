@@ -1,5 +1,15 @@
 package org.intermine.api.query.range;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import static org.intermine.metadata.ConstraintOp.AND;
 import static org.intermine.metadata.ConstraintOp.DOES_NOT_OVERLAP;
 import static org.intermine.metadata.ConstraintOp.OR;
@@ -18,13 +28,15 @@ import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraintRange;
 
-public class StringHelper implements RangeHelper {
-    
+/**
+ * @author Alex
+ */
+public class StringHelper implements RangeHelper
+{
+
     private static final ConstraintOp GTE = ConstraintOp.GREATER_THAN_EQUALS;
     private static final ConstraintOp LTE = ConstraintOp.LESS_THAN_EQUALS;
-    private static final ConstraintOp LT = ConstraintOp.LESS_THAN;
-    private static final ConstraintOp GT = ConstraintOp.GREATER_THAN_EQUALS;
-    
+
     @Override
     public Constraint createConstraint(Queryable q, QueryNode node, PathConstraintRange con) {
         QueryField qf = (QueryField) node;
@@ -51,12 +63,12 @@ public class StringHelper implements RangeHelper {
         }
         return mainSet;
     }
-    
+
     private class StringRange
     {
         final String start;
         final String end;
-        
+
         StringRange(String range) {
             if (range == null) {
                 throw new NullPointerException("range may not be null");

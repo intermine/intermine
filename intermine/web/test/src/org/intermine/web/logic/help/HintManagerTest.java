@@ -10,21 +10,21 @@ public class HintManagerTest extends TestCase
 {
     Properties hintProps;
     WebState webState;
-    
-    
+
     public HintManagerTest() throws Exception {
         hintProps = new Properties();
         hintProps.load(getClass().getClassLoader().getResourceAsStream("HintManagerTest.properties"));
     }
-    
+
+    @Override
     public void setUp() {
         webState = new WebState();
     }
-    
+
     public void testConstruct() throws Exception {
         HintManager.getInstance(hintProps);
     }
-    
+
     public void testGetHintForPageNoHint() {
         HintManager hintManager = HintManager.getInstance(hintProps);
         assertNull(hintManager.getHintForPage("dummy", webState));

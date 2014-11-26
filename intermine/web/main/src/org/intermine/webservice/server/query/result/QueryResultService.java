@@ -178,7 +178,7 @@ public class QueryResultService extends AbstractQueryService
             if (wantsColumnHeaders()) {
                 if (ColumnHeaderStyle.FRIENDLY == getColumnHeaderStyle()) {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS,
-                            WebUtil.formatPathQueryView(pq, request));
+                            WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
                 } else {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getView());
                 }

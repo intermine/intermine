@@ -19,6 +19,10 @@ import javax.servlet.http.HttpServletRequest;
  **/
 public abstract class RequestUtil
 {
+    private RequestUtil() {
+        // don't
+    }
+
     /**
      * @param request request
      * @return true if request was sent by windows client

@@ -112,14 +112,22 @@ public final class SqlGenerator
     }
 
     private static final Logger LOG = Logger.getLogger(SqlGenerator.class);
-    protected static final int QUERY_NORMAL = 0;
-    protected static final int QUERY_SUBQUERY_FROM = 1;
-    protected static final int QUERY_SUBQUERY_CONSTRAINT = 2;
-    protected static final int ID_ONLY = 2;
-    protected static final int NO_ALIASES_ALL_FIELDS = 3;
-    protected static final int QUERY_FOR_PRECOMP = 4;
-    protected static final int QUERY_SUBQUERY_EXISTS = 5;
-    protected static final int QUERY_FOR_GOFASTER = 6;
+    /** normal query **/
+    public static final int QUERY_NORMAL = 0;
+    /** subquery in FROM **/
+    public static final int QUERY_SUBQUERY_FROM = 1;
+    /** subquery in CONSTRAINT **/
+    public static final int QUERY_SUBQUERY_CONSTRAINT = 2;
+    /** IDs only **/
+    public static final int ID_ONLY = 2;
+    /** I DON'T KNOW **/
+    public static final int NO_ALIASES_ALL_FIELDS = 3;
+    /** query for precomputing **/
+    public static final int QUERY_FOR_PRECOMP = 4;
+    /** subquery exists **/
+    public static final int QUERY_SUBQUERY_EXISTS = 5;
+    /** query for go faster **/
+    public static final int QUERY_FOR_GOFASTER = 6;
 
     protected static Map<DatabaseSchema, Map<Query, CacheEntry>> sqlCache
         = new WeakHashMap<DatabaseSchema, Map<Query, CacheEntry>>();
@@ -270,6 +278,7 @@ public final class SqlGenerator
         } catch (ObjectStoreException e) {
             LOG.warn("Error while registering offset for query " + q + ": " + e);
         } catch (IllegalArgumentException e) {
+            LOG.warn("Error while registering offset for query " + q + ": " + e);
         }
     }
 
@@ -291,25 +300,26 @@ public final class SqlGenerator
     protected static Constraint getOffsetConstraint(Query q, QueryOrderable firstOrderBy,
             Object value, DatabaseSchema schema) {
         boolean reverse = false;
-        if (firstOrderBy instanceof OrderDescending) {
-            firstOrderBy = ((OrderDescending) firstOrderBy).getQueryOrderable();
+        QueryOrderable newFirstOrderBy = firstOrderBy;
+        if (newFirstOrderBy instanceof OrderDescending) {
+            newFirstOrderBy = ((OrderDescending) newFirstOrderBy).getQueryOrderable();
             reverse = true;
         }
-        if (firstOrderBy instanceof QueryClass) {
-            firstOrderBy = new QueryField((QueryClass) firstOrderBy, "id");
+        if (newFirstOrderBy instanceof QueryClass) {
+            newFirstOrderBy = new QueryField((QueryClass) newFirstOrderBy, "id");
         }
         boolean hasNulls = true;
-        if ((firstOrderBy instanceof QueryField) && (!reverse)) {
-            FromElement qc = ((QueryField) firstOrderBy).getFromElement();
+        if ((newFirstOrderBy instanceof QueryField) && (!reverse)) {
+            FromElement qc = ((QueryField) newFirstOrderBy).getFromElement();
             if (qc instanceof QueryClass) {
-                if ("id".equals(((QueryField) firstOrderBy).getFieldName())) {
+                if ("id".equals(((QueryField) newFirstOrderBy).getFieldName())) {
                     hasNulls = false;
-                } else if ("class".equals(((QueryField) firstOrderBy).getFieldName())) {
+                } else if ("class".equals(((QueryField) newFirstOrderBy).getFieldName())) {
                     hasNulls = false;
                 } else {
                     AttributeDescriptor desc = (AttributeDescriptor) schema
                         .getModel().getFieldDescriptorsForClass(((QueryClass) qc)
-                        .getType()).get(((QueryField) firstOrderBy)
+                        .getType()).get(((QueryField) newFirstOrderBy)
                                         .getFieldName());
                     if (desc.isPrimitive()) {
                         hasNulls = false;
@@ -318,21 +328,21 @@ public final class SqlGenerator
             }
         }
         if (reverse) {
-            return new SimpleConstraint((QueryEvaluable) firstOrderBy,
+            return new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
                     ConstraintOp.LESS_THAN, new QueryValue(value));
         } else {
-            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) firstOrderBy,
+            SimpleConstraint sc = new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
                     ConstraintOp.GREATER_THAN, new QueryValue(value));
             if (hasNulls) {
                 // if the query aready constrains the first order by field to be
                 // not null it doesn't make sense to add a costraint to null
                 CheckForIsNotNullConstraint check = new CheckForIsNotNullConstraint((QueryNode)
-                        firstOrderBy);
+                        newFirstOrderBy);
                 ConstraintHelper.traverseConstraints(q.getConstraint(), check);
                 if (!check.exists()) {
                     ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
                     cs.addConstraint(sc);
-                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) firstOrderBy,
+                    cs.addConstraint(new SimpleConstraint((QueryEvaluable) newFirstOrderBy,
                                 ConstraintOp.IS_NULL));
                     return cs;
                 }
@@ -614,7 +624,7 @@ public final class SqlGenerator
         throws ObjectStoreException {
         Set<Object> retvalO = findTableNames(q, schema, false);
         // If the last argument is false, we know that the result only contains Strings.
-        @SuppressWarnings("unchecked") Set<String> retval = (Set) retvalO;
+        Set<String> retval = (Set) retvalO;
         return retval;
     }
 
@@ -1533,43 +1543,7 @@ public final class SqlGenerator
             }
             if (c.getOp().equals(ConstraintOp.IS_NULL) || c.getOp().equals(ConstraintOp
                     .IS_NOT_NULL)) {
-
-                // EXISTS OR NOT EXISTS to wrap this query
-                String arg1Alias = state.getFieldToAlias(arg1.getQueryClass()).get("id");
-                if (c.getOp() == ConstraintOp.IS_NULL) {
-                    buffer.append("(NOT ");
-                }
-                buffer.append("EXISTS(SELECT 1 FROM ");
-                if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
-                    // the referenced class will have an field pointing back to this class, see
-                    // whether anything exists that points back to our id
-                    ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
-                    String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
-
-                    String reverseRefAlias = indirectTableAlias + "."
-                            + DatabaseUtil.getColumnName(reverse);
-
-                    ClassDescriptor referencedClass = schema.getTableMaster(reverse
-                            .getClassDescriptor());
-                    buffer.append(DatabaseUtil.getTableName(referencedClass) + " AS "
-                            + indirectTableAlias);
-                    buffer.append(" WHERE " + reverseRefAlias + " = " + arg1Alias);
-                } else if (arg1Desc.relationType() == FieldDescriptor.M_N_RELATION) {
-                    // We need to see if there are rows in the indirection table that points back
-                    // to our id
-                    CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
-                    String indirectTableAlias = state.getIndirectAlias();
-                    String indirectionTable = DatabaseUtil.getIndirectionTableName(arg1ColDesc);
-                    String inwardIndirectionCol = indirectTableAlias + "."
-                            + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc,
-                                    schema.getVersion());
-                    buffer.append(indirectionTable + " AS " + indirectTableAlias);
-                    buffer.append(" WHERE " + inwardIndirectionCol + " = " + arg1Alias);
-                }
-                buffer.append(")");
-                if (c.getOp() == ConstraintOp.IS_NULL) {
-                    buffer.append(")");
-                }
+                addNullPhrase(state, buffer, c, schema, arg1, arg1Desc);
             } else if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
                 if (arg2 == null) {
                     ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
@@ -1599,7 +1573,9 @@ public final class SqlGenerator
                                 bagConstraintToString(state, buffer, new BagConstraint(new
                                             QueryField(arg1Qcb), ConstraintOp.IN,
                                             arg1Qcb.getOsb()), q,
-                                        schema, SAFENESS_UNSAFE); // TODO: Not really unsafe [ 2012-08-06 ajk: what does this comment mean??]
+                                        schema, SAFENESS_UNSAFE);
+                             // TODO: Not really unsafe
+                             // [ 2012-08-06 ajk: what does this comment mean??]
                                 buffer.append(" AND ");
                             } else if (arg1Qcb.getIds() != null) {
                                 BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),
@@ -1718,6 +1694,47 @@ public final class SqlGenerator
         }
     }
 
+    private static void addNullPhrase(State state, StringBuffer buffer,
+            ContainsConstraint c, DatabaseSchema schema, QueryReference arg1,
+            ReferenceDescriptor arg1Desc) {
+        // EXISTS OR NOT EXISTS to wrap this query
+        String arg1Alias = state.getFieldToAlias(arg1.getQueryClass()).get("id");
+        if (c.getOp() == ConstraintOp.IS_NULL) {
+            buffer.append("(NOT ");
+        }
+        buffer.append("EXISTS(SELECT 1 FROM ");
+        if (arg1Desc.relationType() == FieldDescriptor.ONE_N_RELATION) {
+            // the referenced class will have an field pointing back to this class, see
+            // whether anything exists that points back to our id
+            ReferenceDescriptor reverse = arg1Desc.getReverseReferenceDescriptor();
+            String indirectTableAlias = state.getIndirectAlias(); // Not really indirection
+
+            String reverseRefAlias = indirectTableAlias + "."
+                    + DatabaseUtil.getColumnName(reverse);
+
+            ClassDescriptor referencedClass = schema.getTableMaster(reverse
+                    .getClassDescriptor());
+            buffer.append(DatabaseUtil.getTableName(referencedClass) + " AS "
+                    + indirectTableAlias);
+            buffer.append(" WHERE " + reverseRefAlias + " = " + arg1Alias);
+        } else if (arg1Desc.relationType() == FieldDescriptor.M_N_RELATION) {
+            // We need to see if there are rows in the indirection table that points back
+            // to our id
+            CollectionDescriptor arg1ColDesc = (CollectionDescriptor) arg1Desc;
+            String indirectTableAlias = state.getIndirectAlias();
+            String indirectionTable = DatabaseUtil.getIndirectionTableName(arg1ColDesc);
+            String inwardIndirectionCol = indirectTableAlias + "."
+                    + DatabaseUtil.getInwardIndirectionColumnName(arg1ColDesc,
+                            schema.getVersion());
+            buffer.append(indirectionTable + " AS " + indirectTableAlias);
+            buffer.append(" WHERE " + inwardIndirectionCol + " = " + arg1Alias);
+        }
+        buffer.append(")");
+        if (c.getOp() == ConstraintOp.IS_NULL) {
+            buffer.append(")");
+        }
+    }
+
 
     /**
      * The maximum size a bag in a BagConstraint can be before we consider using a temporary table
@@ -1802,7 +1819,8 @@ public final class SqlGenerator
                 if (!filteredBag.isEmpty()) {
                     buffer.append("(");
                 }
-                buffer.append("(" + leftHandSide + " " + (c.getOp() == ConstraintOp.IN ? "IS" : "IS NOT") + " NULL)");
+                buffer.append("(" + leftHandSide + " "
+                        + (c.getOp() == ConstraintOp.IN ? "IS" : "IS NOT") + " NULL)");
                 if (!filteredBag.isEmpty()) {
                     buffer.append(" ")
                           .append(c.getOp() == ConstraintOp.IN ? "OR" : "AND")
@@ -1911,11 +1929,15 @@ public final class SqlGenerator
         SortedSet<Object> filteredBag = new TreeSet<Object>();
         Collection<?> bagColl = c.getBag();
         for (Object bagItem : bagColl) {
-            if (type.isInstance(bagItem)) {
+            if (type != null && type.isInstance(bagItem)) {
                 filteredBag.add(bagItem);
             } else {
-                throw new ObjectStoreException("Bag<" + type.getName() + "> contains element "
-                        + "of wrong type (" + bagItem.getClass().getName() + ")");
+                if (type == null) {
+                    throw new NullPointerException("Couldn't determine type of list");
+                } else {
+                    throw new ObjectStoreException("Bag<" + type.getName() + "> contains element "
+                            + "of wrong type (" + bagItem.getClass().getName() + ")");
+                }
             }
         }
         if (filteredBag.isEmpty()) {
@@ -2661,10 +2683,16 @@ public final class SqlGenerator
         // bag that are relevant for the BagConstraint
         private Map<Object, String> bagTableNames = new HashMap<Object, String>();
 
+        /**
+         * Constructor
+         */
         public State() {
             // empty
         }
 
+        /**
+         * @return where clause
+         */
         public String getWhere() {
             // a hacky fix for #731:
             String where = whereText.toString();
@@ -2675,27 +2703,50 @@ public final class SqlGenerator
             return (where.length() == 0 ? "" : " WHERE " + where);
         }
 
+        /**
+         * @return where clause
+         */
         public StringBuffer getWhereBuffer() {
             return whereText;
         }
 
+        /**
+         *
+         * @return having clause
+         */
         public String getHaving() {
             String having = havingText.toString();
             return (having.length() == 0 ? "" : " HAVING " + having);
         }
 
+        /**
+         *
+         * @return having clause
+         */
         public StringBuffer getHavingBuffer() {
             return havingText;
         }
 
+        /**
+         *
+         * @return from clause
+         */
         public String getFrom() {
             return fromText.toString();
         }
 
+        /**
+         *
+         * @param text where caluse
+         */
         public void addToWhere(String text) {
             whereText.append(text);
         }
 
+        /**
+         *
+         * @param text from clause
+         */
         public void addToFrom(String text) {
             if (fromText.length() == 0) {
                 fromText.append(" FROM ").append(text);
@@ -2704,22 +2755,43 @@ public final class SqlGenerator
             }
         }
 
+        /**
+         *
+         * @return indirect alias
+         */
         public String getIndirectAlias() {
             return "indirect" + (number++);
         }
 
+        /**
+         *
+         * @return order by alias
+         */
         public String getOrderByAlias() {
             return "orderbyfield" + (number++);
         }
 
+        /**
+         *
+         * @param s order by string
+         */
         public void addToOrderBy(String s) {
             orderBy.put(s, getOrderByAlias());
         }
 
+        /**
+         *
+         * @return order by clause
+         */
         public Map<String, String> getOrderBy() {
             return orderBy;
         }
 
+        /**
+         *
+         * @param from from element
+         * @return alias for given from element
+         */
         public Map<String, String> getFieldToAlias(FromElement from) {
             Map<String, String> retval = fromToFieldToAlias.get(from);
             if (retval == null) {
@@ -2729,24 +2801,45 @@ public final class SqlGenerator
             return retval;
         }
 
+        /**
+         *
+         * @param from from element
+         * @param map map of from elements to aliases
+         */
         public void setFieldToAlias(FromElement from, Map<String, String> map) {
             fromToFieldToAlias.put(from, map);
         }
 
+        /**
+         *
+         * @param bagTableNames map
+         */
         public void setBagTableNames(Map<Object, String> bagTableNames) {
             if (bagTableNames != null) {
                 this.bagTableNames = bagTableNames;
             }
         }
 
+        /**
+         *
+         * @return bag table name map
+         */
         public Map<Object, String> getBagTableNames() {
             return bagTableNames;
         }
 
+        /**
+         *
+         * @param db database
+         */
         public void setDb(Database db) {
             this.db = db;
         }
 
+        /**
+         *
+         * @return database
+         */
         public Database getDb() {
             return db;
         }

@@ -144,9 +144,11 @@ public class QueryService extends AbstractQueryService<PathQuery>
     public PathQuery createPathQuery(String queryXml) {
         ModelService modelService = new ModelService(getRootUrl(), getApplicationName());
         Model model = modelService.getModel();
-        Model.addModel(model.getName(), model);
+        // We supply the model explicitly to the PathQueryBinding, since model name
+        // clashes are common, and we know here which model this query should be
+        // referring to.
         return PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
-                PathQuery.USERPROFILE_VERSION);
+                PathQuery.USERPROFILE_VERSION, model);
     }
 
     @Override
@@ -406,10 +408,11 @@ public class QueryService extends AbstractQueryService<PathQuery>
      * The column must represent a column of numeric values.
      *
      * @param query The query to summarise.
-     * @param summaryPath The column to summarise.
+     * @param path The column to summarise.
      * @return A summary.
      */
-    public NumericSummary getNumericSummary(PathQuery query, String summaryPath) {
+    public NumericSummary getNumericSummary(PathQuery query, String path) {
+        String summaryPath = path;
         try {
             if (!summaryPath.startsWith(query.getRootClass())) {
                 summaryPath = query.getRootClass() + "." + summaryPath;
@@ -469,11 +472,12 @@ public class QueryService extends AbstractQueryService<PathQuery>
      * the most request value to the least.
      *
      * @param query The query to summarise.
-     * @param summaryPath The column to summarise.
+     * @param path The column to summarise.
      * @param page The subsection of the summary to retrieve.
      * @return A summary.
      */
-    public Map<String, Integer> getSummary(PathQuery query, String summaryPath, Page page) {
+    public Map<String, Integer> getSummary(PathQuery query, String path, Page page) {
+        String summaryPath = path;
         try {
             if (!summaryPath.startsWith(query.getRootClass())) {
                 summaryPath = query.getRootClass() + "." + summaryPath;

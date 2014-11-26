@@ -12,6 +12,7 @@ package org.intermine.metadata;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public class Model
     public Model(String name,
             String packageName,
             int version,
-            Set<ClassDescriptor> clds)
+            Collection<ClassDescriptor> clds)
         throws MetaDataException {
         if (name == null) {
             throw new NullPointerException("Model name cannot be null");
@@ -193,7 +194,7 @@ public class Model
      * @param classes The classes within this model.
      * @throws MetaDataException if inconsistencies found in model
      */
-    public Model(String name, String namespace, Set<ClassDescriptor> classes)
+    public Model(String name, String namespace, Collection<ClassDescriptor> classes)
         throws MetaDataException {
         this(name, namespace, 0, classes);
     }
