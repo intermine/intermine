@@ -49,7 +49,7 @@ class CheckStyleHandler(ContentHandler):
         if not self.can_ignore(err):
             self.errors[self.currentFile].append(err)
 
-class NervousErrorHandler(object):
+class NervousErrorHandler(ErrorHandler):
 
     def error(self, exception):
         raise exception
