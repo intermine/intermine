@@ -2,6 +2,7 @@ language: python # needed to get access to virtualenv
 env:
     global:
         - TESTMODEL_URL=http://localhost:8080/intermine-demo
+        - TESTMODEL_PATH=intermine-demo
     matrix:
         - TEST_SUITE=model
         - TEST_SUITE=objectstore
