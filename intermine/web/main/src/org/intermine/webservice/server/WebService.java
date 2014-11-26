@@ -689,7 +689,9 @@ public abstract class WebService
      * @return An Output that produces good XML.
      */
     protected Output makeXMLOutput(PrintWriter out, String separator) {
-        ResponseUtil.setXMLHeader(response, "result.xml");
+        String filename = getRequestFileName();
+        filename += ".xml";
+        ResponseUtil.setXMLHeader(response, filename);
         return new StreamedOutput(out, new XMLFormatter(), separator);
     }
 
@@ -770,73 +772,70 @@ public abstract class WebService
             throw new ServiceException(e);
         }
         // TODO: retrieve the content types from the formats.
-        String filename = getDefaultFileName();
-        switch (getFormat()) {
-            case HTML:
-                output = new StreamedOutput(out, new HTMLTableFormatter(),
-                        separator);
-                ResponseUtil.setHTMLContentType(response);
-                break;
-            case XML:
-                output = makeXMLOutput(out, separator);
-                break;
-            case TSV:
-                output = new StreamedOutput(out, new TabFormatter(
-                        StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
-                        separator);
-                filename = "result.tsv";
-                if (isUncompressed()) {
-                    ResponseUtil.setTabHeader(response, filename);
-                }
-                break;
-            case CSV:
-                output = new StreamedOutput(out, new CSVFormatter(), separator);
-                filename = "result.csv";
-                if (isUncompressed()) {
-                    ResponseUtil.setCSVHeader(response, filename);
-                }
-                break;
-            case TEXT:
-                output = new StreamedOutput(out, new PlainFormatter(), separator);
-                if (filename == null) {
-                    filename = "result.txt";
-                }
-                filename += getExtension();
-                if (isUncompressed()) {
-                    ResponseUtil.setPlainTextHeader(response, filename);
-                }
-                break;
-            case JSON:
-                output = makeJSONOutput(out, separator);
-                filename = "result.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-                }
-                break;
-            case OBJECTS:
-                output = new StreamedOutput(out, new JSONObjectFormatter(),
-                        separator);
-                filename = "result.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-                }
-                break;
-            case TABLE:
-                output = new StreamedOutput(out, new JSONTableFormatter(),
-                        separator);
-                filename = "resulttable.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-                }
-                break;
-            case ROWS:
-                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
-                }
-                break;
-            default:
-                output = getDefaultOutput(out, os, separator);
+        String filename = getRequestFileName();
+        switch (format) {
+        case HTML:
+            output = new StreamedOutput(out, new HTMLTableFormatter(),
+                    separator);
+            ResponseUtil.setHTMLContentType(response);
+            break;
+        case XML:
+            output = makeXMLOutput(out, separator);
+            break;
+        case TSV:
+            output = new StreamedOutput(out, new TabFormatter(
+                    StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
+                    separator);
+            filename += ".tsv";
+            if (isUncompressed()) {
+                ResponseUtil.setTabHeader(response, filename);
+            }
+            break;
+        case CSV:
+            output = new StreamedOutput(out, new CSVFormatter(), separator);
+            filename += ".csv";
+            if (isUncompressed()) {
+                ResponseUtil.setCSVHeader(response, filename);
+            }
+            break;
+        case TEXT:
+            output = new StreamedOutput(out, new PlainFormatter(), separator);
+            filename += getExtension();
+            if (isUncompressed()) {
+                ResponseUtil.setPlainTextHeader(response, filename);
+            }
+            break;
+        case JSON:
+            output = makeJSONOutput(out, separator);
+            filename += ".json";
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+            }
+            break;
+        case OBJECTS:
+            output = new StreamedOutput(out, new JSONObjectFormatter(),
+                    separator);
+            filename += ".json";
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+            }
+            break;
+        case TABLE:
+            output = new StreamedOutput(out, new JSONTableFormatter(),
+                    separator);
+            filename = "resulttable.json";
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+            }
+            break;
+        case ROWS:
+            output = new StreamedOutput(out, new JSONRowFormatter(), separator);
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
+            }
+            break;
+        default:
+            output = getDefaultOutput(out, os, separator);
         }
         if (!isUncompressed()) {
             ResponseUtil.setGzippedHeader(response, filename + getExtension());
@@ -869,6 +868,12 @@ public abstract class WebService
      */
     protected String getDefaultFileName() {
         return "result";
+    }
+
+    protected String getRequestFileName(){
+	String fileName = request.getParameter("fileName");
+	if(fileName == null || fileName.trim().length()==0) fileName=getDefaultFileName();
+	return fileName;
     }
 
     /**
