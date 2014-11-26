@@ -42,7 +42,7 @@ else
         ant -f testmodel/dbmodel/build.xml build-db
     fi
 
-    if [[ "$TEST_SUITE" = "ws-integration"]]; then
+    if [[ "$TEST_SUITE" = "ws-integration" ]] ; then
         # We need the imjs code to exercise the webservices
         git clone https://github.com/intermine/imjs.git imjs
     fi
