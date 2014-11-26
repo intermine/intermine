@@ -16,12 +16,12 @@ jdk:
     - openjdk7
     - openjdk6
 before_script:
-    - ./config/travis-init.sh
+    - ./config/travis/init.sh
 before_install:
     - "export DISPLAY=:99.0"
-    - ./config/travis-before-install.sh
+    - ./config/travis/before-install.sh
 script:
-    - ./config/travis-run.sh
+    - ./config/travis/run.sh
 notifications:
   irc:
       channels:
