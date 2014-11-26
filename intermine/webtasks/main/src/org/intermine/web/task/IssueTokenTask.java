@@ -48,7 +48,7 @@ public class IssueTokenTask extends KeyStoreTask
     private static final String PRIVATEKEY_ALIAS = "security.privatekey.alias";
     private static final String[] REQUIRED_PROPS = {
         PUBLICIDENTITY, PRIVATEKEY_ALIAS, PRIVATEKEY_PASSWORD
-    }; 
+    };
 
     private int expiry = 0;
     private String buildDir, identity, email;
@@ -79,7 +79,7 @@ public class IssueTokenTask extends KeyStoreTask
 
     /**
      * Bean-style setter, as per the ant spec.
-     * @param email The 
+     * @param email The email address passed as a parameter
      */
     public void setEmail(String email) {
         this.email = email;
@@ -143,7 +143,7 @@ public class IssueTokenTask extends KeyStoreTask
     }
 
     private String generateToken(Properties opts, PrivateKey key)
-            throws InvalidKeyException, SignatureException {
+        throws InvalidKeyException, SignatureException {
         JWTBuilder builder = new JWTBuilder(key, opts.getProperty(PUBLICIDENTITY));
         Profile profile = new FakeProfile(identity, email);
         String token = builder.issueToken(profile, expiry);
@@ -177,7 +177,7 @@ public class IssueTokenTask extends KeyStoreTask
             savedInvalidBags = new DevNullMap<String, InvalidBag>();
             queryHistory = new DevNullMap<String, SavedQuery>();
             savingDisabled = true;
-            
+
             this.username = username;
             this.email = email;
         }
@@ -193,3 +193,4 @@ public class IssueTokenTask extends KeyStoreTask
         }
     }
 }
+

@@ -31,8 +31,8 @@ import org.intermine.webservice.server.JWTVerifier.VerificationError;
 public class VerifyTokenTask extends KeyStoreTask
 {
 
-   private String token;
-    
+    private String token;
+
     /**
      * Bean-style setter for token, as per ant spec.
      * @param token The token.

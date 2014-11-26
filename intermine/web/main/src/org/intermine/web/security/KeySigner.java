@@ -86,7 +86,7 @@ public class KeySigner
      * @throws SigningException If we cannot generate the certificate for some reason.
      */
     public X509Certificate generateCertificate(String subject, PublicKey key)
-            throws SigningException {
+        throws SigningException {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         X509V3CertificateGenerator cert = new X509V3CertificateGenerator();
         cert.setSerialNumber(BigInteger.valueOf(1));   //or generate a random number

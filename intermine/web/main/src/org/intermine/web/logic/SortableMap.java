@@ -150,7 +150,7 @@ public class SortableMap<K extends Comparable<K>, V extends Comparable<V>>
     }
 
     private static <T extends Comparable<T>>
-        int compareThings(final boolean checkNumbers, final boolean sortAscending, T a, T b) {
+    int compareThings(final boolean checkNumbers, final boolean sortAscending, T a, T b) {
         if (checkNumbers) {
             // Check numeric values in keys.
             try {
@@ -177,6 +177,4 @@ public class SortableMap<K extends Comparable<K>, V extends Comparable<V>>
         }
     }
 }
-
-
 

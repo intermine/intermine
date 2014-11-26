@@ -78,31 +78,30 @@ public abstract class KeyStoreTask extends Task
     protected KeyStore createKeyStore() {
         KeyStoreBuilder builder = new KeyStoreBuilder(getOptions(), getOpener());
         try {
-			return builder.buildKeyStore();
-		} catch (KeyStoreException e) {
-			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-		} catch (NoSuchAlgorithmException e) {
-			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-		} catch (CertificateException e) {
-			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-		} catch (IOException e) {
-			throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
-		}
+            return builder.buildKeyStore();
+        } catch (KeyStoreException e) {
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+        } catch (CertificateException e) {
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new BuildException(KEY_STORE_ERR + e.getMessage(), e);
+        }
     }
 
     private ResourceOpener getOpener() {
-    	// An opener that only opens one resource - the keystore.
-		return new ResourceOpener() {
+        // An opener that only opens one resource - the keystore.
+        return new ResourceOpener() {
 
-			@Override
-			public InputStream openResource(String resourceName) {
-				return readKeystore();
-			}
-			
-		};
-	}
+            @Override
+            public InputStream openResource(String resourceName) {
+                return readKeystore();
+            }
+        };
+    }
 
-	/**
+    /**
      * Get the options as configured for this task
      * @return The project properties.
      */
@@ -125,6 +124,7 @@ public abstract class KeyStoreTask extends Task
 
     /**
      * Log a message to standard out.
+     * @param message The message to print.
      */
     protected static void logMessage(String message) {
         PrintStream out = System.out;
@@ -133,6 +133,7 @@ public abstract class KeyStoreTask extends Task
 
     /**
      * Log a message to standard error.
+     * @param message The message to print.
      */
     protected static void logError(String message) {
         PrintStream out = System.err;

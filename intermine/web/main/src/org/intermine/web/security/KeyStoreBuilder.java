@@ -140,7 +140,7 @@ public class KeyStoreBuilder
     }
 
     private PrivateKey getOrGeneratePrivateKey(KeyStore store, String alias)
-            throws KeyStoreException, NoSuchAlgorithmException {
+        throws KeyStoreException, NoSuchAlgorithmException {
         PrivateKey signingKey = null;
         if (alias != null && store.containsAlias(alias)) {
             String password = options.getProperty(SECURITY_PRIVATEKEY_PASSWORD);
