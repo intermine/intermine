@@ -3,10 +3,10 @@
 
 set -e
 
-SCRIPT=${BASH_SOURCE[@]}
+SCRIPT=${BASH_SOURCE[0]}
 DIR=$(dirname $SCRIPT)
 
-echo "Working relative to $DIR"
+echo "Working relative to ''$DIR''"
 
 for dep in perl unzip; do
   if test -z $(which $dep); then
@@ -39,7 +39,7 @@ echo "#--- Using tomcat $TOMCAT_VERSION"
 TOMCAT=apache-tomcat-${TOMCAT_VERSION}
 $DOWNLOAD http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/${TOMCAT}.zip
 unzip -q ${TOMCAT}.zip
-cp $DIR/tomcat-users.xml ${TOMCAT}/conf/tomcat-users.xml
+cp ${DIR}/tomcat-users.xml ${TOMCAT}/conf/tomcat-users.xml
 echo 'JAVA_OPTS="$JAVA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"' >> prefixed
 echo 'export JAVA_OPTS' >> prefixed
 cat ${TOMCAT}/bin/startup.sh >> prefixed
