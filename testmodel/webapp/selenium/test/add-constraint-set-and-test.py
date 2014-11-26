@@ -37,7 +37,9 @@ class AddConstraintSetTest(Super):
         Select(self.elem("#attribute7")).select_by_visible_text("Gringotts")
         self.elem('#attributeSubmit').click()
         # Check that the query is as expected.
+        current_title = self.browser.title()
         self.elem('a[title="Export this query as XML"]').click()
+        self.wait().until(lambda d: d.title() != current_title)
         self.assertEquals(expected_query.strip(), self.elem('body').text)
         self.browser.back()
         # Check that the results are as expected.
