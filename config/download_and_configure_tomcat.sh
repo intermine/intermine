@@ -2,7 +2,6 @@
 # Hackily scrape the currently available tomcat-7 version.
 
 set -e
-shopt -s expand_aliases
 
 SCRIPT=${BASH_SOURCE[@]}
 DIR=$(dirname $SCRIPT)
@@ -19,15 +18,15 @@ if test -z $(which wget); then
     echo 'ERROR: neither wget or curl are available - cannot fetch tomcat'
     exit 1
   else # curl is available - use that
-    alias download='curl -O'
-    alias readurl='curl'
+    DOWNLOAD='curl -O'
+    READURL='curl'
   fi
 else # use wget
-  alias download='wget'
-  alias readurl='wget -O -'
+  DOWNLOAD='wget'
+  READURL='wget -O -'
 fi
 
-TOMCAT_VERSION=$(readurl http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/ | grep folder.gif | perl -ne 'm/v(7\.\d+\.\d+)/; print $1;')
+TOMCAT_VERSION=$($READURL http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/ | grep folder.gif | perl -ne 'm/v(7\.\d+\.\d+)/; print $1;')
 
 if test -z $TOMCAT_VERSION; then
   echo '#--- Error reading tomcat version'
@@ -36,7 +35,7 @@ fi
 
 echo "#--- Using tomcat $TOMCAT_VERSION"
 TOMCAT=apache-tomcat-${TOMCAT_VERSION}
-download http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/${TOMCAT}.zip
+$DOWNLOAD http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/v${TOMCAT_VERSION}/bin/${TOMCAT}.zip
 unzip ${TOMCAT}.zip
 cp $DIR/tomcat-users.xml ${TOMCAT}/conf/tomcat-users.xml
 echo 'JAVA_OPTS="$JAVA_OPTS -Dorg.apache.el.parser.SKIP_IDENTIFIER_CHECK=true"' >> prefixed
