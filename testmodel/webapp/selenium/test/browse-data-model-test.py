@@ -1,4 +1,3 @@
-import time
 from test.querybuildertestcase import QueryBuilderTestCase
 
 EXPECTED_TYPES = ['Bank', 'Broke', 'Employment Period', 'Has Address',
@@ -16,6 +15,6 @@ class BrowseDataModelTest(QueryBuilderTestCase):
             self.assertIsNotNone(self.findLink(type_name))
 
         self.findLink('Bank').click()
-        time.sleep(3)
+        self.wait().until(lambda d: 'builder' in d.title)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)

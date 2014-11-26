@@ -4,13 +4,14 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re
-from imuser import IMUser
+from imuser import TemporaryUser
 
 class AccountLogin(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
+        self.user = TemporaryUser("zombie-testing-account-login@intermine.org");
+        self.user.create()
 
     def test_account_login(self):
 
@@ -26,19 +27,9 @@ class AccountLogin(Super):
         # Long emails are truncated and appended with an ellipsis,
         # so we can't assert by comparing user.name to what's on the DOM.
         # Look for Log out link instead?
-        for i in range(60):
-            try:
-                if self.is_element_present(By.LINK_TEXT, "Log out"): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
+        log_out = self.findLink("Log out")
 
-        self.assertTrue(self.is_element_present(By.LINK_TEXT, "Log out"))
+        self.assertTrue(log_out.is_displayed())
 
-    def is_element_present(self, how, what):
-        try: self.browser.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
-        return True
-    
     def tearDown(self):
         self.user.delete()

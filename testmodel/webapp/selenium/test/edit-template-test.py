@@ -7,7 +7,7 @@ class EditTemplateTest(QueryBuilderTestCase):
     def test_edit_template(self):
         self.browser.get(self.base_url + '/template.do?name=ManagerLookup&scope=all')
         self.elem('input.editQueryBuilder').click()
-        time.sleep(3)
+        self.wait().until(lambda d: 'builder' in d.title)
         self.assertIn('Query builder', self.browser.title)
         # Edit the constraint.
         self.elem('img[title="Edit this constraint"]').click()

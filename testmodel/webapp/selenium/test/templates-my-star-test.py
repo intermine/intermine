@@ -3,14 +3,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
-import unittest, time, re
-from imuser import IMUser
+import unittest, re
+from imuser import TemporaryUser
 
 class TemplatesMyStarTest(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
+        self.user = TemporaryUser("zombie-testing-account-login@intermine.org");
+        self.user.create()
 
     def test_templates_my_star(self):
 
@@ -70,28 +71,15 @@ class TemplatesMyStarTest(Super):
 
     def assert_visible_id(self, id):
         browser = self.browser
-        for i in range(60):
-            try:
-                if browser.find_element_by_id(id).is_displayed(): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
+        element = browser.find_element_by_id(id)
+        self.wait().until(lambda d: element.is_displayed())
         return True
 
     def assert_invisible_id(self, id):
         browser = self.browser
-        for i in range(60):
-            try:
-                if not browser.find_element_by_id(id).is_displayed(): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
+        element = browser.find_element_by_id(id)
+        self.wait().until(lambda d: not element.is_displayed())
         return True
 
-    def is_element_present(self, how, what):
-        try: self.browser.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
-        return True
-    
     def tearDown(self):
         self.user.delete()

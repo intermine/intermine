@@ -4,15 +4,15 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re
-from imuser import IMUser
-
+from imuser import TemporaryUser
 
 class AccountPersistentSettings(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
-    
+        self.user = TemporaryUser("zombie-testing-account-login@intermine.org");
+        self.user.create()
+
     def test_account_persistent_settings(self):
 
         browser = self.browser
@@ -78,17 +78,21 @@ class AccountPersistentSettings(Super):
         browser.find_element_by_name("password").send_keys(self.user.password)
         browser.find_element_by_name("action").click()
         return True
-    
+
     def is_element_present(self, how, what):
-        try: self.browser.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
+        try:
+            self.browser.find_element(by=how, value=what)
+        except NoSuchElementException, e:
+            return False
         return True
-    
+
     def is_alert_present(self):
-        try: self.browser.switch_to_alert()
-        except NoAlertPresentException, e: return False
+        try:
+            self.browser.switch_to_alert()
+        except NoAlertPresentException, e:
+            return False
         return True
-    
+
     def close_alert_and_get_its_text(self):
         try:
             alert = self.browser.switch_to_alert()

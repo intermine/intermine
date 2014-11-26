@@ -1,6 +1,4 @@
-import time
-
-from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support.ui import Select
 
 from test.querybuildertestcase import QueryBuilderTestCase as Super
 
@@ -9,7 +7,7 @@ class QueryTreeTest(Super):
     def test_query_tree(self):
         Select(self.elem("#queryClassSelector")).select_by_visible_text("Bank")
         self.elem("#submitClassSelect").click()
-        time.sleep(3)
+        self.wait().until(lambda d: 'builder' in d.title)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals('Bank', self.elem('.typeSelected').text)
         self.assertEquals('Name', self.elem('.attributeField').text)
