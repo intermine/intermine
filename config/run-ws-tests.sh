@@ -8,6 +8,5 @@ if [ -z $(which npm) ]; then
 fi
 
 cd imjs
-npm install
-npm test
+npm install # installs deps and runs tests.
 
