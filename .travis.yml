@@ -9,7 +9,8 @@ env:
         - TEST_SUITE=pathquery
         - TEST_SUITE=api
         - TEST_SUITE=web
-        - TEST_SUITE=ws-integration
+        - TEST_SUITE=ws-integration CLIENT=JS
+        - TEST_SUITE=ws-integration CLIENT=PY
         - TEST_SUITE=bio
         - TEST_SUITE=selenium
         - TEST_SUITE=checkstyle

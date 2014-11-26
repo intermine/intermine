@@ -50,10 +50,14 @@ else
         ant -f testmodel/dbmodel/build.xml build-db
     fi
 
-    if [[ "$TEST_SUITE" = "ws-integration" ]] ; then
-        # We need the imjs code to exercise the webservices
+    if [[ "$TEST_SUITE" = "ws-integration" ]]; then
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET $TESTMODEL_URL/service/search > /dev/null
-        git clone https://github.com/intermine/imjs.git imjs
+        if [[ "$CLIENT" = "JS" ]]; then
+            # We need the imjs code to exercise the webservices
+            git clone https://github.com/intermine/imjs.git client
+        elif [[ "$CLIENT" = "PY" ]]; then
+            git clone https://github.com/intermine/intermine-ws-client.py client
+        fi
     fi
 fi
