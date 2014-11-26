@@ -53,6 +53,8 @@ else
     if [[ "$TEST_SUITE" = "ws-integration" ]]; then
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET $TESTMODEL_URL/service/search > /dev/null
+        # Start any list upgrades
+        $GET "$TESTMODEL_URL/service/lists?token=test-user-token" > /dev/null
         if [[ "$CLIENT" = "JS" ]]; then
             # We need the imjs code to exercise the webservices
             git clone https://github.com/intermine/imjs.git client
