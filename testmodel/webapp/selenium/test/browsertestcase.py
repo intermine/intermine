@@ -11,7 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-TIMEOUT = 60
+TIMEOUT = 120
 
 sauce_user = os.getenv("SAUCE_USERNAME")
 sauce_key = os.getenv("SAUCE_ACCESS_KEY")
