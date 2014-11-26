@@ -4,7 +4,7 @@ PROJECT=intermine/all
 
 ant -f ${PROJECT}/build.xml clean fulltest checkstyle
 
-./config/run-selenium-tests.sh
+TESTMODEL_URL='http://localhost:8080/intermine-demo' ./config/run-selenium-tests.sh
 SELENIUM_STATUS=$?
 ./config/lib/parse_test_report.py "${PROJECT}/build/test/results"
 ANT_STATUS=$?
