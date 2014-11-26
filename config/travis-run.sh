@@ -43,4 +43,6 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ./config/lib/parse_checkstyle_report.py 'intermine/all/build/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "selenium" ]; then
     . config/run-selenium-tests.sh
+elif [ "$TEST_SUITE" = "ws-integration" ]; then
+    . config/run-ws-tests.sh
 fi
