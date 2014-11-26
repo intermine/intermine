@@ -32,6 +32,7 @@ else
         # We need a running webapp
         source config/download_and_configure_tomcat.sh
         sleep 10 # wait for tomcat to come on line
+        echo 'i.am.a.dev = true' >> testmodel/testmodel.properties
         PSQL_USER=postgres sh testmodel/setup.sh
         sleep 10 # wait for the webapp to come on line
     elif [ "$TEST_SUITE" = "bio" ]; then
