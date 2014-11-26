@@ -16,7 +16,7 @@ jdk:
     - openjdk7
     - openjdk6
 before_script:
-    - ./config/travis.init.sh
+    - ./config/travis-init.sh
 before_install:
     - "export DISPLAY=:99.0"
     - ./config/travis-before-install.sh
