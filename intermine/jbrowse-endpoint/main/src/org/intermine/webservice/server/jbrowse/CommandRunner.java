@@ -13,6 +13,7 @@ package org.intermine.webservice.server.jbrowse;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -176,5 +177,13 @@ public abstract class CommandRunner
      */
     public void addListener(MapListener<String, Object> listener) {
         listeners.add(listener);
+    }
+
+    protected void sendMap(Map<String, Object> map) {
+        Iterator<Entry<String, Object>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry<String, Object> e = it.next();
+            onData(e, it.hasNext());
+        }
     }
 }

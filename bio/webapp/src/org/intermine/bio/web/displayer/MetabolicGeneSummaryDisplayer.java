@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -72,10 +73,10 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         summary.addCollectionCount("Gene Ontology", "&nbsp;",
                 goTermPathQuery(summary.getObjectId()), "GeneOntologyDisplayer");
 
-        // on sapien pages:
+        // on H. sapiens pages:
         if (summary.isThisAHuman()) {
             // ArrayExpress Gene Expression Tissues & Tissues
-            ArrayList arr = new ArrayList();
+            ArrayList<Map<String, Integer>> arr = new ArrayList<Map<String, Integer>>();
             arr.add(this.arrayAtlasExpressionTissues(summary));
             arr.add(this.arrayAtlasExpressionDiseases(summary));
             summary.addCustom("Expression", "Array Express (E-MTAB 62)",
@@ -87,7 +88,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
     }
 
 
-    private Object arrayAtlasExpressionTissues(GeneSummary summary) {
+    private Map<String, Integer> arrayAtlasExpressionTissues(GeneSummary summary) {
         PathQuery query = new PathQuery(im.getModel());
         query.addViews("Gene.atlasExpression.expression");
 
@@ -127,7 +128,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         return map;
     }
 
-    private Object arrayAtlasExpressionDiseases(GeneSummary summary) {
+    private Map<String, Integer> arrayAtlasExpressionDiseases(GeneSummary summary) {
         PathQuery query = new PathQuery(im.getModel());
         query.addViews("Gene.atlasExpression.expression");
 
