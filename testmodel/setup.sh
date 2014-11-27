@@ -5,7 +5,7 @@
 #  * psql (createdb, psql) - your user should have a postgres
 #    role with password authentication set up.
 #  * ant
-#  * a deployment container (tomcat).
+#  * a deployment container (tomcat) - see config/download_and_configure_tomcat.sh
 
 set -e # Errors are fatal.
 
