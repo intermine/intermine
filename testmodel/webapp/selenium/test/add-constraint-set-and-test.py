@@ -94,8 +94,9 @@ class AddConstraintSetTest(Super):
         Select(attr_5).select_by_visible_text(">")
         self.elem('#attribute8').send_keys('35,000,000')
         self.elem('#attributeSubmit').click()
+
         # Add constraint: Bank.name = Gringotts
-        self.elem('a[title="Add a constraint to name"]').click()
+        self.find_and_click('a[title="Add a constraint to name"]')
         attr_7 = self.wait().until(on_page('#attribute7'))
         Select(attr_7).select_by_visible_text("Gringotts")
         self.elem('#attributeSubmit').click()
@@ -104,7 +105,7 @@ class AddConstraintSetTest(Super):
         logic = self.elem('#expr')
         logic.clear()
         logic.send_keys('A or B')
-        self.browser.find_element_by_id('editconstraintlogic').click()
+        self.elem('#editconstraintlogic').click()
 
         # Check that the query is as expected.
         self.click_and_wait_for_refresh('a[title="Export this query as XML"]')
