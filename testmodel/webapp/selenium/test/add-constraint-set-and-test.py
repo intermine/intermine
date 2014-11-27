@@ -33,6 +33,7 @@ class AddConstraintSetTest(Super):
         xml = self.wait().until(on_page('#xml'))
         xml.send_keys(query)
         self.elem('#importQueriesForm input[type="submit"]').click()
+
         # Add constraint: Bank.debtors.debt > 35e6
         debtors = self.wait().until(EC.presence_of_element_located((By.ID, 'img_Bank.debtors')))
         debtors.click()
@@ -42,17 +43,20 @@ class AddConstraintSetTest(Super):
         Select(attr_5).select_by_visible_text(">")
         self.elem('#attribute8').send_keys('35,000,000')
         self.elem('#attributeSubmit').click()
+
         # Add constraint: Bank.name = Gringotts
-        self.elem('a[title="Add a constraint to name"]').click()
+        self.find_and_click('a[title="Add a constraint to name"]')
         attr_7 = self.wait().until(on_page('#attribute7'))
         Select(attr_7).select_by_visible_text("Gringotts")
         save_constraint = self.elem('#attributeSubmit')
         save_constraint.click()
         self.wait().until_not(lambda d: d.find_element_by_id('attributeSubmit'), "#attributeSubmit did not go away")
+
         # Check that the query is as expected.
         self.click_and_wait_for_refresh('a[title="Export this query as XML"]')
         self.assertEquals(expected_query.strip(), self.elem('body').text)
         self.browser.back()
+
         # Check that the results are as expected.
         self.wait().until(on_page('#showResult')).click()
         self.assertRowCountIs(2)
