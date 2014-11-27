@@ -9,11 +9,13 @@ import xunitparser
 
 directory = sys.argv[1]
 failure_count = 0
+test_count = 0
 
 for filename in os.listdir(directory):
     if filename.endswith('.xml') and not filename.endswith('TestSuites.xml'):
         with open(path.join(directory, filename)) as f:
             suite, tr = xunitparser.parse(f)
+            test_count += len(list(suite))
 
             failures = [testcase for testcase in suite if not testcase.good]
 
@@ -22,6 +24,9 @@ for filename in os.listdir(directory):
                 print(testcase.trace)
 
             failure_count += len(failures)
+
+
+print(test_count, "tests were run")
 
 if failure_count:
     print(failure_count, 'TESTS FAILED')
