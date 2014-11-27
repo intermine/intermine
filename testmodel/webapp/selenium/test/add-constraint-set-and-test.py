@@ -100,8 +100,9 @@ class AddConstraintSetTest(Super):
         attr_7 = self.wait().until(on_page('#attribute7'))
         Select(attr_7).select_by_visible_text("Gringotts")
         self.elem('#attributeSubmit').click()
+
         # Switch the constraint logic to A or B
-        self.elem('#constraintLogic').click()
+        self.find_and_click('#constraintLogic')
         logic = self.elem('#expr')
         logic.clear()
         logic.send_keys('A or B')
