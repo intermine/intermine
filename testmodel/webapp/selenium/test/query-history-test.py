@@ -61,13 +61,13 @@ class QueryHistoryTest(QueryBuilderTestCase):
     def test_run_query_in_query_history(self):
         self.load_queries_into_history()
 
-        self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(1)').click()
+        self.find_and_click('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(1)')
         self.assertRowCountIs(16)
 
     def test_edit_query_in_query_history(self):
         self.load_queries_into_history()
 
-        self.elem('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(2)').click()
+        self.find_and_click('#modifyQueryForm tbody tr:nth-child(2) td:nth-child(7) span.fakelink:nth-child(2)')
 
         self.wait().until(lambda d: 'query' in d.title.lower())
 
