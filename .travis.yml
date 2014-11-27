@@ -4,16 +4,16 @@ env:
         - TESTMODEL_URL=http://localhost:8080/intermine-demo
         - TESTMODEL_PATH=intermine-demo
     matrix:
+        - TEST_SUITE=selenium
+        - TEST_SUITE=ws-integration CLIENT=JS
+        - TEST_SUITE=ws-integration CLIENT=PY
         - TEST_SUITE=model
         - TEST_SUITE=objectstore
         - TEST_SUITE=integrate
         - TEST_SUITE=pathquery
         - TEST_SUITE=api
         - TEST_SUITE=web
-        - TEST_SUITE=ws-integration CLIENT=JS
-        - TEST_SUITE=ws-integration CLIENT=PY
         - TEST_SUITE=bio
-        - TEST_SUITE=selenium
         - TEST_SUITE=checkstyle
 sudo: false # use container based infrastructure
 jdk:
