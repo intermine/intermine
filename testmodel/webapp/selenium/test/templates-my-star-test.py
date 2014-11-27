@@ -70,16 +70,14 @@ class TemplatesMyStarTest(Super):
         self.assert_invisible_id("all_templates_template_item_line_ManagerLookup")
 
     def assert_visible_id(self, id):
-        browser = self.browser
-        element = browser.find_element_by_id(id)
-        self.wait().until(lambda d: element.is_displayed())
-        return True
+        elem = self.wait().until(lambda d: d.find_element_by_id(id))
+        self.wait().until(lambda d: elem.is_displayed())
+        self.assertTrue(elem.is_displayed())
 
     def assert_invisible_id(self, id):
-        browser = self.browser
-        element = browser.find_element_by_id(id)
-        self.wait().until(lambda d: not element.is_displayed())
-        return True
+        elem = self.wait().until(lambda d: d.find_element_by_id(id))
+        self.wait().until_not(lambda d: elem.is_displayed())
+        self.assertFalse(elem.is_displayed())
 
     def tearDown(self):
         self.user.delete()

@@ -14,7 +14,8 @@ class QueryTreeTest(Super):
         return len(self.elems('.viewpath'))
 
     def add_view(self, base, *names):
-        self.browser.find_element_by_id('img_' + base).click()
+        elem_id = 'img_' + base
+        self.wait().until(lambda b: b.find_element_by_id(elem_id)).click()
         view_len = self.get_view_length()
 
         for name in names:
@@ -53,7 +54,7 @@ class QueryTreeTest(Super):
         self.start_query('Bank')
 
         # Add a constraint
-        self.browser.find_element_by_id('img_Bank.debtors').click()
+        self.wait().until(lambda b: b.find_element_by_id('img_Bank.debtors')).click()
         self.add_constaint('debt', '>', '1000')
 
         self.wait().until(lambda d: len(self.elems('span.constraint')))

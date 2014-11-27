@@ -23,10 +23,10 @@ class TemplateTestCase(Super):
         template_link = self.findLink(self.template_name)
         template_link.click()
         self.assertIn(self.template_name, self.browser.title)
-        button = self.elem("#smallGreen.button input")
+        button = self.wait_for_elem("#smallGreen.button input")
         self.assertIsNotNone(button, "Expected to find button to run template")
         button.click()
-        summary = self.elem(".im-table-summary")
-        self.assertIsNotNone(button, "Expected to find a summary of the template results")
+        summary = self.wait_for_elem(".im-table-summary")
+        self.assertIsNotNone(summary, "Expected to find a summary of the template results")
         self.assertIn("1 to 2", summary.text)
 

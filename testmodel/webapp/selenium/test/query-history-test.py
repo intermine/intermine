@@ -29,12 +29,15 @@ class QueryHistoryTest(QueryBuilderTestCase):
         def get_row_count():
             return len(self.elems(row_selector))
 
+        there_are_two_rows = lambda d: get_row_count() == 2
+        there_is_one_row = lambda d: get_row_count() == 1
+
+        self.wait().until(there_are_two_rows, "Row count wrong")
+
         self.assertEquals(2, get_row_count())
         self.find_and_click('#selected_history_1')
         self.find_and_click('#delete_button')
         Alert(self.browser).accept()
-
-        there_is_one_row = lambda d: get_row_count() == 1
 
         self.wait().until(there_is_one_row, "Row count unchanged")
 
