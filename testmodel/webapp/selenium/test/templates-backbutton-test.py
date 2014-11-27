@@ -20,8 +20,8 @@ class TemplatesBackButton(Super):
         browser.find_element_by_id("filterText").clear()
         browser.find_element_by_id("filterText").send_keys("underwater")
 
-        rivals = self.elem(RIVALS)
-        underwater = self.elem(UNDERWATER)
+        rivals = self.wait_for_elem(RIVALS)
+        underwater = self.wait_for_elem(UNDERWATER)
 
         self.wait().until(lambda d: not rivals.is_displayed())
         self.wait().until(lambda d: underwater.is_displayed())
@@ -32,8 +32,8 @@ class TemplatesBackButton(Super):
         # Go back one in the history
         browser.back()
 
-        rivals_2 = self.elem(RIVALS)
-        underwater_2 = self.elem(UNDERWATER)
+        rivals_2     = self.wait_for_elem(RIVALS)
+        underwater_2 = self.wait_for_elem(UNDERWATER)
 
         # Assert that our filter still has the value of "underwater"
         self.assertEqual("underwater", browser.find_element_by_id("filterText").get_attribute("value"))

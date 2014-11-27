@@ -17,12 +17,12 @@ class AccountLogin(Super):
 
         browser = self.browser
         browser.get(self.base_url + "/begin.do")
-        browser.find_element_by_link_text("Log in").click()
+        self.click_and_wait_for_refresh(self.findLink("Log in"))
         browser.find_element_by_name("username").clear()
         browser.find_element_by_name("username").send_keys(self.user.name)
         browser.find_element_by_name("password").clear()
         browser.find_element_by_name("password").send_keys(self.user.password)
-        browser.find_element_by_name("action").click()
+        self.click_and_wait_for_refresh(browser.find_element_by_name("action"))
 
         # Long emails are truncated and appended with an ellipsis,
         # so we can't assert by comparing user.name to what's on the DOM.

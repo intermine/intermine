@@ -9,7 +9,7 @@ class BrowseDataModelTest(QueryBuilderTestCase):
         link = self.findLink("Browse data model")
         self.assertIsNotNone(link)
         link.click()
-        help_text = self.elem('.body > p').text
+        help_text = self.wait_for_elem('.body > p').text
         self.assertIn("browse the tree", help_text)
         for type_name in EXPECTED_TYPES:
             self.assertIsNotNone(self.findLink(type_name))

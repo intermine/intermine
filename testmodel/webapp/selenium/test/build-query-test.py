@@ -8,11 +8,11 @@ class BuildQueryTest(Super):
 
     def test_build_query(self):
         Select(self.elem("#queryClassSelector")).select_by_visible_text("Employee")
-        self.elem("#submitClassSelect").click()
-        self.elem('a[title="Show name in results"]').click()
-        self.elem('a[title="Add a constraint to name"]').click()
-        self.elem("#attribute8").clear()
-        self.elem("#attribute8").send_keys(u"*ö*")
-        self.elem("#attributeSubmit").click()
+        self.find_and_click("#submitClassSelect")
+        self.find_and_click('a[title="Show name in results"]')
+        self.find_and_click('a[title="Add a constraint to name"]')
+        self.find_and("#attribute8", lambda e: e.clear())
+        self.find_and("#attribute8", lambda e: e.send_keys(u"*ö*"))
+        self.find_and_click("#attributeSubmit")
         self.run_and_expect(4)
 

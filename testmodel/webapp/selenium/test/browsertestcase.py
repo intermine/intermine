@@ -11,7 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-TIMEOUT = 120
+TIMEOUT = 30
 
 sauce_user = os.getenv("SAUCE_USERNAME")
 sauce_key = os.getenv("SAUCE_ACCESS_KEY")
@@ -33,7 +33,6 @@ class BrowserTestCase(unittest.TestCase):
             hub_url = "%s:%s@localhost:4445" % (sauce_user, sauce_key)
             driver = webdriver.Remote(desired_capabilities=capabilities, command_executor="http://%s/wd/hub" % hub_url)
         cls.browser = driver
-        cls.browser.implicitly_wait(TIMEOUT)
 
     @classmethod
     def tearDownClass(cls):
@@ -67,10 +66,19 @@ class BrowserTestCase(unittest.TestCase):
             elem.click()
         else:
             self.elem(elem).click()
-        self.wait().until(lambda d: d.current_url != prev_url)
+        self.wait().until(lambda d: d.current_url != prev_url, "Browser stayed at " + prev_url)
 
     @contextmanager
     def wait_for(self, find_element):
         """Wait for an element, then act on it"""
         self.wait().until(find_element)
         yield find_element(self.browser)
+
+    def find_and(self, selector, action):
+        action(self.wait().until(lambda d: d.find_element_by_css_selector(selector), selector + ' not found'))
+
+    def find_and_click(self, selector):
+        self.wait().until(lambda d: d.find_element_by_css_selector(selector), selector + ' not found').click()
+
+    def wait_for_elem(self, selector):
+        return self.wait().until(lambda d: d.find_element_by_css_selector(selector), selector + ' not found')

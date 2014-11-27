@@ -1,7 +1,11 @@
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from test.querybuildertestcase import QueryBuilderTestCase as Super
+
+def on_page(selector):
+    return EC.presence_of_element_located((By.CSS_SELECTOR, selector))
 
 class AddConstraintSetTest(Super):
 
@@ -26,24 +30,31 @@ class AddConstraintSetTest(Super):
             '</query>'
         ])
         self.findLink("Import query from XML").click()
-        self.elem('#xml').send_keys(query)
+        xml = self.wait().until(on_page('#xml'))
+        xml.send_keys(query)
         self.elem('#importQueriesForm input[type="submit"]').click()
         # Add constraint: Bank.debtors.debt > 35e6
-        self.browser.find_element_by_id('img_Bank.debtors').click()
-        self.elem('a[title="Add a constraint to debt"]').click()
-        Select(self.elem("#attribute5")).select_by_visible_text(">")
+        debtors = self.wait().until(EC.presence_of_element_located((By.ID, 'img_Bank.debtors')))
+        debtors.click()
+        add_constraint = self.wait().until(on_page('a[title="Add a constraint to debt"]'))
+        add_constraint.click()
+        attr_5 = self.wait().until(on_page('#attribute5'))
+        Select(attr_5).select_by_visible_text(">")
         self.elem('#attribute8').send_keys('35,000,000')
         self.elem('#attributeSubmit').click()
         # Add constraint: Bank.name = Gringotts
         self.elem('a[title="Add a constraint to name"]').click()
-        Select(self.elem("#attribute7")).select_by_visible_text("Gringotts")
-        self.elem('#attributeSubmit').click()
+        attr_7 = self.wait().until(on_page('#attribute7'))
+        Select(attr_7).select_by_visible_text("Gringotts")
+        save_constraint = self.elem('#attributeSubmit')
+        save_constraint.click()
+        self.wait().until_not(lambda d: d.find_element_by_id('attributeSubmit'), "#attributeSubmit did not go away")
         # Check that the query is as expected.
         self.click_and_wait_for_refresh('a[title="Export this query as XML"]')
         self.assertEquals(expected_query.strip(), self.elem('body').text)
         self.browser.back()
         # Check that the results are as expected.
-        self.elem('#showResult').click()
+        self.wait().until(on_page('#showResult')).click()
         self.assertRowCountIs(2)
 
     def test_add_constraint_set_or(self):
@@ -68,17 +79,21 @@ class AddConstraintSetTest(Super):
 
         # Perform actions.
         self.findLink("Import query from XML").click()
-        self.elem('#xml').send_keys(query)
+        self.wait().until(on_page('#xml')).send_keys(query)
         self.elem('#importQueriesForm input[type="submit"]').click()
         # Add constraint: Bank.debtors.debt > 35e6
-        self.browser.find_element_by_id('img_Bank.debtors').click()
-        self.elem('a[title="Add a constraint to debt"]').click()
-        Select(self.elem("#attribute5")).select_by_visible_text(">")
+        debtors = self.wait().until(EC.presence_of_element_located((By.ID, 'img_Bank.debtors')))
+        debtors.click()
+        add_constraint = self.wait().until(on_page('a[title="Add a constraint to debt"]'))
+        add_constraint.click()
+        attr_5 = self.wait().until(on_page('#attribute5'))
+        Select(attr_5).select_by_visible_text(">")
         self.elem('#attribute8').send_keys('35,000,000')
         self.elem('#attributeSubmit').click()
         # Add constraint: Bank.name = Gringotts
         self.elem('a[title="Add a constraint to name"]').click()
-        Select(self.elem("#attribute7")).select_by_visible_text("Gringotts")
+        attr_7 = self.wait().until(on_page('#attribute7'))
+        Select(attr_7).select_by_visible_text("Gringotts")
         self.elem('#attributeSubmit').click()
         # Switch the constraint logic to A or B
         self.elem('#constraintLogic').click()
@@ -88,10 +103,10 @@ class AddConstraintSetTest(Super):
         self.browser.find_element_by_id('editconstraintlogic').click()
 
         # Check that the query is as expected.
-        self.elem('a[title="Export this query as XML"]').click()
+        self.click_and_wait_for_refresh('a[title="Export this query as XML"]')
         self.assertEquals(expected_query.strip(), self.elem('body').text)
         self.browser.back()
         # Check that the results are as expected.
-        self.elem('#showResult').click()
+        self.wait().until(on_page('#showResult')).click()
         self.assertRowCountIs(24)
 
