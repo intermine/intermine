@@ -17,9 +17,18 @@ import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
+/**
+ *
+ * @author Radek
+ *
+ */
 public class PathwayDescriptionDisplayer extends ReportDisplayer
 {
 
+    /**
+     * @param config report displayer config
+     * @param im intermine API
+     */
     public PathwayDescriptionDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
@@ -28,7 +37,8 @@ public class PathwayDescriptionDisplayer extends ReportDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
 
         try {
-            request.setAttribute("description", reportObject.getObject().getFieldValue("description"));
+            request.setAttribute("description", reportObject.getObject()
+                    .getFieldValue("description"));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

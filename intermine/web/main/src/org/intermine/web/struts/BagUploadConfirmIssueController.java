@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -31,7 +30,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.metadata.Model;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.results.BagUploadConfirmInlineResultsTable;
 import org.intermine.web.logic.results.BagUploadConfirmInlineResultsTableRow;
@@ -49,6 +48,7 @@ public class BagUploadConfirmIssueController extends TilesAction
      * Initialise attributes for the bagUploadConfirmIssue.
      * {@inheritDoc}
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Written by someone with fear of generics??
     @Override
     public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
@@ -96,18 +96,15 @@ public class BagUploadConfirmIssueController extends TilesAction
             }
         }
 
-        ServletContext servletContext = session.getServletContext();
-
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
-        Map webPropertiesMap = SessionMethods.getWebProperties(servletContext);
 
         // create a BagUploadConfirmInlineResultsTable which is a special case of InlineResultsTable
         //  that uses BagUploadConfirmInlineResultsTableRow objects which is a special case of
         //  InlineResultsTableRow containing methods to set/get identifier & rowspan
         BagUploadConfirmInlineResultsTable table =
-            new BagUploadConfirmInlineResultsTable(objectList, model, webConfig, webPropertiesMap,
-                    -1, true, null);
+            new BagUploadConfirmInlineResultsTable(
+                    objectList, model, webConfig, im.getClassKeys(), -1, true, null);
 
         // map additional matches onto the table
         table = mapResultTableOnAdditionalMatches(table, identifierResultElementMap);
@@ -124,7 +121,7 @@ public class BagUploadConfirmIssueController extends TilesAction
      * @param resultElementMap
      * @return
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private BagUploadConfirmInlineResultsTable mapResultTableOnAdditionalMatches(
                 BagUploadConfirmInlineResultsTable table,
                 Map resultElementMap) {

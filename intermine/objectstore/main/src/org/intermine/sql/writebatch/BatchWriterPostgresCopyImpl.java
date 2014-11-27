@@ -22,11 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.util.StringConstructor;
-
+import org.apache.log4j.Logger;
+import org.intermine.model.StringConstructor;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyManager;
-import org.apache.log4j.Logger;
 
 /**
  * An implementation of the BatchWriter interface that uses PostgreSQL-specific COPY commands.
@@ -52,8 +51,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         if ((colNames != null) && (!table.getIdsToInsert().isEmpty())) {
             try {
                 CopyManager copyManager = null;
-                if (con instanceof PGConnection) {
-                    copyManager = ((PGConnection) con).getCopyAPI();
+                if (con.isWrapperFor(PGConnection.class)) {
+                    copyManager = con.unwrap(PGConnection.class).getCopyAPI();
                 }
                 if (copyManager == null) {
                     LOG.warn("Database with Connection " + con.getClass().getName()
@@ -202,8 +201,8 @@ public class BatchWriterPostgresCopyImpl extends BatchWriterPreparedStatementImp
         if (!table.getRowsToInsert().isEmpty()) {
             try {
                 CopyManager copyManager = null;
-                if (con instanceof PGConnection) {
-                    copyManager = ((PGConnection) con).getCopyAPI();
+                if (con.isWrapperFor(PGConnection.class)) {
+                    copyManager = con.unwrap(PGConnection.class).getCopyAPI();
                 }
                 if (copyManager == null) {
                     LOG.warn("Database is incompatible with the PostgreSQL COPY command - falling"

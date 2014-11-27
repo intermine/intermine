@@ -49,7 +49,7 @@ public abstract class QueryExecutor
         Collections.synchronizedMap(new WeakHashMap<Query, Map<String, QuerySelectable>>());
     protected int summaryBatchSize;
 
-    private static final Logger LOG = Logger.getLogger(QueryExecutor.class); 
+    private static final Logger LOG = Logger.getLogger(QueryExecutor.class);
     /**
      * The profile to use to find bags from.
      */
@@ -83,14 +83,12 @@ public abstract class QueryExecutor
      *
      * @param pathQuery the query to convert
      * @param summaryPath the column to summarise
+     * @param asOccurrances If true, will only return the list of values and their counts.
      * @return an IQL Query object
      * @throws ObjectStoreException if there is a problem creating the query
      */
-    public Query makeSummaryQuery(
-    		PathQuery pathQuery,
-            String summaryPath,
-            boolean asOccurrances
-            ) throws ObjectStoreException {
+    public Query makeSummaryQuery(PathQuery pathQuery, String summaryPath, boolean asOccurrances)
+        throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
 
         Map<String, InterMineBag> allBags = bagManager.getBags(profile);
@@ -98,28 +96,32 @@ public abstract class QueryExecutor
                 bagQueryRunner, asOccurrances);
         return q;
     }
-    
-    public Query makeSummaryQuery(
-    		PathQuery pathQuery,
-            String summaryPath
-            ) throws ObjectStoreException {
-    	return makeSummaryQuery(pathQuery, summaryPath);
+
+    /**
+     *
+     * @param pathQuery the query to summarise
+     * @param summaryPath the column to summarise
+     * @return a Results object with varying styles of data
+     * @throws ObjectStoreException if there is a problem creating the query
+     */
+    public Query makeSummaryQuery(PathQuery pathQuery, String summaryPath)
+        throws ObjectStoreException {
+        return makeSummaryQuery(pathQuery, summaryPath);
     }
 
     /**
-     * Creates a query that returns the summary for a column in a PathQuery, applying a filter at 
+     * Creates a query that returns the summary for a column in a PathQuery, applying a filter at
      * the database level.
-     * 
-     * @param pathQuery the query to convert
+     *
+     * @param filterTerm what to filter by
+     * @param asOccurrances If true, will only return the list of values and their counts.
+     * @param pq the query to convert
      * @param summaryPath the column to summarise
      * @return an IQL Query object
      * @throws ObjectStoreException if there is a problem creating the query
-     */    
-    public Query makeSummaryQuery(
-    		PathQuery pq,
-    		String summaryPath,
-    		String filterTerm,
-    		boolean asOccurrances) throws ObjectStoreException {
+     */
+    public Query makeSummaryQuery(PathQuery pq, String summaryPath, String filterTerm,
+            boolean asOccurrances) throws ObjectStoreException {
         PathQuery clone = pq.clone();
         clone.addConstraint(Constraints.contains(summaryPath, filterTerm));
         Query q = makeSummaryQuery(clone, summaryPath, asOccurrances);
@@ -149,26 +151,30 @@ public abstract class QueryExecutor
      *
      * @param pathQuery the query to summarise
      * @param summaryPath the column to summarise
+     * @param asOccurrances If true, will only return the list of values and their counts.
      * @return a Results object with varying styles of data
      * @throws ObjectStoreException if there is a problem summarising
      */
-    public Results summariseQuery(
-    		PathQuery pathQuery,
-            String summaryPath,
-            boolean asOccurrances) throws ObjectStoreException {
+    public Results summariseQuery(PathQuery pathQuery, String summaryPath, boolean asOccurrances)
+        throws ObjectStoreException {
         return os.execute(makeSummaryQuery(pathQuery, summaryPath, asOccurrances), summaryBatchSize,
                 true, true, true);
     }
-    
-    public Results summariseQuery(
-    		PathQuery pathQuery,
-            String summaryPath)
-    	throws ObjectStoreException {
-    	return summariseQuery(pathQuery, summaryPath, false);
-    }
-    
+
     /**
-     * Summarise a query. 
+     *
+     * @param pathQuery The query to execute.
+     * @param summaryPath The path whose unique column value count we want.
+     * @return A set of results.
+     * @throws ObjectStoreException If there is a problem making the query.
+     */
+    public Results summariseQuery(PathQuery pathQuery, String summaryPath)
+        throws ObjectStoreException {
+        return summariseQuery(pathQuery, summaryPath, false);
+    }
+
+    /**
+     * Summarise a query.
      * @param pq The query to summarise
      * @param summaryPath The path of the query to focus on.
      * @param filterTerm An optional term to further filter by.
@@ -177,15 +183,15 @@ public abstract class QueryExecutor
      * @throws ObjectStoreException in case of Ragnarok.
      */
     public Results summariseQuery(
-    		PathQuery pq,
-    		String summaryPath,
-    		String filterTerm,
-    		boolean asOccurrances) throws ObjectStoreException {
+            PathQuery pq,
+            String summaryPath,
+            String filterTerm,
+            boolean asOccurrances) throws ObjectStoreException {
         if (filterTerm == null || filterTerm.isEmpty()) {
             return summariseQuery(pq, summaryPath, asOccurrances);
         }
-        return os.execute(makeSummaryQuery(pq, summaryPath, filterTerm, asOccurrances), summaryBatchSize,
-                true, true, true);
+        return os.execute(makeSummaryQuery(pq, summaryPath, filterTerm, asOccurrances),
+                summaryBatchSize, true, true, true);
     }
 
     /**
@@ -200,7 +206,7 @@ public abstract class QueryExecutor
         return os.count(q, ObjectStore.SEQUENCE_IGNORE);
     }
 
-    private static final Map<String, Integer> countCache = new CacheMap<String, Integer>();
+    private static final Map<String, Integer> COUNT_CACHE = new CacheMap<String, Integer>();
     /**
      * Get the the total number of unique column values for a given path in the
      * context of a given query.
@@ -218,14 +224,14 @@ public abstract class QueryExecutor
     public int uniqueColumnValues(PathQuery pq, String path) throws ObjectStoreException {
         Query q = makeSummaryQuery(pq, path, true);
         String cacheKey = q.toString() + "summary-path: " + path;
-        if (countCache.containsKey(cacheKey)) {
+        if (COUNT_CACHE.containsKey(cacheKey)) {
             LOG.debug("Count cache hit");
-            return countCache.get(cacheKey);
+            return COUNT_CACHE.get(cacheKey);
         } else {
             LOG.debug("Count cache miss");
             Results res = os.execute(q, summaryBatchSize, true, true, true);
             int c = res.size();
-            countCache.put(cacheKey, c);
+            COUNT_CACHE.put(cacheKey, c);
             return c;
         }
     }
@@ -235,7 +241,7 @@ public abstract class QueryExecutor
      *
      * @param pathQuery The path query.
      * @return The internal Query representation.
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException If there is a problem making the query.
      */
     public abstract Query makeQuery(PathQuery pathQuery) throws ObjectStoreException;
 

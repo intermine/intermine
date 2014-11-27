@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -24,13 +25,11 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Query;
-import org.intermine.util.DynamicUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * Class providing EquivalentObjectFetcher functionality that makes use of hints to improve
@@ -151,7 +150,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                 if (!primaryKeys.isEmpty()) {
                     time = System.currentTimeMillis();
                     boolean classNotExists = hints.classNotExists(cld.getType());
-                    String className = DynamicUtil.getFriendlyName(cld.getType());
+                    String className = Util.getFriendlyName(cld.getType());
                     if (!savedTimes.containsKey(className)) {
                         savedTimes.put(className, new Long(System.currentTimeMillis() - time));
                     }
@@ -199,7 +198,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                 }
                 long time = System.currentTimeMillis();
                 boolean pkQueryFruitless = hints.pkQueryFruitless(cld.getType(), fieldName, value);
-                String summaryName = DynamicUtil.getFriendlyName(cld.getType()) + "."
+                String summaryName = Util.getFriendlyName(cld.getType()) + "."
                     + fieldName;
                 if (!savedTimes.containsKey(summaryName)) {
                     savedTimes.put(summaryName, new Long(System.currentTimeMillis() - time));
@@ -229,7 +228,7 @@ public class HintingFetcher extends BaseEquivalentObjectFetcher
                         long time = System.currentTimeMillis();
                         boolean pkQueryFruitless = hints.pkQueryFruitless(cld.getType(), fieldName,
                                 destId);
-                        String summaryName = DynamicUtil.getFriendlyName(cld.getType()) + "."
+                        String summaryName = Util.getFriendlyName(cld.getType()) + "."
                             + fieldName;
                         if (!savedTimes.containsKey(summaryName)) {
                             savedTimes.put(summaryName, new Long(System.currentTimeMillis()

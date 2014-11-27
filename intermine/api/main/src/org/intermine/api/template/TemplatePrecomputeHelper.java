@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
@@ -41,9 +40,8 @@ import org.intermine.template.TemplateQuery;
 public final class TemplatePrecomputeHelper
 {
     private TemplatePrecomputeHelper() {
+        // don't
     }
-
-    private static final Logger LOG = Logger.getLogger(TemplatePrecomputeHelper.class);
 
     /**
      * Get an ObjectStore query to precompute this template - remove editable constraints
@@ -59,6 +57,17 @@ public final class TemplatePrecomputeHelper
         return TemplatePrecomputeHelper.getPrecomputeQuery(template, indexes, null);
     }
 
+    /**
+     * Get an ObjectStore query to precompute this template - remove editable constraints
+     * and add fields to select list if necessary.  Fill in indexes list with QueryNodes
+     * to create additional indexes on (i.e. those added to select list).  Original
+     * template is left unaltered.
+     *
+     * @param template to generate precompute query for
+     * @param indexes any additional indexes to be created will be added to this list.
+     * @param groupBy a path to group by, for summary data, or null for a precompute query
+     * @return the query to precompute
+     */
     public static Query getPrecomputeQuery(TemplateQuery template,
             List<? super QueryNode> indexes, String groupBy) {
         return getPrecomputeQuery(template, indexes, groupBy, null);
@@ -73,6 +82,7 @@ public final class TemplatePrecomputeHelper
      * @param template to generate precompute query for
      * @param indexes any additional indexes to be created will be added to this list.
      * @param groupBy a path to group by, for summary data, or null for a precompute query
+     * @param im intermine api
      * @return the query to precompute
      */
     public static Query getPrecomputeQuery(TemplateQuery template,

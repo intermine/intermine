@@ -46,7 +46,7 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.stringtree.json.JSONWriter;
@@ -69,17 +69,19 @@ public class WebSearchableListController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(
+            ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         String type = (String) context.getAttribute("type");
         String scope = (String) context.getAttribute("scope");
         String tags = (String) context.getAttribute("tags");
         String list = (String) context.getAttribute("list");
         String limit = (String) context.getAttribute("limit");
         String templatesPublicPage = (String) context.getAttribute("templatesPublicPage");
-        Map filteredWebSearchables;
+        Map<String, WebSearchable> filteredWebSearchables = new HashMap<String, WebSearchable>();
         HttpSession session = request.getSession();
         im = SessionMethods.getInterMineAPI(session);
         tagManager = im.getTagManager();
@@ -90,22 +92,15 @@ public class WebSearchableListController extends TilesAction
                 new ActionMessage("login.upgradeListManually"));
             saveErrors(request, actionErrors);
         }
-/*        if (session.getAttribute("IS_SUPERUSER") != null
-                        && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
-            filteredWebSearchables = getFilterWebSearchables(request, type,
-                                                          Scope.USER, tags);
-
-        } else*/
         if (scope.equals(Scope.ALL)) {
-            Map globalWebSearchables =
+            Map<String, ? extends WebSearchable> globalWebSearchables =
                 getFilterWebSearchables(request, type, Scope.GLOBAL, tags);
-            Map userWebSearchables =
+            Map<String, ? extends WebSearchable> userWebSearchables =
                 getFilterWebSearchables(request, type, Scope.USER, tags);
-            filteredWebSearchables = new HashMap<String, WebSearchable>(userWebSearchables);
+            filteredWebSearchables.putAll(userWebSearchables);
             filteredWebSearchables.putAll(globalWebSearchables);
-
         } else {
-            filteredWebSearchables = getFilterWebSearchables(request, type, scope, tags);
+            filteredWebSearchables.putAll(getFilterWebSearchables(request, type, scope, tags));
         }
 
         if (list != null) {
@@ -152,15 +147,8 @@ public class WebSearchableListController extends TilesAction
             Map<String, String> sharedBagsByOwner = new HashMap<String, String>();
             for (Map.Entry<String, InterMineBag> entry : sharedBags.entrySet()) {
                 int id = entry.getValue().getProfileId();
-                String username = pm.getProfileUserName(id);
-                String usernameFormatted;
-                if (username.contains("@")) {
-                    String[] usernameSplitted = StringUtil.split(username, "@");
-                    usernameFormatted = usernameSplitted[0] + " at " + usernameSplitted[1];
-                } else {//openid username
-                    usernameFormatted = username;
-                }
-                sharedBagsByOwner.put(entry.getKey(), usernameFormatted);
+                Profile owner = pm.getProfile(id);
+                sharedBagsByOwner.put(entry.getKey(), owner.getName());
             }
             request.setAttribute("sharedBagWebSearchables", sharedBagsByOwner);
         }
@@ -359,8 +347,8 @@ public class WebSearchableListController extends TilesAction
      * @param list list
      * @return map with items that were on the list and on the map as well
      */
-    public static Map<String, ? extends WebSearchable> filterByList(
-            Map<String, ? extends WebSearchable> filteredWebSearchables, String list) {
+    public static Map<String, WebSearchable> filterByList(
+            Map<String, WebSearchable> filteredWebSearchables, String list) {
 
         Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
         clone.putAll(filteredWebSearchables);
@@ -384,8 +372,8 @@ public class WebSearchableListController extends TilesAction
         return clone;
     }
 
-    private Map<String, ? extends WebSearchable> filterByCurrent(
-            Map<String, ? extends WebSearchable> filteredWebSearchables) {
+    private Map<String, WebSearchable> filterByCurrent(
+            Map<String, WebSearchable> filteredWebSearchables) {
         Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();
         clone.putAll(filteredWebSearchables);
         for (Object o : filteredWebSearchables.values()) {

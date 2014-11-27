@@ -10,7 +10,9 @@ package org.intermine.webservice.server.output;
  *
  */
 
-public class JSONFormattingException extends RuntimeException {
+/** @author Alex Kalderimis **/
+public final class JSONFormattingException extends RuntimeException
+{
 
     private static final long serialVersionUID = 1L;
 

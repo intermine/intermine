@@ -11,7 +11,6 @@ package org.intermine.webservice.server;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +26,6 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.webservice.server.core.JSONService;
-import org.intermine.webservice.server.output.JSONFormatter;
-import org.json.JSONObject;
 
 /**
  * Serve up the paths used to summarise each class.
@@ -38,7 +35,7 @@ import org.json.JSONObject;
 public class SummaryService extends JSONService
 {
 
-    private final static Logger LOG = Logger.getLogger(SummaryService.class);
+    private static final Logger LOG = Logger.getLogger(SummaryService.class);
 
     /**
      * Constructor
@@ -63,7 +60,7 @@ public class SummaryService extends JSONService
         addResultItem(summaryFieldsForCd, false);
     }
 
-    protected Map<String, Object> getMapping(Boolean refsAllowed, WebConfig webConfig) {
+    private Map<String, Object> getMapping(Boolean refsAllowed, WebConfig webConfig) {
         Map<String, Object> summaryFieldsForCd = new HashMap<String, Object>();
         Model m = im.getModel();
         for (ClassDescriptor cd: m.getClassDescriptors()) {

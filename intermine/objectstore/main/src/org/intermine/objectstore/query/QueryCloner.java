@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 
 /**
@@ -283,7 +284,7 @@ public final class QueryCloner
             ContainsConstraint origC = (ContainsConstraint) orig;
             if (origC.getOp().equals(ConstraintOp.IS_NULL) || origC.getOp().equals(
                     ConstraintOp.IS_NOT_NULL)) {
-                return new ContainsConstraint((QueryObjectReference) cloneThing(
+                return new ContainsConstraint((QueryReference) cloneThing(
                         origC.getReference(), fromElementMap, qopeMap), origC.getOp());
             } else if (origC.getQueryClass() == null) {
                 return new ContainsConstraint((QueryReference) cloneThing(origC.getReference(),

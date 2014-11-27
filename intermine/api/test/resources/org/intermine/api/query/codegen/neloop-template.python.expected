@@ -1,0 +1,4 @@
+# Invalid query.
+# =============
+# This query cannot be run because of the following problems:
+#  * It contains a constraint type that can only be used internally (PathConstraintLoop)

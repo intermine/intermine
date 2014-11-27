@@ -55,10 +55,16 @@ public abstract class JSONService extends WebService
         output.setHeaderAttributes(getHeaderAttributes());
     }
 
+    /**
+     * @return The key for the results property.
+     */
     protected String getResultsKey() {
         return null;
     }
 
+    /**
+     * @return Whether to treat this as a lazy list.
+     */
     protected boolean lazyList() {
         return false;
     }
@@ -76,7 +82,7 @@ public abstract class JSONService extends WebService
                 intro += "[";
                 attributes.put(JSONFormatter.KEY_OUTRO, "]");
             }
-        	attributes.put(JSONFormatter.KEY_INTRO, intro);
+            attributes.put(JSONFormatter.KEY_INTRO, intro);
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
@@ -93,7 +99,7 @@ public abstract class JSONService extends WebService
     protected void addOutputInfo(String key, String value) {
         kvPairs.put(key, value);
     }
-    
+
     /**
      * Output a map of names and values as a JSON object.
      * @param mapping the mapping of things to output.
@@ -104,14 +110,29 @@ public abstract class JSONService extends WebService
         addResultItemInternal(jo, hasMore);
     }
 
+    /**
+     * Output a char-sequence as a JSON value.
+     * @param str The character sequence.
+     * @param hasMore Whether there are more to come.
+     */
     protected void addResultValue(CharSequence str, boolean hasMore) {
         addResultItemInternal("\"" + String.valueOf(str) + "\"", hasMore);
     }
 
+    /**
+     * Output a number as a JSON value.
+     * @param num The number.
+     * @param hasMore Whether there are more to come.
+     */
     protected void addResultValue(Number num, boolean hasMore) {
         addResultValueInternal(String.valueOf(num), hasMore);
     }
 
+    /**
+     * Output a bool as a JSON value.
+     * @param bool The boolean.
+     * @param hasMore Whether there are more.
+     */
     protected void addResultValue(Boolean bool, boolean hasMore) {
         addResultValueInternal(String.valueOf(bool), hasMore);
     }
@@ -119,23 +140,45 @@ public abstract class JSONService extends WebService
     private void addResultValueInternal(String val, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
         outputStrings.add(val);
-        if (hasMore) outputStrings.add("");
+        if (hasMore) {
+            outputStrings.add("");
+        }
         output.addResultItem(outputStrings);
     }
 
+    /**
+     * @param entries The entries to output
+     */
     protected void addResultEntries(
             Collection<Map.Entry<String, Object>> entries) {
         addResultEntries(entries, false);
     }
 
+    /**
+     * Output a single entry.
+     * @param key The key
+     * @param value The value
+     * @param hasMore Whether there are more to come.
+     */
     protected void addResultEntry(String key, Object value, boolean hasMore) {
         addResultEntry(new Pair<String, Object>(key, value), hasMore);
     }
 
+    /**
+     * Output a single entry.
+     * @param entry The entry
+     * @param hasMore Whether there are more to come.
+     */
     protected void addResultEntry(Map.Entry<String, Object> entry, boolean hasMore) {
         addResultEntries(Collections.singleton(entry), hasMore);
     }
 
+    /**
+     * Output a bunch of entries.
+     * @param entries The entries
+     * @param hasMore Whether there are more of them to come.
+     */
+    @SuppressWarnings("rawtypes")
     protected void addResultEntries(
             Collection<Map.Entry<String, Object>> entries, boolean hasMore) {
         List<String> outputStrings = new ArrayList<String>();
@@ -146,7 +189,7 @@ public abstract class JSONService extends WebService
 
             if (value == null) {
                 valStr = "null";
-            } if (value instanceof Map) {
+            } else if (value instanceof Map) {
                 valStr = new JSONObject((Map) value).toString();
             } else if (value instanceof List) {
                 valStr = new JSONArray((List) value).toString();

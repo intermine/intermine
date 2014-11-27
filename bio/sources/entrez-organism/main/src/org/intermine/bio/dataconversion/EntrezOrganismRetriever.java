@@ -10,26 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryClass;
-
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
-
-import org.intermine.model.bio.Organism;
-
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,16 +17,29 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
-
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.intermine.metadata.StringUtil;
+import org.intermine.model.bio.Organism;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.util.SAXParser;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -179,6 +172,12 @@ public class EntrezOrganismRetriever extends Task
         return new BufferedReader(new InputStreamReader(url.openStream()));
     }
 
+    /**
+     *
+     * @param id organism id
+     * @return reader
+     * @throws Exception if something goes wrong
+     */
     protected static Reader getReader(Integer id) throws Exception {
         URL url = new URL(ESUMMARY_URL + id);
         return new BufferedReader(new InputStreamReader(url.openStream()));

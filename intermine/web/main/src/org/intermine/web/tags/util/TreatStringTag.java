@@ -24,9 +24,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  **/
 public class TreatStringTag extends SimpleTagSupport
 {
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         StringWriter buffer = new StringWriter();

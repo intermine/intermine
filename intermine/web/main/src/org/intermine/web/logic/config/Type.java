@@ -20,13 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.commons.collections.set.ListOrderedSet;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Configuration object for displaying a class
@@ -39,18 +38,18 @@ public class Type
     // if fieldName is null it's ignored and the webapp will use the default renderer
     private String fieldName;
     private String className;
-    private Map<String, FieldConfig> fieldConfigMap =
-        new LinkedHashMap<String, FieldConfig>(); // Use a linked map to allow users to specify column order in the config.
+    // Use a linked map to allow users to specify column order in the config.
+    private Map<String, FieldConfig> fieldConfigMap = new LinkedHashMap<String, FieldConfig>();
     private ListOrderedSet longDisplayers = new ListOrderedSet();
     private ListOrderedSet bagDisplayers = new ListOrderedSet();
     private LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>();
     private Displayer tableDisplayer;
     private Map<String, List<Displayer>> aspectDisplayers = new HashMap<String, List<Displayer>>();
 
-    /** @var inline lists attached to the object type */
+    /** inline lists attached to the object type */
     private LinkedList<InlineListConfig> inlineLists = new LinkedList<InlineListConfig>();
 
-    /** @var header configuration having paths to titles to show */
+    /** header configuration having paths to titles to show */
     private HeaderConfigTitle headerConfigTitle;
     private HeaderConfigLink headerConfigLink;
 
@@ -72,6 +71,7 @@ public class Type
         this.label = label;
     }
 
+    /** @return the display name for this type. **/
     public String getDisplayName() {
         if (label != null) {
             return label;
@@ -80,10 +80,14 @@ public class Type
         }
     }
 
+    /** @return the formatted class name for this type **/
     public String getFormattedClassName() {
         return Type.getFormattedClassName(className);
     }
 
+    /**
+     * @param nameOfClass the specific class name
+     * @return the formatted class name for a specific class **/
     public static String getFormattedClassName(String nameOfClass) {
         String unqualifiedName = TypeUtil.unqualifiedName(nameOfClass);
         String[] parts = StringUtils.splitByCharacterTypeCamelCase(unqualifiedName);
@@ -111,6 +115,9 @@ public class Type
         return this.className;
     }
 
+    /**
+     * @return The unqualified name of the class this type configures.
+     */
     public String getUnqualifiedClassName() {
         return TypeUtil.unqualifiedName(this.className);
     }
@@ -167,9 +174,9 @@ public class Type
         }
         for (int i = 0; i < aspects.length; i++) {
             String aspect = aspects[i].trim();
-            List displayers = (List) aspectDisplayers.get(aspect);
+            List<Displayer> displayers = aspectDisplayers.get(aspect);
             if (displayers == null) {
-                displayers = new ArrayList();
+                displayers = new ArrayList<Displayer>();
                 aspectDisplayers.put(aspect, displayers);
             }
             displayers.add(disp);
@@ -210,7 +217,7 @@ public class Type
 
     /**
      * Add an InlineList for this object, used from WebConfig
-     * @param list lalala
+     * @param listConfig The list to add.
      */
     public void addInlineList(InlineListConfig listConfig) {
         inlineLists.add(listConfig);
@@ -234,6 +241,7 @@ public class Type
     /**
      * @param widgets the widgets to set
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setWidgets(LinkedList widgets) {
         this.widgets = widgets;
     }
@@ -258,7 +266,8 @@ public class Type
      * Get the List of long Displayers
      * @return the List of long Displayers
      */
-    public Set getLongDisplayers() {
+    @SuppressWarnings("unchecked")
+    public Set<? extends Object> getLongDisplayers() {
         return Collections.unmodifiableSet(this.longDisplayers);
     }
 
@@ -274,7 +283,8 @@ public class Type
      * Get the List of bag Displayers
      * @return the List of bag Displayers
      */
-    public Set getBagDisplayers() {
+    @SuppressWarnings("unchecked")
+    public Set<? extends Object> getBagDisplayers() {
         return Collections.unmodifiableSet(this.bagDisplayers);
     }
 
@@ -326,7 +336,7 @@ public class Type
             sb.append(" fieldName=\"" + fieldName + "\"");
         }
         if (label != null) {
-        	sb.append(" label=\"" + label + "\"");
+            sb.append(" label=\"" + label + "\"");
         }
         sb.append(">\n");
         sb.append("\t<fieldconfigs>\n");
@@ -338,7 +348,7 @@ public class Type
             sb.append(tableDisplayer.toString("tabledisplayer"));
         }
         sb.append("\t<longdisplayers>\n");
-        Iterator iter = longDisplayers.iterator();
+        Iterator<?> iter = longDisplayers.iterator();
         while (iter.hasNext()) {
             sb.append("\t\t" + iter.next().toString() + "\n");
         }

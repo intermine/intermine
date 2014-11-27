@@ -295,13 +295,18 @@
       <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
      </tiles:insert>
-  
+
    <tiles:insert name="templateList.tile">
     <tiles:put name="scope" value="global" />
     <tiles:put name="placement" value="im:aspect:summary" />
     <tiles:put name="reportObject" beanName="object" />
   </tiles:insert>
-  
+
+    <tiles:insert page="/reportRefsCols.jsp">
+      <tiles:put name="object" beanName="object" />
+      <tiles:put name="placement" value="im:summary" />
+    </tiles:insert>
+
   </div>
 
   <c:forEach items="${categories}" var="aspect" varStatus="status">

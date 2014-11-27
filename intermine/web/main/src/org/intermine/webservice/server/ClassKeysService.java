@@ -19,7 +19,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.json.JSONObject;
 
 /**
@@ -42,7 +42,7 @@ public class ClassKeysService extends SummaryService
     protected void execute() throws Exception {
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         if (classKeys == null) {
-            throw new InternalErrorException("class keys unavailable");
+            throw new ServiceException("class keys unavailable");
         }
         Map<String, List<String>> ckData = new HashMap<String, List<String>>();
         Model m = im.getModel();

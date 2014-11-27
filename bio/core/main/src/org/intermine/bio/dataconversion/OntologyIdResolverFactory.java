@@ -45,6 +45,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * Return an IdResolver, if not already built then create it.
      * @return a specific IdResolver
      */
+    @Override
     public IdResolver getIdResolver() {
         return getIdResolver(true);
     }
@@ -56,6 +57,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * @param failOnError if false swallow any exceptions and return null
      * @return a specific IdResolver
      */
+    @Override
     public IdResolver getIdResolver(boolean failOnError) {
         if (!caughtError) {
             try {
@@ -72,16 +74,14 @@ public class OntologyIdResolverFactory extends IdResolverFactory
 
     /**
      * Build an IdResolver.
-     * @return an IdResolver for GO
      */
     @Override
     protected void createIdResolver() {
         if (resolver != null && resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology)) {
             return;
-        } else {
-            if (resolver == null) {
-                resolver = new IdResolver(this.ontology);
-            }
+        }
+        if (resolver == null) {
+            resolver = new IdResolver(this.ontology);
         }
 
         try {
@@ -90,7 +90,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
                     && !resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology))) {
                 LOG.info("Creating id resolver from database and caching it.");
                 createFromDb(DatabaseFactory.getDatabase(propName));
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                resolver.writeToFile(new File(idResolverCachedFileName));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -127,6 +127,13 @@ public class OntologyIdResolverFactory extends IdResolverFactory
         }
     }
 
+    /**
+     * Add results from query to ID resolver
+     *
+     * @param res Result set from query
+     * @return number of IDs parsed
+     * @throws Exception if error parsing query results
+     */
     protected int addIdsFromResultSet(ResultSet res) throws Exception {
         int i = 0;
         while (res.next()) {

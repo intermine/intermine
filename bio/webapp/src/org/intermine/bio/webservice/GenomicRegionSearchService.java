@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -29,7 +27,6 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.webservice.GenomicRegionSearchListInput.GenomicRegionSearchInfo;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.intermine.webservice.server.lists.ListMakerService;
@@ -95,7 +92,8 @@ public class GenomicRegionSearchService extends ListMakerService
      * @param type The unqualified name of the class of object in the new list.
      * @return A new list
      * @throws ObjectStoreException if there is an error running the queries.
-     * @throws UnknownBagTypeException
+     * @throws UnknownBagTypeException if bad bag type
+     * @throws ClassKeysNotFoundException no class keys
      */
     protected InterMineBag doListCreation(GenomicRegionSearchListInput input, Profile profile,
         String type) throws ObjectStoreException, ClassKeysNotFoundException,
@@ -128,7 +126,8 @@ public class GenomicRegionSearchService extends ListMakerService
     @Override
     protected ListInput getInput() {
         try {
-            return new GenomicRegionSearchListInput(request, bagManager, getPermission().getProfile(), im);
+            return new GenomicRegionSearchListInput(request, bagManager,
+                    getPermission().getProfile(), im);
         } catch (JSONException e) {
             String msg = e.getMessage();
             if (msg == null) {
@@ -149,7 +148,7 @@ public class GenomicRegionSearchService extends ListMakerService
         return GenomicRegionSearchUtil.createRegionListQueries(
                 info.getGenomicRegions(),
                 info.getExtension(),
-                GenomicRegionSearchQueryRunner.getChromosomeInfo(im, SessionMethods.getProfile(request.getSession())).get(info.getOrganism()),
+                GenomicRegionSearchQueryRunner.getChromosomeInfo(im).get(info.getOrganism()),
                 info.getOrganism(),
                 info.getFeatureClasses());
     }

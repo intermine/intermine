@@ -31,11 +31,12 @@ import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.PathExpressionField;
@@ -53,8 +54,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -63,6 +63,7 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  * @author Andrew Varley
  * @author Kim Rutherford
+ * @deprecated Use web-services instead.
  */
 @Deprecated
 public class PagedTable
@@ -355,8 +356,7 @@ public class PagedTable
     }
 
     /**
-     * Get the underlying query for these results.
-     * @return
+     * @return the underlying query for these results.
      */
     public PathQuery getPathQuery() {
         return webTable.getPathQuery();
@@ -444,8 +444,9 @@ public class PagedTable
      * @param classKeysMap map of key field for a given class name
      * @return the list
      */
-    public List<String> getFirstSelectedFields(final ObjectStore os,
-                                               final Map<String, List<FieldDescriptor>> classKeysMap) {
+    public List<String> getFirstSelectedFields(
+            final ObjectStore os,
+            final Map<String, List<FieldDescriptor>> classKeysMap) {
         final Set<String> retList = new LinkedHashSet<String>();
         // only find values if individual elements selected, not if whole column selected
         final Iterator<SelectionEntry> selectedEntryIter = selectedEntryIterator();
@@ -499,7 +500,7 @@ public class PagedTable
     public String findClassKeyValue(final Map<String, List<FieldDescriptor>> classKeysMap,
                                      final InterMineObject object) {
         try {
-            final String objectClassName = DynamicUtil.getFriendlyName(object.getClass());
+            final String objectClassName = Util.getFriendlyName(object.getClass());
             final List<FieldDescriptor> classKeyFds = classKeysMap.get(objectClassName);
             for (final FieldDescriptor fd: classKeyFds) {
                 final Object value = object.getFieldValue(fd.getName());
@@ -529,8 +530,8 @@ public class PagedTable
         final List<String> selected = new ArrayList<String>();
         if (allSelected == -1) {
             if (!selectionIds.isEmpty()) {
-                for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> multiRow : getRows()) {
-                    for (final ResultsRow<MultiRowValue<ResultElement>> resultsRow : multiRow) {
+                for (final MultiRow<ResultsRow<MultiRowValue<ResultElement>>> mr : getRows()) {
+                    for (final ResultsRow<MultiRowValue<ResultElement>> resultsRow : mr) {
                         for (final MultiRowValue<ResultElement> multiRowValue : resultsRow) {
                             if (multiRowValue instanceof MultiRowFirstValue<?>) {
                                 final ResultElement resElt = multiRowValue.getValue();
@@ -1100,7 +1101,8 @@ public class PagedTable
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public int removeSelectedFromBag(final InterMineBag bag, final HttpSession session) throws Exception {
+    public int removeSelectedFromBag(final InterMineBag bag, final HttpSession session)
+        throws Exception {
         int removedCount = 0;
         // don't remove all ids from bag
         if (bag.size() == selectionIds.size()) {
@@ -1114,19 +1116,24 @@ public class PagedTable
         return removedCount;
     }
 
+    /**
+     * Get the IDs to remove.
+     * @param bag An intermine bag.
+     * @return A set of integers.
+     */
     public Set<Integer> getIdsToRemove(final InterMineBag bag) {
-    	Set<Integer> idsToRemove = new HashSet<Integer>();
-    	if (allSelected == -1) {
+        Set<Integer> idsToRemove = new HashSet<Integer>();
+        if (allSelected == -1) {
             idsToRemove = selectionIds.keySet();
-    	} else {
-    		// selection is reversed, so selectionIds.keySet() are the ids to keep
-    		 idsToRemove = new HashSet<Integer>();
-             for (final Integer id : bag.getContentsAsIds()) {
-                 if (!selectionIds.keySet().contains(id)) {
-                     idsToRemove.add(id);
-                 }
-             }
-    	}
-    	return idsToRemove;
+        } else {
+            // selection is reversed, so selectionIds.keySet() are the ids to keep
+            idsToRemove = new HashSet<Integer>();
+            for (final Integer id : bag.getContentsAsIds()) {
+                if (!selectionIds.keySet().contains(id)) {
+                    idsToRemove.add(id);
+                }
+            }
+        }
+        return idsToRemove;
     }
 }

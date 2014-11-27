@@ -25,6 +25,7 @@ public class ImportXMLForm extends ValidatorForm
     protected String xml;
     protected FormFile formFile;
 
+    /** Construct a form. **/
     public ImportXMLForm() {
         reset();
     }

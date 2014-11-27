@@ -18,10 +18,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import net.sf.cglib.proxy.Callback;
+import net.sf.cglib.proxy.CallbackFilter;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.NoOp;
 
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.NotXmlRenderer;
@@ -33,6 +39,23 @@ import org.intermine.objectstore.proxy.ProxyReference;
  */
 public class DynamicBean implements MethodInterceptor
 {
+
+    private static class FinalizeFilter implements CallbackFilter
+    {
+
+        @Override
+        public int accept(Method method) {
+            if ("finalize".equals(method.getName())
+                    && method.getParameterTypes().length == 0
+                    && method.getReturnType() == Void.TYPE) {
+                return 1;
+            }
+            return 0;
+        }
+
+    }
+
+    private static final CallbackFilter FINALIZE_FILTER = new FinalizeFilter();
     //private static final Logger LOG = Logger.getLogger(DynamicBean.class);
     private Map<String, Object> map = new HashMap<String, Object>();
 
@@ -59,7 +82,13 @@ public class DynamicBean implements MethodInterceptor
         //if ( clazz == null) {
         //    clazz = DynamicBean.class;
         //}
-        return (FastPathObject) Enhancer.create(clazz, inter, new DynamicBean());
+        Callback[] callbacks = {new DynamicBean(), NoOp.INSTANCE};
+        Enhancer e = new Enhancer();
+        e.setSuperclass(clazz);
+        e.setInterfaces(inter);
+        e.setCallbackFilter(FINALIZE_FILTER);
+        e.setCallbacks(callbacks);
+        return (FastPathObject) e.create();
     }
 
     /**
@@ -73,8 +102,9 @@ public class DynamicBean implements MethodInterceptor
      * @return the return value of the real method call
      * @throws Throwable if an error occurs in executing the real method
      */
+    @Override
     public Object intercept(Object obj, Method method, Object[] args,
-            @SuppressWarnings("unused") MethodProxy proxy) throws Throwable {
+            MethodProxy proxy) throws Throwable {
         // java.lang.Object methods
         if ("equals".equals(method.getName())) {
             if (args[0] instanceof InterMineObject) {
@@ -87,9 +117,6 @@ public class DynamicBean implements MethodInterceptor
         if ("hashCode".equals(method.getName())) {
             return map.get("id");
         }
-        if ("finalize".equals(method.getName())) {
-            return null;
-        }
         if ("toString".equals(method.getName())) {
             return doToString(obj);
         }
@@ -97,93 +124,10 @@ public class DynamicBean implements MethodInterceptor
             return NotXmlRenderer.render(obj);
         }
         if ("getFieldValue".equals(method.getName()) && (args.length == 1)) {
-            String fieldName = (String) args[0];
-            Object retval = map.get(fieldName);
-            if (retval instanceof ProxyReference) {
-                try {
-                    retval = ((ProxyReference) retval).getObject();
-                } catch (NullPointerException e) {
-                    NullPointerException e2 = new NullPointerException("Exception while calling "
-                            + method.getName() + "(\"" + args[0] + "\") on object with ID "
-                            + map.get("id"));
-                    e2.initCause(e);
-                    throw e2;
-                } catch (Exception e) {
-                    RuntimeException e2 = new RuntimeException("Exception while calling "
-                            + method.getName() + "(\"" + args[0] + "\") on object with ID "
-                            + map.get("id"));
-                    e2.initCause(e);
-                    throw e2;
-                }
-            }
-            if (retval == null) {
-                Class<?> fieldType = null;
-                try {
-                    String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
-                    Method getMethod = obj.getClass().getMethod(methodName);
-                    fieldType = getMethod.getReturnType();
-                } catch (NoSuchMethodException e) {
-                    throw new RuntimeException("No such field " + args[0], e);
-                }
-
-                if (Collection.class.isAssignableFrom(fieldType)) {
-                    retval = new HashSet<Object>();
-                    map.put(fieldName, retval);
-                }
-                if (fieldType.isPrimitive()) {
-                    if (Boolean.TYPE.equals(fieldType)) {
-                        retval = Boolean.FALSE;
-                    } else if (Short.TYPE.equals(fieldType)) {
-                        retval = new Short((short) 0);
-                    } else if (Integer.TYPE.equals(fieldType)) {
-                        retval = new Integer(0);
-                    } else if (Long.TYPE.equals(fieldType)) {
-                        retval = new Long(0);
-                    } else if (Float.TYPE.equals(fieldType)) {
-                        retval = new Float(0.0);
-                    } else if (Double.TYPE.equals(fieldType)) {
-                        retval = new Double(0.0);
-                    }
-                    map.put(fieldName, retval);
-                }
-            }
-            return retval;
+            return handleGetFieldValue(obj, method, args);
         }
         if ("getFieldProxy".equals(method.getName()) && (args.length == 1)) {
-            String fieldName = (String) args[0];
-            Object retval = map.get(fieldName);
-            if (retval == null) {
-                Class<?> fieldType = null;
-                try {
-                    String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
-                    Method getMethod = obj.getClass().getMethod(methodName);
-                    fieldType = getMethod.getReturnType();
-                } catch (NoSuchMethodException e) {
-                    throw new RuntimeException("No such field " + args[0], e);
-                }
-
-                if (Collection.class.isAssignableFrom(fieldType)) {
-                    retval = new HashSet<Object>();
-                    map.put(fieldName, retval);
-                }
-                if (fieldType.isPrimitive()) {
-                    if (Boolean.TYPE.equals(fieldType)) {
-                        retval = Boolean.FALSE;
-                    } else if (Short.TYPE.equals(fieldType)) {
-                        retval = new Short((short) 0);
-                    } else if (Integer.TYPE.equals(fieldType)) {
-                        retval = new Integer(0);
-                    } else if (Long.TYPE.equals(fieldType)) {
-                        retval = new Long(0);
-                    } else if (Float.TYPE.equals(fieldType)) {
-                        retval = new Float(0.0);
-                    } else if (Double.TYPE.equals(fieldType)) {
-                        retval = new Double(0.0);
-                    }
-                    map.put(fieldName, retval);
-                }
-            }
-            return retval;
+            return handleGetFieldProxy(obj, args);
         }
         if ("setFieldValue".equals(method.getName()) && (args.length == 2)
                 && (method.getReturnType() == Void.TYPE)) {
@@ -224,28 +168,7 @@ public class DynamicBean implements MethodInterceptor
         }
         // Bean methods
         if (method.getName().startsWith("get") && (args.length == 0)) {
-            Object retval = map.get(StringUtil.reverseCapitalisation(method.getName()
-                        .substring(3)));
-            if (retval instanceof ProxyReference) {
-                try {
-                    retval = ((ProxyReference) retval).getObject();
-                } catch (NullPointerException e) {
-                    NullPointerException e2 = new NullPointerException("Exception while calling "
-                            + method.getName() + " on object with ID " + map.get("id"));
-                    e2.initCause(e);
-                    throw e2;
-                } catch (Exception e) {
-                    RuntimeException e2 = new RuntimeException("Exception while calling "
-                            + method.getName() + " on object with ID " + map.get("id"));
-                    e2.initCause(e);
-                    throw e2;
-                }
-            }
-            if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
-                retval = new HashSet<Object>();
-                map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), retval);
-            }
-            return retval;
+            return handleGet(method);
         }
         if (method.getName().startsWith("is")
             && (args.length == 0)) {
@@ -266,22 +189,143 @@ public class DynamicBean implements MethodInterceptor
         }
         if (method.getName().startsWith("add") && (args.length == 1)
                 && (method.getReturnType() == Void.TYPE)) {
-            @SuppressWarnings("unchecked") Collection<Object> col = (Collection<Object>) map
-                .get(StringUtil.reverseCapitalisation(method.getName().substring(3)));
-            if (col == null) {
-                col = new HashSet<Object>();
-                map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), col);
-            }
-            col.add(args[0]);
-            return null;
+            return handleAddObject(method, args);
         }
-        throw new IllegalArgumentException("No definition for method " + method);
+        return proxy.invokeSuper(obj, args);
+    }
+
+    private Object handleGetFieldValue(Object obj, Method method, Object[] args) {
+        String fieldName = (String) args[0];
+        Object retval = map.get(fieldName);
+        if (retval instanceof ProxyReference) {
+            try {
+                retval = ((ProxyReference) retval).getObject();
+            } catch (NullPointerException e) {
+                NullPointerException e2 = new NullPointerException("Exception while calling "
+                        + method.getName() + "(\"" + args[0] + "\") on object with ID "
+                        + map.get("id"));
+                e2.initCause(e);
+                throw e2;
+            } catch (Exception e) {
+                RuntimeException e2 = new RuntimeException("Exception while calling "
+                        + method.getName() + "(\"" + args[0] + "\") on object with ID "
+                        + map.get("id"));
+                e2.initCause(e);
+                throw e2;
+            }
+        }
+        if (retval == null) {
+            Class<?> fieldType = null;
+            try {
+                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                Method getMethod = obj.getClass().getMethod(methodName);
+                fieldType = getMethod.getReturnType();
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("No such field " + args[0], e);
+            }
+
+            if (Collection.class.isAssignableFrom(fieldType)) {
+                retval = new HashSet<Object>();
+                map.put(fieldName, retval);
+            }
+            if (fieldType.isPrimitive()) {
+                if (Boolean.TYPE.equals(fieldType)) {
+                    retval = Boolean.FALSE;
+                } else if (Short.TYPE.equals(fieldType)) {
+                    retval = new Short((short) 0);
+                } else if (Integer.TYPE.equals(fieldType)) {
+                    retval = new Integer(0);
+                } else if (Long.TYPE.equals(fieldType)) {
+                    retval = new Long(0);
+                } else if (Float.TYPE.equals(fieldType)) {
+                    retval = new Float(0.0);
+                } else if (Double.TYPE.equals(fieldType)) {
+                    retval = new Double(0.0);
+                }
+                map.put(fieldName, retval);
+            }
+        }
+        return retval;
+    }
+
+    private Object handleGetFieldProxy(Object obj, Object[] args) {
+        String fieldName = (String) args[0];
+        Object retval = map.get(fieldName);
+        if (retval == null) {
+            Class<?> fieldType = null;
+            try {
+                String methodName = "get" + StringUtil.reverseCapitalisation((String) args[0]);
+                Method getMethod = obj.getClass().getMethod(methodName);
+                fieldType = getMethod.getReturnType();
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException("No such field " + args[0], e);
+            }
+
+            if (Collection.class.isAssignableFrom(fieldType)) {
+                retval = new HashSet<Object>();
+                map.put(fieldName, retval);
+            }
+            if (fieldType.isPrimitive()) {
+                if (Boolean.TYPE.equals(fieldType)) {
+                    retval = Boolean.FALSE;
+                } else if (Short.TYPE.equals(fieldType)) {
+                    retval = new Short((short) 0);
+                } else if (Integer.TYPE.equals(fieldType)) {
+                    retval = new Integer(0);
+                } else if (Long.TYPE.equals(fieldType)) {
+                    retval = new Long(0);
+                } else if (Float.TYPE.equals(fieldType)) {
+                    retval = new Float(0.0);
+                } else if (Double.TYPE.equals(fieldType)) {
+                    retval = new Double(0.0);
+                }
+                map.put(fieldName, retval);
+            }
+        }
+        return retval;
+    }
+
+    private Object handleGet(Method method) {
+        Object retval = map.get(StringUtil.reverseCapitalisation(method.getName()
+                    .substring(3)));
+        if (retval instanceof ProxyReference) {
+            try {
+                retval = ((ProxyReference) retval).getObject();
+            } catch (NullPointerException e) {
+                NullPointerException e2 = new NullPointerException("Exception while calling "
+                        + method.getName() + " on object with ID " + map.get("id"));
+                e2.initCause(e);
+                throw e2;
+            } catch (Exception e) {
+                RuntimeException e2 = new RuntimeException("Exception while calling "
+                        + method.getName() + " on object with ID " + map.get("id"));
+                e2.initCause(e);
+                throw e2;
+            }
+        }
+        if ((retval == null) && Collection.class.isAssignableFrom(method.getReturnType())) {
+            retval = new HashSet<Object>();
+            map.put(StringUtil.reverseCapitalisation(method.getName().substring(3)), retval);
+        }
+        return retval;
+    }
+
+    private Object handleAddObject(Method method, Object[] args) {
+        String key = StringUtil.reverseCapitalisation(method.getName().substring(3));
+        @SuppressWarnings("unchecked")
+        Collection<Object> col = (Collection<Object>) map.get(key);
+        if (col == null) {
+            col = new HashSet<Object>();
+            map.put(key, col);
+        }
+        col.add(args[0]);
+        return null;
     }
 
     private String doToString(Object obj) {
         StringBuffer className = new StringBuffer();
         boolean needComma = false;
-        Set<Class<?>> classes = DynamicUtil.decomposeClass(obj.getClass());
+        Set<Class<?>> classes = Util.decomposeClass(obj.getClass());
         for (Class<?> clazz : classes) {
             if (needComma) {
                 className.append(",");

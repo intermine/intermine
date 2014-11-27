@@ -73,17 +73,15 @@ public class ReportObjectTest extends InterMineAPITestCase
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void testFieldConfigsNoConfig() throws Exception {
         // setup the object we are testing
         WebConfig newWebConfig = new WebConfig();
         ReportObject reportObject = new ReportObject(company, newWebConfig, im, null);
 
         // test
-        assertEquals(new ArrayList(), reportObject.getFieldConfigs());
+        assertEquals(new ArrayList<FieldConfig>(), reportObject.getFieldConfigs());
     }
 
-    @SuppressWarnings("unchecked")
     public void testGetFieldConfigs() throws Exception {
         // setup the object we are testing
         ReportObject reportObject = new ReportObject(company, webConfig, im, null);
@@ -100,8 +98,7 @@ public class ReportObjectTest extends InterMineAPITestCase
         fieldConfigs.add(df3);
 
         // test
-        assertEquals(Collections.unmodifiableCollection(new ArrayList()).getClass(), reportObject.getFieldConfigs().getClass());
-        assertEquals(fieldConfigs, new ArrayList(reportObject.getFieldConfigs()));
+        assertEquals(fieldConfigs, new ArrayList<FieldConfig>(reportObject.getFieldConfigs()));
     }
 
     public void testGetFieldValue() throws Exception {

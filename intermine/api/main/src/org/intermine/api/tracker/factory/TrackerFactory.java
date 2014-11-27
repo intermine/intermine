@@ -29,8 +29,9 @@ public final class TrackerFactory
      * Return the tracker instantiated with the reflection
      * @param className name of the class to instantiate
      * @param con connection to the database
+     * @param trackQueue tracks to be parsed
      * @return the tracker instantiated
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     public static Tracker getTracker(String className, Connection con, Queue<Track> trackQueue)
         throws Exception {

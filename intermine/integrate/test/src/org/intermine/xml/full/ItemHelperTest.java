@@ -27,6 +27,7 @@ public class ItemHelperTest extends TestCase
 
     ReferenceList referenceList;
     org.intermine.model.fulldata.ReferenceList dbReferenceList;
+    ProxyReference departmentProxy;
 
     ObjectStore os;
 
@@ -88,8 +89,9 @@ public class ItemHelperTest extends TestCase
         dbReferenceList = new org.intermine.model.fulldata.ReferenceList();
         dbReferenceList.setName("employees");
         dbReferenceList.setRefIds("3 4");
-        dbReferenceList.proxyItem(new ProxyReference(os, 1, Department.class));
-        dbReferenceList.setId(2002);
+        departmentProxy = new ProxyReference(os, 1, Department.class);
+        dbReferenceList.proxyItem(departmentProxy);
+        //dbReferenceList.setId(2002);
     }
 
     public void testConvertFromDbItem() throws Exception {
@@ -102,10 +104,15 @@ public class ItemHelperTest extends TestCase
 
     public void testConvertReferenceList() throws Exception {
         org.intermine.model.fulldata.ReferenceList resRefList = ItemHelper.convert(referenceList);
-        resRefList.setId(2002);
-        assertEquals(dbReferenceList, resRefList);
+        resRefList.proxyItem(departmentProxy);
+
+        // referencelists are simple objects so don't have .equals() on id like InterMineObjects
+        // need to check each field
+        assertEquals(dbReferenceList.getName(), resRefList.getName());
+        assertEquals(dbReferenceList.getFieldProxy("item"), resRefList.getFieldProxy("item"));
+        assertEquals(dbReferenceList.getRefIds(), resRefList.getRefIds());
     }
-    
+
     public void testGenerateClassNamesNull() throws Exception {
         assertNull(ItemHelper.generateClassNames(null, null));
     }

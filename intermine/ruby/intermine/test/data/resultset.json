@@ -1,3 +1,0 @@
-{"rootClass":"Company","modelName":"testmodel","start":0,"views":["Company.departments.name","Company.departments.manager.name"],"results":[
-[{"id":320000014,"value":"DepartmentA1","class":"Department","url":"/report.do?id=320000014"},{"id":320000015,"value":"EmployeeA1","class":"Manager","url":"/report.do?id=320000015"}]
-],"executionTime":"2011.07.09 11:52::30","wasSuccessful":true,"error":null,"statusCode":200}

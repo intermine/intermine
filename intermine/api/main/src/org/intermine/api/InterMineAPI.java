@@ -11,7 +11,6 @@ package org.intermine.api;
  */
 
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.bag.BagManager;
@@ -28,7 +27,8 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.types.ClassKeys;
+import org.intermine.api.util.AnonProfile;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -45,7 +45,7 @@ public class InterMineAPI
 {
     protected ObjectStore objectStore;
     protected Model model;
-    protected Map<String, List<FieldDescriptor>> classKeys;
+    protected ClassKeys classKeys;
     protected BagQueryConfig bagQueryConfig;
     protected ProfileManager profileManager;
     protected TemplateManager templateManager;
@@ -84,7 +84,7 @@ public class InterMineAPI
      * @param linkRedirector class that builds URLs that replace report links
      */
     public InterMineAPI(ObjectStore objectStore, ObjectStoreWriter userProfileWriter,
-            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
+            ClassKeys classKeys, BagQueryConfig bagQueryConfig,
             ObjectStoreSummary oss, TrackerDelegate trackerDelegate, LinkRedirectManager
             linkRedirector) {
         this.objectStore = objectStore;
@@ -93,18 +93,27 @@ public class InterMineAPI
         this.classKeys = classKeys;
         this.bagQueryConfig = bagQueryConfig;
         this.oss = oss;
-        this.profileManager = new ProfileManager(objectStore, userProfileWriter);
-        Profile superUser = profileManager.getSuperuserProfile(classKeys);
-        this.bagManager = new BagManager(superUser, model);
-        this.templateManager = new TemplateManager(superUser, model,
-                trackerDelegate.getTemplateTracker());
-        this.templateSummariser = new TemplateSummariser(objectStore,
-                profileManager.getProfileObjectStoreWriter(), oss);
-        this.bagQueryRunner =
-            new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
         this.trackerDelegate = trackerDelegate;
         this.linkRedirector = linkRedirector;
         this.queryStore = new MemoryQueryStore(1024);
+        initUserProfileResources(userProfileWriter);
+    }
+
+    /**
+     * Initialise parts of this object that require connection to a user-profile
+     * object store.
+     * @param userProfileWriter The object store for the users and their stuff.
+     */
+    protected void initUserProfileResources(ObjectStoreWriter userProfileWriter) {
+        this.profileManager = new ProfileManager(objectStore, userProfileWriter);
+        Profile superUser = profileManager.getSuperuserProfile(classKeys);
+        this.bagManager = new BagManager(superUser, model);
+        this.templateManager =
+                new TemplateManager(superUser, model, trackerDelegate.getTemplateTracker());
+        this.templateSummariser =
+                new TemplateSummariser(objectStore, userProfileWriter, oss);
+        this.bagQueryRunner =
+                new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
     }
 
     /**
@@ -115,7 +124,6 @@ public class InterMineAPI
     }
 
     /**
-     * @return 
      * @return The ObjectStore that represents a connection to the userprofile store.
      */
     public ObjectStoreWriter getUserProfile() {
@@ -177,6 +185,13 @@ public class InterMineAPI
     }
 
     /**
+     * @return the pathQueryExecutor
+     */
+    public PathQueryExecutor getPathQueryExecutor() {
+        return getPathQueryExecutor(new AnonProfile());
+    }
+
+    /**
      * @param profile the user that is executing the query
      * @return the pathQueryExecutor
      */
@@ -215,7 +230,7 @@ public class InterMineAPI
      * "symbol".
      * @return the classKeys
      */
-    public Map<String, List<FieldDescriptor>> getClassKeys() {
+    public ClassKeys getClassKeys() {
         return classKeys;
     }
 

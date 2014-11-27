@@ -18,11 +18,12 @@ import org.intermine.webservice.client.services.TemplateService;
 import org.intermine.webservice.client.services.WidgetService;
 
 /**
- * The Class that should be used for creating services. You should never create instances of
+ * The Class that should be used for creating services. You should never need to create instances of
  * service classes directly with their constructors - it is simpler to use this factory.
  * This factory deals with constructing services with the correct relative paths.
  *
- * Usage:
+ * <h2>Usage:</h2>
+ *
  * <pre>
  *   ServiceFactory serviceFactory =
  *      new ServiceFactory("http://www.flymine.org/query/service", "MyApp")
@@ -30,9 +31,9 @@ import org.intermine.webservice.client.services.WidgetService;
  *
  *      ...
  * </pre>
- * 
+ *
  * <h2>Proxy settings:</h2>
- * 
+ *
  * To configure access through a proxy, ensure that the following Java system
  * properties have been set:
  * <ul>
@@ -110,7 +111,6 @@ public class ServiceFactory
         this.applicationName = name;
     }
 
-    @SuppressWarnings("deprecation")
     private void authoriseAndLink(Service s) {
         if (authToken != null) {
             s.setAuthentication(authToken);
@@ -193,13 +193,12 @@ public class ServiceFactory
      *
      * @param serviceRelativeUrl the part of the URL specific to this service
      *      Example: query/results
-     * @param applicationName application name, information for server which application uses this
+     * @param name application name, information for server which application uses this
      *      service
      * @return the created service
      */
-    public Service getService(String serviceRelativeUrl,
-            String applicationName) {
-        Service x = new Service(rootUrl, serviceRelativeUrl, applicationName);
+    public Service getService(String serviceRelativeUrl, String name) {
+        Service x = new Service(rootUrl, serviceRelativeUrl, name);
         authoriseAndLink(x);
         return x;
     }

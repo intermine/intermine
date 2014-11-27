@@ -14,5 +14,5 @@
 	<classpathentry exported="true" kind="lib" path="/bio-testall-dbmodel/build/model"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry kind="lib" path="/intermine-integrate-test/lib/mockrunner.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 </classpath>

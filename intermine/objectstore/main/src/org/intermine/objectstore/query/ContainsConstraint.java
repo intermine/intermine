@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.Util;
 
 /**
  * Constrain whether a QueryClass is member of a QueryReference or not.
@@ -30,6 +30,13 @@ import org.intermine.util.Util;
  */
 public class ContainsConstraint extends Constraint
 {
+    /** List of possible operations */
+    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
+    /** List of possible null operations */
+    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
+        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
+
     protected QueryReference ref;
     protected QueryClass cls;
     protected InterMineObject obj;
@@ -60,8 +67,8 @@ public class ContainsConstraint extends Constraint
 
         Class<?> c1 = ref.getType();
         Class<? extends FastPathObject> c2 = cls.getType();
-        Set<Class<?>> cs1 = DynamicUtil.decomposeClass(c1);
-        Set<Class<?>> cs2 = DynamicUtil.decomposeClass(c2);
+        Set<Class<?>> cs1 = Util.decomposeClass(c1);
+        Set<Class<?>> cs2 = Util.decomposeClass(c2);
         if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
             if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
                 throw new IllegalArgumentException("Invalid constraint: "
@@ -103,12 +110,12 @@ public class ContainsConstraint extends Constraint
     }
 
     /**
-     * Constructor for ContainsConstraint.
+     * Constructor for ContainsConstraint, constrain a reference/collection to be NULL/ NOT NULL
      *
-     * @param ref the target QueryObjectReference
+     * @param ref the target QueryObjectReference or QueryCollectionReference
      * @param op specify IS_NULL or IS_NOT_NULL
      */
-    public ContainsConstraint(QueryObjectReference ref, ConstraintOp op) {
+    public ContainsConstraint(QueryReference ref, ConstraintOp op) {
         if (ref == null) {
             throw new NullPointerException("ref cannot be null");
         }
@@ -185,10 +192,10 @@ public class ContainsConstraint extends Constraint
             + 11 * (obj == null ? 0 : obj.hashCode());
     }
 
-    /** List of possible operations */
-    public static final List<ConstraintOp> VALID_OPS = Arrays.asList(new ConstraintOp[] {
-        ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN});
-    /** List of possible null operations */
-    public static final List<ConstraintOp> VALID_OPS_NULL = Arrays.asList(new ConstraintOp[] {
-        ConstraintOp.IS_NULL, ConstraintOp.IS_NOT_NULL});
+    /**
+     * {@inheritDoc}
+     */
+    @Override public String toString() {
+        return ref + " CONTAINS " + cls;
+    }
 }

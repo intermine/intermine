@@ -20,8 +20,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -219,7 +217,7 @@ public class BDGPInsituConverter extends BioFileConverter
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("OntologyTerm");
+        Item termItem = createItem("MRNAExpressionTerm");
         termItem.setAttribute("name", name);
         termItem.setReference("ontology", ontology);
         store(termItem);

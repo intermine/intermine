@@ -10,11 +10,12 @@ package org.intermine.objectstore.query;
  *
  */
 
-import org.apache.log4j.Logger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**

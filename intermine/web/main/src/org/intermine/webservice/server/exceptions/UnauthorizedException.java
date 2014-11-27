@@ -12,21 +12,20 @@ package org.intermine.webservice.server.exceptions;
 
 import org.intermine.webservice.server.output.Output;
 
-public class UnauthorizedException extends ServiceException {
+/** @author Alex Kalderimis **/
+public class UnauthorizedException extends ServiceException
+{
 
     private static final long serialVersionUID = 1L;
+    private static final int ERROR_CODE = Output.SC_UNAUTHORIZED;
 
+    /** Construct an UnauthorizedException **/
     public UnauthorizedException() {
-        super("This service requires authentication.");
-        initResponseCode();
+        super("This service requires authentication.", ERROR_CODE);
     }
 
+    /** @param message A description of the problem **/
     public UnauthorizedException(String message) {
-        super(message);
-        initResponseCode();
-    }
-
-    private void initResponseCode() {
-        setHttpErrorCode(Output.SC_UNAUTHORIZED);
+        super(message, ERROR_CODE);
     }
 }

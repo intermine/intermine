@@ -10,7 +10,6 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
-import org.json.JSONObject;
 
 /**
  * Class for retrieving information about the currently authenticated user.

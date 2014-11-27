@@ -16,7 +16,6 @@
 <script type="text/javascript" src="model/jquery_periodicalupdater/jquery.periodicalupdater.js"></script>
 <script type="text/javascript" src="model/jquery_progressbar/jquery.progressbar.js"></script>
 <script type="text/javascript" src="model/jquery_download/jquery.download.js"></script>
-<script type="text/javascript" src="model/jquery_download/jquery.download.js"></script>
 <script type="text/javascript">
     // globle variables for results javascript use
     var span_query_total_count = parseInt("${spanQueryTotalCount}");

@@ -9,5 +9,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-pathquery"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

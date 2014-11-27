@@ -17,13 +17,14 @@ import java.util.List;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.TagManager.TagNameException;
 import org.intermine.api.profile.TagManager.TagNamePermissionException;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -44,19 +45,23 @@ public class TagManagerTest extends InterMineAPITestCase
     public void setUp() throws Exception {
         super.setUp();
         pm = im.getProfileManager();
-        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(),
-                                 new HashMap(), true, false);
-        pm.createProfile(bobProfile);
+        bobProfile = pm.createBasicLocalProfile("bob", "bob_pass", null);
+        // bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(),
+        //                         new HashMap(), true, false);
+        // pm.createProfile(bobProfile);
         manager = im.getTagManager();
     }
 
-    public void testDeleteTag() {
-        manager.addTag("list1Tag", "list1", "bag", "bob");
+    public void testDeleteTag() throws TagNameException, TagNamePermissionException {
+        String tagName = "list1Tag";
+        assertEquals(0, manager.getTagsByName(tagName, bobProfile, TagTypes.BAG).size());
+        // Add tag.
+        manager.addTag(tagName, "list1", TagTypes.BAG, bobProfile);
         // test that tag was added successfully
-        assertEquals(1, manager.getTags("list1Tag", "list1", "bag", "bob").size());
-        manager.deleteTag("list1Tag", "list1", "bag", "bob");
+        assertEquals(1, manager.getTagsByName(tagName, bobProfile, TagTypes.BAG).size());
+        manager.deleteTag(tagName, "list1", TagTypes.BAG, bobProfile.getUsername());
         // test that tag was deleted
-        assertEquals(0, manager.getTags("list1Tag", "list1", "bag", "bob").size());
+        assertEquals(0, manager.getTagsByName(tagName, bobProfile, TagTypes.BAG).size());
     }
 
     public void testGetTags() throws Exception {
@@ -65,7 +70,7 @@ public class TagManagerTest extends InterMineAPITestCase
         manager.addTag("list3Tag", "list3", "bag", "bob");
         manager.addTag("list4Tag", "list_", "bag", "bob");
 
-        List<Tag> tags = manager.getTags(null, null, null, "bob");
+        List<Tag> tags = manager.getUserTags(bobProfile);
         assertEquals(4, tags.size());
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list1Tag", "list1", "bag", "bob"));
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list2Tag", "list2", "bag", "bob"));

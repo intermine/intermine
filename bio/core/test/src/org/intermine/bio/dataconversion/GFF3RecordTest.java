@@ -74,7 +74,7 @@ public class GFF3RecordTest extends TestCase
 
     public void testToString() throws Exception {
         String gff =
-            "X\t.\tgene\t21115389\t21115496\t.\t+\t.\tID=CR32525;Dbxref=FlyBase%3AFBan0032525,FlyBase%3AFBgn0052525;cyto_range=19F3-19F3;dbxref_2nd=FlyBase%3AFBgn0012015,FlyBase%3AFBgn0060008;gbunit=AE003568;synonym=CR32525;synonym_2nd=AE002620.trna4-TyrGTA,CG32525,tRNA%3Atyr1%3A19F,tRNA%3Cup%3ETyr%3C%2Fup%3E%3Cdown%3E1%26gamma%3B%3C%2Fdown%3E,tRNA%3AY1%3A19F,tRNA%3AY%3AGTA%3AAE002620-b";
+            "X\t.\tgene\t21115389\t21115496\t.\t+\t.\tID=CR32525;Dbxref=FlyBase:FBan0032525,FlyBase:FBgn0052525;cyto_range=19F3-19F3;dbxref_2nd=FlyBase:FBgn0012015,FlyBase:FBgn0060008;gbunit=AE003568;synonym=CR32525;synonym_2nd=AE002620.trna4-TyrGTA,CG32525,tRNA:tyr1:19F,tRNA%3Cup%3ETyr%3C%2Fup%3E%3Cdown%3E1%26gamma%3B%3C%2Fdown%3E,tRNA:Y1:19F,tRNA:Y:GTA:AE002620-b";
         GFF3Record gff3Record = new GFF3Record(gff);
         List synonym2ndList = (List) gff3Record.getAttributes().get("synonym_2nd");
 

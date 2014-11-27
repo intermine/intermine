@@ -15,7 +15,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -29,12 +28,10 @@ import org.apache.struts.action.ActionMapping;
  */
 public class CytoscapeInteractionExtentionAction extends Action
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(CytoscapeInteractionExtentionAction.class);
-
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -43,10 +40,8 @@ public class CytoscapeInteractionExtentionAction extends Action
 
         //========== input ==========
         // List of all nodes in the network, the current list should be always saved in the jsp
-        @SuppressWarnings("unused")
         String nodeList = request.getParameter("nodeList");
         // The node is one of the list
-        @SuppressWarnings("unused")
         String nodeToExtent = request.getParameter("nodeToExtent");
 
         //========== logics ==========

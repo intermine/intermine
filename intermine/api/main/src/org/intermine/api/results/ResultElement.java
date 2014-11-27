@@ -16,8 +16,8 @@ import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 
 /**
  * Cell of results table containing information for the parent Object

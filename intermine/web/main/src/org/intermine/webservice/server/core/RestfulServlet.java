@@ -21,14 +21,15 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.webservice.server.WebService;
 
-public class RestfulServlet extends WebServiceServlet {
+/** @author Alex Kalderimis **/
+public class RestfulServlet extends WebServiceServlet
+{
 
     private static final long serialVersionUID = -6545928555512220185L;
-	
-	private Map<Method, Constructor<? extends WebService>> mapping
+
+    private Map<Method, Constructor<? extends WebService>> mapping
         = new HashMap<Method, Constructor<? extends WebService>>();
-    
-    @SuppressWarnings("unchecked")
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -44,8 +45,9 @@ public class RestfulServlet extends WebServiceServlet {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Constructor<? extends WebService> getConstructor(String className)
-            throws ServletException {
+        throws ServletException {
         Class<? extends WebService> serviceClass;
         try {
             serviceClass = (Class<? extends WebService>) Class.forName(className);
@@ -60,7 +62,7 @@ public class RestfulServlet extends WebServiceServlet {
             throw new ServletException(e);
         }
     }
-    
+
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         if (mapping.containsKey(method)) {

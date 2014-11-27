@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.util.ConsistentSet;
+
 import antlr.Token;
 import antlr.collections.AST;
 //import antlr.debug.misc.ASTFrame;
-
-import org.intermine.util.ConsistentSet;
 
 
 /**
@@ -62,8 +62,8 @@ public class Query implements SQLStringable
 
     private Map<String, AbstractTable> aliasToTable;
     private Map<String, AbstractTable> originalAliasToTable;
-    private AbstractTable onlyTable;
-
+    // keep track of aliases defined in the select list as they may be used elsewhere
+    private Map<String, AbstractValue> aliasToSelect;
     /**
      * Construct a new Query.
      */
@@ -80,7 +80,7 @@ public class Query implements SQLStringable
         distinct = false;
         queriesInUnion = new ArrayList<Query>();
         queriesInUnion.add(this);
-        onlyTable = null;
+        aliasToSelect = new HashMap<String, AbstractValue>();
         this.aliasToTable = null;
         this.originalAliasToTable = null;
     }
@@ -124,7 +124,7 @@ public class Query implements SQLStringable
      * @throws IllegalArgumentException if the SQL String is invalid
      */
     public Query(String sql) {
-        this(sql, true);
+        this(sql, true, null);
     }
 
     /**
@@ -135,6 +135,29 @@ public class Query implements SQLStringable
      * @throws IllegalArgumentException if the SQL String is invalid
      */
     public Query(String sql, boolean treeParse) {
+        this(sql, treeParse, null);
+    }
+
+    /**
+     * Construct a new parsed Query from a String.
+     *
+     * @param sql a SQL SELECT String to parse
+     * @param timeOut maximum time in milliseconds to spend parsing, can be null for no timeout
+     * @throws IllegalArgumentException if the SQL String is invalid
+     */
+    public Query(String sql, Long timeOut) {
+        this(sql, true, timeOut);
+    }
+
+    /**
+     * Construct a new parsed Query from a String.
+     *
+     * @param sql a SQL SELECT String to parse
+     * @param treeParse true if a tree-parse step is required (usually so)
+     * @param timeOut maximum time in milliseconds to spend parsing, can be null for no timeout
+     * @throws IllegalArgumentException if the SQL String is invalid
+     */
+    public Query(String sql, boolean treeParse, Long timeOut) {
         this();
 
         aliasToTable = new HashMap<String, AbstractTable>();
@@ -152,6 +175,7 @@ public class Query implements SQLStringable
             }
             if (treeParse) {
                 AST oldAst;
+                long startTime = System.currentTimeMillis();
                 do {
                     oldAst = ast;
                     SqlTreeParser treeparser = new SqlTreeParser();
@@ -159,6 +183,10 @@ public class Query implements SQLStringable
                     ast = treeparser.getAST();
                     if (ast == null) {
                         throw (new IllegalArgumentException("Invalid SQL string " + sql));
+                    }
+                    long elapsedTime = System.currentTimeMillis() - startTime;
+                    if (timeOut != null && elapsedTime > timeOut.longValue()) {
+                        throw new QueryParseTimeoutException();
                     }
                 } while (!oldAst.equalsList(ast));
             }
@@ -185,10 +213,13 @@ public class Query implements SQLStringable
             } catch (antlr.TokenStreamException e3) {
                 throw new IllegalArgumentException(e);
             }
+
         } catch (antlr.TokenStreamException e) {
             IllegalArgumentException e2 = new IllegalArgumentException();
             e2.initCause(e);
             throw e2;
+        } catch (QueryParseTimeoutException e) {
+            throw e;
         }
     }
 
@@ -266,7 +297,6 @@ public class Query implements SQLStringable
         if (aliasToTable != null) {
             aliasToTable.put(obj.getAlias(), obj);
         }
-        onlyTable = obj;
     }
 
     /**
@@ -396,6 +426,7 @@ public class Query implements SQLStringable
      *
      * @return this Query in String form
      */
+    @Override
     public String getSQLString() {
         boolean needComma = false;
         String retval = "";
@@ -584,9 +615,10 @@ public class Query implements SQLStringable
     /**
      * Processes a SQL_STATEMENT AST node produced by antlr.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processSqlStatementAST(AST ast) {
+    private void processSqlStatementAST(AST node) {
+        AST ast = node;
         if (ast.getType() != SqlTokenTypes.SQL_STATEMENT) {
             throw (new IllegalArgumentException("Expected: a SQL SELECT statement"));
         }
@@ -597,53 +629,66 @@ public class Query implements SQLStringable
         }
     }
 
+
     /**
      * Processes an AST node produced by antlr, at the top level of the SQL query.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processAST(AST ast) {
-        boolean processSelect = false;
-        switch (ast.getType()) {
-            case SqlTokenTypes.LITERAL_explain:
-                explain = true;
-                break;
-            case SqlTokenTypes.LITERAL_distinct:
-                distinct = true;
-                break;
-            case SqlTokenTypes.SELECT_LIST:
-                // Always do the select list last.
-                processSelect = true;
-                break;
-            case SqlTokenTypes.FROM_LIST:
-                processFromList(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.WHERE_CLAUSE:
-                processWhereClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.GROUP_CLAUSE:
-                processGroupClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.HAVING_CLAUSE:
-                processHavingClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.ORDER_CLAUSE:
-                processOrderClause(ast.getFirstChild());
-                break;
-            case SqlTokenTypes.LIMIT_CLAUSE:
-                processLimitClause(ast.getFirstChild());
-                break;
-            default:
-                throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
-                            + ast.getType() + "]"));
+    private void processAST(AST node) {
+        AST ast = node;
+        // Parts of SQL statement need to be processed in the correct order, for example:
+        // - tables defined in FROM need to be referenced in the SELECT
+        // - aliases defined in SELECT may be used in GROUP BY and ORDER BY, etc
+        // The required order is:
+        //   FROM
+        //   ON
+        //   JOIN
+        //   WHERE
+        //   GROUP BY
+        //   WITH CUBE or WITH ROLLUP  (we don't use)
+        //   HAVING
+        //   SELECT
+        //   DISTINCT
+        //   ORDER BY
+
+        // find each part of the query first, map by SqlTokenType
+        HashMap<Integer, AST> queryPartASTs = new HashMap<Integer, AST>();
+        while (ast != null) {
+            queryPartASTs.put(ast.getType(), ast.getFirstChild());
+            ast = ast.getNextSibling();
         }
-        if (ast.getNextSibling() != null) {
-            processAST(ast.getNextSibling());
+
+        // process in appropriate order
+        if (queryPartASTs.containsKey(SqlTokenTypes.FROM_LIST)) {
+            processFromList(queryPartASTs.get(SqlTokenTypes.FROM_LIST));
         }
-        if (processSelect) {
-            processSelectList(ast.getFirstChild());
+        if (queryPartASTs.containsKey(SqlTokenTypes.WHERE_CLAUSE)) {
+            processWhereClause(queryPartASTs.get(SqlTokenTypes.WHERE_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.GROUP_CLAUSE)) {
+            processGroupClause(queryPartASTs.get(SqlTokenTypes.GROUP_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.HAVING_CLAUSE)) {
+            processHavingClause(queryPartASTs.get(SqlTokenTypes.HAVING_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.SELECT_LIST)) {
+            processSelectList(queryPartASTs.get(SqlTokenTypes.SELECT_LIST));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.LITERAL_distinct)) {
+            distinct = true;
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.ORDER_CLAUSE)) {
+            processOrderClause(queryPartASTs.get(SqlTokenTypes.ORDER_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.LIMIT_CLAUSE)) {
+            processLimitClause(queryPartASTs.get(SqlTokenTypes.LIMIT_CLAUSE));
+        }
+        if (queryPartASTs.containsKey(SqlTokenTypes.LITERAL_explain)) {
+            explain = true;
         }
     }
+
 
     /**
      * Processes an AST node that describes a FROM list.
@@ -675,11 +720,12 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a table in the FROM list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processNewTable(AST ast) {
+    private void processNewTable(AST node) {
         String tableName = null;
         String tableAlias = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.TABLE_NAME:
@@ -700,9 +746,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a subquery in the FROM list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processNewSubQuery(AST ast) {
+    private void processNewSubQuery(AST node) {
+        AST ast = node;
         AST subquery = null;
         String alias = null;
         do {
@@ -729,9 +776,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a SELECT list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processSelectList(AST ast) {
+    public void processSelectList(AST node) {
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.SELECT_VALUE:
@@ -748,11 +796,12 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a SelectValue.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processNewSelect(AST ast) {
+    public void processNewSelect(AST node) {
         AbstractValue v = null;
         String alias = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.FIELD_ALIAS:
@@ -772,15 +821,20 @@ public class Query implements SQLStringable
             ast = ast.getNextSibling();
         } while (ast != null);
         SelectValue sv = new SelectValue(v, alias);
+        // store aliases defined here as they may be used in other parts of the query
+        if (alias != null) {
+            aliasToSelect.put(alias, v);
+        }
         addSelect(sv);
     }
 
     /**
      * Processes an AST node that describes a GROUP clause.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processGroupClause(AST ast) {
+    public void processGroupClause(AST node) {
+        AST ast = node;
         do {
             addGroupBy(processNewAbstractValue(ast));
             ast = ast.getNextSibling();
@@ -790,9 +844,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a ORDER clause.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    public void processOrderClause(AST ast) {
+    public void processOrderClause(AST node) {
+        AST ast = node;
         do {
             addOrderBy(processNewAbstractValue(ast));
             ast = ast.getNextSibling();
@@ -826,14 +881,17 @@ public class Query implements SQLStringable
     }
 
     /**
-     * Processes an AST node that describes a Field.
+     * Processes an AST node that describes a Field. If no table alias is found for a field the
+     * field may be an alias, in which case find the actual field name/function/etc that was
+     * defined in the select list.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      * @return a Field object corresponding to the input
      */
-    public Field processNewField(AST ast) {
+    public AbstractValue processNewField(AST node) {
         String table = null;
         String field = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.TABLE_ALIAS:
@@ -850,7 +908,18 @@ public class Query implements SQLStringable
         } while (ast != null);
         AbstractTable t = null;
         if (table == null) {
-            t = onlyTable;
+            // if there is no table this may be an alias, so include field/function/etc from select
+            if (aliasToSelect.containsKey(field)) {
+                return aliasToSelect.get(field);
+            }
+            if (from.size() == 1) {
+                // there is only one table on this query so we can infer the alias
+                t = from.iterator().next();
+            } else {
+                // We can't do anything here, we don't know a table name and
+                throw new IllegalArgumentException("Unable to parse query - there was a field ("
+                        + field + ") in the query without a table name and that isn't an alias");
+            }
         } else {
             t = aliasToTable.get(table);
         }
@@ -860,12 +929,13 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a typecast.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      * @return a Function object corresponding to the input
      */
-    public Function processNewTypecast(AST ast) {
+    public Function processNewTypecast(AST node) {
         AbstractValue obj = null;
         Function retval = null;
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.FIELD:
@@ -1013,11 +1083,12 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a safe function.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      * @return a Function object corresponding to the input
      */
-    public Function processNewSafeFunction(AST ast) {
+    public Function processNewSafeFunction(AST node) {
         Function retval = null;
+        AST ast = node;
         boolean gotType = false;
         do {
             switch (ast.getType()) {
@@ -1118,9 +1189,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a where condition.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processWhereClause(AST ast) {
+    private void processWhereClause(AST node) {
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.AND_CONSTRAINT_SET:
@@ -1146,9 +1218,10 @@ public class Query implements SQLStringable
     /**
      * Processes an AST node that describes a HAVING condition.
      *
-     * @param ast an AST node to process
+     * @param node an AST node to process
      */
-    private void processHavingClause(AST ast) {
+    private void processHavingClause(AST node) {
+        AST ast = node;
         do {
             switch (ast.getType()) {
                 case SqlTokenTypes.AND_CONSTRAINT_SET:

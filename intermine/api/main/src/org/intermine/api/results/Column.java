@@ -11,7 +11,7 @@ package org.intermine.api.results;
  */
 
 import org.intermine.pathquery.Path;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Configuration information for a column in a table
@@ -27,7 +27,7 @@ public class Column
     private Path path;
     protected String name;
     protected String columnId;
-    private Boolean showInListAnalysisPreviewTable;
+
 
     /**
      * @return the columnId
@@ -93,7 +93,7 @@ public class Column
         this.path = null;
         setColumnId(name + "_" + TypeUtil.unqualifiedName(type.getName()));
     }
-    
+
     /**
      * Gets the value of selectable
      * @return a boolean
@@ -156,12 +156,12 @@ public class Column
 
     /**
      * Used in the view to match this element
-     * @return
+     * @return column identifier
      */
     public String getColumnIdentifier() {
-    	return getName().replace(" > ", ".");
+        return getName().replace(" > ", ".");
     }
-    
+
     /**
      * Get the column type unqualified as a String
      * @return the column type
@@ -173,6 +173,7 @@ public class Column
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Column) {
             return getName().equals(((Column) other).getName());
@@ -183,6 +184,7 @@ public class Column
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return getName().hashCode();
     }
@@ -190,6 +192,7 @@ public class Column
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return "[Column " + getName() + " " + (visible ? "visible" : "not visible") + "]";
     }

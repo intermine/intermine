@@ -1,8 +1,18 @@
 package org.intermine.api.query.range;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.api.query.RangeHelper;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -22,19 +32,21 @@ import org.intermine.pathquery.PathConstraintRange;
  * @author Alex Kalderimis
  *
  */
-public abstract class AbstractHelper implements RangeHelper {
+public abstract class AbstractHelper implements RangeHelper
+{
 
     /**
      * Extending classes may with to override this method if they need to adjust the
      * main constraint set in some way, such as adding an extra constraint.
+     * @param q queryable
+     * @param node query class to constraint
+     * @param con range constraint
+     * @return constraint
      */
     @Override
-    public Constraint createConstraint(
-        Queryable q,
-        QueryNode node,
-        PathConstraintRange con) {
+    public Constraint createConstraint(Queryable q, QueryNode node, PathConstraintRange con) {
         ConstraintOptions options;
-        
+
         if (con.getOp() == ConstraintOp.WITHIN) {
             options = getWithinOptions();
         } else if (con.getOp() == ConstraintOp.OUTSIDE) {
@@ -62,24 +74,25 @@ public abstract class AbstractHelper implements RangeHelper {
         }
         return mainSet;
     }
-    
+
     /**
      * Construct a constraint for an individual range, to be combined as per the ConstraintOptions.
      *
      * Override this method if you need finer grain control over the content of each constraint, in
      * order, for example to add a further constraint to the constructed constraint set.
      *
-     * @param op The operator we are creating constraints for (eg. WITHIN, OUTSIDE, OVERLAPS...). 
+     * @param op The operator we are creating constraints for (eg. WITHIN, OUTSIDE, OVERLAPS...).
      * @param range The parsed range we are constructing a constraint for.
      * @param options The generated bundle of configured values.
      * @param left The field to be constrained in the left side constraint.
      * @param right The field to be constrained in the right side constraint.
+     * @param node query class to constrain
      * @return A constraint.
      */
     protected Constraint makeRangeConstraint(
-            ConstraintOp op, 
-            Range range, 
-            ConstraintOptions options, 
+            ConstraintOp op,
+            Range range,
+            ConstraintOptions options,
             QueryField left, QueryField right,
             QueryClass node) {
         ConstraintSet conSet = new ConstraintSet(options.getRangeSetOp());
@@ -91,24 +104,31 @@ public abstract class AbstractHelper implements RangeHelper {
         );
         return conSet;
     }
-    
+
     /**
-     * @return The options that define what it means for the constrained object to be WITHIN a given set of ranges.
+     * @return The options that define what it means for the constrained object to be
+     * WITHIN a given set of ranges.
      */
-    abstract protected ConstraintOptions getWithinOptions();
-    
+    protected abstract ConstraintOptions getWithinOptions();
+
     /**
-     * By default the OUTSIDE options are the negation of the WITHIN options, with the right and left fields swapped.
-     * @return The options that define what it means for the constrained object to be OUTSIDE a given set of ranges.
+     * By default the OUTSIDE options are the negation of the WITHIN options, with the
+     * right and left fields swapped.
+     * @return The options that define what it means for the constrained object to be
+     * OUTSIDE a given set of ranges.
      */
     protected ConstraintOptions getOutsideOptions() {
         return getWithinOptions().negate();
     }
 
     /**
-     * By default the OVERLAPS options are the same as the WITHIN options with the right and left fields swapped.
-     * @return The options that define what it means for the constrained object to OVERLAP a given set of ranges.
+     * By default the OVERLAPS options are the same as the WITHIN options with the right
+     * and left fields swapped.
+     * @return The options that define what it means for the constrained object to OVERLAP
+     *  a given set of ranges.
+     *
      */
+
     protected ConstraintOptions getOverlapsOptions() {
         ConstraintOptions withinOpts = getWithinOptions();
         // by default the same as within, with right and left swapped.
@@ -124,15 +144,18 @@ public abstract class AbstractHelper implements RangeHelper {
 
     /**
      * By default the DOES NOT OVERLAP options are negation of the OVERLAPS options.
-     * @return The options that define what it means for the constrained object to NOT OVERLAP a given set of ranges.
+     * @return The options that define what it means for the constrained object to NOT
+     * OVERLAP a given set of ranges.
      */
     protected ConstraintOptions getDoesntOverlapOptions() {
         return getOverlapsOptions().negate();
     }
 
     /**
-     * By default the CONTAINS options are same as the WITHIN options with the left and right operators swapped.
-     * @return The options that define what it means for the constrained object to CONTAIN a given set of ranges.
+     * By default the CONTAINS options are same as the WITHIN options with the left and
+     * right operators swapped.
+     * @return The options that define what it means for the constrained object to CONTAIN
+     * a given set of ranges.
      */
     protected ConstraintOptions getContainsOptions() {
         ConstraintOptions withinOpts = getWithinOptions();
@@ -149,17 +172,19 @@ public abstract class AbstractHelper implements RangeHelper {
 
     /**
      * By default the DOES NOT CONTAINS options are negation of the CONTAINS options.
-     * @return The options that define what it means for the constrained object to NOT CONTAIN a given set of ranges.
+     * @return The options that define what it means for the constrained object to NOT CONTAIN
+     *  a given set of ranges.
      */
     protected ConstraintOptions getDoesntContainOptions() {
         return getContainsOptions().negate();
     }
 
     /**
-     * Construct a Range object from a string defining one of the ranges this constraint operates on.
+     * Construct a Range object from a string defining one of the ranges this constraint
+     * operates on.
      * @param range A string describing a range (eg: "1 .. 10").
      * @return A parsed range object.
      */
-    abstract protected Range parseRange(String range);
+    protected abstract Range parseRange(String range);
 
 }

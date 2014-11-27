@@ -6,6 +6,10 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
+    <source name="ensembl-snp" type="ensembl-snp" dump="true">
+     <property name="src.data.dir" location="/SAN_humanmine/data/variation/ensembl/current" />
+      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gff" />
+    </source>
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current" />
       <property name="src.data.dir.includes" value="9606.xml" />
@@ -145,9 +149,9 @@
     <post-process name="create-gene-flanking-features" />
     <post-process name="create-bioseg-location-index" />
     <post-process name="create-overlap-view" />
+    <post-process name="create-attribute-indexes" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
     <post-process name="create-search-index" />
-    <post-process name="create-attribute-indexes" />
   </post-processing>
 </project>

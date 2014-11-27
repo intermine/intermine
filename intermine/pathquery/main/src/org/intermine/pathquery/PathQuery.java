@@ -23,10 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -36,8 +36,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 
 /**
  * Class to represent a path-based query.
@@ -751,6 +751,9 @@ public class PathQuery implements Cloneable
         return retval;
     }
 
+    /**
+     * @return the constraints that are relevant to the query.
+     */
     public synchronized Map<PathConstraint, String> getRelevantConstraints() {
         return getConstraints(); // Simple alias. All constraints are relevant.
     }
@@ -818,6 +821,7 @@ public class PathQuery implements Cloneable
         return (logic == null ? "" : logic.toString());
     }
 
+    /** @return the logic expression **/
     public synchronized LogicExpression getLogicExpression() {
         return logic;
     }
@@ -1008,7 +1012,6 @@ public class PathQuery implements Cloneable
 
     /**
      * Returns the paths descriptions for the view.
-     * @param pq
      * @return A list of column names
      */
     public List<String> getColumnHeaders() {
@@ -1264,8 +1267,7 @@ public class PathQuery implements Cloneable
         // Remove things from view
         for (String viewPath : getView()) {
             try {
-                @SuppressWarnings("unused")
-                Path viewPathObj = new Path(model, viewPath, subclasses);
+                new Path(model, viewPath, subclasses);
             } catch (PathException e) {
                 // This one is now invalid. Remove
                 removeView(viewPath);
@@ -1275,12 +1277,10 @@ public class PathQuery implements Cloneable
         }
         for (PathConstraint con : getConstraints().keySet()) {
             try {
-                @SuppressWarnings("unused")
-                Path constraintPath = new Path(model, con.getPath(), subclasses);
+                new Path(model, con.getPath(), subclasses);
                 if (con instanceof PathConstraintLoop) {
                     try {
-                        @SuppressWarnings("unused")
-                        Path loopPath = new Path(model, ((PathConstraintLoop) con).getLoopPath(),
+                        new Path(model, ((PathConstraintLoop) con).getLoopPath(),
                                 subclasses);
                     } catch (PathException e) {
                         removeConstraint(con);
@@ -1296,8 +1296,7 @@ public class PathQuery implements Cloneable
         }
         for (OrderElement order : getOrderBy()) {
             try {
-                @SuppressWarnings("unused")
-                Path orderPath = new Path(model, order.getOrderPath(), subclasses);
+                new Path(model, order.getOrderPath(), subclasses);
             } catch (PathException e) {
                 removeOrderBy(order.getOrderPath());
                 messages.add("Removed path " + order.getOrderPath() + " from ORDER BY, because you "
@@ -1306,16 +1305,14 @@ public class PathQuery implements Cloneable
         }
         for (String join : getOuterJoinStatus().keySet()) {
             try {
-                @SuppressWarnings("unused")
-                Path joinPath = new Path(model, join, subclasses);
+                new Path(model, join, subclasses);
             } catch (PathException e) {
                 setOuterJoinStatus(join, null);
             }
         }
         for (String desc : getDescriptions().keySet()) {
             try {
-                @SuppressWarnings("unused")
-                Path descPath = new Path(model, desc, subclasses);
+                new Path(model, desc, subclasses);
             } catch (PathException e) {
                 setDescription(desc, null);
                 messages.add("Removed description on path " + desc + ", because you removed the "
@@ -1372,6 +1369,7 @@ public class PathQuery implements Cloneable
         return new Path(model, path, lSubclasses);
     }
 
+    /** @assert that the query is dirty and needs to be re-checked. **/
     public synchronized void deVerify() {
         isVerified = false;
     }
@@ -1633,7 +1631,7 @@ public class PathQuery implements Cloneable
                     } catch (Exception e) {
                         problems.add("Value in constraint " + constraint + " is not in correct "
                                 + "format for type of "
-                                + DynamicUtil.getFriendlyName(valueType));
+                                + Util.getFriendlyName(valueType));
                         continue;
                     }
                 } else if (constraint instanceof PathConstraintNull) {
@@ -1666,21 +1664,30 @@ public class PathQuery implements Cloneable
                     }
                 } else if (constraint instanceof PathConstraintMultitype) {
                     if (path.endIsAttribute()) {
-                        problems.add("Constraint " + constraint + " must be on a class or reference");
+                        problems.add("Constraint " + constraint
+                                + " must be on a class or reference");
                         continue;
                     }
                     for (String typeName: ((PathConstraintMultitype) constraint).getValues()) {
                         ClassDescriptor cd = model.getClassDescriptorByName(typeName);
                         if (cd == null) {
-                            problems.add(String.format("Type '%s' named in [%s] is not in the model",
+                            problems.add(String.format(
+                                    "Type '%s' named in [%s] is not in the model",
                                     typeName, constraint));
-                        } else if (!cd.getAllSuperDescriptors().contains(path.getEndClassDescriptor())) {
-                            problems.add(String.format("%s is not a subtype of %s, as required by %s",
-                                    typeName, path.getEndClassDescriptor(), constraint));
+                        } else {
+                            ClassDescriptor mustBeA = path.getEndClassDescriptor();
+                            Set<ClassDescriptor> isa = cd.getAllSuperDescriptors();
+                            isa.add(cd);
+                            if (!isa.contains(mustBeA)) {
+                                problems.add(String.format(
+                                        "%s is not a subtype of %s, as required by %s",
+                                        typeName, mustBeA.getUnqualifiedName(), constraint));
+                            }
                         }
                     }
                 } else if (constraint instanceof PathConstraintRange) {
-                    // Cannot verify these constraints until we try and make the query in the MainHelper.
+                    // Cannot verify these constraints
+                    // until we try and make the query in the MainHelper.
                 } else if (constraint instanceof PathConstraintMultiValue) {
                     if (!path.endIsAttribute()) {
                         problems.add("Constraint " + constraint + " must be on an attribute");
@@ -1693,7 +1700,7 @@ public class PathQuery implements Cloneable
                         } catch (Exception e) {
                             problems.add("Value (" + value + ") in list in constraint "
                                     + constraint + " is not in correct format for type of "
-                                    + DynamicUtil.getFriendlyName(valueType));
+                                    + Util.getFriendlyName(valueType));
                             continue;
                         }
                     }
@@ -1852,9 +1859,9 @@ public class PathQuery implements Cloneable
                 }
                 if (!parentClassType.isAssignableFrom(subclassType)) {
                     problems.add("Subclass constraint on path " + subclass.getPath() + " (type "
-                            + DynamicUtil.getFriendlyName(parentClassType)
+                            + Util.getFriendlyName(parentClassType)
                             + ") restricting to type "
-                            + DynamicUtil.getFriendlyName(subclassType)
+                            + Util.getFriendlyName(subclassType)
                             + " is not possible, as it is "
                             + "not a subclass");
                     continue;
@@ -2161,7 +2168,8 @@ public class PathQuery implements Cloneable
     }
 
     // A Path name is the same as a valid java qualified identifier.
-    private static final String JAVA_IDENT_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+    private static final String JAVA_IDENT_PATTERN =
+            "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
     // Zero or more dot-suffixed prefixes + an identifier
     private static final String PATH_PATTERN =
             "(" + JAVA_IDENT_PATTERN + "\\.)*" + JAVA_IDENT_PATTERN;
@@ -2252,6 +2260,12 @@ public class PathQuery implements Cloneable
         return this.toXml(PathQuery.USERPROFILE_VERSION);
     }
 
+    /**
+     * Add a JSON property when serialising
+     * @param sb The buffer we are serialing to.
+     * @param key the property name.
+     * @param value the property value.
+     **/
     protected void addJsonProperty(StringBuffer sb, String key, Object value) {
         if (value != null) {
             if (!sb.toString().endsWith("{")) {
@@ -2261,6 +2275,12 @@ public class PathQuery implements Cloneable
         }
     }
 
+    /**
+     * Format a key-value pair in a JSON compatible way.
+     * @param key The key
+     * @param value The value
+     * @return A string, all nicely formatted
+     */
     protected String formatKVPair(String key, Object value) {
         if (value instanceof List) {
             StringBuffer sb = new StringBuffer("[");
@@ -2291,6 +2311,7 @@ public class PathQuery implements Cloneable
         return toJson();
     }
 
+    /** @return the attributes that should go in the head of a JSON object. **/
     protected Map<String, Object> getHeadAttributes() {
         Map<String, Object> ret = new LinkedHashMap<String, Object>();
         ret.put("title", getTitle());
@@ -2309,9 +2330,21 @@ public class PathQuery implements Cloneable
     /**
      * Convert this PathQuery to a JSON serialisation.
      *
+     * The returned version should be trimmed to represent only the current state
+     * of the query, not all possible states.
+     *
      * @return This query as json.
      */
-    public synchronized String toJson() {
+    public String toJson() {
+        return toJson(true);
+    }
+
+    /**
+     * Convert this PathQuery to a JSON serialisation.
+     * @param onlyRelevant  whether to only return relevant, active constraints.
+     * @return This query as json.
+     */
+    public synchronized String toJson(boolean onlyRelevant) {
         StringBuffer sb = new StringBuffer("{");
 
         sb.append(String.format("\"model\":{\"name\":\"%s\"}",
@@ -2357,7 +2390,8 @@ public class PathQuery implements Cloneable
         }
 
         // CONSTRAINTS
-        Map<PathConstraint, String> cons = getRelevantConstraints();
+        Map<PathConstraint, String> cons =
+                onlyRelevant ? getRelevantConstraints() : getConstraints();
         if (!cons.isEmpty()) {
             sb.append(",\"where\":[");
             Iterator<Entry<PathConstraint, String>> it = cons.entrySet().iterator();
@@ -2376,12 +2410,23 @@ public class PathQuery implements Cloneable
         return sb.toString();
     }
 
+    /**
+     * format a type constraint to a JSON representation.
+     * @param constraint the constraint to format.
+     * @return The JSONification.
+     */
     protected String typeConstraintToJson(final PathConstraint constraint) {
         String path = constraint.getPath();
         String type = PathConstraint.getType(constraint);
         return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
     }
 
+    /**
+     * Get the JSON prefix common to all constraints.
+     * @param constraint the constraint to format.
+     * @param code The constraint code.
+     * @return The prefix
+     */
     protected String getCommonJsonConstraintPrefix(String code, PathConstraint constraint) {
         String path = constraint.getPath();
         String op = constraint.getOp().toString();
@@ -2389,15 +2434,23 @@ public class PathQuery implements Cloneable
         return "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":\""
                               + code + "\"";
     }
- 
+
+    /**
+     * Format a value constraint to a JSON representation.
+     * @param code The constraint code.
+     * @param constraint constraint.
+     * @return The stringification.
+     */
     protected String valueConstraintToJson(final String code, final PathConstraint constraint) {
 
         String commonPrefix = getCommonJsonConstraintPrefix(code, constraint);
         StringBuilder conb = new StringBuilder(commonPrefix);
 
-        Collection<String> values = PathConstraint.getValues(constraint); // Serialise the Multi-Value list
-        Collection<Integer> ids = PathConstraint.getIds(constraint); // Serialise the ID list.
-        if (ids != null ) {
+        // Serialise the Multi-Value list
+        Collection<String> values = PathConstraint.getValues(constraint);
+        // Serialise the ID list.
+        Collection<Integer> ids = PathConstraint.getIds(constraint);
+        if (ids != null) {
             conb.append(",\"ids\":[");
             Iterator<Integer> it = ids.iterator();
             while (it.hasNext()) {

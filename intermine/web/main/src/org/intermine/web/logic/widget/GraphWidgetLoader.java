@@ -18,13 +18,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -43,6 +42,11 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
+/**
+ * The class that does the actual querying for results.
+ * @author Alex Kalderimis
+ *
+ */
 public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
 {
     private GraphWidgetConfig config;
@@ -50,11 +54,21 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
     private int items;
     private List<List<Object>> resultTable = new LinkedList<List<Object>>();
 
-    public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config, String filter) {
+    /**
+     * Constructor.
+     * @param bag The list we are running over.
+     * @param os The data-store.
+     * @param config The description of the list tool.
+     * @param filter A filter value.
+     */
+    public GraphWidgetLoader(InterMineBag bag,
+                              ObjectStore os,
+                              GraphWidgetConfig config,
+                              String filter) {
         super(bag, os, filter, config);
         this.config = config;
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
-        if (!config.isActualExpectedCriteria()) {
+        if (!config.comparesActualToExpected()) {
             Query q = createQuery(GraphWidgetActionType.ACTUAL);
             results = os.execute(q);
             buildCategorySeriesMap(categorySeriesMap);
@@ -73,7 +87,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         calcTotal();
     }
 
-    public Query createQuery(GraphWidgetActionType action) {
+    private Query createQuery(GraphWidgetActionType action) {
         Model model = os.getModel();
         Query query = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -88,7 +102,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         QueryField qfSeriesPath = null;
         if (!GraphWidgetActionType.TOTAL.equals(action)) {
             qfCategoryPath = createQueryFieldByPath(config.getCategoryPath(), query, true);
-            if (!config.isActualExpectedCriteria() && config.hasSeries()) {
+            if (!config.comparesActualToExpected() && config.hasSeries()) {
                 qfSeriesPath = createQueryFieldByPath(config.getSeriesPath(), query, true);
             }
         }
@@ -342,10 +356,11 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
             return 0;
         }
         Results res = os.execute(q);
-        Iterator iter = res.iterator();
+        Iterator<?> iter = res.iterator();
         int grandTotal = 0;
 
         while (iter.hasNext()) {
+            @SuppressWarnings("rawtypes")
             ResultsRow resRow = (ResultsRow) iter.next();
 
             String chromosome = (String) resRow.get(0);         // chromosome
@@ -372,8 +387,9 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         // be easier of they were located on an 'unknown' chromosome.
         int totalInBagWithLocation = 0;
 
-        Iterator iter = results.iterator();
+        Iterator<?> iter = results.iterator();
         while (iter.hasNext()) {
+            @SuppressWarnings("rawtypes")
             ResultsRow resRow = (ResultsRow) iter.next();
             String chromosome = (String) resRow.get(0);
             int geneCount = ((java.lang.Long) resRow.get(1)).intValue();
@@ -383,7 +399,8 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
                 counts[0] = geneCount;
                 resultsTable.put(chromosome, counts);
             } else {
-                resultsTable.get(chromosome)[0] = geneCount;
+                long[] counts = resultsTable.get(chromosome);
+                counts[0] = geneCount;
             }
 
             // increase total

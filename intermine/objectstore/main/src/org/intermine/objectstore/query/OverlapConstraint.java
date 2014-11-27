@@ -13,6 +13,8 @@ package org.intermine.objectstore.query;
 import java.util.Arrays;
 import java.util.List;
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Represents a constraint comparing two range values on an object.
  *
@@ -86,4 +88,14 @@ public class OverlapConstraint extends Constraint
     public int hashCode() {
         return left.hashCode() + 5 * op.hashCode() + 7 * right.hashCode();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return left.toString() + " " + op.toString() + " " + right.toString();
+    }
+
+
 }

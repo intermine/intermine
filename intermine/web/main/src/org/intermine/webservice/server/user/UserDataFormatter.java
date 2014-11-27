@@ -14,12 +14,21 @@ import java.util.List;
 
 import org.intermine.webservice.server.output.XMLFormatter;
 
-public class UserDataFormatter extends XMLFormatter {
+/**
+ * A class that processes information about a user into XML. Used when
+ * exporting a profile following deregistration.
+ * @author Alex Kalderimis
+ *
+ */
+public class UserDataFormatter extends XMLFormatter
+{
 
+    @Override
     protected String getRootElement() {
         return "Deregistration";
     }
 
+    @Override
     protected String getRowElement() {
         return "UserData";
     }

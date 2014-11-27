@@ -11,8 +11,6 @@ package org.intermine.webservice.server.idresolution;
  */
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,16 +37,25 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 
-public class BagResultCategoryKeyFormatter implements BagResultFormatter {
-    
+/**
+ * Format a bag query result, grouping by category of issue.
+ * @author Alex Kalderimis
+ */
+public class BagResultCategoryKeyFormatter implements BagResultFormatter
+{
+
     private static final Logger LOG = Logger.getLogger(BagResultCategoryKeyFormatter.class);
 
     private static final String[] ISSUES = new String[] {
-        BagQueryResult.DUPLICATE, BagQueryResult.WILDCARD, BagQueryResult.OTHER, BagQueryResult.TYPE_CONVERTED
+        BagQueryResult.DUPLICATE,
+        BagQueryResult.WILDCARD,
+        BagQueryResult.OTHER,
+        BagQueryResult.TYPE_CONVERTED
     };
 
     private final InterMineAPI im;
 
+    /** @param api The InterMine state object **/
     public BagResultCategoryKeyFormatter(InterMineAPI api) {
         this.im = api;
     }
@@ -78,7 +85,7 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Map<String, Map<String, Integer>> getStats(BagQueryResult bqr) {
+    private static Map<String, Map<String, Integer>> getStats(BagQueryResult bqr) {
         Map<String, Map<String, Integer>> stats = new HashMap<String, Map<String, Integer>>();
         Map<String, Integer> objectStats = new HashMap<String, Integer>();
         Map<String, Integer> termStats = new HashMap<String, Integer>();
@@ -89,11 +96,11 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
 
         // Do any processing that needs doing here.
         for (List inputTerms: bqr.getMatches().values()) {
-            goodMatchTerms.addAll((Collection<? extends String>) inputTerms);
+            goodMatchTerms.addAll(inputTerms);
         }
         for (String issue: ISSUES) {
             for (IssueResult ir: bqr.getIssueResults(issue)) {
-                issueMatchTerms.add(ir.inputIdent);
+                issueMatchTerms.add(ir.getInputIdent());
             }
         }
 
@@ -120,12 +127,12 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
         for (IssueResult issue: bqr.getIssueResults(issueType)) {
             final Map<String, Object> obj = new HashMap<String, Object>();
             final List<Map<String, Object>> matches = new ArrayList<Map<String, Object>>();
-            
-            obj.put("input", issue.inputIdent);
-            obj.put("reason", issue.queryDesc);
+
+            obj.put("input", issue.getInputIdent());
+            obj.put("reason", issue.getQueryDesc());
             obj.put("matches", matches);
 
-            for (Object match: issue.results) {
+            for (Object match: issue.getResults()) {
                 matches.add(processIssueMatch(match));
             }
             result.add(obj);
@@ -176,7 +183,8 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
 
     private List<Map<String, Object>> getMatches(BagQueryResult bqr) {
         final List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        for (Entry<Integer, List> match: bqr.getMatches().entrySet()) {
+        for (@SuppressWarnings("rawtypes") Entry<Integer, List> match
+                :bqr.getMatches().entrySet()) {
             Map<String, Object> obj = new HashMap<String, Object>();
             obj.put("id", match.getKey());
             obj.put("input", match.getValue());
@@ -188,7 +196,9 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter {
 
     private Map<String, Object> getObjectDetails(Integer objId) {
         InterMineObject imo;
-        if (objId == null) throw new IllegalArgumentException("obj cannot be null");
+        if (objId == null) {
+            throw new IllegalArgumentException("obj cannot be null");
+        }
         try {
             imo = im.getObjectStore().getObjectById(objId);
         } catch (ObjectStoreException e) {

@@ -11,7 +11,6 @@ package org.intermine.model;
  */
 
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.StringConstructor;
 
 /**
  * A root interface for all objects that can be stored in a InterMine database.
@@ -19,7 +18,7 @@ import org.intermine.util.StringConstructor;
  * @author Matthew Wakeling
  * @author Andrew Varley
  */
-public interface InterMineObject extends FastPathObject
+public interface InterMineObject extends InterMineFastPathObject
 {
     /**
      * Getter for the ID field - ensures that every object in the database has an ID.
@@ -41,6 +40,7 @@ public interface InterMineObject extends FastPathObject
      * @return a StringConstructor containing the NotXml
      */
     StringConstructor getoBJECT();
+
 
     /**
      * Sets the values of the fields to the values in the given NotXml.

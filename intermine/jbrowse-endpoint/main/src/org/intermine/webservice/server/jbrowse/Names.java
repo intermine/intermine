@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.jbrowse;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 import static org.intermine.webservice.server.jbrowse.Queries.resolveValue;
 
@@ -15,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.FastPathObject;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
@@ -30,7 +40,13 @@ import org.intermine.webservice.server.jbrowse.util.ArrayFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 
-public class Names extends JSONService {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class Names extends JSONService
+{
 
     private String prefix;
     private String featureClass;
@@ -41,6 +57,9 @@ public class Names extends JSONService {
     private String[] namePaths;
     private ClassDescriptor fcd;
 
+    /**
+     * @param im InterMine API
+     */
     public Names(InterMineAPI im) {
         super(im);
     }
@@ -98,7 +117,8 @@ public class Names extends JSONService {
             throw new BadRequestException("Either 'startswith' or 'equals' parameter is required");
         }
         if (!hasEquals && !hasStart) {
-            throw new BadRequestException("Only one of 'startswith' or 'equals' parameters is allowed");
+            throw new BadRequestException("Only one of 'startswith' or 'equals' "
+                    + "parameters is allowed");
         }
 
         if (hasEquals) {
@@ -126,11 +146,11 @@ public class Names extends JSONService {
         fcd = im.getModel().getClassDescriptorByName(featureClass);
     }
 
-    private Map<String, Object> makeRecord(final FastPathObject o, String searchTerm) {
+    private Map<String, Object> makeRecord(final FastPathObject o, String keyword) {
         Map<String, Object> record = new HashMap<String, Object>();
         Map<String, Object> location = new HashMap<String, Object>();
         List<String> tracks = new ArrayList<String>();
-
+        String searchTerm = keyword;
         searchTerm = searchTerm.replace("*", "");
 
         record.put("location", location);
@@ -142,8 +162,12 @@ public class Names extends JSONService {
         location.put("objectName", resolveValue(o, identPath));
 
         for (ClassDescriptor cd: im.getModel().getClassDescriptors()) {
-            if (cd.getUnqualifiedName().equals("InterMineObject")) continue;
-            if (!fcd.getType().isAssignableFrom(cd.getType())) continue; // Upper bound.
+            if ("InterMineObject".equals(cd.getUnqualifiedName())) {
+                continue;
+            }
+            if (!fcd.getType().isAssignableFrom(cd.getType())) {
+                continue; // Upper bound.
+            }
             if (cd.getType().isAssignableFrom(o.getClass())) {
                 tracks.add(getTrackName(cd));
             }
@@ -152,22 +176,24 @@ public class Names extends JSONService {
         // Accept the first non null that matches the search term.
         for (Object name: getNames(o, getNamePaths())) {
             record.put("name", name);
-            if (name != null && StringUtils.containsIgnoreCase(name.toString(), searchTerm)) break;
+            if (name != null && StringUtils.containsIgnoreCase(name.toString(), searchTerm)) {
+                break;
+            }
         }
 
         return record;
     }
 
-    private Iterable<Object> getNames(final FastPathObject o, final String[] namePaths) {
+    private Iterable<Object> getNames(final FastPathObject o, final String[] paths) {
         return new Iterable<Object>() {
             FastPathObject root = o;
-            String featureClass = webProperties.getProperty(getPropertyPrefix() + "featureClass");
+            String type = webProperties.getProperty(getPropertyPrefix() + "featureClass");
             @Override
             public Iterator<Object> iterator() {
                 return new Iterator<Object>() {
 
                     private int current = 0;
-                    private List subCol = null;
+                    private List<Object> subCol = null;
                     private String subPath = null;
                     private int subIdx = 0;
 
@@ -176,7 +202,7 @@ public class Names extends JSONService {
                         if (subCol != null) {
                             return subIdx < subCol.size();
                         }
-                        return current < namePaths.length;
+                        return current < paths.length;
                     }
 
                     private Object nextFromSubCol() {
@@ -191,11 +217,13 @@ public class Names extends JSONService {
 
                     @Override
                     public Object next() {
-                        if (subCol != null) return nextFromSubCol();
-                        String path = namePaths[current];
+                        if (subCol != null) {
+                            return nextFromSubCol();
+                        }
+                        String path = paths[current];
                         current++;
                         try {
-                            Path p = new Path(im.getModel(), featureClass + "." + path);
+                            Path p = new Path(im.getModel(), type + "." + path);
                             if (!p.containsCollections()) {
                                 return resolveValue(root, path);
                             } else {
@@ -206,13 +234,16 @@ public class Names extends JSONService {
                                         break;
                                     }
                                 }
-                                Collection things = (Collection) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
+                                @SuppressWarnings("unchecked")
+                                Collection<Object> things = (Collection<Object>) resolveValue(root,
+                                        upToCollection.replaceAll("^[^\\.]+\\.", ""));
                                 if (things.isEmpty()) {
                                     return null;
                                 } else {
-                                    subCol = new ArrayList(things);
+                                    subCol = new ArrayList<Object>(things);
                                     subIdx = 0;
-                                    subPath = p.toStringNoConstraints().replace(upToCollection + ".", "");
+                                    subPath = p.toStringNoConstraints().replace(
+                                            upToCollection + ".", "");
                                     return nextFromSubCol();
                                 }
                             }
@@ -227,44 +258,44 @@ public class Names extends JSONService {
                     }
                 };
             }
-            
+
         };
     }
 
-    private String getTrackName(ClassDescriptor cd) {
+    private static String getTrackName(ClassDescriptor cd) {
         return cd.getUnqualifiedName();
     }
 
-
     private String getPropertyPrefix() {
         String modelName = im.getModel().getName();
-        String prefix = "org.intermine.webservice.server.jbrowse." + modelName + ".";
-        return prefix;
+        String propertyPrefix = "org.intermine.webservice.server.jbrowse." + modelName + ".";
+        return propertyPrefix;
     }
 
     private PathQuery getQuery(String domain, ConstraintOp op, String searchTerm) {
         PathQuery pq = new PathQuery(im.getModel());
-        String prefix = getPropertyPrefix();
-        String[] namePaths = getNamePaths();
+        String propertyPrefix = getPropertyPrefix();
+        String[] paths = getNamePaths();
 
-        String featureClass = webProperties.getProperty(prefix + "featureClass");
-        String domainPath = webProperties.getProperty(prefix + "domain");
-        String locationPath = webProperties.getProperty(prefix + "location");
-        pq.addView(featureClass + ".id");
+        String type = webProperties.getProperty(propertyPrefix + "featureClass");
+        String domainPath = webProperties.getProperty(propertyPrefix + "domain");
+        String locationPath = webProperties.getProperty(propertyPrefix + "location");
+        pq.addView(type + ".id");
 
         StringBuffer logic = new StringBuffer();
 
         // must have location
-        logic.append(pq.addConstraint(Constraints.isNotNull(featureClass + "." + locationPath + ".id")));
+        logic.append(pq.addConstraint(Constraints.isNotNull(type + "." + locationPath + ".id")));
         logic.append(" AND "); // and be on the right domain.
-        logic.append(pq.addConstraint(Constraints.eq(featureClass + "." + domainPath, domain)));
+        logic.append(pq.addConstraint(Constraints.eq(type + "." + domainPath, domain)));
         logic.append(" AND ");
 
         logic.append(" (");
-        for (int i = 0; i < namePaths.length; i++) {
-            PathConstraint c = new PathConstraintAttribute(featureClass + "." + namePaths[i], op, searchTerm);
+        for (int i = 0; i < paths.length; i++) {
+            PathConstraint c = new PathConstraintAttribute(type
+                    + "." + paths[i], op, searchTerm);
             logic.append(pq.addConstraint(c));
-            if (i + 1 < namePaths.length) {
+            if (i + 1 < paths.length) {
                 logic.append(" OR ");
             }
         }

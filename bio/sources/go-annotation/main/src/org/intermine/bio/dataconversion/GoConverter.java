@@ -31,8 +31,8 @@ import org.intermine.metadata.Model;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 
@@ -203,7 +203,7 @@ public class GoConverter extends BioFileConverter
             String withText = array[7];
             String annotationExtension = null;
             if (array.length >= 16) {
-            	annotationExtension = array[15];
+                annotationExtension = array[15];
             }
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence);
@@ -516,23 +516,23 @@ public class GoConverter extends BioFileConverter
                 ? organism.getIdentifier() : "");
     }
 
-    private String resolveTerm(String identifier) {
-        String goId = identifier;
-        if (rslv != null) {
-            int resCount = rslv.countResolutions("0", identifier);
-
-            if (resCount > 1) {
-                LOG.info("RESOLVER: failed to resolve ontology term to one identifier, "
-                        + "ignoring term: " + identifier + " count: " + resCount + " : "
-                        + rslv.resolveId("0", identifier));
-                return null;
-            }
-            if (resCount == 1) {
-                goId = rslv.resolveId("0", identifier).iterator().next();
-            }
-        }
-        return goId;
-    }
+//    private String resolveTerm(String identifier) {
+//        String goId = identifier;
+//        if (rslv != null) {
+//            int resCount = rslv.countResolutions("0", identifier);
+//
+//            if (resCount > 1) {
+//                LOG.info("RESOLVER: failed to resolve ontology term to one identifier, "
+//                        + "ignoring term: " + identifier + " count: " + resCount + " : "
+//                        + rslv.resolveId("0", identifier));
+//                return null;
+//            }
+//            if (resCount == 1) {
+//                goId = rslv.resolveId("0", identifier).iterator().next();
+//            }
+//        }
+//        return goId;
+//    }
 
     private String newGoTerm(String identifier, String dataSource,
             String dataSourceCode) throws ObjectStoreException {

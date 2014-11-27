@@ -33,13 +33,16 @@ public interface CorrectionCoefficient
 
     /**
      * Return true if the correction coefficient is selected
+     * @param correctionCoefficientInput Some input string.
      * @return true/false
      */
     boolean isSelected(String correctionCoefficientInput);
 
     /**
-     * Update the query, given in input, with the field associated to the correction coefficient
-     * and return it 
+     * Update the query, given in input, with the field associated with
+     * the correction coefficient and return a query field.
+     * @param query The query to adjust.
+     * @param qc A query class - but for what??
      * @return the query field
      */
     QueryField updateQueryWithCorrectionCoefficient(Query query, QueryClass qc);
@@ -55,18 +58,21 @@ public interface CorrectionCoefficient
 
     /**
      * Apply the correction coefficient to the pValuesTerm given in input
-     * @param pValuesPerTerm
-     * @param population
-     * @param annotatedPopulationInfo
-     * @param maxValue the maximum value to return, ranges from 0.5 (default value) to 1.0. 
+     * @param pValuesPerTerm The p-values for each term.
+     * @param population The background population.
+     * @param annotatedPopulationInfo a mapping from term(?) to population info.
+     * @param maxValue the maximum value to return, ranges from 0.5 (default value) to 1.0.
      * determined by user, for display reasons.
      */
-    void apply(Map<String, BigDecimal> pValuesPerTerm, PopulationInfo population, 
-            Map<String, PopulationInfo> annotatedPopulationInfo, Double maxValue);
+    void apply(Map<String, BigDecimal> pValuesPerTerm,
+               PopulationInfo population,
+               Map<String, PopulationInfo> annotatedPopulationInfo,
+               Double maxValue);
 
     /**
      * Return the key value pairs to put in the webservice result
-     * @return true/false
+     * @param correctionCoefficientInput the value to use to constrain the coefficient.
+     * @return a JSON serialisable object.
      */
     Map<String, Map<String, Object>> getOutputInfo(String correctionCoefficientInput);
 }

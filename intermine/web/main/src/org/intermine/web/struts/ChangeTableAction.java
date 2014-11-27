@@ -26,6 +26,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Andrew Varley
  * @author Thomas Riley
  */
+@SuppressWarnings("deprecation")
 public class ChangeTableAction extends InterMineDispatchAction
 {
     /**
@@ -37,9 +38,9 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @return an ActionForward object defining where control goes next
      */
     public ActionForward last(ActionMapping mapping,
-                              @SuppressWarnings("unused") ActionForm form,
+                              ActionForm form,
                               HttpServletRequest request,
-                              @SuppressWarnings("unused") HttpServletResponse response) {
+                              HttpServletResponse response) {
         PagedTable pt = getPagedTable(request);
 
         int page = ((pt.getExactSize() - 1) / pt.getPageSize());
@@ -59,9 +60,9 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @deprecated as we don't hide columns any more
      */
     @Deprecated public ActionForward hideColumn(ActionMapping mapping,
-                                    @SuppressWarnings("unused") ActionForm form,
+                                    ActionForm form,
                                     HttpServletRequest request,
-                                    @SuppressWarnings("unused") HttpServletResponse response) {
+                                    HttpServletResponse response) {
         PagedTable pt = getPagedTable(request);
 
         int index = Integer.parseInt(request.getParameter("index"));
@@ -80,9 +81,9 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @deprecated as we don't hide columns any more
      */
     @Deprecated public ActionForward showColumn(ActionMapping mapping,
-                                    @SuppressWarnings("unused") ActionForm form,
+                                    ActionForm form,
                                     HttpServletRequest request,
-                                    @SuppressWarnings("unused") HttpServletResponse response) {
+                                    HttpServletResponse response) {
         PagedTable pt = getPagedTable(request);
 
         int index = Integer.parseInt(request.getParameter("index"));
@@ -101,9 +102,9 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @deprecated as we don't move columns any more
      */
     @Deprecated public ActionForward moveColumnLeft(ActionMapping mapping,
-                                        @SuppressWarnings("unused") ActionForm form,
+                                        ActionForm form,
                                         HttpServletRequest request,
-                                        @SuppressWarnings("unused") HttpServletResponse response) {
+                                        HttpServletResponse response) {
         PagedTable pt = getPagedTable(request);
 
         int index = Integer.parseInt(request.getParameter("index"));
@@ -122,9 +123,9 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @deprecated as we don't move columns any more
      */
     @Deprecated public ActionForward moveColumnRight(ActionMapping mapping,
-                                         @SuppressWarnings("unused") ActionForm form,
+                                         ActionForm form,
                                          HttpServletRequest request,
-                                         @SuppressWarnings("unused") HttpServletResponse response) {
+                                         HttpServletResponse response) {
         PagedTable pt = getPagedTable(request);
         int index = Integer.parseInt(request.getParameter("index"));
         pt.moveColumnRight(index);
@@ -141,9 +142,9 @@ public class ChangeTableAction extends InterMineDispatchAction
      * @deprecated as we don't move columns any more
      */
     @Deprecated public ActionForward swapColumns(ActionMapping mapping,
-                                     @SuppressWarnings("unused") ActionForm form,
+                                     ActionForm form,
                                      HttpServletRequest request,
-                                     @SuppressWarnings("unused") HttpServletResponse response) {
+                                     HttpServletResponse response) {
         PagedTable pt = getPagedTable(request);
         int index1 = Integer.parseInt(request.getParameter("index1"));
         int index2 = Integer.parseInt(request.getParameter("index2"));

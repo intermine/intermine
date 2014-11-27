@@ -1,12 +1,13 @@
 package org.intermine.webservice.server.core;
 
+import static org.intermine.util.DynamicUtil.createObject;
+import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.StringValueTransformer;
-import org.apache.log4j.Logger;
+import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
-import org.intermine.metadata.Model;
+import org.intermine.api.results.ResultCell;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Company;
@@ -33,29 +34,26 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.DynamicUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TableRowIteratorTest
 {
     private static ObjectStoreWriter osw;
-    private static final Logger LOG = Logger.getLogger(TableRowIteratorTest.class);
     private static final int COMPANIES = 6;
     private static final int SECRETARIES = 3;
     private static final int DEPARTMENTS = 2;
     private static final int EMPLOYEES = 3;
-    
+
+    private static final Map<String, InterMineBag> NO_BAGS = Collections.emptyMap();
+
     @BeforeClass
     public static void loadData() throws ObjectStoreException {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
@@ -71,7 +69,7 @@ public class TableRowIteratorTest
                 made++;
             }
             for (int k = 0; k < COMPANIES; k++) {
-                Company c = (Company) DynamicUtil.createObject(new HashSet(Arrays.asList(Company.class)));
+                Company c = (Company) createObject(singleton(Company.class));
                 c.setName("temp-company" + k);
                 c.setVatNumber((k + 1) * (k + 1));
                 c.setBank(banks[k / 2]);
@@ -131,11 +129,11 @@ public class TableRowIteratorTest
         puts("[START UP] Made %d employees\n", made);
     }
 
-    private EitherVisitor<TableCell, SubTable, Map<String, Object>> jsonTransformer
-        = new EitherVisitor<TableCell, SubTable, Map<String, Object>>() {
+    private EitherVisitor<ResultCell, SubTable, Map<String, Object>> jsonTransformer
+        = new EitherVisitor<ResultCell, SubTable, Map<String, Object>>() {
 
             @Override
-            public Map<String, Object> visitLeft(TableCell a) {
+            public Map<String, Object> visitLeft(ResultCell a) {
                 Map<String, Object> cell = new HashMap<String, Object>();
                 cell.put("value", a.getField());
                 cell.put("id", a.getId());
@@ -151,10 +149,10 @@ public class TableRowIteratorTest
                 st.put("columns", CollectionUtils.collect(b.getColumns(), StringValueTransformer.getInstance()));
                 List<List<Map<String, Object>>> rows = new ArrayList<List<Map<String, Object>>>();
                 st.put("rows", rows);
-                for (List<Either<TableCell, SubTable>> items: b.getRows()){
+                for (List<Either<ResultCell, SubTable>> items: b.getRows()){
                     List<Map<String, Object>> row = new ArrayList<Map<String, Object>>();
                     rows.add(row);
-                    for (Either<TableCell, SubTable> item: items) {
+                    for (Either<ResultCell, SubTable> item: items) {
                         row.add(item.accept(this));
                     }
                 }
@@ -163,7 +161,7 @@ public class TableRowIteratorTest
         
     };
 
-    private  EitherVisitor<TableCell, SubTable, Void> printer = new IndentingPrinter(4);
+    private  EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
     
     @Before
     public void setup() throws ObjectStoreException {
@@ -194,11 +192,13 @@ public class TableRowIteratorTest
                 pq.addConstraint(Constraints.eq("Company.name", "temp*"));
 
                 Query q = MainHelper.makeQuery(
-                        pq, new HashMap(), new HashMap(), null, new HashMap());
+                        pq, NO_BAGS, new HashMap<String, QuerySelectable>(), null,
+                        new HashMap<String, BagQueryResult>());
 
                 Results res = osw.execute(q, 50000, true, false, true);
                 Set<Bank> banks = new HashSet<Bank>();
                 for (Object row: res) {
+                    @SuppressWarnings("rawtypes")
                     Company c = (Company) ((List) row).get(0);
                     for (Secretary s: c.getSecretarys()) {
                         osw.delete(s);
@@ -246,7 +246,7 @@ public class TableRowIteratorTest
     }
 
     /* VISITORS WE WILL BE USING... */
-    private static class IndentingPrinter extends EitherVisitor<TableCell, SubTable, Void> {
+    private static class IndentingPrinter extends EitherVisitor<ResultCell, SubTable, Void> {
         
         int indent = 0;
         int depth = 0;
@@ -264,7 +264,7 @@ public class TableRowIteratorTest
         }
 
         @Override
-        public Void visitLeft(TableCell a) {
+        public Void visitLeft(ResultCell a) {
             puts(spacer + "%s: %s", a.getPath(), a.getField());
             return null;
         }
@@ -274,10 +274,10 @@ public class TableRowIteratorTest
             puts(spacer + "%d %s", b.getRows().size(), b.getJoinPath());
             puts(spacer + "  " + b.getColumns());
             int c = 0;
-            for (List<Either<TableCell, SubTable>> row: b.getRows()) {
+            for (List<Either<ResultCell, SubTable>> row: b.getRows()) {
                 puts(spacer + "  %s %d",
                         b.getJoinPath().getLastClassDescriptor().getUnqualifiedName(), c++);
-                for (Either<TableCell, SubTable> item: row) {
+                for (Either<ResultCell, SubTable> item: row) {
                     item.accept(new IndentingPrinter(indent, depth + 1));
                 }
             }
@@ -285,14 +285,14 @@ public class TableRowIteratorTest
         }
     };
     
-    private static final EitherVisitor<TableCell, SubTable, Integer> deepCounter = new EitherVisitor<TableCell, SubTable, Integer>() {
+    private static final EitherVisitor<ResultCell, SubTable, Integer> deepCounter = new EitherVisitor<ResultCell, SubTable, Integer>() {
 
-        @Override public Integer visitLeft(TableCell a) { return Integer.valueOf(1); }
+        @Override public Integer visitLeft(ResultCell a) { return Integer.valueOf(1); }
 
         @Override public Integer visitRight(SubTable b) {
             int c = 0;
-            for (List<Either<TableCell, SubTable>> row: b.getRows()) {
-                for (Either<TableCell, SubTable> item: row) {
+            for (List<Either<ResultCell, SubTable>> row: b.getRows()) {
+                for (Either<ResultCell, SubTable> item: row) {
                     c += item.accept(this);
                 }
             }
@@ -301,13 +301,13 @@ public class TableRowIteratorTest
         
     };
 
-    private static final EitherVisitor<TableCell, SubTable, String> toStringNoTables = new EitherVisitor<TableCell, SubTable, String>() {
-        public String visitLeft(TableCell a) { return String.valueOf(a.getField()); }
+    private static final EitherVisitor<ResultCell, SubTable, String> toStringNoTables = new EitherVisitor<ResultCell, SubTable, String>() {
+        public String visitLeft(ResultCell a) { return String.valueOf(a.getField()); }
         public String visitRight(SubTable b) { fail("No subtables expected"); return null; }
     };
 
-    private static final EitherVisitor<TableCell, SubTable, Integer> counterNoTables = new EitherVisitor<TableCell, SubTable, Integer>() {
-        public Integer visitLeft(TableCell a) { return Integer.valueOf(1);}
+    private static final EitherVisitor<ResultCell, SubTable, Integer> counterNoTables = new EitherVisitor<ResultCell, SubTable, Integer>() {
+        public Integer visitLeft(ResultCell a) { return Integer.valueOf(1);}
         public Integer visitRight(SubTable b) { fail("No subtables expected"); return null; }
     };
 
@@ -336,8 +336,8 @@ public class TableRowIteratorTest
 
         while(iter.hasNext()) {
             List<Map<String, Object>> data = ListFunctions.map(iter.next(),
-                new F<Either<TableCell, SubTable>, Map<String, Object>>() {
-                    @Override public Map<String, Object> call(Either<TableCell, SubTable> a) {
+                new F<Either<ResultCell, SubTable>, Map<String, Object>>() {
+                    @Override public Map<String, Object> call(Either<ResultCell, SubTable> a) {
                         return a.accept(jsonTransformer);
                     }
             });
@@ -358,7 +358,7 @@ public class TableRowIteratorTest
         };
 
         // We get:
-        List<Either<TableCell, SubTable>> row = iter.next();
+        List<Either<ResultCell, SubTable>> row = iter.next();
 
         // Same size
         assertEquals(values.length, row.size());
@@ -371,7 +371,7 @@ public class TableRowIteratorTest
         // For all the rows in the set.
         int c = 0;
         while (iter.hasNext()) {
-            for (Either<TableCell, SubTable> o: iter.next()) {
+            for (Either<ResultCell, SubTable> o: iter.next()) {
                 c += o.accept(counterNoTables);
             }
         }
@@ -528,7 +528,7 @@ public class TableRowIteratorTest
 
     private TableRowIterator getResults(final PathQuery pq, final Page page)  throws ObjectStoreException {
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+        Query q = MainHelper.makeQuery(pq, new HashMap<String, InterMineBag>(), p2qn, null, new HashMap<String, BagQueryResult>());
 
         Results res = osw.execute(q, 1000, true, false, true);
         //puts("EXAMPLE ROW: " + res.get(0));
@@ -541,9 +541,9 @@ public class TableRowIteratorTest
         PathQuery pq = getPQ(name);
         TableRowIterator iter = getResults(pq, page);
         int c = 0, r = page.getStart();
-        for (List<Either<TableCell, SubTable>> row: iter) {
+        for (List<Either<ResultCell, SubTable>> row: iter) {
             puts("Row " + r++);
-            for (Either<TableCell, SubTable> ro: row) {
+            for (Either<ResultCell, SubTable> ro: row) {
                 c += ro.accept(printer.and(deepCounter));
             }
             puts("-----");

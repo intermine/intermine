@@ -94,6 +94,22 @@
   <target name="create-indexes-unittest-attribute" depends="-init-build-db">
     <create-indexes alias="os.unittest" attributeIndexes="true"/>
   </target>
+
+  <!-- run read/write performance testing -->
+
+  <target name="test-performance" depends="-init-properties, library.default, build-db-unittest">
+    <taskdef name="run-performance-test" classname="org.intermine.task.ReadWritePerformanceTask">
+      <classpath>
+	<path refid="project.execute.path"/>
+        <pathelement location="${build.task.dir}"/>
+        <pathelement location="${build.classes.dir}"/>
+        <pathelement location="${resources.dir}"/>
+        <pathelement location="${build.test.resources.dir}"/>
+      </classpath>
+    </taskdef>
+
+    <run-performance-test osAlias="os.unittest"/>
+  </target>
   
 </project>
 

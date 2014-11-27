@@ -18,11 +18,8 @@ import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.Request;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
-
-import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
-
 import org.intermine.webservice.client.widget.Widget;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,8 +128,7 @@ public class WidgetService extends Service
             List<Widget> ret = new ArrayList<Widget>();
             try {
                 for (int i = 0; i < length; i++) {
-                    ret.add(parseWidget(getFactory(),
-                                widgets.getJSONObject(i)));
+                    ret.add(parseWidget(widgets.getJSONObject(i)));
                 }
             } catch (JSONException e) {
                 throw new ServiceException("Error processing request: "
@@ -146,7 +142,7 @@ public class WidgetService extends Service
         }
     }
 
-    private Widget parseWidget(ServiceFactory factory, JSONObject json)
+    private static Widget parseWidget(JSONObject json)
         throws JSONException {
         String name = json.getString("name");
         String title = json.getString("title");
@@ -160,15 +156,17 @@ public class WidgetService extends Service
             targets.add(targetArray.getString(i));
         }
         List<String> filters = new LinkedList<String>();
-        JSONArray filterArray = json.getJSONArray("filters");
-        length = filterArray.length();
-        for (int i = 0; i < length; i++) {
-            filters.add(filterArray.getString(i));
+        JSONArray filterArray = json.optJSONArray("filters");
+        if (filterArray != null) {
+            length = filterArray.length();
+            for (int i = 0; i < length; i++) {
+                filters.add(filterArray.getString(i));
+            }
         }
         JSONObject labels = json.optJSONObject("labels");
         String xLabel = labels == null ? null : labels.getString("x");
         String yLabel = labels == null ? null : labels.getString("y");
-        return new Widget(factory, name, title, description,
+        return new Widget(name, title, description,
                 widgetType, chartType, targets, filters, xLabel, yLabel);
     }
 }

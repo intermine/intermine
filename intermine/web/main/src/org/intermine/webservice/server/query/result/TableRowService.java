@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.query.result;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,11 +19,13 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.InvokerTransformer;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.BagNotFound;
 import org.intermine.api.query.MainHelper;
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ResultCell;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -25,17 +37,21 @@ import org.intermine.webservice.server.core.Either;
 import org.intermine.webservice.server.core.EitherVisitor;
 import org.intermine.webservice.server.core.Page;
 import org.intermine.webservice.server.core.SubTable;
-import org.intermine.webservice.server.core.TableCell;
 import org.intermine.webservice.server.core.TableRowIterator;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.TableCellFormatter;
 import org.json.JSONArray;
 
+/**
+ * A service that produces results in nested rows for use in tables.
+ * @author Alex Kalderimis
+ *
+ */
 public class TableRowService extends QueryResultService
 {
-    private static final Logger LOG = Logger.getLogger(TableRowService.class);
 
+    /** @param im The InterMine state object **/
     public TableRowService(InterMineAPI im) {
         super(im);
     }
@@ -54,15 +70,13 @@ public class TableRowService extends QueryResultService
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
         try {
             Profile p = getPermission().getProfile();
-            Query q = MainHelper.makeQuery(pq, im.getBagManager().getCurrentBags(p),
-                    new HashMap(), im.getBagQueryRunner(), new HashMap());
-            ObjectStore os = im.getObjectStore();
-            int count = os.count(q, new HashMap());
+            PathQueryExecutor pqe = im.getPathQueryExecutor(p);
+            int count = pqe.count(pq);
             attributes.put("iTotalRecords", count);
         } catch (BagNotFound e) {
             throw new BadRequestException(e.getMessage());
         } catch (ObjectStoreException e) {
-            throw new InternalErrorException("Error counting rows.", e);
+            throw new ServiceException("Error counting rows.", e);
         }
         super.setHeaderAttributes(pq, start, size);
     }
@@ -74,21 +88,26 @@ public class TableRowService extends QueryResultService
         final Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query q;
         try {
-            q = MainHelper.makeQuery(pathQuery, im.getBagManager().getCurrentBags(p),
-                    pathToQueryNode, im.getBagQueryRunner(), new HashMap());
+            q = MainHelper.makeQuery(
+                    pathQuery,
+                    im.getBagManager().getCurrentBags(p),
+                    pathToQueryNode,
+                    im.getBagQueryRunner(),
+                    new HashMap<String, BagQueryResult>());
         } catch (ObjectStoreException e) {
-            throw new InternalErrorException("Could not run query", e);
+            throw new ServiceException("Could not run query", e);
         }
         final Results results = os.execute(q, QueryResultService.BATCH_SIZE, true, false, false);
         final Page page = new Page(firstResult, (maxResults == 0) ? null : maxResults);
-        
-        TableRowIterator iter = new TableRowIterator(pathQuery, q, results, pathToQueryNode, page, im);
-        
+
+        TableRowIterator iter = new TableRowIterator(
+                pathQuery, q, results, pathToQueryNode, page, im);
+
         final Processor processor = new Processor(im);
-        
+
         while (iter.hasNext()) {
             List<Map<String, Object>> rowdata = new LinkedList<Map<String, Object>>();
-            for (Either<TableCell, SubTable> cell: iter.next()) {
+            for (Either<ResultCell, SubTable> cell: iter.next()) {
                 rowdata.add(cell.accept(processor));
             }
             JSONArray ja = new JSONArray(rowdata);
@@ -100,7 +119,8 @@ public class TableRowService extends QueryResultService
         }
     }
 
-    private static final class Processor extends EitherVisitor<TableCell, SubTable, Map<String, Object>>
+    private static final class Processor
+        extends EitherVisitor<ResultCell, SubTable, Map<String, Object>>
     {
         private static final String CELL_KEY_COLUMN = "column";
         private static final String CELL_KEY_VIEW = "view";
@@ -113,7 +133,7 @@ public class TableRowService extends QueryResultService
         }
 
         @Override
-        public Map<String, Object> visitLeft(TableCell a) {
+        public Map<String, Object> visitLeft(ResultCell a) {
             return tableCellFormatter.toMap(a);
         }
 
@@ -126,10 +146,10 @@ public class TableRowService extends QueryResultService
                             InvokerTransformer.getInstance("toStringNoConstraints")));
             List<List<Map<String, Object>>> rows = new ArrayList<List<Map<String, Object>>>();
             cell.put(CELL_KEY_ROWS, rows);
-            for (List<Either<TableCell, SubTable>> items: b.getRows()){
+            for (List<Either<ResultCell, SubTable>> items: b.getRows()) {
                 List<Map<String, Object>> row = new ArrayList<Map<String, Object>>();
                 rows.add(row);
-                for (Either<TableCell, SubTable> item: items) {
+                for (Either<ResultCell, SubTable> item: items) {
                     row.add(item.accept(this));
                 }
             }

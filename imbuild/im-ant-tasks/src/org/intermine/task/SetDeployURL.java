@@ -1,13 +1,33 @@
 package org.intermine.task;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import org.apache.catalina.ant.AbstractCatalinaTask;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-public class SetDeployURL extends AbstractCatalinaTask {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class SetDeployURL extends AbstractCatalinaTask
+{
 
     private String var;
 
+    /**
+     * @param name name
+     */
     public void setVar(String name) {
         var = name;
     }
@@ -17,6 +37,9 @@ public class SetDeployURL extends AbstractCatalinaTask {
         return false;
     }
 
+    /**
+     * @throws BuildException if something goes wrong
+     */
     public void execute() throws BuildException {
         super.execute();
         log("Determining version of " + getUrl(), Project.MSG_DEBUG);

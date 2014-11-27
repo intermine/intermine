@@ -14,6 +14,8 @@ import java.util.LinkedHashSet;
 
 import junit.framework.TestCase;
 
+import org.intermine.metadata.ConstraintOp;
+
 
 public class ConstraintSetTest extends TestCase {
 

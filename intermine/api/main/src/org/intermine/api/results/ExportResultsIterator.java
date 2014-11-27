@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.query.QueryExecutor;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -58,6 +57,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      * ObjectStore, PathQuery, and other necessary objects.
      *
      * @param pathQuery a PathQuery to run
+     * @param q original query
      * @param results the results object created when executing the query
      * @param pathToQueryNode a map from path in pathQuery to QuerySelectable in the generated
      * ObjectStore query
@@ -71,17 +71,23 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         init(pathQuery, pathToQueryNode);
     }
 
+    /**
+     * @return original query
+     */
     public PathQuery getQuery() {
         return originatingQuery;
     }
 
+    /**
+     * @return list of paths on view
+     */
     public List<Path> getViewPaths() {
         return Collections.unmodifiableList(paths);
     }
 
     private void init(PathQuery pq, Map<String, QuerySelectable> pathToQueryNode) {
         osIter = ((List) results).iterator();
-      
+
         List<List<ResultElement>> empty = Collections.emptyList();
         subIter = empty.iterator();
         for (String pathString : pq.getView()) {
@@ -163,23 +169,24 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
 
     /** Analyses the select list to predict what the structure of the results will be. It produces
      *  a list with a disjoint type of element.
-     *  
+     *
      * Some examples of the return values are presented below:
      * <pre>
      * [
      *    {Employee.age=6, Employee.fullTime=4, Employee.name=0},
-     *    [{Employee.department.name=1}, {Employee.department.manager.name=2}, {Employee.department.company.name=3}], 
+     *    [{Employee.department.name=1}, {Employee.department.manager.name=2},
+     *    {Employee.department.company.name=3}],
      *    {Employee.address.address=5}
      * ]
-     * [  
+     * [
      *    {Company.vatNumber=6, Company.name=0},
      *    [
-     *      {Company.departments.name=1}, 
+     *      {Company.departments.name=1},
      *      [
      *        {Company.departments.employees.age=3, Company.departments.employees.name=2},
      *        {Company.departments.employees.address.address=4}
      *      ]
-     *    ], 
+     *    ],
      *    [
      *      {Company.secretarys.name=5}
      *    ]

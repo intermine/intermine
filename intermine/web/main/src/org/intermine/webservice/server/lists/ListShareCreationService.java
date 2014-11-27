@@ -1,12 +1,17 @@
 package org.intermine.webservice.server.lists;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.mail.MessagingException;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -15,40 +20,42 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.UserAlreadyShareBagException;
-import org.intermine.api.profile.UserNotFoundException;
-import org.intermine.api.profile.UserPreferences;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
 import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
-import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class ListShareCreationService extends JSONService {
+/** @author Alex Kalderimis **/
+public class ListShareCreationService extends JSONService
+{
 
-    private final static Logger LOG = Logger.getLogger(ListShareCreationService.class);
+    private static final Logger LOG = Logger.getLogger(ListShareCreationService.class);
     private final ProfileManager pm;
     private final SharedBagManager sbm;
 
+    /** @param im The InterMine state object. **/
     public ListShareCreationService(InterMineAPI im) {
         super(im);
         pm = im.getProfileManager();
         sbm = SharedBagManager.getInstance(pm);
     }
-    
-    private final class UserInput {
+
+    private final class UserInput
+    {
+        private static final String CANT_SHARE_WITH_THEM
+            = "The value of the 'with' parameter is not the name of user you can share lists with";
+        private static final String NOT_YOUR_LIST
+            = "The value of the 'list' parameter is not the name of a list you own";
         final Profile owner;
         final Profile recipient;
         final InterMineBag bag;
         final Boolean notify;
 
-        UserInput() throws ServiceException {
+        UserInput() {
             owner = getPermission().getProfile();
             if (!owner.isLoggedIn()) {
                 throw new ServiceForbiddenException("Not authenticated.");
@@ -57,11 +64,11 @@ public class ListShareCreationService extends JSONService {
             if (bags.isEmpty()) {
                 throw new BadRequestException("You do not have any lists to share");
             }
-            
+
             String bagName = getRequiredParameter("list");
             bag = bags.get(bagName);
             if (bag == null) {
-                throw new ResourceNotFoundException("The value of the 'list' parameter is not the name of a list you own");
+                throw new ResourceNotFoundException(NOT_YOUR_LIST);
             }
             String recipientName = getRequiredParameter("with");
             // Is this dangerous? it allows users to
@@ -69,7 +76,8 @@ public class ListShareCreationService extends JSONService {
             // thing in the registration service...
             recipient = pm.getProfile(recipientName);
             if (recipient == null || recipient.prefers(Constants.HIDDEN)) {
-                throw new ResourceNotFoundException("The value of the 'with' parameter is not the name of user you can share lists with");
+                // Maybe insert sleep here to prevent scraping??
+                throw new ResourceNotFoundException(CANT_SHARE_WITH_THEM);
             }
 
             String notifyStr = getOptionalParameter("notify", "false");
@@ -90,29 +98,31 @@ public class ListShareCreationService extends JSONService {
      */
     @Override
     protected void execute() throws Exception {
-         UserInput input = new UserInput();
+        UserInput input = new UserInput();
 
-         try {
-             sbm.shareBagWithUser(input.bag, input.recipient.getUsername());
-         } catch (UserAlreadyShareBagException e) {
-             throw new BadRequestException("This bag is already shared with this user", e);
-         }
+        try {
+            sbm.shareBagWithUser(input.bag, input.recipient.getUsername());
+        } catch (UserAlreadyShareBagException e) {
+            throw new BadRequestException("This bag is already shared with this user", e);
+        }
 
-         Map<String, Object> data = new HashMap<String, Object>();
-         data.put(input.bag.getName(), sbm.getUsersWithAccessToBag(input.bag));
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put(input.bag.getName(), sbm.getUsersWithAccessToBag(input.bag));
 
-         if (input.notify && !input.recipient.prefers(Constants.NO_SPAM)) {
-             MailAction action = new InformUserOfNewShare(input.recipient.getEmailAddress(), input.owner, input.bag);
-             if (!InterMineContext.queueMessage(action)) {
-                 LOG.error("Could not send email message");
-             }
-         }
+        if (input.notify && !input.recipient.prefers(Constants.NO_SPAM)) {
+            MailAction action = new InformUserOfNewShare(
+                    input.recipient.getEmailAddress(), input.owner, input.bag);
+            if (!InterMineContext.queueMessage(action)) {
+                LOG.error("Could not send email message");
+            }
+        }
 
-         addResultItem(data, false);
+        addResultItem(data, false);
 
     }
 
-    private class InformUserOfNewShare implements MailAction {
+    private class InformUserOfNewShare implements MailAction
+    {
 
         private final String to;
         private final Profile owner;
@@ -128,7 +138,6 @@ public class ListShareCreationService extends JSONService {
         public void act(Emailer emailer) throws Exception {
             emailer.informUserOfNewSharedBag(to, owner, bag);
         }
-        
     }
 
 }

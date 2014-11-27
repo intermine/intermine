@@ -11,11 +11,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -24,9 +26,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * @author alex
@@ -91,15 +95,15 @@ public class JSONRowResultProcessorTest extends TestCase {
 
         os.setResultsSize(5);
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Employee> row1 = new ResultsRow<Employee>();
         row1.add(tim);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Employee> row2 = new ResultsRow<Employee>();
         row2.add(gareth);
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Employee> row3 = new ResultsRow<Employee>();
         row3.add(dawn);
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Employee> row4 = new ResultsRow<Employee>();
         row4.add(keith);
-        ResultsRow row5 = new ResultsRow();
+        ResultsRow<Employee> row5 = new ResultsRow<Employee>();
         row5.add(lee);
 
         os.addRow(row1);
@@ -112,21 +116,23 @@ public class JSONRowResultProcessorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.age", "Employee.name");
 
-        Map pathToQueryNode = new HashMap();
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query q;
         try {
-            q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-            List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+            q = MainHelper.makeQuery(pq, new HashMap<String, InterMineBag>(), pathToQueryNode, null, null);
+            @SuppressWarnings("unchecked")
+            List<Object> resultList = os.execute(q, 0, 5, true, true, new HashMap<Object, Integer>());
             Results results = new DummyResults(q, resultList);
             iterator = new ExportResultsIterator(pq, q, results, pathToQueryNode);
 
-            List emptyList = new ArrayList();
+            List<Object> emptyList = new ArrayList<Object>();
             Results emptyResults = new DummyResults(q, emptyList);
             emptyIterator = new ExportResultsIterator(pq, q, emptyResults, pathToQueryNode);
 
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
+        InterMineContext.initilise(api, new Properties(), null);
     }
 
     /**
@@ -134,6 +140,7 @@ public class JSONRowResultProcessorTest extends TestCase {
      */
     @Override
     protected void tearDown() throws Exception {
+        InterMineContext.doShutdown();
         super.tearDown();
     }
 
@@ -144,6 +151,7 @@ public class JSONRowResultProcessorTest extends TestCase {
 
     public void testZeroResults() {
         List<String> inner = new ArrayList<String>();
+        @SuppressWarnings("unchecked")
         List<List<String>> expected = Arrays.asList(inner);
 
         MemoryOutput out  = new MemoryOutput();
@@ -153,7 +161,6 @@ public class JSONRowResultProcessorTest extends TestCase {
         assertEquals(expected.toString(), out.getResults().toString());
     }
 
-    @SuppressWarnings("unchecked")
     public void testWrite() throws IOException {
         InputStream is = getClass().getResourceAsStream("JSONRowResultProcessorTest.expected");
         StringWriter sw = new StringWriter();

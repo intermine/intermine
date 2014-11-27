@@ -83,4 +83,12 @@ public class OverlapRange
     public QueryObjectReference getParent() {
         return parent;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "start=" + start.toString() + ", end=" + end.toString();
+    }
 }

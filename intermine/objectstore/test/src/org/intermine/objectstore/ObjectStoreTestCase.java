@@ -36,7 +36,7 @@ import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -277,6 +277,19 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("ContainsConstraintNotNull", toList(r));
+
+        results.put("ContainsConstraintNullCollection1N", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("DepartmentA1") },
+                { data.get("DepartmentB1") },
+                { data.get("DepartmentB2") } };
+        results.put("ContainsConstraintNotNullCollection1N", toList(r));
+
+        results.put("ContainsConstraintNullCollectionMN", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("CompanyA") },
+                { data.get("CompanyB") } };
+        results.put("ContainsConstraintNotNullCollectionMN", toList(r));
 
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
