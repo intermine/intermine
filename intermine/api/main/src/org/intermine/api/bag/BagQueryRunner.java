@@ -191,27 +191,23 @@ public class BagQueryRunner
             if (!wildcardInput.isEmpty() && (!wildcardUnresolved.isEmpty() || !matchOnFirst)) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 try {
-                    Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
-                    Results res = os.execute(q, ResultsBatches.DEFAULT_BATCH_SIZE, true, true,
-                            false);
+                    Query q = bq.getQuery(wildcardInput, extraFieldValue);
+                    Results res = os.execute(q, 10000, true, true, false);
                     for (Object rowObj : res) {
                         ResultsRow<?> row = (ResultsRow<?>) rowObj;
                         Integer id = (Integer) row.get(0);
                         for (int i = 1; i < row.size(); i++) {
-                            String field = "" + row.get(i);
-                            String lowerField = field.toLowerCase();
-                            for (String wildcard : wildcardInput) {
-                                Pattern pattern = patterns.get(wildcard);
-                                if (pattern.matcher(lowerField).matches()) {
-                                    Set<Integer> ids = resMap.get(wildcard);
-                                    if (ids == null) {
-                                        ids = new LinkedHashSet<Integer>();
-                                        resMap.put(wildcard, ids);
+                            final Object fieldObject = row.get(i);
+                            if (fieldObject != null) {
+                                String field = String.valueOf(fieldObject);
+                                String lowerField = field.toLowerCase();
+                                for (String wildcard : wildcardInput) {
+                                    Pattern pattern = patterns.get(wildcard);
+                                    if (pattern.matcher(lowerField).matches()) {
+                                        processMatch(resMap, wildcardUnresolved, id, wildcard);
                                     }
-                                    ids.add(id);
-                                    // we have matched at least once with wildcard
-                                    wildcardUnresolved.remove(wildcard);
                                 }
+
                             }
                         }
                     }
