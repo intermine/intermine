@@ -38,6 +38,8 @@ elif [ "$TEST_SUITE" = "api" ]; then
     ant_test 'intermine/api'
 elif [ "$TEST_SUITE" = "web" ]; then
     ant_test 'intermine/web'
+elif [ "$TEST_SUITE" = "webtasks" ]; then
+    ant_test 'intermine/webtasks'
 elif [ "$TEST_SUITE" = "bio" ]; then
     ant_test 'bio/core'
 elif [ "$TEST_SUITE" = "checkstyle" ]; then

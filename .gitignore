@@ -201,3 +201,4 @@ nb-build.xml
 apache-tomcat*
 prefixed
 failures.list
+*.jks

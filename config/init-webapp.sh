@@ -10,7 +10,11 @@ for dep in keytool; do
 done
 
 # Create a java keystore with a generated key-pair
-echo '#----> Creating keystore'
+if [ -z $KEYSTORE ]; then
+    echo '[ERROR]: No key store location configured'
+    exit 1
+fi
+echo "#----> Creating keystore $KEYSTORE"
 keytool -genkey -noprompt \
     -keysize 2048 \
     -alias SELF \
@@ -18,7 +22,10 @@ keytool -genkey -noprompt \
     -dname "CN=intermine-ci, C=GB" \
     -storepass intermine \
     -keypass intermine \
-    -keystore testmodel/webapp/main/resources/webapp/WEB-INF/keystore.jks
+    -keystore $KEYSTORE
+
+# Make it available to the web-app
+cp $KEYSTORE testmodel/webapp/main/resources/webapp/WEB-INF/keystore.jks
 
 # We need a running webapp
 source config/download_and_configure_tomcat.sh

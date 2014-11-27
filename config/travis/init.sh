@@ -12,6 +12,7 @@ fi
 GIT_GET="git clone --single-branch --depth 1"
 
 export PSQL_USER=postgres
+export KEYSTORE=${PWD}/keystore.jks
 
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
@@ -45,6 +46,7 @@ else
     if [ "$TEST_SUITE" = "selenium" -o "$TEST_SUITE" = "ws-integration" ]; then
         # We will need a fully operational web-application
         source config/init-webapp.sh
+        source config/issue-token.sh
     elif [ "$TEST_SUITE" = "bio" ]; then
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db

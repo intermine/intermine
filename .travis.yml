@@ -13,6 +13,7 @@ env:
         - TEST_SUITE=pathquery
         - TEST_SUITE=api
         - TEST_SUITE=web
+        - TEST_SUITE=webtasks
         - TEST_SUITE=bio
         - TEST_SUITE=checkstyle
 sudo: false # use container based infrastructure
