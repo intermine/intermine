@@ -19,7 +19,6 @@ import java.util.regex.Matcher;
 import javax.servlet.ServletContext;
 
 import org.intermine.web.logic.ResourceOpener;
-import org.jfree.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
