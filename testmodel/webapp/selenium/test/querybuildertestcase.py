@@ -21,5 +21,7 @@ class QueryBuilderTestCase(Super):
     def assertRowCountIs(self, n):
         selector = '.im-table-container tbody tr'
         self.wait().until(on_page(selector))
-        self.assertEquals(n, len(self.elems(selector)))
+        def get_elem_count(): return len(self.elems(selector))
+        self.wait().until(lambda d: n == get_elem_count())
+        self.assertEquals(n, get_elem_count())
 
