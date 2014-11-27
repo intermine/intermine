@@ -23,7 +23,7 @@ class ImportQueryTest(QueryBuilderTestCase):
         self.assertEquals('true', self.elem('#file').get_attribute('disabled'))
         self.elem('#importQueriesForm input[type="submit"]').click()
 
-        self.assertEquals('Bank', self.elem('.typeSelected').text)
+        self.assertEquals('Bank', self.wait_for_elem('.typeSelected').text)
         constraints = self.elems('span.constraint')
         self.assertEquals(1, len(constraints))
         self.assertEquals('> 1000', constraints[0].text)
