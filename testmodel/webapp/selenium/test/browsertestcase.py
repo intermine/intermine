@@ -65,7 +65,7 @@ class BrowserTestCase(unittest.TestCase):
         if hasattr(elem, 'click'):
             elem.click()
         else:
-            self.elem(elem).click()
+            self.wait_for_elem(elem).click()
         self.wait().until(lambda d: d.current_url != prev_url, "Browser stayed at " + prev_url)
 
     @contextmanager
