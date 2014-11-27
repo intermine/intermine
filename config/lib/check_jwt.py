@@ -7,7 +7,7 @@ import sys
 import requests
 
 base_url = os.getenv('TESTMODEL_URL', 'http://localhost:8080/intermine-demo')
-resource = base_url + '/service/whoami'
+resource = base_url + '/service/user'
 
 token = sys.stdin.read()
 
