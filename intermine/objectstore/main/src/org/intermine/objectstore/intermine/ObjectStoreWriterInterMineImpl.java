@@ -1012,7 +1012,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 }
             } else if (Collection.class.isAssignableFrom(fieldInfo.getType())) {
                 @SuppressWarnings("unchecked") Collection<Object> coll
-                        = (Collection<Object>) o.getFieldValue(fieldInfo.getName());
+                    = (Collection<Object>) o.getFieldValue(fieldInfo.getName());
 
                 if (!(coll instanceof Lazy)) {
                     for (Object obj : coll) {
