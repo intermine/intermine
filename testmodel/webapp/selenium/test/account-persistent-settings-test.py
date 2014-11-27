@@ -20,7 +20,7 @@ class AccountPersistentSettings(Super):
         self.login()
 
         # Make sure that our checkboxes are set to on
-        checkbox_donotspam = browser.find_element_by_name("do_not_spam")
+        checkbox_donotspam = self.wait().until(lambda d: d.find_element_by_name('do_not_spam'))
         checkbox_hidden = browser.find_element_by_name("hidden")
 
         checkbox_donotspam.click() if checkbox_donotspam.is_selected() else False
@@ -28,18 +28,20 @@ class AccountPersistentSettings(Super):
         # Checkboxes are now off.
 
         # Now fill out our field values:
-        browser.find_element_by_name("alias").clear()
-        browser.find_element_by_name("alias").send_keys("Temporary Display Name")
+        alias = browser.find_element_by_name('alias')
+        email = browser.find_element_by_name('email')
+        alias.clear()
+        alias.send_keys("Temporary Display Name")
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[3]/td[2]/form/button").click()
-        browser.find_element_by_name("email").clear()
-        browser.find_element_by_name("email").send_keys("temporaryemail@intermine.org")
+        email.clear()
+        email.send_keys("temporaryemail@intermine.org")
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[4]/td[2]/form/button").click()
-        browser.find_element_by_link_text("Log out").click()
+        self.findLink("Log out").click()
 
         # Log back in and confirm the settings have stuck:
         self.login()
 
-        checkbox_donotspam = browser.find_element_by_name("do_not_spam")
+        checkbox_donotspam = self.wait().until(lambda d: d.find_element_by_name('do_not_spam'))
         checkbox_hidden = browser.find_element_by_name("hidden")
 
         self.assertEqual(False, checkbox_donotspam.is_selected())
@@ -50,9 +52,11 @@ class AccountPersistentSettings(Super):
         # Reverse the values
         checkbox_donotspam.click()
         checkbox_hidden.click()
-        browser.find_element_by_name("alias").clear()
+        alias = browser.find_element_by_name('alias')
+        email = browser.find_element_by_name('email')
+        alias.clear()
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[3]/td[2]/form/button[2]").click()
-        browser.find_element_by_name("email").clear()
+        email.clear()
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[4]/td[2]/form/button[2]").click()
         browser.find_element_by_link_text("Log out").click()
 
@@ -60,7 +64,7 @@ class AccountPersistentSettings(Super):
         self.login()
 
         # Get our checkboxes again
-        checkbox_donotspam = browser.find_element_by_name("do_not_spam")
+        checkbox_donotspam = self.wait().until(lambda d: d.find_element_by_name('do_not_spam'))
         checkbox_hidden = browser.find_element_by_name("hidden")
 
         self.assertEqual(True, checkbox_donotspam.is_selected())
