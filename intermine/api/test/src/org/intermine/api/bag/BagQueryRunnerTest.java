@@ -293,7 +293,6 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         Set<Integer> ids = new HashSet<Integer>(Arrays.asList(eIds.get("EmployeeA3").getId(), eIds.get("EmployeeA2").getId(), eIds.get("EmployeeA1").getId()));
         assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("searching key fields").get("EmployeeA*")));
-        assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("Employable by name").get("EmployeeA*")));
     }
 
     // we need to test a query that matches a different type.  Probably
