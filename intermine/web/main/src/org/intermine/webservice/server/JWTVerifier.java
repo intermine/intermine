@@ -21,6 +21,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.security.KeySourceException;
 import org.intermine.web.security.PublicKeySource;
+import org.jfree.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -158,6 +159,7 @@ public class JWTVerifier
         if (!algorithm.endsWith("withRSA")) {
             throw new VerificationError("Unsupported signing algorithm: " + algorithm);
         }
+        Log.debug("Verifying using " + strategy + " strategy");
         try {
             if ("NAMED_ALIAS".equals(strategy)) {
                 return verifyNamedAlias(signed, toVerify, issuer, algorithm);
@@ -176,6 +178,7 @@ public class JWTVerifier
     private boolean verifyWhitelistedAliases(String signed, byte[] toVerify, String algorithm)
         throws VerificationError, KeySourceException {
         String[] names = options.getProperty(WHITELIST, "").split(",");
+        Log.debug("Using any of " + StringUtils.join(names, ", ") + " to verify JWT");
         for (PublicKey key: publicKeys.getSome(names)) {
             if (verifySignature(key, algorithm, signed, toVerify)) {
                 return true;
@@ -200,6 +203,7 @@ public class JWTVerifier
         if (StringUtils.isBlank(keyAlias)) {
             throw new VerificationError("Unknown identity issuer: " + issuer);
         }
+        Log.debug("Using key aliased as " + keyAlias + " to verify JWT");
         return verifySignature(publicKeys.get(keyAlias), alg, signed, toVerify);
     }
 

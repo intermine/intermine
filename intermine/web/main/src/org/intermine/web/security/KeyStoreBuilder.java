@@ -106,6 +106,11 @@ public class KeyStoreBuilder
         InputStream is = null;
         try {
             is = opener.openResource("keystore.jks");
+            if (is == null) {
+                LOG.debug("NO KEYSTORE FOUND - initialising empty keystore");
+            } else {
+                LOG.debug("FOUND KEYSTORE");
+            }
             // Must call load, even on null values, to initialise the store.
             store.load(is, getKeyStorePassword());
         } finally {
@@ -136,6 +141,11 @@ public class KeyStoreBuilder
                 }
             }
         }
+        int n = 0;
+        for (Enumeration<String> es = store.aliases(); es.hasMoreElements(); es.nextElement()) {
+            n++;
+        }
+        LOG.debug("Finished configuring KEYSTORE - it contains " + n + " certificates");
         return store;
     }
 

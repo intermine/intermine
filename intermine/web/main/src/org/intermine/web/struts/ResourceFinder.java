@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import javax.servlet.ServletContext;
 
 import org.intermine.web.logic.ResourceOpener;
+import org.jfree.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +51,7 @@ public class ResourceFinder implements ResourceOpener
 
     @Override
     public InputStream openResource(String resourceName) {
-        return context.getResourceAsStream("/WEB_INF/" + resourceName);
+        return context.getResourceAsStream("/WEB-INF/" + resourceName);
     }
 
     /**
