@@ -19,9 +19,8 @@ class QueryImportTestCase(Super):
         self.elem('#importQueriesForm input[type="submit"]').click()
 
     def assert_error_msg_contains(self, message):
-        wait = WebDriverWait(self.browser, 10)
-        error_notification = self.elem('#error_msg')
-        wait.until(EC.visibility_of(error_notification))
+        error_notification = self.wait_for_elem('#error_msg')
+        self.wait().until(lambda d: error_notification.is_displayed())
         self.assertIn(message, error_notification.text)
 
     def test_bad_xml(self):
