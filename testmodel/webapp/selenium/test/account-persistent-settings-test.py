@@ -72,12 +72,13 @@ class AccountPersistentSettings(Super):
     def login(self):
         browser = self.browser
         browser.get(self.base_url + "/login.do?returnto=%2Fmymine.do?subtab=account")
-        browser.find_element_by_name("username").clear()
-        browser.find_element_by_name("username").send_keys(self.user.name)
-        browser.find_element_by_name("password").clear()
-        browser.find_element_by_name("password").send_keys(self.user.password)
-        browser.find_element_by_name("action").click()
-        return True
+        uname = self.wait().until(lambda d: d.find_element_by_name('username'), 'username not found')
+        pword = browser.find_element_by_name('password')
+        uname.clear()
+        uname.send_keys(self.user.name)
+        pword.clear()
+        pword.send_keys(self.user.password)
+        self.click_and_wait_for_refresh(browser.find_element_by_name("action"))
 
     def is_element_present(self, how, what):
         try:
