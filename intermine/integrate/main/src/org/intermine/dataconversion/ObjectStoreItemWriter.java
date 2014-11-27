@@ -52,6 +52,7 @@ public class ObjectStoreItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public Integer store(Item item) throws ObjectStoreException {
+        osw.store(item);
         for (Attribute a : item.getAttributes()) {
             osw.store(a);
             transactionCounter++;
@@ -68,7 +69,6 @@ public class ObjectStoreItemWriter implements ItemWriter
             && StringUtils.isEmpty(item.getImplementations())) {
             throw new RuntimeException("className not set for item: " + item.getIdentifier());
         }
-        osw.store(item);
         incrementTransaction();
         return item.getId();
     }
