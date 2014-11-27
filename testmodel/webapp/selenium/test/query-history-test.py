@@ -51,7 +51,7 @@ class QueryHistoryTest(QueryBuilderTestCase):
         # Load queries into session history.
         for q in [query_1, query_2]:
             self.browser.get(self.base_url + '/customQuery.do')
-            link = self.browser.find_element_by_link_text(import_query)
+            link = self.wait().until(lambda d: d.find_element_by_link_text(import_query))
             link.click()
             self.wait().until(xml_text_field).send_keys(q)
             self.find_and_click('#importQueriesForm input[type="submit"]')
