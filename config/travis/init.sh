@@ -9,6 +9,8 @@ else
     GET='wget -O -'
 fi
 
+GIT_GET="git clone --single-branch --depth 1"
+
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
@@ -57,9 +59,9 @@ else
         $GET "$TESTMODEL_URL/service/lists?token=test-user-token" > /dev/null
         if [[ "$CLIENT" = "JS" ]]; then
             # We need the imjs code to exercise the webservices
-            git clone https://github.com/intermine/imjs.git client
+            $GIT_GET https://github.com/intermine/imjs.git client
         elif [[ "$CLIENT" = "PY" ]]; then
-            git clone https://github.com/intermine/intermine-ws-client.py client
+            $GIT_GET https://github.com/intermine/intermine-ws-client.py client
         fi
     fi
 fi
