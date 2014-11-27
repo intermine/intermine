@@ -13,8 +13,8 @@ package org.intermine.api.bag;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -148,7 +148,8 @@ public class BagQuery
         throws ClassNotFoundException {
         Set<String> empty = Collections.emptySet();
         Query q = QueryCloner.cloneQuery(getQuery(empty, extraFieldValue));
-        Map<QueryEvaluable, ConstraintSet> nodes = new HashMap<QueryEvaluable, ConstraintSet>();
+        Map<QueryEvaluable, ConstraintSet> nodes = new LinkedHashMap<QueryEvaluable,
+                ConstraintSet>();
         if (q.getConstraint() instanceof BagConstraint) {
             ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
             nodes.put((QueryEvaluable) ((BagConstraint) q.getConstraint()).getQueryNode(), cs);
