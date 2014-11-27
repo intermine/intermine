@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -122,12 +123,30 @@ public abstract class KeyStoreTask extends Task
         return options;
     }
 
+    private PrintStream out = System.out;
+    private PrintStream err = System.err;
+
+    /**
+     * Set the output handler.
+     * @param os Where to send output.
+     */
+    public void setOut(OutputStream os) {
+        out = new PrintStream(os);
+    }
+
+    /**
+     * Set the error handler
+     * @param os Where to send error messages.
+     */
+    public void setErr(OutputStream os) {
+        err = new PrintStream(os);
+    }
+
     /**
      * Log a message to standard out.
      * @param message The message to print.
      */
-    protected static void logMessage(String message) {
-        PrintStream out = System.out;
+    protected void logMessage(String message) {
         out.println(message);
     }
 
@@ -135,9 +154,8 @@ public abstract class KeyStoreTask extends Task
      * Log a message to standard error.
      * @param message The message to print.
      */
-    protected static void logError(String message) {
-        PrintStream out = System.err;
-        out.println(message);
+    protected void logError(String message) {
+        err.println(message);
     }
 
 }

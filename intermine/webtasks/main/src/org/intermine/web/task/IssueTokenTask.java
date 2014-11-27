@@ -43,9 +43,14 @@ public class IssueTokenTask extends KeyStoreTask
 {
 
     // The following three properties are required in the project properties.
-    private static final String PUBLICIDENTITY = "jwt.publicidentity";
-    private static final String PRIVATEKEY_PASSWORD = "security.privatekey.password";
-    private static final String PRIVATEKEY_ALIAS = "security.privatekey.alias";
+
+    /** The identity of the issuing entity (i.e. us) **/
+    public static final String PUBLICIDENTITY = "jwt.publicidentity";
+    /** The password of the private key. **/
+    public static final String PRIVATEKEY_PASSWORD = "security.privatekey.password";
+    /** The alias of the private key **/
+    public static final String PRIVATEKEY_ALIAS = "security.privatekey.alias";
+
     private static final String[] REQUIRED_PROPS = {
         PUBLICIDENTITY, PRIVATEKEY_ALIAS, PRIVATEKEY_PASSWORD
     };
