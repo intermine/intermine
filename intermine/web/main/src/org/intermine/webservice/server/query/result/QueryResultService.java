@@ -304,8 +304,8 @@ public class QueryResultService extends AbstractQueryService
     }
 
     private void runResults(PathQuery pq,  int firstResult, int maxResults) {
-        final boolean canGoFaster = maxResults > (BATCH_SIZE * 2);
-        Iterator<List<ResultElement>> it;
+        final boolean canGoFaster;
+        final Iterator<List<ResultElement>> it;
         final String summaryPath = getOptionalParameter("summaryPath");
         if (isNotBlank(summaryPath)) {
             Integer uniqs = (Integer) attributes.get("uniqueValues");
@@ -323,12 +323,14 @@ public class QueryResultService extends AbstractQueryService
                     attributes.put("filteredCount", r.size());
                 }
                 it = new FilteringResultIterator(r, firstResult, maxResults, filterTerm);
+                canGoFaster = false;
             } catch (ObjectStoreQueryDurationException e) {
                 throw new ServiceException("Query would take too long to run");
             } catch (ObjectStoreException e) {
                 throw new ServiceException("Problem getting summary.", e);
             }
         } else {
+            canGoFaster = maxResults > (BATCH_SIZE * 2);
             executor.setBatchSize(BATCH_SIZE);
             try {
                 it = executor.execute(pq, firstResult, maxResults);
