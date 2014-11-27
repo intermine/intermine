@@ -34,7 +34,8 @@ import org.json.JSONObject;
 public class JWTVerifier
 {
     private static final String EMAIL_CLAIM = "http://wso2.org/claims/emailaddress";
-    private static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
+    /** The strategy used to verify tokens **/
+    public static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
     private static final String WHITELIST = "jwt.alias.whitelist";
     private final Properties options;
     private final PublicKeySource publicKeys;

@@ -11,6 +11,8 @@ fi
 
 GIT_GET="git clone --single-branch --depth 1"
 
+export PSQL_USER=postgres
+
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
@@ -35,15 +37,14 @@ else
     pip install -r config/lib/requirements.txt
 
     # Build resources we might require
-    if [ "$TEST_SUITE" = "selenium" -o "$TEST_SUITE" = "ws-integration" ]; then
+    if [ "$TEST_SUITE" = "selenium" ]; then
         # We will need python requirements for selenium tests
         pip install -r testmodel/webapp/selenium/requirements.txt
-        # We need a running webapp
-        source config/download_and_configure_tomcat.sh
-        sleep 10 # wait for tomcat to come on line
-        echo 'i.am.a.dev = true' >> testmodel/testmodel.properties
-        PSQL_USER=postgres sh testmodel/setup.sh
-        sleep 10 # wait for the webapp to come on line
+    fi
+
+    if [ "$TEST_SUITE" = "selenium" -o "$TEST_SUITE" = "ws-integration" ]; then
+        # We will need a fully operational web-application
+        source config/init-webapp.sh
     elif [ "$TEST_SUITE" = "bio" ]; then
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db
@@ -53,10 +54,12 @@ else
     fi
 
     if [[ "$TEST_SUITE" = "ws-integration" ]]; then
+
         # Warm up the keyword search by requesting results, but ignoring the results
-        $GET $TESTMODEL_URL/service/search > /dev/null
+        $GET "$TESTMODEL_URL/service/search" > /dev/null
         # Start any list upgrades
         $GET "$TESTMODEL_URL/service/lists?token=test-user-token" > /dev/null
+
         if [[ "$CLIENT" = "JS" ]]; then
             # We need the imjs code to exercise the webservices
             $GIT_GET https://github.com/intermine/imjs.git client
