@@ -757,7 +757,8 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
-            final Model model) {
+            final Model model) throws ServletException {
+        String errorKey = "errors.init.objectstoresummary.classcount";
         Map<String, String> classes = new LinkedHashMap<String, String>();
         Map<String, Integer> classCounts = new LinkedHashMap<String, Integer>();
 
@@ -766,10 +767,11 @@ public class InitialiserPlugin implements PlugIn
                 classes.put(className, TypeUtil.unqualifiedName(className));
             }
             try {
-                classCounts.put(className, new Integer(oss.getClassCount(className)));
+                classCounts.put(className, Integer.valueOf(oss.getClassCount(className)));
             } catch (Exception e) {
                 LOG.error("Unable to get class count for " + className, e);
-                blockingErrorKeys.put("errors.init.objectstoresummary.classcount", e.getMessage());
+                blockingErrorKeys.put(errorKey, e.getMessage());
+                throw new ServletException("Could not get class keys");
             }
         }
         servletContext.setAttribute("classes", classes);
@@ -779,7 +781,12 @@ public class InitialiserPlugin implements PlugIn
         for (ClassDescriptor cld : model.getClassDescriptors()) {
             ArrayList<String> subclasses = new ArrayList<String>();
             for (String thisClassName : new TreeSet<String>(getChildren(cld))) {
-                if (classCounts.get(thisClassName).intValue() > 0) {
+                Integer classCount = classCounts.get(thisClassName);
+                if (classCount == null) {
+                    blockingErrorKeys.put(errorKey, thisClassName);
+                    throw new ServletException("Could not find class count for " + thisClassName);
+                }
+                if (classCount.intValue() > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
                 }
             }
