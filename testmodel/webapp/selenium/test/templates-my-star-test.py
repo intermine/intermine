@@ -23,9 +23,6 @@ class TemplatesMyStarTest(Super):
         browser.find_element_by_name("password").send_keys(self.user.password)
         browser.find_element_by_name("action").click()
 
-        # Create a template
-        browser.get(self.base_url + "/import.do")
-
         custom_template = """
             <template name="My_Template_1" title="My Template 1" comment="">
               <query name="CEO_Rivals" model="testmodel" view="CEO.name CEO.salary CEO.seniority CEO.company.name" longDescription="">
@@ -33,7 +30,10 @@ class TemplatesMyStarTest(Super):
               </query>
             </template>"""
 
-        browser.find_element_by_id("xml").send_keys(custom_template)
+        # Create a template
+        browser.get(self.base_url + "/import.do")
+
+        self.wait_for_elem('#xml').send_keys(custom_template)
         browser.find_element_by_css_selector("div > input[type=\"submit\"]").click()
 
         browser.get(self.base_url + "/templates.do")
