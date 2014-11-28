@@ -12,25 +12,28 @@ package org.intermine.web.logic.query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.Path;
@@ -46,7 +49,6 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.querybuilder.DisplayPath;
 
@@ -64,6 +66,7 @@ import org.intermine.web.logic.querybuilder.DisplayPath;
  */
 public class DisplayConstraint
 {
+    private static final Logger LOG = Logger.getLogger(DisplayConstraint.class);
     private Path path;
     private List<DisplayConstraintOption> validOps;
     private AutoCompleter ac;
@@ -743,6 +746,13 @@ public class DisplayConstraint
                 return query.getCandidateLoops(path.getNoConstraintsString());
             }
         }
+    }
+
+    /**
+     * @return true if this path can legally be used with a range constraint.
+     */
+    public boolean isValidRange() {
+        return MainHelper.getValidRangeTargets().contains(path.getEndType());
     }
 
     /**
