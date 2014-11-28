@@ -37,11 +37,11 @@
     <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.path}"/>
   </target>
 
-
   <!-- WAR INSTEAD OF JAR -->
 
   <target name="-check-keystore">
     <script language="javascript">
+      // home, suffix and fileName are all java.lang.String
       var home = project.getProperty('user.home');
       var suffix = project.getProperty('release-suffix');
       var fileName = project.getProperty('intermine.properties.file')
@@ -49,12 +49,12 @@
       project.setProperty('keystore', home + '/.intermine/' + fileName + suffix);
     </script>
     <available file="${keystore}" property="keystore.available"/>
-    <echo>
+    <echo level="debug">
         ${keystore} is available? ${keystore.available}
     </echo>
   </target>
   <target name="-inject-keystore" depends="-check-keystore" if="keystore.available">
-    <echo>
+    <echo level="debug">
         Copying ${keystore} to ${build.dir}/webapp/WEB-INF/keystore.jks
     </echo>
     <copy file="${keystore}"
@@ -88,7 +88,7 @@
 
   <target name="do-jar" depends="-init-presetdef-war, retrieve-objectstore-summary">
       <echo level="debug" message="Running appl do-jar"/>
-    <appl:war/>
+      <appl:war/>
   </target>
 
   <!-- USER PROFILE -->
