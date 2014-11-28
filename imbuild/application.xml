@@ -40,7 +40,18 @@
 
   <!-- WAR INSTEAD OF JAR -->
 
-  <target name="-final-app-pre-jar" depends="-init-properties"
+  <target name="-check-keystore">
+    <property name="keystore"
+      value="${user.home}/.intermine/${mine.dir}-keystore.jks${release-suffix}"/>
+    <available file="${keystore}" property="keystore.available"/>
+  </target>
+  <target name="-inject-keystore" depends="-check-keystore" if="keystore.available">
+    <copy file="${keystore}"
+          tofile="${build.dir}/webapp/WEB-INF/keystore.jks"
+          overwrite="true"/>
+  </target>
+
+  <target name="-final-app-pre-jar" depends="-init-properties, -inject-keystore"
           unless="temporary.webapp.project">
     <!-- Concatenate local build.properties with web.properties -->
     <!-- TODO we only want to copy some properties over -->
@@ -48,6 +59,7 @@
       <fileset file="resources/web.properties"/>
       <fileset file="${build.task.dir}/intermine.properties"/>
     </concat>
+    <!-- Copy intermine.properties onto the classpath -->
     <copy file="${build.task.dir}/intermine.properties"
           tofile="${build.dir}/webapp/WEB-INF/classes/intermine.properties"
           overwrite="true"/>
