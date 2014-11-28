@@ -34,10 +34,18 @@ import org.json.JSONObject;
  */
 public class JWTVerifier
 {
-    private static final String EMAIL_CLAIM = "http://wso2.org/claims/emailaddress";
+    /** This is the key used to establish whether we should verify the audience. **/
+    public static final String VERIFYAUDIENCE = "jwt.verifyaudience";
     /** The strategy used to verify tokens **/
     public static final String VERIFICATION_STRATEGY = "jwt.verification.strategy";
-    private static final String WHITELIST = "jwt.alias.whitelist";
+    /** This is where we get the list of aliases from if the strategy is WHITELIST **/
+    public static final String WHITELIST = "jwt.alias.whitelist";
+
+    private static final String EMAIL_CLAIM = "http://wso2.org/claims/emailaddress";
+    private static final String NOT_FOR_US = "This token was issued for %s. We are %s";
+    private static final String NO_PUBLIC_IDENTITY =
+            "Could not verify audience - no public identity";
+
     private final Properties options;
     private final PublicKeySource publicKeys;
     private final String strategy;
@@ -78,14 +86,18 @@ public class JWTVerifier
         JSONObject header, claims;
         long expiry;
         String issuer;
+        String audience;
         try {
             header = new JSONObject(new String(decoder.decode(pieces[0])));
             claims = new JSONObject(new String(decoder.decode(pieces[1])));
             expiry = claims.getLong("exp");
             issuer = claims.getString("iss");
+            audience = claims.optString("aud");
         } catch (JSONException e) {
             throw new VerificationError("Could not parse token: " + e.getMessage());
         }
+
+        verifyAudience(audience);
 
         // expiry is, as per spec, the number of seconds since the epoch.
         long secondsSinceExpiry = (System.currentTimeMillis() / 1000L) - expiry;
@@ -105,6 +117,20 @@ public class JWTVerifier
     }
 
     /* Private API */
+
+    private void verifyAudience(String audience) throws VerificationError {
+        boolean verifyAudience =
+                "true".equalsIgnoreCase(options.getProperty(VERIFYAUDIENCE, "true"));
+        if (verifyAudience && StringUtils.isNotBlank(audience)) {
+            String self = options.getProperty("jwt.publicidentity");
+            if (self == null) {
+                throw new VerificationError(NO_PUBLIC_IDENTITY);
+            }
+            if (!self.equals(audience)) {
+                throw new VerificationError(String.format(NOT_FOR_US, audience, self));
+            }
+        }
+    }
 
     private String getKeyAlias(String issuer) {
         return options.getProperty("security.keystore.alias." + issuer);

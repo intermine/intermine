@@ -43,6 +43,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -116,6 +117,12 @@ public class InitialiserPlugin implements PlugIn
     Map<String, String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
+
+    private static final Map<String, String> DERIVED_PROPERTIES = new HashMap<String, String>() {
+        {
+            put("jwt.publicidentity", "project.title");
+        }
+    };
 
     private ObjectStoreWriter userprofileOSW;
 
@@ -635,9 +642,23 @@ public class InitialiserPlugin implements PlugIn
         }
         SessionMethods.setPropertiesOrigins(servletContext, origins);
         Properties trimProperties = trimProperties(webProperties);
+        setComputedProperties(trimProperties);
         SessionMethods.setWebProperties(servletContext, trimProperties);
         MainHelper.loadHelpers(trimProperties);
         return trimProperties;
+    }
+
+    // Propagate properties that derive their default values from other properties.
+    private void setComputedProperties(Properties props) {
+        Map<String, String> computedMapping = DERIVED_PROPERTIES;
+        for (String dest: computedMapping.keySet()) {
+            if (StringUtils.isBlank(props.getProperty(dest))) {
+                String src = computedMapping.get(dest);
+                if (src != null) {
+                    props.setProperty(dest, props.getProperty(src));
+                }
+            }
+        }
     }
 
     private Properties trimProperties(Properties webProperties) {
