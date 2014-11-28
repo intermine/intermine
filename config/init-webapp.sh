@@ -25,7 +25,7 @@ keytool -genkey -noprompt \
     -keystore $KEYSTORE
 
 # Make it available to the web-app
-cp $KEYSTORE testmodel/webapp/main/resources/webapp/WEB-INF/keystore.jks
+cp $KEYSTORE ${HOME}/.intermine/testmodel-keystore.jks.demo
 
 # We need a running webapp
 source config/download_and_configure_tomcat.sh
