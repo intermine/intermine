@@ -23,7 +23,7 @@
   <target name="retrieve-objectstore-summary" depends="-init-summarise-objectstore"
           unless="temporary.webapp.project">
     <!-- Summarise objectstore -->
-    <echo message="Retrieving object store summary from ${objectstore.name}..."/>
+    <echo level="debug" message="Retrieving object store summary from ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
                            configFileName="objectstoresummary.config.properties"
                            outputFile="${build.dir}/webapp/WEB-INF/objectstoresummary.properties"/>
@@ -41,11 +41,22 @@
   <!-- WAR INSTEAD OF JAR -->
 
   <target name="-check-keystore">
-    <property name="keystore"
-      value="${user.home}/.intermine/${mine.dir}-keystore.jks${release-suffix}"/>
+    <script language="javascript">
+      var home = project.getProperty('user.home');
+      var suffix = project.getProperty('release-suffix');
+      var fileName = project.getProperty('intermine.properties.file')
+                            .replaceAll('\\.properties', '-keystore.jks');
+      project.setProperty('keystore', home + '/.intermine/' + fileName + suffix);
+    </script>
     <available file="${keystore}" property="keystore.available"/>
+    <echo>
+        ${keystore} is available? ${keystore.available}
+    </echo>
   </target>
   <target name="-inject-keystore" depends="-check-keystore" if="keystore.available">
+    <echo>
+        Copying ${keystore} to ${build.dir}/webapp/WEB-INF/keystore.jks
+    </echo>
     <copy file="${keystore}"
           tofile="${build.dir}/webapp/WEB-INF/keystore.jks"
           overwrite="true"/>
@@ -70,13 +81,13 @@
 
   <target name="-pre-jar" 
           depends="-final-app-pre-jar, webapp.-pre-jar">
-    <echo message="Running appl  pre-jar"/>
+    <echo level="debug" message="Running appl -pre-jar"/>
     <!-- Start with base intermine webapp war -->
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
   </target>
 
   <target name="do-jar" depends="-init-presetdef-war, retrieve-objectstore-summary">
-      <echo message="Running appl  do-jar"/>
+      <echo level="debug" message="Running appl do-jar"/>
     <appl:war/>
   </target>
 
