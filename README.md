@@ -1,7 +1,8 @@
 InterMine
 ============
 
-[![Build Status][travis-badge]][ci]
+Master: [![Build Status: master][travis-badge-master]][ci]
+Beta: [![Build Status: beta][travis-badge-beta]][ci]
 
 A powerful open source data warehouse system. InterMine allows users
 to integrate diverse data sources with a minimum of effort, providing
@@ -67,7 +68,8 @@ See [LICENSE](LICENSE) file for licensing information.
 This product includes software developed by the
 [Apache Software Foundation][apache]
 
-[travis-badge]: https://travis-ci.org/intermine/intermine.svg?branch=beta
+[travis-badge-master]: https://travis-ci.org/intermine/intermine.svg?branch=master
+[travis-badge-beta]: https://travis-ci.org/intermine/intermine.svg?branch=beta
 [ci]: https://travis-ci.org/intermine/intermine
 [readthedocs]: http://intermine.readthedocs.org/en/latest
 [tutorial]: http://intermine.readthedocs.org/en/latest/get-started/tutorial
