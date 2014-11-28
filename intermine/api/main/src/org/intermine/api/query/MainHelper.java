@@ -1636,6 +1636,13 @@ public final class MainHelper
     }
 
     /**
+     * @return set of classes that are legal to use with range constraints
+     */
+    public static Set<Class<?>> getValidRangeTargets() {
+        return RangeConfig.rangeHelpers.keySet();
+    }
+
+    /**
      * Controls access to configuration information on which fields should be summarised as a count
      * of occurrences.
      *
