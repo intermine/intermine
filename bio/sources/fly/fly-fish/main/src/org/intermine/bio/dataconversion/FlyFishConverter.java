@@ -38,7 +38,7 @@ public class FlyFishConverter extends BioFileConverter
     private Map<String, Item> termItems = new HashMap<String, Item>();
 
     Item orgDrosophila;
-    private Item pub, ontology;
+    private Item pub, ontology, devOntology;
     private String[] stages;
     private static final String TAXON_FLY = "7227";
     protected IdResolver rslv;
@@ -65,6 +65,10 @@ public class FlyFishConverter extends BioFileConverter
         ontology = createItem("Ontology");
         ontology.setAttribute("name", "ImaGO");
         store(ontology);
+
+        devOntology = createItem("Ontology");
+        devOntology.setAttribute("name", "Fly Development");
+        store(devOntology);
 
         stages = getStages();
     }
@@ -238,6 +242,7 @@ public class FlyFishConverter extends BioFileConverter
         for (int i = 1; i <= 16; i++) {
             Item stage = createItem("DevelopmentTerm");
             stage.setAttribute("name", "embryonic stage " + i);
+            stage.setReference("ontology", devOntology);
             stageItems[i] = stage.getIdentifier();
             store(stage);
         }
