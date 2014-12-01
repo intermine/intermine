@@ -11,6 +11,7 @@ package org.intermine.api.mines;
  */
 
 import java.io.BufferedReader;
+import java.util.Properties;
 
 /**
  * The type of objects that can request data from mines.
@@ -28,5 +29,11 @@ public interface MineRequester
      * @return A reader over the data.
      */
     BufferedReader requestURL(String urlString, ContentType contentType);
+
+    /**
+     * Accept configuration provided in the form of properties.
+     * @param requesterConfig The configuration.
+     */
+    void configure(Properties requesterConfig);
 
 }

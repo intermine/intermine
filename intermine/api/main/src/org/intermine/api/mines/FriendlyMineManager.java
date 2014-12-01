@@ -23,6 +23,7 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.beans.PartnerLink;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
 
@@ -34,6 +35,10 @@ import org.intermine.util.PropertiesUtil;
  */
 public class FriendlyMineManager
 {
+    private static final String REQUESTER_CONFIG = "friendlymines.requester.config";
+    private static final String DEFAULT_REQR = "org.intermine.api.mines.HttpRequester";
+    private static final String REQUESTER_IMPL = "friendlymines.requester.impl";
+
     @SuppressWarnings("unused") private static final boolean DEBUG = false;
     private static final Logger LOG = Logger.getLogger(FriendlyMineManager.class);
     private static final Map<MultiKey, Collection<PartnerLink>> LINK_CACHE
@@ -45,17 +50,21 @@ public class FriendlyMineManager
     private final LocalMine localMine;
     private final Properties webProperties;
     private final InterMineAPI im;
+    private final MineRequester requester;
 
     /**
      * @param interMineAPI
      *            intermine api
      * @param props
      *            the web properties
+     * @param reqr
+     *            the requester used by remote mine implementations.
      */
-    public FriendlyMineManager(InterMineAPI interMineAPI, Properties props) {
+    FriendlyMineManager(InterMineAPI interMineAPI, Properties props, MineRequester reqr) {
         webProperties = props;
         im = interMineAPI;
         localMine = new LocalMine(im, webProperties);
+        requester = reqr;
         mines.putAll(readConfig());
     }
 
@@ -73,7 +82,9 @@ public class FriendlyMineManager
     public static synchronized
         FriendlyMineManager getInstance(InterMineAPI api, Properties properties) {
         if (!INSTANCE_MAP.containsKey(api)) {
-            INSTANCE_MAP.put(api, new FriendlyMineManager(api, properties));
+            MineRequester r = TypeUtil.createNew(
+                    properties.getProperty(REQUESTER_IMPL, DEFAULT_REQR));
+            INSTANCE_MAP.put(api, new FriendlyMineManager(api, properties, r));
         }
         return INSTANCE_MAP.get(api);
     }
@@ -122,9 +133,11 @@ public class FriendlyMineManager
      * @param imAPI intermine API
      */
     private Map<String, ConfigurableMine> readConfig() {
-        int refreshInterval = getIntProperty("friendlymines.refresh.interval");
-        int timeout         = getIntProperty("friendlymines.requests.timeout");
-        MineRequester httpRequester = new HttpRequester(timeout);
+        int refreshInterval = getIntProperty("friendlymines.refresh.interval", 3600);
+        Properties requesterConfig =
+                PropertiesUtil.stripStart(REQUESTER_CONFIG, webProperties);
+        requester.configure(requesterConfig);
+
         Map<String, ConfigurableMine> newMines = new LinkedHashMap<String, ConfigurableMine>();
         newMines.put(localMine.getID(), localMine);
 
@@ -142,7 +155,7 @@ public class FriendlyMineManager
 
             ConfigurableMine mine = newMines.get(mineId);
             if (mine == null) {
-                mine = new RemoteMine(mineId, httpRequester, refreshInterval);
+                mine = new RemoteMine(mineId, requester, refreshInterval);
             }
             try {
                 mine.configure(mineProps);
@@ -156,8 +169,12 @@ public class FriendlyMineManager
         return newMines;
     }
 
-    private int getIntProperty(String propName) {
-        return Integer.parseInt(getProperty(propName), 10);
+    private int getIntProperty(String propName, int defaultValue) {
+        if (webProperties.containsKey(propName)) {
+            return Integer.parseInt(getProperty(propName), 10);
+        } else {
+            return defaultValue;
+        }
     }
 
     private String getProperty(String propName) {

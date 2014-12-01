@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -30,14 +31,15 @@ public class HttpRequester implements MineRequester
 
     private static final Logger LOG = Logger.getLogger(HttpRequester.class);
 
-    private final int timeout;
+
+    /** The number of seconds we will wait before timing out. **/
+    private int timeout = 20; // seconds
 
     /**
      * Create an object that will make HTTP requests
-     * @param timeoutInSeconds The number of seconds we will wait before timing out.
      */
-    public HttpRequester(int timeoutInSeconds) {
-        this.timeout = timeoutInSeconds;
+    public HttpRequester() {
+        // default no-args constructor
     }
 
     @Override
@@ -74,6 +76,13 @@ public class HttpRequester implements MineRequester
             }
         }
         return reader;
+    }
+
+    @Override
+    public void configure(Properties requesterConfig) {
+        if (requesterConfig.containsKey("timeout")) {
+            this.timeout = Integer.parseInt(requesterConfig.getProperty("timeout"), 10);
+        }
     }
 
 }
