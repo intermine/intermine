@@ -38,8 +38,9 @@
        <include name="bio/tools/test/build.xml"/>
        <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
        <exclude name="bio/sources/example-sources/**/test/build.xml"/>
-       <!-- Requires all the sources to be built. -->
+       <!-- Requires all the sources to be built.
        <include name="bio/sources/*/test/build.xml"/>
+       -->
       </fileset>
     </subant>
   </target>
