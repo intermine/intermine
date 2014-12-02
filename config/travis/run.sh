@@ -41,7 +41,11 @@ elif [ "$TEST_SUITE" = "web" ]; then
 elif [ "$TEST_SUITE" = "webtasks" ]; then
     ant_test 'intermine/webtasks'
 elif [ "$TEST_SUITE" = "bio" ]; then
-    ant_test 'bio/core'
+    echo "RUNNING bio tests"
+    ant -f 'bio/test-all/build.xml' fulltest
+    echo CHECKING results
+    ./config/lib/parse_test_report.py "bio/test-all/build/test/results"
+    echo ALL TESTS PASSED
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ant -f 'intermine/all/build.xml' checkstyle
     ./config/lib/parse_checkstyle_report.py 'intermine/all/build/checkstyle/checkstyle_report.xml'
