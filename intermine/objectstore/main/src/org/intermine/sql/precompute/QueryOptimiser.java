@@ -41,6 +41,7 @@ import org.intermine.sql.query.InListConstraint;
 import org.intermine.sql.query.NotConstraint;
 import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.Query;
+import org.intermine.sql.query.QueryParseTimeoutException;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.SubQuery;
 import org.intermine.sql.query.SubQueryConstraint;
@@ -223,7 +224,7 @@ public final class QueryOptimiser
                 // to say optimisation is not worth it, before parsing.
                 bestQuery.add(query);
                 if (originalQuery == null) {
-                    originalQuery = new Query(query);
+                    originalQuery = new Query(query, context.getMaxQueryParseTime());
                 }
                 parseTime = new Date().getTime();
                 recursiveOptimiseCheckSubquery(precomputedTables, originalQuery, bestQuery);
@@ -235,6 +236,15 @@ public final class QueryOptimiser
                 //}
                 if (context.isVerbose()) {
                     System.out .println("QueryOptimiser: bailing out early: " + e);
+                }
+            } catch (QueryParseTimeoutException e) {
+                LOG.warn("QueryOptimiser aborted parsing query after "
+                        + context.getMaxQueryParseTime() + "ms. " + query);
+                if (context.isVerbose()) {
+                    System.out
+                            .println("QueryOptimiser: parsing SQL query took too long,"
+                                    + " bailing out early (time limit: "
+                                    + context.getMaxQueryParseTime() + ")");
                 }
             } finally {
                 if (context.isVerbose()) {
