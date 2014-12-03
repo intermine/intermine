@@ -13,6 +13,12 @@ options {
     defaultErrorHandler = false;
 }
 
+// NOTE - BIOSEG_CONSTRAINT and INT4RANGE_CONSTRAINT are commented out throughout this file.
+// BIOSEG_CONSTRAINT was being parsed here but isn't included in the java classes that represent
+// sql queries. The BIOSEG_CONSTRAINT was parsed then dropped from the query, which could lead to
+// bad matches to precomputed tables. Parsing has been removed here, which means and query that
+// includes range constraints won't be optimised but bad precompute matches won't occur.
+
 tokens {
     SQL_STATEMENT;
     SELECT_LIST;
@@ -41,9 +47,10 @@ tokens {
     SUBQUERY_CONSTRAINT;
     INLIST_CONSTRAINT;
     ORDER_DESC;
-//    BIOSEG_CONSTRAINT;
+//    BIOSEG_CONSTRAINT;    see NOTE above
 //    INT4RANGE_CONSTRAINT;
 }
+
 
 start_rule: sql ;
 
@@ -481,6 +488,7 @@ safe_abstract_constraint: (paren_constraint)=> paren_constraint
             | (inlist_constraint)=> inlist_constraint
             | constraint
             | not_constraint
+// see NOTE above
 //            | bioseg_constraint
 //            | int4range_constraint
     ;
@@ -501,10 +509,12 @@ not_constraint: "not"! safe_abstract_constraint
         { #not_constraint = #([NOT_CONSTRAINT, "NOT_CONSTRAINT"], #not_constraint); }
     ;
 
+// see NOTE above
 //bioseg_constraint: "bioseg_create"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN! (OVERLAP | INSIDE | SURROUND) "bioseg_create"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
 //        { #bioseg_constraint = #([BIOSEG_CONSTRAINT, "BIOSEG_CONSTRAINT"], #bioseg_constraint); }
 //    ;
 
+// see NOTE above
 //int4range_constraint: "int4range"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN! (OVERLAP | INSIDE | SURROUND) "int4range"! OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
 //        { #int4range_constraint = #([INT4RANGE_CONSTRAINT, "INT4RANGE_CONSTRAINT"], #int4range_constraint); }
 //    ;
