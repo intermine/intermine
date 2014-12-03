@@ -227,6 +227,15 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsConstraintNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("ContainsConstraintNotNull", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NOT NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNotNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
+        results.put("ContainsConstraintNullCollection1N", "SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollection1N", new HashSet(Arrays.asList(new String[] {"Employee", "Department", "InterMineObject"})));
+        results.put("ContainsConstraintNotNullCollection1N", "SELECT a1_.id AS a1_id FROM Department AS a1_ WHERE EXISTS(SELECT 1 FROM Employee AS indirect0 WHERE indirect0.departmentId = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollection1N", new HashSet(Arrays.asList(new String[] {"Employee", "Department", "InterMineObject"})));
+        results.put("ContainsConstraintNullCollectionMN", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE (NOT EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollectionMN", new HashSet(Arrays.asList(new String[] {"Company", "CompanysContractors", "InterMineObject"})));
+        results.put("ContainsConstraintNotNullCollectionMN", "SELECT a1_.id AS a1_id FROM Company AS a1_ WHERE EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollectionMN", new HashSet(Arrays.asList(new String[] {"Company", "CompanysContractors", "InterMineObject"})));
+
         results.put("ContainsConstraintObjectRefObject", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.departmentId = 5 ORDER BY a1_.id");
         results2.put("ContainsConstraintObjectRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("ContainsConstraintNotObjectRefObject", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.departmentId != 5 ORDER BY a1_.id");
@@ -519,14 +528,21 @@ public class SqlGeneratorTest extends SetupDataTestCase
                 fail("No result found for " + type);
             }
 
-            // These are queries the optimiser can't parse so we don't want to test precomputes
-            Set<String> doNotTestPrecompute = new HashSet<String>(Arrays.asList(
-                    new String[] {"SubqueryExistsConstraint", "NotSubqueryExistsConstraint",
-                            "SubqueryExistsConstraintNeg", "ObjectStoreBagCombination2",
-                            "RangeDoesNotOverlap", "RangeOverlapsValues", "RangeOverlaps"}));
+            // Sql containing sub-queries or range constraints can't be parsed by the optimisier,
+            // we don't want to test precomputing for these.
 
-            // TODO: extend sql so that it can represent these
-            if (!doNotTestPrecompute.contains(type)) {
+            if (!("SubqueryExistsConstraint".equals(type)
+                    || "NotSubqueryExistsConstraint".equals(type)
+                    || "SubqueryExistsConstraintNeg".equals(type)
+                    || "ObjectStoreBagCombination2".equals(type)
+                    || "ContainsConstraintNullCollection1N".equals(type)
+                    || "ContainsConstraintNotNullCollection1N".equals(type)
+                    || "ContainsConstraintNullCollectionMN".equals(type)
+                    || "ContainsConstraintNotNullCollectionMN".equals(type)
+                    || "RangeDoesNotOverlap".equals(type)
+                    || "RangeOverlapsValues".equals(type)
+                    || "RangeOverlaps".equals(type))) {
+
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
