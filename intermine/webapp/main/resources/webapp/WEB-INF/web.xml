@@ -10,6 +10,11 @@
     <param-value>InterMineWebApp</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>clearReferencesStopTimerThreads</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
   <listener>
     <listener-class>org.intermine.web.logic.session.SessionListener</listener-class>
   </listener>
