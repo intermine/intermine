@@ -682,6 +682,7 @@ public final class KeywordSearch
             Map<Integer, InterMineObject> objMap = Objects.getObjects(im, objectIds);
             searchHits = getSearchHits(browseHits, objMap);
             searchResultsFacets = parseFacets(results, facets, facetValues);
+            results.close();
         }
         return new ResultsWithFacets(searchHits, searchResultsFacets);
     }
