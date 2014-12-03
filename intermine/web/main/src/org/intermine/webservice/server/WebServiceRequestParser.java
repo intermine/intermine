@@ -32,10 +32,10 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  **/
 public class WebServiceRequestParser
 {
-	/** The smallest legal result size you can request **/
+    /** The smallest legal result size you can request **/
     public static final int MIN_LIMIT = 1;
 
-	/** Name of start parameter that determines index of first returned result. */
+    /** Name of start parameter that determines index of first returned result. */
     public static final String START_PARAMETER = "start";
 
     /** Name of size parameter that determines number of returned results. */
