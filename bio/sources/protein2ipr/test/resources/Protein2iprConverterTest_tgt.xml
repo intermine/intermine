@@ -1,96 +1,137 @@
 <items>
-<item id="8_1" class="CrossReference">
-<attribute name="identifier" value="11111"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="7_1"/>
+<item id="3_8" class="ProteinDomainRegion">
+<attribute name="end" value="289"/>
+<attribute name="originalDb" value="PRINTS"/>
+<attribute name="originalId" value="PR00025"/>
+<attribute name="start" value="282"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_5"/>
 </item>
-<item id="9_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="4_6" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR020479"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_2" class="Interaction">
-<reference name="gene1" ref_id="7_1"/>
-<reference name="gene2" ref_id="7_2"/>
-</item>
-<item id="6_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="4_1" class="InteractionTerm">
-<attribute name="identifier" value="MI:0018"/>
+<item id="4_2" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001827"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="7_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn001"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequenceOntologyTerm" ref_id="9_1"/>
-<collection name="crossReferences"><reference ref_id="8_1"/></collection>
+<item id="3_7" class="ProteinDomainRegion">
+<attribute name="end" value="353"/>
+<attribute name="originalDb" value="PROSITE"/>
+<attribute name="originalId" value="PS00027"/>
+<attribute name="start" value="330"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_4"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="InterPro"/>
+</item>
+<item id="5_1" class="Protein">
+<attribute name="primaryAccession" value="P02833"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_1" class="Interaction">
-<reference name="gene1" ref_id="7_2"/>
-<reference name="gene2" ref_id="7_1"/>
+<item id="3_1" class="ProteinDomainRegion">
+<attribute name="end" value="354"/>
+<attribute name="originalDb" value="Pfam"/>
+<attribute name="originalId" value="PF00046"/>
+<attribute name="start" value="298"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_1"/>
 </item>
-<item id="11_1" class="InteractionDetail">
-<attribute name="name" value="interaction Short Label"/>
-<attribute name="role1" value="prey"/>
-<attribute name="role2" value="bait"/>
-<attribute name="type" value="physical"/>
-<reference name="experiment" ref_id="5_1"/>
-<reference name="interaction" ref_id="10_1"/>
-<reference name="relationshipType" ref_id="4_2"/>
-<collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
+<item id="3_3" class="ProteinDomainRegion">
+<attribute name="end" value="359"/>
+<attribute name="originalDb" value="SMART"/>
+<attribute name="originalId" value="SM00389"/>
+<attribute name="start" value="297"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_1"/>
+</item>
+<item id="4_1" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001356"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="8_2" class="CrossReference">
-<attribute name="identifier" value="12345"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="7_2"/>
+<item id="3_6" class="ProteinDomainRegion">
+<attribute name="end" value="357"/>
+<attribute name="originalDb" value="SUPERFAMILY"/>
+<attribute name="originalId" value="SSF46689"/>
+<attribute name="start" value="276"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_3"/>
 </item>
-<item id="7_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn002"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequenceOntologyTerm" ref_id="9_1"/>
-<collection name="crossReferences"><reference ref_id="8_2"/></collection>
+<item id="3_12" class="ProteinDomainRegion">
+<attribute name="end" value="353"/>
+<attribute name="originalDb" value="PRINTS"/>
+<attribute name="originalId" value="PR00024"/>
+<attribute name="start" value="344"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_6"/>
+</item>
+<item id="3_2" class="ProteinDomainRegion">
+<attribute name="end" value="355"/>
+<attribute name="originalDb" value="PROSITE"/>
+<attribute name="originalId" value="PS50071"/>
+<attribute name="start" value="295"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_1"/>
+</item>
+<item id="3_10" class="ProteinDomainRegion">
+<attribute name="end" value="330"/>
+<attribute name="originalDb" value="PRINTS"/>
+<attribute name="originalId" value="PR00024"/>
+<attribute name="start" value="319"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_6"/>
+</item>
+<item id="4_4" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR017970"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_1" class="DataSet">
-<attribute name="name" value="BioGRID interaction data set"/>
+<attribute name="name" value="InterPro data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="4_2" class="InteractionTerm">
-<attribute name="identifier" value="MI:0407"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="3_11" class="ProteinDomainRegion">
+<attribute name="end" value="344"/>
+<attribute name="originalDb" value="PRINTS"/>
+<attribute name="originalId" value="PR00024"/>
+<attribute name="start" value="334"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_6"/>
 </item>
-<item id="4_3" class="InteractionTerm">
-<attribute name="identifier" value="MI:0796"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="3_4" class="ProteinDomainRegion">
+<attribute name="end" value="288"/>
+<attribute name="originalDb" value="PROSITE"/>
+<attribute name="originalId" value="PS00032"/>
+<attribute name="start" value="283"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_2"/>
 </item>
-<item id="11_2" class="InteractionDetail">
-<attribute name="name" value="interaction Short Label"/>
-<attribute name="role1" value="bait"/>
-<attribute name="role2" value="prey"/>
-<attribute name="type" value="physical"/>
-<reference name="experiment" ref_id="5_1"/>
-<reference name="interaction" ref_id="10_2"/>
-<reference name="relationshipType" ref_id="4_2"/>
-<collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="3_9" class="ProteinDomainRegion">
+<attribute name="end" value="313"/>
+<attribute name="originalDb" value="PRINTS"/>
+<attribute name="originalId" value="PR00025"/>
+<attribute name="start" value="298"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_5"/>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="3_1" class="Publication">
-<attribute name="pubMedId" value="14605208"/>
+<item id="4_3" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR009057"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="BioGRID"/>
+<item id="4_5" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR017995"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="5_1" class="InteractionExperiment">
-<attribute name="description" value="A protein interaction map of Drosophila melanogaster."/>
-<attribute name="name" value="Giot L (2003)"/>
-<reference name="publication" ref_id="3_1"/>
-<collection name="interactionDetectionMethods"><reference ref_id="4_1"/></collection>
+<item id="3_5" class="ProteinDomainRegion">
+<attribute name="end" value="358"/>
+<attribute name="originalDb" value="Gene3D"/>
+<attribute name="originalId" value="G3DSA:1.10.10.60"/>
+<attribute name="start" value="267"/>
+<reference name="protein" ref_id="5_1"/>
+<reference name="proteinDomain" ref_id="4_3"/>
 </item>
 </items>

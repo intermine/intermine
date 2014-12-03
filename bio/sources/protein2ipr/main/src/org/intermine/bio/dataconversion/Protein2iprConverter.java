@@ -185,7 +185,10 @@ public class Protein2iprConverter extends BioFileConverter
 
     private String osAlias = null;
 
-    private void setOsAlias(String osAlias) {
+    /**
+     * @param osAlias osAlias
+     */
+    protected void setOsAlias(String osAlias) {
         this.osAlias = osAlias;
     }
 
