@@ -519,8 +519,14 @@ public class SqlGeneratorTest extends SetupDataTestCase
                 fail("No result found for " + type);
             }
 
+            // These are queries the optimiser can't parse so we don't want to test precomputes
+            Set<String> doNotTestPrecompute = new HashSet<String>(Arrays.asList(
+                    new String[] {"SubqueryExistsConstraint", "NotSubqueryExistsConstraint",
+                            "SubqueryExistsConstraintNeg", "ObjectStoreBagCombination2",
+                            "RangeDoesNotOverlap", "RangeOverlapsValues", "RangeOverlaps"}));
+
             // TODO: extend sql so that it can represent these
-            if (!("SubqueryExistsConstraint".equals(type) || "NotSubqueryExistsConstraint".equals(type) || "SubqueryExistsConstraintNeg".equals(type) || "ObjectStoreBagCombination2".equals(type))) {
+            if (!doNotTestPrecompute.contains(type)) {
                 // And check that the SQL generated is high enough quality to be parsed by the
                 // optimiser.
                 org.intermine.sql.query.Query sql = new org.intermine.sql.query.Query(generated);
