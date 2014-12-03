@@ -20,9 +20,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/postgresql-9.3-1101.jdbc4.jar"/>
 	<classpathentry exported="true" kind="lib" path="/intermine-model-main/lib/cglib-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-simple-1.7.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/javassist-3.12.1.GA.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-digester-2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/javassist-3.18.2.GA.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
