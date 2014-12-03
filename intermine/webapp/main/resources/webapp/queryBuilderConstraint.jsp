@@ -350,7 +350,7 @@
 <!--
    RANGE CONSTRAINT
 -->
-  <c:if test="${dec.validRange}">
+  <c:if test="${dec.validRange && !dec.path.attribute}">
   <br/>
   <FIELDSET class="constraintFieldset">
     <LEGEND>
