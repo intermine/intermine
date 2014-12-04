@@ -52,8 +52,13 @@ else
     elif [ "$TEST_SUITE" = "bio" ]; then
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db
+        echo '#---> building bio tools'
+        ant -f bio/tools/main/build.xml clean default >> $BUILD_LOG
         echo '#---> Building bio sources'
-        find bio/sources/ -path '*/main/build.xml' ! -path '*example*' ! -path '*retired*' -exec ant -f '{}' clean default ';' 2>&1 >> $BUILD_LOG
+        for biosrc in $(find bio/sources/ -path '*/main/build.xml' ! -path '*example*' ! -path '*retired*'); do
+            echo "#------> building $biosrc"
+            ant -f "$biosrc" clean default 2>&1 >> $BUILD_LOG
+        done
     elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" ]; then
         # api, webtasks and web need the testmodel to be built
         ant -f testmodel/dbmodel/build.xml build-db
