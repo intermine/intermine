@@ -33,6 +33,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
+import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
@@ -148,7 +149,7 @@ public class ListUploadService extends ListMakerService
         if (input.doReplace()) {
             ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
         }
-        if (profile.getCurrentSavedBags().containsKey(input.getListName())) {
+        if (profile.getAllBags().containsKey(input.getListName())) {
             throw new BadRequestException(
                 "Attempt to overwrite an existing bag - name: '"
                 + input.getListName() + "'");
@@ -198,19 +199,25 @@ public class ListUploadService extends ListMakerService
         throws IOException, ClassNotFoundException, InterMineException, ObjectStoreException {
         final Collection<String> addIssues = input.getAddIssues();
         String line;
-        final BufferedReader r = getReader(request);
         final StrMatcher matcher = getMatcher();
-        while ((line = r.readLine()) != null) {
-            final StrTokenizer st =
-                new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
-            while (st.hasNext()) {
-                final String token = st.nextToken();
-                ids.add(token);
+        final BufferedReader r = getReader(request);
+        try {
+            while ((line = r.readLine()) != null) {
+                final StrTokenizer st =
+                    new StrTokenizer(line, matcher, StrMatcher.doubleQuoteMatcher());
+                while (st.hasNext()) {
+                    final String token = st.nextToken();
+                    ids.add(token);
+                }
+                if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
+                    addIdsToList(ids, tempBag, type, input.getExtraValue(),
+                            unmatchedIds, addIssues);
+                    ids.clear();
+                }
             }
-            if (ids.size() >= BAG_QUERY_MAX_BATCH_SIZE) {
-                addIdsToList(ids, tempBag, type, input.getExtraValue(),
-                        unmatchedIds, addIssues);
-                ids.clear();
+        } finally {
+            if (r != null) {
+                r.close();
             }
         }
         if (ids.size() > 0) {
