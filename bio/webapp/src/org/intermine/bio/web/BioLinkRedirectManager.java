@@ -24,7 +24,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Contructs an alternate object details link pointing to an external URL for use in results table.
@@ -105,7 +105,7 @@ public class BioLinkRedirectManager extends LinkRedirectManager
                 String dataSourceUrl = null;
                 try {
                     dataSourceName = (String) ds.getFieldValue("name");
-                     dataSourceUrl = (String) ds.getFieldValue("url");
+                    dataSourceUrl = (String) ds.getFieldValue("url");
                 } catch (IllegalAccessException e) {
                     // Do nothing
                 }

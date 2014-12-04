@@ -10,7 +10,7 @@ package org.intermine.pathquery;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /**
  * Representation of a lookup constraint in the PathQuery

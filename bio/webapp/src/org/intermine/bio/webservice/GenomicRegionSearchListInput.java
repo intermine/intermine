@@ -1,5 +1,15 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,22 +27,26 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.bio.web.logic.GenomicRegionSearchQueryRunner;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
+import org.intermine.bio.web.logic.RegionParseException;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
-import org.intermine.bio.web.model.RegionParseException;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GenomicRegionSearchListInput extends ListInput {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class GenomicRegionSearchListInput extends ListInput
+{
 
     private final InterMineAPI api;
     private final GenomicRegionSearchInfo info;
@@ -44,7 +58,7 @@ public class GenomicRegionSearchListInput extends ListInput {
      * @param bagManager A bag manager.
      * @param profile The current user.
      * @param im The InterMine API
-     * @throws JSONException If the region request is malformed.
+     * @throws Exception If the region request is malformed.
      */
     public GenomicRegionSearchListInput(HttpServletRequest request,
             BagManager bagManager, Profile profile, InterMineAPI im)
@@ -99,12 +113,21 @@ public class GenomicRegionSearchListInput extends ListInput {
         }
     }
 
+    /**
+     * @return region search results
+     */
     public GenomicRegionSearchInfo getSearchInfo() {
         return info;
     }
 
-    public class GenomicRegionSearchInfo {
-        private final String SF = "org.intermine.model.bio.SequenceFeature";
+    /**
+     *
+     * @author Alex
+     *
+     */
+    public class GenomicRegionSearchInfo
+    {
+        private final String sequenceFeature = "org.intermine.model.bio.SequenceFeature";
         private String organism;
         private Set<String> featureTypes;
         private Set<ClassDescriptor> featureCds;
@@ -113,15 +136,33 @@ public class GenomicRegionSearchListInput extends ListInput {
         private boolean isInterbase = false;
         private Set<String> invalidSpans = new HashSet<String>();
 
+        /**
+         *
+         * @return set of invalid spans
+         */
         public Set<String> getInvalidSpans() {
             return invalidSpans;
         }
+
+        /**
+         * @return organism
+         */
         public String getOrganism() {
             return organism;
         }
+
+        /**
+         *
+         * @param organism organism
+         */
         public void setOrganism(String organism) {
             this.organism = organism;
         }
+
+        /**
+         *
+         * @return featuretypes
+         */
         public Set<String> getFeatureTypes() {
             return Collections.unmodifiableSet(featureTypes);
         }
@@ -140,20 +181,21 @@ public class GenomicRegionSearchListInput extends ListInput {
 
             Set<String> badTypes = new HashSet<String>();
             Model model = api.getModel();
-            ClassDescriptor sfCd = model.getClassDescriptorByName(SF);
+            ClassDescriptor sfCd = model.getClassDescriptorByName(sequenceFeature);
             for (String f : this.featureTypes) {
                 ClassDescriptor cld = model.getClassDescriptorByName(f);
                 if (cld == null) {
                     badTypes.add(f);
                 } else {
                     try {
-                        if (!SF.equals(f) && !sfCd.getUnqualifiedName().equals(f)
-                                && !ClassDescriptor.findSuperClassNames(model, f).contains(SF)) {
-                            throw new BadRequestException(f + " is not a " + SF);
+                        if (!sequenceFeature.equals(f) && !sfCd.getUnqualifiedName().equals(f)
+                                && !ClassDescriptor.findSuperClassNames(model, f)
+                                    .contains(sequenceFeature)) {
+                            throw new BadRequestException(f + " is not a " + sequenceFeature);
                         }
                     } catch (MetaDataException e) {
                         // This should never happen.
-                        throw new InternalErrorException(e);
+                        throw new ServiceException(e);
                     }
                     featureCds.add(cld);
                     for (ClassDescriptor subCld : model.getAllSubs(cld)) {
@@ -170,14 +212,14 @@ public class GenomicRegionSearchListInput extends ListInput {
         /**
          * Returns an unmodifiable set of the classdescriptors corresponding to the
          * feature types in this query.
-         * @return
+         * @return feature class descriptors
          */
         public Set<ClassDescriptor> getFeatureCds() {
             return Collections.unmodifiableSet(featureCds);
         }
 
         /**
-         * Returns an unmodifiable set of the classes that the Class-Descriptors
+         * @return an unmodifiable set of the classes that the Class-Descriptors
          * in this query represent.
          */
         public Set<Class<?>> getFeatureClasses() {
@@ -188,43 +230,78 @@ public class GenomicRegionSearchListInput extends ListInput {
             return Collections.unmodifiableSet(ftSet);
         }
 
+        /**
+         *
+         * @return regions
+         */
         public List<String> getRegions() {
             return regions;
         }
 
+        /**
+         *
+         * @param regions regions
+         */
         public void setRegions(List<String> regions) {
             this.regions = regions;
         }
 
+        /**
+         *
+         * @return list of valid regions
+         */
         public List<GenomicRegion> getGenomicRegions() {
             Set<String> spans = new HashSet<String>(getRegions());
-            List<GenomicRegion> regions = new ArrayList<GenomicRegion>();
+            List<GenomicRegion> newRegions = new ArrayList<GenomicRegion>();
             Map<String, ChromosomeInfo> chromsForOrg
-                = GenomicRegionSearchQueryRunner.getChromosomeInfo(
-                        api, SessionMethods.getProfile(request.getSession())).get(getOrganism());
+                = GenomicRegionSearchQueryRunner.getChromosomeInfo(api).get(getOrganism());
             for (String span : spans) {
                 try {
-                    regions.add(GenomicRegionSearchUtil.parseRegion(span, isInterbase(), chromsForOrg));
+                    newRegions.add(GenomicRegionSearchUtil.parseRegion(
+                            span, isInterbase(), chromsForOrg));
                 } catch (RegionParseException e) {
                     invalidSpans.add(span + "; " + e.getMessage());
                 }
             }
-            return regions;
+            return newRegions;
         }
 
+        /**
+         *
+         * @return extension
+         */
         public int getExtension() {
             return extension;
         }
+
+        /**
+         *
+         * @param extension extension
+         */
         public void setExtension(int extension) {
             this.extension = extension;
         }
+
+        /**
+         *
+         * @return true if interbase
+         */
         public boolean isInterbase() {
             return isInterbase;
         }
+
+        /**
+         *
+         * @param isInterbase true if interbase
+         */
         public void setInterbase(boolean isInterbase) {
             this.isInterbase = isInterbase;
         }
 
+        /**
+         *
+         * @return region search constraint
+         */
         public GenomicRegionSearchConstraint asSearchConstraint() {
             GenomicRegionSearchConstraint grsc = new GenomicRegionSearchConstraint();
             grsc.setOrgName(organism);

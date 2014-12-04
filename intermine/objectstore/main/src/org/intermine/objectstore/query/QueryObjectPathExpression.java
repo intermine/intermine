@@ -16,10 +16,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
@@ -51,8 +52,8 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
      * Constructs a QueryObjectPathExpression representing an object reference from the given
      * QueryClass to the given fieldname.
      *
-     * @param qc the QueryClass
-     * @param fieldName the name of the relevant field
+     * @param qc the QueryClass of the starting class
+     * @param fieldName the name of field in qc we want to perform an outer join on
      * @throws IllegalArgumentException if the field is not an object reference
      */
     public QueryObjectPathExpression(QueryClass qc, String fieldName) {

@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
@@ -45,11 +44,12 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.bio.web.struts.GenomicRegionSearchForm;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -61,7 +61,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
@@ -74,9 +73,6 @@ import org.json.JSONObject;
  */
 public class GenomicRegionSearchService
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
-
     private InterMineAPI interMineAPI = null;
     private Model model = null;
     private ObjectStore objectStore = null;
@@ -109,7 +105,6 @@ public class GenomicRegionSearchService
      * To set globally used variables.
      * @param request HttpServletRequest
      */
-    @SuppressWarnings("unchecked")
     public void init (HttpServletRequest request) {
         this.webProperties = SessionMethods.getWebProperties(
                 request.getSession().getServletContext());
@@ -467,40 +462,7 @@ public class GenomicRegionSearchService
                     "feature types");
         }
 
-        // featureTypes in this case are (the last bit of) class instead of
-        // featuretype in the db table; gain the full name by Model.getQualifiedTypeName(className)
-        Set<Class<?>> ftSet = new HashSet<Class<?>>();
-        for (String f : featureTypes) {
-            ClassDescriptor cld = model.getClassDescriptorByName(f);
-            ftSet.add(cld.getType());
-            // get all subclasses
-            for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                ftSet.add(subCld.getType());
-            }
-        }
-
-        String ftString = "";
-        for (String aFeaturetype : featureTypes) {
-            aFeaturetype = WebUtil.formatPath(aFeaturetype, interMineAPI, webConfig);
-            ftString = ftString + aFeaturetype + ", ";
-        }
-        selectionInfo.add("<b>Selected feature types: </b>"
-                + ftString.substring(0, ftString.lastIndexOf(", ")));
-
-        if (Integer.parseInt(extendedRegionSize) > 0) {
-            if (Integer.parseInt(extendedRegionSize) >= 1000
-                    && Integer.parseInt(extendedRegionSize) < 1000000) {
-                selectionInfo.add("<b>Extend Regions: </b>"
-                        + new DecimalFormat("#.##").format(Integer
-                                .parseInt(extendedRegionSize) / 1000) + " kbp");
-            } else if (Integer.parseInt(extendedRegionSize) >= 1000000) {
-                selectionInfo.add("<b>Extend Regions: </b>"
-                        + new DecimalFormat("#.##").format(Integer
-                                .parseInt(extendedRegionSize) / 1000000) + " Mbp");
-            } else {
-                selectionInfo.add("<b>Extend Regions: </b>" + extendedRegionSize + "bp");
-            }
-        }
+        Set<Class<?>> ftSet = getFeatureTypes(featureTypes, extendedRegionSize);
 
         grsc.setFeatureTypes(ftSet);
 
@@ -532,12 +494,10 @@ public class GenomicRegionSearchService
                 String mimetype = formFile.getContentType();
                 if (!"application/octet-stream".equals(mimetype)
                         && !mimetype.startsWith("text")) {
-                    return new ActionMessage("genomicRegionSearch.isNotText",
-                            mimetype);
+                    return new ActionMessage("genomicRegionSearch.isNotText", mimetype);
                 }
                 if (formFile.getFileSize() == 0) {
-                    return new ActionMessage(
-                            "genomicRegionSearch.noSpanFileOrEmpty");
+                    return new ActionMessage("genomicRegionSearch.noSpanFileOrEmpty");
                 }
                 try {
                     reader = new BufferedReader(new InputStreamReader(
@@ -549,6 +509,10 @@ public class GenomicRegionSearchService
                 }
             }
         } else {
+            return new ActionMessage("genomicRegionSearch.spanInputType");
+        }
+
+        if (reader == null) {
             return new ActionMessage("genomicRegionSearch.spanInputType");
         }
 
@@ -568,8 +532,7 @@ public class GenomicRegionSearchService
 
             for (int i = 0; i < read; i++) {
                 if (buf[i] == 0) {
-                    return new ActionMessage("genomicRegionSearch.isNotText",
-                            "binary");
+                    return new ActionMessage("genomicRegionSearch.isNotText", "binary");
                 }
             }
 
@@ -677,6 +640,45 @@ public class GenomicRegionSearchService
         return null;
     }
 
+    private Set<Class<?>> getFeatureTypes(String[] featureTypes,
+            String extendedRegionSize) {
+        // featureTypes in this case are (the last bit of) class instead of
+        // featuretype in the db table; gain the full name by Model.getQualifiedTypeName(className)
+        Set<Class<?>> ftSet = new HashSet<Class<?>>();
+        for (String f : featureTypes) {
+            ClassDescriptor cld = model.getClassDescriptorByName(f);
+            ftSet.add(cld.getType());
+            // get all subclasses
+            for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                ftSet.add(subCld.getType());
+            }
+        }
+
+        String ftString = "";
+        for (String aFeaturetype : featureTypes) {
+            aFeaturetype = WebUtil.formatPath(aFeaturetype, interMineAPI, webConfig);
+            ftString = ftString + aFeaturetype + ", ";
+        }
+        selectionInfo.add("<b>Selected feature types: </b>"
+                + ftString.substring(0, ftString.lastIndexOf(", ")));
+
+        if (Integer.parseInt(extendedRegionSize) > 0) {
+            if (Integer.parseInt(extendedRegionSize) >= 1000
+                    && Integer.parseInt(extendedRegionSize) < 1000000) {
+                selectionInfo.add("<b>Extend Regions: </b>"
+                        + new DecimalFormat("#.##").format(Integer
+                                .parseInt(extendedRegionSize) / 1000) + " kbp");
+            } else if (Integer.parseInt(extendedRegionSize) >= 1000000) {
+                selectionInfo.add("<b>Extend Regions: </b>"
+                        + new DecimalFormat("#.##").format(Integer
+                                .parseInt(extendedRegionSize) / 1000000) + " Mbp");
+            } else {
+                selectionInfo.add("<b>Extend Regions: </b>" + extendedRegionSize + "bp");
+            }
+        }
+        return ftSet;
+    }
+
     /**
      * To prepare queries for genomic regions
      *
@@ -702,7 +704,7 @@ public class GenomicRegionSearchService
      * @return chrInfoMap
      */
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
-        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI, profile);
+        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI);
     }
 
     /**
@@ -1115,388 +1117,22 @@ public class GenomicRegionSearchService
             if (features != null) {
                 if (aboveCutOffFeatureTypeMap == null || aboveCutOffFeatureTypeMap.size() == 0) {
                     int length = features.size();
-                    List<String> firstFeature = features.get(0);
-
-                    String firstId = firstFeature.get(0);
-                    String firstPid = firstFeature.get(1);
-                    String firstSymbol = firstFeature.get(2);
-                    String firstFeatureType = firstFeature.get(3); // Class name
-                    String firstChr = firstFeature.get(4);
-                    String firstStart = firstFeature.get(5);
-                    String firstEnd = firstFeature.get(6);
-
-                    String loc = firstChr + ":" + firstStart + ".." + firstEnd;
-
-                    // translatedClassName
-                    String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
-                            webConfig);
-
-                    String firstSoTermDes = firstFeatureType;
-                    if (featureTypeToSOTermMap.get(firstFeatureType) != null) {
-                        firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
-                    }
-
-//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
-
-                    sb.append("<tr><td valign='top' rowspan='" + length + "'>");
-
-                    if (isJBrowseEnabled()) {
-                        sb.append("<b><a title='view region in genome browser' "
-                                + "target='genome-browser' href='"
-                                + generateJBrowseURL(s)
-                                + "'>" + span + "</a></b>");
-                    } else {
-                        sb.append("<b>" + span + "</b>");
-                    }
-
-                    if (!"false".equals(exportChromosomeSegment)) {
-                        sb.append("<span style=\"padding: 10px;\">"
-                                + "<a href='javascript: exportFeatures(\""
-                                + s.getFullRegionInfo()
-                                + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
-                                + "region as FASTA\" class=\"fasta\" "
-                                + "src=\"model/images/fasta.gif\"></a></span>");
-                    }
-
-                    sb.append("<br>");
-
-                    if (s.getExtendedRegionSize() != 0) {
-                        String os = s.getOriginalRegion();
-                        sb.append("<i>Original input: " + os + "</i><br>");
-                    }
-
-                    String facet = "SequenceFeature";
-                    if (ftSet != null) {
-                        if (ftSet.size() == 1) {
-                            facet = ftSet.iterator().next();
-                        }
-                    }
-
-                    sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
-                            + "<span class='tab export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"tab\");'></a></span>"
-                            + "<span class='csv export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"csv\");'></a></span>"
-                            + "<span class='gff3 export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"gff3\");'></a></span>"
-                            + "<span class='fasta export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"sequence\");'></a></span>"
-                            + "<span class='bed export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"bed\");'></a></span>");
-
-                    // Display galaxy export
-                    if (!"false".equals(galaxyDisplay)) {
-                        sb.append("<span class='galaxy export-region'><a href='javascript: "
-                            + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
-                    }
-
-                    sb.append("</div>");
-
-                    // Add create list by feature types link
-                    sb.append(ftHtml);
-//
-//                    // Add JBrowse link
-//                    if (isJBrowseEnabled()) {
-//                        sb.append("<div><a target='genome-browser' href='"
-//                                + generateJBrowseURL(s)
-//                                + "'>View in genome bowser</a></div>");
-//                    }
-
-                    sb.append("</td>");
-
-                    sb.append("<td><a target='' title='' href='" + baseURL + "/" + path
-                            + "/report.do?id=" + firstId + "'>");
-
-                    if ((firstSymbol == null || "".equals(firstSymbol))
-                            && (firstPid == null || "".equals(firstPid))) {
-                        sb.append("<i>unknown identifier</i>");
-                    } else if ((firstSymbol == null || "".equals(firstSymbol))
-                            && (firstPid != null && "".equals(firstPid))) {
-                        sb.append("<span style='font-size: 11px;'>" + firstPid
-                                + "</span>");
-                    } else if ((firstSymbol != null && "".equals(firstSymbol))
-                            && (firstPid == null || "".equals(firstPid))) {
-                        sb.append("<strong>" + firstSymbol + "</strong>");
-                    } else {
-                        sb.append("<strong>" + firstSymbol + "</strong>")
-                                .append(" ")
-                                .append("<span style='font-size: 11px;'>"
-                                        + firstPid + "</span>");
-                    }
-
-                    sb.append("</a></td><td>" + firstSoTerm
-                            + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                            + firstSoTerm + ": " + firstSoTermDes.replaceAll("&apos;", "\\\\'")
-                            + "';document.getElementById('ctxHelpDiv').style.display='';"
-                            + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
-                            + "\"><img class=\"tinyQuestionMark\" "
-                            + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                            + "</td><td>" + loc + "</td></tr>");
+                    addFirstFeatures(baseURL, path, galaxyDisplay,
+                            exportChromosomeSegment, sb, s, features, ftHtml,
+                            ftSet, span, length);
 
                     for (int i = 1; i < length; i++) {
-
-                        String id = features.get(i).get(0);
-                        String pid = features.get(i).get(1);
-                        String symbol = features.get(i).get(2);
-                        String featureType = features.get(i).get(3);
-                        String chr = features.get(i).get(4);
-                        String start = features.get(i).get(5);
-                        String end = features.get(i).get(6);
-
-                        String soTerm = WebUtil.formatPath(featureType, interMineAPI,
-                                webConfig);
-
-                        String soTermDes = featureType;
-                        if (featureTypeToSOTermMap.get(featureType) != null) {
-                            soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
-                        }
-
-//                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
-
-                        String location = chr + ":" + start + ".." + end;
-
-                        sb.append("<tr><td><a target='' title='' href='"
-                                + baseURL + "/" + path + "/report.do?id="  + id + "'>");
-
-                        if ((symbol == null || "".equals(symbol))
-                                && (pid == null || "".equals(pid))) {
-                            sb.append("<i>unknown identifier</i>");
-                        } else if ((symbol == null || "".equals(symbol))
-                                && (pid != null && "".equals(pid))) {
-                            sb.append("<span style='font-size: 11px;'>" + pid
-                                    + "</span>");
-                        } else if ((symbol != null && "".equals(symbol))
-                                && (pid == null || "".equals(pid))) {
-                            sb.append("<strong>" + symbol + "</strong>");
-                        } else {
-                            sb.append("<strong>" + symbol + "</strong>")
-                                    .append(" ")
-                                    .append("<span style='font-size: 11px;'>"
-                                            + pid + "</span>");
-                        }
-
-                        sb.append("</a></td><td>"
-                                + soTerm
-                                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
-                                + "';document.getElementById('ctxHelpDiv').style.display='';"
-                                + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
-                                + "\"><img class=\"tinyQuestionMark\" "
-                                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                                + "</td><td>" + location + "</td></tr>");
+                        addFeaturesAboveCutoff(baseURL, path, sb, features, i);
                     }
                 } else { // some feature sizes are over cutoff
-                    int length = features.size();
+                    int length = addFeaturesAboveCutoff(galaxyDisplay,
+                            exportChromosomeSegment, sb, s, features, ftHtml,
+                            ftSet, aboveCutOffFeatureTypeMap, span);
 
-                    String firstFeatureType = aboveCutOffFeatureTypeMap.keySet().iterator().next();
+                    parseFeaturesAboveCutoff(sb, s, aboveCutOffFeatureTypeMap);
 
-                    // translatedClassName
-                    String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
-                            webConfig);
-
-                    String firstSoTermDes = firstFeatureType;
-                    if (featureTypeToSOTermMap.get(firstFeatureType) != null) {
-                        firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
-                    }
-
-//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
-
-                    // row span is smaller than the feature size
-                    int totalDupCount = 0;
-                    for (String ft : aboveCutOffFeatureTypeMap.keySet()) {
-                        totalDupCount = totalDupCount + aboveCutOffFeatureTypeMap.get(ft);
-                    }
-                    int rowSpan = length - totalDupCount
-                            + aboveCutOffFeatureTypeMap.size();
-
-                    sb.append("<tr><td valign='top' rowspan='" + rowSpan + "'>");
-
-                    if (isJBrowseEnabled()) {
-                        sb.append("<b><a title='view region in genome browser' "
-                                + "target='genome-browser' href='"
-                                + generateJBrowseURL(s)
-                                + "'>" + span + "</a></b>");
-                    } else {
-                        sb.append("<b>" + span + "</b>");
-                    }
-
-                    if (!"false".equals(exportChromosomeSegment)) {
-                        sb.append("<span style=\"padding: 10px;\">"
-                                + "<a href='javascript: exportFeatures(\""
-                                + s.getFullRegionInfo()
-                                + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
-                                + "region as FASTA\" class=\"fasta\" "
-                                + "src=\"model/images/fasta.gif\"></a></span>");
-                    }
-
-                    sb.append("<br>");
-
-                    if (s.getExtendedRegionSize() != 0) {
-                        String os = s.getOriginalRegion();
-                        sb.append("<i>Original input: " + os + "</i><br>");
-                    }
-
-                    String facet = "SequenceFeature";
-                    if (ftSet != null) {
-                        if (ftSet.size() == 1) {
-                            facet = ftSet.iterator().next();
-                        }
-                    }
-
-                    sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
-                            + "<span class='tab export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"tab\");'></a></span>"
-                            + "<span class='csv export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"csv\");'></a></span>"
-                            + "<span class='gff3 export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"gff3\");'></a></span>"
-                            + "<span class='fasta export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"sequence\");'></a></span>"
-                            + "<span class='bed export-region'><a href='javascript: "
-                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
-                            + facet + "\", \"bed\");'></a></span>");
-
-                    // Display galaxy export
-                    if (!"false".equals(galaxyDisplay)) {
-                        sb.append("<span class='galaxy export-region'><a href='javascript: "
-                            + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
-                    }
-
-                    sb.append("</div>");
-
-                    // Add create list by feature types link
-                    sb.append(ftHtml);
-
-//                    // Add JBrowse link
-//                    if (isJBrowseEnabled()) {
-//                        sb.append("<div><a target='genome-browser' href='"
-//                                + generateJBrowseURL(s)
-//                                + "'>View in genome bowser</a></div>");
-//                    }
-
-                    sb.append("</td>");
-
-                    int firstRecordCount = aboveCutOffFeatureTypeMap.get(firstFeatureType);
-
-                    sb.append("<td colspan='3'><b>" + firstRecordCount + "</b> "
-                            + firstSoTerm
-                            + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                            + firstSoTerm + ": " + firstSoTermDes.replaceAll("&apos;", "\\\\'")
-                            + "';document.getElementById('ctxHelpDiv').style.display='';"
-                            + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
-                            + "\"><img class=\"tinyQuestionMark\" "
-                            + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                            + " records (too many to display all), "
-                            + "please <a href=\"javascript: createList('"
-                            + s.getFullRegionInfo() + "', " + null + ", '"
-                            + firstFeatureType
-                            + "');\">create a list</a>");
-
-                    if (hasJBrowseTrack(firstFeatureType)) {
-                        String jbrowseUrl = generateJBrowseURL(s, Arrays.asList(firstFeatureType));
-                        sb.append(" or <a target='genome-browser' href='"
-                                + jbrowseUrl + "'>view in JBrowse</a>");
-                    }
-
-                    sb.append("</td></tr>");
-
-                    if (aboveCutOffFeatureTypeMap.size() > 1) {
-                        List<String> aboveCutOffFeatureTypeList = new ArrayList<String>(
-                                aboveCutOffFeatureTypeMap.keySet());
-                        for (int i = 1; i < aboveCutOffFeatureTypeList.size(); i++) {
-                            String featureType = aboveCutOffFeatureTypeList.get(i);
-
-                            String soTerm = WebUtil.formatPath(featureType, interMineAPI,
-                                    webConfig);
-
-                            String soTermDes = featureType;
-                            if (featureTypeToSOTermMap.get(featureType) != null) {
-                                soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
-                            }
-
-//                            soTermDes = soTermDes.replaceAll("'", "\\\\'");
-
-                            int recordCount = aboveCutOffFeatureTypeMap.get(featureType);
-
-                            sb.append("<tr><td colspan='3'><b>" + recordCount + "</b> "
-                                + soTerm
-                                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
-                                + "';document.getElementById('ctxHelpDiv').style.display='';"
-                                + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
-                                + "\"><img class=\"tinyQuestionMark\" "
-                                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                                + " records (too many to display all), "
-                                + "please <a href=\"javascript: createList('"
-                                + s.getFullRegionInfo() + "', " + null + ", '"
-                                + featureType
-                                + "');\">create a list</a></td></tr>");
-                        }
-                    }
-
-                    for (int i = 0; i < length; i++) {
-
-                        String id = features.get(i).get(0);
-                        String pid = features.get(i).get(1);
-                        String symbol = features.get(i).get(2);
-                        String featureType = features.get(i).get(3);
-                        String chr = features.get(i).get(4);
-                        String start = features.get(i).get(5);
-                        String end = features.get(i).get(6);
-
-                        String soTerm = WebUtil.formatPath(featureType, interMineAPI,
-                                webConfig);
-
-                        String soTermDes = featureType;
-                        if (featureTypeToSOTermMap.get(featureType) != null) {
-                            soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
-                        }
-
-//                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
-
-                        String location = chr + ":" + start + ".." + end;
-
-                        if (!aboveCutOffFeatureTypeMap.keySet().contains(featureType)) {
-                            sb.append("<tr><td><a target='' title='' href='"
-                                    + baseURL + "/" + path + "/report.do?id="  + id + "'>");
-
-                            if ((symbol == null || "".equals(symbol))
-                                    && (pid == null || "".equals(pid))) {
-                                sb.append("<i>unknown identifier</i>");
-                            } else if ((symbol == null || "".equals(symbol))
-                                    && (pid != null && "".equals(pid))) {
-                                sb.append("<span style='font-size: 11px;'>" + pid
-                                        + "</span>");
-                            } else if ((symbol != null && "".equals(symbol))
-                                    && (pid == null || "".equals(pid))) {
-                                sb.append("<strong>" + symbol + "</strong>");
-                            } else {
-                                sb.append("<strong>" + symbol + "</strong>")
-                                        .append(" ")
-                                        .append("<span style='font-size: 11px;'>"
-                                                + pid + "</span>");
-                            }
-
-                            sb.append("</a></td><td>"
-                                + soTerm
-                                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
-                                + "';document.getElementById('ctxHelpDiv').style.display='';"
-                                + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
-                                + "\"><img class=\"tinyQuestionMark\" "
-                                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
-                                + "</td><td>" + location + "</td></tr>");
-                        }
-                    }
+                    parseFeaturesBelowCutoff(baseURL, path, sb, features,
+                            aboveCutOffFeatureTypeMap, length);
                 }
             } else {
                 sb.append("<tr><td><b>"
@@ -1508,6 +1144,407 @@ public class GenomicRegionSearchService
         sb.append("</tbody>");
 
         return sb.toString();
+    }
+
+    private void addFirstFeatures(String baseURL, String path,
+            String galaxyDisplay, String exportChromosomeSegment,
+            StringBuffer sb, GenomicRegion s, List<List<String>> features,
+            String ftHtml, Set<String> ftSet, String span, int length) {
+        List<String> firstFeature = features.get(0);
+
+        String firstId = firstFeature.get(0);
+        String firstPid = firstFeature.get(1);
+        String firstSymbol = firstFeature.get(2);
+        String firstFeatureType = firstFeature.get(3); // Class name
+        String firstChr = firstFeature.get(4);
+        String firstStart = firstFeature.get(5);
+        String firstEnd = firstFeature.get(6);
+
+        String loc = firstChr + ":" + firstStart + ".." + firstEnd;
+
+        // translatedClassName
+        String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
+                webConfig);
+
+        String firstSoTermDes = firstFeatureType;
+        if (featureTypeToSOTermMap.get(firstFeatureType) != null) {
+            firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
+        }
+
+//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
+
+        sb.append("<tr><td valign='top' rowspan='" + length + "'>");
+
+        if (isJBrowseEnabled()) {
+            sb.append("<b><a title='view region in genome browser' "
+                    + "target='genome-browser' href='"
+                    + generateJBrowseURL(s)
+                    + "'>" + span + "</a></b>");
+        } else {
+            sb.append("<b>" + span + "</b>");
+        }
+
+        if (!"false".equals(exportChromosomeSegment)) {
+            sb.append("<span style=\"padding: 10px;\">"
+                    + "<a href='javascript: exportFeatures(\""
+                    + s.getFullRegionInfo()
+                    + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
+                    + "region as FASTA\" class=\"fasta\" "
+                    + "src=\"model/images/fasta.gif\"></a></span>");
+        }
+
+        sb.append("<br>");
+
+        if (s.getExtendedRegionSize() != 0) {
+            String os = s.getOriginalRegion();
+            sb.append("<i>Original input: " + os + "</i><br>");
+        }
+
+        String facet = "SequenceFeature";
+        if (ftSet != null) {
+            if (ftSet.size() == 1) {
+                facet = ftSet.iterator().next();
+            }
+        }
+
+        sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
+                + "<span class='tab export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"tab\");'></a></span>"
+                + "<span class='csv export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"csv\");'></a></span>"
+                + "<span class='gff3 export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"gff3\");'></a></span>"
+                + "<span class='fasta export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"sequence\");'></a></span>"
+                + "<span class='bed export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"bed\");'></a></span>");
+
+        // Display galaxy export
+        if (!"false".equals(galaxyDisplay)) {
+            sb.append("<span class='galaxy export-region'><a href='javascript: "
+                + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
+        }
+
+        sb.append("</div>");
+
+        // Add create list by feature types link
+        sb.append(ftHtml);
+//
+//                    // Add JBrowse link
+//                    if (isJBrowseEnabled()) {
+//                        sb.append("<div><a target='genome-browser' href='"
+//                                + generateJBrowseURL(s)
+//                                + "'>View in genome bowser</a></div>");
+//                    }
+
+        sb.append("</td>");
+
+        sb.append("<td><a target='' title='' href='" + baseURL + "/" + path
+                + "/report.do?id=" + firstId + "'>");
+
+        if ((firstSymbol == null || "".equals(firstSymbol))
+                && (firstPid == null || "".equals(firstPid))) {
+            sb.append("<i>unknown identifier</i>");
+        } else if ((firstSymbol == null || "".equals(firstSymbol))
+                && (firstPid != null && "".equals(firstPid))) {
+            sb.append("<span style='font-size: 11px;'>" + firstPid
+                    + "</span>");
+        } else if ((firstSymbol != null && "".equals(firstSymbol))
+                && (firstPid == null || "".equals(firstPid))) {
+            sb.append("<strong>" + firstSymbol + "</strong>");
+        } else {
+            sb.append("<strong>" + firstSymbol + "</strong>")
+                    .append(" ")
+                    .append("<span style='font-size: 11px;'>"
+                            + firstPid + "</span>");
+        }
+
+        sb.append("</a></td><td>" + firstSoTerm
+                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                + firstSoTerm + ": " + firstSoTermDes.replaceAll("&apos;", "\\\\'")
+                + "';document.getElementById('ctxHelpDiv').style.display='';"
+                + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
+                + "\"><img class=\"tinyQuestionMark\" "
+                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                + "</td><td>" + loc + "</td></tr>");
+    }
+
+    private int addFeaturesAboveCutoff(String galaxyDisplay,
+            String exportChromosomeSegment, StringBuffer sb, GenomicRegion s,
+            List<List<String>> features, String ftHtml, Set<String> ftSet,
+            Map<String, Integer> aboveCutOffFeatureTypeMap, String span) {
+        int length = features.size();
+
+        String firstFeatureType = aboveCutOffFeatureTypeMap.keySet().iterator().next();
+
+        // translatedClassName
+        String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
+                webConfig);
+
+        String firstSoTermDes = firstFeatureType;
+        if (featureTypeToSOTermMap.get(firstFeatureType) != null) {
+            firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
+        }
+
+//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
+
+        // row span is smaller than the feature size
+        int totalDupCount = 0;
+        for (String ft : aboveCutOffFeatureTypeMap.keySet()) {
+            totalDupCount = totalDupCount + aboveCutOffFeatureTypeMap.get(ft);
+        }
+        int rowSpan = length - totalDupCount
+                + aboveCutOffFeatureTypeMap.size();
+
+        sb.append("<tr><td valign='top' rowspan='" + rowSpan + "'>");
+
+        if (isJBrowseEnabled()) {
+            sb.append("<b><a title='view region in genome browser' "
+                    + "target='genome-browser' href='"
+                    + generateJBrowseURL(s)
+                    + "'>" + span + "</a></b>");
+        } else {
+            sb.append("<b>" + span + "</b>");
+        }
+
+        if (!"false".equals(exportChromosomeSegment)) {
+            sb.append("<span style=\"padding: 10px;\">"
+                    + "<a href='javascript: exportFeatures(\""
+                    + s.getFullRegionInfo()
+                    + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
+                    + "region as FASTA\" class=\"fasta\" "
+                    + "src=\"model/images/fasta.gif\"></a></span>");
+        }
+
+        sb.append("<br>");
+
+        if (s.getExtendedRegionSize() != 0) {
+            String os = s.getOriginalRegion();
+            sb.append("<i>Original input: " + os + "</i><br>");
+        }
+
+        String facet = "SequenceFeature";
+        if (ftSet != null) {
+            if (ftSet.size() == 1) {
+                facet = ftSet.iterator().next();
+            }
+        }
+
+        sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
+                + "<span class='tab export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"tab\");'></a></span>"
+                + "<span class='csv export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"csv\");'></a></span>"
+                + "<span class='gff3 export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"gff3\");'></a></span>"
+                + "<span class='fasta export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"sequence\");'></a></span>"
+                + "<span class='bed export-region'><a href='javascript: "
+                + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                + facet + "\", \"bed\");'></a></span>");
+
+        // Display galaxy export
+        if (!"false".equals(galaxyDisplay)) {
+            sb.append("<span class='galaxy export-region'><a href='javascript: "
+                + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
+        }
+
+        sb.append("</div>");
+
+        // Add create list by feature types link
+        sb.append(ftHtml);
+
+//                    // Add JBrowse link
+//                    if (isJBrowseEnabled()) {
+//                        sb.append("<div><a target='genome-browser' href='"
+//                                + generateJBrowseURL(s)
+//                                + "'>View in genome bowser</a></div>");
+//                    }
+
+        sb.append("</td>");
+
+        int firstRecordCount = aboveCutOffFeatureTypeMap.get(firstFeatureType);
+
+        sb.append("<td colspan='3'><b>" + firstRecordCount + "</b> "
+                + firstSoTerm
+                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                + firstSoTerm + ": " + firstSoTermDes.replaceAll("&apos;", "\\\\'")
+                + "';document.getElementById('ctxHelpDiv').style.display='';"
+                + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
+                + "\"><img class=\"tinyQuestionMark\" "
+                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                + " records (too many to display all), "
+                + "please <a href=\"javascript: createList('"
+                + s.getFullRegionInfo() + "', " + null + ", '"
+                + firstFeatureType
+                + "');\">create a list</a>");
+
+        if (hasJBrowseTrack(firstFeatureType)) {
+            String jbrowseUrl = generateJBrowseURL(s, Arrays.asList(firstFeatureType));
+            sb.append(" or <a target='genome-browser' href='"
+                    + jbrowseUrl + "'>view in JBrowse</a>");
+        }
+
+        sb.append("</td></tr>");
+        return length;
+    }
+
+    private void addFeaturesAboveCutoff(String baseURL, String path,
+            StringBuffer sb, List<List<String>> features, int i) {
+        String id = features.get(i).get(0);
+        String pid = features.get(i).get(1);
+        String symbol = features.get(i).get(2);
+        String featureType = features.get(i).get(3);
+        String chr = features.get(i).get(4);
+        String start = features.get(i).get(5);
+        String end = features.get(i).get(6);
+
+        String soTerm = WebUtil.formatPath(featureType, interMineAPI,
+                webConfig);
+
+        String soTermDes = featureType;
+        if (featureTypeToSOTermMap.get(featureType) != null) {
+            soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
+        }
+
+//                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
+
+        String location = chr + ":" + start + ".." + end;
+
+        sb.append("<tr><td><a target='' title='' href='"
+                + baseURL + "/" + path + "/report.do?id="  + id + "'>");
+
+        if ((symbol == null || "".equals(symbol))
+                && (pid == null || "".equals(pid))) {
+            sb.append("<i>unknown identifier</i>");
+        } else if ((symbol == null || "".equals(symbol))
+                && (pid != null && "".equals(pid))) {
+            sb.append("<span style='font-size: 11px;'>" + pid
+                    + "</span>");
+        } else if ((symbol != null && "".equals(symbol))
+                && (pid == null || "".equals(pid))) {
+            sb.append("<strong>" + symbol + "</strong>");
+        } else {
+            sb.append("<strong>" + symbol + "</strong>")
+                    .append(" ")
+                    .append("<span style='font-size: 11px;'>"
+                            + pid + "</span>");
+        }
+
+        sb.append("</a></td><td>"
+                + soTerm
+                + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                + "';document.getElementById('ctxHelpDiv').style.display='';"
+                + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
+                + "\"><img class=\"tinyQuestionMark\" "
+                + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                + "</td><td>" + location + "</td></tr>");
+    }
+
+    private void parseFeaturesBelowCutoff(String baseURL, String path,
+            StringBuffer sb, List<List<String>> features,
+            Map<String, Integer> aboveCutOffFeatureTypeMap, int length) {
+        for (int i = 0; i < length; i++) {
+
+            String id = features.get(i).get(0);
+            String pid = features.get(i).get(1);
+            String symbol = features.get(i).get(2);
+            String featureType = features.get(i).get(3);
+            String chr = features.get(i).get(4);
+            String start = features.get(i).get(5);
+            String end = features.get(i).get(6);
+
+            String soTerm = WebUtil.formatPath(featureType, interMineAPI,
+                    webConfig);
+
+            String soTermDes = featureType;
+            if (featureTypeToSOTermMap.get(featureType) != null) {
+                soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
+            }
+
+            //                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
+
+            String location = chr + ":" + start + ".." + end;
+
+            if (!aboveCutOffFeatureTypeMap.keySet().contains(featureType)) {
+                sb.append("<tr><td><a target='' title='' href='"
+                        + baseURL + "/" + path + "/report.do?id="  + id + "'>");
+
+                if ((symbol == null || "".equals(symbol))
+                        && (pid == null || "".equals(pid))) {
+                    sb.append("<i>unknown identifier</i>");
+                } else if ((symbol == null || "".equals(symbol))
+                        && (pid != null && "".equals(pid))) {
+                    sb.append("<span style='font-size: 11px;'>" + pid
+                            + "</span>");
+                } else if ((symbol != null && "".equals(symbol))
+                        && (pid == null || "".equals(pid))) {
+                    sb.append("<strong>" + symbol + "</strong>");
+                } else {
+                    sb.append("<strong>" + symbol + "</strong>")
+                        .append(" ")
+                        .append("<span style='font-size: 11px;'>"
+                            + pid + "</span>");
+                }
+
+                sb.append("</a></td><td>"
+                        + soTerm
+                        + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                        + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                        + "';document.getElementById('ctxHelpDiv').style.display='';"
+                        + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
+                        + "\"><img class=\"tinyQuestionMark\" "
+                        + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                        + "</td><td>" + location + "</td></tr>");
+            }
+        }
+    }
+
+    private void parseFeaturesAboveCutoff(StringBuffer sb, GenomicRegion s,
+            Map<String, Integer> aboveCutOffFeatureTypeMap) {
+        if (aboveCutOffFeatureTypeMap.size() > 1) {
+            List<String> aboveCutOffFeatureTypeList = new ArrayList<String>(
+                    aboveCutOffFeatureTypeMap.keySet());
+            for (int i = 1; i < aboveCutOffFeatureTypeList.size(); i++) {
+                String featureType = aboveCutOffFeatureTypeList.get(i);
+
+                String soTerm = WebUtil.formatPath(featureType, interMineAPI,
+                        webConfig);
+
+                String soTermDes = featureType;
+                if (featureTypeToSOTermMap.get(featureType) != null) {
+                    soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
+                }
+
+//                            soTermDes = soTermDes.replaceAll("'", "\\\\'");
+
+                int recordCount = aboveCutOffFeatureTypeMap.get(featureType);
+
+                sb.append("<tr><td colspan='3'><b>" + recordCount + "</b> "
+                    + soTerm
+                    + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
+                    + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                    + "';document.getElementById('ctxHelpDiv').style.display='';"
+                    + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
+                    + "\"><img class=\"tinyQuestionMark\" "
+                    + "src=\"images/icons/information-small-blue.png\" alt=\"?\"></a>"
+                    + " records (too many to display all), "
+                    + "please <a href=\"javascript: createList('"
+                    + s.getFullRegionInfo() + "', " + null + ", '"
+                    + featureType
+                    + "');\">create a list</a></td></tr>");
+            }
+        }
     }
 
     /**
@@ -1646,13 +1683,6 @@ public class GenomicRegionSearchService
         }
 
         return taxIds;
-    }
-
-    /**
-     *  To serve UCSC Lift-Over
-     */
-    public void serveLiftOver() {
-
     }
 
     /**

@@ -61,7 +61,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         evidence.addToCollection("publications", pub);
         store(evidence);
     }
-    
+
     /**
      * Read each line from flat file, create genes and synonyms.
      *
@@ -79,16 +79,16 @@ public class DrosophilaHomologyConverter extends BioFileConverter
             // String geneOrganismRefId = getOrganism("7227");
             String homologue = line[5];
             //String homoOrganismRefId = parseSymbol(line[6]);
-            // NULL if not a fly of interest 
-            
+            // NULL if not a fly of interest
+
             String gene1 = getGene(geneIdentifier);
             String gene2 = getGene(homologue);
-            
+
             if (gene1 != null && gene2 != null) {
                 createHomologue(gene1, gene2);
                 createHomologue(gene2, gene1);
             }
-            
+
         }
     }
 

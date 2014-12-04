@@ -43,6 +43,7 @@ public class FriendlyMineManager
     private static InterMineAPI im;
     private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
         = new CacheMap<MultiKey, Collection<JSONObject>>();
+    private FriendlyMineQueryRunner queryRunner;
 
 /**
  * @param interMineAPI intermine api
@@ -54,6 +55,7 @@ public class FriendlyMineManager
         final String localMineName = webProperties.getProperty("project.title");
         localMine = new Mine(localMineName);
         mines = readConfig(im, localMineName);
+        queryRunner = new FriendlyMineQueryRunner();
     }
 
     /**
@@ -65,15 +67,15 @@ public class FriendlyMineManager
     }
 
     /**
-     * @param im intermine api
+     * @param imAPI intermine api
      * @param properties the web properties
      * @return OrthologueLinkManager the link manager
      */
-    public static synchronized FriendlyMineManager getInstance(InterMineAPI im,
+    public static synchronized FriendlyMineManager getInstance(InterMineAPI imAPI,
             Properties properties) {
         if (linkManager == null || DEBUG) {
-            linkManager = new FriendlyMineManager(im, properties);
-            primeCache();
+            linkManager = new FriendlyMineManager(imAPI, properties);
+            linkManager.primeCache();
         }
         return linkManager;
     }
@@ -97,12 +99,12 @@ public class FriendlyMineManager
     /**
      * if an hour has passed, update data
      */
-    public static synchronized void primeCache() {
+    public synchronized void primeCache() {
         long timeSinceLastRefresh = System.currentTimeMillis() - lastCacheRefresh;
         if (timeSinceLastRefresh > ONE_HOUR || !cached || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
-            FriendlyMineQueryRunner.updateReleaseVersion(mines);
+            queryRunner.updateReleaseVersion(mines);
         }
     }
 
@@ -122,7 +124,10 @@ public class FriendlyMineManager
         intermineLinkCache.put(key, results);
     }
 
-    private Map<String, Mine> readConfig(InterMineAPI im, String localMineName) {
+    /**
+     * @param imAPI intermine API
+     */
+    private static Map<String, Mine> readConfig(InterMineAPI imAPI, String localMineName) {
         mines = new LinkedHashMap<String, Mine>();
         Properties props = PropertiesUtil.stripStart("intermines",
                 PropertiesUtil.getPropertiesStartingWith("intermines", webProperties));
@@ -165,7 +170,7 @@ public class FriendlyMineManager
         return mines;
     }
 
-    private void parseLocalConfig(String url, String logo, String defaultValues,
+    private static void parseLocalConfig(String url, String logo, String defaultValues,
             String bgcolor, String frontcolor, String description) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
@@ -177,7 +182,7 @@ public class FriendlyMineManager
         }
     }
 
-    private void parseRemoteConfig(String mineName, String mineId, String defaultValues,
+    private static void parseRemoteConfig(String mineName, String mineId, String defaultValues,
             String url, String logo, String bgcolor, String frontcolor, String description) {
         Mine mine = new Mine(mineName);
         mine.setUrl(url);
@@ -191,15 +196,29 @@ public class FriendlyMineManager
 
     /**
      * @param mineName name of mine
-     * @return mine
+     * @return The mine properties object.
      */
     public Mine getMine(String mineName) {
+        if (mineName == null) {
+            throw new NullPointerException("mineName must not be null");
+        }
+        if (mines.containsKey(mineName)) {
+            return mines.get(mineName);
+        }
         for (Mine mine : mines.values()) {
-            if (mine.getName().equals(mineName)) {
+            if (mineName.equals(mine.getName())) {
+                mines.put(mineName, mine); // Save loop next time.
                 return mine;
             }
         }
         return null;
+    }
+
+    /**
+     * @return An object capable of running friendly mine queries.
+     */
+    public FriendlyMineQueryRunner getQueryRunner() {
+        return queryRunner;
     }
 }
 

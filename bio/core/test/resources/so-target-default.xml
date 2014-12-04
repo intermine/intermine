@@ -1,0 +1,141 @@
+<model name="so" package="org.intermine.model.bio">
+<class name="BindingSite" extends="SequenceFeature" is-interface="true"></class>
+<class name="CDNA" is-interface="true"></class>
+<class name="CDNAClone" extends="Clone" is-interface="true"></class>
+<class name="CDNAMatch" extends="SequenceFeature" is-interface="true"></class>
+<class name="CDS" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="CDSs"/>
+	<collection name="codons" referenced-type="Codon" reverse-reference="CDS"/>
+</class>
+<class name="ChromosomalDeletion" extends="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="ChromosomalDuplication" extends="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="ChromosomalInversion" extends="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="ChromosomalStructuralElement" extends="SequenceFeature" is-interface="true">
+	<reference name="chromosome" referenced-type="Chromosome"/>
+</class>
+<class name="ChromosomalTranslocation" extends="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="ChromosomalTransposition" extends="ChromosomeStructureVariation" is-interface="true"></class>
+<class name="Chromosome" extends="SequenceFeature" is-interface="true"></class>
+<class name="ChromosomeArm" extends="SequenceFeature" is-interface="true">
+	<reference name="chromosome" referenced-type="Chromosome"/>
+</class>
+<class name="ChromosomeBand" extends="SequenceFeature" is-interface="true">
+	<reference name="chromosome" referenced-type="Chromosome"/>
+</class>
+<class name="ChromosomeStructureVariation" extends="SequenceCollection" is-interface="true"></class>
+<class name="Clone" extends="Reagent" is-interface="true"></class>
+<class name="Codon" extends="SequenceFeature" is-interface="true">
+	<reference name="CDS" referenced-type="CDS" reverse-reference="codons"/>
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="codons"/>
+</class>
+<class name="CopyNumberVariation" extends="SequenceFeature" is-interface="true"></class>
+<class name="Enhancer" extends="RegulatoryRegion" is-interface="true"></class>
+<class name="EST" extends="Reagent" is-interface="true">
+	<reference name="overlappingESTSet" referenced-type="OverlappingESTSet" reverse-reference="ESTs"/>
+</class>
+<class name="Exon" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="exons"/>
+	<collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="exon"/>
+</class>
+<class name="ExonRegion" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="exonRegions"/>
+	<reference name="exon" referenced-type="Exon" reverse-reference="exonRegions"/>
+</class>
+<class name="FivePrimeUTR" extends="UTR" is-interface="true"></class>
+<class name="FlankingRegion" extends="SequenceFeature" is-interface="true"></class>
+<class name="Gene" extends="SequenceFeature" is-interface="true">
+	<collection name="regulatoryRegions" referenced-type="RegulatoryRegion" reverse-reference="gene"/>
+	<collection name="transcripts" referenced-type="Transcript" reverse-reference="gene"/>
+</class>
+<class name="GoldenPathFragment" extends="SequenceFeature" is-interface="true"></class>
+<class name="HistoneBindingSite" extends="ProteinBindingSite" is-interface="true"></class>
+<class name="Insertion" extends="SequenceFeature" is-interface="true"></class>
+<class name="InsertionSite" extends="Junction" is-interface="true"></class>
+<class name="InsulatorBindingSite" extends="ProteinBindingSite" is-interface="true"></class>
+<class name="IntergenicRegion" extends="SequenceFeature" is-interface="true"></class>
+<class name="Intron" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="introns"/>
+</class>
+<class name="Junction" extends="SequenceFeature" is-interface="true"></class>
+<class name="MatureTranscript" extends="Transcript" is-interface="true">
+	<collection name="polyASites" referenced-type="PolyASite" reverse-reference="matureTranscript"/>
+</class>
+<class name="MiRNA" extends="SmallRegulatoryNcRNA" is-interface="true"></class>
+<class name="MRNA" extends="MatureTranscript" is-interface="true"></class>
+<class name="NaturalTransposableElement" extends="TransposableElement" is-interface="true"></class>
+<class name="NcRNA" extends="MatureTranscript" is-interface="true"></class>
+<class name="OriginOfReplication" extends="SequenceFeature" is-interface="true"></class>
+<class name="OverlappingESTSet" extends="SequenceFeature" is-interface="true">
+	<collection name="ESTs" referenced-type="EST" reverse-reference="overlappingESTSet"/>
+</class>
+<class name="PCRProduct" extends="Reagent" is-interface="true"></class>
+<class name="PeptideCollection" extends="SequenceCollection" is-interface="true"></class>
+<class name="PointMutation" extends="Substitution" is-interface="true"></class>
+<class name="PolyASequence" extends="SequenceFeature" is-interface="true"></class>
+<class name="PolyASignalSequence" extends="RegulatoryRegion" is-interface="true"></class>
+<class name="PolyASite" extends="Junction" is-interface="true">
+	<reference name="threePrimeUTR" referenced-type="ThreePrimeUTR" reverse-reference="polyASites"/>
+	<reference name="matureTranscript" referenced-type="MatureTranscript" reverse-reference="polyASites"/>
+</class>
+<class name="PolypeptideRegion" extends="SequenceFeature" is-interface="true"></class>
+<class name="ProcessedTranscript" extends="Transcript" is-interface="true"></class>
+<class name="ProteinBindingSite" extends="BindingSite" is-interface="true"></class>
+<class name="Reagent" extends="SequenceFeature" is-interface="true"></class>
+<class name="RegulatoryRegion" extends="SequenceFeature" is-interface="true">
+	<reference name="gene" referenced-type="Gene" reverse-reference="regulatoryRegions"/>
+</class>
+<class name="RepeatRegion" extends="SequenceFeature" is-interface="true"></class>
+<class name="RRNA" extends="NcRNA" is-interface="true"></class>
+<class name="SequenceCollection" is-interface="true"></class>
+<class name="SequenceFeature" is-interface="true"></class>
+<class name="SequenceVariant" is-interface="true"></class>
+<class name="SL1AcceptorSite" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="SL1AcceptorSites"/>
+</class>
+<class name="SL2AcceptorSite" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="SL2AcceptorSites"/>
+</class>
+<class name="SmallRegulatoryNcRNA" extends="NcRNA" is-interface="true"></class>
+<class name="SnoRNA" extends="NcRNA" is-interface="true"></class>
+<class name="SnRNA" extends="NcRNA" is-interface="true"></class>
+<class name="StartCodon" extends="Codon" is-interface="true"></class>
+<class name="StopCodon" extends="Codon" is-interface="true"></class>
+<class name="Substitution" extends="SequenceFeature" is-interface="true"></class>
+<class name="TFBindingSite" extends="ProteinBindingSite RegulatoryRegion" is-interface="true"></class>
+<class name="ThreePrimeRACEClone" extends="CDNAClone" is-interface="true"></class>
+<class name="ThreePrimeRST" extends="EST" is-interface="true"></class>
+<class name="ThreePrimeUST" extends="EST" is-interface="true"></class>
+<class name="ThreePrimeUTR" extends="UTR" is-interface="true">
+	<collection name="polyASites" referenced-type="PolyASite" reverse-reference="threePrimeUTR"/>
+</class>
+<class name="Transcript" extends="SequenceFeature" is-interface="true">
+	<reference name="gene" referenced-type="Gene" reverse-reference="transcripts"/>
+	<collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcript"/>
+	<collection name="transcriptionEndSites" referenced-type="TranscriptionEndSite" reverse-reference="transcript"/>
+	<collection name="codons" referenced-type="Codon" reverse-reference="transcript"/>
+	<collection name="TSSs" referenced-type="TSS" reverse-reference="transcript"/>
+	<collection name="CDSs" referenced-type="CDS" reverse-reference="transcript"/>
+	<collection name="introns" referenced-type="Intron" reverse-reference="transcript"/>
+	<collection name="exons" referenced-type="Exon" reverse-reference="transcript"/>
+	<collection name="UTRs" referenced-type="UTR" reverse-reference="transcript"/>
+	<collection name="SL2AcceptorSites" referenced-type="SL2AcceptorSite" reverse-reference="transcript"/>
+	<collection name="SL1AcceptorSites" referenced-type="SL1AcceptorSite" reverse-reference="transcript"/>
+</class>
+<class name="TranscriptionEndSite" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="transcriptionEndSites"/>
+</class>
+<class name="TransposableElement" extends="SequenceFeature" is-interface="true">
+	<collection name="transposableElementGenes" referenced-type="TransposableElementGene" reverse-reference="transposableElement"/>
+</class>
+<class name="TransposableElementGene" extends="Gene" is-interface="true">
+	<reference name="transposableElement" referenced-type="TransposableElement" reverse-reference="transposableElementGenes"/>
+</class>
+<class name="TransposableElementInsertionSite" extends="InsertionSite" is-interface="true"></class>
+<class name="TRNA" extends="NcRNA" is-interface="true"></class>
+<class name="TSS" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="TSSs"/>
+</class>
+<class name="UTR" extends="SequenceFeature" is-interface="true">
+	<reference name="transcript" referenced-type="Transcript" reverse-reference="UTRs"/>
+</class>
+</model>

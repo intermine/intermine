@@ -63,7 +63,7 @@ public class DisplayPath
     }
 
     /**
-     * Return the last field descriptor (the last element) of the path. If the 
+     * Return the last field descriptor (the last element) of the path. If the
      * path represents the root class, return null.
      * @return A field descriptor.
      */

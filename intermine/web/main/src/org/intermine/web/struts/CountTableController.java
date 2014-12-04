@@ -31,16 +31,19 @@ import org.intermine.web.logic.session.SessionMethods;
  * "resultsTable" request attribute.
  * @author Kim Rutherford
  */
+@SuppressWarnings("deprecation")
 public class CountTableController extends TilesAction
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(
+            ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         PagedTable pt = (PagedTable) request.getAttribute("resultsTable");

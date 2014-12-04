@@ -31,7 +31,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.PendingClob;
@@ -246,7 +246,7 @@ public class TransferSequences
                 + (System.currentTimeMillis() - startTime) + " ms.");
     }
 
-    private ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr) {
+    private static ClobAccess getSubSequence(Sequence chromosomeSequence, Location locationOnChr) {
         int charsToCopy =
             locationOnChr.getEnd().intValue() - locationOnChr.getStart().intValue() + 1;
         ClobAccess chromosomeSequenceString = chromosomeSequence.getResidues();

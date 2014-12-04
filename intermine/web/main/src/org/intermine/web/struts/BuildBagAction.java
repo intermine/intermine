@@ -31,7 +31,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;

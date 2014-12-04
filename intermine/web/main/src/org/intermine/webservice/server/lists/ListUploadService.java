@@ -22,12 +22,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -36,20 +33,15 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
-import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.bag.ConvertedObjectPair;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
@@ -80,7 +72,6 @@ public class ListUploadService extends ListMakerService
      * The maximum number of ids to query for each batch.
      */
     public static final int BAG_QUERY_MAX_BATCH_SIZE = 10000;
-    public static final Logger LOG = Logger.getLogger(ListUploadService.class);
 
     private final BagQueryRunner runner;
     protected static final String PLAIN_TEXT = "text/plain";
@@ -122,12 +113,7 @@ public class ListUploadService extends ListMakerService
      * @return The matcher to use.
      */
     protected StrMatcher getMatcher() {
-        final HttpSession session = request.getSession();
-        final Properties webProperties
-            = (Properties) session.getServletContext().getAttribute(Constants.WEB_PROPERTIES);
-
-        final String bagUploadDelims =
-            (String) webProperties.get("list.upload.delimiters") + " ";
+        final String bagUploadDelims = getProperty("list.upload.delimiters") + " ";
         final StrMatcher matcher = StrMatcher.charSetMatcher(bagUploadDelims);
         return matcher;
     }
@@ -139,8 +125,6 @@ public class ListUploadService extends ListMakerService
 
     /**
      * Parse the parameters for this request.
-     * @param request The request received.
-     * @param bagManager The bag manager that we are using.
      * @return A parsed representation of the parameters.
      */
     @Override
@@ -193,13 +177,25 @@ public class ListUploadService extends ListMakerService
         profile.renameBag(input.getTemporaryListName(), input.getListName());
     }
 
+    /**
+     * Process the identifiers.
+     * @param type The type of thing these identifiers are.
+     * @param input The creation input.
+     * @param ids The identifiers.
+     * @param unmatchedIds A collector for unmatched identifiers.
+     * @param tempBag The temporary bag to add results to.
+     * @throws IOException If we can't from the request.
+     * @throws ClassNotFoundException if the type is not valid.
+     * @throws InterMineException If something goes wrong building the bag.
+     * @throws ObjectStoreException If there is a problem on the database level.
+     */
     protected void processIdentifiers(
             final String type,
             ListCreationInput input,
             final Set<String> ids,
             final Set<String> unmatchedIds,
-            final InterMineBag tempBag) throws IOException,
-            ClassNotFoundException, InterMineException, ObjectStoreException {
+            final InterMineBag tempBag)
+        throws IOException, ClassNotFoundException, InterMineException, ObjectStoreException {
         final Collection<String> addIssues = input.getAddIssues();
         String line;
         final BufferedReader r = getReader(request);
@@ -245,9 +241,9 @@ public class ListUploadService extends ListMakerService
                     }
                 }
             } catch (FileUploadException e) {
-                throw new InternalErrorException("Could not read request body", e);
+                throw new ServiceException("Could not read request body", e);
             } catch (IOException e) {
-                throw new InternalErrorException(e);
+                throw new ServiceException(e);
             }
         } else {
             if (!requestIsOfSuitableType()) {
@@ -257,7 +253,7 @@ public class ListUploadService extends ListMakerService
             try {
                 r = request.getReader();
             } catch (IOException e) {
-                throw new InternalErrorException(e);
+                throw new ServiceException(e);
             }
         }
         if (r == null) {
@@ -282,6 +278,7 @@ public class ListUploadService extends ListMakerService
      * @param type The type of this bag
      * @param extraFieldValue An extra value for disambiguation.
      * @param unmatchedIds An accumulator to store the failed matches.
+     * @param acceptableIssues the list of issues that are OK to ignore.
      * @throws ClassNotFoundException if the type is not a valid class.
      * @throws InterMineException If something goes wrong building the bag.
      * @throws ObjectStoreException If there is a problem on the database level.

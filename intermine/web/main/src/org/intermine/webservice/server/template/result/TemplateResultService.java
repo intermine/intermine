@@ -64,7 +64,8 @@ public class TemplateResultService extends QueryResultService
         template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         if (template == null) {
             throw new ResourceNotFoundException(
-                "You do not have access to a template called '" + input.getName() + "' in this mine.");
+                "You do not have access to a template called '"
+                        + input.getName() + "' in this mine.");
         }
 
         Map<String, List<TemplateValue>> templateValues;
@@ -89,9 +90,9 @@ public class TemplateResultService extends QueryResultService
             populatedTemplate.clearView();
             populatedTemplate.addViews(newView);
         }
-        setHeaderAttributes(populatedTemplate, input.getStart(), input.getMaxCount());
+        setHeaderAttributes(populatedTemplate, input.getStart(), input.getLimit());
         if (populatedTemplate.isValid()) {
-            runPathQuery(populatedTemplate, input.getStart(), input.getMaxCount());
+            runPathQuery(populatedTemplate, input.getStart(), input.getLimit());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
                 + "with model: " + populatedTemplate.verifyQuery();

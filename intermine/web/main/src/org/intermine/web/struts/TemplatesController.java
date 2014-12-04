@@ -35,11 +35,11 @@ public class TemplatesController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         session.removeAttribute(Constants.NEW_TEMPLATE);

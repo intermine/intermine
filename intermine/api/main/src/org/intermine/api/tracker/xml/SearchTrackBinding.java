@@ -30,12 +30,24 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class SearchTrackBinding
+/**
+ * @author Daniela Butano
+ */
+public final class SearchTrackBinding
 {
     private static final Logger LOG = Logger.getLogger(SearchTrackBinding.class);
+    /**
+     * label for XML
+     */
     public static final String SEARCHTRACKS = "searchtracks";
+    /**
+     * label for XML
+     */
     public static final String SEARCHTRACK = "searchtrack";
 
+    private SearchTrackBinding() {
+        // don't
+    }
 
     /**
      * Convert a SearchTrack to XML and write XML to given writer.
@@ -71,6 +83,7 @@ public class SearchTrackBinding
             try {
                 writer.writeEndElement();
             } catch (XMLStreamException e) {
+                LOG.error("XML broke", e);
             }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling search tracks", e);
@@ -120,7 +133,7 @@ class SearchTrackHandler extends TrackHandler
                 stm = connection.prepareStatement("INSERT INTO "
                       + TrackerUtil.SEARCH_TRACKER_TABLE + " VALUES(?, ?, ?, ?)");
             } catch (SQLException sqle) {
-                new BuildException("Problem to retrieve the connection", sqle);
+                throw new BuildException("Problem to retrieve the connection", sqle);
             }
         }
         if (SearchTrackBinding.SEARCHTRACK.equals(qName)) {

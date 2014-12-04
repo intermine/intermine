@@ -45,6 +45,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void clear() {
         throw new UnsupportedOperationException();
     }
@@ -52,6 +53,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean containsKey(@SuppressWarnings("unused") Object key) {
         return true;
     }
@@ -59,6 +61,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean containsValue(@SuppressWarnings("unused") Object value) {
         return true;
     }
@@ -66,6 +69,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<Map.Entry<E, E>> entrySet() {
         throw new UnsupportedOperationException();
     }
@@ -84,6 +88,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public E get(Object key) {
         return (E) key;
@@ -100,6 +105,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEmpty() {
         return false;
     }
@@ -107,6 +113,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<E> keySet() {
         throw new UnsupportedOperationException();
     }
@@ -114,6 +121,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public E put(@SuppressWarnings("unused") E key, @SuppressWarnings("unused") E value) {
         throw new UnsupportedOperationException();
     }
@@ -121,6 +129,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public void putAll(@SuppressWarnings("unused") Map<? extends E, ? extends E> map) {
         throw new UnsupportedOperationException();
     }
@@ -128,6 +137,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public E remove(@SuppressWarnings("unused") Object key) {
         throw new UnsupportedOperationException();
     }
@@ -135,6 +145,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public int size() {
         return 1;
     }
@@ -142,6 +153,7 @@ public final class IdentityMap<E> implements Map<E, E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<E> values() {
         throw new UnsupportedOperationException();
     }

@@ -13,7 +13,6 @@ package org.intermine.webservice.server.widget;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
@@ -23,7 +22,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.widget.TableWidget;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
@@ -36,28 +35,29 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 public class TableWidgetService extends WidgetService
 {
 
+    private final WidgetsRequestParser requestParser;
+
     /**
      * Construct a TableWidgetService
      * @param im the intermine  API object
      */
     public TableWidgetService(InterMineAPI im) {
         super(im);
+        requestParser = new WidgetsRequestParser();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    protected void execute() throws Exception {
-        String bagName = request.getParameter("list");
-        String widgetId = request.getParameter("widget");
+    protected void execute() {
+        WidgetsServiceInput input = requestParser.getInput(request);
 
-        InterMineBag imBag = retrieveBag(bagName);
+        InterMineBag imBag = retrieveBag(input.getBagName());
         addOutputListInfo(imBag);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
-        WidgetConfig widgetConfig = webConfig.getWidgets().get(widgetId);
+        WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
         if (widgetConfig == null || !(widgetConfig instanceof TableWidgetConfig)) {
             throw new ResourceNotFoundException("Could not find a table widget called \""
-                    + widgetId + "\"");
+                    + input.getWidgetId() + "\"");
         }
 
         addOutputConfig(widgetConfig);
@@ -65,19 +65,22 @@ public class TableWidgetService extends WidgetService
         TableWidget widget = null;
         try {
             Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-            ((TableWidgetConfig) widgetConfig).setClassKeys(classKeys);
-            widget = (TableWidget) widgetConfig.getWidget(imBag, null, im.getObjectStore(), null);
+            TableWidgetConfig twc = (TableWidgetConfig) widgetConfig;
+            twc.setClassKeys(classKeys);
+            widget = twc.getWidget(imBag, null, im.getObjectStore(), input);
+            widget.process();
             addOutputInfo("columns", StringUtils.join(widget.getColumns().toArray(), ","));
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find a table widget called \""
-                    + widgetId + "\"", e);
-        }
-        if (widget == null) {
-            throw new InternalErrorException("Problem loading widget");
+                    + input.getWidgetId() + "\"", e);
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputPathQuery(widget, widgetConfig);
-        addOutputResult(widget);
+        try {
+            addOutputResult(widget);
+        } catch (Exception e) {
+            throw new ServiceException("Could not get results.", e);
+        }
     }
 
     @Override

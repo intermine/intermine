@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.BagNotFound;
@@ -43,18 +42,14 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.Format;
-import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONCountFormatter;
-import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
@@ -84,10 +79,12 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class QueryResultService extends AbstractQueryService
 {
 
-    private static final Logger LOG = Logger.getLogger(QueryResultService.class);
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
+
+    private boolean wantsCount = false;
+    private PathQueryExecutor executor;
 
     /**
      * Constructor
@@ -105,11 +102,9 @@ public class QueryResultService extends AbstractQueryService
         QueryResultInput input = getInput();
         PathQueryBuilder builder = getQueryBuilder(input.getXml());
         PathQuery query = builder.getQuery();
-        setHeaderAttributes(query, input.getStart(), input.getMaxCount());
-        runPathQuery(query, input.getStart(), input.getMaxCount());
+        setHeaderAttributes(query, input.getStart(), input.getLimit());
+        runPathQuery(query, input.getStart(), input.getLimit());
     }
-
-    private boolean wantsCount = false;
 
     @Override
     protected void initState() {
@@ -122,12 +117,14 @@ public class QueryResultService extends AbstractQueryService
         return Format.TSV;
     }
 
-    private static final Set<Format> MENU = new HashSet<Format>() {{
-        addAll(Format.BASIC_FORMATS);
-        addAll(Format.FLAT_FILES);
-        addAll(Format.JSON_FORMATS);
-    }};
-    private PathQueryExecutor executor;
+    private static final Set<Format> MENU = new HashSet<Format>() {
+        private static final long serialVersionUID = -6257564064566791521L;
+        {
+            addAll(Format.BASIC_FORMATS);
+            addAll(Format.FLAT_FILES);
+            addAll(Format.JSON_FORMATS);
+        }
+    };
 
     @Override
     protected boolean canServe(Format format) {
@@ -147,7 +144,7 @@ public class QueryResultService extends AbstractQueryService
      * @param size The size of this set of results
      */
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
-        
+
         if (formatIsJSON()) {
             // These attributes are always needed
             attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
@@ -169,7 +166,7 @@ public class QueryResultService extends AbstractQueryService
                 } catch (BagNotFound e) {
                     throw new BadRequestException(e.getMessage());
                 } catch (ObjectStoreException e) {
-                    throw new InternalErrorException("Problem getting unique column value count.", e);
+                    throw new ServiceException("Problem getting unique column value count.", e);
                 }
                 attributes.put("uniqueValues", count);
             }
@@ -181,7 +178,7 @@ public class QueryResultService extends AbstractQueryService
             if (wantsColumnHeaders()) {
                 if (ColumnHeaderStyle.FRIENDLY == getColumnHeaderStyle()) {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS,
-                            WebUtil.formatPathQueryView(pq, request));
+                            WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
                 } else {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getView());
                 }
@@ -211,6 +208,8 @@ public class QueryResultService extends AbstractQueryService
                 attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
                         WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
                 break;
+            default:
+                break;
         }
 
         if (!wantsCount) { // mutually exclusive options.
@@ -236,7 +235,7 @@ public class QueryResultService extends AbstractQueryService
                 } else {
                     colHeaders.addAll(Arrays.asList("item", "count"));
                 }
-    
+
                 if (formatIsJSON()) {
                     attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, colHeaders);
                 } else if (formatIsFlatFile() && wantsColumnHeaders()) {
@@ -305,9 +304,9 @@ public class QueryResultService extends AbstractQueryService
     }
 
     private void runResults(PathQuery pq,  int firstResult, int maxResults) {
-        boolean canGoFaster = false;
-        Iterator<List<ResultElement>> it;
-        String summaryPath = getOptionalParameter("summaryPath");
+        final boolean canGoFaster;
+        final Iterator<List<ResultElement>> it;
+        final String summaryPath = getOptionalParameter("summaryPath");
         if (isNotBlank(summaryPath)) {
             Integer uniqs = (Integer) attributes.get("uniqueValues");
             boolean occurancesOnly = (uniqs == null) || (uniqs < 2);
@@ -315,7 +314,8 @@ public class QueryResultService extends AbstractQueryService
                 String filterTerm = getOptionalParameter("filterTerm");
                 Results r = executor.summariseQuery(pq, summaryPath, filterTerm, occurancesOnly);
                 try {
-                    r.range(0,  0); // causes query to be strictly evaluated, and errors to surface here.
+                    // causes query to be strictly evaluated, and errors to surface here.
+                    r.range(0, 0);
                 } catch (IndexOutOfBoundsException e) {
                     // Ignore, it just means it's empty.
                 }
@@ -323,14 +323,14 @@ public class QueryResultService extends AbstractQueryService
                     attributes.put("filteredCount", r.size());
                 }
                 it = new FilteringResultIterator(r, firstResult, maxResults, filterTerm);
+                canGoFaster = false;
             } catch (ObjectStoreQueryDurationException e) {
                 throw new ServiceException("Query would take too long to run");
             } catch (ObjectStoreException e) {
                 throw new ServiceException("Problem getting summary.", e);
             }
         } else {
-            // Going faster means writing to the DB. Don't do this if it is pointless.
-            canGoFaster = firstResult > BATCH_SIZE || maxResults > BATCH_SIZE;
+            canGoFaster = maxResults > (BATCH_SIZE * 2);
             executor.setBatchSize(BATCH_SIZE);
             try {
                 it = executor.execute(pq, firstResult, maxResults);
@@ -345,6 +345,7 @@ public class QueryResultService extends AbstractQueryService
         if (it.hasNext()) { // Prime the batch fetching pumps
             try {
                 if (canGoFaster) {
+                    // Going faster means writing to the DB. Don't do this if it is pointless.
                     ((ExportResultsIterator) it).goFaster();
                 }
                 processor.write(it, output);
@@ -385,12 +386,19 @@ public class QueryResultService extends AbstractQueryService
 
     private PathQueryExecutor getPathQueryExecutor() {
         final Profile profile = getPermission().getProfile();
-        final PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        return executor;
+        return im.getPathQueryExecutor(profile);
     }
 
 
     private QueryResultInput getInput() {
-        return new QueryResultRequestParser(im.getQueryStore(), request).getInput();
+        QueryResultInput qri = new QueryResultRequestParser(im.getQueryStore(),
+                request).getInput();
+        // Table format doesn't actually fetch any rows but we want it to trigger a query in
+        // ObjectStore so results are in cache when Row processors need to fetch them. We need
+        // to set a limit here to prevent runResults() from calling goFaster() and precomputing.
+        if (getFormat() == Format.TABLE) {
+            qri.setLimit(WebServiceRequestParser.MIN_LIMIT);
+        }
+        return qri;
     }
 }

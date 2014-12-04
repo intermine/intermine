@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.FastPathObject;
@@ -36,7 +37,6 @@ import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -199,6 +199,7 @@ public final class ResultsConverter
                 }
                 retval.add(row);
             }
+            // fetch any objects not found in cache from the intermineobject table
             if (!idsToFetch.isEmpty()) {
                 Map<Integer, InterMineObject> fetched = fetchByIds(os, c, sequence,
                         InterMineObject.class, idsToFetch, extra);
@@ -217,6 +218,7 @@ public final class ResultsConverter
                     }
                 }
             }
+            // resolve outer join queries
             if (needPathExpressions) {
                 HashSet<QuerySelectable> done = new HashSet<QuerySelectable>();
                 for (QuerySelectable node : q.getSelect()) {
@@ -374,12 +376,17 @@ public final class ResultsConverter
         Map<Integer, Integer> objectIds = new HashMap<Integer, Integer>();
         Set<Integer> idsToFetch = new HashSet<Integer>();
         QueryClass qc = qope.getQueryClass();
-        // Search for starting point.
+        // Search for starting point, this is the class on the SELECT of the parent query that
+        // contains the reference we are performing the outer join on
         startingPoint = q.getSelect().indexOf(qc);
         if (startingPoint == -1) {
             throw new ObjectStoreException("Path Expression " + qope + " needs QueryClass "
                     + qc + " to be in the SELECT list");
         }
+        // from the original query results find all objects that have a value for the outer joined
+        // reference. The id of the referenced object is in the table for the starting class so
+        // these objects will have a ProxyReference containing the referenced id. Map the starting
+        // object ids to the outer joined object ids.
         for (ResultsRow<Object> row : retval) {
             InterMineObject o = (InterMineObject) row.get(startingPoint);
             Integer refId = null;
@@ -394,6 +401,7 @@ public final class ResultsConverter
                 throw new ObjectStoreException("Shouldn't ever happen", e);
             }
         }
+        // execute a single query for this outer join with all the referenced ids
         Query qopeQuery = qope.getQuery(idsToFetch, os.getSchema().isMissingNotXml());
         long startTime = System.currentTimeMillis();
         List<ResultsRow<Object>> res = os.executeWithConnection(c, qopeQuery, 0,
@@ -404,6 +412,8 @@ public final class ResultsConverter
             fetched.put((Integer) row.get(0), row);
         }
         int columnCount = q.getSelect().size();
+        // iterate over main query results again and add the outer join query results in the
+        // appropriate column
         for (ResultsRow<Object> row : retval) {
             Integer startingId = ((InterMineObject) row.get(startingPoint)).getId();
             ResultsRow<Object> pathRow = fetched.get(objectIds.get(startingId));
@@ -461,6 +471,7 @@ public final class ResultsConverter
                     + qc + " to be in the SELECT list");
         }
         if (qcpe.isCollection()) {
+            // find ids of objects from the main query on which the outer join will be performed
             for (ResultsRow<Object> row : retval) {
                 InterMineObject o = (InterMineObject) row.get(startingPoint);
                 if (!idsToFetch.containsKey(o.getId())) {
@@ -468,14 +479,17 @@ public final class ResultsConverter
                     objectsToFetch.add(o);
                 }
             }
+            // execute a single query for the outer join with all the starting ids
             Query subQ = qcpe.getQuery(objectsToFetch);
             long startTime = System.currentTimeMillis();
             List<ResultsRow<Object>> results = os.executeWithConnection(c, subQ, 0,
                     Integer.MAX_VALUE, optimise, false, sequence, goFasterTables, goFasterCache);
             extra.addTime(System.currentTimeMillis() - startTime);
             boolean singleton = qcpe.isSingleton();
+            // put list of objects returned by outer join query in a map keyed by starting object id
             for (ResultsRow<Object> row : results) {
                 Integer id = (Integer) row.get(0);
+
                 List<Object> list = idsToFetch.get(id);
                 if (singleton) {
                     list.add(row.get(1));
@@ -489,11 +503,17 @@ public final class ResultsConverter
                     list.add(newRow);
                 }
             }
+            // iterate over the main query results again and add in the outer joined results
             for (ResultsRow<Object> row : retval) {
                 InterMineObject o = (InterMineObject) row.get(startingPoint);
                 row.set(columnToReplace, idsToFetch.get(o.getId()));
             }
         } else {
+            // the start of this outer join is a reference but because there are further joins in
+            // the outer join itself there may be multiple rows returned for each starting id
+
+            // first iterate over the main query results and find all referenced ids on which to
+            // perform the outer join
             Map<Integer, Integer> objectIds = new HashMap<Integer, Integer>();
             for (ResultsRow<Object> row : retval) {
                 InterMineObject o = (InterMineObject) row.get(startingPoint);
@@ -510,6 +530,7 @@ public final class ResultsConverter
                     throw new ObjectStoreException("Shouldn't ever happen", e);
                 }
             }
+            // perform a single query with all the outer join starting ids
             Query subQ = qcpe.getQuery(objectsToFetch);
             long startTime = System.currentTimeMillis();
             List<ResultsRow<Object>> results = os.executeWithConnection(c, subQ, 0,
@@ -531,6 +552,8 @@ public final class ResultsConverter
                     list.add(newRow);
                 }
             }
+            // iterate over the main query results again and fill in the outer join results in the
+            // appropriate column
             for (ResultsRow<Object> row : retval) {
                 InterMineObject o = (InterMineObject) row.get(startingPoint);
                 Integer referenceId = objectIds.get(o.getId());

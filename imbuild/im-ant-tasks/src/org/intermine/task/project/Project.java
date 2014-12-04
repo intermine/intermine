@@ -34,7 +34,7 @@ public class Project
 
     // this will hold a set of canonical locations for sources
     Set<String> srcLocations = new HashSet<String>();
-        
+
 
     /**
      * Add a Source object
@@ -109,30 +109,30 @@ public class Project
      * Validate contents of a project.xml file once it has been unmarshalled.  This will check
      *     a) that 'source.location' properties point to valid locations
      *     b) that all sources lists can be found in 'source.location' directories
-     * @param projectXml project.xml file, location used to resolve relative source.location paths 
+     * @param projectXml project.xml file, location used to resolve relative source.location paths
      */
     public void validate(File projectXml) {
         File baseDir = projectXml.getParentFile();
-        
+
         String endl = System.getProperty("line.separator");
-        
+
         if (!sources.isEmpty() &&  getSourceLocations().isEmpty()) {
             throw new BuildException("Error in project.xml: no source locations found.  You need to"
                     + " set at least one 'source.location' property in project.xml to specify where"
                     + " source directories can be found.");
         }
-        
+
         // check that directories specified by 'source.location' properties exist
         // resolve relative paths into a canonical file
         List<String> badLocations = new ArrayList<String>();
         for (String srcLocation : getSourceLocations()) {
-            if (srcLocation.indexOf('~') >= 0 
+            if (srcLocation.indexOf('~') >= 0
                     || srcLocation.indexOf('$') >= 0) {
                 throw new BuildException("Error in project.xml: invalid 'source.location'"
                         + " property: " + srcLocation + ".  Must a be relative or absolute"
                         + " path and cannot contain '~' or environment variables: ");
             }
-            
+
             // if starts with / is absolute path, otherwise resolve relative to project.xml
             File tmpDir;
             if (srcLocation.startsWith("/")) {
@@ -140,7 +140,7 @@ public class Project
             } else {
                 tmpDir = new File(baseDir, srcLocation);
             }
-            
+
             // get rid of any ../ from path
             String canonicalPath;
             try {
@@ -149,14 +149,14 @@ public class Project
                 throw new BuildException("Error finding canonical path for 'source.location': "
                         + tmpDir.getPath());
             }
-            
+
             if (tmpDir.exists()) {
                 visitAllDirs(tmpDir);
             } else {
                 badLocations.add(canonicalPath);
             }
         }
-        
+
         if (!badLocations.isEmpty()) {
             StringBuffer message = new StringBuffer("Error in project.xml: Can't open directories"
                     + " specified by 'source.location' properties in project.xml: ");
@@ -165,8 +165,8 @@ public class Project
             }
             throw new BuildException(message.toString());
         }
-        
-        
+
+
         Set<String> badSources = new HashSet<String>();
 
         // check that all <source> types can be found
@@ -179,11 +179,11 @@ public class Project
                     if (sourceDir != null) {
                         // already seen a source with this type
                         throw new BuildException("Error in project.xml: multiple directories found"
-                        + " for source '" + s.getType() + "'.  Each source type must be"
-                        + " uniquely named within the 'source.location' directories"
-                        + " specified. Found in: "
-                        + endl + "\t\t" + sourceDir.getParent()
-                        + endl + "\t\t" + tmpDir.getParent());
+                                + " for source '" + s.getType() + "'.  Each source type must be"
+                                + " uniquely named within the 'source.location' directories"
+                                + " specified. Found in: "
+                                + endl + "\t\t" + sourceDir.getParent()
+                                + endl + "\t\t" + tmpDir.getParent());
                     }
                     sourceDir = tmpDir;
                 }
@@ -195,24 +195,24 @@ public class Project
                 badSources.add(s.getType());
             }
         }
-        
+
         if (!badSources.isEmpty()) {
             StringBuffer message = new StringBuffer("Error in project.xml: Can't find directories"
                     + " for sources: ");
             for (String badSource : badSources) {
                 message.append("'" + badSource + "', ");
             }
-            message.append(" looked in: ");       
-            
+            message.append(" looked in: ");
+
             for (String srcLocation : srcLocations) {
                 message.append(endl + "\t\t" + srcLocation);
             }
             throw new BuildException(message.toString());
         }
 
-        
+
     }
-    
+
     /**
      * Get a list of directories to search for sources, specified by 'source.location. properties.
      * @return a list of source locations
@@ -246,5 +246,5 @@ public class Project
                 visitAllDirs(new File(dir, child));
             }
         }
-    }   
+    }
 }

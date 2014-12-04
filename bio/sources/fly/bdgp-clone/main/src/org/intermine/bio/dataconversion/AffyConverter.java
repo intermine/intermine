@@ -56,6 +56,7 @@ public class AffyConverter extends CDNACloneConverter
      *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
 
         BufferedReader br = new BufferedReader(reader);

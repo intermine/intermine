@@ -37,8 +37,8 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
-import org.intermine.util.StringUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.Util;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -51,7 +51,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class MinePathwaysDisplayer extends ReportDisplayer
 {
-    private static Map<ReportObject, Map<Mine, String>> minePathwayCache = new CacheMap<ReportObject, Map<Mine, String>>();
+    private static Map<ReportObject, Map<Mine, String>> minePathwayCache
+        = new CacheMap<ReportObject, Map<Mine, String>>();
     private static Map<ReportObject, Mine> localMineCache = new CacheMap<ReportObject, Mine>();
     protected static final Logger LOG = Logger.getLogger(MinePathwaysDisplayer.class);
 
@@ -88,7 +89,7 @@ public class MinePathwaysDisplayer extends ReportDisplayer
 
             mineToOrthologues = buildHomologueMap(mines, orthologues);
             localMine = linkManager.getLocalMine();
-            
+
             minePathwayCache.put(reportObject, mineToOrthologues);
         }
 
@@ -96,14 +97,13 @@ public class MinePathwaysDisplayer extends ReportDisplayer
             localMine = localMineCache.get(reportObject);
 
         } else {
-            Map<String, Set<String>> orthologues = getLocalHomologues(gene);
             HttpSession session = request.getSession();
             ServletContext servletContext = session.getServletContext();
             final Properties webProperties = SessionMethods.getWebProperties(servletContext);
             final FriendlyMineManager linkManager
                 = FriendlyMineManager.getInstance(im, webProperties);
             localMine = linkManager.getLocalMine();
-            
+
             localMineCache.put(reportObject, localMine);
         }
 

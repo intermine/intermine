@@ -29,6 +29,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Jakub Kulaviak
  *
  */
+@SuppressWarnings("deprecation")
 public abstract class HttpExporterBase
 {
     private static final int BATCH_SIZE = 5000;

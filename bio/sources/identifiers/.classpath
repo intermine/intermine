@@ -15,5 +15,6 @@
 	<classpathentry kind="src" path="/bio-core-main"/>
 	<classpathentry kind="src" path="/intermine-integrate-main"/>
 	<classpathentry kind="src" path="/intermine-integrate-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="zfin-identifiers/test/build/classes"/>
 </classpath>

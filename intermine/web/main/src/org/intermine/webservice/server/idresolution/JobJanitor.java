@@ -1,8 +1,17 @@
 package org.intermine.webservice.server.idresolution;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Date;
 import java.util.Iterator;
-import java.util.UUID;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.intermine.api.idresolution.IDResolver;
@@ -13,7 +22,8 @@ import org.intermine.api.idresolution.Job;
  * @author Alex Kalderimis
  *
  */
-public class JobJanitor implements Runnable {
+public class JobJanitor implements Runnable
+{
 
     private static final long PERIOD = 60 * 1000;
     private volatile boolean canContinue = true;
@@ -22,7 +32,7 @@ public class JobJanitor implements Runnable {
     public void run() {
         IDResolver idresolver = IDResolver.getInstance();
         while (canContinue) {
-            Iterator<Job> jobs = idresolver.JOBS.values().iterator();
+            Iterator<Job> jobs = idresolver.getJobs().values().iterator();
             Date cutOff = DateUtils.addHours(new Date(), -3);
             while (jobs.hasNext()) {
                 if (Thread.interrupted()) {
@@ -32,12 +42,14 @@ public class JobJanitor implements Runnable {
                 switch (job.getStatus()) {
                     case ERROR:
                     case SUCCESS:
-                        Date startedAt = job.getStatedAt();
+                        Date startedAt = job.getStartedAt();
                         if (startedAt != null && startedAt.before(cutOff)) {
                             jobs.remove();
                         }
+                        break;
                     case PENDING:
                     case RUNNING:
+                    default:
                         continue;
                 }
             }
@@ -51,6 +63,7 @@ public class JobJanitor implements Runnable {
 
     }
 
+    /** Let others tell us to stop. **/
     public void stop() {
         canContinue = false;
     }

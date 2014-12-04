@@ -3,7 +3,6 @@ package org.intermine.webservice.server.output;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,10 +11,12 @@ import java.util.TreeMap;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
@@ -28,6 +29,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.OuterJoinStatus;
@@ -47,6 +49,7 @@ import org.json.JSONObject;
 
 public class JSONResultsIteratorTest extends TestCase {
 
+    private static final int DEFAULT_LIMIT = 5;
     private ObjectStoreDummyImpl os;
     private Company wernhamHogg;
     private CEO jennifer;
@@ -78,7 +81,7 @@ public class JSONResultsIteratorTest extends TestCase {
     protected void setUp() {
         os = new ObjectStoreDummyImpl();
 
-        wernhamHogg = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        wernhamHogg = DynamicUtil.simpleCreateObject(Company.class);
         wernhamHogg.setId(new Integer(1));
         wernhamHogg.setName("Wernham-Hogg");
         wernhamHogg.setVatNumber(101);
@@ -179,7 +182,7 @@ public class JSONResultsIteratorTest extends TestCase {
         trudy.setName("Trudy");
         trudy.setAge(25);
 
-        bms = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        bms = DynamicUtil.simpleCreateObject(Company.class);
         bms.setId(new Integer(23));
         bms.setName("Business Management Seminars");
         bms.setVatNumber(102);
@@ -202,7 +205,7 @@ public class JSONResultsIteratorTest extends TestCase {
         String jsonString = "{ 'class': 'Manager', 'objectId': 3, 'age': 39, 'name': 'David Brent' }";
         JSONObject expected = new JSONObject(jsonString);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(david);
 
         os.addRow(row);
@@ -222,15 +225,21 @@ public class JSONResultsIteratorTest extends TestCase {
         assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(0)));
 
     }
-    
-    private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+
+    private ExportResultsIterator getIterator(PathQuery pq, int limit) throws ObjectStoreException {
+        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Map<String, InterMineBag> noBags = new HashMap<String, InterMineBag>();
+        Query q = MainHelper.makeQuery(pq, noBags, pathToQueryNode, null, null);
+        @SuppressWarnings("unchecked")
+        List<Object> resultList = os.execute(q, 0, limit, true, true, new HashMap<Object, Integer>());
         Results results = new DummyResults(q, resultList);
 
         ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
         return iter;
+    }
+
+    private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
+        return getIterator(pq, DEFAULT_LIMIT);
     }
 
     public void testMultipleSimpleObjects() throws Exception {
@@ -244,17 +253,17 @@ public class JSONResultsIteratorTest extends TestCase {
         jsonStrings.add("{ 'class':'Employee', 'objectId':9, 'age':28, 'name': 'Lee' }");
         jsonStrings.add("{ 'class':'Manager',  'objectId':3, 'age':39, 'name': 'David Brent' }");
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(tim);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(gareth);
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Object> row3 = new ResultsRow<Object>();
         row3.add(dawn);
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Object> row4 = new ResultsRow<Object>();
         row4.add(keith);
-        ResultsRow row5 = new ResultsRow();
+        ResultsRow<Object> row5 = new ResultsRow<Object>();
         row5.add(lee);
-        ResultsRow row6 = new ResultsRow();
+        ResultsRow<Object> row6 = new ResultsRow<Object>();
         row6.add(david);
 
         os.addRow(row1);
@@ -267,7 +276,7 @@ public class JSONResultsIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.name", "Employee.age", "Employee.id");
 
-        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq, 10));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
@@ -285,30 +294,30 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testSingleObjectWithNestedCollections() throws Exception {
         os.setResultsSize(1);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(wernhamHogg);
-        List sub1 = new ArrayList();
-        ResultsRow subRow1 = new ResultsRow();
+        List<ResultsRow<Object>> sub1 = new ArrayList<ResultsRow<Object>>();
+        ResultsRow<Object> subRow1 = new ResultsRow<Object>();
         subRow1.add(sales);
-        List sub2 = new ArrayList();
-        ResultsRow subRow2 = new ResultsRow();
+        List<ResultsRow<Employee>> sub2 = new ArrayList<ResultsRow<Employee>>();
+        ResultsRow<Employee> subRow2 = new ResultsRow<Employee>();
         subRow2.add(tim);
         sub2.add(subRow2);
-        subRow2 = new ResultsRow();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(gareth);
         sub2.add(subRow2);
-        subRow2 = new ResultsRow();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(david);
         sub2.add(subRow2);
         subRow1.add(sub2);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<Object>();
         subRow1.add(distribution);
-        sub2 = new ArrayList();
-        subRow2 = new ResultsRow();
+        sub2 = new ArrayList<ResultsRow<Employee>>();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(lee);
         sub2.add(subRow2);
-        subRow2 = new ResultsRow();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(alex);
         sub2.add(subRow2);
         subRow1.add(sub2);
@@ -386,27 +395,27 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testSingleObjectWithNestedCollectionsAndMultipleAttributes() throws Exception {
         os.setResultsSize(1);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(wernhamHogg);
-        List sub1 = new ArrayList();
-        ResultsRow subRow1 = new ResultsRow();
+        List<ResultsRow<Object>> sub1 = new ArrayList<ResultsRow<Object>>();
+        ResultsRow<Object> subRow1 = new ResultsRow<Object>();
         subRow1.add(sales);
-        List sub2 = new ArrayList();
-        ResultsRow subRow2 = new ResultsRow();
+        List<ResultsRow<Employee>> sub2 = new ArrayList<ResultsRow<Employee>>();
+        ResultsRow<Employee> subRow2 = new ResultsRow<Employee>();
         subRow2.add(tim);
         sub2.add(subRow2);
-        subRow2 = new ResultsRow();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(gareth);
         sub2.add(subRow2);
         subRow1.add(sub2);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<Object>();
         subRow1.add(distribution);
-        sub2 = new ArrayList();
-        subRow2 = new ResultsRow();
+        sub2 = new ArrayList<ResultsRow<Employee>>();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(lee);
         sub2.add(subRow2);
-        subRow2 = new ResultsRow();
+        subRow2 = new ResultsRow<Employee>();
         subRow2.add(alex);
         sub2.add(subRow2);
         subRow1.add(sub2);
@@ -514,7 +523,7 @@ public class JSONResultsIteratorTest extends TestCase {
                 "            }";
         JSONObject expected = new JSONObject(jsonString);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(sales);
         row.add(wernhamHogg);
         row.add(jennifer);
@@ -539,7 +548,7 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testBadReferenceTrail() throws Exception {
         os.setResultsSize(1);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(sales);
         row.add(jennifer);
         row.add(address);
@@ -573,12 +582,12 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testSingleObjectWithACollection() throws Exception {
         os.setResultsSize(2);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(david);
         row.add(sales);
         row.add(tim);
         os.addRow(row);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(david);
         row2.add(sales);
         row2.add(gareth);
@@ -633,11 +642,11 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testBadCollectionTrail() throws Exception {
         os.setResultsSize(2);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(david);
         row.add(tim);
         os.addRow(row);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(david);
         row2.add(gareth);
         os.addRow(row2);
@@ -669,10 +678,10 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testHeadlessQuery() throws Exception {
         os.setResultsSize(2);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(tim);
         os.addRow(row);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(gareth);
         os.addRow(row2);
 
@@ -740,24 +749,24 @@ public class JSONResultsIteratorTest extends TestCase {
                 "    ]" +
                 "}";
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(wernhamHogg);
-        List sub1 = new ArrayList();
-        ResultsRow subRow1 = new ResultsRow();
+        List<ResultsRow<InterMineObject>> sub1 = new ArrayList<ResultsRow<InterMineObject>>();
+        ResultsRow<InterMineObject> subRow1 = new ResultsRow<InterMineObject>();
         subRow1.add(sales);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<InterMineObject>();
         subRow1.add(accounts);
         sub1.add(subRow1);
         row.add(sub1);
-        sub1 = new ArrayList();
-        subRow1 = new ResultsRow();
+        sub1 = new ArrayList<ResultsRow<InterMineObject>>();
+        subRow1 = new ResultsRow<InterMineObject>();
         subRow1.add(rowan);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<InterMineObject>();
         subRow1.add(ray);
         sub1.add(subRow1);
-        subRow1 = new ResultsRow();
+        subRow1 = new ResultsRow<InterMineObject>();
         subRow1.add(jude);
         sub1.add(subRow1);
         row.add(sub1);
@@ -826,25 +835,25 @@ public class JSONResultsIteratorTest extends TestCase {
                 "    ]" +
                 "}";
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(wernhamHogg);
         row1.add(sales);
         row1.add(null);
         os.addRow(row1);
 
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(wernhamHogg);
         row2.add(accounts);
         row2.add(rowan);
         os.addRow(row2);
 
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Object> row3 = new ResultsRow<Object>();
         row3.add(wernhamHogg);
         row3.add(accounts);
         row3.add(ray);
         os.addRow(row3);
 
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Object> row4 = new ResultsRow<Object>();
         row4.add(wernhamHogg);
         row4.add(accounts);
         row4.add(jude);
@@ -954,7 +963,7 @@ public class JSONResultsIteratorTest extends TestCase {
                 "   }" +
                 "}";
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(tim);
         row1.add(sales);
         row1.add(david);
@@ -966,10 +975,12 @@ public class JSONResultsIteratorTest extends TestCase {
         row1.add(wernhamHogg);
         row1.add(address2);
         os.addRow(row1);
+        os.setResultsSize(1);
 
         PathQuery pq = new PathQuery(model);
         pq.addViews(
-                "Employee.age", "Employee.name",
+                "Employee.age",
+                "Employee.name",
                 "Employee.department.name",
                 "Employee.department.manager.name",
                 "Employee.department.manager.address.address",
@@ -1000,11 +1011,11 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testHeadInWrongPlace() throws Exception {
         os.setResultsSize(2);
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(tim);
         row1.add(sales);
         os.addRow(row1);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(gareth);
         row2.add(sales);
         os.addRow(row2);
@@ -1040,12 +1051,12 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testRefBeforeItsParentCollectionOrder() throws Exception {
         os.setResultsSize(2);
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(wernhamHogg);
         row1.add(tim);
         row1.add(sales);
         os.addRow(row1);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(wernhamHogg);
         row2.add(gareth);
         row2.add(sales);
@@ -1077,12 +1088,12 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testColBeforeItsParentRefOrder() throws Exception {
         os.setResultsSize(2);
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(david);
         row1.add(tim);
         row1.add(sales);
         os.addRow(row1);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(david);
         row2.add(gareth);
         row2.add(sales);
@@ -1187,22 +1198,22 @@ public class JSONResultsIteratorTest extends TestCase {
                 "            ]" +
                 "    }");
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(sales);
         row1.add(tim);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(sales);
         row2.add(gareth);
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Object> row3 = new ResultsRow<Object>();
         row3.add(accounts);
         row3.add(keith);
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Object> row4 = new ResultsRow<Object>();
         row4.add(distribution);
         row4.add(lee);
-        ResultsRow row5 = new ResultsRow();
+        ResultsRow<Object> row5 = new ResultsRow<Object>();
         row5.add(distribution);
         row5.add(alex);
-        ResultsRow row6 = new ResultsRow();
+        ResultsRow<Object> row6 = new ResultsRow<Object>();
         row6.add(reception);
         row6.add(dawn);
 
@@ -1212,11 +1223,12 @@ public class JSONResultsIteratorTest extends TestCase {
         os.addRow(row4);
         os.addRow(row5);
         os.addRow(row6);
+        os.setResultsSize(6);
 
         PathQuery pq = new PathQuery(model);
         pq.addViews("Department.name", "Department.employees.name", "Department.employees.age");
 
-        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq, 10));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
@@ -1232,8 +1244,7 @@ public class JSONResultsIteratorTest extends TestCase {
     }
 
     public void testMultipleObjectsWithRefs() throws Exception {
-        os.setResultsSize(6);
-
+        
         List<String> jsonStrings = new ArrayList<String>();
 
         jsonStrings.add(
@@ -1270,39 +1281,50 @@ public class JSONResultsIteratorTest extends TestCase {
                 "            company   : { class: 'Company', objectId: 1, vatNumber: 101, name: 'Wernham-Hogg' }" +
                 "        }");
 
-        ResultsRow row1 = new ResultsRow();
+        ResultsRow<Object> row1 = new ResultsRow<Object>();
         row1.add(sales);
         row1.add(david);
         row1.add(wernhamHogg);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(accounts);
         row2.add(david);
         row2.add(wernhamHogg);
-        ResultsRow row3 = new ResultsRow();
+        ResultsRow<Object> row3 = new ResultsRow<Object>();
         row3.add(distribution);
         row3.add(taffy);
         row3.add(wernhamHogg);
-        ResultsRow row4 = new ResultsRow();
+        ResultsRow<Object> row4 = new ResultsRow<Object>();
         row4.add(swindon);
         row4.add(neil);
         row4.add(wernhamHogg);
 
+        os.setResultsSize(4); // Otherwise the DummyObject store will keep pumping out nulls.
         os.addRow(row1);
         os.addRow(row2);
         os.addRow(row3);
         os.addRow(row4);
 
         PathQuery pq = new PathQuery(model);
-        pq.addViews("Department.name", "Department.manager.name", "Department.manager.age", "Department.company.name", "Department.company.vatNumber");
+        pq.addViews(
+            "Department.name",
+            "Department.manager.name",
+            "Department.manager.age",
+            "Department.company.name",
+            "Department.company.vatNumber"
+        );
 
         JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
+        List<String> names = new ArrayList<String>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
+            names.add(gotRow.getString("name"));
             got.add(gotRow);
         }
 
-        assertEquals(4, got.size());
+        int howMany = got.size();
+        String msg = howMany > 4 ? "There are too many results: " + names : "There are too few results: " + names;
+        assertEquals(msg, 4, howMany);
         for (int i = 0; i < jsonStrings.size(); i++) {
             JSONObject jo = new JSONObject(jsonStrings.get(i));
             assertEquals(null, JSONObjTester.getProblemsComparing(jo, got.get(i)));
@@ -1398,37 +1420,37 @@ public class JSONResultsIteratorTest extends TestCase {
                 "            ]" +
                 "        }");
 
-        ResultsRow row1a = new ResultsRow();
+        ResultsRow<Object> row1a = new ResultsRow<Object>();
         row1a.add(sales);
         row1a.add(david);
         row1a.add(wernhamHogg);
         row1a.add(tim);
-        ResultsRow row1b = new ResultsRow();
+        ResultsRow<Object> row1b = new ResultsRow<Object>();
         row1b.add(sales);
         row1b.add(david);
         row1b.add(wernhamHogg);
         row1b.add(gareth);
-        ResultsRow row2 = new ResultsRow();
+        ResultsRow<Object> row2 = new ResultsRow<Object>();
         row2.add(accounts);
         row2.add(david);
         row2.add(wernhamHogg);
         row2.add(keith);
-        ResultsRow row3a = new ResultsRow();
+        ResultsRow<Object> row3a = new ResultsRow<Object>();
         row3a.add(distribution);
         row3a.add(taffy);
         row3a.add(wernhamHogg);
         row3a.add(lee);
-        ResultsRow row3b = new ResultsRow();
+        ResultsRow<Object> row3b = new ResultsRow<Object>();
         row3b.add(distribution);
         row3b.add(taffy);
         row3b.add(wernhamHogg);
         row3b.add(alex);
-        ResultsRow row4a = new ResultsRow();
+        ResultsRow<Object> row4a = new ResultsRow<Object>();
         row4a.add(swindon);
         row4a.add(neil);
         row4a.add(wernhamHogg);
         row4a.add(rachel);
-        ResultsRow row4b = new ResultsRow();
+        ResultsRow<Object> row4b = new ResultsRow<Object>();
         row4b.add(swindon);
         row4b.add(neil);
         row4b.add(wernhamHogg);
@@ -1437,18 +1459,27 @@ public class JSONResultsIteratorTest extends TestCase {
 
         os.addRow(row1a);
         os.addRow(row1b);
+
         os.addRow(row2);
+
         os.addRow(row3a);
         os.addRow(row3b);
+
         os.addRow(row4a);
         os.addRow(row4b);
 
         PathQuery pq = new PathQuery(model);
-        pq.addViews("Department.name", "Department.manager.name", "Department.manager.age",
-                        "Department.company.name", "Department.company.vatNumber",
-                        "Department.employees.name", "Department.employees.age");
+        pq.addViews(
+            "Department.name",
+            "Department.manager.name",
+            "Department.manager.age",
+            "Department.company.name",
+            "Department.company.vatNumber",
+            "Department.employees.name",
+            "Department.employees.age"
+        );
 
-        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
+        JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq, 10));
 
         List<JSONObject> got = new ArrayList<JSONObject>();
         for (JSONObject gotRow : new IteratorIterable<JSONObject>(jsonIter)) {
@@ -1465,7 +1496,7 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testUnsupportedOperations() throws Exception {
         os.setResultsSize(1);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(wernhamHogg);
 
         os.addRow(row);
@@ -1493,7 +1524,7 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testCurrentArrayIsEmpty() throws Exception {
         os.setResultsSize(1);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(wernhamHogg);
         row.add(david);
 
@@ -1526,7 +1557,7 @@ public class JSONResultsIteratorTest extends TestCase {
     public void testCurrentMapIsNull() throws Exception {
         os.setResultsSize(1);
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(sales);
         row.add(address);
 
@@ -1565,7 +1596,7 @@ public class JSONResultsIteratorTest extends TestCase {
         cal.set(108 + 1900, 6, 6);
         typeContainer.setDateObjType(cal.getTime());
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(typeContainer);
 
         os.addRow(row);
@@ -1600,10 +1631,7 @@ public class JSONResultsIteratorTest extends TestCase {
         }
 
         ResultElement re = new ResultElement(david, manP, false);
-        Map<String, Object> jsonMap = new TreeMap<String, Object>();
-
-
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(david);
         os.addRow(row);
 
@@ -1623,7 +1651,7 @@ public class JSONResultsIteratorTest extends TestCase {
 
     public void testAIsaB() throws ObjectStoreException {
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(david);
         os.addRow(row);
 
@@ -1677,7 +1705,7 @@ public class JSONResultsIteratorTest extends TestCase {
         Map<String, Object> jsonMap = new TreeMap<String, Object>();
 
 
-        ResultsRow row = new ResultsRow();
+        ResultsRow<Object> row = new ResultsRow<Object>();
         row.add(david);
         os.addRow(row);
 

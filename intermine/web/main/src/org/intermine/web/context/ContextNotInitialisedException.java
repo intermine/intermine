@@ -1,19 +1,29 @@
 package org.intermine.web.context;
 
-public class ContextNotInitialisedException extends RuntimeException {
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
-    public ContextNotInitialisedException() {
+/**
+ * An error thrown when the InterMineContext object has not been initialised.
+ * @author Richard Smith
+ * @author Alex Kalderimis
+ *
+ */
+public final class ContextNotInitialisedException extends RuntimeException
+{
+
+    /**
+     * @param message The message.
+     */
+    public ContextNotInitialisedException(String message) {
+        super(message);
     }
 
-    public ContextNotInitialisedException(String arg0) {
-        super(arg0);
-    }
-
-    public ContextNotInitialisedException(Throwable arg0) {
-        super(arg0);
-    }
-
-    public ContextNotInitialisedException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
 }

@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.jbrowse;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 import static org.intermine.webservice.server.jbrowse.Queries.resolveValue;
 
@@ -20,7 +30,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.PropertiesUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -45,14 +54,16 @@ import org.intermine.webservice.server.output.StreamedOutput;
  * This service requires appropriate values to be configured in the web-properties
  * of a mine. For most biological genomic webservices, the default configuration
  * will suffice, but this can be altered on a per installation basis.
- * 
- * See <a href="http://gmod.org/wiki/JBrowse_Configuration_Guide#Other_Dynamically-Servable_Formats">
+ *
+ * See <a href="http://gmod.org/wiki/JBrowse_Configuration_Guide#Other_Dynamically-
+ * Servable_Formats">
  * the JBrowse wiki</a> for a guide to the formats of the files generated here.
  *
  * @author Alex Kalderimis
  *
  */
-public class Config extends JSONService {
+public class Config extends JSONService
+{
 
     /**
      * The domain we are operating within.
@@ -64,7 +75,8 @@ public class Config extends JSONService {
     /** The file we are being asked for. **/
     private String fileName = "";
 
-    /** The data type that represents a reference sequence in this model. Usually a sub-type of featType **/
+    /** The data type that represents a reference sequence in this model.
+     *  Usually a sub-type of featType **/
     private String refType;
 
     /** The data type that represents a feature in this model **/
@@ -98,14 +110,16 @@ public class Config extends JSONService {
     private String baseurl = null;
 
     /** A reference to the web-app configuration. **/
-    WebConfig config; 
+    WebConfig config;
 
     /** One of the files we serve: seq/refSeqs.json **/
     private static final String REF_SEQS = "seq/refSeqs.json";
     /** One of the files we serve: trackList.json **/
     private static final String TRACKS = "trackList.json";
 
-    /** Build a new instance with the injected API **/
+    /** Build a new instance with the injected API
+     * @param im InterMine API
+     * **/
     public Config(InterMineAPI im) {
         super(im);
     }
@@ -255,8 +269,10 @@ public class Config extends JSONService {
         ret.put("type", "JBrowse/View/Track/CanvasFeatures");
         ret.put("storeClass", "JBrowse/Store/SeqFeature/REST");
         ret.put("category", featureCat);
-        ret.put("key", WebUtil.formatClass(feature, config)); // In JBrowse "key" means human-readable.
-        ret.put("label", dataset + "-" + feature.getUnqualifiedName()); // and "label" means machine-readable.
+        // In JBrowse "key" means human-readable.
+        ret.put("key", WebUtil.formatClass(feature, config));
+        // and "label" means machine-readable.
+        ret.put("label", dataset + "-" + feature.getUnqualifiedName());
         ret.put("baseUrl", getBaseUrl() + domain);
         Map<String, Object> query = new HashMap<String, Object>();
         query.put("type", feature.getUnqualifiedName());
@@ -315,6 +331,6 @@ public class Config extends JSONService {
         return ret;
     }
 
-    
+
 
 }

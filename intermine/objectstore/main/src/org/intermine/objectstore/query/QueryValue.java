@@ -24,6 +24,12 @@ public class QueryValue implements QueryEvaluable
 {
     private Object value;
 
+    /* Constant instances of Query Value */
+    /** The true value **/
+    public static final QueryValue TRUE = new QueryValue(Boolean.TRUE);
+    /** The false value **/
+    public static final QueryValue FALSE = new QueryValue(Boolean.FALSE);
+
     /**
      * Construct a QueryValue
      *

@@ -40,6 +40,7 @@ public class CombinedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         while (((currentIterator == null) || (!currentIterator.hasNext()))
                 && iteratorIterator.hasNext()) {
@@ -51,6 +52,7 @@ public class CombinedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public E next() {
         if (hasNext()) {
             return currentIterator.next();
@@ -63,6 +65,7 @@ public class CombinedIterator<E> implements Iterator<E>
      * {@inheritDoc}
      * This operation is not supported.
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

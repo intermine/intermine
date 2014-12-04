@@ -12,9 +12,8 @@ package org.intermine.webservice.server.template.result;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.Logger;
 import org.intermine.TestUtil;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
@@ -30,7 +29,6 @@ public class TemplateResultLinkGeneratorTest extends TestCase
 {
 
     private final String prefix = "http://localhost:8080/query/" + WebServiceConstants.MODULE_NAME;
-    private static final Logger LOG = Logger.getLogger(TemplateResultLinkGeneratorTest.class);
     public void testExtraValueLink() {
         PathQuery ret = new PathQuery(TestUtil.getModel());
         PathConstraint c1 = new PathConstraintLookup("Gene.name", "zen", "Drosophila_melanogaster");

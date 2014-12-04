@@ -15,9 +15,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -41,16 +41,15 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -65,7 +64,6 @@ import org.intermine.web.logic.session.SessionMethods;
 
 public class PortalQueryAction extends InterMineAction
 {
-    private static int index = 0;
 
     /**
      * Link-ins from other sites end up here (after some redirection).
@@ -79,6 +77,7 @@ public class PortalQueryAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -92,6 +91,8 @@ public class PortalQueryAction extends InterMineAction
         if (StringUtils.isBlank(extId)) {
             extId = request.getParameter("externalids");
         }
+
+        String extraFieldValue = request.getParameter("extraValue");
 
         // Add a message to welcome the user
         Properties properties = SessionMethods.getWebProperties(servletContext);
@@ -116,7 +117,8 @@ public class PortalQueryAction extends InterMineAction
             String defaultClass = properties.getProperty("webapp.portal.defaultClass");
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
-                = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), null, false);
+                = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), extraFieldValue,
+                        false);
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
@@ -163,13 +165,13 @@ public class PortalQueryAction extends InterMineAction
         className = StringUtil.capitalise(className);
         if (model.getClassDescriptorByName(className) == null) {
             recordError(new ActionMessage("errors.badportalclass"), request);
-            return goToNoResults(mapping, session);
+            return goToNoResults(mapping);
         }
 
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.addViews(PathQueryResultHelper.getDefaultViewForClass(className, model,
                 webConfig, null));
-        pathQuery.addConstraint(Constraints.lookup(className, extId, null));
+        pathQuery.addConstraint(Constraints.lookup(className, extId, extraFieldValue));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
         Profile profile = SessionMethods.getProfile(session);
@@ -245,34 +247,33 @@ public class PortalQueryAction extends InterMineAction
         }
     }
 
-    private ActionForward goToResults(ActionMapping mapping, HttpSession session,
+    private static ActionForward goToResults(ActionMapping mapping, HttpSession session,
             WebResults webResults) {
         SessionMethods.setQuery(session, webResults.getPathQuery());
         return new ForwardParameters(mapping.findForward("results"))
             .addParameter("trail", "").forward();
     }
 
-    private ActionForward goToReport(ActionMapping mapping, String id) {
+    private static ActionForward goToReport(ActionMapping mapping, String id) {
         return new ForwardParameters(mapping.findForward("report"))
             .addParameter("id", id).forward();
     }
 
-    private ActionForward goToNoResults(ActionMapping mapping, HttpSession session) {
+    private static ActionForward goToNoResults(ActionMapping mapping) {
         ActionForward forward = mapping.findForward("noResults");
         return new ForwardParameters(forward).addParameter("trail", "").forward();
     }
 
-    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag,
-            List<Integer> bagList) throws ObjectStoreException {
+    private static ActionForward createBagAndGoToBagDetails(ActionMapping mapping,
+            InterMineBag imBag, List<Integer> bagList) throws ObjectStoreException {
         imBag.addIdsToBag(bagList, imBag.getType());
         return new ForwardParameters(mapping.findForward("bagDetails"))
             .addParameter("bagName", imBag.getName()).forward();
     }
 
-    private void attachMessages(ActionMessages actionMessages, String className,
+    private static void attachMessages(ActionMessages actionMessages, String className,
             int bagQueryResultSize,
             int bagListSize, String extId) {
-        // Attach messages
         if (bagListSize == 0 && bagQueryResultSize == 1) {
             ActionMessage msg = new ActionMessage("results.lookup.noresults.one",
                     new Integer(bagQueryResultSize), className);

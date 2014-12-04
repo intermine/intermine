@@ -27,9 +27,9 @@ import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.results.flatouterjoins.ResultsFlatOuterJoinsImpl;
-import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -48,7 +48,6 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.util.TypeUtil;
 
 /**
  * The web version of a Results object.  This class handles the mapping between the paths that user
@@ -56,7 +55,8 @@ import org.intermine.util.TypeUtil;
  *
  * @author Kim Rutherford
  */
-public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
+public class WebResults
+    extends AbstractList<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>>
     implements WebTable
 {
     protected static final Logger LOG = Logger.getLogger(WebResults.class);
@@ -124,6 +124,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSingleBatch() {
         return osResults.isSingleBatch();
     }
@@ -176,22 +177,20 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @return the column name
      */
-    public List getColumnNames() {
+    public List<String> getColumnNames() {
         return columnNames;
     }
 
-    /**
-     * Adds columns that should be displayed to the table.
-     * @param columnPaths columns correspond to paths and columns for these paths should be added
-     */
-    public void addColumns(List<Path> columnPaths) {
-        addColumnsInternal(columnPaths);
+
+    @Override
+    public void addColumns(List<Path> paths) {
+        addColumnsInternal(paths);
     }
 
-    private void addColumnsInternal(List<Path> columnPaths) {
+    private void addColumnsInternal(List<Path> paths) {
         List<String> types = new ArrayList<String>();
         int i = columns.size();
-        for (Path columnPath : columnPaths) {
+        for (Path columnPath : paths) {
             String type = TypeUtil.unqualifiedName(columnPath.getLastClassDescriptor()
                                                    .getName());
             Class typeCls = columnPath.getLastClassDescriptor().getType();
@@ -225,6 +224,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     /**
      * {@inheritDoc}
      */
+    @Override
     public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> get(int index) {
         //throw new RuntimeException("Throwing exception in WebResults.get because it has always "
         //        + "returned an incorrect result.");
@@ -234,6 +234,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getEstimatedSize() {
         try {
             return getInfo().getRows();
@@ -248,6 +249,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isSizeEstimate() {
         try {
             return getInfo().getStatus() != ResultsInfo.SIZE;
@@ -269,6 +271,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      * @return the ResultsInfo object
      * @throws ObjectStoreException if there is an exception while getting the info
      */
+    @Override
     public ResultsInfo getInfo() throws ObjectStoreException {
         return osResults.getInfo();
     }
@@ -296,6 +299,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @return a Map
      */
+    @Override
     public Map<String, BagQueryResult> getPathToBagQueryResult() {
         return pathToBagQueryResult;
     }
@@ -327,7 +331,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      * @param newBatchSize the new batch size
      * @return a new Results object with a new batch size
      */
-    private Results changeResultBatchSize(Results oldResults, int newBatchSize) {
+    private static Results changeResultBatchSize(Results oldResults, int newBatchSize) {
         Results newResults = oldResults.getObjectStore().execute(oldResults.getQuery(),
                 newBatchSize, true, true, true);
         return newResults;
@@ -354,6 +358,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @return an int
      */
+    @Override
     public int getMaxRetrievableIndex() {
         return osResults.getObjectStore().getMaxOffset();
     }
@@ -365,6 +370,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      * @param index the row of the results to fetch
      * @return the results row as ResultElement objects
      */
+    @Override
     public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> getResultElements(int index) {
         return translateRow(flatResults.get(index));
     }
@@ -459,7 +465,8 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
 
                         if (redirector != null) {
                             try {
-                                String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
+                                String linkRedirect =
+                                        redirector.generateLink(im, (InterMineObject) o);
                                 if (linkRedirect != null) {
                                     resultElement.setLinkRedirect(linkRedirect);
                                 }
@@ -492,6 +499,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     /**
      * @return iterator over results
      */
+    @Override
     public Iterator<MultiRow<ResultsRow<MultiRowValue<ResultElement>>>> iterator() {
         return new Iter();
     }
@@ -509,15 +517,12 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
      *
      * @return the columns
      */
+    @Override
     public List<Column> getColumns() {
         return columns;
     }
 
-    /**
-     * Returns the columns path.
-     *
-     * @return the columns path
-     */
+    @Override
     public List<Path> getColumnsPath() {
         return columnPaths;
     }
@@ -525,6 +530,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
     /**
      * @return path query
      */
+    @Override
     public PathQuery getPathQuery() {
         return pathQuery;
     }
@@ -544,6 +550,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean hasNext() {
             return subIter.hasNext();
         }
@@ -551,6 +558,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
         /**
          * {@inheritDoc}
          */
+        @Override
         public MultiRow<ResultsRow<MultiRowValue<ResultElement>>> next() {
             return translateRow(subIter.next());
         }
@@ -558,6 +566,7 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
         /**
          * {@inheritDoc}
          */
+        @Override
         public void remove() {
             throw (new UnsupportedOperationException());
         }

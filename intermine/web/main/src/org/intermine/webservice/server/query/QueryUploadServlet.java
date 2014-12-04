@@ -10,15 +10,6 @@ package org.intermine.webservice.server.query;
  *
  */
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
@@ -31,13 +22,16 @@ import org.intermine.webservice.server.core.WebServiceServlet;
 public class QueryUploadServlet extends WebServiceServlet
 {
 
+    private static final long serialVersionUID = -7802363779951976507L;
+
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-        case POST:
-            return new QueryUploadService(api);
+            case POST:
+                return new QueryUploadService(api);
+            default:
+                throw new NoServiceException();
         }
-        throw new NoServiceException();
     }
 
 }

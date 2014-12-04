@@ -32,6 +32,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Kim Rutherford
  * @author Thomas Riley
  */
+@SuppressWarnings("deprecation")
 public class CollectionDetailsAction extends Action
 {
     /**

@@ -46,9 +46,25 @@ public class DisplayCollection extends DisplayField
         this.desc = desc;
     }
 
-    public DisplayCollection(Collection<?> collection, CollectionDescriptor desc,
-                             WebConfig webConfig, Properties webProperties, Map<String,
-                             List<FieldDescriptor>> classKeys, List<Class<?>> listOfTypes, String objectType)
+    /**
+     * Construct a DisplayCollection object.
+     * @param collection The actual collection.
+     * @param desc The metadata for this collection.
+     * @param webConfig The configuration object for the web-app.
+     * @param webProperties User configurable properties.
+     * @param classKeys Map of class name to a composite key.
+     * @param listOfTypes As determined for this collection.
+     * @param objectType The type of object.
+     * @throws Exception if something goes wrong.
+     */
+    public DisplayCollection(
+            Collection<?>        collection,
+            CollectionDescriptor desc,
+            WebConfig            webConfig,
+            Properties           webProperties,
+            Map<String, List<FieldDescriptor>> classKeys,
+            List<Class<?>>       listOfTypes,
+            String               objectType)
         throws Exception {
         super(collection, desc, webConfig, webProperties, classKeys, listOfTypes, objectType);
         this.desc = desc;
@@ -66,7 +82,7 @@ public class DisplayCollection extends DisplayField
      *
      * @return Collection for JSP instead of dealing with InlineResultsTable
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings("rawtypes")
     public Collection getCollection() {
         return this.collection;
     }

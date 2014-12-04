@@ -62,7 +62,7 @@ public abstract class BagConverter
     * @param bagList list of intermine object IDs
     * @param constraintValue value of constraint
     * @return list of intermine IDs
-     * @throws ObjectStoreException 
+    * @throws ObjectStoreException if we have issues querying the db.
     */
     public abstract List<Integer> getConvertedObjectIds(Profile profile, String bagType,
             List<Integer> bagList, String constraintValue) throws ObjectStoreException;
@@ -74,6 +74,8 @@ public abstract class BagConverter
     * @param bag intermine bag
     * @param profile user profile
     * @return map of values to counts
+    * @throws ObjectStoreException if we have issues querying the db.
     */
-    public abstract Map<String, String> getCounts(Profile profile, InterMineBag bag) throws ObjectStoreException;
+    public abstract Map<String, String> getCounts(Profile profile, InterMineBag bag)
+        throws ObjectStoreException;
 }

@@ -10,6 +10,7 @@ package org.intermine.web.task;
  *
  */
 
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +40,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
-import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
  * Task to load bagvalues table in the userprofile database.
@@ -101,13 +101,14 @@ public class LoadBagValuesTask extends Task
             return;
         }
         if (!verifyProductionDatabase(bags)) {
-            log("The task will not be executed. Verify to use the same production database that" +
-            " created the users's saved lists.");
+            log("The task will not be executed. Verify to use the same production database that"
+                    + " created the users's saved lists.");
             return;
         }
 
         //start loading bagvalues
-        for (Iterator i = bags.iterator(); i.hasNext();) {
+        for (Iterator<?> i = bags.iterator(); i.hasNext();) {
+            @SuppressWarnings("rawtypes")
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             if (StringUtils.isBlank(savedBag.getName())) {
@@ -153,19 +154,21 @@ public class LoadBagValuesTask extends Task
     private void updateUserProfileDatabase() {
         if (uos instanceof ObjectStoreInterMineImpl) {
             Connection conn = null;
+            PrintStream out = System.out;
             Database db = ((ObjectStoreInterMineImpl) uos).getDatabase();
             try {
                 conn = ((ObjectStoreInterMineImpl) uos).getConnection();
 
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")
                     && DatabaseUtil.columnExists(conn, "savedbag", "intermine_current")) {
-                        System .out.println("You must not execute the task load-bagvalues-table. Run the task update-savedbag-table task.");
-                        return;
+                    out.println("You must not execute the task load-bagvalues-table."
+                            + " Run the task update-savedbag-table task.");
+                    return;
                 }
                 if (!DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")) {
-                        DatabaseUtil.addColumn(db, "savedbag", "intermine_state",
+                    DatabaseUtil.addColumn(db, "savedbag", "intermine_state",
                             DatabaseUtil.Type.text);
-                        DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_state",
+                    DatabaseUtil.updateColumnValue(db, "savedbag", "intermine_state",
                             BagState.CURRENT.toString());
                 }
 
@@ -188,12 +191,14 @@ public class LoadBagValuesTask extends Task
     }
 
     private boolean verifyProductionDatabase(Results bags) {
-        //verify that we are pointing out the production database that created the users's saved lists.
+        //verify that we are pointing out the production database
+        //that created the users's saved lists.
         //select osbid from savedbag
         int totalBags = bags.size();
         int bagsMatching = 0;
         StringBuffer osbids = new StringBuffer();
-        for (Iterator i = bags.iterator(); i.hasNext();) {
+        for (Iterator<?> i = bags.iterator(); i.hasNext();) {
+            @SuppressWarnings("rawtypes")
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             osbids.append(savedBag.getOsbId() + ",");
@@ -205,7 +210,10 @@ public class LoadBagValuesTask extends Task
             Connection conn = null;
             try {
                 conn = ((ObjectStoreInterMineImpl) os).getDatabase().getConnection();
-                String sqlCountBagsMatching = "SELECT COUNT(DISTINCT bagid) FROM osbag_int WHERE bagid IN (" + osbids + ")";
+                String sqlCountBagsMatching =
+                        "SELECT COUNT(DISTINCT bagid)"
+                        + " FROM osbag_int"
+                        + " WHERE bagid IN (" + osbids + ")";
                 ResultSet result = conn.createStatement().executeQuery(sqlCountBagsMatching);
                 result.next();
                 bagsMatching = result.getInt(1);

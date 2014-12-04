@@ -35,7 +35,7 @@ import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.sql.precompute.QueryOptimiserContext;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.CEO;

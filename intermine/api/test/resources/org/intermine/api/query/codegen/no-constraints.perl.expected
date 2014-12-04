@@ -9,13 +9,13 @@
 #
 # For help using these modules, please see these resources:
 #
-#  * http://search.cpan.org/perldoc?Webservice::InterMine
+#  * https://metacpan.org/pod/Webservice::InterMine
 #       - API reference
-#  * http://search.cpan.org/perldoc?Webservice::InterMine::Cookbook
+#  * https://metacpan.org/pod/Webservice::InterMine::Cookbook
 #       - A How-To manual
-#  * http://www.intermine.org/wiki/PerlWebServiceAPI
+#  * http://intermine.readthedocs.org/en/latest/web-services
 #       - General Usage
-#  * http://www.intermine.org/wiki/WebService
+#  * http://iodoc.labs.intermine.org
 #       - Reference documentation for the underlying REST API
 #
 ######################################################################
@@ -30,10 +30,11 @@ binmode(STDOUT, 'utf8');
 # Silence warnings when printing null fields
 no warnings ('uninitialized');
 
+# This code makes use of the Webservice::InterMine library.
 # The following import statement sets TEST_PROJECT_TITLE as your default
-use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT/service';
+use Webservice::InterMine TEST_WS_VERSION 'TEST_SERVICE_ROOT';
 
-my $query = Webservice::InterMine->new_query;
+my $query = new_query(class => 'Gene');
 
 # The view specifies the output columns
 $query->add_view(qw/
@@ -45,7 +46,7 @@ $query->add_view(qw/
 /);
 
 # edit the line below to change the sort order:
-# $query->add_sort_order('Gene.primaryIdentifier', 'ASC');
+# $query->add_sort_order('primaryIdentifier', 'ASC');
 
 
 # Use an iterator to avoid having all rows in memory at once.

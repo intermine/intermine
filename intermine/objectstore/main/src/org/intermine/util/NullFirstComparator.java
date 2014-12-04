@@ -30,7 +30,7 @@ public final class NullFirstComparator implements Comparator<Object>
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
+    @Override
     public int compare(Object o1, Object o2) {
         if (o1 == null) {
             if (o2 == null) {

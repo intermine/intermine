@@ -40,15 +40,14 @@ public class FieldConfig
 
     /**
      * Specify if we want to show this field for an object in list analysis page table preview
-     * @param showInListAnalysisPreviewTable
+     * @param showInListAnalysisPreviewTable whether to show this in the list analysis preview.
      */
     public void setShowInListAnalysisPreviewTable(Boolean showInListAnalysisPreviewTable) {
         this.showInListAnalysisPreviewTable = showInListAnalysisPreviewTable;
     }
 
     /**
-     * -||-
-     * @return
+     * @return whether we should show this in the list analyis preview.
      */
     public Boolean getShowInListAnalysisPreviewTable() {
         return this.showInListAnalysisPreviewTable;
@@ -67,10 +66,16 @@ public class FieldConfig
         }
     }
 
+    /**
+     * @return The formatted name of this field.
+     */
     public String getFormattedName() {
         return FieldConfig.getFormattedName(fieldExpr);
     }
 
+    /**
+     * @param name the name of the field to format.
+     * @return the formatted name of a  particular field **/
     public static String getFormattedName(String name) {
         String[] parts = StringUtils.splitByCharacterTypeCamelCase(name);
         String[] ucFirstParts = new String[parts.length];
@@ -80,10 +85,12 @@ public class FieldConfig
         return StringUtils.join(ucFirstParts, " ");
     }
 
+    /** @param ccf The config object **/
     public void setClassConfig(Type ccf) {
         this.parent = ccf;
     }
 
+    /** @return The class config object for the class this field belongs to. **/
     public Type getClassConfig() {
         return this.parent;
     }
@@ -122,7 +129,7 @@ public class FieldConfig
 
     /**
      * Shall we show this field in a QueryBuilder? Ref #355
-     * @param showInQB
+     * @param showInQB whether to show this in the query builder.
      */
     public void setShowInQB(boolean showInQB) {
         this.showInQB = showInQB;
@@ -135,6 +142,9 @@ public class FieldConfig
         return showInQB;
     }
 
+    /**
+     * @return Whether this field represents a composite path.
+     */
     public boolean getIsDottedPath() {
         return (fieldExpr.lastIndexOf(".") >= 0);
     }
@@ -190,10 +200,12 @@ public class FieldConfig
         return showInSummary;
     }
 
+    /** @return whether the summary contains any outer joins. **/
     public boolean getOuterInSummary() {
         return outerInSummary;
     }
 
+    /** @param outerInSummary whether the summary contains any outer joins. **/
     public void setOuterInSummary(boolean outerInSummary) {
         this.outerInSummary = outerInSummary;
     }

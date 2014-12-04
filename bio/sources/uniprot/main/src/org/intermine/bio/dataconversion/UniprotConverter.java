@@ -30,7 +30,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
@@ -77,8 +77,6 @@ public class UniprotConverter extends BioDirectoryConverter
     protected IdResolver rslv;
     private static final String FLY = "7227";
     private String datasourceRefId = null;
-    @SuppressWarnings("unused")
-    private OrganismRepository or;
     private static final Map<String, String> GENE_PREFIXES = new HashMap<String, String>();
 
     /**
@@ -88,7 +86,7 @@ public class UniprotConverter extends BioDirectoryConverter
      */
     public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model, "UniProt", "Swiss-Prot data set");
-        or = OrganismRepository.getOrganismRepository();
+        OrganismRepository.getOrganismRepository();
     }
 
     static {
@@ -169,7 +167,7 @@ public class UniprotConverter extends BioDirectoryConverter
         genes = new HashMap<String, String>();
     }
 
-    /*
+    /**
      * sprot data files need to be processed immediately before trembl ones
      * not all organisms are going to have both files
      *
@@ -178,6 +176,9 @@ public class UniprotConverter extends BioDirectoryConverter
      *  expected syntax : 7227_uniprot_sprot.xml
      *  [TAXONID]_uniprot_[SOURCE].xml
      *  SOURCE: sprot or trembl
+     *
+     * @param fileList list of files to parse
+     * @return list of files ordered to that SwissProt files are parsed first
      */
     protected Map<String, File[]> parseFileNames(File[] fileList) {
         Map<String, File[]> files = new HashMap<String, File[]>();
@@ -810,19 +811,19 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private void processFeatures(Item protein, UniprotEntry uniprotEntry)
             throws SAXException {
-        	List<String> featureTypes = CONFIG.getFeatureTypes();
-        	for (Item feature : uniprotEntry.getFeatures()) {
-        		// only store the features of interest
-        		if (featureTypes.isEmpty() || 
-        				featureTypes.contains(feature.getAttribute("type").getValue())) {        			
-        			feature.setReference("protein", protein);
-        			try {
-        				store(feature);
-        			} catch (ObjectStoreException e) {
-        				throw new SAXException(e);
-        			}
-        		}
-        	}
+            List<String> featureTypes = CONFIG.getFeatureTypes();
+            for (Item feature : uniprotEntry.getFeatures()) {
+                // only store the features of interest
+                if (featureTypes.isEmpty() || featureTypes.contains(
+                        feature.getAttribute("type").getValue())) {
+                    feature.setReference("protein", protein);
+                    try {
+                        store(feature);
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException(e);
+                    }
+                }
+            }
         }
 
         private void processSynonyms(String proteinRefId, UniprotEntry uniprotEntry)
@@ -864,7 +865,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processDbrefs(Item protein, UniprotEntry uniprotEntry)
-            throws SAXException, ObjectStoreException {
+            throws ObjectStoreException {
             Map<String, Set<String>> dbrefs = uniprotEntry.getDbrefs();
             for (Map.Entry<String, Set<String>> dbref : dbrefs.entrySet()) {
                 String key = dbref.getKey();
@@ -1283,23 +1284,23 @@ public class UniprotConverter extends BioDirectoryConverter
 
     private Item getFeature(String type, String description, String status)
         throws SAXException {
-//        List<String> featureTypes = CONFIG.getFeatureTypes();
-//        if (featureTypes.isEmpty() || featureTypes.contains(type)) {
-            Item feature = createItem("UniProtFeature");
-            feature.setAttribute("type", type);
-            String keywordRefId = getKeyword(type);
-            feature.setReference("feature", keywordRefId);
-            String featureDescription = description;
-            if (status != null) {
-                featureDescription = (description == null ? status : description
-                                                          + " (" + status + ")");
-            }
-            if (!StringUtils.isEmpty(featureDescription)) {
-                feature.setAttribute("description", featureDescription);
-            }
-            return feature;
-//        }
-//        return null;
+        //        List<String> featureTypes = CONFIG.getFeatureTypes();
+        //        if (featureTypes.isEmpty() || featureTypes.contains(type)) {
+        Item feature = createItem("UniProtFeature");
+        feature.setAttribute("type", type);
+        String keywordRefId = getKeyword(type);
+        feature.setReference("feature", keywordRefId);
+        String featureDescription = description;
+        if (status != null) {
+            featureDescription = (description == null ? status : description
+                    + " (" + status + ")");
+        }
+        if (!StringUtils.isEmpty(featureDescription)) {
+            feature.setAttribute("description", featureDescription);
+        }
+        return feature;
+        //        }
+        //        return null;
     }
 
     /**
@@ -1308,7 +1309,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param name the attribute to fetch
      * @return attValue
      */
-    private String getAttrValue(Attributes attrs, String name) {
+    private static String getAttrValue(Attributes attrs, String name) {
         if (attrs.getValue(name) != null) {
             return attrs.getValue(name).trim();
         }

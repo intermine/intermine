@@ -96,10 +96,11 @@ public class KeggPathwayConverter extends BioFileConverter
                 configs[1] = "primaryIdentifier";
                 config.put(organism, configs);
             }
+            String[] bits = config.get(organism);
             if ("taxonId".equals(attributes[1])) {
-                config.get(organism)[0] = value;
+                bits[0] = value;
             } else if ("identifier".equals(attributes[1])) {
-                config.get(organism)[1] = value;
+                bits[1] = value;
             } else {
                 String msg = "Problem processing properties '" + PROP_FILE + "' on line " + key
                     + ".  This line has not been processed.";

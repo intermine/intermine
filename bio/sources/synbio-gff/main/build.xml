@@ -1,4 +1,0 @@
-<project name="synbio-gff-tasks" default="default" basedir=".">
-  <description>build synbio-gff tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

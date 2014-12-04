@@ -23,10 +23,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -43,8 +43,10 @@ public class GetAttributeAsFileAction extends Action
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
+    public ActionForward execute(
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -57,12 +59,12 @@ public class GetAttributeAsFileAction extends Action
 
         FieldExporter fieldExporter = null;
 
-        Set classes = DynamicUtil.decomposeClass(object.getClass());
+        Set<Class<?>> classes = Util.decomposeClass(object.getClass());
 
-        Iterator classIter = classes.iterator();
+        Iterator<Class<?>> classIter = classes.iterator();
 
         while (classIter.hasNext()) {
-            Class c = (Class) classIter.next();
+            Class<?> c = classIter.next();
 
             Type thisTypeConfig = webConfig.getTypes().get(c.getName());
 

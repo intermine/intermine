@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.intermine.metadata.ConstraintOp;
+
 /**
  * Groups a series of Constraints together.  Specify whether in the query
  * the relationship between them should be AND or OR

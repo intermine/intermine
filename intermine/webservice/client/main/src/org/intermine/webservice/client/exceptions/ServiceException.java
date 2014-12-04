@@ -27,7 +27,6 @@ public class ServiceException extends RuntimeException
     private final int httpErrorCode;
     protected static final int ERROR_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
-    private static final long serialVersionUID = 1L;
 
     /**
      * @param message message

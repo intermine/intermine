@@ -10,7 +10,10 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -22,7 +25,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -32,43 +35,49 @@ import org.xml.sax.SAXParseException;
 public class XMLValidator
 {
 
+    private static final String QUERY_XMLNS
+        = "<xsq:query xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+          + "xmlns:xsq=\"http://intermine.org/query/1.0\" "
+          + "xsi:schemaLocation=\"http://intermine.org/query/1.0 query.xsd\"";
     private XMLValidatorErrorHandler errorHandler = null;
-    
     private static final Logger LOG = Logger.getLogger(XMLValidator.class);
 
     /**
      * Validates an XML string according to an XML Schema at a given URL.
-     * @param xml an XML string.
+     *
+     * @param xmlToValidate an XML string.
      * @param xmlSchemaUrl the URL of an XML Schema.
      */
-    public void validate(String xml, String xmlSchemaUrl) {
-        
-    	errorHandler = new XMLValidatorErrorHandler();
-        
-    	try {
-        	// `query.xsd` had to be edited to allow the `QueryType` to be exported. But this means
-        	//  that now a `<query>` has to have a namespace associated. Here we do a simply
-        	//  replacement to fake in the namespace of queries that are un-namespaced.
-    		String[] parts = xmlSchemaUrl.split(Pattern.quote("/"));
-        	if ("query.xsd".equals(parts[parts.length - 1])) {
-        		xml = xml.replaceAll(Pattern.quote("<query"), "<xsq:query xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsq=\"http://intermine.org/query/1.0\" xsi:schemaLocation=\"http://intermine.org/query/1.0 query.xsd\"");
-        		xml = xml.replaceAll(Pattern.quote("</query>"), "</xsq:query>");
-        	}
-        	
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			Schema schema = factory.newSchema(new StreamSource(new StringReader(xmlSchemaUrl)));
+    public void validate(String xmlToValidate, String xmlSchemaUrl) {
+        String xml = xmlToValidate;
+        errorHandler = new XMLValidatorErrorHandler();
 
-			Validator validator = schema.newValidator();
-			validator.setErrorHandler(errorHandler);
-			validator.validate(new StreamSource(new StringReader(xml)));
-			
-    	} catch (SAXParseException e) {
-    		// Ignore.
-		} catch (Exception e) {
-			throw new InternalErrorException("XML validation failed.", e);
-		}
+        try {
+            // `query.xsd` had to be edited to allow the `QueryType` to be exported. But this means
+            //  that now a `<query>` has to have a namespace associated. Here we do a simply
+            //  replacement to fake in the namespace of queries that are un-namespaced.
+            String[] parts = xmlSchemaUrl.split(Pattern.quote("/"));
+            if ("query.xsd".equals(parts[parts.length - 1])) {
+                xml = xml.replaceAll(Pattern.quote("<query"), QUERY_XMLNS);
+                xml = xml.replaceAll(Pattern.quote("</query>"), "</xsq:query>");
+            }
+
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            URL schemaLocation = new URL(xmlSchemaUrl);
+            Reader schemaReader = new InputStreamReader(schemaLocation.openStream());
+            Schema schema = factory.newSchema(new StreamSource(schemaReader));
+
+            Validator validator = schema.newValidator();
+            validator.setErrorHandler(errorHandler);
+            validator.validate(new StreamSource(new StringReader(xml)));
+
+        } catch (SAXParseException e) {
+            LOG.debug(e);
+        } catch (Exception e) {
+            throw new ServiceException("XML validation failed.", e);
+        }
     }
-    
+
     /**
      * Returns errors occurred during parsing xml.
      * @return errors

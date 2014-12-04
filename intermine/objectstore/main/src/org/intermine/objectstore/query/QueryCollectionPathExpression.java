@@ -17,10 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
@@ -33,7 +34,8 @@ import org.intermine.util.TypeUtil;
  *
  * @author Matthew Wakeling
  */
-public class QueryCollectionPathExpression implements QueryPathExpressionWithSelect, Queryable
+public class QueryCollectionPathExpression
+    implements QueryPathExpressionWithSelect, Queryable, HasFromList
 {
     private QueryClass qc;
     private String fieldName;
@@ -208,6 +210,7 @@ public class QueryCollectionPathExpression implements QueryPathExpressionWithSel
      *
      * @param node a QueryNode
      */
+    @Override
     public void addFrom(FromElement node) {
         additionalFromList.add(node);
     }

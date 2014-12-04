@@ -1,17 +1,52 @@
 package org.intermine.api.idresolution;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 
-public interface JobInput {
+/**
+ *
+ * @author Alex
+ *
+ */
+public interface JobInput
+{
+    /**
+     *
+     * @return IDs
+     */
+    Collection<String> getIds();
 
-    public Collection<String> getIds();
+    /**
+     *
+     * @return extra value
+     */
+    String getExtraValue();
 
-    public String getExtraValue();
+    /**
+     *
+     * @return type
+     */
+    String getType();
 
-    public String getType();
+    /**
+     *
+     * @return true if case sensitive
+     */
+    Boolean getCaseSensitive();
 
-    public Boolean getCaseSensitive();
-
-    public Boolean getWildCards();
+    /**
+     *
+     * @return wildcards
+     */
+    Boolean getWildCards();
 
 }

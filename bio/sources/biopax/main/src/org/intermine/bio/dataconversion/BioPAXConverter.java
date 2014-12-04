@@ -56,8 +56,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private Map<String, Item> bioentities = new HashMap<String, Item>();
     private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet<BioPAXElement>();
-    @SuppressWarnings("unused")
-    private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
     private Set<String> taxonIds = new HashSet<String>();
@@ -194,6 +192,11 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         dataSourceRefId = datasource.getIdentifier();
     }
 
+    /**
+     *
+     * @param title data set title
+     * @throws ObjectStoreException can't store
+     */
     public void setBiopaxDatasetname(String title)
         throws ObjectStoreException {
         dataset = createItem("DataSet");
@@ -209,23 +212,22 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      * @param editor editor that is going to be used for traversing functionallity
      * @see org.biopax.paxtools.controller.Traverser
      */
-    public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor<?, ?> editor) {
+    public void visit(BioPAXElement domain, Object range, Model model,
+            PropertyEditor<?, ?> editor) {
 
         if (range != null && range instanceof BioPAXElement) {
             BioPAXElement bpe = (BioPAXElement) range;
             if (bpe instanceof Named) {
                 Named entity = (Named) bpe;
                 String className = entity.getModelInterface().getSimpleName();
-                if (className.equalsIgnoreCase("ProteinReference")
+                if ("ProteinReference".equalsIgnoreCase(className)
                         && StringUtils.isNotEmpty(pathwayRefId)) {
                     processProteinEntry(entity);
                 }
             }
             if (!visited.contains(bpe)) {
                 visited.add(bpe);
-                depth++;
                 traverser.traverse(bpe, model);
-                depth--;
             }
         }
     }
@@ -373,7 +375,8 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             // Good file name: 83333.owl
             taxonId = Integer.valueOf(filename.split("\\.")[0]);
         } else {
-            String[] bits = filename.split(" ");
+            // underscore or space
+            String[] bits = filename.split("[_\\s]");
 
             // bad filename eg `Human immunodeficiency virus 1.owl`,
             // expecting "Drosophila melanogaster.owl"

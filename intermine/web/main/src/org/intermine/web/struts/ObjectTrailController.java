@@ -55,11 +55,11 @@ public class ObjectTrailController extends TilesAction
      * @exception Exception if an error occurs
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -81,14 +81,14 @@ public class ObjectTrailController extends TilesAction
             String[] breadcrumbs = StringUtils.split(urlParam, '.');
 
             // bag names allow for dots
-            if (breadcrumbs[0].equals("bag")) {
+            if ("bag".equals(breadcrumbs[0])) {
                 List<String> bagName = new ArrayList<String>();
                 for (int j = 1; j < breadcrumbs.length; j++) {
                     // replace all spaces with plus signs
                     bagName.add(breadcrumbs[j].replaceAll(" ", "+"));
                 }
-                // join on a dot
-                String[] newBreadcrumbs = { "bag", StringUtils.join(bagName, ".") };
+                // join on a dot. Also, array constants can be used in initialisers.
+                String[] newBreadcrumbs = {"bag", StringUtils.join(bagName, ".")};
                 breadcrumbs = newBreadcrumbs;
             }
 

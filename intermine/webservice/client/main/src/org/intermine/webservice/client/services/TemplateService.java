@@ -10,10 +10,13 @@ package org.intermine.webservice.client.services;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import static org.intermine.pathquery.PathConstraint.getValue;
+import static org.intermine.pathquery.PathConstraint.getValues;
+import static org.intermine.pathquery.PathConstraint.getExtraValue;
+
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -41,16 +44,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * The TemplateService represents the connection to the resource that
- * returns results of templates and number of results.
+ * <h1>The TemplateService represents the connection to the resource that
+ * returns results of templates and number of results.</h1>
  *
- * A template is a predefined query, with a set number of configurable parameters, similar to a
+ * <p>A template is a predefined query, with a set number of configurable parameters, similar to a
  * search form. Only a subset of their actual constraints are editable, although at least one will
  * be. For example you might have a template that finds Alcohol-Dehydrogenase genes in a specific
  * organism - although this would require a couple of constraints, only the one that
- * specifies the organism need be visible to the end user.
+ * specifies the organism need be visible to the end user.</p>
  *
- * From the user's perspective, templates can offer two advantages:
+ * <p>From the user's perspective, templates can offer two advantages:</p>
  * <ul>
  *   <li>They can be simpler to run, as only the parts of the query relevant to the particular
  *       search need to be specified (for example you never need to set the output columns)</li>
@@ -59,12 +62,12 @@ import org.json.JSONObject;
  *       run from anywhere</li>
  * </ul>
  *
- * There are two ways to use templates - either you can fetch a template object from the
+ * <p>There are two ways to use templates - either you can fetch a template object from the
  * service, and use that to build the request, or you can build it by referencing the parameters
  * and output. The former method is preferable as it will catch errors caused by changes to the
- * template structure earlier on, and allow you to introspect the template.
+ * template structure earlier on, and allow you to introspect the template.</p>
  *
- * Using a Template object:
+ * <h3>Using a Template object:</h3>
  * <pre>
  * PrintStream out = System.out;
  *
@@ -87,11 +90,11 @@ import org.json.JSONObject;
  * }
  * </pre>
  *
- * When using the other method, it is assumed that if you are familiar with the template's
+ * <p>When using the other method, it is assumed that if you are familiar with the template's
  * parameters and output. Using the name and parameter method saves a call to the service to
- * retrieve the template in the first place:
+ * retrieve the template in the first place:</p>
  *
- * Using template name and parameters:
+ * <h3>Using template name and parameters:</h3>
  * <pre>
  * PrintStream out = System.out;
  *
@@ -168,7 +171,8 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
          * @param parameters a List of TemplateParameter objects
          */
         public void setTemplateParameters(List<TemplateParameter> parameters) {
-            for (int i = 0; i < parameters.size(); i++) {
+            int size = parameters.size();
+            for (int i = 0; i < size; i++) {
                 TemplateParameter par = parameters.get(i);
                 int index = i + 1;
                 addParameter("constraint" + index, par.getPathId());
@@ -294,7 +298,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
         return getCount(template.getName(), parameters);
     }
 
-    private List<TemplateParameter> getParametersFor(TemplateQuery template) {
+    private static List<TemplateParameter> getParametersFor(TemplateQuery template) {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
         for (PathConstraint pc: template.getEditableConstraints()) {
             if (template.getSwitchOffAbility(pc) != SwitchOffAbility.OFF) {
@@ -302,10 +306,11 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
                 String path = pc.getPath();
                 String op = pc.getOp().toString();
                 String code = template.getConstraints().get(pc);
-                if (PathConstraint.getValues(pc) != null) {
-                    tp = new TemplateParameter(path, op, PathConstraint.getValues(pc), code);
+                Collection<String> values = getValues(pc);
+                if (values != null) {
+                    tp = new TemplateParameter(path, op, values, code);
                 } else {
-                    tp = new TemplateParameter(path, op, PathConstraint.getValue(pc), PathConstraint.getExtraValue(pc), code);
+                    tp = new TemplateParameter(path, op, getValue(pc), getExtraValue(pc), code);
                 }
                 params.add(tp);
             }
@@ -453,7 +458,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public List<List<Object>> getRowsAsLists(String name,
             List<TemplateParameter> params, Page page) {
-        return getRows(name, params, page).getRowsAsLists();
+        return getRows(name, params).getRowsAsLists();
     }
 
     /**
@@ -466,7 +471,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * @return a list of rows, which are each a list of cells.
      */
     public List<List<Object>> getRowsAsLists(String name, List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getRowsAsLists();
+        return getRows(name, params).getRowsAsLists();
     }
 
     /**
@@ -480,7 +485,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public List<Map<String, Object>> getRowsAsMaps(String name, List<TemplateParameter> params,
             Page page) {
-        return getRows(name, params, page).getRowsAsMaps();
+        return getRows(name, params).getRowsAsMaps();
     }
 
     /**
@@ -494,7 +499,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * output column (in alternate long and short form) to value.
      */
     public List<Map<String, Object>> getRowsAsMaps(String name, List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getRowsAsMaps();
+        return getRows(name, params).getRowsAsMaps();
     }
 
     /**
@@ -509,7 +514,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Iterator<List<Object>> getRowListIterator(String name, List<TemplateParameter> params,
             Page page) {
-        return getRows(name, params, page).getListIterator();
+        return getRows(name, params).getListIterator();
     }
 
     /**
@@ -524,7 +529,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * @return an iterator over the rows, where each row is a list of objects.
      */
     public Iterator<List<Object>> getRowListIterator(String name, List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getListIterator();
+        return getRows(name, params).getListIterator();
     }
 
     /**
@@ -538,7 +543,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Iterator<Map<String, Object>> getRowMapIterator(String name,
             List<TemplateParameter> params, Page page) {
-        return getRows(name, params, page).getMapIterator();
+        return getRows(name, params).getMapIterator();
     }
 
     /**
@@ -553,26 +558,28 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Iterator<Map<String, Object>> getRowMapIterator(String name,
             List<TemplateParameter> params) {
-        return getRows(name, params, Page.DEFAULT).getMapIterator();
+        return getRows(name, params).getMapIterator();
     }
 
-    private RowResultSet getRows(String name, List<TemplateParameter> params, Page page) {
+    private RowResultSet getRows(String name, List<TemplateParameter> params) {
         TemplateQuery tq = getTemplate(name);
         if (tq == null) {
             throw new ServiceException("There is no template named " + name);
         }
-        return getRows(name, params, tq.getView(), page);
+        return getRows(name, params, tq.getView());
     }
 
     @Override
     protected RowResultSet getRows(TemplateQuery query, Page page) {
         List<TemplateParameter> parameters = getParametersFor(query);
-        return getRows(query.getName(), parameters, query.getView(), page);
+        return getRows(query.getName(), parameters, query.getView());
     }
 
     private RowResultSet getRows(String name, List<TemplateParameter> params,
-            List<String> views, Page page) {
-        ContentType ct = (getAPIVersion() < 8) ? ContentType.APPLICATION_JSON_ROW : ContentType.APPLICATION_JSON;
+            List<String> views) {
+        ContentType ct = (getAPIVersion() < 8)
+                ? ContentType.APPLICATION_JSON_ROW
+                : ContentType.APPLICATION_JSON;
         TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), ct);
 
         request.setName(name);

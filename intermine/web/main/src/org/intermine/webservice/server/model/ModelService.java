@@ -14,31 +14,38 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
+import org.json.JSONObject;
 
 /**
  * Web service that returns a serialised representation of the data model. The currently
@@ -50,7 +57,7 @@ import org.intermine.webservice.server.output.StreamedOutput;
 public class ModelService extends WebService
 {
     private static final String DEFAULT_CALLBACK = "parseModel";
-
+    private static final Logger LOG = Logger.getLogger(ModelService.class);
     private static final String FILE_BASE_NAME = "model";
     private Path node = null;
 
@@ -73,7 +80,7 @@ public class ModelService extends WebService
         return Format.XML;
     }
 
-    private static final String formatEndings = "^/?(xml|tsv|csv|json|jsonp)$";
+    private static final String FORMAT_ENDINGS = "^/?(xml|tsv|csv|json|jsonp)$";
 
     @Override
     protected void initState() {
@@ -82,15 +89,15 @@ public class ModelService extends WebService
         if (StringUtils.isBlank(pathInfo)) {
             return;
         }
-        if (pathInfo.matches(formatEndings)) {
+        if (pathInfo.matches(FORMAT_ENDINGS)) {
             return;
         }
         setFormat(Format.JSON);
         pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         try {
-            
             Map<String, String> subclasses = new HashMap<String, String>();
-            for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+            for (@SuppressWarnings("unchecked")
+            Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
                 String param = e.nextElement();
                 subclasses.put(param, request.getParameter(param));
             }
@@ -124,10 +131,10 @@ public class ModelService extends WebService
                 attributes.put(JSONFormatter.KEY_CALLBACK, callback);
             }
             if (node == null) {
-                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":{");
-                attributes.put(JSONFormatter.KEY_OUTRO, "}");
+                attributes.put(JSONFormatter.KEY_INTRO, "\"model\":");
                 output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(model.toJSONString()));
+                output.addResultItem(
+                        Arrays.asList(new JSONObject(getAnnotatedModel(model)).toString()));
             } else {
                 Map<String, String> kvPairs = new HashMap<String, String>();
                 kvPairs.put("name", getNodeName(node));
@@ -145,35 +152,64 @@ public class ModelService extends WebService
         }
     }
 
-    private String getNodeName(Path node) {
+    private Map<String, Object> getAnnotatedModel(Model model) {
+        TagManager tm = im.getTagManager();
+        Model.ModelAST modelData = model.toJsonAST();
+        WebConfig config = InterMineContext.getWebConfig();
+        Map<String, Map<String, Object>> classes = modelData.getClasses();
+        Profile p = getPermission().getProfile();
+        String userName = p.getUsername();
+        try {
+            for (Map<String, Object> classData: classes.values()) {
+                // Might be a good idea to add in field names as well,
+                // but these have sharper edge cases
+                ClassDescriptor cd = model.getClassDescriptorByName((String) classData.get("name"));
+                // Add the display name for this class.
+                classData.put("displayName", WebUtil.formatClass(cd, config));
+                // Get the tags for this class.
+                Set<String> tags = new HashSet<String>();
+                if (p.isLoggedIn()) {
+                    tags.addAll(tm.getObjectTagNames(cd.getSimpleName(), TagTypes.CLASS, userName));
+                }
+                tags.addAll(tm.getPublicTagNames(cd.getSimpleName(), TagTypes.CLASS));
+                classData.put("tags", tags);
+            }
+        } catch (RuntimeException t) {
+            LOG.error("Could not annotate model", t);
+            throw t;
+        }
+        return modelData;
+    }
+
+    private static String getNodeName(Path newNode) {
         WebConfig webConfig = InterMineContext.getWebConfig();
-        if (node.isRootPath()) {
-            return WebUtil.formatPath(node, webConfig);
+        if (newNode.isRootPath()) {
+            return WebUtil.formatPath(newNode, webConfig);
         } else {
-            return WebUtil.formatField(node, webConfig);
+            return WebUtil.formatField(newNode, webConfig);
         }
     }
 
-    private List<String> nodeChildrenToJSON(Path node) {
+    private static List<String> nodeChildrenToJSON(Path newNode) {
         List<String> ret = new LinkedList<String>();
-        if (!node.endIsAttribute()) {
-            ClassDescriptor cd = node.getLastClassDescriptor();
+        if (!newNode.endIsAttribute()) {
+            ClassDescriptor cd = newNode.getLastClassDescriptor();
             List<FieldDescriptor> fields = new LinkedList<FieldDescriptor>();
             fields.addAll(cd.getAllAttributeDescriptors());
             fields.addAll(cd.getAllReferenceDescriptors());
             fields.addAll(cd.getAllCollectionDescriptors());
             for (FieldDescriptor fd: fields) {
                 try {
-                    ret.add(fieldToJSON(node.append(fd.getName())));
+                    ret.add(fieldToJSON(newNode.append(fd.getName())));
                 } catch (PathException e) {
-                    throw new InternalErrorException("While walking model", e);
+                    throw new ServiceException("While walking model", e);
                 }
             }
         }
         return ret;
     }
 
-    private String fieldToJSON(Path fieldPath) {
+    private static String fieldToJSON(Path fieldPath) {
 
         StringBuilder sb = new StringBuilder("{");
         sb.append("\"name\":\"" + getNodeName(fieldPath) + "\"");

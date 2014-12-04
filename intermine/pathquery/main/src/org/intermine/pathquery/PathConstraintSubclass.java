@@ -13,7 +13,7 @@ package org.intermine.pathquery;
 import java.util.Collections;
 import java.util.Set;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /**
  * Representation of a subclass constraint in the PathQuery. Restricts a path in the query to be

@@ -38,7 +38,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -66,6 +66,8 @@ public class TemplatePopulatorTest extends TestCase
     private Map<String, List<TemplateValue>> values = new HashMap<String, List<TemplateValue>>();
     private ObjectStoreWriter uosw;
     Map<String, List<FieldDescriptor>>  classKeys;
+    private ProfileManager pm;
+    private ObjectStore os;
 
     public void setUp() throws Exception {
         super.setUp();
@@ -119,12 +121,19 @@ public class TemplatePopulatorTest extends TestCase
         if (con != null) {
             con.close();
         }
+
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
+        pm = new ProfileManager(os, uosw);
     }
 
+    public void tearDown() throws Exception {
+        super.tearDown();
+        pm.close();
+    }
 
     private Profile setUpProfile() throws Exception {
-        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
-        ProfileManager pm = new ProfileManager(os, uosw);
+//        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+//        ProfileManager pm = new ProfileManager(os, uosw);
 
         Profile profile = new Profile(pm, "testUser", null, "password", new HashMap(),
                 new HashMap(), new HashMap(), true, false);

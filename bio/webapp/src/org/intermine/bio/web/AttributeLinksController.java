@@ -42,7 +42,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.bag.BagHelper;
 import org.intermine.web.logic.results.ReportObject;
@@ -176,7 +176,8 @@ public class AttributeLinksController extends TilesAction
                         } else { //it's a bag!
                             attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
                             if (!"*".equalsIgnoreCase(taxId)) {
-                                taxIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
+                                taxIds = BioUtil.getOrganisms(os, bag.getType(),
+                                        bag.getContentsAsIds(), false, "taxonId");
 
                                 //don't display link if
                                 // a) not a bioentity (no reference to organism)
@@ -303,7 +304,7 @@ public class AttributeLinksController extends TilesAction
         return linkConfigs;
     }
 
-    private boolean hasDataset(InterMineAPI im, ReportObject reportObject,
+    private static boolean hasDataset(InterMineAPI im, ReportObject reportObject,
             String datasetToMatch) throws PathException {
         boolean isValidDataset = false;
         InterMineObject imo = reportObject.getObject();
@@ -328,7 +329,7 @@ public class AttributeLinksController extends TilesAction
         return isValidDataset;
     }
 
-    private void modifyIdString(ConfigMap config) {
+    private static void modifyIdString(ConfigMap config) {
 
         String delim = (String) config.get("delimiter");
         String urlString = (String) config.get("url");
@@ -346,7 +347,7 @@ public class AttributeLinksController extends TilesAction
         config.put("attributeValue", idString);
     }
 
-    private void modifyConfigToPost(ConfigMap config) {
+    private static void modifyConfigToPost(ConfigMap config) {
         String urlString = (String) config.get("url");
         AttributeLinkURL link;
         try {

@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -36,7 +35,7 @@ import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.tracker.TrackerDelegate;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
@@ -52,6 +51,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
 
+
 /**
  * A TestCase that sets up a working InterMineAPI for use in TestCases that extend this class.  The
  * setUp() method creates a new InterMineAPI instance for each test with a superuser account called
@@ -60,8 +60,8 @@ import org.intermine.util.PropertiesUtil;
  *
  */
 public class InterMineAPITestCase extends TestCase {
-	
-	private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
+
+    private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
 
     protected InterMineAPI im;
     protected ObjectStore os;
@@ -78,11 +78,11 @@ public class InterMineAPITestCase extends TestCase {
 
     public void setUp() throws Exception {
 
-	    // When we construct the InterMineAPI it expects to have superuser account already created
+        // When we construct the InterMineAPI it expects to have superuser account already created
         // and the superuser.account property set.  This would be the normal application state.
         Properties props = PropertiesUtil.getProperties();
         props.put("superuser.account", "superUser");
-        
+
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
@@ -90,15 +90,13 @@ public class InterMineAPITestCase extends TestCase {
         clearUserprofile();
 
         ObjectStoreSummary oss = new ObjectStoreSummary(new Properties());
-        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
+        ClassKeys classKeys = getClassKeys(os.getModel());
 
         InputStream configStream = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), configStream);
 
         ProfileManager pmTmp = new ProfileManager(os, uosw);
-        Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(),
-                                        new HashMap(), new HashMap(), true, true);
-        pmTmp.createProfile(superUser);
+        pmTmp.createSuperUser("superUser", "password", null);
 
         String apiKey = "abcdef012345";
         Integer userId = null;
@@ -106,25 +104,42 @@ public class InterMineAPITestCase extends TestCase {
         Map<String, InterMineBag> validBags = new HashMap<String, InterMineBag>();
 
         testUser = new Profile(pmTmp, "testUser", userId, "password",
-                               new HashMap(), new BagSet(validBags, invalidBags),
-                               new HashMap(), apiKey, true, false);
+                               Profile.NO_QUERIES, new BagSet(validBags, invalidBags),
+                               Profile.NO_TEMPLATES, apiKey, true, false);
         pmTmp.createProfile(testUser);
 
-        String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
+        String[] trackerClassNames = {
+                "org.intermine.api.tracker.TemplateTracker",
                 "org.intermine.api.tracker.ListTracker",
                 "org.intermine.api.tracker.LoginTracker",
-                "org.intermine.api.tracker.KeySearchTracker"};
+                "org.intermine.api.tracker.KeySearchTracker"
+        };
         trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
 
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
     }
 
     public void tearDown() throws Exception {
-        trackerDelegate.close();
-        trackerDelegate.finalize();
-        clearDatabase();
-        clearUserprofile();
-        uosw.close();
+        if (trackerDelegate != null) {
+            trackerDelegate.close();
+            try {
+                trackerDelegate.finalize();
+            } catch (Throwable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        if (os != null) {
+            clearDatabase();
+        }
+        if (uosw != null) {
+            clearUserprofile();
+            uosw.close();
+        }
+
+        // should be closed!
+        im.getBagManager().close();
     }
 
     private void clearDatabase() throws Exception {
@@ -134,7 +149,7 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         SingletonResults res = os.executeSingleton(q, 20000, false, false, true);
         ObjectStoreWriter osw = os.getNewWriter();
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             osw.delete(o);
@@ -150,44 +165,44 @@ public class InterMineAPITestCase extends TestCase {
         q.addFrom(qc);
         ObjectStore uos = uosw.getObjectStore();
         SingletonResults res = uos.executeSingleton(q, 1000, false, false, false);
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             UserProfile userProfile = (UserProfile) resIter.next();
             pm.deleteProfile(userProfile.getId());
         }
         Connection con = null;
-		PreparedStatement stm1 = null, stm2 = null;
+        PreparedStatement stm1 = null, stm2 = null;
         try {
-        	// Horrible, I know, but necessary.
-        	con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-			
-        	if (DatabaseUtil.tableExists(con, SharedBagManager.SHARED_BAGS)) {
-			    stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);			
-			    stm1.executeUpdate();
-        	}
-			
-        	if (DatabaseUtil.tableExists(con, SharingInvite.TABLE_NAME)) {
-			    stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);			
-			    stm2.executeUpdate();
-        	}
+            // Horrible, I know, but necessary.
+            con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+
+            if (DatabaseUtil.tableExists(con, SharedBagManager.SHARED_BAGS)) {
+                stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);
+                stm1.executeUpdate();
+            }
+
+            if (DatabaseUtil.tableExists(con, SharingInvite.TABLE_NAME)) {
+                stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);
+                stm2.executeUpdate();
+            }
         } catch (Exception e) {
-        	LOG.error("Error dropping extra tables", e);
+            LOG.error("Error dropping extra tables", e);
         } finally {
-        	for (Statement stm: new Statement[]{stm1, stm2}) {
-        		if (stm != null) {
+            for (Statement stm: new Statement[]{stm1, stm2}) {
+                if (stm != null) {
                     try {
                         stm.close();
                     } catch (SQLException e) {
                         throw new RuntimeException("Problem closing resources", e);
                     }
                 }
-        	}
-			((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
+            }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
         }
-        
+
     }
 
-    private Map<String, List<FieldDescriptor>> getClassKeys(Model model) {
+    private ClassKeys getClassKeys(Model model) {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(getClass().getClassLoader()
@@ -195,8 +210,7 @@ public class InterMineAPITestCase extends TestCase {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        Map<String, List<FieldDescriptor>> classKeys =
-            ClassKeyHelper.readKeys(model, classKeyProps);
+        ClassKeys classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         return classKeys;
     }
 }

@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -26,8 +27,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-
-import org.apache.log4j.Logger;
 
 /**
  * An object that represents the mapping of a Model onto a relational database. This handles the
@@ -46,7 +45,7 @@ public class DatabaseSchema
     private Set<String> missingTables;
     private boolean fetchFromInterMineObject;
     private int version;
-    private boolean hasBioSeg;
+    protected boolean hasBioSeg; // protected so we can set in test
 
     private Set<ClassDescriptor> truncatedSet;
     private Map<ClassDescriptor, Fields> tableMasterToFieldDescriptors

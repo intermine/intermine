@@ -117,6 +117,7 @@ public class ClobAccess implements CharSequence, Lazy
      * @return a character
      * @throws IndexOutOfBoundsException if the index argument is negative or not less than length()
      */
+    @Override
     public char charAt(int index) {
         init();
         if (index < 0) {
@@ -135,6 +136,7 @@ public class ClobAccess implements CharSequence, Lazy
      *
      * @return the number of chars in this sequence
      */
+    @Override
     public int length() {
         init();
         return length;
@@ -150,6 +152,7 @@ public class ClobAccess implements CharSequence, Lazy
      * @throws IndexOutOfBoundsException if the start or end are negative, if end is greater than
      * length(), or if start is greater than end
      */
+    @Override
     public ClobAccess subSequence(int start, int end) {
         init();
         if (start < 0) {
@@ -172,6 +175,7 @@ public class ClobAccess implements CharSequence, Lazy
      *
      * @return an ObjectStore
      */
+    @Override
     public ObjectStore getObjectStore() {
         return os;
     }
@@ -195,7 +199,8 @@ public class ClobAccess implements CharSequence, Lazy
                     pageText = pageText.substring(0, offset + length - page * CLOB_PAGE_SIZE);
                 }
                 if (page == lowestPage) {
-                    pageText = pageText.substring(offset - page * CLOB_PAGE_SIZE, pageText.length());
+                    pageText = pageText.substring(offset - page
+                            * CLOB_PAGE_SIZE, pageText.length());
                 }
                 retval.append(pageText);
             }

@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.bio.ontology.OboParser;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * A Task that reads a SO OBO files and writes a file mapping SO term names to FlyMine class names.
@@ -74,14 +74,14 @@ public class SOClassNameMapMakerTask extends Task
         }
 
         OboParser oboParser = new OboParser();
-        Map termIdNameMap;
+        Map<?, ?> termIdNameMap;
         try {
             termIdNameMap = oboParser.getTermIdNameMap(reader);
         } catch (IOException e) {
             throw new BuildException("error while reading SO file: " + soFile, e);
         }
 
-        Iterator termNameIter = termIdNameMap.values().iterator();
+        Iterator<?> termNameIter = termIdNameMap.values().iterator();
 
         try {
             FileWriter fw = new FileWriter(outputFile);

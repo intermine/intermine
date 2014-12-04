@@ -16,7 +16,6 @@ package org.intermine.web.logic;
 
 
 import java.math.BigDecimal;
-
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,11 +42,54 @@ import java.util.TreeMap;
  * sortableMap.sortKeys(false, false); or sortableMap.sortValues(false, false);
  *
  * @author balusc@xs4all.nl
- * @version Without Generics for < Java 5.0
+ * @author Alex Kalderimis (added generics).
+ * @param <K> The type of keys.
+ * @param <V> The type of values.
  */
-public class SortableMap extends LinkedHashMap
+public class SortableMap<K, V> extends LinkedHashMap<Comparable<K>, Comparable<V>>
 {
     // Constructors -----------------------------------------------------------
+
+    private final class ValueComparator implements Comparator<Comparable<K>>
+    {
+        private final boolean sortAscending;
+        private final boolean checkNumbers;
+
+        private ValueComparator(boolean sortAscending, boolean checkNumbers) {
+            this.sortAscending = sortAscending;
+            this.checkNumbers = checkNumbers;
+        }
+
+        @Override
+        public int compare(Comparable<K> key1, Comparable<K> key2) {
+            Comparable<V> value1 = get(key1);
+            Comparable<V> value2 = get(key2);
+
+            if (value1 == null || value2 == null || value1.equals(value2)) {
+                // Values are null or equal. Sort on its keys then.
+                return compareThings(checkNumbers, sortAscending, key1, key2);
+            } else {
+                // Values are not null or equal. Proceed to sort on values.
+                return compareThings(checkNumbers, sortAscending, value1, value2);
+            }
+        }
+    }
+
+    private final class KeyComparator implements Comparator<Comparable<K>>
+    {
+        private final boolean checkNumbers;
+        private final boolean sortAscending;
+
+        private KeyComparator(boolean checkNumbers, boolean sortAscending) {
+            this.checkNumbers = checkNumbers;
+            this.sortAscending = sortAscending;
+        }
+
+        @Override
+        public int compare(Comparable<K> key1, Comparable<K> key2) {
+            return compareThings(checkNumbers, sortAscending, key1, key2);
+        }
+    }
 
     /**
      * Default constructor.
@@ -60,7 +102,7 @@ public class SortableMap extends LinkedHashMap
      * Create new SortableMap based on the given Map.
      * @param map Any map.
      */
-    public SortableMap(Map map) {
+    public SortableMap(Map<Comparable<K>, Comparable<V>> map) {
         super(map);
     }
 
@@ -79,33 +121,9 @@ public class SortableMap extends LinkedHashMap
      * @param sortAscending Sort ascending?
      */
     public void sortKeys(final boolean checkNumbers, final boolean sortAscending) {
-        Map treeMap = new TreeMap(new Comparator() {
-            public int compare(Object key1, Object key2) {
-                Comparable key1a = (Comparable) key1;
-                Comparable key2a = (Comparable) key2;
-
-                if (checkNumbers) {
-                    // Check numeric values in keys.
-                    try {
-                        // Are the keys parseable as numbers?
-                        key1a = new BigDecimal(key1.toString());
-                        key2a = new BigDecimal(key2.toString());
-                    } catch (NumberFormatException e) {
-                        // Revert both back otherwise.
-                        key1a = (Comparable) key1;
-                        key2a = (Comparable) key2;
-                    }
-                }
-
-                if (sortAscending) {
-                    // Sort keys ascending.
-                    return key1a.compareTo(key2a);
-                } else {
-                    // Sort keys descending.
-                    return key2a.compareTo(key1a);
-                }
-            }
-        });
+        Comparator<Comparable<K>> comparator = new KeyComparator(checkNumbers, sortAscending);
+        Map<Comparable<K>, Comparable<V>> treeMap =
+                new TreeMap<Comparable<K>, Comparable<V>>(comparator);
         treeMap.putAll(this);
         this.clear();
         this.putAll(treeMap);
@@ -124,67 +142,44 @@ public class SortableMap extends LinkedHashMap
      * @param sortAscending Sort ascending?
      */
     public void sortValues(final boolean checkNumbers, final boolean sortAscending) {
-        Map treeMap = new TreeMap(new Comparator() {
-            public int compare(Object key1, Object key2) {
-                Object value1 = get(key1);
-                Object value2 = get(key2);
-
-                if (value1 == null || value2 == null || value1.equals(value2)) {
-                    // Values are null or equal. Sort on it's keys then.
-                    Comparable key1a = (Comparable) key1;
-                    Comparable key2a = (Comparable) key2;
-
-                    if (checkNumbers) {
-                        // Check numeric values in keys.
-                        try {
-                            // Are the keys parseable as numbers?
-                            key1a = new BigDecimal(key1.toString());
-                            key2a = new BigDecimal(key2.toString());
-                        } catch (NumberFormatException e) {
-                            // Revert both back otherwise.
-                            key1a = (Comparable) key1;
-                            key2a = (Comparable) key2;
-                        }
-                    }
-
-                    if (sortAscending) {
-                        // Sort keys ascending.
-                        return key1a.compareTo(key2a);
-                    } else {
-                        // Sort keys descending.
-                        return key2a.compareTo(key1a);
-                    }
-                } else {
-                    // Values are not null or equal. Proceed to sort on values.
-                    Comparable value1a = (Comparable) value1;
-                    Comparable value2a = (Comparable) value2;
-
-                    if (checkNumbers) {
-                        // Check numeric values in values.
-                        try {
-                            // Are the values parseable as numbers?
-                            value1a = new BigDecimal(value1.toString());
-                            value2a = new BigDecimal(value2.toString());
-                        } catch (NumberFormatException e) {
-                            // Revert both back otherwise.
-                            value1a = (Comparable) value1;
-                            value2a = (Comparable) value2;
-                        }
-                    }
-
-                    if (sortAscending) {
-                        // Sort values ascending.
-                        return value1a.compareTo(value2a);
-                    } else {
-                        // Sort values descending.
-                        return value2a.compareTo(value1a);
-                    }
-                }
-            }
-        });
+        Comparator<Comparable<K>> comparator = new ValueComparator(sortAscending, checkNumbers);
+        Map<Comparable<K>, Comparable<V>> treeMap =
+                new TreeMap<Comparable<K>, Comparable<V>>(comparator);
         treeMap.putAll(this);
         this.clear();
         this.putAll(treeMap);
+    }
+
+    @SuppressWarnings("unchecked") // needs unchecked cast from Comparable<T> to T.
+    private static <T> int compareThings(
+            final boolean checkNumbers,
+            final boolean sortAscending,
+            Comparable<T> a,
+            Comparable<T> b) {
+        if (checkNumbers) {
+            // Check numeric values in keys.
+            try {
+                // Are the keys parseable as numbers?
+                BigDecimal asNum1 = new BigDecimal(a.toString());
+                BigDecimal asNum2 = new BigDecimal(b.toString());
+                if (sortAscending) {
+                    // Sort keys ascending.
+                    return asNum1.compareTo(asNum2);
+                } else {
+                    // Sort keys descending.
+                    return asNum2.compareTo(asNum1);
+                }
+            } catch (NumberFormatException e) {
+                // Ignore.
+            }
+        }
+        if (sortAscending) {
+            // Sort keys ascending.
+            return a.compareTo((T) b);
+        } else {
+            // Sort keys descending.
+            return b.compareTo((T) a);
+        }
     }
 }
 

@@ -10,9 +10,11 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.Date;
+
 import junit.framework.TestCase;
 
-import java.util.Date;
+import org.intermine.metadata.ConstraintOp;
 
 public class SimpleConstraintTest extends TestCase {
     private SimpleConstraint constraint;

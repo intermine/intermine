@@ -11,7 +11,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
@@ -41,12 +40,11 @@ public class CSVFormatterTest extends TestCase {
     StringWriter sw;
     PrintWriter pw;
 
-    private final InterMineAPI dummyAPI = new DummyAPI();
-
     Map<String, Object> attributes;
 
     ResultProcessor processor;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected void setUp() throws Exception {
 

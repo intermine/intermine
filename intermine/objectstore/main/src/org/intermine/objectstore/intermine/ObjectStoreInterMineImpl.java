@@ -38,9 +38,11 @@ import java.util.WeakHashMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.DataChangedException;
@@ -52,7 +54,6 @@ import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintHelper;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ConstraintTraverseAction;
 import org.intermine.objectstore.query.ConstraintWithBag;
@@ -91,7 +92,6 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.CacheMap;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
-import org.intermine.util.TypeUtil;
 
 /**
  * An SQL-backed implementation of the ObjectStore interface. The schema is oriented towards data
@@ -201,6 +201,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         ShutdownHook.registerObject(new WeakReference<Object>(this));
         limitedContext = new QueryOptimiserContext();
         limitedContext.setTimeLimit(getMaxTime() / 10);
+        maxQueryParseTime = getMaxQueryParseTime();
+        if (maxQueryParseTime != null) {
+            limitedContext.setMaxQueryParseTime(maxQueryParseTime.longValue());
+        }
         description = "ObjectStoreInterMineImpl(" + db + ")";
     }
 
@@ -263,11 +267,14 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     /**
      * Convenience wrapper to manage the boilerplate when performing unsafe operations.
      *
-     * @param operation The operation to perform.
-     * @return
-     * @throws SQLException
+     * @param <T> The type of thing to return.
+     * @param sql The sql to perform this operation.
+     * @param operation The operation to perform with the prepared statement.
+     * @return A T of some kind
+     * @throws SQLException if there is a problem running the query.
      */
-    public <T> T performUnsafeOperation(final String sql, SQLOperation<T> operation) throws SQLException {
+    public <T> T performUnsafeOperation(final String sql, SQLOperation<T> operation)
+        throws SQLException {
         Connection con = null;
         PreparedStatement stm = null;
         T retval;
@@ -357,7 +364,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             MetadataManager.OS_FORMAT_VERSION);
                 } catch (SQLException e) {
                     LOG.warn("Error retrieving database format version number", e);
-                    throw new ObjectStoreException("The table intermine_metadata doesn't exist. Please run build-db");
+                    throw new ObjectStoreException(
+                            "The table intermine_metadata doesn't exist. Please run build-db");
                 }
                 if (versionString == null) {
                     formatVersion = 0;
@@ -539,8 +547,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 logTableConnection = getConnection();
                 if (!DatabaseUtil.tableExists(logTableConnection, tableName)) {
                     logTableConnection.createStatement().execute("CREATE TABLE " + tableName
-                        + "(timestamp bigint, optimise bigint, estimated bigint, "
-                        + "execute bigint, permitted bigint, convert bigint, iql text, sql text)");
+                            + "(timestamp bigint, optimise bigint, estimated bigint, execute "
+                            + "bigint, permitted bigint, convert bigint, iql text, sql text)");
                 }
                 logTableBatch = new Batch(new BatchWriterPostgresCopyImpl());
                 logTableName = tableName;
@@ -718,6 +726,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         String cacheKey = "Batchsize: " + batchSize + ", optimise: " + optimise + ", explain: "
             + explain + ", prefetch: " + prefetch + ", query: " + q;
         synchronized (resultsCache) {
+            // if this query has been executed before return a cached copy of the Results
             Results retval = resultsCache.get(cacheKey);
             if (retval != null) {
                 try {
@@ -736,6 +745,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     }
                     ResultsBatches batch = getResultsBatches(batches, batchSize);
                     if (batch != null) {
+                        // We've executed this query before but with a different batch size, we may
+                        // be able to use the rows from previous batches to seed a new Results. This
+                        // is here because running a query in the webapp and exporting use different
+                        // batch sizes, this way we avoid re-executing queries that have results
+                        // already in cache.
                         retval = new Results(batch, optimise, explain, prefetch);
                     } else {
                         retval = super.execute(q, batchSize, optimise, explain, prefetch);
@@ -976,6 +990,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
     public List<ResultsRow<Object>> execute(Query q, int start, int limit, boolean optimise,
             boolean explain, Map<Object, Integer> sequence) throws ObjectStoreException {
         Constraint where = q.getConstraint();
+        // we know there will be no results if we ORing or NANDing over an empty constraint set
         if (where instanceof ConstraintSet) {
             ConstraintSet where2 = (ConstraintSet) where;
             if (where2.getConstraints().isEmpty()
@@ -1031,7 +1046,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 + ", SQL Optimise: " + statsOptTime + ", Estimate: "
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
-        flushLogTable();
+
+        try {
+            logTableBatch.close(logTableConnection);
+        } catch (SQLException e1) {
+            LOG.error("Couldn't close OS log table.");
+        }
+
         Connection c = null;
         try {
             c = getConnection();

@@ -11,8 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.xml.full.Item;
 
 /**

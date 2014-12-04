@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -23,7 +24,6 @@ import org.intermine.objectstore.fastcollections.ObjectStoreFastCollectionsForTr
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
 
@@ -179,14 +179,14 @@ public class ObjectStoreDataLoader extends DataLoader
                                 + (600000000L / (now - time)) + " (avg "
                                 + ((60000L * opCount) / (now - startTime))
                                 + ") objects per minute -- now on "
-                                + DynamicUtil.getFriendlyName(obj.getClass()));
+                                + Util.getFriendlyName(obj.getClass()));
                     } else {
                         LOG.info("Dataloaded " + opCount + " objects - running at "
                                 + (600000000L / (now - time)) + " (200000 avg "
                                 + (12000000000L / (now - times[(int) ((opCount / 10000) % 20)]))
                                 + ") (avg = " + ((60000L * opCount) / (now - startTime))
                                 + ") objects per minute -- now on "
-                                + DynamicUtil.getFriendlyName(obj.getClass()));
+                                + Util.getFriendlyName(obj.getClass()));
                     }
                     time = now;
                     times[(int) ((opCount / 10000) % 20)] = now;

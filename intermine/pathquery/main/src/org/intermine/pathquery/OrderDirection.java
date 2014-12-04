@@ -15,4 +15,13 @@ package org.intermine.pathquery;
  *
  * @author Matthew Wakeling
  */
-public enum OrderDirection { ASC, DESC };
+public enum OrderDirection {
+    /**
+     * ascending
+     */
+   ASC,
+    /**
+     * descending
+     */
+   DESC
+}

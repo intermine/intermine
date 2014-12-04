@@ -10,6 +10,13 @@ package org.intermine.sql.precompute;
  *
  */
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,14 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
+import org.apache.log4j.Logger;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.AbstractTable;
@@ -35,8 +36,6 @@ import org.intermine.sql.query.OrderDescending;
 import org.intermine.sql.query.Query;
 import org.intermine.sql.query.SelectValue;
 import org.intermine.sql.query.Table;
-
-import org.apache.log4j.Logger;
 
 /**
  * Manages all the Precomputed tables in a given database.
@@ -446,14 +445,33 @@ public class PrecomputedTableManager
             simpleField = simpleField.replace(',', '_').replace(' ', '_').replace('(', '_')
                 .replace(')', '_');
         }
+
+        // NOTE - rns 04/07/14 - this is really awful. A check was put in here when code was added
+        // for precomputing templates:
+        // https://github.com/intermine/intermine/commit/94461fc1088cb8f4b8957895ccac5147b2b7dfa3
+        // The change put the field to be indexed in quotes if it wasn't lower case, which makes no
+        // sense, it must checking for some other feature that just happens to be in upper case.
+
+        // This caused problems precomputing temporary table containing simple objects - they end
+        // up with field names added to the ORDER BY instead of an aliases, the field names may be
+        // upper case. The whole list of field names was being put in quotes, Postgres then thinks
+        // this is a single column name that doesn't exist.
+
+        // I haven't been able to determine what the code was actually testing for that happens to
+        // be in upper case. I've removed the quotes for the moment, if we see error messages
+        // we'll hopefully be able to find what see what this should be looking for instead of case.
+
+        // String sql = "CREATE INDEX " + simpleTable + "_" + simpleField + " ON "
+        //     + table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
+        //     + ")";
         String sql = "CREATE INDEX " + simpleTable + "_" + simpleField + " ON "
-            + table + " (" + (field.equals(field.toLowerCase()) ? field : "\"" + field + "\"")
-            + ")";
+                + table + " (" + field + ")";
         try {
             Statement stmt = con.createStatement();
             stmt.execute(sql);
         } catch (SQLException e) {
-            LOG.warn("Error while executing " + sql, e);
+            LOG.warn("Error while creating index on " + table + ", table creation will proceed. "
+                    + sql);
         }
     }
 

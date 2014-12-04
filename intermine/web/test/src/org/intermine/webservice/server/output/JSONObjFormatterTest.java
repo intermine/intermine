@@ -52,6 +52,7 @@ public class JSONObjFormatterTest extends TestCase {
 
     JSONObjResultProcessor processor;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected void setUp() throws Exception {
 
@@ -159,6 +160,7 @@ public class JSONObjFormatterTest extends TestCase {
         String executionTime = dateFormatter.format(now);
         String expected = "],\"executionTime\":\"" + executionTime
                         + "\",\"wasSuccessful\":true,\"error\":null,\"statusCode\":200}";
+        fmtr.formatAttributes(null, new StringBuilder());
         assertEquals(expected, fmtr.formatFooter(null, 200));
         expected = "],\"executionTime\":\"" + executionTime
         + "\",\"wasSuccessful\":false,\"error\":\"this error\",\"statusCode\":501}";

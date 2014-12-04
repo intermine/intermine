@@ -42,8 +42,8 @@
     <put name="pageName" value="api"/>
   </definition>
   <definition name="showProperties.page" extends="layout.template">
-  	<put name="body" value="showProperties.tile"/>
-  	<put name="pageName" value="properties"/>
+    <put name="body" value="showProperties.tile"/>
+    <put name="pageName" value="properties"/>
   </definition>
   <definition name="begin.page" extends="layout.template">
     <put name="body" value="begin.tile"/>
@@ -244,8 +244,8 @@
   <definition name="bagView.tile" path="bagView.jsp" controllerUrl="/initBagView.do" />
   <definition name="apiJava.tile" path="apiJava.jsp" controllerUrl="/initApiJava.do" />
   <definition name="apiPerl.tile" path="apiPerl.jsp" controllerUrl="/initApiPerl.do" />
-  <definition name="apiPython.tile" path="apiPython.jsp" controllerUrl="/initApiPython.do" />
-    <definition name="apiRuby.tile" path="apiRuby.jsp" controllerUrl="/initApiRuby.do" />
+  <definition name="apiPython.tile" path="apiPython.jsp" />
+    <definition name="apiRuby.tile" path="apiRuby.jsp"  />
   <definition name="dataCategories.tile" path="/dataCategories.jsp"/>
   <definition name="convertBag.tile" path="convertBag.jsp" controllerUrl="/initConvertBag.do" />
   <definition name="errorMessages.tile" path="errorMessages.jsp" controllerUrl="/initErrorMessages.do" />

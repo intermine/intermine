@@ -14,8 +14,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.Request;
 import org.intermine.webservice.client.core.Request.RequestType;
@@ -74,10 +74,21 @@ public class ModelService extends Service
             // so it won't do checks when constructing path query
             model.setGeneratedClassesAvailable(false);
             models.put(key, model);
-            // This is necessary so that unmarshalling of queries can occur.
-            Model.addModel(model.getName(), model);
+            // Rather than adding the model by its name (which might overwrite other models of the
+            // same name (eg. the default genomic model), we store it by its full URI, meaning
+            // pathqueries can refer to their model as either "genomic",
+            // or fully qualified as "http://myhost:8080/mymine/models#genomic". This could be
+            // useful to distinguish between generic genomic queries that will work on multiple
+            // mines, and more specific ones that require a specific model.
+            Model.addModel(key + "/models#" + model.getName(), model);
         }
         return model;
+    }
+
+    @Override
+    public void clearCache() {
+        super.clearCache();
+        models.remove(getRootUrl());
     }
 
     private Model fetchModel() {

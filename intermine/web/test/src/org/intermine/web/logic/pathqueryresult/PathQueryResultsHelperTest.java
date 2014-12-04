@@ -10,18 +10,23 @@ package org.intermine.web.logic.pathqueryresult;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
@@ -33,6 +38,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
@@ -48,17 +54,57 @@ public class PathQueryResultsHelperTest extends TestCase
     private WebConfig badWebConfig;
     ObjectStoreWriter uosw;
     ObjectStore os;
+    private Department department;
+    private Manager manager;
+    private List<Class<?>> types;
+    private Set<Employee> employees;
+    private Employee employee;
+    private static Map<String, PathQuery> queries = null;
 
     public PathQueryResultsHelperTest(String testName) {
         super(testName);
     }
 
+    private String toXML(PathQuery pq) {
+        return pq.toXml(PathQuery.USERPROFILE_VERSION);
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
-        webConfig = new WebConfig();
+        
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         os = ObjectStoreFactory.getObjectStore("os.unittest");
 
+        initQueries();
+
+        initWebConfig();
+
+        initData();
+
+    }
+
+    private void initData() {
+        employees = new HashSet<Employee>();
+        types = new ArrayList<Class<?>>();
+        Department d1 = new Department();
+        d1.setId(1);
+        Employee e1 = new Employee();
+        e1.setId(2);
+        employees.add(e1);
+        Manager m1 = new Manager();
+        m1.setId(3);
+        employees.add(m1);
+        d1.setEmployees(employees);
+        types.add(Employee.class);
+        types.add(Manager.class);
+
+        department = d1;
+        employee = e1;
+        manager = m1;
+    }
+
+    private void initWebConfig() {
+        webConfig = new WebConfig();
         Type type  = new Type();
         type.setClassName("org.intermine.model.testmodel.Employee");
         FieldConfig df1 = new FieldConfig();
@@ -88,7 +134,17 @@ public class PathQueryResultsHelperTest extends TestCase
         badFC.setFieldExpr("wibble");
         badType.addFieldConfig(badFC);
         badWebConfig.addType(badType);
+    }
 
+    private void initQueries() throws IOException {
+        if (queries == null) { // Cache rather than re-read.
+            InputStream is = getClass().getResourceAsStream("queries.xml");
+            if (is == null) {
+                throw new IOException("Could not find queries.xml");
+            }
+            Reader r = new InputStreamReader(is);
+            queries = PathQueryBinding.unmarshalPathQueries(r, PathQuery.USERPROFILE_VERSION);
+        }
     }
 
     protected void tearDown() throws Exception{
@@ -124,12 +180,12 @@ public class PathQueryResultsHelperTest extends TestCase
 
         List<String> view = PathQueryResultHelper.getDefaultViewForClass(
                 "Employee", os.getModel(), badWebConfig, "Department.employees");
-        List<String> expectedView = new ArrayList<String>(Arrays.asList(
+        List<String> expectedView = Arrays.asList(
                 "Department.employees.fullTime",
                 "Department.employees.age",
                 "Department.employees.end",
                 "Department.employees.name"
-        ));
+        );
         assertEquals(expectedView, view);
     }
 
@@ -138,49 +194,31 @@ public class PathQueryResultsHelperTest extends TestCase
     public void testMakePathQueryForBag() throws Exception {
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), BagState.CURRENT, os, null, uosw, Arrays.asList("name"));
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os.getModel());
-        String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime\" longDescription=\"\">"
-            + "<constraint path=\"Employee\" op=\"IN\" value=\"Fred\"/>"
-            + "</query>";
+        String expectedXml = toXML(queries.get("for-bag"));
 
-        assertEquals(pathQuery.toXml(PathQuery.USERPROFILE_VERSION), expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
+        assertEquals(expectedXml, toXML(pathQuery));
     }
 
     // This test expects the references from the configuration to be included.
-    public void testMakePathQueryForCollection() throws Exception {
-        Department d1 = new Department();
-        d1.setId(1);
-        Set<Employee> employees = new HashSet<Employee>();
-        Employee e1 = new Employee();
-        e1.setId(2);
-        employees.add(e1);
-        Manager m1 = new Manager();
-        m1.setId(3);
-        employees.add(m1);
-        d1.setEmployees(employees);
-        List<Class<?>> sr = new ArrayList<Class<?>>();
-        sr.add(Employee.class);
-        sr.add(Manager.class);
-       
-        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Employee", "employees");
-        String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.name Department.employees.department.name Department.employees.department.company.name Department.employees.age Department.employees.fullTime\" longDescription=\"\">"
-            + "<join path=\"Department.employees.department\" style=\"OUTER\"/>"
-            + "<join path=\"Department.employees.department.company\" style=\"OUTER\"/>"
-            + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
-            + "</query>";
-        assertEquals(pathQuery.toXml(PathQuery.USERPROFILE_VERSION), expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
-        PathQuery pathQuery2 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) e1, "Address", "address");
-        String expectedXml2 =  "<query name=\"query\" model=\"testmodel\" "
-            + "view=\"Employee.address.address\" longDescription=\"\"><constraint path=\"Employee.id\" "
-            + "op=\"=\" value=\"2\"/></query>";
-        assertEquals(pathQuery2.toXml(PathQuery.USERPROFILE_VERSION), expectedXml2, pathQuery2.toXml(PathQuery.USERPROFILE_VERSION));
-        PathQuery pathQuery3 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Manager", "employees");
-        String expectedXml3 = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title "
-            + "Department.employees.fullTime Department.employees.age Department.employees.end "
-            + "Department.employees.name Department.employees.seniority\" longDescription=\"\">"
-            + "<constraint path=\"Department.employees\" type=\"Manager\"/>"
-            + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
-            + "</query>";
-        assertEquals(pathQuery3.toXml(PathQuery.USERPROFILE_VERSION), expectedXml3, pathQuery3.toXml(PathQuery.USERPROFILE_VERSION));
+    public void testMakePathQueryForCollection() {
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, department, "Employee", "employees");
+        String expectedXml = toXML(queries.get("for-collection-Department.employees"));
+
+        assertEquals("Pathquery not as expected", expectedXml, toXML(pathQuery));
+    }
+
+    public void testMakePathQueryForReference() {
+
+        PathQuery pathQuery2 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, employee, "Address", "address");
+        String expectedXml2 =  toXML(queries.get("for-reference-Employee.address"));
+        assertEquals("Not as expected", expectedXml2, toXML(pathQuery2));
+    }
+
+    public void testMakePathQueryForCollectionSubtypes() {
+
+        PathQuery pathQuery3 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, department, "Manager", "employees");
+        String expectedXml3 = toXML(queries.get("for-collection-Department.managers"));
+        assertEquals("Pathquery is not as expected", expectedXml3, toXML(pathQuery3));
     }
 
 
@@ -206,12 +244,7 @@ public class PathQueryResultsHelperTest extends TestCase
         String fieldType = "Department.employees";
         Model model = Model.getInstanceByName("testmodel");
         PathQuery pq = PathQueryResultHelper.getQueryWithDefaultView(objType, model, webConfig, fieldType);
-        assertEquals(
-                "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title " +
-                "Department.employees.fullTime Department.employees.age Department.employees.end " +
-                "Department.employees.name Department.employees.seniority\" longDescription=\"\"><constraint " +
-                "path=\"Department.employees\" type=\"Manager\"/></query>",
-                pq.toXml(PathQuery.USERPROFILE_VERSION));
+        assertEquals(toXML(queries.get("default-view")), toXML(pq));
     }
 
     public void testQueryForTypesInCollection() throws ObjectStoreException {
@@ -229,8 +262,8 @@ public class PathQueryResultsHelperTest extends TestCase
         osw.store(m1);
         osw.store(d1);
         List<Class<?>> classes = PathQueryResultHelper.queryForTypesInCollection(d1, field, os);
-        List<Class<?>> expectedClasses = new ArrayList<Class<?>>(
-                Arrays.asList(Employee.class, Manager.class));
+        @SuppressWarnings("unchecked")
+        List<Class<? extends Employee>> expectedClasses = Arrays.asList(Employee.class, Manager.class);
         assertEquals(expectedClasses, classes);
         osw.delete(d1);
         osw.delete(e1);

@@ -9,7 +9,8 @@
     <Item Name="AuthorList" Type="List">
         <Item Name="Author" Type="String">Lie YS</Item>
         <Item Name="Author" Type="String">Macdonald PM</Item>
-        <Item Name="Author" Type="String">Chow KL</Item>        
+        <Item Name="Author" Type="String">Chow KL</Item>
+        <Item Name="CollectiveName" Type="String">Arabidopsis Interactome Mapping Consortium</Item>
     </Item>
     <Item Name="Title" Type="String">Apontic binds the translational repressor Bruno and is implicated in regulation of oskar mRNA translation.</Item>
     <Item Name="Volume" Type="String">126</Item>

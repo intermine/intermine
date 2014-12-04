@@ -24,8 +24,8 @@ public interface RowFormatter
 
     /**
      * Format row to string.
-     * @param row formatted objects
-     * @return returned formatted string
+     * @param row The objects to format (covariant).
+     * @return a string with everything nicely formatted.
      */
-    String format(List<Object> row);
+    String format(List<? extends Object> row);
 }

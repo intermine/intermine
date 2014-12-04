@@ -31,7 +31,8 @@ import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
 import org.intermine.web.logic.bag.BagConverter;
@@ -42,9 +43,9 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Xavier Watkins
  *
  */
+@SuppressWarnings("deprecation")
 public class ModifyBagDetailsAction extends InterMineAction
 {
-    private static int index = 0;
 
     /**
      * Forward to the correct method based on the button pressed
@@ -132,7 +133,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                     return createBagAndGoToBagDetails(mapping, newBag, converted);
                 }
             }
-            
+
             // "use in bag" link
         } else if (request.getParameter("useBag") != null) {
             PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
@@ -143,16 +144,20 @@ public class ModifyBagDetailsAction extends InterMineAction
             String msg = "You can now create a query using your list " + imBag.getName();
             SessionMethods.recordMessage(msg, session);
             return mapping.findForward("query");
-                
+
         // convert links
         } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
             TemplateManager templateManager = im.getTemplateManager();
+            @SuppressWarnings("unchecked")
+            Class<? extends InterMineObject> classA = (Class<? extends InterMineObject>)
+                    TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType());
+            @SuppressWarnings("unchecked")
+            Class<? extends InterMineObject> classB = (Class<? extends InterMineObject>)
+                    TypeUtil.instantiate(model.getPackageName() + "." + type2);
             PathQuery q = BagConversionHelper.getConvertedObjects(session,
-                    templateManager.getConversionTemplates(),
-                    TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
-                    TypeUtil.instantiate(model.getPackageName() + "." + type2), imBag);
+                    templateManager.getConversionTemplates(), classA, classB, imBag);
             q.setTitle(type2 + "s from list '" + imBag.getName() + "'");
             SessionMethods.loadQuery(q, session, response);
             final String trail = "|bag." + imBag.getName();

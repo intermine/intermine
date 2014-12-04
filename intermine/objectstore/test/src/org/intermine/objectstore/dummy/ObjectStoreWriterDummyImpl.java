@@ -190,7 +190,13 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         return os.getModel();
     }
 
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames) {
+    @Override
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(T o, Set<String> fs) {
         throw new UnsupportedOperationException();
     }
 

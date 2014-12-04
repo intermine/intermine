@@ -36,12 +36,8 @@ import org.intermine.task.project.UserProperty;
 public class Integrate extends Task
 {
     private static final String ENDL = System.getProperty("line.separator");
-    
-    private String [] possibleActionsArray = {
-        "retrieve",
-        "load",
-        "clean"
-    };
+
+    private String [] possibleActionsArray = {"retrieve", "load", "clean"};
 
     private Set<String> possibleActions = new HashSet<String>(Arrays.asList(possibleActionsArray));
 
@@ -84,7 +80,7 @@ public class Integrate extends Task
         }
         if (sourceAttribute == null || "".equals(sourceAttribute.trim())) {
             throw new BuildException("no source set, try \"ant -Dsource=all\" or "
-                                     + "\"ant -Dsource=source1,source2\"");
+                    + "\"ant -Dsource=source1,source2\"");
         }
 
         System.err.print("action: " + action + ENDL);
@@ -101,11 +97,11 @@ public class Integrate extends Task
 
         intermineProject = ProjectXmlBinding.unmarshall(projectXml);
 
-        System.out.print("Found " + intermineProject.getSources().size() + " sources" + ENDL);
+        System.out .print("Found " + intermineProject.getSources().size() + " sources" + ENDL);
 
         List<String> sourceNames = new ArrayList<String>();
 
-        if ("".equals(sourceAttribute) || sourceAttribute.equals("all")) {
+        if ("".equals(sourceAttribute) || "all".equals(sourceAttribute)) {
             for (String thisSource : intermineProject.getSources().keySet()) {
                 sourceNames.add(thisSource);
             }
@@ -120,7 +116,7 @@ public class Integrate extends Task
             Source sourceObject = intermineProject.getSources().get(thisSourceName);
             if (sourceObject == null) {
                 throw new BuildException("can't find source in project definition file: "
-                                         + thisSourceName);
+                        + thisSourceName);
             }
 
             if ("".equals(action)) {
@@ -139,9 +135,9 @@ public class Integrate extends Task
     private void performAction(String actionName, String sourceName, String sourceType) {
         Source s = (Source) intermineProject.getSources().get(sourceName);
         File sourceDir = s.getLocation();
-        
-        System.out.print("Performing integration action \"" + actionName + "\" for source \""
-                         + sourceName + "\" (" + sourceType + ") in: " + sourceDir + ENDL);
+
+        System.out .print("Performing integration action \"" + actionName + "\" for source \""
+                + sourceName + "\" (" + sourceType + ") in: " + sourceDir + ENDL);
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);

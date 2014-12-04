@@ -1,8 +1,18 @@
 package org.intermine.pathquery;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 
 /*
  * Copyright (C) 2002-2014 FlyMine
@@ -102,6 +112,11 @@ public abstract class PathConstraint
         }
     }
 
+    /**
+     * Get the values for a constraint.
+     * @param con The constraint.
+     * @return A collection of values. null if this makes no sense.
+     */
     public static Collection<String> getValues(PathConstraint con) {
         if (con instanceof PathConstraintMultiValue) {
             return ((PathConstraintMultiValue) con).getValues();
@@ -109,7 +124,12 @@ public abstract class PathConstraint
             return null;
         }
     }
-    
+
+    /**
+     * Get the ids for a constraint.
+     * @param con The constraint.
+     * @return A collection of ids. null if this makes no sense.
+     */
     public static Collection<Integer> getIds(PathConstraint con) {
         if (con instanceof PathConstraintIds) {
             return ((PathConstraintIds) con).getIds();
