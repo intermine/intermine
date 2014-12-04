@@ -691,7 +691,8 @@ public class IqlQuery
             OverlapConstraint oc = (OverlapConstraint) cc;
             return "RANGE(" + nodeToString(q, oc.getLeft().getStart(), parameters, null) + ", "
                 + nodeToString(q, oc.getLeft().getEnd(), parameters, null) + ", "
-                + nodeToString(q, oc.getLeft().getParent(), parameters, null) + ") OVERLAPS RANGE("
+                + nodeToString(q, oc.getLeft().getParent(), parameters, null) + ")"
+                + " " + cc.getOp() + " RANGE("
                 + nodeToString(q, oc.getRight().getStart(), parameters, null) + ", "
                 + nodeToString(q, oc.getRight().getEnd(), parameters, null) + ", "
                 + nodeToString(q, oc.getRight().getParent(), parameters, null) + ")";
