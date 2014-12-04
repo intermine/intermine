@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
@@ -83,6 +84,14 @@ public class Protein2iprConverter extends BioFileConverter
     }
 
     /**
+     * Set the ObjectStore alias.
+     * @param osAlias The ObjectStore alias
+     */
+    public void setOsAlias(String osAlias) {
+        this.osAlias = osAlias;
+    }
+
+    /**
      * Constructor
      *
      * @param writer
@@ -95,11 +104,14 @@ public class Protein2iprConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+
+        if (osAlias == null) {
+            throw new BuildException("osAlias attribute is not set");
+        }
+
         getProteinIds();
         LOG.info("Found " + proteinIds.size() + " protein ids.");
 
@@ -184,13 +196,6 @@ public class Protein2iprConverter extends BioFileConverter
     }
 
     private String osAlias = null;
-
-    /**
-     * @param osAlias osAlias
-     */
-    protected void setOsAlias(String osAlias) {
-        this.osAlias = osAlias;
-    }
 
     @SuppressWarnings("unchecked")
     private void getProteinIds() throws Exception {
