@@ -11,6 +11,8 @@ fi
 
 GIT_GET="git clone --single-branch --depth 1"
 
+BUILD_LOG=${HOME}/build.log
+
 export PSQL_USER=postgres
 export KEYSTORE=${PWD}/keystore.jks
 
@@ -51,7 +53,7 @@ else
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db
         echo '#---> Building bio sources'
-        find bio/sources/ -path '*/main/build.xml' ! -path '*examples-sources*' -exec ant -f '{}' ';'
+        find bio/sources/ -path '*/main/build.xml' ! -path '*examples-sources*' -exec ant -f '{}' '2>&1' '>>' $BUILD_LOG';'
     elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" ]; then
         # api, webtasks and web need the testmodel to be built
         ant -f testmodel/dbmodel/build.xml build-db
