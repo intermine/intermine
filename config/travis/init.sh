@@ -53,7 +53,7 @@ else
         # Bio requires the bio model
         ant -f bio/test-all/dbmodel/build.xml build-db
         echo '#---> Building bio sources'
-        find bio/sources/ -path '*/main/build.xml' ! -path '*examples-sources*' -exec ant -f '{}' '2>&1' '>>' $BUILD_LOG';'
+        find bio/sources/ -path '*/main/build.xml' ! -path '*examples-sources*' ! -path '*retired*' -exec ant -f '{}' '2>&1' '>>' $BUILD_LOG';'
     elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" ]; then
         # api, webtasks and web need the testmodel to be built
         ant -f testmodel/dbmodel/build.xml build-db
