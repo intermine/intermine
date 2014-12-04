@@ -21,18 +21,21 @@ public class ResultsWithFacets
 {
 
     private final Collection<KeywordSearchHit> results;
-
+    private int totalHits;
     private final Collection<KeywordSearchFacet> facets;
 
     /**
      * @param results the hits
      * @param facets The facets
+     * @param totalHits count of search results
      */
     public ResultsWithFacets(
             Collection<KeywordSearchHit> results,
-            Collection<KeywordSearchFacet> facets) {
+            Collection<KeywordSearchFacet> facets,
+            int totalHits) {
         this.results = results;
         this.facets = facets;
+        this.totalHits = totalHits;
     }
 
     /** @return the hits **/
@@ -45,4 +48,8 @@ public class ResultsWithFacets
         return facets;
     }
 
+    /** @return the totalHits **/
+    public int getTotalHits() {
+        return totalHits;
+    }
 }

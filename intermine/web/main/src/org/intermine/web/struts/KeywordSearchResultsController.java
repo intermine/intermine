@@ -117,8 +117,8 @@ public class KeywordSearchResultsController extends TilesAction
                 SearchUtils.parseResults(im, wc, results.getHits());
 
         Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
+        totalHits = results.getTotalHits();
 
-        totalHits = searchResultsParsed.size();
         logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS FOR " + searchTerm  + ": " + totalHits);
 
