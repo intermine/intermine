@@ -3,6 +3,7 @@
 # Allows garbage collection of the permanent generation.
 export JAVA_OPTS="-server \
     -Xms256m -Xmx1024m \
+    -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode \
     -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled \
     -XX:NewSize=128m -XX:MaxNewSize=256m \
     -XX:PermSize=64m -XX:MaxPermSize=128m \
