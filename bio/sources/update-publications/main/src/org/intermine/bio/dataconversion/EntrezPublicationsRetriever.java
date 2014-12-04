@@ -720,6 +720,15 @@ public class EntrezPublicationsRetriever
                     pubMap.put("authors", authorList);
                 }
                 authorList.add(authorString);
+            } else if ("CollectiveName".equals(name)) {
+                String authorString = characters.toString();
+                @SuppressWarnings("unchecked")
+                List<String> authorList = (List<String>) pubMap.get("authors");
+                if (authorList == null) {
+                    authorList = new ArrayList<String>();
+                    pubMap.put("authors", authorList);
+                }
+                authorList.add(authorString);
             }
             name = null;
         }

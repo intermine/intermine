@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
  */
 public class EntrezPublicationRetrieverTest extends ItemsTestCase
 {
-    String fullRecord = "true";
+    String fullRecord = "false";
 
     public EntrezPublicationRetrieverTest(String arg) {
         super(arg);
@@ -49,7 +49,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
 
         eor.setOsAlias("os.bio-test");
         eor.setOutputFile(temp.getPath());
-        // eor.setOutputFile("entrez-pub-tgt-items.xml");
+        //eor.setOutputFile("entrez-pub-tgt-items.xml");
         eor.setCacheDirName("build/");
         eor.execute();
         Collection<Item> actual = FullParser.parse(new FileInputStream(temp));

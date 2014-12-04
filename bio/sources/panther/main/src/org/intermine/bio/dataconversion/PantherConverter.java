@@ -136,8 +136,8 @@ public class PantherConverter extends BioFileConverter
         String resolvedGenePid = parseIdentifier(geneId);
 
         // only resolve if fish - TODO put in config file
-        if ("7955".equals(taxonId)) {
-            resolvedGenePid = resolveGene(taxonId, geneId);
+        if ("7955".equals(taxonId) || "9606".equals(taxonId)) {
+            resolvedGenePid = resolveGene(taxonId, resolvedGenePid);
             if (resolvedGenePid == null) {
                 return null;
             }
