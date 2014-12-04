@@ -21,14 +21,12 @@ import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
 import org.postgresql.largeobject.LargeObject;
@@ -156,7 +154,7 @@ public final class MetadataManager
                 connection.rollback();
             }
         } finally {
-            
+
             if (insert != null) {
                 insert.close();
             }
