@@ -51,7 +51,7 @@ else
         source config/issue-token.sh
     elif [ "$TEST_SUITE" = "bio" ]; then
         # Bio requires the bio model
-        ant -f bio/test-all/dbmodel/build.xml build-db
+        ant -f bio/test-all/dbmodel/build.xml build-db >> $BUILD_LOG
         echo '#---> building bio tools'
         ant -f bio/tools/main/build.xml clean default >> $BUILD_LOG
         echo '#---> Building bio sources'
