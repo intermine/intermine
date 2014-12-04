@@ -522,6 +522,11 @@ public abstract class WebService
         if (StringUtils.isEmpty(authToken)) {
             if (StringUtils.startsWith(authString, "Token ")) {
                 authToken = StringUtils.removeStart(authString, "Token ");
+                try { // Allow bearer tokens to be passed in as normal tokens.
+                    identity = getIdentityFromBearerToken(authToken);
+                } catch (UnauthorizedException e) {
+                    // pass - check the token below.
+                }
             } else if (StringUtils.startsWith(authString, "Bearer ")) {
                 identity = getIdentityFromBearerToken(
                     StringUtils.removeStart(authString, "Bearer "));
