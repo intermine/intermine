@@ -29,7 +29,7 @@ import java.util.Collection;
 public class ResourceFinder
 {
     private ServletContext context;
-    private static final String WEB_INF = "WEB-INF";
+    private static final String WEB_INF = "/WEB-INF";
 
     /**
      * Constructor. Makes a ResourceFinder with reference to the current servlet context,
