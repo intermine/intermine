@@ -21,13 +21,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
@@ -43,6 +42,7 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
+import org.intermine.util.StringUtil;
 
 /**
  * A class encapsulating a query used to create a bag from a collection of input identifiers.

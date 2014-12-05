@@ -26,7 +26,7 @@
     /* use absolute value */
     #cwcontent { width: 600px; height: 485px; border: 2px solid #CCCCCC; padding: 0 1em 1em 0;
         -moz-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px; float:left; }
-    #cwtabsbyside { float: right; width: 300px; display:none; }
+    #cwtabsbyside { float: left; width: 300px; display:none; }
     #cwinlinetable { display: none; padding: 5px 0 0 0;}
     label { vertical-align: middle; }
     #powerby { padding: 5px; text-align: center; }
