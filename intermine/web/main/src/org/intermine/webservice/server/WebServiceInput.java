@@ -17,9 +17,9 @@ package org.intermine.webservice.server;
 public class WebServiceInput
 {
 
-    private Integer start;
+    private Integer start; // The index of the first item the user will accept.
 
-    private Integer maxCount;
+    private Integer limit; // The maximum number of items the user will accept.
 
     private String userName;
 
@@ -63,10 +63,10 @@ public class WebServiceInput
 
     /**
      * Sets maximum of returned results.
-     * @param maxCount maximal count
+     * @param limit maximal count
      */
-    public void setMaxCount(Integer maxCount) {
-        this.maxCount = maxCount;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 
     /**
@@ -78,10 +78,10 @@ public class WebServiceInput
     }
 
     /**
-     * Returns maximum count of results do be returned.
+     * Returns maximum number of results the user will accept.
      * @return maximum count
      */
-    public Integer getMaxCount() {
-        return maxCount;
+    public Integer getLimit() {
+        return limit;
     }
 }
