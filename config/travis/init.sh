@@ -34,10 +34,7 @@ else
     # Set up properties
     source config/create-ci-properties-files.sh
 
-    # Initialise a python virtual environment
-    virtualenv venv
-    source venv/bin/activate
-
+    echo '#---> Installing python requirements'
     # Install lib requirements
     pip install -r config/lib/requirements.txt
 

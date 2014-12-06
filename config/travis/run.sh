@@ -6,10 +6,6 @@ export ANT_OPTS='-server'
 
 FAILURES=$PWD/failures.list
 
-if [ -d venv ]; then
-    source venv/bin/activate
-fi
-
 ant_test () {
     if [ -d "$1/main" ]; then
       echo RUNNING ant -f "$1/main/build.xml" clean
