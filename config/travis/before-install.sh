@@ -2,7 +2,7 @@
 
 set -e
 
-if [ "$TEST_SUITE" = "selenium" ]; then
+if [ "$TEST_SUITE" = "webapp" ]; then
     # Start X server so we can run 
     sh -e /etc/init.d/xvfb start
     # Configure the screen size.
