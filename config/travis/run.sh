@@ -32,7 +32,7 @@ elif [ "$TEST_SUITE" = "objectstore" ]; then
     ant_test 'intermine/objectstore'
 elif [ "$TEST_SUITE" = "integrate" ]; then
     ant_test 'intermine/integrate'
-elif [ "$TEST_SUITE" = "pathquery" ]; then
+elif [ "$TEST_SUITE" = "pq" ]; then
     ant_test 'intermine/pathquery'
 elif [ "$TEST_SUITE" = "api" ]; then
     ant_test 'intermine/api'
@@ -49,8 +49,8 @@ elif [ "$TEST_SUITE" = "bio" ]; then
 elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ant -f 'intermine/all/build.xml' checkstyle
     ./config/lib/parse_checkstyle_report.py 'intermine/all/build/checkstyle/checkstyle_report.xml'
-elif [ "$TEST_SUITE" = "selenium" ]; then
+elif [ "$TEST_SUITE" = "webapp" ]; then
     . config/run-selenium-tests.sh
-elif [ "$TEST_SUITE" = "ws-integration" ]; then
+elif [ "$TEST_SUITE" = "ws" ]; then
     . config/run-ws-tests.sh
 fi

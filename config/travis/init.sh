@@ -40,12 +40,12 @@ else
     pip install -r config/lib/requirements.txt
 
     # Build resources we might require
-    if [ "$TEST_SUITE" = "selenium" ]; then
+    if [ "$TEST_SUITE" = "webapp" ]; then
         # We will need python requirements for selenium tests
         pip install -r testmodel/webapp/selenium/requirements.txt
     fi
 
-    if [ "$TEST_SUITE" = "selenium" -o "$TEST_SUITE" = "ws-integration" ]; then
+    if [ "$TEST_SUITE" = "webapp" -o "$TEST_SUITE" = "ws" ]; then
         # We will need a fully operational web-application
         source config/init-webapp.sh
         source config/issue-token.sh
@@ -64,7 +64,7 @@ else
         ant -f testmodel/dbmodel/build.xml build-db
     fi
 
-    if [[ "$TEST_SUITE" = "ws-integration" ]]; then
+    if [[ "$TEST_SUITE" = "ws" ]]; then
 
         # Warm up the keyword search by requesting results, but ignoring the results
         $GET "$TESTMODEL_URL/service/search" > /dev/null
