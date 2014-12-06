@@ -50,6 +50,7 @@ elif [ "$TEST_SUITE" = "checkstyle" ]; then
     ant -f 'intermine/all/build.xml' checkstyle
     ./config/lib/parse_checkstyle_report.py 'intermine/all/build/checkstyle/checkstyle_report.xml'
 elif [ "$TEST_SUITE" = "webapp" ]; then
+    echo 'Running selenium tests'
     . config/run-selenium-tests.sh
 elif [ "$TEST_SUITE" = "ws" ]; then
     . config/run-ws-tests.sh

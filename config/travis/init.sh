@@ -16,6 +16,8 @@ BUILD_LOG=${HOME}/build.log
 export PSQL_USER=postgres
 export KEYSTORE=${PWD}/keystore.jks
 
+echo "#---> Running $TEST_SUITE tests"
+
 if [ "$TEST_SUITE" = "checkstyle" ]; then
     exit 0 # nothing to do
 else
@@ -47,6 +49,7 @@ else
 
     if [ "$TEST_SUITE" = "webapp" -o "$TEST_SUITE" = "ws" ]; then
         # We will need a fully operational web-application
+        echo '#---> Building and releasing web application to test against'
         source config/init-webapp.sh
         source config/issue-token.sh
     elif [ "$TEST_SUITE" = "bio" ]; then
