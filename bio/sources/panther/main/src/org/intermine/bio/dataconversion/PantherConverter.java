@@ -138,11 +138,14 @@ public class PantherConverter extends BioFileConverter
         if (StringUtils.isEmpty(identifierType)) {
             identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
+	String resolvedGenePid = parseIdentifier(geneId);
 
-        geneId = parseIdentifier(geneId);
-        String resolvedGenePid = resolveGene(taxonId, geneId);
-        if (resolvedGenePid == null) {
-            return null;
+        // only resolve if fish - TODO put in config file
+        if ("7955".equals(taxonId) || "9606".equals(taxonId)) {
+            resolvedGenePid = resolveGene(taxonId, resolvedGenePid);
+            if (resolvedGenePid == null) {
+                return null;
+            }
         }
 
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
