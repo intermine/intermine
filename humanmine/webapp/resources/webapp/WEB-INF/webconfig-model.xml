@@ -194,11 +194,25 @@
   <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
 
   <reportdisplayers>
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
+                     jspName="model/geneIdentifiersDisplayer.jsp"
+                     replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
+                     showImmediately="true"
+                     placement="top"
+                     types="Gene"/>
 
-   <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
-                     jspName="model/geneOntologyDisplayer.jsp"
-                     replacesFields="goAnnotation,ontologyAnnotations"
-                     placement="Genomics"
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
+                     jspName="model/sequenceFeatureDisplayer.jsp"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,mapLocation"
+                     showImmediately="true"
+                     placement="top"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MetabolicGeneSummaryDisplayer"
+                     jspName="model/metabolicGeneSummaryDisplayer.jsp"
+                     replacesFields=""
+                     showImmediately="true"
+                     placement="top"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
@@ -207,17 +221,98 @@
                      placement="Genomics"
                      types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
-                     jspName="model/sequenceFeatureDisplayer.jsp"
-                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
-                     placement="summary"
-                     types="SequenceFeature"/>
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
                      replacesFields=""
-                     placement="Proteins"
+                     placement="summary"
                      types="Gene,Protein"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SnpToGeneDisplayer"
+                     jspName="model/snpToGeneDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="SNP"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
+                     jspName="model/overlappingFeaturesDisplayer.jsp"
+                     replacesFields="overlappingFeatures"
+                     placement="Genomics"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MouseAllelesDisplayer"
+                     jspName="model/mouseAllelesDisplayer.jsp"
+                     replacesFields="alleles"
+                     placement="Genomics"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
+                     jspName="model/jbrowseDisplayer.jsp"
+                     replacesFields=""
+                     placement="Genomics"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
+                     jspName="model/cytoscapeNetworkDisplayer.jsp"
+                     replacesFields="interactions"
+                     placement="Interactions"
+                     types="Gene,Protein"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+                     jspName="model/geneOntologyDisplayer.jsp"
+                     replacesFields="goAnnotation,ontologyAnnotations"
+                     placement="Function"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+                     jspName="model/homologueDisplayer.jsp"
+                     replacesFields="homologues"
+                     placement="Homology"
+                     parameters="{'dataSets': ['Ensembl Compara data set']}"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAtlasDisplayer"
+                     jspName="model/proteinAtlasDisplayer.jsp"
+                     replacesFields="proteinAtlasExpression"
+                     placement="summary"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasTissuesDisplayer"
+                     jspName="model/geneExpressionAtlasTissuesDisplayer.jsp"
+                     replacesFields="atlasExpression"
+                     placement="summary"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasDiseasesDisplayer"
+                     jspName="model/geneExpressionAtlasDiseasesDisplayer.jsp"
+                     replacesFields="atlasExpression"
+                     placement="summary"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
+                     jspName="model/publicationAnnotationsDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence"
+                     types="Publication"/>
+
+    <!-- currently only works with classes with publications collection -->
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationCountsDisplayer"
+                     jspName="model/publicationCountsDisplayer.jsp"
+                     replacesFields="publications"
+                     placement="summary"
+                     types="BioEntity"/>
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinSequenceDisplayer"
+                     jspName="model/proteinSequenceDisplayer.jsp"
+                     replacesFields="sequence"
+                     placement="summary"
+                     types="Protein"/>
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CuratedProteinsDisplayer"
+                     jspName="model/curatedProteinsDisplayer.jsp"
+                     replacesFields="proteins"
+                     placement="summary"
+                     types="Gene"/>
 
   </reportdisplayers>
 
@@ -239,6 +334,133 @@
                       constraints="organism.name=[Organism]"
                       views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
                              chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
+
+      <graphdisplayer id="chromosome_distribution_for_snp"
+                      title="Chromosome Distribution"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="ColumnChart"
+                      rangeLabel="Count"
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="SNP"
+                      typeClass="SNP"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath="ActualExpectedCriteria"
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, organism.shortName, locations.locatedOn.primaryIdentifier,
+                             locations.start, locations.end, locations.strand"/>
+
+     <graphdisplayer id="mouse_human_orthologue_pair"
+                      title="Mouse-human orthologue pair"
+                      description="dots would be where there is a mouse-human orthologue pair "
+                      graphType="ScatterChart"
+                      domainLabel="Chromosome location for humans"
+                      rangeLabel="Chromosome location for mouses"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      categoryPath="organism.name"
+                      correlation="chromosomeLocation.locatedOn.primaryIdentifier,homologues.homologue.chromosomeLocation.locatedOn.primaryIdentifier"
+                      seriesPath=""
+                      seriesValues=""
+                      seriesLabels=""
+                      constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>
+
+     <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
+                                 title="Gene Ontology Enrichment"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filterLabel="Ontology"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="goAnnotation.ontologyTerm.parents.name"
+                                 enrichIdentifier="goAnnotation.ontologyTerm.parents.identifier"
+                                 constraints="goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
+                                              primaryIdentifier != null, goAnnotation.qualifier = null,
+                                              goAnnotation.ontologyTerm.parents.identifier != go:0008150,
+                                              goAnnotation.ontologyTerm.parents.identifier != go:0003674,
+                                              goAnnotation.ontologyTerm.parents.identifier != go:0005575"
+                                 typeClass="Gene"
+                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+                                       goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
+                                       goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
+                                 title="Protein Domain Enrichment"
+                                 description="Protein Domains enriched for items in this list."
+                                 label="Protein Domain"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="proteins.proteinDomains.name"
+                                 enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
+                                 constraints="organism.name=[list]"
+                                 typeClass="Gene"
+                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+                                       proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
+                                 title="Protein Domain Enrichment"
+                                 description="Protein Domains enriched for items in this list."
+                                 label="Protein Domain"
+                                 startClass="Protein"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="proteinDomains.name"
+                                 enrichIdentifier="proteinDomains.primaryIdentifier"
+                                 constraints="organism.name=[list]"
+                                 typeClass="Protein"
+                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
+                                       proteinDomains.name"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+
+
+      <enrichmentwidgetdisplayer id="publication_enrichment"
+                                 title="Publication Enrichment"
+                                 description="Publications enriched for genes in this list."
+                                 label="Publication"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="publications.title"
+                                 enrichIdentifier="publications.pubMedId"
+                                 constraints="organism.name=[list],primaryIdentifier != null"
+                                 typeClass="Gene"
+                                 views="secondaryIdentifier, symbol, organism.name,
+                                       publications.title, publications.firstAuthor,
+                                       publications.journal, publications.year, publications.pubMedId"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+
+      <enrichmentwidgetdisplayer id="snp_gwas_study_enrichment"
+                                 title="GWAS study Enrichment for SNPs"
+                                 description="GWAS studies enriched for SNPs in this list."
+                                 label="GWAS Study"
+                                 startClass="SNP"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="GWASResults.study.name"
+                                 enrichIdentifier="GWASResults.study.publication.pubMedId"
+                                 constraints="organism.name=[list],primaryIdentifier != null"
+                                 typeClass="SNP"
+                                 views="primaryIdentifier, organism.name,
+                                       GWASResults.study.name, GWASResults.study.firstAuthor"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+
+      <enrichmentwidgetdisplayer id="snp_publication_enrichment"
+                                 title="Publication Enrichment for SNPs"
+                                 description="Publications enriched for SNPs in this list."
+                                 label="Publication"
+                                 startClass="SNP"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="GWASResults.study.publication.title"
+                                 enrichIdentifier="GWASResults.study.publication.pubMedId"
+                                 constraints="organism.name=[list],primaryIdentifier != null"
+                                 typeClass="SNP"
+                                 views="primaryIdentifier, organism.name,
+                                       GWASResults.study.publication.title, GWASResults.study.publication.firstAuthor,
+                                       GWASResults.study.publication.journal, GWASResults.study.publication.year, GWASResults.study.publication.pubMedId"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
 </widgets>
 </webconfig>
