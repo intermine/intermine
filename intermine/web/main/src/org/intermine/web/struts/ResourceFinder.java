@@ -50,7 +50,7 @@ public class ResourceFinder implements ResourceOpener
 
     @Override
     public InputStream openResource(String resourceName) {
-        return context.getResourceAsStream(WEB-INF + "/" + resourceName);
+        return context.getResourceAsStream(WEB_INF + "/" + resourceName);
     }
 
     /**
