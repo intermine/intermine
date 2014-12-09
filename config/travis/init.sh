@@ -59,8 +59,8 @@ else
             echo "#------> building $biosrc"
             ant -f "$biosrc" clean default 2>&1 >> $BUILD_LOG
         done
-    elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" ]; then
-        # api, webtasks and web need the testmodel to be built
+    elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" -o "$TEST_SUITE" = "all" ]; then
+        # api, webtasks, web and all need the testmodel to be built
         ant -f testmodel/dbmodel/build.xml build-db
     fi
 
