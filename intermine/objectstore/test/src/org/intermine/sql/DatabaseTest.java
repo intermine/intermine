@@ -107,6 +107,10 @@ public class DatabaseTest extends TestCase
         assertTrue(db.isVersionAtLeast("9.2.1.0"));
         assertFalse(db.isVersionAtLeast("9.2.1.1"));
         assertFalse(db.isVersionAtLeast("9.2.2"));
+        db.version = "9.4beta3";
+        assertTrue(db.isVersionAtLeast("9.2"));
+        assertTrue(db.isVersionAtLeast("9.4.0"));
+        assertFalse(db.isVersionAtLeast("9.5"));
     }
 
 /*
