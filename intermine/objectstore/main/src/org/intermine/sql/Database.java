@@ -31,6 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.StringUtil;
 import org.intermine.util.PropertiesUtil;
@@ -374,11 +375,27 @@ public class Database implements Shutdownable
         return true;
     }
 
+    // parse the postgres version, e.g. 9.2.1
     private List<Integer> versionStringToInts(String versionStr) {
         List<Integer> versionInts = new ArrayList<Integer>();
         String[] parts = versionStr.split("\\.");
         for (int i = 0; i < parts.length; i++) {
-            versionInts.add(new Integer(parts[i]));
+            String partToParse = parts[i];
+            if (StringUtils.isNumeric(partToParse)) {
+                versionInts.add(new Integer(partToParse));
+            } else {
+                // beta version, e.g. 9.4beta3
+                if (partToParse.contains("beta")) {
+                    String[] betaBits = partToParse.split("beta");
+                    if (betaBits != null) {
+                        String betaDigit = betaBits[0];
+                        if (StringUtils.isNumeric(betaDigit)
+                                && StringUtils.isNotEmpty(betaDigit)) {
+                            versionInts.add(new Integer(betaDigit));
+                        }
+                    }
+                }
+            }
         }
         return versionInts;
     }
