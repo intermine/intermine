@@ -19,10 +19,12 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.Emailer;
 import org.intermine.util.ShutdownHook;
@@ -39,6 +41,8 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public final class InterMineContext implements Shutdownable
 {
+    private static final Logger LOG = Logger.getLogger(InterMineContext.class);
+
     private InterMineContext() {
         // Hidden constructor.
     }
@@ -175,8 +179,24 @@ public final class InterMineContext implements Shutdownable
         mailQueue = null;
         mailService = null;
         isInitialised = false;
+        destroyDaemonThreads("com.browseengine.bobo.util.MemoryManager");
     }
 
+    // forcibly stop threads. Avoids memory leaks in 3rd party libraries we can't control
+    // (e.g. bobo)
+    private static void destroyDaemonThreads(String className) {
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        for (Thread t : threadSet) {
+            for (StackTraceElement s : t.getStackTrace()) {
+                if (s.getClassName().contains(className)) {
+                    synchronized (t) {
+                        LOG.warn("Forcibly stopping thread to avoid memory leak: " + className);
+                        t.stop(); //don't complain, it works
+                    }
+                }
+            }
+        }
+    }
 
     private static char[] getKeyStorePassword() {
         return getWebProperties().getProperty("security.keystore.password").toCharArray();
