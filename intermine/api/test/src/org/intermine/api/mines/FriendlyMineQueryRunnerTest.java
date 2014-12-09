@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
  * Class to query friendly mines.
@@ -40,7 +41,7 @@ public final class FriendlyMineQueryRunnerTest
 
     private FriendlyMineQueryRunner queryRunner;
     private MockRequester requester;
-    private Map<String, Mine> mines; 
+    private Map<String, Mine> mines;
 
     private Mine mine;
 
@@ -81,7 +82,7 @@ public final class FriendlyMineQueryRunnerTest
         requester.queryResult = "{\"results\":[[123,\"foo\"],[456,\"bar\"]]}";
         String expected = "{\"results\":[{\"id\":123,\"name\":\"foo\"},{\"id\":456,\"name\":\"bar\"}]}";
         JSONObject result = queryRunner.runJSONWebServiceQuery(mine, "FOO");
-        assertEquals(expected, result.toString());
+        JSONAssert.assertEquals(expected, result.toString(), false);
     }
 
     @Test
@@ -128,11 +129,11 @@ public final class FriendlyMineQueryRunnerTest
         String expected2 = "{\"results\":[{\"id\":789,\"name\":\"zop\"}]}";
         queryRunner.updateReleaseVersion(mines);
         JSONObject result = queryRunner.runJSONWebServiceQuery(mine, "FOO");
-        assertEquals(expected, result.toString());
+        JSONAssert.assertEquals(expected, result.toString(), false);
         requester.queryResult = "Not the same, in fact totally not even json";
         JSONObject result2 = queryRunner.runJSONWebServiceQuery(mine, "FOO");
         // Expect cached result.
-        assertEquals(expected, result2.toString());
+        JSONAssert.assertEquals(expected, result2.toString(), false);
         assertTrue(result == result2);
         requester.urlResult = "quux";
         requester.queryResult = "{\"results\":[[789,\"zop\"]]}";
@@ -140,8 +141,8 @@ public final class FriendlyMineQueryRunnerTest
         queryRunner.updateReleaseVersion(mines);
         JSONObject result3 = queryRunner.runJSONWebServiceQuery(mine, "FOO");
         assertEquals("quux", mine.getReleaseVersion());
-        assertEquals(expected2, result3.toString());
-        assertTrue(result != result3);
+        JSONAssert.assertEquals(expected2, result3.toString(), false);
+        JSONAssert.assertNotEquals(result, result3, false);
     }
 
     @Test
