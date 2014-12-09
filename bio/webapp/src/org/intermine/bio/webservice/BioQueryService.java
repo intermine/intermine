@@ -190,7 +190,7 @@ public abstract class BioQueryService extends AbstractQueryService
 
         ExportResultsIterator iter = null;
         try {
-            iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
+            iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_LIMIT);
             iter.goFaster();
             exporter.export(iter);
         } finally {

@@ -51,16 +51,34 @@ public class OverlapViewTask
 
         con.setAutoCommit(false);
 
-        String dropSql = "DROP TABLE overlappingfeaturessequencefeature";
-        String viewSql =
-            "CREATE VIEW overlappingfeaturessequencefeature "
-            + " AS SELECT l1.featureid AS overlappingfeatures, "
-            + "           l2.featureid AS sequencefeature "
-            + "      FROM location l1, location l2 "
-            + "     WHERE l1.locatedonid = l2.locatedonid "
-            + "       AND l1.featureid != l2.featureid"
-            + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
-            + "              && bioseg_create(l2.intermine_start, l2.intermine_end)";
+        String dropSql = "DROP VIEW overlappingfeaturessequencefeature";
+        String viewSql;
+
+        if (osw.getSchema().useRangeTypes()) {
+            viewSql =
+                    "CREATE VIEW overlappingfeaturessequencefeature "
+                            + " AS SELECT l1.featureid AS overlappingfeatures, "
+                            + "           l2.featureid AS sequencefeature "
+                            + "      FROM location l1, location l2 "
+                            + "     WHERE l1.locatedonid = l2.locatedonid "
+                            + "       AND l1.featureid != l2.featureid"
+                            + "       AND int4range(l1.intermine_start, l1.intermine_end) "
+                            + "              && int4range(l2.intermine_start, l2.intermine_end)";
+        } else if (osw.getSchema().hasBioSeg()) {
+            viewSql =
+                    "CREATE VIEW overlappingfeaturessequencefeature "
+                            + " AS SELECT l1.featureid AS overlappingfeatures, "
+                            + "           l2.featureid AS sequencefeature "
+                            + "      FROM location l1, location l2 "
+                            + "     WHERE l1.locatedonid = l2.locatedonid "
+                            + "       AND l1.featureid != l2.featureid"
+                            + "       AND bioseg_create(l1.intermine_start, l1.intermine_end) "
+                            + "            && bioseg_create(l2.intermine_start, l2.intermine_end)";
+        } else {
+            throw new IllegalArgumentException("Attempt to create overlappingfeatures view but"
+                    + " database doesn't support Postgres built in ranges (has to be > 9.2"
+                    + " and doesn't have bioseg installed. Aborting.");
+        }
 
         Statement statement = con.createStatement();
         statement.executeUpdate(dropSql);

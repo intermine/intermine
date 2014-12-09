@@ -34,6 +34,7 @@
 <c:set var="uid" value="${fn:replace(placement, ' ', '_')}_${templateName}"/>
 <c:set var="placementAndField" value="${placement}_${templateName}"/>
 <c:set var="useLocalStorage" value="${WEB_PROPERTIES['use.localstorage']=='true'}"/>
+<c:set var="expandOnLoad" value="${WEB_PROPERTIES['web.templates.expandonload']=='true'}"/>
 
 <c:choose>
     <c:when test="${reportObject != null}">
@@ -41,10 +42,10 @@
     </c:when>
     <c:when test="${interMineIdBag != null}">
         <c:set scope="request" var="tquery" value="${imf:populateTemplateWithBag(templateQuery, interMineIdBag)}"/>
-	</c:when>
-	<c:otherwise>
-		<c:set scope="request" var="tmlType" value="aspect"/>
-	</c:otherwise>
+  </c:when>
+  <c:otherwise>
+    <c:set scope="request" var="tmlType" value="aspect"/>
+  </c:otherwise>
 </c:choose>
 
 
@@ -56,9 +57,11 @@
   
   <%-- JS target for the table --%>
   <div class="collection-table" id="${tableContainerId}"></div>
-
   <script type="text/javascript">
+
+
     (function($) {
+        var EXPAND_ON_LOAD = ${expandOnLoad};
         intermine.css.headerIcon = "fm-header-icon";
         var query = ${tquery.json};
         var disableTemplate = function() {
@@ -94,13 +97,23 @@
                       }else{
                         localStorage.${elemId} = "show";
                       }
-                    }	
+                    }  
                 });
             });
             if(${useLocalStorage} && typeof(Storage)!=="undefined"){
-              if(localStorage.${elemId} == "show"){
-                 $('#${elemId} h3').click();
-              }
+                if (!localStorage.${elemId}) {
+                    if (EXPAND_ON_LOAD) {
+                        $('#${elemId} h3').click();
+                    }
+                } else {
+                  if(localStorage.${elemId} == "show"){
+                     $('#${elemId} h3').click();
+                  }
+                }
+            } else {
+                if (EXPAND_ON_LOAD) {
+                    $('#${elemId} h3').click();
+                }
             }
         });
     }).call(window, jQuery);
