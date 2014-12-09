@@ -12,12 +12,9 @@ package org.intermine.web.displayer;
 
 import java.util.Collection;
 
-import org.intermine.api.InterMineAPI;
 import org.intermine.api.beans.PartnerLink;
-import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
 import org.intermine.api.mines.ObjectRequest;
-import org.json.JSONObject;
 
 /**
  * Helper class for intermine links generated on report and list pages
@@ -29,9 +26,10 @@ public interface InterMineLinkGenerator
     /**
      * Query other intermines for this object
      *
-     * @param mine The mine object where we want to get the data from.
+     * @param thisMine The mine instance representing this application.
+     * @param thatMine The mine object where we want to get the data from.
      * @param request The information about the things we want to get.
      * @return map of mines to objects to link to
      */
-    public abstract Collection<PartnerLink> getLinks(Mine thisMine, Mine thatMine, ObjectRequest request);
+    Collection<PartnerLink> getLinks(Mine thisMine, Mine thatMine, ObjectRequest request);
 }

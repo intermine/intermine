@@ -14,7 +14,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -433,10 +432,12 @@ public final class TypeUtil
      * Encapsulate the logic of requesting an object of a class named <code>name</name>
      * where that class has a default no-arguments constructor. If any of the contracts are
      * violated you will get an IllegalArgumentException.
+     * @param <T> The type of the object we are instantiating, for type inference purposes.
      * @param typeName The name of the class.
      * @return An instance of that class.
      */
     public static <T> T createNew(String typeName) {
+        @SuppressWarnings("unchecked") // If typeName doesn't refer to the class of T, then BOOM!
         Class<T> clazz = (Class<T>) getTypeByName(typeName);
         if (clazz == null) {
             throw new IllegalArgumentException("Cannot get class for " + typeName);
@@ -497,6 +498,7 @@ public final class TypeUtil
      * @deprecated This method is named incorrectly - use <code>getTypeByName</code> instead.
      * @return the corresponding Class
      */
+    @Deprecated
     public static Class<?> instantiate(String type) {
         return getTypeByName(type);
     }

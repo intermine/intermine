@@ -700,7 +700,7 @@ public class AjaxServices
      * @return the links to friendly intermines
      */
     public static Collection<PartnerLink>
-        getFriendlyMineLinks(String mineName, String domains, String idents) {
+    getFriendlyMineLinks(String mineName, String domains, String idents) {
         if (StringUtils.isEmpty(mineName)
                 || StringUtils.isEmpty(domains)
                 || StringUtils.isEmpty(idents)) {
