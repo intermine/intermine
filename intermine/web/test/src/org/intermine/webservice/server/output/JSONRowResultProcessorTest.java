@@ -31,6 +31,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
  * @author alex
@@ -161,7 +163,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         assertEquals(expected.toString(), out.getResults().toString());
     }
 
-    public void testWrite() throws IOException {
+    public void testWrite() throws IOException, JSONException {
         InputStream is = getClass().getResourceAsStream("JSONRowResultProcessorTest.expected");
         StringWriter sw = new StringWriter();
         IOUtils.copy(is, sw);
@@ -179,7 +181,7 @@ public class JSONRowResultProcessorTest extends TestCase {
 //        fw.write(out.getResults().toString());
 //        fw.close();
 
-        assertEquals(expected, out.getResults().toString() + "\n");
+        JSONAssert.assertEquals(expected, out.getResults().toString() + "\n", false);
 
     }
 

@@ -1244,7 +1244,7 @@ public class JSONResultsIteratorTest extends TestCase {
     }
 
     public void testMultipleObjectsWithRefs() throws Exception {
-        
+
         List<String> jsonStrings = new ArrayList<String>();
 
         jsonStrings.add(

@@ -25,6 +25,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 public class JSONObjFormatterTest extends TestCase {
 
@@ -137,7 +139,7 @@ public class JSONObjFormatterTest extends TestCase {
         assertTrue(fmtr != null);
     }
 
-    public void testFormatHeader() {
+    public void testFormatHeader() throws JSONException {
         JSONObjectFormatter fmtr = new JSONObjectFormatter();
 
         String expected = testProps.getProperty("result.header");
@@ -167,7 +169,7 @@ public class JSONObjFormatterTest extends TestCase {
         assertEquals(expected, fmtr.formatFooter("this error", 501));
     }
 
-    public void testFormatAll() {
+    public void testFormatAll() throws JSONException {
         JSONObjectFormatter fmtr = new JSONObjectFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
@@ -183,6 +185,6 @@ public class JSONObjFormatterTest extends TestCase {
 
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
-        assertEquals(expected, sw.toString());
+        JSONAssert.assertEquals(expected, sw.toString(), false);
     }
 }
