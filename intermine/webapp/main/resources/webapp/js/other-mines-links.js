@@ -10,21 +10,27 @@
 
 var OtherMines = (function ($, _, AjaxServices) {
 
+  'use strict';
+
   function getLinks(selector, mine, request) {
     var $context = $(selector);
     if (!$context.length) return;
     var $loading = $('.loading-indicator', $context).addClass('loading');
+    var handlers = {callback: handleResults, errorHandler: handleError};
 
-    AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, handleResults);
-      
+    AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, handlers);
+
     function handleResults (results) {
       $loading.removeClass('loading');
       if (results && results.length) {
         display(results);
       } else {
-        $loading.remove();
-        $('.apology', $context).show();
+        handleError();
       }
+    }
+    function handleError () {
+      $loading.remove();
+      $('.apology', $context).show();
     }
 
     function display (results) {

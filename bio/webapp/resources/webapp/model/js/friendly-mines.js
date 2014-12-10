@@ -31,15 +31,21 @@ var FriendlyMines = (function ($, AjaxServices) {
 
     function getLinks(context, mine, request) {
         var loading = $('.loading-indicator', context).addClass('loading');
-        AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, function(results) {
-            // switch off loading img
-            loading.removeClass('loading');
-            if (results && results.length) {
-                display(results);
-            } else {
-                loading.html('No results found');
-            }
-        });
+        var handlers = {
+          callback: function(results) {
+              // switch off loading img
+              loading.removeClass('loading');
+              if (results && results.length) {
+                  display(results);
+              } else {
+                  loading.html('No results found');
+              }
+          },
+          errorHandler: function () {
+            loading.html('Could not retrieve results');
+          }
+        }
+        AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, handlers);
 
         function display(results) {
             var resultsList = $('.results', context);
