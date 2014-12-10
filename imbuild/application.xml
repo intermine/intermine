@@ -44,7 +44,7 @@
       // home, suffix and fileName are all java.lang.String
       var home = project.getProperty('user.home');
       var suffix = project.getProperty('release-suffix');
-      var fileName = project.getProperty('intermine.properties.file')
+      var fileName = project.getProperty('intermine.properties.file', '')
                             .replaceAll('\\.properties', '-keystore.jks');
       project.setProperty('keystore', home + '/.intermine/' + fileName + suffix);
     </script>

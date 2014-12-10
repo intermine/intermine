@@ -191,6 +191,9 @@ public final class InterMineContext implements Shutdownable
         destroyDaemonThreads("com.browseengine.bobo.util.MemoryManager");
     }
 
+    private static final String STOPPING_THREAD = 
+        "Forcibly stopping thread to avoid memory leak: ";
+
     // forcibly stop threads. Avoids memory leaks in 3rd party libraries we can't control
     // (e.g. bobo)
     private static void destroyDaemonThreads(String searchString) {
@@ -199,7 +202,7 @@ public final class InterMineContext implements Shutdownable
             for (StackTraceElement s : t.getStackTrace()) {
                 if (s.getClassName().contains(searchString)) {
                     synchronized (t) {
-                        LOG.warn("Forcibly stopping thread to avoid memory leak: " + s.getClassName());
+                        LOG.warn(STOPPING_THREAD + s.getClassName());
                         t.stop(); //don't complain, it works
                     }
                 }
