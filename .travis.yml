@@ -4,18 +4,12 @@ env:
         - TESTMODEL_URL=http://localhost:8080/intermine-demo
         - TESTMODEL_PATH=intermine-demo
     matrix:
-        - TEST_SUITE=webapp
+        - TEST_SUITE=webapp # Long tests should be listed first, to make most of 
+        - TEST_SUITE=bio    # concurrency
         - TEST_SUITE=ws CLIENT=JS
         - TEST_SUITE=ws CLIENT=PY
-        - TEST_SUITE=model
-        - TEST_SUITE=objectstore
-        - TEST_SUITE=integrate
-        - TEST_SUITE=pq
-        - TEST_SUITE=api
-        - TEST_SUITE=web
-        - TEST_SUITE=webtasks
         - TEST_SUITE=all
-        - TEST_SUITE=bio
+        - TEST_SUITE=webtasks
         - TEST_SUITE=checkstyle
 sudo: false # use container based infrastructure
 jdk:
