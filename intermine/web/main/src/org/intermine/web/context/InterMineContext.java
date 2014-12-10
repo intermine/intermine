@@ -191,7 +191,7 @@ public final class InterMineContext implements Shutdownable
         destroyDaemonThreads("com.browseengine.bobo.util.MemoryManager");
     }
 
-    private static final String STOPPING_THREAD = 
+    private static final String STOPPING_THREAD =
         "Forcibly stopping thread to avoid memory leak: ";
 
     // forcibly stop threads. Avoids memory leaks in 3rd party libraries we can't control
