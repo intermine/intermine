@@ -48,7 +48,7 @@ var FriendlyMines = (function ($, AjaxServices) {
         function failure(message, err) {
             loading.removeClass('loading')
                    .html('<span class="error">Could not retrieve results</span>');
-            console.error('Error retrieving results', e);
+            console.error('Error retrieving results', message, err);
         }
 
         function display(results) {
