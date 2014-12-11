@@ -143,7 +143,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L3);
         Model model = jenaIOHandler.convertFromOWL(new FileInputStream(getCurrentFile()));
         Set<Pathway> pathwaySet = model.getObjects(Pathway.class);
-
+        LOG.info("Checkit: Processing "+pathwaySet.size()+" BioPAX pathways");
         for (Pathway pathwayObj : pathwaySet) {
             try {
                 pathwayRefId = getPathway(pathwayObj);
@@ -373,13 +373,13 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             // Good file name: 83333.owl
             taxonId = Integer.valueOf(filename.split("\\.")[0]);
         } else {
-            String[] bits = filename.split(" ");
+            String[] bits = filename.split("_");
 
             // bad filename eg `Human immunodeficiency virus 1.owl`,
             // expecting "Drosophila melanogaster.owl"
             if (bits.length != 2) {
                 String msg = "Bad filename:  '" + filename + "'.  Expecting filename in the format "
-                    + "'Drosophila melanogaster.owl'";
+                    + "'Drosophila_melanogaster.owl'";
                 LOG.error(msg);
                 return null;
             }
