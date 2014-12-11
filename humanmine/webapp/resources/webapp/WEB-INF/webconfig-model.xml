@@ -1,4 +1,48 @@
 <webconfig>
+
+  <class className="org.intermine.model.bio.Disease">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.Pathway">
+    <headerconfig>
+      <titles>
+        <title mainTitles="name" />
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.Consequence">
+    <fields>
+      <fieldconfig fieldExpr="types"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.ValidationState">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.Ontology">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.Component">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+  <class className="org.intermine.model.bio.CrossReference">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -8,11 +52,12 @@
   <class className="org.intermine.model.bio.BioEntity">
     <headerconfig>
       <titles>
-        <title mainTitles="symbol|primaryIdentifier" numberOfMainTitlesToShow="1" subTitles="*organism.shortName*" />
+        <title mainTitles="symbol|primaryIdentifier" numberOfMainTitlesToShow="1" subTitles="*organism.name*" />
       </titles>
     </headerconfig>
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier" label="DB identifier"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
@@ -31,10 +76,30 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.UniProtFeature">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.ProteinAtlasExpression">
+    <fields>
+      <fieldconfig fieldExpr="tissue.name"/>
+      <fieldconfig fieldExpr="level"/>
+      <fieldconfig fieldExpr="reliability"/>
+      <fieldconfig fieldExpr="expressionType"/>
+      <fieldconfig fieldExpr="cellType"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.DataSet">
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
+      <fieldconfig fieldExpr="dataSource.name"/>
     </fields>
   </class>
 
@@ -47,23 +112,105 @@
   </class>
 
   <class className="org.intermine.model.bio.Gene">
+    <inlinelist>
+      <table path="synonyms.value" showInHeader="true" lineLength="100" />
+      <table path="pathways.name" showLinksToObjects="true" />
+    </inlinelist>
     <fields>
+      <fieldconfig fieldExpr="symbol" showInListAnalysisPreviewTable="true"/>
+      <fieldconfig fieldExpr="name" showInListAnalysisPreviewTable="true"/>
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
-      <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="description" doNotTruncate="true" showInSummary="false" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.shortName" />
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <bagdisplayers>
+      <!-- attribute links can now be configured for gene list analysis pages -->
+      <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
+    </bagdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Protein">
+    <inlinelist>
+      <table path="synonyms.value" showInHeader="true" lineLength="100" />
+    </inlinelist>
+    <fields>
+        <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
+        <fieldconfig fieldExpr="primaryAccession"/>
+        <fieldconfig fieldExpr="organism.name"/>
+        <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
   </class>
+
+  <class className="org.intermine.model.bio.GOAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
+      <fieldconfig fieldExpr="ontologyTerm.identifier" />
+      <fieldconfig fieldExpr="ontologyTerm.name" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GOEvidenceCode">
+    <fields>
+      <fieldconfig fieldExpr="code"/>
+    </fields>
+  </class>
+
+    <class className="org.intermine.model.bio.GOTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="ontology.name"/>
+      <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GWAS">
+    <fields>
+      <fieldconfig fieldExpr="firstAuthor"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.GWASResult">
+    <fields>
+      <fieldconfig fieldExpr="SNP.primaryIdentifier"/>
+      <fieldconfig fieldExpr="SNP.alleles"/>
+      <fieldconfig fieldExpr="SNP.chromosomeLocation.start"/>
+      <fieldconfig fieldExpr="SNP.chromosome.primaryIdentifier"/>
+      <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="pValue"/>
+      <fieldconfig fieldExpr="study.firstAuthor"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Homologue">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
+      <fieldconfig fieldExpr="homologue.organism.shortName"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.InteractionTerm">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
 
  <class className="org.intermine.model.bio.Location">
     <fields>
       <fieldconfig fieldExpr="feature.primaryIdentifier"/>
+      <fieldconfig fieldExpr="feature.symbol"/>
+      <fieldconfig fieldExpr="locatedOn.primaryIdentifier"/>
       <fieldconfig fieldExpr="start"/>
       <fieldconfig fieldExpr="end"/>
       <fieldconfig fieldExpr="strand"/>
@@ -83,21 +230,11 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Ontology">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.OntologyTerm">
-    <headerconfig>
-      <titles>
-      <title mainTitles="identifier|name" subTitles="ontology.name" />
-      </titles>
-    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="ontology.name"/>
       <fieldconfig fieldExpr="description" doNotTruncate="true" />
     </fields>
   </class>
@@ -118,38 +255,27 @@
   </class>
 
   <class className="org.intermine.model.bio.Organism">
-    <headerconfig>
-      <titles>
-      <title mainTitles="name"/>
-      </titles>
-    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Protein">
-    <inlinelist>
-      <table path="synonyms.value" showLinksToObjects="true" />
-    </inlinelist>
+  <class className="org.intermine.model.bio.ProteinDomain">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="primaryAccession"/>
-      <fieldconfig fieldExpr="organism.name"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="shortName"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
   <class className="org.intermine.model.bio.Publication">
-    <headerconfig>
-  <titles>
-    <title mainTitles="title" />
- </titles>
+      <headerconfig>
+      <titles>
+        <title mainTitles="title" />
+      </titles>
     </headerconfig>
-    <inlinelist>
-      <table path="authors.name" showLinksToObjects="true" />
-    </inlinelist>
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
@@ -168,7 +294,26 @@
                    showInSummary="false" showInResults="false" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="length"/>
     </fields>
-    <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
+  </class>
+
+  <class className="org.intermine.model.bio.SNP">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
+      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp"/>
+      <fieldconfig fieldExpr="alleles"/>
+      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+    <bagdisplayers>
+      <displayer src="snpToGeneFormDisplayer.tile" showOnLeft="true"/>
+    </bagdisplayers>
+  </class>
+
+  <class className="org.intermine.model.bio.Source">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
   </class>
 
   <class className="org.intermine.model.bio.Synonym">
@@ -185,6 +330,7 @@
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
 
@@ -193,7 +339,8 @@
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
   <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
 
-  <reportdisplayers>
+<!-- report page displayers -->
+<reportdisplayers>
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
                      jspName="model/geneIdentifiersDisplayer.jsp"
                      replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
@@ -314,7 +461,7 @@
                      placement="summary"
                      types="Gene"/>
 
-  </reportdisplayers>
+</reportdisplayers>
 
 <!-- widgets -->
 <widgets>
@@ -351,22 +498,6 @@
                       constraints="organism.name=[Organism]"
                       views="primaryIdentifier, organism.shortName, locations.locatedOn.primaryIdentifier,
                              locations.start, locations.end, locations.strand"/>
-
-     <graphdisplayer id="mouse_human_orthologue_pair"
-                      title="Mouse-human orthologue pair"
-                      description="dots would be where there is a mouse-human orthologue pair "
-                      graphType="ScatterChart"
-                      domainLabel="Chromosome location for humans"
-                      rangeLabel="Chromosome location for mouses"
-                      startClass="Gene"
-                      typeClass="Gene"
-                      categoryPath="organism.name"
-                      correlation="chromosomeLocation.locatedOn.primaryIdentifier,homologues.homologue.chromosomeLocation.locatedOn.primaryIdentifier"
-                      seriesPath=""
-                      seriesValues=""
-                      seriesLabels=""
-                      constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
-                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>
 
      <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
@@ -461,6 +592,55 @@
                                        GWASResults.study.publication.title, GWASResults.study.publication.firstAuthor,
                                        GWASResults.study.publication.journal, GWASResults.study.publication.year, GWASResults.study.publication.pubMedId"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+
+<!--
+
+    <enrichmentwidgetdisplayer id="gwas_enrichment" title="GWAS Phenotype Enrichment"
+        link="org.intermine.bio.web.widget.GWASEnrichmentURLQuery"
+        dataSetLoader="org.intermine.bio.web.widget.GWASEnrichmentLdr"
+        label="Phenotype"
+        description="Phenotypes enriched for SNPs in this list."
+        typeClass="SNP"
+        style="height:310px;"
+    />
+-->
+
+      <enrichmentwidgetdisplayer id="pathway_enrichment"
+                                 title="Pathway Enrichment"
+                                 description="Pathways enriched for genes in this list - data from KEGG and Reactome"
+                                 label="Pathways"
+                                 filterLabel="DataSet"
+                                 filters="All,KEGG pathways data set,Reactome data set"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="pathways.name"
+                                 enrichIdentifier="pathways.identifier"
+                                 constraints="pathways.dataSets.name = [DataSet],organism.taxonId = [list],primaryIdentifier != null"
+                                 typeClass="Gene"
+                                 views="secondaryIdentifier, symbol, organism.name,
+                                        pathways.identifier, pathways.name, pathways.dataSets.name"/>
+
+    <!--<bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
+        link="org.intermine.bio.web.widget.HomologueURLQuery"
+        description="Counts of orthologues in other organisms for the genes in this list."
+        displayFields="name"
+        exportField="primaryIdentifier"
+        typeClass="Gene"
+        columnTitle="Orthologues"/>-->
+
+     <bagtabledisplayer id="interactions" title="Interactions"
+                        pathStrings="Gene.interactions.gene2"
+                        description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
+                        displayFields="primaryIdentifier, name"
+                        exportField="primaryIdentifier"
+                        typeClass="Gene"
+                        columnTitle="Interactions"
+                        views="secondaryIdentifier, symbol, organism.shortName,
+                                  interactions.details.name, interactions.details.type,
+                                  interactions.details.role1, interactions.details.role2,
+                                  interactions.gene2.primaryIdentifier,
+                                  interactions.gene2.symbol,
+                                  interactions.details.experiment.name"/>
 
 </widgets>
 </webconfig>

@@ -10,152 +10,85 @@ package org.intermine.api.mines;
  *
  */
 
-import java.util.HashSet;
+
+import java.util.List;
 import java.util.Set;
 
-/**
- * Represents an instance of an InterMine.  Contains generic data structures to populate with
- * queryable values.
- *
- * @author Julie Sullivan
- */
-public class Mine
-{
-//    private static final Logger LOG = Logger.getLogger(Mine.class);
-    protected String name = null;
-    protected String url = null;
-    protected String logo = null;
-    protected String bgcolor, frontcolor;
-    protected Set<String> defaultValues = new HashSet<String>();
-    protected String releaseVersion = null;
-    protected String description = null;
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.PathQuery;
 
-    /**
-     * Constructor
-     *
-     * @param name name of mine, eg FlyMine
-     */
-    public Mine(String name) {
-        this.name = name;
-    }
+/**
+ * The type of objects that represent InterMine instances.
+ * @author Alex Kalderimis
+ *
+ */
+public interface Mine
+{
 
     /**
      * @return the name of the mine
      */
-    public String getName() {
-        return name;
-    }
-
+    String getName();
 
     /**
      * @return the description of the mine
      */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description of the mine
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    String getDescription();
 
     /**
      * @return the url to the mine
      */
-    public String getUrl() {
-        return url;
-    }
-
-    /**
-     * @param url the url to set
-     */
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    String getUrl();
 
     /**
      * @return the logo
      */
-    public String getLogo() {
-        return logo;
-    }
-
-    /**
-     * @param logo the logo to set
-     */
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
+    String getLogo();
 
     /**
      * @return bgcolor
      */
-    public String getBgcolor() {
-        return bgcolor;
-    }
-
-    /**
-     * @param bgcolor background color
-     */
-    public void setBgcolor(String bgcolor) {
-        this.bgcolor = bgcolor;
-    }
+    String getBgcolor();
 
     /**
      * @return frontcolor
      */
-    public String getFrontcolor() {
-        return frontcolor;
-    }
-
-    /**
-     * @param frontcolor front color
-     */
-    public void setFrontcolor(String frontcolor) {
-        this.frontcolor = frontcolor;
-    }
+    String getFrontcolor();
 
     /**
      * @return the releaseVersion
      */
-    public String getReleaseVersion() {
-        return releaseVersion;
-    }
+    String getReleaseVersion();
+
     /**
-     * @param releaseVersion the releaseVersion to set
+     * Get the main model associated with this application.
+     * @return The data model.
      */
-    public void setReleaseVersion(String releaseVersion) {
-        this.releaseVersion = releaseVersion;
-    }
+    Model getModel();
 
     /**
      * @return the defaultValue
      */
-    public Set<String> getDefaultValues() {
-        return defaultValues;
-    }
+    Set<String> getDefaultValues();
 
     /**
-     * get first default value.  used in querybuilder to select default extra value
+     * get first default value. used in querybuilder to select default extra value
      * @return the defaultValue
      */
-    public String getDefaultValue() {
-        for (String value : defaultValues) {
-            return value;
-        }
-        return null;
-    }
+    String getDefaultValue();
 
     /**
-     * @param defaultValue the defaultValues to set, comma delim
+     * Run a path query and get back all the results.
+     * @param query The query to run.
+     * @return A list of rows.
      */
-    public void setDefaultValues(String defaultValue) {
-        String[] bits = defaultValue.split(",");
-        for (String bit : bits) {
-            defaultValues.add(bit.trim());
-        }
-    }
+    List<List<Object>> getRows(PathQuery query);
+
+    /**
+     * Run a path query and get back all the results.
+     * @param xml The query to run, in XML format.
+     * @return A list of rows.
+     */
+    List<List<Object>> getRows(String xml);
+
 }
