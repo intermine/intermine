@@ -31,21 +31,25 @@ var FriendlyMines = (function ($, AjaxServices) {
 
     function getLinks(context, mine, request) {
         var loading = $('.loading-indicator', context).addClass('loading');
-        var handlers = {
-          callback: function(results) {
-              // switch off loading img
-              loading.removeClass('loading');
-              if (results && results.length) {
-                  display(results);
-              } else {
-                  loading.html('No results found');
-              }
-          },
-          errorHandler: function () {
-            loading.html('Could not retrieve results');
-          }
-        }
+        var handlers = {callback: success, errorHandler: failure};
+
         AjaxServices.getFriendlyMineLinks(mine.name, request.domain, request.identifiers, handlers);
+
+        function success(results) {
+            // switch off loading img
+            loading.removeClass('loading');
+            if (results && results.length) {
+                display(results);
+            } else {
+                loading.html('<span class="error">No results found</span>');
+            }
+        }
+
+        function failure(message, err) {
+            loading.removeClass('loading')
+                   .html('<span class="error">Could not retrieve results</span>');
+            console.error('Error retrieving results', e);
+        }
 
         function display(results) {
             var resultsList = $('.results', context);

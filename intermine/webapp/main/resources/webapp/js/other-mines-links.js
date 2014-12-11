@@ -28,6 +28,7 @@ var OtherMines = (function ($, _, AjaxServices) {
         handleError();
       }
     }
+
     function handleError () {
       $loading.remove();
       $('.apology', $context).show();
