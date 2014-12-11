@@ -131,7 +131,6 @@
     </fields>
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
-      <displayer src="attributeLinkDisplayer.tile"/>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
     </bagdisplayers>
   </class>
