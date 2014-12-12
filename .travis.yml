@@ -1,4 +1,6 @@
 language: python # needed to get access to virtualenv
+addons:
+    postgresql: 9.2 # minimum supported postgres version
 env:
     global:
         - TESTMODEL_URL=http://localhost:8080/intermine-demo
