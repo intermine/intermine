@@ -321,7 +321,7 @@ public class InitialiserPlugin implements PlugIn
         ClassDescriptor cd = os.getModel().getClassDescriptorByName("PermanentToken");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         if (cd == null) {
-            throw new IllegalStateException("Expected model to containt PermanentToken");
+            throw new IllegalStateException("Expected model to contain PermanentToken");
         }
         String tableDef = DatabaseUtil.getTableDefinition(db, cd);
         LOG.info("Adding table for " + cd.getName());
@@ -792,7 +792,7 @@ public class InitialiserPlugin implements PlugIn
             } catch (Exception e) {
                 LOG.error("Unable to get class count for " + className, e);
                 blockingErrorKeys.put(errorKey, e.getMessage());
-                throw new ServletException("Could not get class keys");
+                return;
             }
         }
         servletContext.setAttribute("classes", classes);
@@ -805,7 +805,7 @@ public class InitialiserPlugin implements PlugIn
                 Integer classCount = classCounts.get(thisClassName);
                 if (classCount == null) {
                     blockingErrorKeys.put(errorKey, thisClassName);
-                    throw new ServletException("Could not find class count for " + thisClassName);
+                    return;
                 }
                 if (classCount.intValue() > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
