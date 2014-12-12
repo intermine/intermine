@@ -143,7 +143,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L3);
         Model model = jenaIOHandler.convertFromOWL(new FileInputStream(getCurrentFile()));
         Set<Pathway> pathwaySet = model.getObjects(Pathway.class);
-        LOG.info("Checkit: Processing "+pathwaySet.size()+" BioPAX pathways");
         for (Pathway pathwayObj : pathwaySet) {
             try {
                 pathwayRefId = getPathway(pathwayObj);
