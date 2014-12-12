@@ -49,11 +49,10 @@ public class OverlapViewTask
         Database db = this.osw.getDatabase();
         Connection con = db.getConnection();
 
-        con.setAutoCommit(false);
+        // autocommit as we may fail DROP TABLE and use same connection for DROP VIEW
+        con.setAutoCommit(true);
 
-        String dropSql = "DROP VIEW overlappingfeaturessequencefeature";
         String viewSql;
-
         if (osw.getSchema().useRangeTypes()) {
             viewSql =
                     "CREATE VIEW overlappingfeaturessequencefeature "
@@ -80,15 +79,26 @@ public class OverlapViewTask
                     + " and doesn't have bioseg installed. Aborting.");
         }
 
-        Statement statement = con.createStatement();
-        statement.executeUpdate(dropSql);
-        statement.close();
+        // initially this is a table, need to try dropping table first, if the postprocess has been
+        // run before then it will be a view. We need to try dropping table first then view.
+        String dropSql = "DROP TABLE overlappingfeaturessequencefeature";
+        try {
+            Statement statement = con.createStatement();
+            statement.executeUpdate(dropSql);
+            statement.close();
+        } catch (SQLException e) {
+            // if the postprocess has already been run will be a view
+            dropSql = "DROP VIEW overlappingfeaturessequencefeature";
+            Statement statement = con.createStatement();
+            statement.executeUpdate(dropSql);
+            statement.close();
+        }
 
-        statement = con.createStatement();
+
+        Statement statement = con.createStatement();
         statement.executeUpdate(viewSql);
         statement.close();
 
-        con.commit();
         con.close();
     }
 }
