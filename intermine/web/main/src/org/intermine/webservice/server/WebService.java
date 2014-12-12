@@ -774,68 +774,68 @@ public abstract class WebService
         // TODO: retrieve the content types from the formats.
         String filename = getRequestFileName();
         switch (format) {
-        case HTML:
-            output = new StreamedOutput(out, new HTMLTableFormatter(),
-                    separator);
-            ResponseUtil.setHTMLContentType(response);
-            break;
-        case XML:
-            output = makeXMLOutput(out, separator);
-            break;
-        case TSV:
-            output = new StreamedOutput(out, new TabFormatter(
-                    StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
-                    separator);
-            filename += ".tsv";
-            if (isUncompressed()) {
-                ResponseUtil.setTabHeader(response, filename);
-            }
-            break;
-        case CSV:
-            output = new StreamedOutput(out, new CSVFormatter(), separator);
-            filename += ".csv";
-            if (isUncompressed()) {
-                ResponseUtil.setCSVHeader(response, filename);
-            }
-            break;
-        case TEXT:
-            output = new StreamedOutput(out, new PlainFormatter(), separator);
-            filename += getExtension();
-            if (isUncompressed()) {
-                ResponseUtil.setPlainTextHeader(response, filename);
-            }
-            break;
-        case JSON:
-            output = makeJSONOutput(out, separator);
-            filename += ".json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-            }
-            break;
-        case OBJECTS:
-            output = new StreamedOutput(out, new JSONObjectFormatter(),
-                    separator);
-            filename += ".json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-            }
-            break;
-        case TABLE:
-            output = new StreamedOutput(out, new JSONTableFormatter(),
-                    separator);
-            filename = "resulttable.json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
-            }
-            break;
-        case ROWS:
-            output = new StreamedOutput(out, new JSONRowFormatter(), separator);
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
-            }
-            break;
-        default:
-            output = getDefaultOutput(out, os, separator);
+            case HTML:
+                output = new StreamedOutput(out, new HTMLTableFormatter(),
+                        separator);
+                ResponseUtil.setHTMLContentType(response);
+                break;
+            case XML:
+                output = makeXMLOutput(out, separator);
+                break;
+            case TSV:
+                output = new StreamedOutput(out, new TabFormatter(
+                        StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
+                        separator);
+                filename += ".tsv";
+                if (isUncompressed()) {
+                    ResponseUtil.setTabHeader(response, filename);
+                }
+                break;
+            case CSV:
+                output = new StreamedOutput(out, new CSVFormatter(), separator);
+                filename += ".csv";
+                if (isUncompressed()) {
+                    ResponseUtil.setCSVHeader(response, filename);
+                }
+                break;
+            case TEXT:
+                output = new StreamedOutput(out, new PlainFormatter(), separator);
+                filename += getExtension();
+                if (isUncompressed()) {
+                    ResponseUtil.setPlainTextHeader(response, filename);
+                }
+                break;
+            case JSON:
+                output = makeJSONOutput(out, separator);
+                filename += ".json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+                }
+                break;
+            case OBJECTS:
+                output = new StreamedOutput(out, new JSONObjectFormatter(),
+                        separator);
+                filename += ".json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+                }
+                break;
+            case TABLE:
+                output = new StreamedOutput(out, new JSONTableFormatter(),
+                        separator);
+                filename = "resulttable.json";
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+                }
+                break;
+            case ROWS:
+                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
+                if (isUncompressed()) {
+                    ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
+                }
+                break;
+            default:
+                output = getDefaultOutput(out, os, separator);
         }
         if (!isUncompressed()) {
             ResponseUtil.setGzippedHeader(response, filename + getExtension());
@@ -870,10 +870,17 @@ public abstract class WebService
         return "result";
     }
 
-    protected String getRequestFileName(){
-	String fileName = request.getParameter("fileName");
-	if(fileName == null || fileName.trim().length()==0) fileName=getDefaultFileName();
-	return fileName;
+    /**
+     * If the request has a prameter 'fileName' use that for the fileName
+     * Otherwise use the default fileName
+     * @return String the fileName to use for the exported file
+     */
+    protected String getRequestFileName() {
+        String fileName = request.getParameter("fileName");
+        if (fileName == null || fileName.trim().length() == 0) {
+            fileName = getDefaultFileName();
+        }
+        return fileName;
     }
 
     /**
