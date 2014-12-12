@@ -256,14 +256,20 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
                 ovt.createView();
             } else if ("create-bioseg-location-index".equals(operation)) {
-                BiosegIndexTask bit = new BiosegIndexTask(getObjectStoreWriter());
-                bit.createIndex();
+                LOG.warn("The postprocess step 'create-bioseg-location-index' has been replaced"
+                        + " by 'create-location-overlap-index'. They now do the same thing but"
+                        + "you should use the new name.");
+                // this will use int4range or bioseg depending on postgres version
+                CreateLocationOverlapIndex cloi =
+                        new CreateLocationOverlapIndex(getObjectStoreWriter());
+                cloi.create();
             } else if ("populate-child-features".equals(operation)) {
                 PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
                 jb.populateCollection();
-            } else if ("create-location-range-index".equals(operation)) {
-                CreateLocationRange clr = new CreateLocationRange(getObjectStoreWriter());
-                clr.create();
+            } else if ("create-location-overlap-index".equals(operation)) {
+                CreateLocationOverlapIndex cloi =
+                        new CreateLocationOverlapIndex(getObjectStoreWriter());
+                cloi.create();
             }
 
         } catch (BuildException e) {
