@@ -52,7 +52,6 @@ import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 import org.jfree.util.Log;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -288,6 +287,7 @@ public class ReportController extends InterMineAction
             String taggedType, DisplayField dispRef, Map<String, DisplayField> miscRefs,
             TagManager tagManager, String sup, Map<String, Map<String, DisplayField>>
             placementRefsAndCollections, boolean isSuperUser) {
+        @SuppressWarnings("deprecation")
         List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor()
                 .getUnqualifiedName()
                 + "." + fd.getName(), taggedType, sup);

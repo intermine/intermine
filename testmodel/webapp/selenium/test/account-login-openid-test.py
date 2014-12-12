@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re, os
-from imuser import IMUser
 
 class AccountLoginOpenID(Super):
 
@@ -29,7 +28,7 @@ class AccountLoginOpenID(Super):
         browser.find_element_by_id("Passwd").clear()
         browser.find_element_by_id("Passwd").send_keys(password)
         browser.find_element_by_id("signIn").click()
-        
+
         # TBD until we can deploy testmodel on a server with access to openid
         return
         self.assertEqual("Log out", browser.find_element_by_link_text("Log out").text)
@@ -50,14 +49,8 @@ class AccountLoginOpenID(Super):
         browser.find_element_by_id("submitBag").click()
         browser.find_element_by_id("newBagName").clear()
         browser.find_element_by_id("newBagName").send_keys("Company List 1")
-        for i in range(60):
-            try:
-                if self.is_element_present(By.XPATH, "//*[@id=\"target\"]/div[1]/header/a"): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
-        browser.find_element_by_xpath("//*[@id=\"target\"]/div[1]/header/a").click()
+        header_link = self.browser.find_element_by_xpath("//*[@id=\"target\"]/div[1]/header/a")
+        header_link.click()
         browser.get(self.base_url + "/bag.do?subtab=view.do")
-
 
         # Create a list and save it

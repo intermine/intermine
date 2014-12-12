@@ -1,29 +1,33 @@
-language: java
-jdk:
-    - oraclejdk7
-#    - openjdk7
-#    - openjdk6
+language: python # needed to get access to virtualenv
+addons:
+    postgresql: 9.2 # minimum supported postgres version
 env:
-    ANT_OPTS='-server'
+    global:
+        - TESTMODEL_URL=http://localhost:8080/intermine-demo
+        - TESTMODEL_PATH=intermine-demo
+    matrix:
+        - TEST_SUITE=webapp # Long tests should be listed first, to make most of 
+        - TEST_SUITE=bio    # concurrency
+        - TEST_SUITE=ws CLIENT=JS
+        - TEST_SUITE=ws CLIENT=PY
+        - TEST_SUITE=all
+        - TEST_SUITE=webtasks
+        - TEST_SUITE=checkstyle
+sudo: false # use container based infrastructure
+jdk:
+    - openjdk7
+    - openjdk6
 before_script:
-    - sh config/travis.init.sh
+    - ./config/travis/init.sh
 before_install:
     - "export DISPLAY=:99.0"
-    - sh -e /etc/init.d/xvfb start
-    - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
+    - ./config/travis/before-install.sh
 script:
-    - ant -f intermine/all/build.xml clean fulltest checkstyle 2>&1 | tee >(grep FAILED >> failures.list)
-    - cat failures.list
-    - (cd testmodel; PSQL_USER=postgres sh setup.sh)
-    - sleep 10
-    - sh config/run-selenium-tests.sh
-    - test ! -s failures.list
-after_failure:
-    - config/upload_artifacts.sh
+    - ./config/travis/run.sh
 notifications:
-    irc:
-        channels:
-            - "chat.freenode.net#intermine-ci"
-        on_success: change
-        on_error: always
+  irc:
+      channels:
+          - "chat.freenode.net#intermine-ci"
+      on_success: change
+      on_error: change
 

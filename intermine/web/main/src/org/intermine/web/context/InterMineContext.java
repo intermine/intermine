@@ -11,7 +11,6 @@ package org.intermine.web.context;
  */
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +28,9 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.util.Emailer;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
+import org.intermine.web.logic.ResourceOpener;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.security.KeyStoreBuilder;
 
 /**
  * A context object that doesn't require the session.
@@ -57,24 +58,31 @@ public final class InterMineContext implements Shutdownable
     private static KeyStore keyStore = null;
     private static ArrayBlockingQueue<MailAction> mailQueue;
     private static ExecutorService mailService;
+    private static ResourceOpener opener;
 
     /**
      * Set up the Context with everything it needs.
      * @param imApi The application state.
      * @param webProps The application properties.
      * @param wc The application configuration.
+     * @param resourceOpener Something to use to open resources.
      */
     public static synchronized void initilise(
             final InterMineAPI imApi,
             final Properties webProps,
-            final WebConfig wc) {
-
+            final WebConfig wc,
+            final ResourceOpener resourceOpener) {
+        if (imApi == null || webProps == null || wc == null || resourceOpener == null) {
+            throw new NullPointerException("None of the arguments to this method may be null.");
+        }
         if (isInitialised) { // May be initialized multiple times in tests.
             doShutdown();
         }
         im = imApi;
         webProperties = webProps;
         webConfig = wc;
+        opener = resourceOpener;
+
         emailer = EmailerFactory.getEmailer(webProps);
         mailQueue = new ArrayBlockingQueue<MailAction>(10000);
         mailService = Executors.newCachedThreadPool(new DaemonThreadFactory());
@@ -176,30 +184,30 @@ public final class InterMineContext implements Shutdownable
         webProperties = null;
         webConfig = null;
         emailer = null;
+        keyStore = null;
         mailQueue = null;
         mailService = null;
         isInitialised = false;
         destroyDaemonThreads("com.browseengine.bobo.util.MemoryManager");
     }
 
+    private static final String STOPPING_THREAD =
+        "Forcibly stopping thread to avoid memory leak: ";
+
     // forcibly stop threads. Avoids memory leaks in 3rd party libraries we can't control
     // (e.g. bobo)
-    private static void destroyDaemonThreads(String className) {
+    private static void destroyDaemonThreads(String searchString) {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread t : threadSet) {
             for (StackTraceElement s : t.getStackTrace()) {
-                if (s.getClassName().contains(className)) {
+                if (s.getClassName().contains(searchString)) {
                     synchronized (t) {
-                        LOG.warn("Forcibly stopping thread to avoid memory leak: " + className);
+                        LOG.warn(STOPPING_THREAD + s.getClassName());
                         t.stop(); //don't complain, it works
                     }
                 }
             }
         }
-    }
-
-    private static char[] getKeyStorePassword() {
-        return getWebProperties().getProperty("security.keystore.password", "").toCharArray();
     }
 
     /**
@@ -213,22 +221,11 @@ public final class InterMineContext implements Shutdownable
         throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         checkInit();
         if (keyStore == null) {
-            keyStore = KeyStore.getInstance("JKS");
-            InputStream is = null;
-            try {
-                is = InterMineContext.class.getResourceAsStream("keystore.jks");
-                // Must call load, even on null values, to initialise the store.
-                keyStore.load(is, getKeyStorePassword());
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        // who honestly cares.
-                    }
-                }
-            }
+            KeyStoreBuilder builder = new KeyStoreBuilder(getWebProperties(), opener);
+            keyStore = builder.buildKeyStore();
         }
+
         return keyStore;
     }
+
 }

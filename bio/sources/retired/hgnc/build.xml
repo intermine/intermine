@@ -1,5 +1,5 @@
 <project name="hgnc" default="default" basedir=".">
   <description>build, test, package hgnc</description>
   
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
 </project>

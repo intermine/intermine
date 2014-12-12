@@ -1,7 +1,5 @@
 from test.querybuildertestcase import QueryBuilderTestCase
 
-import time
-
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -11,7 +9,7 @@ class ImportQueryTest(QueryBuilderTestCase):
         link = self.findLink("Import query from XML")
         self.assertIsNotNone(link)
         link.click()
-        time.sleep(3)
+        self.wait().until(lambda d: 'query' in d.title.lower())
         self.assertIn('Import Query', self.browser.title)
         input_box = self.elem('#xml')
         self.assertIsNotNone(input_box)
@@ -24,9 +22,8 @@ class ImportQueryTest(QueryBuilderTestCase):
         input_box.send_keys(query)
         self.assertEquals('true', self.elem('#file').get_attribute('disabled'))
         self.elem('#importQueriesForm input[type="submit"]').click()
-        time.sleep(3)
 
-        self.assertEquals('Bank', self.elem('.typeSelected').text)
+        self.assertEquals('Bank', self.wait_for_elem('.typeSelected').text)
         constraints = self.elems('span.constraint')
         self.assertEquals(1, len(constraints))
         self.assertEquals('> 1000', constraints[0].text)

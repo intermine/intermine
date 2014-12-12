@@ -103,6 +103,7 @@ public class LoadDefaultTemplatesTask extends Task
      * Load templates from an xml file into a userprofile account.
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void execute() {
         log("Loading default templates and tags into profile " + username);

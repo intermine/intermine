@@ -19,7 +19,6 @@ public class DisjointListTest {
         numsAndStrings.addLeft(3);
         numsAndStrings.addRight("four");
         assertEquals(numsAndStrings.size(), 4);
-        @SuppressWarnings("unchecked")
         List<Either<Integer, String>> expected = Arrays.asList(
                 new Either.Left<Integer, String>(1),
                 new Either.Right<Integer, String>("two"),

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
 import org.intermine.web.logic.config.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,8 @@ public class ReleaseEtagFilterTest {
         InterMineContext.initilise(
                 createMock(InterMineAPI.class),
                 webProperties,
-                createMock(WebConfig.class));
+                createMock(WebConfig.class),
+                new ClassResourceOpener(ReleaseEtagFilter.class));
         req = createMock(HttpServletRequest.class);
         resp = createMock(HttpServletResponse.class);
         chain = createMock(FilterChain.class);

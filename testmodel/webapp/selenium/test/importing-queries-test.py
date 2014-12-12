@@ -15,13 +15,12 @@ class QueryImportTestCase(Super):
 
     def import_query(self, xml):
         self.assertIn('Import Query', self.browser.title)
-        self.elem('#xml').send_keys(xml)
+        self.wait_for_elem('#xml').send_keys(xml)
         self.elem('#importQueriesForm input[type="submit"]').click()
 
     def assert_error_msg_contains(self, message):
-        wait = WebDriverWait(self.browser, 10)
-        error_notification = self.elem('#error_msg')
-        wait.until(EC.visibility_of(error_notification))
+        error_notification = self.wait_for_elem('#error_msg')
+        self.wait().until(lambda d: error_notification.is_displayed())
         self.assertIn(message, error_notification.text)
 
     def test_bad_xml(self):
@@ -33,12 +32,20 @@ class QueryImportTestCase(Super):
         self.import_query('')
         self.assert_error_msg_contains('end of file')
 
+    def test_from_form(self):
+        with open('data/employee-query.xml') as f:
+            xml = f.read()
+            self.import_query(xml)
+
+        self.assertEquals('Employee', self.wait_for_elem('.typeSelected').text)
+        self.assertEquals(3, len(self.browser.find_elements_by_class_name('viewpath')))
+
     def test_from_file(self):
         file_input = self.elem('#file')
         file_input.send_keys(os.path.abspath('data/employee-query.xml'))
-
         self.elem('#importQueriesForm input[type="submit"]').click()
-        self.assertEquals('Employee', self.elem('.typeSelected').text)
+
+        self.assertEquals('Employee', self.wait_for_elem('.typeSelected').text)
         self.assertEquals(3, len(self.browser.find_elements_by_class_name('viewpath')))
 
     def test_bad_file(self):

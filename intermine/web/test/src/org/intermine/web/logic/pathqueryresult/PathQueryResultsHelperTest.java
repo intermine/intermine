@@ -55,7 +55,6 @@ public class PathQueryResultsHelperTest extends TestCase
     ObjectStoreWriter uosw;
     ObjectStore os;
     private Department department;
-    private Manager manager;
     private List<Class<?>> types;
     private Set<Employee> employees;
     private Employee employee;
@@ -100,7 +99,6 @@ public class PathQueryResultsHelperTest extends TestCase
 
         department = d1;
         employee = e1;
-        manager = m1;
     }
 
     private void initWebConfig() {
@@ -262,7 +260,6 @@ public class PathQueryResultsHelperTest extends TestCase
         osw.store(m1);
         osw.store(d1);
         List<Class<?>> classes = PathQueryResultHelper.queryForTypesInCollection(d1, field, os);
-        @SuppressWarnings("unchecked")
         List<Class<? extends Employee>> expectedClasses = Arrays.asList(Employee.class, Manager.class);
         assertEquals(expectedClasses, classes);
         osw.delete(d1);

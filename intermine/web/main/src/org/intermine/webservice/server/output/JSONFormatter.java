@@ -185,7 +185,9 @@ public class JSONFormatter extends Formatter
      */
     @Override
     public String formatResult(List<String> resultRow) {
-        if (resultRow.isEmpty()) { return ""; }
+        if (resultRow.isEmpty()) {
+            return "";
+        }
         Iterator<String> iter = resultRow.iterator();
         String first = iter.next();
         if (shouldQuote && !"".equals(first)) {

@@ -31,6 +31,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
+import org.intermine.web.logic.config.WebConfig;
 
 /**
  * @author alex
@@ -132,7 +134,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
-        InterMineContext.initilise(api, new Properties(), null);
+        InterMineContext.initilise(api, new Properties(), new WebConfig(), new ClassResourceOpener(getClass()));
     }
 
     /**
@@ -151,7 +153,6 @@ public class JSONRowResultProcessorTest extends TestCase {
 
     public void testZeroResults() {
         List<String> inner = new ArrayList<String>();
-        @SuppressWarnings("unchecked")
         List<List<String>> expected = Arrays.asList(inner);
 
         MemoryOutput out  = new MemoryOutput();
