@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
 import org.xml.sax.SAXException;
 

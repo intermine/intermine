@@ -1,109 +1,94 @@
 package org.intermine.webservice.server;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Security;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.security.cert.X509Certificate;
-import java.util.Date;
+import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.codec.binary.Base64;
-import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.x509.X509V3CertificateGenerator;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.util.DevNullMap;
+import org.intermine.web.security.PublicKeySource;
 import org.intermine.webservice.server.JWTVerifier.VerificationError;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@SuppressWarnings("deprecation")
-public class JWTVerifierTest {
+public class JWTVerifierTest
+{
 
-    private static KeyPair testingKeyPair;
-    private static KeyPair wso2KeyPair;
-    private static KeyStore ks = null;
+	private static PrivateKey testingKey;
+	private static PrivateKey wso2Key;
+    private static PublicKeySource ks;
 
     private Properties options = null;
     private static Properties defaultOptions = new Properties();
     private String token, wso2Token, expired, wrongSig, unknown;
+	private JWTVerifier verifier;
 
     @BeforeClass
-    public static void setupOnce() throws Exception {
-        ks = KeyStore.getInstance("JKS");
-        ks.load(null, null); // srsly - this is necessary to initialize the keystore.
-        testingKeyPair = generateKeyPair("testing");
-        wso2KeyPair = generateKeyPair("wso2");
+    public static void createKeySource() throws Exception {
+    	KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    	keyGen.initialize(512);
+    	Map<String, PublicKey> keys = new HashMap<String, PublicKey>();
+    	
+    	KeyPair testingKeyPair = keyGen.generateKeyPair();
+    	testingKey = testingKeyPair.getPrivate();
+    	keys.put("testing", testingKeyPair.getPublic());
+    	defaultOptions.setProperty("security.keystore.alias.testing issuer", "testing");
+    	
+    	KeyPair wso2KeyPair = keyGen.generateKeyPair();
+    	wso2Key = wso2KeyPair.getPrivate();
+    	keys.put("wso2", wso2KeyPair.getPublic());
+    	defaultOptions.setProperty("security.keystore.alias.wso2 issuer", "wso2");
+    	
+    	ks = new MapPublicKeySource(keys);
     }
 
-    @Before
+	@Before
     public void setup() throws Exception {
         options = new Properties(defaultOptions);
         // Normally "wso2.org/products/am" => "http://wso2.org/claims/emailaddress"
         options.setProperty("jwt.key.sub.wso2 issuer", "http://wso2.org/claims/emailaddress");
+        Profile profile = new FakeProfile("Mr Somebody", "somebody@somewhere.org");
+        int expiry = 60 * 60;
 
-        long expirationTime = System.currentTimeMillis() + 1000L * 60 * 60;
         //System.out.println("Expires at: " + expirationTime);
+        JWTBuilder testBuilder = new JWTBuilder(testingKey, "testing issuer");
+        JWTBuilder wso2Builder = new JWTBuilder(wso2Key, "wso2 issuer");
+        JWTBuilder unknownBuilder = new JWTBuilder(testingKey, "unknown issuer");
+        JWTBuilder mismatchBuilder = new JWTBuilder(wso2Key, "testing issuer");
 
-        token = generateToken(testingKeyPair, expirationTime, "testing issuer");
-        wso2Token = generateToken(wso2KeyPair, expirationTime, "wso2 issuer");
-        unknown = generateToken(testingKeyPair, expirationTime, "unknown issuer");
-        wrongSig = generateToken(wso2KeyPair, expirationTime, "testing issuer");
-        expired = generateToken(wso2KeyPair, 0L, "testing issuer");
-    }
-
-    private String generateToken(KeyPair keyPair, long expirationTime, String issuer)
-            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        Map<String, Object> header = new HashMap<String, Object>();
-        Map<String, Object> claims = new HashMap<String, Object>();
-
-        header.put("alg", "SHA256withRSA");
-        header.put("typ", "JWT");
-        claims.put("sub", "Mr Somebody");
-        claims.put("iss", issuer);
-        claims.put("exp", expirationTime);
-        claims.put("iat", System.currentTimeMillis());
-        claims.put("http://wso2.org/claims/emailaddress", "somebody@somewhere.org");
-
-        String toSign = String.format("%s.%s",
-                Base64.encodeBase64URLSafeString(new JSONObject(header).toString().getBytes()),
-                Base64.encodeBase64URLSafeString(new JSONObject(claims).toString().getBytes()));
-
-        Signature signing = Signature.getInstance("SHA256withRSA");
-
-        signing.initSign(keyPair.getPrivate());
-        signing.update(toSign.getBytes());
-
-        byte[] signature = signing.sign();
-        return toSign + "." + Base64.encodeBase64URLSafeString(signature);
-    }
-
-    private static KeyPair generateKeyPair(String alias)
-            throws NoSuchAlgorithmException, Exception, KeyStoreException {
-        defaultOptions.setProperty("security.keystore.alias." + alias + " issuer", alias);
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(512);
-        KeyPair keyPair = keyGen.genKeyPair();
-        X509Certificate cert = generateCertificate(keyPair);
-        ks.setCertificateEntry(alias, cert);
-        return keyPair;
+        token = testBuilder.issueToken(profile, expiry);
+        wso2Token = wso2Builder.issueToken(profile, expiry);
+        unknown = unknownBuilder.issueToken(profile, expiry);
+        wrongSig = mismatchBuilder.issueToken(profile, expiry);
+        expired = testBuilder.issueToken(profile.getUsername(), profile.getEmailAddress(), -1L);
+        
+        this.verifier = new JWTVerifier(ks, options);
     }
 
     @Test
     public void testVerify() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         JWTVerifier.Verification resp = verifier.verify(token);
         assertEquals(resp.getIssuer(), "testing issuer");
         assertEquals(resp.getIdentity(), "Mr Somebody");
@@ -111,7 +96,6 @@ public class JWTVerifierTest {
 
     @Test
     public void testVerifyWSO2() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         JWTVerifier.Verification resp = verifier.verify(wso2Token);
         assertEquals("wso2 issuer", resp.getIssuer());
         assertEquals("somebody@somewhere.org", resp.getIdentity());
@@ -119,7 +103,6 @@ public class JWTVerifierTest {
 
     @Test
     public void testNullToken() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         try {
             verifier.verify(null);
             fail();
@@ -130,7 +113,6 @@ public class JWTVerifierTest {
 
     @Test
     public void testBadToken() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         try {
             verifier.verify(wrongSig);
             fail();
@@ -141,7 +123,6 @@ public class JWTVerifierTest {
 
     @Test
     public void testUnknownIssuer() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         try {
             verifier.verify(unknown);
             fail();
@@ -152,7 +133,6 @@ public class JWTVerifierTest {
 
     @Test
     public void testExpiredToken() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         try {
             verifier.verify(expired);
             fail();
@@ -163,7 +143,6 @@ public class JWTVerifierTest {
 
     @Test
     public void testBlankToken() throws Exception {
-        JWTVerifier verifier = new JWTVerifier(ks, options);
         try {
             verifier.verify("");
             fail();
@@ -172,21 +151,36 @@ public class JWTVerifierTest {
         }
     }
 
-    // Yes it is deprecated. It also generates self-signed certificates. So not exactly an example
-    // of great things to do in production.
-    private static X509Certificate generateCertificate(KeyPair keyPair) throws Exception {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        X509V3CertificateGenerator cert = new X509V3CertificateGenerator();
-        cert.setSerialNumber(BigInteger.valueOf(1));   //or generate a random number
-        cert.setSubjectDN(new X509Principal("CN=localhost"));  //see examples to add O,OU etc
-        cert.setIssuerDN(new X509Principal("CN=localhost")); //same since it is self-signed
-        cert.setPublicKey(keyPair.getPublic());
-        cert.setNotBefore(new Date());
-        cert.setNotAfter(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365));
-        cert.setSignatureAlgorithm("SHA1WithRSAEncryption");
+    // Implementation for issuing tokens to users by name.
+    private class FakeProfile extends Profile
+    {
 
-        PrivateKey signingKey = keyPair.getPrivate();
-        return cert.generate(signingKey, "BC");
-     }
+        private String username, email;
+
+        public FakeProfile(String username, String email) {
+            super(null, null, null, null,
+                    new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
+                    new HashMap<String, ApiTemplate>(), null, true, false);
+            savedQueries = new DevNullMap<String, SavedQuery>();
+            savedBags = new DevNullMap<String, InterMineBag>();
+            savedTemplates = new DevNullMap<String, ApiTemplate>();
+            savedInvalidBags = new DevNullMap<String, InvalidBag>();
+            queryHistory = new DevNullMap<String, SavedQuery>();
+            savingDisabled = true;
+
+            this.username = username;
+            this.email = email;
+        }
+
+        @Override
+        public String getUsername() {
+            return this.username;
+        }
+
+        @Override
+        public String getEmailAddress() {
+            return this.email;
+        }
+    }
 
 }

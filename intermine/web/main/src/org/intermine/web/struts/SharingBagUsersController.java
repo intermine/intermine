@@ -54,6 +54,7 @@ public class SharingBagUsersController extends TilesAction
         request.setAttribute("currentSharingUsers", bm.getUsersSharingBag(bagName,
             profile.getUsername()));
         TagManager tm = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> tags = tm.getTags(TagNames.IM_PUBLIC, bagName, TagTypes.BAG,
                                     profile.getUsername());
         if (tags.isEmpty() || !profile.isSuperuser()) {

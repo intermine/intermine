@@ -394,7 +394,7 @@ public class TemplateAction extends InterMineAction
                             }
                         } else {
                             ConstraintOp constraintOp = ConstraintOp
-                            .getOpForIndex(Integer.valueOf(op));
+                                    .getOpForIndex(Integer.valueOf(op));
                             String constraintValue = "";
                             String multiValueAttribute = tf.getMultiValueAttribute(key);
                             if (multiValueAttribute != null && !("".equals(multiValueAttribute))) {

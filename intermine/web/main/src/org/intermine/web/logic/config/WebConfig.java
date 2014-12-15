@@ -220,8 +220,7 @@ public class WebConfig
      */
     private static List<String> getMappingFileNames(final Properties props, final String prefix) {
         final List<String> returnVal = new ArrayList<String>();
-        for (@SuppressWarnings("rawtypes")
-        final Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+        for (final Enumeration<?> e = props.propertyNames(); e.hasMoreElements();) {
             final String key = (String) e.nextElement();
             if (key.startsWith(prefix)) {
                 returnVal.add(props.getProperty(key));
@@ -256,8 +255,7 @@ public class WebConfig
                 throw new Error("Problem reading from " + fileName, e);
             }
             if (!props.isEmpty()) {
-                for (@SuppressWarnings("rawtypes")
-                final Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements();) {
                     final String key = (String) e.nextElement();
                     if (theseProps.containsKey(key)) {
                         throw new IllegalStateException(

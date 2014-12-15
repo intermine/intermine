@@ -8,7 +8,7 @@
   <sources>
     <source name="ensembl-snp" type="ensembl-snp" dump="true">
      <property name="src.data.dir" location="/SAN_humanmine/data/variation/ensembl/current" />
-      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gff" />
+      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gvf" />
     </source>
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current" />
@@ -69,6 +69,9 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
+ <source name="arrayexpress-atlas" type="arrayexpress-atlas">
+   <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/" />
+ </source>
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>

@@ -4,15 +4,15 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re
-from imuser import IMUser
-
+from imuser import TemporaryUser
 
 class AccountPersistentSettings(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
-    
+        self.user = TemporaryUser("zombie-testing-account-login@intermine.org");
+        self.user.create()
+
     def test_account_persistent_settings(self):
 
         browser = self.browser
@@ -20,7 +20,7 @@ class AccountPersistentSettings(Super):
         self.login()
 
         # Make sure that our checkboxes are set to on
-        checkbox_donotspam = browser.find_element_by_name("do_not_spam")
+        checkbox_donotspam = self.wait().until(lambda d: d.find_element_by_name('do_not_spam'))
         checkbox_hidden = browser.find_element_by_name("hidden")
 
         checkbox_donotspam.click() if checkbox_donotspam.is_selected() else False
@@ -28,18 +28,20 @@ class AccountPersistentSettings(Super):
         # Checkboxes are now off.
 
         # Now fill out our field values:
-        browser.find_element_by_name("alias").clear()
-        browser.find_element_by_name("alias").send_keys("Temporary Display Name")
+        alias = browser.find_element_by_name('alias')
+        email = browser.find_element_by_name('email')
+        alias.clear()
+        alias.send_keys("Temporary Display Name")
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[3]/td[2]/form/button").click()
-        browser.find_element_by_name("email").clear()
-        browser.find_element_by_name("email").send_keys("temporaryemail@intermine.org")
+        email.clear()
+        email.send_keys("temporaryemail@intermine.org")
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[4]/td[2]/form/button").click()
-        browser.find_element_by_link_text("Log out").click()
+        self.findLink("Log out").click()
 
         # Log back in and confirm the settings have stuck:
         self.login()
 
-        checkbox_donotspam = browser.find_element_by_name("do_not_spam")
+        checkbox_donotspam = self.wait().until(lambda d: d.find_element_by_name('do_not_spam'))
         checkbox_hidden = browser.find_element_by_name("hidden")
 
         self.assertEqual(False, checkbox_donotspam.is_selected())
@@ -50,9 +52,11 @@ class AccountPersistentSettings(Super):
         # Reverse the values
         checkbox_donotspam.click()
         checkbox_hidden.click()
-        browser.find_element_by_name("alias").clear()
+        alias = browser.find_element_by_name('alias')
+        email = browser.find_element_by_name('email')
+        alias.clear()
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[3]/td[2]/form/button[2]").click()
-        browser.find_element_by_name("email").clear()
+        email.clear()
         browser.find_element_by_xpath("//div[@id='pagecontentmax']/div[4]/div/table/tbody/tr[4]/td[2]/form/button[2]").click()
         browser.find_element_by_link_text("Log out").click()
 
@@ -60,7 +64,7 @@ class AccountPersistentSettings(Super):
         self.login()
 
         # Get our checkboxes again
-        checkbox_donotspam = browser.find_element_by_name("do_not_spam")
+        checkbox_donotspam = self.wait().until(lambda d: d.find_element_by_name('do_not_spam'))
         checkbox_hidden = browser.find_element_by_name("hidden")
 
         self.assertEqual(True, checkbox_donotspam.is_selected())
@@ -72,23 +76,28 @@ class AccountPersistentSettings(Super):
     def login(self):
         browser = self.browser
         browser.get(self.base_url + "/login.do?returnto=%2Fmymine.do?subtab=account")
-        browser.find_element_by_name("username").clear()
-        browser.find_element_by_name("username").send_keys(self.user.name)
-        browser.find_element_by_name("password").clear()
-        browser.find_element_by_name("password").send_keys(self.user.password)
-        browser.find_element_by_name("action").click()
-        return True
-    
+        uname = self.wait().until(lambda d: d.find_element_by_name('username'), 'username not found')
+        pword = browser.find_element_by_name('password')
+        uname.clear()
+        uname.send_keys(self.user.name)
+        pword.clear()
+        pword.send_keys(self.user.password)
+        self.click_and_wait_for_refresh(browser.find_element_by_name("action"))
+
     def is_element_present(self, how, what):
-        try: self.browser.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
+        try:
+            self.browser.find_element(by=how, value=what)
+        except NoSuchElementException, e:
+            return False
         return True
-    
+
     def is_alert_present(self):
-        try: self.browser.switch_to_alert()
-        except NoAlertPresentException, e: return False
+        try:
+            self.browser.switch_to_alert()
+        except NoAlertPresentException, e:
+            return False
         return True
-    
+
     def close_alert_and_get_its_text(self):
         try:
             alert = self.browser.switch_to_alert()

@@ -762,7 +762,7 @@ public class ReportObject
             long queryStartTime = System.currentTimeMillis();
             // determine the types in the collection
             List<Class<?>> listOfTypes = PathQueryResultHelper.
-            queryForTypesInCollection(object, colName, im.getObjectStore());
+                    queryForTypesInCollection(object, colName, im.getObjectStore());
             long queryTime = System.currentTimeMillis() - queryStartTime;
             LOG.info("TIME - query for types in collection: " + colName + " took: " + queryTime);
 
