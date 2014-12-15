@@ -8,9 +8,11 @@
      <collection name="validations" referenced-type="ValidationState" />
      <collection name="consequences" referenced-type="Consequence" reverse-reference="snp"/>
    </class>
+   <class name="Indel" extends="SequenceAlteration" is-interface="true"/>
    <class name="Deletion" extends="SequenceAlteration" is-interface="true"/>
    <class name="Insertion" extends="SequenceAlteration" is-interface="true"/>
-   <class name="SNV" extends="SequenceAlteration" is-interface="true"/>
+   <class name="SNV
+   " extends="SequenceAlteration" is-interface="true"/>
    <class name="Substitution" extends="SequenceAlteration" is-interface="true"/>
 
    <!-- this is just a sequence feature, not an alteration -->
