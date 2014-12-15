@@ -11,6 +11,7 @@
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
-	<classpathentry kind="lib" path="/bio-core-main/build/classes"/>
-	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
