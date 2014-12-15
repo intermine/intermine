@@ -4,5 +4,5 @@ set -e
 
 cd testmodel/webapp/selenium
 
-nosetests --verbose
+nosetests --verbose --with-flaky
 
