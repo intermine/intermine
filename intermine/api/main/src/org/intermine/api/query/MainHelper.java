@@ -1565,9 +1565,9 @@ public final class MainHelper
         private static void init() {
             rangeHelpers = new HashMap<Class<?>, RangeHelper>();
             // Default basic helpers.
-//            rangeHelpers.put(int.class, new IntHelper());
-//            rangeHelpers.put(Integer.class, new IntHelper());
-//            rangeHelpers.put(String.class, new StringHelper());
+            rangeHelpers.put(int.class, new IntHelper());
+            rangeHelpers.put(Integer.class, new IntHelper());
+            rangeHelpers.put(String.class, new StringHelper());
             loadHelpers(PropertiesUtil.getProperties());
         }
 
