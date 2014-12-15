@@ -1217,4 +1217,22 @@ public final class KeywordSearch
             index = null;
         }
     }
+
+    /**
+     * set all the variables to NULL
+     */
+    public static void close() {
+        reader = null;
+        boboIndexReader = null;
+        indexingQueue = null;
+        index = null;
+        properties = null;
+        tempDirectory = null;
+        specialReferences = null;
+        ignoredClasses = null;
+        ignoredFields = null;
+        classBoost = null;
+        facets = null;
+        attributePrefixes = null;
+    }
 }

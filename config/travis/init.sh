@@ -57,7 +57,7 @@ else
         echo '#---> Building bio sources'
         for biosrc in $(find bio/sources/ -path '*/main/build.xml' ! -path '*example*' ! -path '*retired*'); do
             echo "#------> building $biosrc"
-            ant -f "$biosrc" clean default 2>&1 >> $BUILD_LOG
+            ant -f "$biosrc" clean default
         done
     elif [ "$TEST_SUITE" = "api" -o "$TEST_SUITE" = "web" -o "$TEST_SUITE" = "webtasks" -o "$TEST_SUITE" = "all" ]; then
         # api, webtasks, web and all need the testmodel to be built
