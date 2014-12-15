@@ -10,7 +10,7 @@ package org.intermine.web.security;
  *
  */
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

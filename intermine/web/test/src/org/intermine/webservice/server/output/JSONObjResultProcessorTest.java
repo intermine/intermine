@@ -19,7 +19,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 public class JSONObjResultProcessorTest extends TestCase {
 
@@ -122,7 +121,7 @@ public class JSONObjResultProcessorTest extends TestCase {
         JSONObjResultProcessor processor = new JSONObjResultProcessor();
         processor.write(iterator, out);
 
-        JSONAssert.assertEquals(expected.toString(), out.getResults().toString(), false);
+        assertEquals(expected.toString(), out.getResults().toString(), false);
 
     }
 
