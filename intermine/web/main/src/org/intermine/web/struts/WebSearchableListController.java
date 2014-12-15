@@ -167,6 +167,7 @@ public class WebSearchableListController extends TilesAction
         Comparator<String> comparator = new Comparator<String>() {
 
             private List<Tag> resolveTagsInBag(InterMineBag bag) {
+                @SuppressWarnings("deprecation")
                 List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
                 return tags;
             }

@@ -93,6 +93,7 @@ public class BagBuildController extends TilesAction
         ArrayList<String> preferedTypeList = new ArrayList<String>();
 
         TagManager tagManager = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class",
                                                             im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {

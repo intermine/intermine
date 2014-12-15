@@ -10,6 +10,7 @@ class RunQueryTest(Super):
         </query>
         """
         self.findLink("Import query from XML").click()
-        self.elem('#xml').send_keys(query)
+        xml = self.wait().until(lambda d: d.find_element_by_css_selector('#xml'))
+        xml.send_keys(query)
         self.elem('#importQueriesForm input[type="submit"]').click()
         self.run_and_expect(22)

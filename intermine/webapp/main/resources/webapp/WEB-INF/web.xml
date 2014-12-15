@@ -115,7 +115,7 @@
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
         <param type="Integer" required="false" recommended="true" default="10" description="The maximum size of the result set.">size</param>
         <param type="enumerated"
-               values="none,path,friendly" 
+               values="none,path,friendly"
                default="none"
                required="false"
                description="Include column headers. Use friendly for human readable paths. (Only for flat-file formats)">columnheaders</param>
@@ -193,28 +193,28 @@ attribute when using this service.
   </servlet>
 
   <servlet-mapping>
-	  <servlet-name>ws-query-append</servlet-name>
-	  <url-pattern>/service/query/append/tolist/*</url-pattern>
-	  <metadata>
-	        <name>Add to List from Query</name>
-	        <minVersion>4</minVersion>
-	        <method type="POST" authenticationRequired="true" ALSO="GET">
-	            <summary>Add the result set of a query to a list on the server.</summary>
-	            <description>
-	                This service provides the facility to submit a query and add the objects
-	                contained in its result set to a list that already exists on the server. This
-	                facility places a couple of restrictions on the query itself, namely that
-	                the view list may only contain a single item, which should refer to the
-	                internal id attribute of an object in the query.
-	            </description>
-	            <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format.">query</param>
-	            <param required="true" type="String" description="The list to append items to.">name</param>
-	            <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
-	            <returns>
-	                <format accept="application/json">json</format>
-	                <format accept="text/plain">text</format>
-	            </returns>
-	        </method>
+    <servlet-name>ws-query-append</servlet-name>
+    <url-pattern>/service/query/append/tolist/*</url-pattern>
+    <metadata>
+          <name>Add to List from Query</name>
+          <minVersion>4</minVersion>
+          <method type="POST" authenticationRequired="true" ALSO="GET">
+              <summary>Add the result set of a query to a list on the server.</summary>
+              <description>
+                  This service provides the facility to submit a query and add the objects
+                  contained in its result set to a list that already exists on the server. This
+                  facility places a couple of restrictions on the query itself, namely that
+                  the view list may only contain a single item, which should refer to the
+                  internal id attribute of an object in the query.
+              </description>
+              <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format.">query</param>
+              <param required="true" type="String" description="The list to append items to.">name</param>
+              <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+              <returns>
+                  <format accept="application/json">json</format>
+                  <format accept="text/plain">text</format>
+              </returns>
+          </method>
     </metadata>
   </servlet-mapping>
 
@@ -589,20 +589,20 @@ attribute when using this service.
                 options="/lists|lists{authorized}"
                 default="{name}"
                 description="The name of the list to delete">name</param>
-	        <returns>
-	          <format accept="application/json">json</format>
-	          <format accept="text/plain">text</format>
-	        </returns>
+          <returns>
+            <format accept="application/json">json</format>
+            <format accept="text/plain">text</format>
+          </returns>
         </method>
         <method type="POST" authenticationRequired="true">
-	        <summary>Create a new list</summary>
-	          <description>
-	            This service allows users to create a new
-	            list by uploading a set of identifiers. 
+          <summary>Create a new list</summary>
+            <description>
+              This service allows users to create a new
+              list by uploading a set of identifiers.
                 The list is created by using the default settings
                 of the ID resolution mechanism and then taking
                 all the good matches.
-	          </description>
+            </description>
               <param required="true"
                   type="String"
                   description="The name of the new list">name</param>
@@ -618,17 +618,17 @@ attribute when using this service.
             <param required="false"
                 type="String"
                 description="A disambiguating value (such as organism name)">extraValue</param>
-	        <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
+          <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
              <content type="text/plain">
               "even skipped"
               zen, bib
               hairless
              </content>
             </body>
-	        <returns>
-	          <format accept="application/json">json</format>
-	          <format accept="text/plain">text</format>
-	        </returns>
+          <returns>
+            <format accept="application/json">json</format>
+            <format accept="text/plain">text</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -716,7 +716,7 @@ attribute when using this service.
         <summary>Get the results from running a template with a given set of parameters</summary>
         <description format="markdown">
 Templates are predefined parameterised queries which may be run by supplying values and
-operators for the available editable constraints. The editable constraints vary from 
+operators for the available editable constraints. The editable constraints vary from
 template to template, so knowledge of these (obtainable by calls to `/templates`)
 is required to use this service correctly.
 
@@ -780,7 +780,7 @@ for each editable constraint on the query. These are not required for optional c
         <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
         <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
         <param type="enumerated"
-               values="none,path,friendly" 
+               values="none,path,friendly"
                default="none"
                required="false"
                description="Include column headers. Use friendly for human readable paths. (Only for flat-file formats)">columnheaders</param>
@@ -818,7 +818,7 @@ for each editable constraint on the query. These are not required for optional c
 This service allows the user to create a list from the result set of running a template
 with a given set of parameters. The parameters for running the template are the same as when
 requesting results (see documentation for `template-results`), and in addition to these
-parameters the user needs to supply a name and optional description for the list to be created. 
+parameters the user needs to supply a name and optional description for the list to be created.
 
 To define which part of the template results to use, the user must supply a path parameter which
 indicates a valid column from the output to be used.
@@ -923,7 +923,7 @@ for each editable constraint on the query. These are not required for optional c
         <description format="markdown">
 This service allows the user to add items to a list from the result set of running a template
 with a given set of parameters. The parameters for running the template are the same as when
-requesting results, and in addition to these parameters the user needs to supply the name 
+requesting results, and in addition to these parameters the user needs to supply the name
 of a list to append the results to.
 
 To define which part of the template results to use, the user must supply a path parameter which
@@ -1253,9 +1253,9 @@ to will also be returned.
         <method type="GET" authenticationRequired="false">
            <summary>Get the fields used to summarise the class</summary>
            <param type="Boolean" required="false" default="false" description="Whether to exclude references from the summary fields">norefs</param>
-	       <returns>
-	         <format key="classes">json</format>
-	       </returns>
+         <returns>
+           <format key="classes">json</format>
+         </returns>
        </method>
     </metadata>
   </servlet-mapping>
@@ -1278,16 +1278,16 @@ to will also be returned.
         <method type="GET" ALSO="POST" authenticationRequired="false">
             <summary>Get the code to run a pathquery in a given language.</summary>
             <description>
-	            This service provides the ability to generate code in one of several
-	            languages based on a pathquery provided in serialised form.
-	        </description>
+              This service provides the ability to generate code in one of several
+              languages based on a pathquery provided in serialised form.
+          </description>
             <param type="enumerated" default="py" values="pl,py,rb,js,java" required="true" description="The language to generate code in.">lang</param>
             <param type="XML" required="true" description="The query to generate code for, in XML form." schema="/service/schema/query.xsd">query</param>
             <returns>
                 <format accept="text/plain">text</format>
-	            <format accept="application/json" key="code">json</format>
-	            <format accept="application/xml">xml</format>
-	        </returns>
+              <format accept="application/json" key="code">json</format>
+              <format accept="application/xml">xml</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1326,11 +1326,11 @@ to will also be returned.
             </description>
             <param type="String" required="false" description="The name of a list whose tags to retrieve. If no list is provided, then all the tags associated with the authenticating user will be returned.">name</param>
             <returns>
-	            <format key="tags">json</format>
-	            <format>xml</format>
-	            <format>tab</format>
-	            <format>csv</format>
-	        </returns>
+              <format key="tags">json</format>
+              <format>xml</format>
+              <format>tab</format>
+              <format>csv</format>
+          </returns>
         </method>
         <method authenticationRequired="true" type="POST">
             <summary>Add one or more tags to a list</summary>
@@ -1382,11 +1382,11 @@ to will also be returned.
                 the kind of data it processes, and any filters it accepts.
             </description>
             <returns>
-	            <format key="widgets">json</format>
-	            <format>xml</format>
-	            <format>tab</format>
-	            <format>csv</format>
-	        </returns>
+              <format key="widgets">json</format>
+              <format>xml</format>
+              <format>tab</format>
+              <format>csv</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1451,11 +1451,11 @@ to will also be returned.
                 options="/widgets|widgets{name=$name}.0.filters"
                 description="An optional filter that some widgets accept">filter</param>
             <returns>
-	            <format key="results">json</format>
-	            <format>xml</format>
-	            <format>tab</format>
-	            <format>csv</format>
-	        </returns>
+              <format key="results">json</format>
+              <format>xml</format>
+              <format>tab</format>
+              <format>csv</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1479,10 +1479,10 @@ to will also be returned.
         <method type="GET" authenticationRequired="false" ALSO="POST">
             <summary>get the data to produce a graph</summary>
             <description>
-	           This service returns data that can be passed to charting software, such
-	           as Google's javascript Charts API, to produce graphical representations
-	           of the overview of data in a list.
-	        </description>
+             This service returns data that can be passed to charting software, such
+             as Google's javascript Charts API, to produce graphical representations
+             of the overview of data in a list.
+          </description>
             <param type="String"
                 required="true"
                 options="/lists|lists{status=CURRENT}"
@@ -1494,10 +1494,10 @@ to will also be returned.
                 options="/widgets|widgets{widgetType=chart}"
                 default="{name}">widget</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
-	        <returns>
-	            <format key="results">json</format>
-	            <format>xml</format>
-	        </returns>
+          <returns>
+              <format key="results">json</format>
+              <format>xml</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1521,18 +1521,18 @@ to will also be returned.
         <method type="GET" authenticationRequired="false" ALSO="POST">
             <summary>Get the data as displayed by a table widget</summary>
             <description>
-	            This service returns data to produce a table representations
-	            of the overview of data in a list.
-	        </description>
+              This service returns data to produce a table representations
+              of the overview of data in a list.
+          </description>
             <param type="String" required="true"
                 options="/lists|lists{status=CURRENT}"
                 default="{name}"
                 description="The name of the list to use as the population for the graph">list</param>
             <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
             <returns>
-	            <format key="results">json</format>
-	            <format>xml</format>
-	        </returns>
+              <format key="results">json</format>
+              <format>xml</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1596,11 +1596,11 @@ to will also be returned.
         <minVersion>9</minVersion>
         <method authenticationRequired="true" type="GET">
             <summary>Get details about the authenticated user</summary>
-	        <description>
-	            Retrieve information about the currently authenticated user. This can
-	            be used to display the user's name.
-	        </description>
-	        <returns>
+          <description>
+              Retrieve information about the currently authenticated user. This can
+              be used to display the user's name.
+          </description>
+          <returns>
                 <format key="user">json</format>
             </returns>
         </method>
@@ -1625,15 +1625,15 @@ to will also be returned.
         <minVersion>9</minVersion>
         <method type="GET" authenticationRequired="true">
             <summary>Get a new API key</summary>
-	        <description>
-	            This service allows a user to retrieve an API token which is valid
-	            for up to 24 hours of unlimited use. The primary use case is to
-	            get an API key where the user has only username/password credentials,
-	            since the use of API keys is more secure.
-	        </description>
-	        <returns>
-	            <format key="token">json</format>
-	        </returns>
+          <description>
+              This service allows a user to retrieve an API token which is valid
+              for up to 24 hours of unlimited use. The primary use case is to
+              get an API key where the user has only username/password credentials,
+              since the use of API keys is more secure.
+          </description>
+          <returns>
+              <format key="token">json</format>
+          </returns>
         </method>
     </metadata>
   </servlet-mapping>
@@ -1643,7 +1643,7 @@ to will also be returned.
     <servlet-name>ws-new-user</servlet-name>
     <servlet-class>org.intermine.webservice.server.user.NewUserServlet</servlet-class>
     <!--
-    This config should be used when there are some tests set up for it. 
+    This config should be used when there are some tests set up for it.
     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
      <init-param>
         <param-name>POST</param-name>
@@ -1667,12 +1667,12 @@ to will also be returned.
           <name>User Creation</name>
           <summary>Create a new user in the user-profile</summary>
           <description>
-		      This service allows users of the web service to create a new user account.
-		      A user account is required for a number of operations, such as saving
-		      lists. This service allows users of the webservice to register an account, and
-		      start using these features that require authentication. The username and
-		      password provided will be able to be used for future requests, as will
-		      an API key provided with the response, which is valid for 24 hours.
+          This service allows users of the web service to create a new user account.
+          A user account is required for a number of operations, such as saving
+          lists. This service allows users of the webservice to register an account, and
+          start using these features that require authentication. The username and
+          password provided will be able to be used for future requests, as will
+          an API key provided with the response, which is valid for 24 hours.
               This is equivalent to the registration mechanism in the web-application interface.
               Requests to this service are rate limited by IP Address
           </description>
@@ -1711,7 +1711,7 @@ to will also be returned.
   </servlet-mapping>
 
       <!-- NEW IN VERSION 10 -->
-      
+
    <servlet>
      <servlet-name>ws-id-resolver</servlet-name>
      <servlet-class>org.intermine.webservice.server.idresolution.IdResolutionServlet</servlet-class>
@@ -1799,14 +1799,14 @@ following [json-schema](http://json-schema.org/) schema:
         </method>
       </metadata>
    </servlet-mapping>
-   
+
    <!-- NEW IN VERSION 11 -->
-   
+
    <servlet>
      <servlet-name>ws-list-invitations</servlet-name>
      <servlet-class>org.intermine.webservice.server.lists.ListSharingInvitationServlet</servlet-class>
    </servlet>
-   
+
    <servlet-mapping>
      <servlet-name>ws-list-invitations</servlet-name>
      <url-pattern>/service/lists/invitations/*</url-pattern>
@@ -1822,7 +1822,7 @@ following [json-schema](http://json-schema.org/) schema:
               queries, exported, etc. You should only do this if you trust the other
               party with your data.
 
-              Users can be designated by their username, display-name (if set) or by 
+              Users can be designated by their username, display-name (if set) or by
               and email address. If the email address is not registered with a user in
               the system, an invitation will be sent to that address, with a code that
               allows the user to activate the list share.
@@ -1877,13 +1877,13 @@ following [json-schema](http://json-schema.org/) schema:
       </method>
      </metadata>
    </servlet-mapping>
-   
-    
+
+
    <servlet>
      <servlet-name>ws-list-shares</servlet-name>
      <servlet-class>org.intermine.webservice.server.lists.ListShareServlet</servlet-class>
    </servlet>
-   
+
    <servlet-mapping>
      <servlet-name>ws-list-shares</servlet-name>
      <url-pattern>/service/lists/shares/*</url-pattern>
@@ -1916,7 +1916,7 @@ following [json-schema](http://json-schema.org/) schema:
           <description>
             Get information about each list that is shared by or with the authenticating
             user. The service returns a map with two keys "sharedByUser" and "sharedWithUser"
-            which are themselves each maps, with list names as keys, and either lists of 
+            which are themselves each maps, with list names as keys, and either lists of
             users with access as values, or the name of the original owner as values.
           </description>
           <returns>
@@ -1939,7 +1939,7 @@ following [json-schema](http://json-schema.org/) schema:
       </method>
      </metadata>
    </servlet-mapping>
-   
+
     <servlet>
      <servlet-name>ws-user-preferences</servlet-name>
      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
@@ -1960,7 +1960,7 @@ following [json-schema](http://json-schema.org/) schema:
         <param-value>org.intermine.webservice.server.user.DeletePreferencesService</param-value>
      </init-param>
    </servlet>
-   
+
    <servlet-mapping>
      <servlet-name>ws-user-preferences</servlet-name>
      <url-pattern>/service/user/preferences/*</url-pattern>
@@ -2051,26 +2051,26 @@ following [json-schema](http://json-schema.org/) schema:
         </method>
     </metadata>
   </servlet-mapping>
-  
+
   <!-- NEW IN VERSION 13 -->
 
     <servlet>
-	    <servlet-name>ws-sequence</servlet-name>
-	    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
-	    <init-param>
-	        <param-name>GET</param-name>
-	        <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
-	    </init-param>
-	    <init-param>
+      <servlet-name>ws-sequence</servlet-name>
+      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+      <init-param>
+          <param-name>GET</param-name>
+          <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
+      </init-param>
+      <init-param>
             <param-name>POST</param-name>
             <param-value>org.intermine.webservice.server.clob.SequenceService</param-value>
         </init-param>
-	</servlet>
-	
-	<servlet-mapping>
-	   <servlet-name>ws-sequence</servlet-name>
-	   <url-pattern>/service/sequence/*</url-pattern>
-	   <metadata>
+  </servlet>
+
+  <servlet-mapping>
+     <servlet-name>ws-sequence</servlet-name>
+     <url-pattern>/service/sequence/*</url-pattern>
+     <metadata>
         <name>Sequence Access</name>
         <minVersion>13</minVersion>
         <method authenticationRequired="false" type="GET" also="POST">
@@ -2103,8 +2103,8 @@ query could be used:
             </returns>
         </method>
     </metadata>
-	</servlet-mapping>
-    
+  </servlet-mapping>
+
     <!--  New in version 14 -->
 
     <servlet>
@@ -2119,7 +2119,7 @@ query could be used:
         <param-value>org.intermine.webservice.server.jbrowse.Endpoint</param-value>
      </init-param>
    </servlet>
-   
+
    <servlet-mapping>
     <servlet-name>ws-jbrowse</servlet-name>
     <url-pattern>/service/jbrowse/*</url-pattern>
@@ -2131,7 +2131,7 @@ query could be used:
             <summary>Get Features on a Reference Sequence</summary>
             <description format="markdown">
                 This service provides the functionality for `JBrowse` feature
-                requests. 
+                requests.
 
                 See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
             </description>
@@ -2181,7 +2181,7 @@ query could be used:
             <summary>Get Statistics about the Features Served by this Store</summary>
             <description format="markdown">
                 This service provides the functionality for `JBrowse` global statistics
-                requests. 
+                requests.
 
                 See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
             </description>
@@ -2207,7 +2207,7 @@ query could be used:
             <summary>Get Statistics for a Sub-Set of Features Served by this Store</summary>
             <description format="markdown">
                 This service provides the functionality for `JBrowse` region statistics
-                requests. 
+                requests.
 
                 See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
             </description>
@@ -2252,7 +2252,7 @@ query could be used:
             <summary>Get Binned Density Statistics for a Sub-Set of Features Served by this Store</summary>
             <description format="markdown">
                 This service provides the functionality for `JBrowse` binned
-                region statistics requests. 
+                region statistics requests.
 
                 See [Writing JBrowse Compatible Web Services](http://gmod.org/wiki/JBrowse_Configuration_Guide#Writing_JBrowse-compatible_Web_Services)
             </description>
@@ -2297,7 +2297,7 @@ query could be used:
       </method>
     </metadata>
    </servlet-mapping>
-   
+
    <!--  New in version 16 -->
 
     <servlet>
@@ -2308,7 +2308,7 @@ query could be used:
         <param-value>org.intermine.webservice.server.jbrowse.Names</param-value>
      </init-param>
    </servlet>
-   
+
    <servlet-mapping>
     <servlet-name>ws-jbrowse-names</servlet-name>
     <url-pattern>/service/jbrowse/names/*</url-pattern>
@@ -2365,12 +2365,12 @@ query could be used:
         </method>
     </metadata>
    </servlet-mapping>
-   
+
    <servlet>
      <servlet-name>ws-deregistration-token</servlet-name>
      <servlet-class>org.intermine.webservice.server.user.DeregistrationTokenServlet</servlet-class>
    </servlet>
-   
+
    <servlet-mapping>
     <servlet-name>ws-deregistration-token</servlet-name>
     <url-pattern>/service/user/deregistration/*</url-pattern>
@@ -2431,7 +2431,7 @@ query could be used:
          <param-value>org.intermine.webservice.server.user.DeregistrationService</param-value>
      </init-param>
    </servlet>
-   
+
    <servlet-mapping>
      <servlet-name>ws-user</servlet-name>
      <url-pattern>/service/user</url-pattern>
@@ -2452,7 +2452,7 @@ query could be used:
              <summary>Delete the Current User</summary>
              <description format="markdown">
                  This service deletes the current User and all their data.
-                 
+
                  To ensure that you really mean to deregister a user
                  programmatically, this service requires a deregistration
                  token to be obtained before sending the delete request.
@@ -2487,7 +2487,7 @@ query could be used:
          <param-value>org.intermine.webservice.server.user.DeleteTokensService</param-value>
      </init-param>
    </servlet>
-   
+
    <servlet-mapping>
      <servlet-name>ws-perma-tokens</servlet-name>
      <url-pattern>/service/user/tokens</url-pattern>
@@ -2501,7 +2501,7 @@ query could be used:
                  to their private data to third parties in a more secure manner.
                  This service lets users inspect the permanent tokens they have
                  issued.
-                 
+
                  No access is provide here to other tokens (24hrs, api, day), for
                  security and other reasons. Please look at the `Session` service
                  for issuing new temporary tokens.
@@ -2559,12 +2559,12 @@ The different token types are:
         </method>
     </metadata>
    </servlet-mapping>
-   
+
    <servlet>
      <servlet-name>ws-perma-token</servlet-name>
      <servlet-class>org.intermine.webservice.server.user.PermaTokensServlet</servlet-class>
    </servlet>
-   
+
    <servlet-mapping>
      <servlet-name>ws-perma-token</servlet-name>
      <url-pattern>/service/user/tokens/*</url-pattern>
@@ -2802,7 +2802,7 @@ The different token types are:
          <param-value>org.intermine.webservice.server.template.TemplateRemovalService</param-value>
      </init-param>
   </servlet>
-  
+
   <servlet-mapping>
      <servlet-name>ws-saved-template</servlet-name>
      <url-pattern>/service/templates/*</url-pattern>
@@ -3103,48 +3103,48 @@ The different token types are:
     <filter-name>ExpireHeader</filter-name>
     <url-pattern>*.css</url-pattern>
   </filter-mapping>
-  
+
   <!-- The cachable WS responses are configured here. -->
   <filter>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<filter-class>org.intermine.web.filters.ReleaseEtagFilter</filter-class>
+    <filter-name>ReleaseEtags</filter-name>
+    <filter-class>org.intermine.web.filters.ReleaseEtagFilter</filter-class>
   </filter>
-  
+
   <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-model</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-model</servlet-name>
   </filter-mapping>
 
   <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-summary-fields</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-summary-fields</servlet-name>
   </filter-mapping>
 
   <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-classkeys</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-classkeys</servlet-name>
   </filter-mapping>
 
   <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-code-gen</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-code-gen</servlet-name>
   </filter-mapping>
 
   <filter-mapping>
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-service-listing</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-service-listing</servlet-name>
   </filter-mapping>
 
   <filter-mapping> <!-- Does not include user data, and over read-only db -->
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-quick-search</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-quick-search</servlet-name>
   </filter-mapping>
 
   <filter-mapping> <!-- NB: if we ever make widgets dynamic, this will have to change. -->
-  	<filter-name>ReleaseEtags</filter-name>
-  	<servlet-name>ws-available-widgets</servlet-name>
+    <filter-name>ReleaseEtags</filter-name>
+    <servlet-name>ws-available-widgets</servlet-name>
   </filter-mapping>
-  
+
  <filter>
   <filter-name>CompressingFilter</filter-name>
   <filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>

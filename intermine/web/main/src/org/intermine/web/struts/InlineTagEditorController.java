@@ -44,6 +44,7 @@ public class InlineTagEditorController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,

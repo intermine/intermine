@@ -1,6 +1,6 @@
 import time
 
-from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support.ui import Select
 
 from test.querybuildertestcase import QueryBuilderTestCase as Super
 
@@ -13,7 +13,7 @@ class StartQueryFromSelect(Super):
         cls = 'Employee'
         Select(self.elem("#queryClassSelector")).select_by_visible_text(cls)
         self.elem("#submitClassSelect").click()
-        time.sleep(3)
+        self.wait().until(lambda d: 'builder' in d.title)
         self.assertIn('Query builder', self.browser.title)
         self.assertEquals(cls, self.elem('.typeSelected').text)
         self.elem('a[title="Show Employee in results"] > img.arrow').click()

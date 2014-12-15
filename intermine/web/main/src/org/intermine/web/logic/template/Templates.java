@@ -172,9 +172,8 @@ public final class Templates
         // Use the id parameters (eg. constraint1, constraint2, ...) as a proxy
         // for the whole constraint.
         Set<String> allIdParameters = new HashSet<String>();
-        for (@SuppressWarnings("unchecked")
-        Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
-            String next = e.nextElement();
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
+            String next = (String) e.nextElement();
             if (next.startsWith("constraint")) {
                 allIdParameters.add(next);
             }

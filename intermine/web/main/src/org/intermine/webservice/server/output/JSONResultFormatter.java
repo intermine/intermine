@@ -63,7 +63,9 @@ public abstract class JSONResultFormatter extends JSONFormatter
 
         // Handle all non-reserved keys in the attribute map.
         for (String key : attributes.keySet()) {
-            if (RESERVED_KEYS.contains(key)) { continue; }
+            if (RESERVED_KEYS.contains(key)) {
+                continue;
+            }
             Object val = attributes.get(key);
             sb.append("\"" + key + "\":");
 

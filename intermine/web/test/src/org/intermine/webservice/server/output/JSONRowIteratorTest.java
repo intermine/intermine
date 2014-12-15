@@ -14,7 +14,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
@@ -38,6 +37,8 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.IteratorIterable;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
+import org.intermine.web.logic.config.WebConfig;
 import org.json.JSONArray;
 
 /**
@@ -198,7 +199,7 @@ public class JSONRowIteratorTest extends TestCase {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(im, webProperties, null);
+        InterMineContext.initilise(im, webProperties, new WebConfig(), new ClassResourceOpener(getClass()));
 
     }
 

@@ -60,6 +60,7 @@ public class ClassChooserController extends TilesAction
         StringBuffer sb = new StringBuffer();
         TagManager tagManager = im.getTagManager();
 
+        @SuppressWarnings("deprecation")
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null,
                 "class", im.getProfileManager().getSuperuser());
 

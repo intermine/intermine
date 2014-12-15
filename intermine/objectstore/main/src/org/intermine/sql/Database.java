@@ -15,11 +15,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -28,6 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.StringUtil;
 import org.intermine.util.PropertiesUtil;
@@ -55,6 +59,7 @@ public class Database implements Shutdownable
     protected int parallel = 4;
     // Store all the properties this Database was configured with
     protected Properties settings;
+    protected String version = null;
 
     // protected Map createSituations = new HashMap();
 
@@ -92,7 +97,7 @@ public class Database implements Shutdownable
             // database connection properties need dataSource prefix
             renameProperty(dsProps, "user", "dataSource.user");
             renameProperty(dsProps, "password", "dataSource.password");
-            renameProperty(dsProps, "port", "dataSource.port");
+            renameProperty(dsProps, "port", "dataSource.portNumber");
             renameProperty(dsProps, "databaseName", "dataSource.databaseName");
             renameProperty(dsProps, "serverName", "dataSource.serverName");
 
@@ -313,6 +318,86 @@ public class Database implements Shutdownable
      */
     public String getName() {
         return (String) settings.get("datasource.databaseName");
+    }
+
+    /**
+     * Get the version number of the database as a string. Currently throws an error if database
+     * server is anything other than postgres.
+     * @return the database version number
+     */
+    public String getVersion() {
+        if (!"postgresql".equals(platform.toLowerCase())) {
+            throw new IllegalArgumentException("Don't know how to get the version number for "
+                    + platform + " databases.");
+        }
+        if (version == null) {
+            try {
+                Connection c = getConnection();
+                Statement s = c.createStatement();
+                String versionQuery = "SELECT current_setting('server_version')";
+                ResultSet rs = s.executeQuery(versionQuery);
+                if (rs.next()) {
+                    version = rs.getString(1);
+                }
+            } catch (SQLException e) {
+                throw new IllegalArgumentException("Error fetching version number from database: "
+                        + e.getMessage());
+            }
+        }
+        return version;
+    }
+
+    /**
+     * Return true if the database version is at least as high as the test number given, taking
+     * into account major and minor versions. e.g. test if database is at least 9.2
+     * @param testVersionStr a postgres version number of dot separated integers
+     * @return true if the database is the version specified or later
+     */
+    public boolean isVersionAtLeast(String testVersionStr) {
+
+        List<Integer> dbVersion = versionStringToInts(getVersion());
+        List<Integer> testVersion = versionStringToInts(testVersionStr);
+        for (int i = 0; i < testVersion.size(); i++) {
+            if (dbVersion.size() > i) {
+                if (dbVersion.get(i) < testVersion.get(i)) {
+                    return false;
+                }
+            } else if (i > 0 && (testVersion.get(i - 1).equals(dbVersion.get(i - 1)))) {
+                // if previous numbers were equal and all remaining digits of the test version are
+                // zero the we're at least that version e.g. 9.3 is at least 9.3.0 but not 9.3.0.1
+                for (Integer remaining : testVersion.subList(i, testVersion.size())) {
+                    if (remaining > 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    // parse the postgres version, e.g. 9.2.1
+    private List<Integer> versionStringToInts(String versionStr) {
+        List<Integer> versionInts = new ArrayList<Integer>();
+        String[] parts = versionStr.split("\\.");
+        for (int i = 0; i < parts.length; i++) {
+            String partToParse = parts[i];
+            if (StringUtils.isNumeric(partToParse)) {
+                versionInts.add(new Integer(partToParse));
+            } else {
+                // beta version, e.g. 9.4beta3
+                if (partToParse.contains("beta")) {
+                    String[] betaBits = partToParse.split("beta");
+                    if (betaBits != null) {
+                        String betaDigit = betaBits[0];
+                        if (StringUtils.isNumeric(betaDigit)
+                                && StringUtils.isNotEmpty(betaDigit)) {
+                            versionInts.add(new Integer(betaDigit));
+                        }
+                    }
+                }
+            }
+        }
+        return versionInts;
     }
 
     /**

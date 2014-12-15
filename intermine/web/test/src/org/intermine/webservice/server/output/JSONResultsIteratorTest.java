@@ -1593,7 +1593,13 @@ public class JSONResultsIteratorTest extends TestCase {
         Types typeContainer = new Types();
         typeContainer.setId(new Integer(100));
         Calendar cal = Calendar.getInstance();
-        cal.set(108 + 1900, 6, 6);
+        // Around noon on 6 July 2008
+        cal.set(Calendar.YEAR, 2008);
+        cal.set(Calendar.MONTH, 6);
+        cal.set(Calendar.DATE, 6);
+        cal.set(Calendar.ZONE_OFFSET, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 12);
+        cal.set(Calendar.MINUTE, 0);
         typeContainer.setDateObjType(cal.getTime());
 
         ResultsRow<Object> row = new ResultsRow<Object>();
@@ -1603,7 +1609,7 @@ public class JSONResultsIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Types.dateObjType");
 
-        String jsonString = "{ class: 'Types', objectId: 100, dateObjType: '2008-07-06' }";
+        String jsonString = "{class: 'Types', objectId: 100, dateObjType: '2008-07-06'}";
 
         JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
 

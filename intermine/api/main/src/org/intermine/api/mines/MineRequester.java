@@ -11,27 +11,29 @@ package org.intermine.api.mines;
  */
 
 import java.io.BufferedReader;
+import java.util.Properties;
 
 /**
  * The type of objects that can request data from mines.
- * @author alex
+ *
+ * @author Alex Kalderimis
  *
  */
 public interface MineRequester
 {
-    /**
-     * Run a query, and return a reader for the result.
-     * @param mine The description of the mine.
-     * @param xmlQuery The query description.
-     * @return A reader over the result.
-     */
-    BufferedReader runQuery(Mine mine, String xmlQuery);
 
     /**
      * Request information as encoded in a string.
      * @param urlString The data to request.
+     * @param contentType The content type.
      * @return A reader over the data.
      */
-    BufferedReader requestURL(String urlString);
+    BufferedReader requestURL(String urlString, ContentType contentType);
+
+    /**
+     * Accept configuration provided in the form of properties.
+     * @param requesterConfig The configuration.
+     */
+    void configure(Properties requesterConfig);
 
 }

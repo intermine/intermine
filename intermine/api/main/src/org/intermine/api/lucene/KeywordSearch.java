@@ -674,16 +674,18 @@ public final class KeywordSearch
         BrowseResult results = runBrowseSearch(searchString, offset, facetValues, ids);
         Collection<KeywordSearchFacet> searchResultsFacets = Collections.emptySet();
         Collection<KeywordSearchHit> searchHits = Collections.emptySet();
-
+        int totalHits = 0;
         if (results != null) {
-            LOG.debug("Browse found " + results.getNumHits() + " hits");
+            totalHits = results.getNumHits();
+            LOG.debug("Browse found " + totalHits + " hits");
             BrowseHit[] browseHits = results.getHits();
             Set<Integer> objectIds = getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = Objects.getObjects(im, objectIds);
             searchHits = getSearchHits(browseHits, objMap);
             searchResultsFacets = parseFacets(results, facets, facetValues);
+            results.close();
         }
-        return new ResultsWithFacets(searchHits, searchResultsFacets);
+        return new ResultsWithFacets(searchHits, searchResultsFacets, totalHits);
     }
 
     /**
@@ -1214,5 +1216,23 @@ public final class KeywordSearch
 
             index = null;
         }
+    }
+
+    /**
+     * set all the variables to NULL
+     */
+    public static void close() {
+        reader = null;
+        boboIndexReader = null;
+        indexingQueue = null;
+        index = null;
+        properties = null;
+        tempDirectory = null;
+        specialReferences = null;
+        ignoredClasses = null;
+        ignoredFields = null;
+        classBoost = null;
+        facets = null;
+        attributePrefixes = null;
     }
 }

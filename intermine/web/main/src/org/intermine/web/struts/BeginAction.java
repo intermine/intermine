@@ -147,9 +147,10 @@ public class BeginAction extends InterMineAction
         }
         request.setAttribute("tabs", bagOfTabs);
 
-        // preferred bags (Gucci)
+        // preferred bags
         List<String> preferredBags = new LinkedList<String>();
         TagManager tagManager = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> preferredBagTypeTags = tagManager.getTags(
                 "im:preferredBagType", null, "class", im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
