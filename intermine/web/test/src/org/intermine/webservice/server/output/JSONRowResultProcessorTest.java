@@ -34,6 +34,7 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.ClassResourceOpener;
 import org.intermine.web.logic.config.WebConfig;
 import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 
 /**
@@ -182,7 +183,7 @@ public class JSONRowResultProcessorTest extends TestCase {
 //        fw.write(out.getResults().toString());
 //        fw.close();
 
-        assertEquals(expected, out.getResults().toString() + "\n", false);
+        JSONAssert.assertEquals(expected, out.getResults().toString() + "\n", false);
 
     }
 

@@ -44,6 +44,7 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.ClassResourceOpener;
 import org.intermine.web.logic.config.WebConfig;
 import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 
 /**
@@ -249,7 +250,7 @@ public class JSONRowFormatterTest extends TestCase {
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
-        assertEquals(expected, sw.toString(), false);
+        JSONAssert.assertEquals(expected, sw.toString(), false);
     }
 
     public void testFormatAllBad() throws JSONException {
@@ -268,7 +269,7 @@ public class JSONRowFormatterTest extends TestCase {
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
-        assertEquals(expected, sw.toString(), false);
+        JSONAssert.assertEquals(expected, sw.toString(), false);
 
     }
 }
