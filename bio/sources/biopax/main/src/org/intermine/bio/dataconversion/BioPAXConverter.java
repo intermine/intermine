@@ -372,7 +372,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             // Good file name: 83333.owl
             taxonId = Integer.valueOf(filename.split("\\.")[0]);
         } else {
-            String[] bits = filename.split("_");
+            String[] bits = filename.split("[_\\s]");
 
             // bad filename eg `Human immunodeficiency virus 1.owl`,
             // expecting "Drosophila melanogaster.owl"
