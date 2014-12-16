@@ -101,7 +101,7 @@ public final class EnrichmentCalculation
 
     private static ErrorCorrection.Strategy getStrategy(String errorCorrection) {
         ErrorCorrection.Strategy strategy = null;
-        if (StringUtils.isBlank(errorCorrection)) {
+        if (StringUtils.isBlank(errorCorrection) || StringUtils.equalsIgnoreCase("NONE", errorCorrection)) {
             strategy = ErrorCorrection.Strategy.NONE;
         } else {
             for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
