@@ -41,7 +41,7 @@ public final class ErrorCorrection
         /** The Holm-Bonferroni error correction strategy **/
         HOLM_BONFERRONI("Holm-Bonferroni"),
         /** Do not perform error correction **/
-        NONE("");
+        NONE("None");
 
         private final String algorithm;
 

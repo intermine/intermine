@@ -101,16 +101,14 @@ public final class EnrichmentCalculation
 
     private static ErrorCorrection.Strategy getStrategy(String errorCorrection) {
         ErrorCorrection.Strategy strategy = null;
-        if (StringUtils.isBlank(errorCorrection) || StringUtils.equalsIgnoreCase("NONE", errorCorrection)) {
-            strategy = ErrorCorrection.Strategy.NONE;
-        } else {
-            for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
-                if (s.getAlgorithm().equalsIgnoreCase(errorCorrection)) {
-                    strategy = s;
-                    break;
-                }
+        StringUtils.defaultIfBlank(errorCorrection, "None");
+        for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
+            if (s.getAlgorithm().equalsIgnoreCase(errorCorrection)) {
+                strategy = s;
+                break;
             }
         }
+
         if (strategy == null) {
             throw new IllegalArgumentException(UNKNOWN_STRATEGY + errorCorrection);
         }
