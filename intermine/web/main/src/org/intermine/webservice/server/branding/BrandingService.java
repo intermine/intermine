@@ -24,6 +24,8 @@ import org.intermine.webservice.server.core.JSONService;
 /**
  * Serve branding information so that a client can provide a branded
  * visual experience.
+ *
+ * This service should be used to provide a customised interaction with a service.
  * @author Alex Kalderimis
  *
  */
@@ -40,22 +42,29 @@ public class BrandingService extends JSONService
         super(im);
     }
 
+    private Queue<String> toPath(String key) {
+        String[] keyParts = key.split("\\.");
+        if (keyParts.length < 2) {
+            LOG.warn(PROPERTIES_NEED_2_SECTIONS + key);
+            return null;
+        }
+        Queue<String> path = new LinkedList<String>();
+        for (int i = 1; i < keyParts.length; i++) {
+            path.add(keyParts[i]);
+        }
+        return path;
+    }
+
     @Override
     protected void execute() throws Exception {
         Properties props = PropertiesUtil.getPropertiesStartingWith(PREFIX, webProperties);
         Map<String, Object> branding = new HashMap<String, Object>();
         for (Object key: props.keySet()) {
             String keyString = String.valueOf(key);
-            String[] keyParts = keyString.split("\\.");
-            if (keyParts.length < 2) {
-                LOG.warn(PROPERTIES_NEED_2_SECTIONS + key);
-                continue;
+            Queue<String> path = toPath(keyString);
+            if (path != null) {
+                setProperty(branding, path, props.getProperty(keyString));
             }
-            Queue<String> path = new LinkedList<String>();
-            for (int i = 1; i < keyParts.length; i++) {
-                path.add(keyParts[i]);
-            }
-            setProperty(branding, path, props.getProperty(keyString));
         }
         addResultItem(branding, false);
     }
@@ -65,6 +74,7 @@ public class BrandingService extends JSONService
         return "properties";
     }
 
+    // Recursively build up a nested object.
     @SuppressWarnings("unchecked")
     private void setProperty(
             final Map<String, Object> branding,
