@@ -1035,13 +1035,9 @@ public class JSONResultsIteratorTest extends TestCase {
             // rethrow the fail from within the try
             throw e;
         } catch (JSONFormattingException e) {
-            // Test that this is what we thought would happen.
-            assertEquals(
-                "This result element ( Sales 11 Department) " +
-                "does not belong on this map " +
-                "({objectId=5, class=Employee, employees=[{objectId=5, name=Tim Canterbury, class=Employee}]}) " +
-                "- classes don't match (Department ! isa Employee)",
-                e.getMessage());
+            String errMsg = "classes don't match (Department ! isa Employee)";
+           // Test that this is what we thought would happen.
+            assertTrue(e.getMessage().contains(errMsg));
         } catch (Throwable e){
             // All other exceptions are failures
             fail("Got unexpected error: " + e);
@@ -1244,7 +1240,7 @@ public class JSONResultsIteratorTest extends TestCase {
     }
 
     public void testMultipleObjectsWithRefs() throws Exception {
-        
+
         List<String> jsonStrings = new ArrayList<String>();
 
         jsonStrings.add(

@@ -18,6 +18,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 public class JSONObjResultProcessorTest extends TestCase {
 
@@ -104,7 +106,10 @@ public class JSONObjResultProcessorTest extends TestCase {
         assertTrue(processor != null);
     }
 
-    public void testWrite() {
+
+    @SuppressWarnings("unchecked")
+    public void testWrite() throws JSONException {
+
         List<List<String>> expected = Arrays.asList(
             Arrays.asList("{\"objectId\":5,\"name\":\"Tim Canterbury\",\"age\":30,\"class\":\"Employee\"}", ""),
             Arrays.asList("{\"objectId\":6,\"name\":\"Gareth Keenan\",\"age\":32,\"class\":\"Employee\"}", ""),
@@ -117,7 +122,7 @@ public class JSONObjResultProcessorTest extends TestCase {
         JSONObjResultProcessor processor = new JSONObjResultProcessor();
         processor.write(iterator, out);
 
-        assertEquals(expected.toString(), out.getResults().toString());
+        JSONAssert.assertEquals(expected.toString(), out.getResults().toString(), false);
 
     }
 

@@ -1,21 +1,31 @@
 package org.intermine.web.struts;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import org.apache.struts.action.*;
-import org.apache.struts.config.*;
-import org.intermine.api.*;
-import org.intermine.api.results.*;
-import org.intermine.metadata.*;
-import org.intermine.pathquery.*;
-import org.intermine.web.logic.results.*;
-import org.junit.*;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.config.ForwardConfig;
+import org.intermine.api.InterMineAPI;
+import org.intermine.api.results.WebTable;
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.results.PagedTable;
+import org.junit.Test;
 
 
 public class AddColumnActionTest {

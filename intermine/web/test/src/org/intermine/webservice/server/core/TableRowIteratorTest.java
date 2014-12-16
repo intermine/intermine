@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
-import static org.intermine.util.DynamicUtil.createObject;
 import static java.util.Collections.singleton;
+import static org.intermine.util.DynamicUtil.createObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
