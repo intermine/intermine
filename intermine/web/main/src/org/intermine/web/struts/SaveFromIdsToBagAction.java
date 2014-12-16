@@ -63,11 +63,11 @@ public class SaveFromIdsToBagAction extends InterMineAction
         try {
             String type = (String) request.getParameter("type");
             String allChecked = (String) request.getParameter("allChecked");
-            String totalHits = (String) request.getParameter("totalHits");
-            int listSize = Integer.parseInt(totalHits);
 
             if ("true".equals(allChecked)) {
                 // TODO do something more clever than running the search again
+                String totalHits = (String) request.getParameter("totalHits");
+                int listSize = Integer.parseInt(totalHits);
                 String searchTerm = (String) request.getParameter("searchTerm");
                 JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));
                 Map<String, String> facetMap = jsonToJava(jsonRequest);
