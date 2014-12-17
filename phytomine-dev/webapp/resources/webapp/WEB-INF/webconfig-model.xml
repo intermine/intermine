@@ -220,6 +220,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Homolog">
+    <fields>
+      <fieldconfig fieldExpr="gene1.primaryIdentifier"/>
+      <fieldconfig fieldExpr="gene2.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.DiversitySample">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -267,6 +274,8 @@
     </fields>
   </class>
 
+  
+
 
 <!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
@@ -307,6 +316,12 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSNPDisplayer"
                      jspName="model/geneSNPDisplayer.jsp"
+                     replacesFields=""
+                     placement="Genomics"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneHomologDisplayer"
+                     jspName="model/geneHomologDisplayer.jsp"
                      replacesFields=""
                      placement="Genomics"
                      types="Gene"/>

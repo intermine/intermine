@@ -67,7 +67,8 @@ public class GatkvcfConverter extends BioFileConverter
   private Map<String,String> geneMap = new HashMap<String,String>();
   private Map<String,String> mRNAMap = new HashMap<String,String>();
   // we'll get this from the header. When parsing, we need to keep these in order
-  private ArrayList<String> sampleList = new ArrayList<String>();
+  private ArrayList<String> sampleIdentifierList = new ArrayList<String>();
+  private ArrayList<String> sampleNameList = new ArrayList<String>();
   // what we expect to see in the vcf header
   final static String[] expectedHeaders = {"#CHROM","POS","ID","REF","ALT",
     "QUAL","FILTER","INFO","FORMAT"};
@@ -142,7 +143,7 @@ public class GatkvcfConverter extends BioFileConverter
         }
       }
       // make sure we processed the header at this point
-      if (sampleList.size() == 0) {
+      if (sampleIdentifierList.size() == 0) {
         throw new BuildException("Cannot find sample names in vcf file.");
       }
       // now we can proceed with the FormattedTextParser
@@ -196,7 +197,8 @@ public class GatkvcfConverter extends BioFileConverter
         } catch (ObjectStoreException e) {
           throw new BuildException("Cannot store source " + header[i]);
         }
-        sampleList.add(source.getIdentifier());
+        sampleIdentifierList.add(source.getIdentifier());
+        sampleNameList.add(header[i]);
       }
     }
   }
@@ -239,7 +241,7 @@ public class GatkvcfConverter extends BioFileConverter
     snp.setAttribute("alternate", alt);
     try {
       // only add if a number. Silently ignore non-numbers
-      Integer.parseInt(quality);
+      Double.parseDouble(quality);
       snp.setAttribute("quality", quality);
     } catch ( NumberFormatException e) {}
     snp.setAttribute("name",name);
@@ -251,6 +253,60 @@ public class GatkvcfConverter extends BioFileConverter
     // create and store the location
     makeLocation(chrMap.get(chr),snp.getIdentifier(),pos.toString(),
         Integer.toString(pos+ref.length()),"1",true);
+
+    // scan the sample data so that we can construct the JSON for
+    // genotype data
+    HashMap<String,ArrayList<String>> sampleGeno = 
+                         new HashMap<String,ArrayList<String>>();
+    
+    // process the genotype field. First we have attribute:attribute:attribute... 
+    // and value:value:value... Convert these to attribute=value;attribute=value;...
+    String[] attBits = fields[formatPosition].split(":");
+    
+    // look through the different genotype scores for column 9 onward.
+    for(int col=expectedHeaders.length;col<fields.length;col++) {
+      String[] valBits = fields[col].split(":");
+      String genotype = new String("?");
+      if ( valBits.length != attBits.length ) {
+        // sometimes there is only a ./.
+        if ( fields[col].equals("./.")) {
+          genotype = new String("./.");
+        } else {
+          // what should we call this?
+          genotype = new String("?");
+          LOG.warn("Genotype fields have unexpected length.");
+        }
+      } else {
+        for(int i=0; i< attBits.length && i<valBits.length;i++) {
+          if (attBits[i].equals("GT")) {
+            genotype = new String(valBits[i]);
+            break;
+          }
+        }
+        if ( !sampleGeno.containsKey(genotype) ) {
+          sampleGeno.put(genotype, new ArrayList<String>());
+        }
+        sampleGeno.get(genotype).add(sampleNameList.get(col-expectedHeaders.length));
+      }
+    }
+    // now construct the JSON string
+    StringBuffer JSONString = new StringBuffer("{");
+    for( String genotype : sampleGeno.keySet()) {
+      if (JSONString.length() > 1 ) {
+        JSONString.append(",");
+      }
+      JSONString.append("\""+genotype+"\":[");
+      boolean needComma = false;
+      for( String sampleName : sampleGeno.get(genotype)) {
+        if (needComma) JSONString.append(",");
+        JSONString.append("\""+sampleName+"\"");
+        needComma = true;
+      }
+      JSONString.append("]");
+    }
+    JSONString.append("}");
+    snp.setAttribute("sampleInfo",JSONString.toString());
+  
     try {
       // and store the snp.
       store(snp);
@@ -259,9 +315,7 @@ public class GatkvcfConverter extends BioFileConverter
     }
 
     if (makeLinks) {
-      // process the genotype field. First we have attribute:attribute:attribute... 
-      // and value:value:value... Convert these to attribute=value;attribute=value;...
-      String[] attBits = fields[formatPosition].split(":");
+ 
 
       // look through the different genotype scores for column 9 onward.
       for(int col=expectedHeaders.length;col<fields.length;col++) {
@@ -291,7 +345,7 @@ public class GatkvcfConverter extends BioFileConverter
             snpSource.setAttribute("genotype", genotype.toString());
           if (!format.toString().isEmpty() )
             snpSource.setAttribute("format", format.toString());
-          snpSource.setReference("diversitySample", sampleList.get(col-expectedHeaders.length));
+          snpSource.setReference("diversitySample", sampleIdentifierList.get(col-expectedHeaders.length));
           snpSource.setReference("snp",snp.getIdentifier());
           try {
             store(snpSource);

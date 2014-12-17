@@ -18,9 +18,9 @@ public class SuperfamilyTermsConverter extends OntologyTermsFileConverter {
    */
   public SuperfamilyTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = "ACC";
+    identifierKey = "^ACC.*";
     nameKey = null;
-    descKey = "DESC";
+    descKey = "^DESC.*";
   }
   //@Override
 }

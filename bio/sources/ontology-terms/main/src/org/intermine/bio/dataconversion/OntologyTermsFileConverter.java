@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -50,6 +51,7 @@ public class OntologyTermsFileConverter extends BioFileConverter
     protected String dataSetVersion = null;
     protected String dataSetURL = null;
     protected String srcDataFile = null;
+    protected String srcDataDir = null;
 
     protected String identifierLine = null;
     protected String descriptionLine = null;
@@ -65,13 +67,19 @@ public class OntologyTermsFileConverter extends BioFileConverter
     // the term when the endOfRecord key is found. But is perfectly acceptable
     // to read a line, parse everything from that line and then store the record in
     // the line parser routine
-    protected String identifierKey = "ACC";
-    protected String nameKey = "NAME";
-    protected String descKey = "DESC";
+    protected String identifierKey = "^ACC.*";
+    protected String nameKey = "^NAME.*";
+    protected String descKey = "^DESC.*";
     protected String namespaceKey = null;
-    protected String endOfRecord = "//";
-    // inserted items
+    protected String identifierReplacement = "^ACC\\s*";
+    protected String nameReplacement = "^NAME\\s*";
+    protected String descReplacement = "^DESC\\s*";
+    protected String namespaceReplacement = null;
+    protected String endOfRecord = "^//.*";
+    // inserted items. The key is the identifier that is read. It is
+    // unique within this ontology.
     protected HashMap<String,Item> termMap = new HashMap<String,Item>();
+    protected HashSet<ParentChild> parentChildren = new HashSet<ParentChild>();
 
     /**
      * Constructor
@@ -110,20 +118,24 @@ public class OntologyTermsFileConverter extends BioFileConverter
           // otherwise, look for keys
           if (!parseLine(line) ) {
             // end of record indicator
-            if(endOfRecord != null && line.startsWith(endOfRecord) ) {
-              if (identifierLine != null) {
+            if(endOfRecord != null && line.matches(endOfRecord) ) {
+              if (identifierLine != null ) { //&& nameLine != null) {
                 // protect against stray end-of-record indicators
                 // and make sure identifierLine (at least) is set.
                 storeRecord();
               }
+              identifierLine = null;
+              nameLine = null;
+              descriptionLine = null;
+              recordNamespace = null;
             } else {
-              if (identifierKey != null && line.startsWith(identifierKey)) {
+              if (identifierKey != null && line.matches(identifierKey)) {
                 parseIdentifier(line);
-              } else if (descKey != null && line.startsWith(descKey)) {
+              } else if (descKey != null && line.matches(descKey)) {
                 parseDescription(line);
-              } else if (nameKey != null && line.startsWith(nameKey)) {
+              } else if (nameKey != null && line.matches(nameKey)) {
                 parseName(line);
-              } else if (namespaceKey != null && line.startsWith(namespaceKey)) {
+              } else if (namespaceKey != null && line.matches(namespaceKey)) {
                 parseNamespace(line);
               }
             }
@@ -133,6 +145,16 @@ public class OntologyTermsFileConverter extends BioFileConverter
           }
         }
         LOG.info("Processed " + ctr + " lines.");
+        // now store the parent-child relationships
+        for( Object pair : parentChildren.toArray() ) {
+          Item rel = createItem("OntologyRelation");
+          rel.setAttribute("relationship", "part_of");
+          rel.setAttribute("redundant","false");
+          rel.setAttribute("direct",((ParentChild)pair).getDirect()?"true":"false");
+          rel.setReference("childTerm", termMap.get(((ParentChild)pair).getChild()));
+          rel.setReference("parentTerm", termMap.get(((ParentChild)pair).getParent()));
+        }
+        LOG.info("Added "+parentChildren.size()+" relationships.");
         finalProcessing();
         in.close();
       }
@@ -148,7 +170,8 @@ public class OntologyTermsFileConverter extends BioFileConverter
       // something set in the record overrides something in the property/id parser
       setIfNotNull(ontTerm,"namespace",recordNamespace);
       ontTerm.setReference("ontology", ontology.getIdentifier());
-      termMap.put(ontTerm.getIdentifier(),ontTerm);
+      termMap.put(ontTerm.getAttribute("identifier").getValue(),ontTerm);
+      LOG.info("Adding "+ontTerm.getAttribute("identifier").getValue()+" to termMap");
       // be sure these are nulled after insertion.
       identifierLine = null;
       nameLine = null;
@@ -170,7 +193,7 @@ public class OntologyTermsFileConverter extends BioFileConverter
       setIfNotNull(ontTerm,"namespace",recordNamespace);
       ontTerm.setReference("ontology", ontology.getIdentifier());
       store(ontTerm);
-      termMap.put(ontTerm.getIdentifier(),ontTerm);
+      termMap.put(ontTerm.getAttribute("identifier").getValue(),ontTerm);
       // be sure these are nulled after insertion.
       identifierLine = null;
       nameLine = null;
@@ -186,24 +209,24 @@ public class OntologyTermsFileConverter extends BioFileConverter
       return false;
     }
     void parseIdentifier(String line) {
-      identifierLine = line.substring(identifierKey.length()).trim();
+      identifierLine = line.replaceAll(identifierReplacement,"").trim();
     }
     void parseDescription(String line) {
       // we're going to allow for continuation lines.
       if (descriptionLine != null) {
         descriptionLine = descriptionLine.concat(" ");
-        descriptionLine = descriptionLine.concat(line.substring(descKey.length()).trim());
+        descriptionLine = descriptionLine.concat(line.replaceAll(descReplacement,"").trim());
       } else {
-        descriptionLine = line.substring(descKey.length()).trim();
+        descriptionLine = line.replaceAll(descReplacement,"").trim();
       }          
     }
     void parseName(String line) {
       // we're not going to have continuation lines here.
       // still don't know how to handle multiple names.
-      nameLine = line.substring(nameKey.length()).trim(); 
+      nameLine = line.replaceAll(nameReplacement,"").trim(); 
     }
     void parseNamespace(String line) {
-      recordNamespace = line.substring(namespaceKey.length()).trim();
+      recordNamespace = line.replaceAll(namespaceReplacement,"").trim();
     }
     void finalProcessing() {
       // whatever needs to be done before closing the file
@@ -260,6 +283,9 @@ public class OntologyTermsFileConverter extends BioFileConverter
     public void setSrcDataFile(String file) {
       srcDataFile = file;
     }
+    public void setSrcDataDir(String dir) {
+      srcDataDir = dir;
+    }
     
     /* 
      * set an attribute if it's not null and not an empty string
@@ -268,5 +294,19 @@ public class OntologyTermsFileConverter extends BioFileConverter
       if (value != null && value.trim().length() > 0) {
         s.setAttribute(field,value);
       }
+    }
+
+    protected class ParentChild {
+      private String parentIdentifier;
+      private String childIdentifier;
+      private Boolean direct;
+      public ParentChild(String parent, String child, boolean isDirect) {
+        parentIdentifier = parent;
+        childIdentifier = child;
+        direct = isDirect;
+      }
+      public String getParent() { return parentIdentifier; }
+      public String getChild() { return childIdentifier; }
+      public Boolean getDirect() { return direct; }
     }
 }

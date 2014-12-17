@@ -30,7 +30,7 @@ public class PirTermsConverter extends OntologyTermsFileConverter {
    */
   public PirTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = ">";
+    identifierKey = "^>.*";
     nameKey = null;
     descKey =null;
     endOfRecord = null;

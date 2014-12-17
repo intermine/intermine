@@ -19,7 +19,7 @@ public class KogTermsConverter extends OntologyTermsFileConverter {
    */
   public KogTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = "[";
+    identifierKey = "^\\[.*";
     nameKey = null;
     descKey = null;
     endOfRecord = null;

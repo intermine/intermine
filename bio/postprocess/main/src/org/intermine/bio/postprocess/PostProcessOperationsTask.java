@@ -286,14 +286,14 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("transfer-go-terms".equals(operation)) {
               TransferGOAnnotations task = new TransferGOAnnotations(getObjectStoreWriter());
               task.execute();           
-            } else if ("create-crossreference-ontologyterms".equals(operation)) {
-              AddCrossReferenceOntology task = new AddCrossReferenceOntology(getObjectStoreWriter());
+            } else if ("transfer-ontology-terms".equals(operation)) {
+              TransferOntologyAnnotations task = new TransferOntologyAnnotations(getObjectStoreWriter());
               task.execute();
             } else if ("rename-ontologies".equals(operation)) {
               OntologyRenamer task = new OntologyRenamer(getObjectStoreWriter());
               task.execute();
-            } else if ("tweak-coordinates".equals(operation)) {
-              CoordinateTweaker task = new CoordinateTweaker(getObjectStoreWriter());
+            } else if ("name-features".equals(operation)) {
+              FeatureNamer task = new FeatureNamer(getObjectStoreWriter());
               task.execute();
             } else if ("add-singleton-sequence".equals(operation)) {
               SingletonSequenceTransfer task = new SingletonSequenceTransfer(getObjectStoreWriter());

@@ -1630,6 +1630,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     sql = QueryOptimiser.optimise(sql, null, db, c, QueryOptimiserContext.DEFAULT)
                         .getBestQueryString();
                 }
+                // remove order by?
+                sql = sql.replaceAll(" *ORDER BY .*","");
+                // trouble when too big
+                sql = sql + " LIMIT "+Integer.MAX_VALUE;
                 sql = "SELECT COUNT(*) FROM (" + sql + ") as fake_table";
             }
             //long time = (new Date()).getTime();

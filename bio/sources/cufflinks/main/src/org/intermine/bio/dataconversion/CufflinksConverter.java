@@ -192,7 +192,7 @@ public class CufflinksConverter extends BioFileConverter
                   score.setAttribute("fpkm",fields[i]);
                   score.setAttribute("conflo",fields[i+1]);
                   score.setAttribute("confhi",fields[i+2]);
-                  //score.setAttribute("status",fields[i+3]);
+                  score.setAttribute("status",fields[i+3]);
                 } catch (ArrayIndexOutOfBoundsException e) {
                   throw new BuildException("Incorrect number of fields (" + i + " to " + (i+2) + ") at line " + lineNumber
                       + " in " + getCurrentFile() );

@@ -18,9 +18,9 @@ public class ExpasyTermsConverter extends OntologyTermsFileConverter {
    */
   public ExpasyTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = "ID";
-    nameKey = "AN";
-    descKey = "DE";
+    identifierKey = "^ID.*";
+    nameKey = "^AN.*";
+    descKey = "^DE.*";
   }
   //@Override
   String cleanDescription(String desc) {

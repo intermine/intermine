@@ -18,9 +18,9 @@ public class HamapTermsConverter extends OntologyTermsFileConverter {
    */
   public HamapTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = "AC";
-    nameKey = "ID";
-    descKey = "DE";
+    identifierKey = "^AC.*";
+    nameKey = "^ID.*";
+    descKey = "^DE.*";
   }
   @Override
   public String cleanId(String id) {

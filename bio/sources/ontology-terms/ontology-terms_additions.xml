@@ -4,4 +4,14 @@
 <classes>
 <!-- add any <class> elements here -->
 
+<class name="CrossReference" is-interface="true">
+  <collection name="ontologyTerms" referenced-type="OntologyTerm" reverse-reference="xrefs"/>
+</class>
+
+<class name="OntologyTerm" is-interface="true">
+  <collection name="xrefs" referenced-type="CrossReference" reverse-reference="ontologyTerms"/>
+</class>
+
 </classes>
+
+

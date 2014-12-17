@@ -68,14 +68,14 @@ public class PhytozomeDbProcessor {
   public void process() throws SQLException, ObjectStoreException {
     // the steps
     fillChromosomeTable();
-    fillAnnotationTable();
-    fillProperties();
-    fillRelationships();
-    fillAnalyses();
+    //fillAnnotationTable();
+    // TODO enable fillProperties();
+    // TODO enablefillRelationships();
+    // TODO enable fillAnalyses();
     converter.getDatabase().getConnection().createStatement().execute(
         "DROP TABLE "+ tempChromosomeTableName);
-    converter.getDatabase().getConnection().createStatement().execute(
-        "DROP TABLE "+ tempFeatureTableName);
+    //converter.getDatabase().getConnection().createStatement().execute(
+    //    "DROP TABLE "+ tempFeatureTableName);
   }
   
   private void fillAnalyses() throws SQLException, ObjectStoreException {
@@ -413,8 +413,8 @@ public class PhytozomeDbProcessor {
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));
         seq.setAttribute("md5checksum", checksum);
-        seqId = seq.getIdentifier();
-        converter.store(seq);
+        // TODO enable seqId = seq.getIdentifier();
+        // TODO enable converter.store(seq);
       }
       
       Item feat = converter.createItem(PhytozomeDbConfig.getIntermineType(chadoType));
@@ -533,8 +533,8 @@ public class PhytozomeDbProcessor {
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));
         seq.setAttribute("md5checksum", checksum);
-        seqId = seq.getIdentifier();
-        converter.store(seq);
+        // TODO enable seqId = seq.getIdentifier();
+        // TODO enable converter.store(seq);
       }
       Item chrom = converter.createItem("Chromosome");
       chrom.setAttribute("primaryIdentifier", name);

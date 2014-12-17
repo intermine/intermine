@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Stack;
 
 
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -59,7 +60,7 @@ public class OntologyTermsXMLConverter extends OntologyTermsFileConverter {
         SAXParser.parse(new InputSource(reader), handler);
       } catch (Exception e) {
         e.printStackTrace();
-        throw new RuntimeException(e);
+        throw new BuildException(e);
       }
     }
   }

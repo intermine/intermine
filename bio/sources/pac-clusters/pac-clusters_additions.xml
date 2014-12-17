@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <classes>
   <class name="Protein" extends="BioEntity" is-interface="true">
-    <collection name="proteinFamily" referenced-type="ProteinFamily" reverse-reference="protein" />
+    <collection name="proteinFamily" referenced-type="ProteinFamilyMember" reverse-reference="protein" />
   </class>
   <class name="MSA" is-interface="true">
     <attribute name="primaryIdentifier" type="java.lang.String" />
@@ -15,14 +15,15 @@
     <attribute name="memberCount" type="java.lang.Integer" />
     <reference name="msa" referenced-type="MSA" />
     <reference name="consensus" referenced-type="Sequence" />
-    <collection name="protein" referenced-type="Protein" reverse-reference="proteinFamily" /> 
     <collection name="gene" referenced-type="Gene" />
-    <collection name="proteinFamilyOrganism" referenced-type="ProteinFamilyOrganism" reverse-reference="proteinFamily" /> 
+    <collection name="member" referenced-type="ProteinFamilyMember" reverse-reference="proteinFamily" /> 
     <collection name="crossReferences" referenced-type="CrossReference" />
   </class>
-  <class name="ProteinFamilyOrganism" is-interface="true">
+  <class name="ProteinFamilyMember" is-interface="true">
     <attribute name="count" type="java.lang.Integer" />
+    <attribute name="membershipDetail" type="java.lang.String" />
     <reference name="organism" referenced-type="Organism" />
-    <reference name="proteinFamily" referenced-type="ProteinFamily" reverse-reference="proteinFamilyOrganism" />
+    <reference name="protein" referenced-type="Protein" />
+    <reference name="proteinFamily" referenced-type="ProteinFamily" reverse-reference="member" />
   </class>
 </classes>

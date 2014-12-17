@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
@@ -40,8 +41,8 @@ public class PantherTermsConverter extends OntologyTermsFileConverter {
       String p1 = fields[0].trim().replace(".mod","");
       identifierLine = p1.trim().replace(".mag","");
       descriptionLine = fields[1].trim();
-      if (identifierLine.matches(".*\\.SF\\d+$")) {
-        parentMap.put(identifierLine, identifierLine.replaceAll("\\.SF\\d+$", ""));
+      if (identifierLine.matches(".*[.:]SF\\d+$")) {
+        parentMap.put(identifierLine, identifierLine.replaceAll("[.:]SF\\d+$", ""));
       }
       idMap.put(identifierLine, createOntologyTerm().getIdentifier());
     }
@@ -63,8 +64,17 @@ public class PantherTermsConverter extends OntologyTermsFileConverter {
       relation.setAttribute("direct", "true");
       relation.setAttribute("redundant", "false");
       // Set the reverse reference
-      termMap.get(idMap.get(child)).addToCollection("relations", relation.getIdentifier());
-      termMap.get(idMap.get(parentMap.get(child))).addToCollection("relations", relation.getIdentifier());
+      if (!idMap.containsKey(child)) {
+        throw new BuildException("Id map has no entry for the child "+child);
+      }
+      if (!termMap.containsKey(child)) {
+        throw new BuildException("Term Map has no entry for "+child);
+      }
+      if (!termMap.containsKey(parentMap.get(child))) {
+        throw new BuildException("Term Map has no entry for "+parentMap.get(child));
+      }
+      termMap.get(child).addToCollection("relations", relation.getIdentifier());
+      termMap.get(parentMap.get(child)).addToCollection("relations", relation.getIdentifier());
       relations.add(relation);
     }
     // now store the items

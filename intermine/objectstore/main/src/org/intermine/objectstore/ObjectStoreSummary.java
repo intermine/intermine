@@ -98,29 +98,32 @@ public class ObjectStoreSummary
         // 4. Always empty refs/cols per class
         // 5. Always empty attributes per class
 
-        Model model = os.getModel();
+         Model model = os.getModel();
+        
+         // classCounts - number of objects of each type in the database
+         LOG.info("Collecting class counts...");
+         for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
 
-        // classCounts - number of objects of each type in the database
-        LOG.info("Collecting class counts...");
-        for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
-            nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
+           LOG.info("Counting class "+cld.getName());
+           nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
 
-            if (!classCountsMap.containsKey(cld.getName())) {
-                int classCount = countClass(os, cld.getType());
-                LOG.info("Adding class count: " + cld.getUnqualifiedName() + " = " + classCount);
-                classCountsMap.put(cld.getName(), new Integer(classCount));
+           if (!classCountsMap.containsKey(cld.getName())) {
+             int classCount = countClass(os, cld.getType());
+             LOG.info("Adding class count: " + cld.getUnqualifiedName() + " = " + classCount);
+             classCountsMap.put(cld.getName(), new Integer(classCount));
 
-                // if this class is empty all subclasses MUST be empty as well
-                if (classCount == 0) {
-                    for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                        if (!classCountsMap.containsKey(subCld.getName())) {
-                            classCountsMap.put(subCld.getName(), new Integer(classCount));
-                        }
-                    }
-                }
-            }
-        }
-
+             // if this class is empty all subclasses MUST be empty as well
+             if (classCount == 0) {
+               for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                 if (!classCountsMap.containsKey(subCld.getName())) {
+                   classCountsMap.put(subCld.getName(), new Integer(classCount));
+                 }
+               }
+             }
+           }
+         }
+         LOG.info("Done with class counting.");
+        
         // fieldValues - find all attributes with few unique values for populating dropdowns,
         // also look for any attributes that are empty.
         LOG.info("Summarising field values...");
@@ -137,73 +140,72 @@ public class ObjectStoreSummary
 
         Set<String> doneFields = new HashSet<String>();
         for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
+          int classCount = classCountsMap.get(cld.getName()).intValue();
+          if (classCount == 0) {
+            continue;
+          }
 
-            int classCount = classCountsMap.get(cld.getName()).intValue();
-            if (classCount == 0) {
-                continue;
+          for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+            String fieldName = att.getName();
+            if ("id".equals(fieldName)) {
+              continue;
             }
 
-            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
-                String fieldName = att.getName();
-                if ("id".equals(fieldName)) {
-                    continue;
-                }
-
-                String clsFieldName = cld.getName() + "." + fieldName;
-                if (doneFields.contains(clsFieldName) || ignoreFields.contains(clsFieldName)) {
-                    continue;
-                }
-
-                Results results = getFieldSummary(cld, fieldName, os);
-                if (results.size() <= maxValues) {
-                    List<Object> fieldValues = new ArrayList<Object>();
-                    for (Object resRow: results) {
-                        Object fieldValue = ((ResultsRow<?>) resRow).get(0);
-                        fieldValues.add(fieldValue == null ? null : fieldValue.toString());
-                    }
-                    if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
-                        Set<String> emptyAttributes = emptyAttributesMap.get(cld.getName());
-                        if (emptyAttributes == null) {
-                            emptyAttributes = new HashSet<String>();
-                            emptyAttributesMap.put(cld.getName(), emptyAttributes);
-                        }
-                        emptyAttributes.add(fieldName);
-                    }
-                    Collections.sort(fieldValues, new Comparator<Object>() {
-                        @Override
-                        public int compare(Object arg0, Object arg1) {
-                            if (arg0 == null) {
-                                return arg1 == null ? 0 : 1;
-                            }
-                            if (arg1 == null) {
-                                return arg0 == null ? 0 : -1;
-                            }
-                            return arg0.toString().compareTo(arg1.toString());
-                        }
-                    });
-                    fieldValuesMap.put(clsFieldName, fieldValues);
-                    LOG.info("Adding " + fieldValues.size() + " values for "
-                            + cld.getUnqualifiedName() + "." + fieldName);
-
-                } else {
-                    LOG.info("Too many values for " + cld.getUnqualifiedName() + "." + fieldName);
-                    // all superclasses must also have too many values for this field
-                    for (ClassDescriptor superCld : cld.getAllSuperDescriptors()) {
-                        if (cld.equals(superCld)
-                                || superCld.getType().equals(InterMineObject.class)) {
-                            continue;
-                        }
-                        String superClsField = superCld.getName() + "." + fieldName;
-                        if (!doneFields.contains(superClsField)
-                                && (superCld.getAttributeDescriptorByName(fieldName,
-                                        true) != null)) {
-                            LOG.info("Pushing too many values from " + cld.getUnqualifiedName()
-                                    + "." + fieldName + " to " + superCld.getUnqualifiedName());
-                            doneFields.add(superClsField);
-                        }
-                    }
-                }
+            String clsFieldName = cld.getName() + "." + fieldName;
+            if (doneFields.contains(clsFieldName) || ignoreFields.contains(clsFieldName)) {
+              continue;
             }
+
+            Results results = getFieldSummary(cld, fieldName, os);
+            if (results.size() <= maxValues) {
+              List<Object> fieldValues = new ArrayList<Object>();
+              for (Object resRow: results) {
+                Object fieldValue = ((ResultsRow<?>) resRow).get(0);
+                fieldValues.add(fieldValue == null ? null : fieldValue.toString());
+              }
+              if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
+                Set<String> emptyAttributes = emptyAttributesMap.get(cld.getName());
+                if (emptyAttributes == null) {
+                  emptyAttributes = new HashSet<String>();
+                  emptyAttributesMap.put(cld.getName(), emptyAttributes);
+                }
+                emptyAttributes.add(fieldName);
+              }
+              Collections.sort(fieldValues, new Comparator<Object>() {
+                @Override
+                public int compare(Object arg0, Object arg1) {
+                  if (arg0 == null) {
+                    return arg1 == null ? 0 : 1;
+                  }
+                  if (arg1 == null) {
+                    return arg0 == null ? 0 : -1;
+                  }
+                  return arg0.toString().compareTo(arg1.toString());
+                }
+              });
+              fieldValuesMap.put(clsFieldName, fieldValues);
+              LOG.info("Adding " + fieldValues.size() + " values for "
+                  + cld.getUnqualifiedName() + "." + fieldName);
+
+            } else {
+              LOG.info("Too many values for " + cld.getUnqualifiedName() + "." + fieldName);
+              // all superclasses must also have too many values for this field
+              for (ClassDescriptor superCld : cld.getAllSuperDescriptors()) {
+                if (cld.equals(superCld)
+                    || superCld.getType().equals(InterMineObject.class)) {
+                  continue;
+                }
+                String superClsField = superCld.getName() + "." + fieldName;
+                if (!doneFields.contains(superClsField)
+                    && (superCld.getAttributeDescriptorByName(fieldName,
+                        true) != null)) {
+                  LOG.info("Pushing too many values from " + cld.getUnqualifiedName()
+                      + "." + fieldName + " to " + superCld.getUnqualifiedName());
+                  doneFields.add(superClsField);
+                }
+              }
+            }
+          }
         }
 
 
@@ -212,53 +214,53 @@ public class ObjectStoreSummary
         // queries would take longer. If a ref/col is not empty it must not be empty in all parents.
         Set<String> notEmptyFields = new HashSet<String>();
         for (ClassDescriptor cld: model.getBottomUpLevelTraversal()) {
-            int classCount = classCountsMap.get(cld.getName()).intValue();
-            if (classCount == 0) {
-                continue;
+          int classCount = classCountsMap.get(cld.getName()).intValue();
+          if (classCount == 0) {
+            continue;
+          }
+
+          Set<ReferenceDescriptor> refsAndCols = new HashSet<ReferenceDescriptor>();
+          refsAndCols.addAll(cld.getAllReferenceDescriptors());
+          refsAndCols.addAll(cld.getAllCollectionDescriptors());
+          for (ReferenceDescriptor ref : refsAndCols) {
+            String fieldName = ref.getName();
+            String clsFieldName = cld.getName() + "." + fieldName;
+
+            if (ignoreFields.contains(fieldName)) {
+              continue;
             }
 
-            Set<ReferenceDescriptor> refsAndCols = new HashSet<ReferenceDescriptor>();
-            refsAndCols.addAll(cld.getAllReferenceDescriptors());
-            refsAndCols.addAll(cld.getAllCollectionDescriptors());
-            for (ReferenceDescriptor ref : refsAndCols) {
-                String fieldName = ref.getName();
-                String clsFieldName = cld.getName() + "." + fieldName;
-
-                if (ignoreFields.contains(fieldName)) {
-                    continue;
-                }
-
-                if (notEmptyFields.contains(clsFieldName)) {
-                    LOG.info("Skipping " + clsFieldName + " - already know it's not empty");
-                    continue;
-                }
-
-                boolean refIsEmpty = isReferenceEmpty(cld, ref, os);
-                if (refIsEmpty) {
-                    addToEmptyFields(cld.getName(), ref.getName());
-                    LOG.info("Adding empty field " + cld.getUnqualifiedName() + "." + fieldName);
-                } else {
-                    // this isn't empty, so CAN'T be empty for any super classes
-                    for (ClassDescriptor superCld : cld.getAllSuperDescriptors()) {
-                        if (cld.equals(superCld)
-                                || superCld.getType().equals(InterMineObject.class)) {
-                            continue;
-                        }
-                        String superClsField = superCld.getName() + "." + fieldName;
-
-                        if (!notEmptyFields.contains(superClsField)) {
-                            if ((superCld.getReferenceDescriptorByName(fieldName, true) != null)
-                                    || (superCld.getCollectionDescriptorByName(fieldName,
-                                            true) != null)) {
-                                LOG.info("Pushing not empty ref/col from "
-                                        + cld.getUnqualifiedName() + "." + fieldName + " to "
-                                        + superCld.getUnqualifiedName());
-                                notEmptyFields.add(superClsField);
-                            }
-                        }
-                    }
-                }
+            if (notEmptyFields.contains(clsFieldName)) {
+              LOG.info("Skipping " + clsFieldName + " - already know it's not empty");
+              continue;
             }
+
+            boolean refIsEmpty = isReferenceEmpty(cld, ref, os);
+            if (refIsEmpty) {
+              addToEmptyFields(cld.getName(), ref.getName());
+              LOG.info("Adding empty field " + cld.getUnqualifiedName() + "." + fieldName);
+            } else {
+              // this isn't empty, so CAN'T be empty for any super classes
+              for (ClassDescriptor superCld : cld.getAllSuperDescriptors()) {
+                if (cld.equals(superCld)
+                    || superCld.getType().equals(InterMineObject.class)) {
+                  continue;
+                }
+                String superClsField = superCld.getName() + "." + fieldName;
+
+                if (!notEmptyFields.contains(superClsField)) {
+                  if ((superCld.getReferenceDescriptorByName(fieldName, true) != null)
+                      || (superCld.getCollectionDescriptorByName(fieldName,
+                          true) != null)) {
+                    LOG.info("Pushing not empty ref/col from "
+                        + cld.getUnqualifiedName() + "." + fieldName + " to "
+                        + superCld.getUnqualifiedName());
+                    notEmptyFields.add(superClsField);
+                  }
+                }
+              }
+            }
+          }
         }
     }
 

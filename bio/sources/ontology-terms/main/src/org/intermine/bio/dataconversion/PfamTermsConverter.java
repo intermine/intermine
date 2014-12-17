@@ -18,9 +18,9 @@ public class PfamTermsConverter extends OntologyTermsFileConverter {
    */
   public PfamTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = "#=GF AC";
-    nameKey = "#=GF ID";
-    descKey = "#=GF DE";
+    identifierKey = "^#=GF AC.*";
+    nameKey = "^#=GF ID.*";
+    descKey = "^#=GF DE.8";
     
   }
   @Override

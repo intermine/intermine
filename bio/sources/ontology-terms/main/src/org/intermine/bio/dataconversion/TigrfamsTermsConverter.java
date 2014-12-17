@@ -18,9 +18,9 @@ public class TigrfamsTermsConverter extends OntologyTermsFileConverter {
    */
   public TigrfamsTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = "ACC";
-    nameKey = "NAME";
-    descKey = "DESC";
+    identifierKey = "^ACC.*";
+    nameKey = "^NAME.*";
+    descKey = "^DESC.*";
   }
 
 }

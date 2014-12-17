@@ -24,7 +24,9 @@
     <attribute name="countvariance" type="java.lang.Float" />
     <attribute name="countuncertaintyvar" type="java.lang.Float" />
     <attribute name="countdispersionvar" type="java.lang.Float" />
-    <attribure name="status" type="java.lang.String" />
+    <attribute name="status" type="java.lang.String" />
+    <attribute name="libraryExpressionLevel" type="java.lang.String" />"
+    <attribute name="locusExpressionLevel" type="java.lang.String" />"
     <reference name="bioentity" referenced-type="BioEntity" />
     <reference name="experiment" referenced-type="RNAseqExperiment" />
   </class>

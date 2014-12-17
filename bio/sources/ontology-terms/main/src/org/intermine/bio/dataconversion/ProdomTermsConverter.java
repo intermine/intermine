@@ -22,7 +22,7 @@ public class ProdomTermsConverter extends OntologyTermsFileConverter {
    */
   public ProdomTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
-    identifierKey = ">";
+    identifierKey = "^>.*";
     nameKey = null;
     descKey =null;
     endOfRecord = null;
