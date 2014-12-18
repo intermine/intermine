@@ -35,6 +35,7 @@ public class CreateSearchIndexTask extends Task
 
     protected String osAlias = null;
     protected ObjectStore os;
+    private ClassLoader classLoader;
 
     /**
      * Set the alias of the main object store.
@@ -44,7 +45,18 @@ public class CreateSearchIndexTask extends Task
         this.osAlias = osAlias;
     }
 
+    /**
+     * Set the object store.
+     * @param os The object store.
+     */
+    public void setObjectStore(ObjectStore os) {
+        this.os = os;
+    }
+
     private ObjectStore getObjectStore() throws Exception {
+        if (os != null) {
+            return os;
+        }
         if (osAlias == null) {
             throw new BuildException("objectStoreWriter attribute is not set");
         }
@@ -53,6 +65,21 @@ public class CreateSearchIndexTask extends Task
             os = ObjectStoreFactory.getObjectStore(osAlias);
         }
         return os;
+    }
+
+    /**
+     * Set the class loader
+     * @param loader The class loader.
+     */
+    public void setClassLoader(ClassLoader loader) {
+        this.classLoader = loader;
+    }
+
+    private ClassLoader getClassLoader() {
+        if (classLoader != null) {
+            return classLoader;
+        }
+        return this.getClass().getClassLoader();
     }
 
     @Override
@@ -71,19 +98,8 @@ public class CreateSearchIndexTask extends Task
                     + "instance of ObjectStoreInterMineImpl!");
         }
 
-        /*
-        String configFileName = "objectstoresummary.config.properties";
-        InputStream configStream = classLoader.getResourceAsStream(configFileName);
-        if (configStream == null) {
-            throw new RuntimeException("can't find resource: " + configFileName);
-        }
-
-        Properties properties = new Properties();
-        properties.load(configStream);*/
-
         //read class keys to figure out what are keyFields during indexing
-        InputStream is = this.getClass().getClassLoader()
-                .getResourceAsStream("class_keys.properties");
+        InputStream is = getClassLoader().getResourceAsStream("class_keys.properties");
         Properties classKeyProperties = new Properties();
         try {
             classKeyProperties.load(is);
