@@ -60,7 +60,9 @@ public class TextLocationHelper implements RangeHelper {
         } else if (op == ConstraintOp.OUTSIDE) {
             rangeOp = ConstraintOp.NOT_IN;
         }
-        ConstraintOp mainOp = (op == ConstraintOp.WITHIN || op == ConstraintOp.CONTAINS || op == ConstraintOp.OVERLAPS)
+        ConstraintOp mainOp = (op == ConstraintOp.WITHIN
+                || op == ConstraintOp.CONTAINS
+                || op == ConstraintOp.OVERLAPS)
                 ? ConstraintOp.OR : ConstraintOp.AND;
         ConstraintSet mainSet = new ConstraintSet(mainOp);
 

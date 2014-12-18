@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultCell;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.PathExpressionField;
@@ -37,7 +36,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.DynamicUtil;
 import org.intermine.webservice.server.core.DisjointRecursiveList.Eacher;
 import org.intermine.webservice.server.exceptions.NotImplementedException;
 
