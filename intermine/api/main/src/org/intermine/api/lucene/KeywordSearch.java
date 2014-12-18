@@ -1104,6 +1104,14 @@ public final class KeywordSearch
                 }
             }
         }
+        if (fetchThread.getException() != null) {
+            try {
+                writer.close();
+            } catch (Exception e) {
+                LOG.error("Error closing writer while handling exception.", e);
+            }
+            throw new RuntimeException("Indexing failed.", fetchThread.getException());
+        }
         index.getFieldNames().addAll(fetchThread.getFieldNames());
         LOG.debug("Indexing done, optimizing index files...");
         try {

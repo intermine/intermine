@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
 	<classpathentry kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="src" path="/intermine-web-tasks"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
