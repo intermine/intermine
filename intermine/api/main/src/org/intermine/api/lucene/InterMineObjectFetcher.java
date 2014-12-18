@@ -80,6 +80,8 @@ public class InterMineObjectFetcher extends Thread
     Field idField = null;
     Field categoryField = null;
 
+    private volatile Exception error;
+
     /**
      * initialize the documentfetcher thread
      * @param os
@@ -185,11 +187,24 @@ public class InterMineObjectFetcher extends Thread
                 }
             }
         } catch (Exception e) {
-            LOG.warn(null, e);
+            LOG.warn("Error occurred during processing", e);
+            setException(e);
         }
 
         //notify main thread that we're done
         indexingQueue.finish();
+    }
+
+    private void setException(Exception e) {
+        this.error = e;
+    }
+
+    /**
+     * Get the error that occurred during processing, if any.
+     * @return The error.
+     */
+    public Exception getException() {
+        return error;
     }
 
     private Document handleObject(
@@ -436,11 +451,22 @@ public class InterMineObjectFetcher extends Thread
         }
     }
 
+    private Set<String> getIgnorableFields(FastPathObject obj) {
+        Set<String> ret = new HashSet<String>();
+        for (Class<?> clazz: Util.decomposeClass(obj.getClass())) {
+            if (ignoredFields.containsKey(clazz)) {
+                ret.addAll(ignoredFields.get(clazz));
+            }
+        }
+        return ret;
+    }
+
     private Set<ObjectValueContainer> getAttributeMapForObject(Model model, FastPathObject obj) {
         Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
-        Set<String> fieldsToIgnore = ignoredFields.get(DynamicUtil.getSimpleClass(obj));
+
+        Set<String> fieldsToIgnore = getIgnorableFields(obj);
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
