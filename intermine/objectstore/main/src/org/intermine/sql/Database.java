@@ -332,16 +332,25 @@ public class Database implements Shutdownable
         }
         if (version == null) {
             try {
-                Connection c = getConnection();
-                Statement s = c.createStatement();
-                String versionQuery = "SELECT current_setting('server_version')";
-                ResultSet rs = s.executeQuery(versionQuery);
-                if (rs.next()) {
-                    version = rs.getString(1);
+                Connection c = null;
+                try {
+                    c = getConnection();
+                    Statement s = c.createStatement();
+                    String versionQuery = "SELECT current_setting('server_version')";
+                    ResultSet rs = s.executeQuery(versionQuery);
+                    if (rs.next()) {
+                        version = rs.getString(1);
+                    }
+                } catch (SQLException e) {
+                    throw new IllegalArgumentException("Error fetching version number from"
+                            + " database: " + e.getMessage());
+                } finally {
+                    if (c != null) {
+                        c.close();
+                    }
                 }
             } catch (SQLException e) {
-                throw new IllegalArgumentException("Error fetching version number from database: "
-                        + e.getMessage());
+                LOG.warn("Error closing database connection used to find Postgres version.");
             }
         }
         return version;
