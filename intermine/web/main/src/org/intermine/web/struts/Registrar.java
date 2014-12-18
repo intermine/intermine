@@ -71,7 +71,9 @@ public class Registrar extends Thread
         String data = "";
         for (String key: params.keySet()) {
             String value = params.get(key);
-            if (value == null) { continue; }
+            if (value == null) {
+                continue;
+            }
             if (!data.isEmpty()) {
                 data += "&";
             }

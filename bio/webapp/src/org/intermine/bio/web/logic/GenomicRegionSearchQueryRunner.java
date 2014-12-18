@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ExportResultsIterator;
@@ -57,9 +56,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class GenomicRegionSearchQueryRunner implements Runnable
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
-
     private HttpServletRequest request = null;
     private String spanUUIDString = null;
     private GenomicRegionSearchConstraint grsc = null;
@@ -126,11 +122,9 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     /**
      * The method to run all the queries.
      */
-    @SuppressWarnings("rawtypes")
     private void queryExecutor() {
 
         // Use spanOverlapFullResultMap to store the data in the session
-        @SuppressWarnings("unchecked")
         Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap =
              (Map<String, Map<GenomicRegion, List<List<String>>>>) request
                             .getSession().getAttribute("spanOverlapFullResultMap");
@@ -140,7 +134,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 new HashMap<String, Map<GenomicRegion, List<List<String>>>>();
         }
 
-        @SuppressWarnings("unchecked")
         // map of sequence feature statistics: key - class name. value - count of feature
         Map<String, Map<GenomicRegion, Map<String, Integer>>> spanOverlapFullStatMap =
              (Map<String, Map<GenomicRegion, Map<String, Integer>>>) request
@@ -395,7 +388,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         List<?> orgs = im.getObjectStore().executeSingleton(q);
         for (Object o: orgs) {
             org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
-            orgTaxonIdMap.put(org.getName(), org.getTaxonId());
+            orgTaxonIdMap.put(org.getShortName(), org.getTaxonId());
         }
         return orgTaxonIdMap;
     }

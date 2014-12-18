@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.jbrowse;
 
+/*
+ * Copyright (C) 2002-2014 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 import static org.intermine.webservice.server.jbrowse.Queries.resolveValue;
 
@@ -31,7 +41,13 @@ import org.intermine.webservice.server.jbrowse.util.ArrayFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 
-public class Names extends JSONService {
+/**
+ *
+ * @author Alex
+ *
+ */
+public class Names extends JSONService
+{
 
     private String prefix;
     private String featureClass;
@@ -42,6 +58,9 @@ public class Names extends JSONService {
     private String[] namePaths;
     private ClassDescriptor fcd;
 
+    /**
+     * @param im InterMine API
+     */
     public Names(InterMineAPI im) {
         super(im);
     }
@@ -99,7 +118,8 @@ public class Names extends JSONService {
             throw new BadRequestException("Either 'startswith' or 'equals' parameter is required");
         }
         if (!hasEquals && !hasStart) {
-            throw new BadRequestException("Only one of 'startswith' or 'equals' parameters is allowed");
+            throw new BadRequestException("Only one of 'startswith' or 'equals' "
+                    + "parameters is allowed");
         }
 
         if (hasEquals) {
@@ -138,11 +158,11 @@ public class Names extends JSONService {
         fcd = im.getModel().getClassDescriptorByName(featureClass);
     }
 
-    private Map<String, Object> makeRecord(final FastPathObject o, String searchTerm) {
+    private Map<String, Object> makeRecord(final FastPathObject o, String keyword) {
         Map<String, Object> record = new HashMap<String, Object>();
         Map<String, Object> location = new HashMap<String, Object>();
         List<String> tracks = new ArrayList<String>();
-
+        String searchTerm = keyword;
         searchTerm = searchTerm.replace("*", "");
 
         record.put("location", location);
@@ -154,8 +174,12 @@ public class Names extends JSONService {
         location.put("objectName", resolveValue(o, identPath));
 
         for (ClassDescriptor cd: im.getModel().getClassDescriptors()) {
-            if (cd.getUnqualifiedName().equals("InterMineObject")) continue;
-            if (!fcd.getType().isAssignableFrom(cd.getType())) continue; // Upper bound.
+            if ("InterMineObject".equals(cd.getUnqualifiedName())) {
+                continue;
+            }
+            if (!fcd.getType().isAssignableFrom(cd.getType())) {
+                continue; // Upper bound.
+            }
             if (cd.getType().isAssignableFrom(o.getClass())) {
                 tracks.add(getTrackName(cd));
             }
@@ -164,7 +188,9 @@ public class Names extends JSONService {
         // Accept the first non null that matches the search term.
         for (Object name: getNames(o, getNamePaths())) {
             record.put("name", name);
-            if (name != null && StringUtils.containsIgnoreCase(name.toString(), searchTerm)) break;
+            if (name != null && StringUtils.containsIgnoreCase(name.toString(), searchTerm)) {
+                break;
+            }
         }
 
         return record;
@@ -173,7 +199,7 @@ public class Names extends JSONService {
     private Iterable<Object> getNames(final FastPathObject o, final List<Path> namePaths) {
         return new Iterable<Object>() {
             FastPathObject root = o;
-            String featureClass = webProperties.getProperty(getPropertyPrefix() + "featureClass");
+            String type = webProperties.getProperty(getPropertyPrefix() + "featureClass");
             @Override
             public Iterator<Object> iterator() {
                 return new Iterator<Object>() {
@@ -203,11 +229,13 @@ public class Names extends JSONService {
 
                     @Override
                     public Object next() {
-                        if (subCol != null) return nextFromSubCol();
+                        if (subCol != null) {
+                            return nextFromSubCol();
+                        }
                         Path path = namePaths.get(current);
                         current++;
                         try {
-                            Path p = new Path(im.getModel(), featureClass + "." + path);
+                            Path p = new Path(im.getModel(), type + "." + path);
                             if (!p.containsCollections()) {
                                 return resolveValue(root, path.toString());
                             } else {
@@ -219,13 +247,15 @@ public class Names extends JSONService {
                                     }
                                 }
                                 @SuppressWarnings("unchecked")
-                                Collection<Object> things = (Collection<Object>) resolveValue(root, upToCollection.replaceAll("^[^\\.]+\\.", ""));
+                                Collection<Object> things = (Collection<Object>) resolveValue(root,
+                                        upToCollection.replaceAll("^[^\\.]+\\.", ""));
                                 if (things.isEmpty()) {
                                     return null;
                                 } else {
                                     subCol = new ArrayList<Object>(things);
                                     subIdx = 0;
-                                    subPath = p.toStringNoConstraints().replace(upToCollection + ".", "");
+                                    subPath = p.toStringNoConstraints().replace(
+                                            upToCollection + ".", "");
                                     return nextFromSubCol();
                                 }
                             }
@@ -240,51 +270,45 @@ public class Names extends JSONService {
                     }
                 };
             }
-            
+
         };
     }
 
-    private String headless(Path path) {
-        String pstring = path.toStringNoConstraints();
-        int idx = pstring.indexOf('.');
-        return pstring.substring(idx + 1);
-    }
-
-    private String getTrackName(ClassDescriptor cd) {
+    private static String getTrackName(ClassDescriptor cd) {
         return cd.getUnqualifiedName();
     }
 
-
     private String getPropertyPrefix() {
         String modelName = im.getModel().getName();
-        String prefix = "org.intermine.webservice.server.jbrowse." + modelName + ".";
-        return prefix;
+        String propertyPrefix = "org.intermine.webservice.server.jbrowse." + modelName + ".";
+        return propertyPrefix;
     }
 
     private PathQuery getQuery(String domain, ConstraintOp op, String searchTerm) {
         PathQuery pq = new PathQuery(im.getModel());
-        String prefix = getPropertyPrefix();
-        List<Path> namePaths = getNamePaths();
+        String propertyPrefix = getPropertyPrefix();
+        List<Path> paths = getNamePaths();
 
-        String featureClass = webProperties.getProperty(prefix + "featureClass");
-        String domainPath = webProperties.getProperty(prefix + "domain");
-        String locationPath = webProperties.getProperty(prefix + "location");
-        pq.addView(featureClass + ".id");
+        String type = webProperties.getProperty(propertyPrefix + "featureClass");
+        String domainPath = webProperties.getProperty(propertyPrefix + "domain");
+        String locationPath = webProperties.getProperty(propertyPrefix + "location");
+        pq.addView(type + ".id");
 
         StringBuffer logic = new StringBuffer();
 
         // must have location
-        logic.append(pq.addConstraint(Constraints.isNotNull(featureClass + "." + locationPath + ".id")));
+        logic.append(pq.addConstraint(Constraints.isNotNull(type + "." + locationPath + ".id")));
         logic.append(" AND "); // and be on the right domain.
-        logic.append(pq.addConstraint(Constraints.eq(featureClass + "." + domainPath, domain)));
+        logic.append(pq.addConstraint(Constraints.eq(type + "." + domainPath, domain)));
         logic.append(" AND ");
 
         logic.append(" (");
-        for (int i = 0; i < namePaths.size(); i++) {
-            Path p = namePaths.get(i);
-            PathConstraint c = new PathConstraintAttribute(p.toStringNoConstraints(), op, searchTerm);
+        for (int i = 0; i < paths.size(); i++) {
+            Path p = paths.get(i);
+            String pathString = p.toStringNoConstraints();
+            PathConstraint c = new PathConstraintAttribute(pathString, op, searchTerm);
             logic.append(pq.addConstraint(c));
-            if (i + 1 < namePaths.size()) {
+            if (i + 1 < paths.size()) {
                 logic.append(" OR ");
             }
         }

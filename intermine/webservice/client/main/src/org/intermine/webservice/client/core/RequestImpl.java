@@ -262,7 +262,7 @@ public class RequestImpl implements Request
     }
 
     /**
-     * {@inheritDoc}
+     * get URL
      */
     private String getUrl(boolean encode) {
         StringBuilder sb = new StringBuilder();
@@ -285,7 +285,7 @@ public class RequestImpl implements Request
         return sb.toString();
     }
 
-    private String format(String str, boolean encode) {
+    private static String format(String str, boolean encode) {
         if (encode) {
             try {
                 return URLEncoder.encode(str, "UTF-8");
@@ -342,6 +342,7 @@ public class RequestImpl implements Request
      * Specify what section of the result set you wish to retrieve.
      * @param page the subsection of the result set you want.
      */
+    @Override
     public void setPage(Page page) {
         setStart(page.getStart());
         if (page.getSize() != null) {

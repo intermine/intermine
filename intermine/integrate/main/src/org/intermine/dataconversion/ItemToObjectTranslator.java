@@ -308,6 +308,7 @@ public class ItemToObjectTranslator extends Translator
         try {
             obj.setFieldValue("id", identifierToId(item.getIdentifier()));
         } catch (IllegalArgumentException e) {
+            // that's not good
         }
         time1 = System.currentTimeMillis();
         timeSpentCreate += time1 - time2;
@@ -319,12 +320,12 @@ public class ItemToObjectTranslator extends Translator
                     String message = "Attribute not found in class: "
                         + Util.getFriendlyName(obj.getClass()) + "." + attr.getName()
                           + "\nProblem found while loading Item with identifier "
-                          + item.getIdentifier() + " and attribute with id " + attr.getId();
+                          + item.getIdentifier() + " and attribute name " + attr.getName();
                     LOG.error(message);
                     throw new MetaDataException(message);
                 }
                 Class<?> attrClass = info.getType();
-                if (!attr.getName().equalsIgnoreCase("id")) {
+                if (!"id".equalsIgnoreCase(attr.getName())) {
                     Object value = null;
                     if (ClobAccess.class.equals(attrClass)) {
                         if (attr.getValue() != null) {
@@ -353,11 +354,11 @@ public class ItemToObjectTranslator extends Translator
                 String refName = ref.getName();
                 if (refName == null) {
                     throw new RuntimeException("Item with identifier " + item.getIdentifier()
-                            + " has a reference with ID " + ref.getId() + " with a null name");
+                            + " has a reference with a null name");
                 }
                 if ("".equals(refName)) {
                     throw new RuntimeException("Item with identifier " + item.getIdentifier()
-                            + " has a reference with ID " + ref.getId() + " with an empty name");
+                            + " has a reference with an empty name");
                 }
                 if (Character.isLowerCase(refName.charAt(1))) {
                     refName = StringUtil.decapitalise(refName);

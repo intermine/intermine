@@ -217,7 +217,7 @@ public class BDGPInsituConverter extends BioFileConverter
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("OntologyTerm");
+        Item termItem = createItem("MRNAExpressionTerm");
         termItem.setAttribute("name", name);
         termItem.setReference("ontology", ontology);
         store(termItem);

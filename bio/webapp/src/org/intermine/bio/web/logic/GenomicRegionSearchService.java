@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
@@ -45,11 +44,12 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.bio.web.struts.GenomicRegionSearchForm;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -61,7 +61,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
@@ -74,9 +73,6 @@ import org.json.JSONObject;
  */
 public class GenomicRegionSearchService
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
-
     private InterMineAPI interMineAPI = null;
     private Model model = null;
     private ObjectStore objectStore = null;
@@ -109,7 +105,6 @@ public class GenomicRegionSearchService
      * To set globally used variables.
      * @param request HttpServletRequest
      */
-    @SuppressWarnings("unchecked")
     public void init (HttpServletRequest request) {
         this.webProperties = SessionMethods.getWebProperties(
                 request.getSession().getServletContext());
@@ -499,12 +494,10 @@ public class GenomicRegionSearchService
                 String mimetype = formFile.getContentType();
                 if (!"application/octet-stream".equals(mimetype)
                         && !mimetype.startsWith("text")) {
-                    return new ActionMessage("genomicRegionSearch.isNotText",
-                            mimetype);
+                    return new ActionMessage("genomicRegionSearch.isNotText", mimetype);
                 }
                 if (formFile.getFileSize() == 0) {
-                    return new ActionMessage(
-                            "genomicRegionSearch.noSpanFileOrEmpty");
+                    return new ActionMessage("genomicRegionSearch.noSpanFileOrEmpty");
                 }
                 try {
                     reader = new BufferedReader(new InputStreamReader(
@@ -516,6 +509,10 @@ public class GenomicRegionSearchService
                 }
             }
         } else {
+            return new ActionMessage("genomicRegionSearch.spanInputType");
+        }
+
+        if (reader == null) {
             return new ActionMessage("genomicRegionSearch.spanInputType");
         }
 
@@ -535,8 +532,7 @@ public class GenomicRegionSearchService
 
             for (int i = 0; i < read; i++) {
                 if (buf[i] == 0) {
-                    return new ActionMessage("genomicRegionSearch.isNotText",
-                            "binary");
+                    return new ActionMessage("genomicRegionSearch.isNotText", "binary");
                 }
             }
 
@@ -1687,13 +1683,6 @@ public class GenomicRegionSearchService
         }
 
         return taxIds;
-    }
-
-    /**
-     *  To serve UCSC Lift-Over
-     */
-    public void serveLiftOver() {
-
     }
 
     /**

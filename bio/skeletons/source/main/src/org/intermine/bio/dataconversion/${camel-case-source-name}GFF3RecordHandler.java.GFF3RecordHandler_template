@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2014 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,7 +41,7 @@ public class ${camel-case-source-name}GFF3RecordHandler extends GFF3RecordHandle
         //
         //     Item feature = getFeature();
         //     String symbol = record.getAttributes().get("symbol");
-        //     feature.setAttrinte("symbol", symbol);
+        //     feature.setAttribute("symbol", symbol);
         //
         // Any new Items created can be stored by calling addItem().  For example:
         // 

@@ -97,7 +97,7 @@ public class InheritanceDotTask extends Task
         try {
             PrintWriter out = new PrintWriter(new FileWriter(file));
             File dir = new File(directory);
-            String packageBits[] = packageName.split("\\.");
+            String[] packageBits = packageName.split("\\.");
             for (int i = 0; i < packageBits.length; i++) {
                 dir = new File(dir, packageBits[i]);
             }

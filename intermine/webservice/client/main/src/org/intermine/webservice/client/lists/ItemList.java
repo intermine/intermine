@@ -44,7 +44,7 @@ import org.intermine.webservice.client.util.PQUtil;
  * See {@link InterMineBag}
  * @author Alex Kalderimis
  */
-public class ItemList extends AbstractSet<Item> implements Iterable<Item>
+public class ItemList extends AbstractSet<Item>
 {
 
     private final ServiceFactory services;
@@ -273,10 +273,10 @@ public class ItemList extends AbstractSet<Item> implements Iterable<Item>
      * Add new items to the list.
      *
      * This method will update the size of the list, and clear the items cache.
-     * @param items The items to add.
+     * @param newItems The items to add.
      **/
-    public void append(Item... items) {
-        appendItems(Arrays.asList(items));
+    public void append(Item... newItems) {
+        appendItems(Arrays.asList(newItems));
     }
 
     /**
@@ -294,23 +294,22 @@ public class ItemList extends AbstractSet<Item> implements Iterable<Item>
         return addAll(Arrays.asList(i));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean addAll(@SuppressWarnings("rawtypes") Collection items) {
+    public boolean addAll(Collection newItems) {
         int priorSize = getSize();
-        appendItems(items);
+        appendItems(newItems);
         return priorSize != getSize();
     }
 
     /**
      * Add items to this list by using a query.
-     * @param items The items to add to the list.
+     * @param newItems The items to add to the list.
      */
-    private void appendItems(Iterable<Item> items) {
+    private void appendItems(Iterable<Item> newItems) {
         PathQuery pq = new PathQuery(services.getModel());
         pq.addViews(getType() + ".id");
         Set<String> values = new HashSet<String>();
-        for (Item i: items) {
+        for (Item i: newItems) {
             values.add(Integer.toString(i.getId()));
         }
         pq.addConstraint(Constraints.oneOfValues(getType() + ".id", values));
@@ -370,7 +369,9 @@ public class ItemList extends AbstractSet<Item> implements Iterable<Item>
             res.rename(getName());
         } finally {
             try {
-                removalList.delete();
+                if (removalList != null) {
+                    removalList.delete();
+                }
             } catch (Exception e) {
                 // Ignore
             }

@@ -18,11 +18,8 @@ import org.intermine.webservice.client.core.ContentType;
 import org.intermine.webservice.client.core.Request;
 import org.intermine.webservice.client.core.RequestImpl;
 import org.intermine.webservice.client.core.Service;
-
-import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
-
 import org.intermine.webservice.client.widget.Widget;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -131,8 +128,7 @@ public class WidgetService extends Service
             List<Widget> ret = new ArrayList<Widget>();
             try {
                 for (int i = 0; i < length; i++) {
-                    ret.add(parseWidget(getFactory(),
-                                widgets.getJSONObject(i)));
+                    ret.add(parseWidget(widgets.getJSONObject(i)));
                 }
             } catch (JSONException e) {
                 throw new ServiceException("Error processing request: "
@@ -146,7 +142,7 @@ public class WidgetService extends Service
         }
     }
 
-    private Widget parseWidget(ServiceFactory factory, JSONObject json)
+    private static Widget parseWidget(JSONObject json)
         throws JSONException {
         String name = json.getString("name");
         String title = json.getString("title");

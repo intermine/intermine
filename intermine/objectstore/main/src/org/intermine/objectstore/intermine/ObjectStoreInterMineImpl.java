@@ -438,6 +438,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         missingTables.add(tables[i].toLowerCase());
                     }
                 }
+
+                // Check if there is a bioseg index in the database for faster range queries
                 boolean hasBioSeg = false;
                 Connection c = null;
                 try {
@@ -457,8 +459,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         }
                     }
                 }
+
+                // if we're above Postgres version 9.2 we can use the built-in range types
+                boolean useRangeTypes = database.isVersionAtLeast("9.2");
+
                 DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
-                        missingTables, formatVersion, hasBioSeg);
+                        missingTables, formatVersion, hasBioSeg, useRangeTypes);
                 os = new ObjectStoreInterMineImpl(database, schema);
                 os.description = osAlias;
 
@@ -547,8 +553,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 logTableConnection = getConnection();
                 if (!DatabaseUtil.tableExists(logTableConnection, tableName)) {
                     logTableConnection.createStatement().execute("CREATE TABLE " + tableName
-                        + "(timestamp bigint, optimise bigint, estimated bigint, "
-                        + "execute bigint, permitted bigint, convert bigint, iql text, sql text)");
+                            + "(timestamp bigint, optimise bigint, estimated bigint, execute "
+                            + "bigint, permitted bigint, convert bigint, iql text, sql text)");
                 }
                 logTableBatch = new Batch(new BatchWriterPostgresCopyImpl());
                 logTableName = tableName;
@@ -1046,7 +1052,13 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 + ", SQL Optimise: " + statsOptTime + ", Estimate: "
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
-        flushLogTable();
+
+        try {
+            logTableBatch.close(logTableConnection);
+        } catch (SQLException e1) {
+            LOG.error("Couldn't close OS log table.");
+        }
+
         Connection c = null;
         try {
             c = getConnection();

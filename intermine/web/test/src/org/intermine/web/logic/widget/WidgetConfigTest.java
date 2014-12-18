@@ -48,7 +48,7 @@ public class WidgetConfigTest extends WidgetConfigTestCase
         ids.add(e1.getId()); ids.add(e2.getId());
         list.addIdsToBag(ids, "Employee");
 
-        List<String> expected = new ArrayList();
+        List<String> expected = new ArrayList<String>();
         expected.add("ContractorA");
         expected.add("ContractorB");
 

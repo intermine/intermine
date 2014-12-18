@@ -16,19 +16,23 @@ The tests are normally run as part of the CI test suite. They can also be run
 locally, and of course should be when new tests are added or changes are made to
 existing tests.
 
-.. code-block:: bash
-    
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    nosetests
+```bash    
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+nosetests
+```
 
 Required Environment Variables
 ---------------------
 
 global use:
-TESTMODEL_URL - The base URL of the web application. Ex: http://localhost:8080/intermine-demo
+```
+TESTMODEL_BASE - The base URL of the web application. Ex: http://localhost:8080/intermine-demo
+```
 
 account-login-openid-test.py:
+```
 TESTMODEL_OPENID_NAME - The username of a Gmail account
 TESTMODEL_OPENID_PASSWORD - The password of a Gmail account
+```

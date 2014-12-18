@@ -283,14 +283,17 @@ public class EntrezPublicationsRetriever
         } catch (Throwable e) {
             throw new RuntimeException("failed to get all publications", e);
         } finally {
-            txn.commit();
-            db.close();
+            if (txn != null) {
+                txn.commit();
+            }
+            if (db != null) {
+                db.close();
+            }
             Thread.currentThread().setContextClassLoader(cl);
         }
-
     }
 
-    private void writeItems(Writer writer, Collection<Item> items) throws IOException {
+    private static void writeItems(Writer writer, Collection<Item> items) throws IOException {
         for (Item item: items) {
             writer.write(FullRenderer.render(item));
         }
@@ -299,7 +302,7 @@ public class EntrezPublicationsRetriever
     /**
      * Add a Map of pubication information to the Database
      */
-    private void addToDb(Transaction txn, Database db,
+    private static void addToDb(Transaction txn, Database db,
                          Map<String, Map<String, Object>> fromServerMap)
         throws IOException, DatabaseException {
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
@@ -342,8 +345,7 @@ public class EntrezPublicationsRetriever
 
         q.setConstraint(cs);
 
-        List<Publication> retval = (List<Publication>) ((List) os
-                .executeSingleton(q));
+        List<Publication> retval = ((List) os.executeSingleton(q));
         return retval;
     }
 
@@ -362,10 +364,9 @@ public class EntrezPublicationsRetriever
         return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Set<Item> mapToItems(ItemFactory itemFactory, Map map) {
+    private Set<Item> mapToItems(ItemFactory factory, Map map) {
         Set<Item> retSet = new HashSet<Item>();
-        Item publication = itemFactory.makeItemForClass("Publication");
+        Item publication = factory.makeItemForClass("Publication");
         retSet.add(publication);
         publication.setAttribute("pubMedId", (String) map.get("id"));
 
@@ -413,7 +414,7 @@ public class EntrezPublicationsRetriever
             for (String authorString : authors) {
                 Item author = authorMap.get(authorString);
                 if (author == null) {
-                    author = itemFactory.makeItemForClass("Author");
+                    author = factory.makeItemForClass("Author");
                     author.setAttribute("name", authorString);
                     authorMap.put(authorString, author);
                 }
@@ -711,6 +712,15 @@ public class EntrezPublicationsRetriever
             } else if ("Pages".equals(name)) {
                 pubMap.put("pages", characters.toString());
             } else if ("Author".equals(name)) {
+                String authorString = characters.toString();
+                @SuppressWarnings("unchecked")
+                List<String> authorList = (List<String>) pubMap.get("authors");
+                if (authorList == null) {
+                    authorList = new ArrayList<String>();
+                    pubMap.put("authors", authorList);
+                }
+                authorList.add(authorString);
+            } else if ("CollectiveName".equals(name)) {
                 String authorString = characters.toString();
                 @SuppressWarnings("unchecked")
                 List<String> authorList = (List<String>) pubMap.get("authors");

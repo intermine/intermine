@@ -1012,7 +1012,6 @@ public class PathQuery implements Cloneable
 
     /**
      * Returns the paths descriptions for the view.
-     * @param pq
      * @return A list of column names
      */
     public List<String> getColumnHeaders() {

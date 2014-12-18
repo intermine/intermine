@@ -6,5 +6,5 @@
     <pathDescription
         pathString="Gene.doAnnotation.ontologyTerm"
         description="Disease Ontology Term"/>
-    <constraint path="Gene" op="LOOKUP" value="%s"/>
+    <!--  constraint path="Gene" op="LOOKUP" value="geneids" -->
 </query>

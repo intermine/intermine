@@ -5,6 +5,7 @@
   
   <description>wrapper project for build/testing/cleaning everything in bio</description>
 
+  <import file="../../imbuild/tests.xml"/> 
   <import file="../../imbuild/library.xml"/> 
   <import file="../../imbuild/task.xml"/>
   <import file="../../imbuild/objectstore.xml"/>
@@ -29,18 +30,21 @@
     <subant inheritAll="false">
       <property name="test.results.dir" value="${test.results.dir}"/>
       <property name="generate.report" value="false"/>
-      <property name="no.dep" value="false"/>
-      <!--<property name="test.fork" value="yes"/>-->
+      <property name="no.dep" value="true"/>
+      <property name="test.fork" value="yes"/>
       <fileset dir="../..">
-        <!-- <include name="bio/sources/**/test/build.xml" />-->
-        <!-- bio-core tests pass in eclipse -->
-        <!-- <include name="bio/core/test/build.xml"/>-->
-        <include name="bio/postprocess/test/build.xml"/>
-        <include name="bio/tools/test/build.xml"/>
-        <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
+       <include name="bio/core/test/build.xml"/>
+       <include name="bio/postprocess/test/build.xml"/>
+       <include name="bio/tools/test/build.xml"/>
+       <exclude name="bio/sources/experimental-sources/**/test/build.xml"/>
+       <exclude name="bio/sources/example-sources/**/test/build.xml"/>
+       <!-- Requires all the sources to be built.
+       <include name="bio/sources/*/test/build.xml"/>
+       -->
       </fileset>
     </subant>
   </target>
+
   
   <target name="test-report" depends="init">
     <junitreport todir="${test.results.dir}">
