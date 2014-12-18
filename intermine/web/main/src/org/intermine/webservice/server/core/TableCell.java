@@ -14,8 +14,6 @@ import org.intermine.api.results.ResultCell;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
-import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
 
 /**
