@@ -47,6 +47,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
@@ -214,13 +215,11 @@ public class InterMineObjectFetcher extends Thread
         throws PathException, ObjectStoreException, IllegalAccessException {
         long objectParseStart = System.currentTimeMillis();
         long objectParseTime = 0L;
-        Set<Class<?>> objectClasses = Util.decomposeClass(object.getClass());
-        Class<?> objectTopClass = objectClasses.iterator().next();
-        ClassDescriptor classDescriptor =
-                os.getModel().getClassDescriptorByName(objectTopClass.getName());
+        Set<ClassDescriptor> classDescs =
+                os.getModel().getClassDescriptorsForClass(object.getClass());
 
         // create base doc for object
-        Document doc = createDocument(object, classDescriptor);
+        Document doc = createDocument(object, classDescs);
         HashSet<String> references = new HashSet<String>();
         HashMap<String, KeywordSearchFacetData> referenceFacetFields =
                 new HashMap<String, KeywordSearchFacetData>();
@@ -229,12 +228,12 @@ public class InterMineObjectFetcher extends Thread
         // its superclasses
         for (Entry<Class<? extends InterMineObject>, String[]> specialClass
                 : specialReferences.entrySet()) {
-            for (Class<?> objectClass : objectClasses) {
-                if (specialClass.getKey().isAssignableFrom(objectClass)) {
+            for (ClassDescriptor cld: classDescs) {
+                if (specialClass.getKey().isAssignableFrom(cld.getType())) {
                     for (String reference : specialClass.getValue()) {
-                        String fullReference =
-                                classDescriptor.getUnqualifiedName() + "."
-                                        + reference;
+                        // TODO: avoid the stringification - we have the cld, so we don't need
+                        // to roundtrip through the path resolution mechanism.
+                        String fullReference = cld.getUnqualifiedName() + "." + reference;
                         references.add(fullReference);
 
                         //check if this reference returns a field we are
@@ -402,10 +401,25 @@ public class InterMineObjectFetcher extends Thread
         return i;
     }
 
-    private Document createDocument(InterMineObject object, ClassDescriptor classDescriptor) {
+    private Float getMaximumBoost(Collection<ClassDescriptor> classDescriptors) {
+        Float boost = null;
+        for (ClassDescriptor cld: classDescriptors) {
+            Float thisBoost = classBoost.get(cld);
+            if (thisBoost == null) {
+                continue;
+            }
+            if (boost == null || thisBoost.compareTo(boost) > 0) {
+                boost = thisBoost;
+            }
+        }
+        return boost;
+    }
+
+    private Document
+    createDocument(InterMineObject object, Collection<ClassDescriptor> classDescriptors) {
         Document doc = new Document();
 
-        Float boost = classBoost.get(classDescriptor);
+        Float boost = getMaximumBoost(classDescriptors);
         if (boost != null) {
             doc.setBoost(boost.floatValue());
         }
@@ -415,13 +429,15 @@ public class InterMineObjectFetcher extends Thread
         doc.add(new Field("id", object.getId().toString(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED_NO_NORMS));
 
-        // special case for faceting
-        doc.add(new Field("Category", classDescriptor.getUnqualifiedName(), Field.Store.NO,
-                Field.Index.NOT_ANALYZED_NO_NORMS));
+        for (ClassDescriptor cld: classDescriptors) {
+         // special case for faceting
+            doc.add(new Field("Category", cld.getUnqualifiedName(), Field.Store.NO,
+                    Field.Index.NOT_ANALYZED_NO_NORMS));
 
-        addToDocument(doc, "classname", classDescriptor.getUnqualifiedName(), 1F, false);
+            addToDocument(doc, "classname", cld.getUnqualifiedName(), 1F, false);
 
-        addObjectToDocument(object, classDescriptor, doc);
+            addObjectToDocument(object, cld, doc);
+        }
 
         return doc;
     }
@@ -590,8 +606,7 @@ public class InterMineObjectFetcher extends Thread
         Query q = new Query();
         ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
 
-        org.intermine.pathquery.Path path =
-                new org.intermine.pathquery.Path(os.getModel(), pathString);
+        Path path = new Path(os.getModel(), pathString);
         List<ClassDescriptor> classDescriptors = path.getElementClassDescriptors();
         List<String> fields = path.getElements();
 
