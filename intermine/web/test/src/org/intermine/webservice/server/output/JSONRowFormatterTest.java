@@ -163,7 +163,7 @@ public class JSONRowFormatterTest extends TestCase {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(dummyAPI, props, wc, new ClassResourceOpener(getClass()));
+        InterMineContext.initialise(dummyAPI, props, wc, new ClassResourceOpener(getClass()));
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {

@@ -1231,18 +1231,22 @@ public final class KeywordSearch
      * set all the variables to NULL
      */
     public static void close() {
-        try {
-            reader.close();
-        } catch (IOException e) {
-            LOG.error("Not able to free Lucene index file.");
-            e.printStackTrace();
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                LOG.error("Not able to free Lucene index file.");
+                e.printStackTrace();
+            }
         }
         reader = null;
-        try {
-            boboIndexReader.close();
-        } catch (IOException e) {
-            LOG.error("Not able to close bobo Index Reader (Lucene).");
-            e.printStackTrace();
+        if (boboIndexReader != null) {
+            try {
+                boboIndexReader.close();
+            } catch (IOException e) {
+                LOG.error("Not able to close bobo Index Reader (Lucene).");
+                e.printStackTrace();
+            }
         }
         boboIndexReader = null;
         indexingQueue = null;

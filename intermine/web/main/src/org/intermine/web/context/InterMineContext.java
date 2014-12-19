@@ -68,7 +68,7 @@ public final class InterMineContext implements Shutdownable
      * @param wc The application configuration.
      * @param resourceOpener Something to use to open resources.
      */
-    public static synchronized void initilise(
+    public static synchronized void initialise(
             final InterMineAPI imApi,
             final Properties webProps,
             final WebConfig wc,

@@ -199,7 +199,7 @@ public class JSONRowIteratorTest extends TestCase {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(im, webProperties, new WebConfig(), new ClassResourceOpener(getClass()));
+        InterMineContext.initialise(im, webProperties, new WebConfig(), new ClassResourceOpener(getClass()));
 
     }
 

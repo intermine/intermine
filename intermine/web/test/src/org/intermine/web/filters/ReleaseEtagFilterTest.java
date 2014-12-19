@@ -33,7 +33,7 @@ public class ReleaseEtagFilterTest {
         webProperties = new Properties();
         webProperties.setProperty("project.releaseVersion", "testing");
         release = "testing-" + String.valueOf(org.intermine.web.logic.Constants.WEB_SERVICE_VERSION);
-        InterMineContext.initilise(
+        InterMineContext.initialise(
                 createMock(InterMineAPI.class),
                 webProperties,
                 createMock(WebConfig.class),

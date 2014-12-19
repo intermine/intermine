@@ -137,7 +137,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
-        InterMineContext.initilise(api, new Properties(), new WebConfig(), new ClassResourceOpener(getClass()));
+        InterMineContext.initialise(api, new Properties(), new WebConfig(), new ClassResourceOpener(getClass()));
     }
 
     /**

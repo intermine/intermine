@@ -292,7 +292,7 @@ public class InitialiserPlugin implements PlugIn
         SessionMethods.setInterMineAPI(servletContext, im);
         ResourceFinder finder = new ResourceFinder(servletContext);
 
-        InterMineContext.initilise(im, webProperties, webConfig, finder);
+        InterMineContext.initialise(im, webProperties, webConfig, finder);
         return im;
     }
 
