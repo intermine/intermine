@@ -29,10 +29,15 @@ public class QuickSearchJSONProcessor implements QuickSearchResultProcessor
     @Override
     public List<String> formatResult(KeywordSearchResult result, boolean hasNext) {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("type", result.getType());
+        // type is deprecated, but should work well for most users.
+        List<String> types = new ArrayList<String>(result.getTypes());
+        data.put("type", types.get(0));
+        data.put("types", types);
         data.put("id", result.getId());
         data.put("relevance", result.getScore());
-        data.put("fields", result.getFieldValues());
+        // Backwards compatible filler.
+        data.put("fields", result.getHeadlessFieldValues());
+        data.put("data", result.getFieldValues());
         JSONObject jo = new JSONObject(data);
         List<String> ret = new ArrayList<String>();
         ret.add(jo.toString());

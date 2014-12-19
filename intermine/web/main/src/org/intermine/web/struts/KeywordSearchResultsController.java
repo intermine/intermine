@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +79,7 @@ public class KeywordSearchResultsController extends TilesAction
                     "project.title", "unknown").toLowerCase());
         }
         KeywordSearch.initKeywordSearch(im, contextPath);
-        Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
+        Collection<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         int totalHits = 0;
 
         // term
@@ -193,7 +192,7 @@ public class KeywordSearchResultsController extends TilesAction
 
     @SuppressWarnings("unchecked")
     private Map<String, String> getFacetValues(HttpServletRequest request,
-            Vector<KeywordSearchFacetData> facets) {
+            Collection<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
         // if this is a new search (searchSubmit set) only keep facets if
         // searchSubmitRestricted used

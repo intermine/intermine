@@ -1198,8 +1198,17 @@ public final class KeywordSearch
      * get list of facet fields and names
      * @return map of internal fieldname -> displayed name
      */
-    public static Vector<KeywordSearchFacetData> getFacets() {
+    public static Collection<KeywordSearchFacetData> getFacets() {
         return facets;
+    }
+
+    private static boolean shouldDeleteIndex(File indexDir) {
+        if (!indexDir.exists()) {
+            LOG.warn("Index directory does not exist!");
+            return false;
+        }
+        // Delete by default - set delete.index = false for debugging.
+        return "true".equals(properties.getProperty("delete.index", "true"));
     }
 
     /**
@@ -1208,18 +1217,16 @@ public final class KeywordSearch
     public static void deleteIndexDirectory() {
         if (index != null && "FSDirectory".equals(index.getDirectoryType())) {
             File tempFile = ((FSDirectory) index.getDirectory()).getFile();
-            LOG.info("Deleting index directory: " + tempFile.getAbsolutePath());
 
-            if (tempFile.exists()) {
+            if (shouldDeleteIndex(tempFile)) {
+                LOG.debug("Deleting index directory: " + tempFile.getAbsolutePath());
                 String[] files = tempFile.list();
                 for (int i = 0; i < files.length; i++) {
                     LOG.debug("Deleting index file: " + files[i]);
                     new File(tempFile.getAbsolutePath() + File.separator + files[i]).delete();
                 }
                 tempFile.delete();
-                LOG.warn("Deleted index directory!");
-            } else {
-                LOG.warn("Index directory does not exist!");
+                LOG.info("Deleted index directory!");
             }
 
             index = null;

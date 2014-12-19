@@ -215,12 +215,14 @@ public class InterMineObjectFetcher extends Thread
         throws PathException, ObjectStoreException, IllegalAccessException {
         long objectParseStart = System.currentTimeMillis();
         long objectParseTime = 0L;
-        Set<ClassDescriptor> classDescs =
-                os.getModel().getClassDescriptorsForClass(object.getClass());
-
+        Set<Class<?>> clazzes = Util.decomposeClass(object.getClass());
+        Set<ClassDescriptor> classDescs = new HashSet<ClassDescriptor>();
+        for (Class<?> clazz: clazzes) {
+            classDescs.add(os.getModel().getClassDescriptorByName(clazz.getName()));
+        }
         // create base doc for object
         Document doc = createDocument(object, classDescs);
-        HashSet<String> references = new HashSet<String>();
+        Map<ClassDescriptor, Set<String>> references = new HashMap<ClassDescriptor, Set<String>>();
         HashMap<String, KeywordSearchFacetData> referenceFacetFields =
                 new HashMap<String, KeywordSearchFacetData>();
 
@@ -229,12 +231,15 @@ public class InterMineObjectFetcher extends Thread
         for (Entry<Class<? extends InterMineObject>, String[]> specialClass
                 : specialReferences.entrySet()) {
             for (ClassDescriptor cld: classDescs) {
-                if (specialClass.getKey().isAssignableFrom(cld.getType())) {
+                Class<?> type = cld.getType();
+                Set<String> refs = new HashSet<String>();
+                references.put(cld, refs);
+                if (specialClass.getKey().isAssignableFrom(type)) {
                     for (String reference : specialClass.getValue()) {
                         // TODO: avoid the stringification - we have the cld, so we don't need
                         // to roundtrip through the path resolution mechanism.
                         String fullReference = cld.getUnqualifiedName() + "." + reference;
-                        references.add(fullReference);
+                        refs.add(fullReference);
 
                         //check if this reference returns a field we are
                         //faceting by. if so, add it to referenceFacetFields
@@ -253,118 +258,121 @@ public class InterMineObjectFetcher extends Thread
         }
 
         // if we have not seen an object of this class before, query references
-        if (!seenClasses.contains(object.getClass())) {
-            LOG.info("Getting references for new class: " + object.getClass());
+        for (ClassDescriptor cld: classDescs) {
+            Class<? extends FastPathObject> clazz = cld.getType();
+            if (!seenClasses.contains(clazz)) {
+                LOG.info("Getting references for new class: " + clazz);
 
-            // query all references that we need
-            for (String reference : references) {
-                // LOG.info("Querying reference " + reference);
+                // query all references that we need
+                for (String reference : references.get(cld)) {
+                    // LOG.info("Querying reference " + reference);
 
-                Query queryReference = getPathQuery(reference);
+                    Query queryReference = getPathQuery(reference);
 
-                // do not count this towards objectParseTime
-                objectParseTime += (System.currentTimeMillis() - objectParseStart);
+                    // do not count this towards objectParseTime
+                    objectParseTime += (System.currentTimeMillis() - objectParseStart);
 
-                Results resultsc = os.execute(queryReference, 1000, true, false,
-                        true);
-                ((ObjectStoreInterMineImpl) os).goFaster(queryReference);
-                referenceResults.put(reference, new InterMineResultsContainer(
-                        resultsc));
-                LOG.info("Querying reference " + reference + " done -- "
-                        + resultsc.size() + " results");
+                    Results resultsc = os.execute(queryReference, 1000, true, false,
+                            true);
+                    ((ObjectStoreInterMineImpl) os).goFaster(queryReference);
+                    referenceResults.put(reference, new InterMineResultsContainer(resultsc));
+                    LOG.info("Querying reference " + reference + " done -- "
+                            + resultsc.size() + " results");
 
-                // start counting objectParseTime again
-                objectParseStart = System.currentTimeMillis();
+                    // start counting objectParseTime again
+                    objectParseStart = System.currentTimeMillis();
+                }
+
+                seenClasses.add((Class<? extends InterMineObject>) clazz);
             }
-
-            seenClasses.add(object.getClass());
         }
 
+
         // find all references and add them
-        for (String reference : references) {
-            InterMineResultsContainer resultsContainer =
-                    referenceResults.get(reference);
-            //step through the reference results (ordered) while ref.id = obj.id
-            while (resultsContainer.getIterator().hasNext()) {
-                @SuppressWarnings("rawtypes")
-                ResultsRow next = resultsContainer.getIterator().next();
+        for (Set<String> refSet: references.values()) {
+            for (String reference: refSet) {
+                InterMineResultsContainer resultsContainer = referenceResults.get(reference);
+                //step through the reference results (ordered) while ref.id = obj.id
+                while (resultsContainer.getIterator().hasNext()) {
+                    @SuppressWarnings("rawtypes")
+                    ResultsRow next = resultsContainer.getIterator().next();
 
-                // It is possible that the inner loop iterator "lags behind" the
-                // current object's id. See:
-                // https://github.com/intermine/intermine/issues/473
-                while (resultsContainer.getIterator().hasNext()
-                        && ((Integer) next.get(0)).compareTo(
-                                object.getId()) == -1) {
-                    next = resultsContainer.getIterator().next();
-                }
-
-                //reference is not for the current object?
-                if (!next.get(0).equals(object.getId())) {
-                    // go back one step
-                    if (resultsContainer.getIterator().hasPrevious()) {
-                        resultsContainer.getIterator().previous();
+                    // It is possible that the inner loop iterator "lags behind" the
+                    // current object's id. See:
+                    // https://github.com/intermine/intermine/issues/473
+                    while (resultsContainer.getIterator().hasNext()
+                            && ((Integer) next.get(0)).compareTo(
+                                    object.getId()) == -1) {
+                        next = resultsContainer.getIterator().next();
                     }
 
-                    break;
-                }
+                    //reference is not for the current object?
+                    if (!next.get(0).equals(object.getId())) {
+                        // go back one step
+                        if (resultsContainer.getIterator().hasPrevious()) {
+                            resultsContainer.getIterator().previous();
+                        }
 
-                // add reference to doc
-                addObjectToDocument((InterMineObject) next.get(1), null, doc);
+                        break;
+                    }
 
-                //check if this reference contains an attribute we need for a facet
-                KeywordSearchFacetData referenceFacet =
-                        referenceFacetFields.get(reference);
-                if (referenceFacet != null) {
-                    //handle PATH facets FIXME: UNTESTED!
-                    if (referenceFacet.getType() == KeywordSearchFacetType.PATH) {
-                        String virtualPathField =
-                                "path_" + referenceFacet.getName().toLowerCase();
-                        for (String field : referenceFacet.getFields()) {
-                            if (field.startsWith(reference + ".")) {
-                                String facetAttribute =
-                                        field.substring(field.lastIndexOf('.') + 1);
-                                Object facetValue = ((InterMineObject) next.get(1))
-                                    .getFieldValue(facetAttribute);
+                    // add reference to doc
+                    InterMineObject ref = (InterMineObject) next.get(1);
+                    addObjectToDocument(ref, null, doc);
 
-                                if (facetValue instanceof String
-                                        && !StringUtils
-                                                .isBlank((String) facetValue)) {
-                                    Field f = doc.getField(virtualPathField);
+                    //check if this reference contains an attribute we need for a facet
+                    KeywordSearchFacetData referenceFacet = referenceFacetFields.get(reference);
+                    if (referenceFacet != null) {
+                        //handle PATH facets FIXME: UNTESTED!
+                        if (referenceFacet.getType() == KeywordSearchFacetType.PATH) {
+                            String virtualPathField =
+                                    "path_" + referenceFacet.getName().toLowerCase();
+                            for (String field : referenceFacet.getFields()) {
+                                if (field.startsWith(reference + ".")) {
+                                    String facetAttribute =
+                                            field.substring(field.lastIndexOf('.') + 1);
+                                    Object facetValue = ref.getFieldValue(facetAttribute);
 
-                                    if (f != null) {
-                                        f.setValue(f.stringValue() + "/"
-                                                + facetValue);
-                                    } else {
-                                        doc.add(new Field(virtualPathField,
-                                                (String) facetValue,
-                                                Field.Store.NO,
-                                                Field.Index.NOT_ANALYZED_NO_NORMS));
+                                    if (facetValue instanceof String
+                                            && !StringUtils
+                                                    .isBlank((String) facetValue)) {
+                                        Field f = doc.getField(virtualPathField);
+
+                                        if (f != null) {
+                                            f.setValue(f.stringValue() + "/"
+                                                    + facetValue);
+                                        } else {
+                                            doc.add(new Field(virtualPathField,
+                                                    (String) facetValue,
+                                                    Field.Store.NO,
+                                                    Field.Index.NOT_ANALYZED_NO_NORMS));
+                                        }
                                     }
                                 }
                             }
-                        }
-                    } else {
-                        //SINGLE/MULTI facet
-                        //add attribute to document a second time, but unstemmed
-                        //and with the field name corresponding to the facet name
-                        String facetAttribute =
-                                referenceFacet.getField()
-                                        .substring(
-                                                referenceFacet.getField()
-                                                        .lastIndexOf('.') + 1);
-                        Object facetValue = ((InterMineObject) next.get(1))
-                            .getFieldValue(facetAttribute);
+                        } else {
+                            //SINGLE/MULTI facet
+                            //add attribute to document a second time, but unstemmed
+                            //and with the field name corresponding to the facet name
+                            String facetAttribute =
+                                    referenceFacet.getField()
+                                            .substring(
+                                                    referenceFacet.getField()
+                                                            .lastIndexOf('.') + 1);
+                            Object facetValue = ref.getFieldValue(facetAttribute);
 
-                        if (facetValue instanceof String
-                                && !StringUtils.isBlank((String) facetValue)) {
-                            doc.add(new Field(referenceFacet.getField(),
-                                    (String) facetValue, Field.Store.NO,
-                                    Field.Index.NOT_ANALYZED_NO_NORMS));
+                            if (facetValue instanceof String
+                                    && !StringUtils.isBlank((String) facetValue)) {
+                                doc.add(new Field(referenceFacet.getField(),
+                                        (String) facetValue, Field.Store.NO,
+                                        Field.Index.NOT_ANALYZED_NO_NORMS));
+                            }
                         }
                     }
                 }
             }
         }
+
         objectParseTime += (System.currentTimeMillis() - objectParseTime);
         return doc;
     }
@@ -430,11 +438,15 @@ public class InterMineObjectFetcher extends Thread
                 Field.Index.NOT_ANALYZED_NO_NORMS));
 
         for (ClassDescriptor cld: classDescriptors) {
-         // special case for faceting
+            // special case for faceting
             doc.add(new Field("Category", cld.getUnqualifiedName(), Field.Store.NO,
                     Field.Index.NOT_ANALYZED_NO_NORMS));
-
             addToDocument(doc, "classname", cld.getUnqualifiedName(), 1F, false);
+
+            for (ClassDescriptor superCld: cld.getAllSuperDescriptors()) {
+                doc.add(new Field("Category", superCld.getUnqualifiedName(), Field.Store.NO,
+                        Field.Index.NOT_ANALYZED_NO_NORMS));
+            }
 
             addObjectToDocument(object, cld, doc);
         }
@@ -448,9 +460,8 @@ public class InterMineObjectFetcher extends Thread
 
         // if we know the class, get a list of key fields
         if (classDescriptor != null) {
-            keyFields =
-                    ClassKeyHelper
-                            .getKeyFieldNames(classKeys, classDescriptor.getUnqualifiedName());
+            keyFields = ClassKeyHelper
+                    .getKeyFieldNames(classKeys, classDescriptor.getUnqualifiedName());
         } else {
             keyFields = Collections.emptyList();
         }

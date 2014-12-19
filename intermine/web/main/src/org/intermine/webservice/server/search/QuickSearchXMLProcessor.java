@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.web.search.KeywordSearchResult;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeXml;
@@ -36,7 +37,8 @@ public class QuickSearchXMLProcessor implements QuickSearchResultProcessor
         List<String> ret = new ArrayList<String>();
         StringBuffer sb = new StringBuffer(
                 String.format("<%s type=\"%s\" id=\"%d\" score=\"%f\">",
-                     TAG_NAME, result.getType(), result.getId(), result.getScore()));
+                     TAG_NAME,
+                     StringUtils.join(result.getTypes(), ","), result.getId(), result.getScore()));
         for (Entry<String, Object> kv: data.entrySet()) {
             sb.append(String.format("<%s name=\"%s\">", FIELD_TAG, escapeXml(kv.getKey())));
             sb.append(escapeXml(kv.getValue() + ""));
