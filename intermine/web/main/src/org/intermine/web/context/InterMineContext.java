@@ -168,7 +168,10 @@ public final class InterMineContext implements Shutdownable
     }
 
     /**
-     * Send the signal that shutdown is happening - try and release resources.
+     * Send the signal that shutdown is happening - try and release resources.  This class registers
+     * with ShutdownHook on construction, this method is called automatically on JVM shutdown and
+     * by InitialiserPlugin which calls ShutdownHook.shutdown() explicitly when a webapp is
+     * undeployed.
      */
     public static void doShutdown() {
         if (mailQueue != null && mailService != null) {

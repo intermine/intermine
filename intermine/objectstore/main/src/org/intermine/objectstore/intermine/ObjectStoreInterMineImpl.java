@@ -1053,10 +1053,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
 
-        try {
-            logTableBatch.close(logTableConnection);
-        } catch (SQLException e1) {
-            LOG.error("Couldn't close OS log table.");
+        if (logTableBatch != null) {
+            try {
+                logTableBatch.close(logTableConnection);
+            } catch (SQLException e1) {
+                LOG.error("Couldn't close OS log table.");
+            }
         }
 
         Connection c = null;

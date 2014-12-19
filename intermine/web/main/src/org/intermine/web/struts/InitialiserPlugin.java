@@ -82,10 +82,10 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.ShutdownHook;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.Constants;
@@ -904,30 +904,17 @@ public class InitialiserPlugin implements PlugIn
      */
     @Override
     public void destroy() {
-        if (userprofileOSW != null) {
-            try {
-                userprofileOSW.close();
-            } catch (ObjectStoreException e) {
-                LOG.warn("Error closing userprofile writer.", e);
-            }
-            ((ObjectStoreWriterInterMineImpl) userprofileOSW).getDatabase().shutdown();
-        }
-        if (os != null) {
-            if (os instanceof ObjectStoreInterMineImpl) {
-                try {
-                    ((ObjectStoreInterMineImpl) os).close();
-                } catch (ObjectStoreException e) {
-                    LOG.error("Couldn't shut down OS. Memory leaks!");
-                }
-                ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
-            }
-        }
-        if (trackerDelegate != null) {
-            trackerDelegate.close();
-        }
-        InterMineContext.doShutdown();
-    }
+        // We're undeploying the webapp so we need to shut everything down. The ShutdownHook will
+        // shutdown all objects that have registerted themselves. However, this doesn't get
+        // called automatically unless the JVM itself (tomcat) is shut down,
+        ShutdownHook.shutdown();
 
+        // The ShutdownHook is registered JVM-wide so unless we remove it a reference will be held
+        // to the current WebappClassLoader preventing it from being garbage collected. This will
+        // cause a memory leak, where tomcat would run out of PermGen space after several deploy
+        // cycles.
+        Runtime.getRuntime().removeShutdownHook(ShutdownHook.getInstance());
+    }
 
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist
