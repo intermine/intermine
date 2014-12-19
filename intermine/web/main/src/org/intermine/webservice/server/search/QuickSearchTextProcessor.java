@@ -40,7 +40,7 @@ public class QuickSearchTextProcessor implements QuickSearchResultProcessor
         Map<String, Object> data = new HashMap<String, Object>(result.getFieldValues());
         StringBuffer sb = new StringBuffer();
         sb.append(String.format("# %s:%d (%.3f) - ",
-                result.getType(), result.getId(), result.getScore()));
+                result.getTypes(), result.getId(), result.getScore()));
         sb.append(nl);
         for (Entry<String, Object> kv: data.entrySet()) {
             sb.append(TAB);

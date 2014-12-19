@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.servlet.ServletContext;
 
@@ -82,7 +81,7 @@ public class QuickSearch extends JSONService
         WebConfig wc = InterMineContext.getWebConfig();
 
         QuickSearchRequest input = new QuickSearchRequest();
-        Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
+        Collection<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
 
         ResultsWithFacets results = KeywordSearch.runBrowseWithFacets(
@@ -124,7 +123,7 @@ public class QuickSearch extends JSONService
         return attributes;
     }
 
-    private Map<String, String> getFacetValues(Vector<KeywordSearchFacetData> facets) {
+    private Map<String, String> getFacetValues(Collection<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
     PARAM_LOOP:
         for (@SuppressWarnings("unchecked")
