@@ -514,6 +514,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 } else {
                     if (!(field instanceof CollectionDescriptor)) {
                         lastSource = dataTracker.getSource(obj.getId(), fieldName);
+                        // TODO: replace this hack
+                        if (lastSource == null) lastSource=source;
                     }
                     if (field instanceof CollectionDescriptor || lastSource != null) {
                         copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);

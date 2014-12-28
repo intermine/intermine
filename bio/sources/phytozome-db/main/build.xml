@@ -1,0 +1,4 @@
+<project name="phytozome-db-tasks" default="default" basedir=".">
+  <description>build phytozome-db tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

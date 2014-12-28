@@ -7,6 +7,7 @@
 <class name="Homolog" is-interface="true">
   <attribute name="relationship" type="java.lang.String" />
   <attribute name="type" type="java.lang.String" />
+  <attribute name="method" type="java.lang.String" />
   <attribute name="tree" type="java.lang.String" />
   <attribute name="bootscore" type="java.lang.Double" />
   <attribute name="groupName" type="java.lang.String" />

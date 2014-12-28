@@ -130,19 +130,6 @@
       <property name="annotationVersion" value="v1.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
-    <source name="phytozome-chado-C.grandiflora" type="phytozome-db">
-      <property name="source.db.name" value="phytozome" />
-      <property name="genus" value="Capsella" />
-      <property name="species" value="grandiflora" />
-      <property name="dbxrefId" value="7271520" />
-      <property name="proteomeId" value="266" />
-      <property name="taxonId" value="264402" />
-      <property name="dataSourceName" value="phytozome-C.grandiflora" />
-      <property name="shortName" value="C. grandiflora" />
-      <property name="version" value="current" />
-      <property name="annotationVersion" value="v1.1" />
-      <property name="dataSetTitle" value="Phytozome v10" />
-    </source>
     <source name="phytozome-chado-C.papaya" type="phytozome-db">
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Carica" />
@@ -155,6 +142,20 @@
       <property name="shortName" value="C. papaya" />
       <property name="version" value="current" />
       <property name="annotationVersion" value="ASGPBv0.4" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
+
+    <source name="phytozome-chado-C.grandiflora" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Capsella" />
+      <property name="species" value="grandiflora" />
+      <property name="dbxrefId" value="7271520" />
+      <property name="proteomeId" value="266" />
+      <property name="taxonId" value="264402" />
+      <property name="dataSourceName" value="phytozome-C.grandiflora" />
+      <property name="shortName" value="C. grandiflora" />
+      <property name="version" value="current" />
+      <property name="annotationVersion" value="v1.1" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
     <source name="phytozome-chado-C.reinhardtii" type="phytozome-db">
@@ -185,6 +186,49 @@
       <property name="annotationVersion" value="v1.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
+
+    <source name="phytozome-chado-C.grandiflora-chrom-merge" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Capsella" />
+      <property name="species" value="grandiflora" />
+      <property name="dbxrefId" value="7271520" />
+      <property name="proteomeId" value="266" />
+      <property name="taxonId" value="264402" />
+      <property name="dataSourceName" value="phytozome-C.grandiflora" />
+      <property name="shortName" value="C. grandiflora" />
+      <property name="version" value="current" />
+      <property name="annotationVersion" value="v1.1" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
+    <source name="phytozome-chado-C.reinhardtii-chrom-merge" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Chlamydomonas" />
+      <property name="species" value="reinhardtii" />
+      <property name="dbxrefId" value="7251957" />
+      <property name="proteomeId" value="281" />
+      <property name="taxonId" value="3055" />
+      <property name="dataSourceName" value="phytozome-C.reinhardtii" />
+      <property name="commonName" value="Green algae" />
+      <property name="shortName" value="C. reinhardtii" />
+      <property name="version" value="current" />
+      <property name="annotationVersion" value="v5.5" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
+    <source name="phytozome-chado-C.rubella-chrom-merge" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Capsella" />
+      <property name="species" value="rubella" />
+      <property name="dbxrefId" value="3455688" />
+      <property name="proteomeId" value="183" />
+      <property name="taxonId" value="81985" />
+      <property name="dataSourceName" value="phytozome-C.rubella" />
+      <property name="commonName" value="Red shepherd's purse" />
+      <property name="shortName" value="C. rubella" />
+      <property name="version" value="current" />
+      <property name="annotationVersion" value="v1.0" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
+
     <source name="phytozome-chado-C.sativus" type="phytozome-db">
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Cucumis" />
@@ -479,6 +523,20 @@
       <property name="annotationVersion" value="v3.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
+    <source name="phytozome-chado-P.trichocarpa-redo" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Populus" />
+      <property name="species" value="trichocarpa" />
+      <property name="dbxrefId" value="3496333" />
+      <property name="proteomeId" value="210" />
+      <property name="taxonId" value="3694" />
+      <property name="dataSourceName" value="phytozome-P.trichocarpa" />
+      <property name="commonName" value="Western poplar" />
+      <property name="shortName" value="P. trichocarpa" />
+      <property name="version" value="current" />
+      <property name="annotationVersion" value="v3.0" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
     <source name="phytozome-chado-P.virgatum" type="phytozome-db">
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Panicum" />
@@ -687,6 +745,14 @@
       <property name="createrelations" value="false" />
       <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4835,4836,4837,4838,4839,4840,4841,4842,4843,4844,4845,4846" />
     </source>
+    <source name="pac-clusters-reinsert" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4835,4836,4837,4838,4839,4840,4841,4842,4843,4844,4845,4846" />
+    </source>
+
     <source name="diversity-P.vulgaris" type="gatkvcf">
       <property name="proteomeId" value="218" />
       <property name="makeLinks" value="false" />
@@ -703,7 +769,25 @@
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
     </source>
+
     <source name="diversity-B.distachyon" type="gatkvcf">
+      <property name="proteomeId" value="283" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-B.distachyon" />
+      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
+    </source>
+
+    <source name="diversity-B.distachyon-consequence" type="gatkvcf">
+      <property name="proteomeId" value="283" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-B.distachyon" />
+      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
+    </source>
+    <source name="diversity-B.distachyon-redo" type="gatkvcf">
       <property name="proteomeId" value="283" />
       <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
@@ -727,6 +811,97 @@
       <property name="dataSourcename" value="diversity-M.esculenta" />
       <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
     </source>
+
+    <source name="diversity-P.vulgaris-json" type="gatkvcf">
+      <property name="proteomeId" value="218" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.vulgaris" />
+      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
+    </source>
+    <source name="diversity-P.vulgaris-json-redo" type="gatkvcf">
+      <property name="proteomeId" value="218" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.vulgaris" />
+      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
+    </source>
+    <source name="diversity-P.trichocarpa-json" type="gatkvcf">
+      <property name="proteomeId" value="210" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.trichocarpa" />
+      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
+    </source>
+    <source name="diversity-B.distachyon-json" type="gatkvcf">
+      <property name="proteomeId" value="283" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-B.distachyon" />
+      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
+    </source>
+    <source name="diversity-E.grandis-json" type="gatkvcf">
+      <property name="proteomeId" value="201" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-E.grandis" />
+      <property name="dataSetTitle" value="E.grandis Natural Diversity" />
+    </source>
+    <source name="diversity-M.esculenta-json" type="gatkvcf">
+      <property name="proteomeId" value="147" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-M.esculenta" />
+      <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
+    </source>
+
+    <source name="diversity-P.vulgaris-json-corrected" type="gatkvcf">
+      <property name="proteomeId" value="218" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.vulgaris" />
+      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
+    </source>
+    <source name="diversity-P.trichocarpa-json-corrected" type="gatkvcf">
+      <property name="proteomeId" value="210" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.trichocarpa" />
+      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
+    </source>
+    <source name="diversity-B.distachyon-json-corrected" type="gatkvcf">
+      <property name="proteomeId" value="283" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-B.distachyon" />
+      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
+    </source>
+    <source name="diversity-E.grandis-json-corrected" type="gatkvcf">
+      <property name="proteomeId" value="201" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-E.grandis" />
+      <property name="dataSetTitle" value="E.grandis Natural Diversity" />
+    </source>
+    <source name="diversity-M.esculenta-json-corrected" type="gatkvcf">
+      <property name="proteomeId" value="147" />
+      <property name="makeLinks" value="false" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-M.esculenta" />
+      <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
+    </source>
+
     <source name="diversity-P.trichocarpa-samples" type="vcfsampleinfo">
       <property name="proteomeId" value="210"/>
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/"/>
@@ -757,7 +932,6 @@
       <property name="dataSourcename" value="diversity-M.esculenta" />
       <property name="dataSetTitle" value="M.esculenta Natural Diversity Sample Info" />
     </source>
-
     <source name="cufflinks-P.vulgaris-info" type="rnaseq-experiment-info">
       <property name="proteomeId" value="218" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Pvulgaris/" />
@@ -794,6 +968,21 @@
       <property name="dataSourceName" value="rnaseq-G.max" />
       <property name="dataSetTitle" value="G.max RNA-seq" />
     </source>
+    <source name="cufflinks-E.grandis" type="cufflinks">
+      <property name="proteomeId" value="201" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Egrandis/" />
+      <property name="dataSourceName" value="rnaseq-E.grandis" />
+      <property name="dataSetTitle" value="E.grandis RNA-seq" />
+    </source>
+    <source name="cufflinks-E.grandis-info" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="201" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Egrandis/" />
+      <property name="dataSourceName" value="rnaseq-E.grandis" />
+      <property name="dataSetTitle" value="E.grandis RNA-seq Info" />
+    </source>
+    <source name="phytozome-homologs" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+    </source>
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml" />
     </source>
@@ -812,6 +1001,7 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro-go/" />
     </source>
+
     <source name="Panther-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/interproscan/data/panther/8.1/model/globals/" />
       <property name="src.data.file" value="names.tab" />
@@ -819,6 +1009,14 @@
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter" />
     </source>
+    <source name="Panther-terms-reload" type="ontology-terms">
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
+      <property name="src.data.file" value="names.tab" />
+      <property name="dataSetTitle" value="PANTHER" />
+      <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
+      <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter" />
+    </source>
+
     <source name="Enzyme-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/enzyme-terms/" />
       <property name="src.data.file" value="enzyme.dat" />
@@ -870,6 +1068,7 @@
     <source name="Kegg-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-terms/" />
       <property name="src.data.file" value="ko00001.keg" />
+      <property name="src.map.file" value="kegg_mapping.tsv" />
       <property name="dataSetTitle" value="KEGG" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.KeggTermsConverter" />
       <property name="dataSetURL" value="http://www.genome.jp" />
@@ -880,6 +1079,14 @@
       <property name="converter.class" value="org.intermine.bio.dataconversion.ProfileTermsConverter" />
       <property name="dataSetTitle" value="PROFILE" />
       <property name="dataSourceName" value="PROFILE" />
+      <property name="dataSetURL" value="http://www.expasy.org/prosite" />
+    </source>
+    <source name="Prosite-terms" type="ontology-terms">
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/profile-terms/" />
+      <property name="src.data.file" value="prosite.dat" />
+      <property name="converter.class" value="org.intermine.bio.dataconversion.PrositeTermsConverter" />
+      <property name="dataSetTitle" value="PROSITE" />
+      <property name="dataSourceName" value="PROSITE" />
       <property name="dataSetURL" value="http://www.expasy.org/prosite" />
     </source>
     <source name="Superfamily-terms" type="ontology-terms">
@@ -927,6 +1134,7 @@
     <source name="Gene3D-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/gene3d-terms/" />
       <property name="src.data.file" value="gene3d.lib" />
+      <property name="src.map.file" value="model_to_family_map.csv" />
       <property name="dataSetTitle" value="GENE3D" />
       <property name="dataSourceName" value="GENE3D" />
       <property name="dataSetURL" value="http://gene3d.biochem.ucl.ac.uk/Gene3D" />
@@ -940,18 +1148,6 @@
       <property name="dataSetURL" value="http://www.ebi.ac.uk/interpro" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.OntologyTermsXMLConverter" />
     </source>
-    <source name="tsv-synonyms" type="tsv-synonyms">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms" />
-      <property name="src.data.file" value="synonyms.tsv" />
-    </source>
-    <source name="organism-version" type="organism-version">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/organism-version" />
-      <property name="src.data.file" value="organism-version.tsv" />
-    </source>
-    <source name="organism-version-repeat" type="organism-version">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/organism-version" />
-      <property name="src.data.file" value="organism-version.tsv" />
-    </source>
   </sources>
   <post-processing>
     <!--post-process name="create-references" /-->
@@ -960,9 +1156,13 @@
     <!--post-process name="do-sources" /-->
     <!--post-process name="create-gene-flanking-features" /-->
     <post-process name="summarise-objectstore" />
-    <!--post-process name="create-autocomplete-index" /-->
-    <!--post-process name="create-search-index" /-->
-    <!--post-process name="add-uniprot-ids" /-->
-    <!--post-process name="transfer-go-terms" /-->
+    <post-process name="create-autocomplete-index" />
+    <post-process name="create-search-index" />
+    <post-process name="add-uniprot-ids" />
+    <post-process name="transfer-go-terms" />
+    <post-process name="transfer-ontology-terms" />
+    <post-process name="name-features" />
+
+    
   </post-processing>
 </project>

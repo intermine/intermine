@@ -180,8 +180,8 @@ public class PacClustersConverter extends BioDBConverter
           p.setReference("organism",organismMap.get(proteomeId));
           proteinMap.get(proteomeId).put(proteinName,p);
         }
-        family.addToCollection("protein", proteinMap.get(proteomeId).get(proteinName));
-        proteinMap.get(proteomeId).get(proteinName).addToCollection("proteinFamily",family.getIdentifier());
+        //family.addToCollection("protein", proteinMap.get(proteomeId).get(proteinName));
+        //proteinMap.get(proteomeId).get(proteinName).addToCollection("proteinFamily",family.getIdentifier());
         String geneName = res.getString("locusName");
         if (!geneMap.get(proteomeId).containsKey(geneName)) {
           Item g = createItem("Gene");
@@ -190,19 +190,26 @@ public class PacClustersConverter extends BioDBConverter
           geneMap.get(proteomeId).put(geneName,g);
         }
         family.addToCollection("gene", geneMap.get(proteomeId).get(geneName));
+        Item pfm = createItem("ProteinFamilyMember");
+        pfm.setAttribute("membershipDetail", res.getString("name"));
+        pfm.setReference("organism", organismMap.get(proteomeId));
+        pfm.setReference("protein", proteinMap.get(proteomeId).get(proteinName));
+        pfm.setReference("proteinFamily",family.getIdentifier());
+        store(pfm);
+        family.addToCollection("member",pfm.getIdentifier());
        
       }
       res.close();
       // register the organism counts
       Integer memberCount = new Integer(0);
       for( String proteomeId : organismCount.keySet()) {
-        memberCount += organismCount.get(proteomeId);
+        memberCount += organismCount.get(proteomeId);/*
         Item count = createItem("ProteinFamilyOrganism");
         count.setAttribute("count", organismCount.get(proteomeId).toString());
         count.setReference("proteinFamily",family.getIdentifier());
         count.setReference("organism",organismMap.get(proteomeId));
         family.addToCollection("proteinFamilyOrganism",count.getIdentifier());
-        store(count);
+        store(count);*/
       }
       family.setAttribute("memberCount",memberCount.toString());
       return idToName;
@@ -266,10 +273,12 @@ public class PacClustersConverter extends BioDBConverter
         String query = "select peptideName,"
                              + " locusName, "
                              + " cast(t.id as char) as transcriptId, "
-                             + " cast(p.id as char) as proteomeid from"
-                             + " clusterJoin c, proteome p, transcript t"
+                             + " cast(p.id as char) as proteomeid, "
+                             + " m.name from"
+                             + " clusterJoin c, proteome p, transcript t, membershipDetail m"
                              + " where clusterId="+clusterId 
                              + " and memberId=t.id and c.active=1"
+                             + " and m.id=memShipDetailId"
                              + " and t.active=1 and p.id=c.proteomeId";
         res = stmt.executeQuery(query);
       } catch (SQLException e) {

@@ -58,7 +58,7 @@ public class GeneHomologDisplayer extends ReportDisplayer {
       LOG.info("Entering GeneHomologDisplayer.display for "+geneObj.getPrimaryIdentifier());
       LOG.info("Id is "+geneObj.getId());
 
-      // query the consequences, snps and location
+      // query the homologs
       PathQuery query = getHomologTable(geneObj.getId());
       Profile profile = SessionMethods.getProfile(session);
       PathQueryExecutor exec = im.getPathQueryExecutor(profile);
@@ -78,9 +78,9 @@ public class GeneHomologDisplayer extends ReportDisplayer {
 
         ArrayList<String> thisRow = new ArrayList<String>();
 
-        // copy columns 1-9:
+        // copy columns,
         // replace NULL with &nbsp;
-        for(int i=0;i<9;i++) {
+        for(int i=0;i<6;i++) {
           if ( (resElement.get(i) != null) && (resElement.get(i).getField() != null)) {
             thisRow.add(resElement.get(i).getField().toString());
           } else {
@@ -97,17 +97,14 @@ public class GeneHomologDisplayer extends ReportDisplayer {
 
   private PathQuery getHomologTable(Integer id) {
     PathQuery query = new PathQuery(im.getModel());
-    query.addViews( "Homolog.gene1.id",
-        "Homolog.gene1.primaryIdentifier",
-        "Homolog.gene1.organism.shortName",
+    query.addViews( "Homolog.id",
+        "Homolog.groupName",
         "Homolog.gene2.id",
         "Homolog.gene2.primaryIdentifier",
         "Homolog.gene2.organism.shortName",
-        "Homolog.relationship",
-        "Homolog.proteinfamily.id",
-        "Homolog.proteinfamily.clusterId"
+        "Homolog.relationship"
         );
-query.addOrderBy("Homolog.gene1.primaryIdentifier", OrderDirection.ASC);
+query.addOrderBy("Homolog.groupName", OrderDirection.ASC);
 query.addOrderBy("Homolog.gene2.primaryIdentifier", OrderDirection.ASC);
 query.addConstraint(Constraints.eq("Homolog.gene1.id",id.toString()));
     return query;

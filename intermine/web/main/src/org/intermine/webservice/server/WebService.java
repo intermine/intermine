@@ -43,6 +43,7 @@ import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -343,6 +344,12 @@ public abstract class WebService {
                 initOutput();
                 checkEnabled();
                 authenticate();
+                // JWC: test on authentication always.
+                if (!SessionMethods.getProfile(request.getSession()).isLoggedIn()) {
+                  LOG.info("User is not logged in.");
+                  //response.sendRedirect("https://signon.phytozome.net/");
+                  //return;
+                }
                 initialised = true;
                 postInit();
                 validateState();

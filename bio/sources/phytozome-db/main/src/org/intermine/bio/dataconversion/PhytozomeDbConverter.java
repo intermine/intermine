@@ -225,7 +225,7 @@ public class PhytozomeDbConverter extends BioDBConverter
       while (annRes.next()) {
         // check for duplicates
         if (annotationDbxrefId != null &&
-            !annotationDbxrefId.toString().equals(annRes.getInt("dbxref_id")) ) {
+            !annotationDbxrefId.equals(annRes.getInt("dbxref_id")) ) {
           throw new BuildException("Retrieved annotation dbxref_id's from CHADO.");
         }
         annotationDbxrefId = annRes.getInt("dbxref_id");
@@ -264,7 +264,7 @@ public class PhytozomeDbConverter extends BioDBConverter
       ResultSet assRes = stmt.executeQuery(assQuery);
       while (assRes.next()) {
         // check for duplicates
-        if (assemblyDbxrefId != null && !assemblyDbxrefId.equals(annRes.getInt("dbxref_id")) ) {
+        if (assemblyDbxrefId != null && !assemblyDbxrefId.equals(assRes.getInt("dbxref_id")) ) {
           throw new BuildException("Retrieved multiple assembly dbxref_id's.");
         }
         assemblyDbxrefId = assRes.getInt("dbxref_id");

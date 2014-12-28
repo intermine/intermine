@@ -146,7 +146,8 @@ public class InparanoidHomologsConverter extends BioFileConverter
                 String gene2 = "PAC:"+fields2[i2];
                 o.setReference("gene1",getGene(gene1,p1));
                 o.setReference("gene2",getGene(gene2,p2));
-                o.setAttribute("groupName",id+"_"+p1.toString()+"_"+p2.toString());
+                o.setAttribute("groupName",p1.toString()+"_"+p2.toString()+"_"+id);
+                o.setAttribute("method", "inParanoid");
                 try {
                   store(o);
                 } catch (ObjectStoreException e) {

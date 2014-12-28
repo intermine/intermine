@@ -57,6 +57,7 @@ public class AddUniProtIds {
   // the hash of what we read from the uniprot file. First key is taxonId, Second is md5sum
   private HashMap<Integer,HashMap<String,ArrayList<UniProtInfo>>> seqToUniProtId =
       new HashMap<Integer,HashMap<String,ArrayList<UniProtInfo>>>();
+  private int entryCtr = 0;
   
   private static final Logger LOG = Logger.getLogger(AddUniProtIds.class);
 
@@ -86,11 +87,11 @@ public class AddUniProtIds {
     int ctr = 0;
     int nRepeats = 0;
     boolean readingSequence = false;
-    Pattern taxonIdPattern = Pattern.compile("OX\\s+NCBI_TaxID=(\\d+);");
+    Pattern taxonIdPattern = Pattern.compile("OX\\s+NCBI_TaxID=(\\d+).*");
     Pattern accessionPattern = Pattern.compile("AC\\s+(\\w+);.*");
     Pattern nonTerminalFivePrimePattern = Pattern.compile("FT\\s+NON_TER\\s+1\\s+1");
     Pattern nonTerminalPattern = Pattern.compile("FT\\s+NON_TER");
-    Pattern geneNamePattern = Pattern.compile("GN\\s+(\\w.*)");
+    Pattern geneNamePattern = Pattern.compile("..\\s+(\\w.*)");
     UniProtInfo uPI = new UniProtInfo();
     try {
       while ( (line = in.readLine()) != null) {
@@ -130,7 +131,7 @@ public class AddUniProtIds {
           if (m.matches()) {
             uPI.setAccession(m.group(1));
           }
-        }  else if ( line.startsWith("GN")) {
+        }  else if ( line.startsWith("GN") || line.startsWith("DR") ) {
           Matcher m = geneNamePattern.matcher(line);
           if (m.matches()) {
             uPI.addGeneNames(m.group(1));
@@ -151,7 +152,7 @@ public class AddUniProtIds {
     }
     try {
       in.close();
-      LOG.info("Read "+ctr+" proteins from file with "+nRepeats+" repeats.");
+      LOG.info("Read "+entryCtr+" proteins from file.");
     } catch (IOException e) {
       throw new BuildException("Problem when trying to close UniProt file.");
     }
@@ -162,12 +163,7 @@ public class AddUniProtIds {
   private void populateOrgMap() {
     Query q = new Query();
     q.setDistinct(true);
-    QueryClass orgObj;
-    try {
-      orgObj = new QueryClass(Class.forName("org.intermine.model.bio.Organism"));
-    } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    }
+    QueryClass orgObj = new QueryClass(Organism.class);
     q.addFrom(orgObj);
     q.addToSelect(orgObj);
     Results res = os.execute(q, 1000, true, true, true);
@@ -185,7 +181,7 @@ public class AddUniProtIds {
   
   public void execute() throws ObjectStoreException {
     Results results = BioQueries.findObjects(os,
-        Protein.class, false, true, 1000);
+        Protein.class, false, true, 100000);
 
     dataSet = (DataSet) DynamicUtil.createObject(Collections
         .singleton(DataSet.class));
@@ -213,8 +209,6 @@ public class AddUniProtIds {
     osw.store(dataSet);
     LOG.info("Added UniProt Ids for " + added + " of " + count + " proteins.");
     osw.commitTransaction();
-    
-    
   }
   private int lookUpAndStoreUniProtId(Protein prot, Sequence seq) {
 
@@ -289,6 +283,9 @@ public class AddUniProtIds {
               }
             }
           }
+          // report a sequence match
+          LOG.info("Protein "+prot.getPrimaryIdentifier()+" has the same sequence is "+uPI.getAccession());
+          System.out.println("Protein "+prot.getPrimaryIdentifier()+" has the same sequence is "+uPI.getAccession());
         }
       }
     }
@@ -312,9 +309,14 @@ public class AddUniProtIds {
   }
   private void processLastRecord(UniProtInfo uPI) {
     // process if not null
-    if (uPI == null || uPI.getAccession() == null || 
-        uPI.getTaxon() == null || uPI.getSequence() == null) {
-      return;
+    if (uPI == null ) {
+      LOG.info("Not processing record: UPI is null");
+    } else if ( uPI.getAccession() == null ) {
+      LOG.info("Not processing record: accession is null");
+    } else if ( uPI.getTaxon() == null ) {
+      LOG.info("Not processing record: taxon is null");
+    } else if ( uPI.getSequence() == null) {
+      LOG.info("Not processing record: seqence is null.");
     } else {
       if (!uPI.getThreePrimePartial() && !uPI.getSequence().endsWith("*")) {
         uPI.appendSeq("*");
@@ -326,7 +328,12 @@ public class AddUniProtIds {
         seqToUniProtId.get(uPI.getTaxon()).put(uPI.getMD5(), new ArrayList<UniProtInfo>());
       }
       seqToUniProtId.get(uPI.getTaxon()).get(uPI.getMD5()).add(uPI);
+      entryCtr++;
+      if ( (entryCtr%10000) == 0) {
+        LOG.info("Read "+entryCtr+" proteins from file.");
+      }
     }
+    return;
   }
   
   public static String calcMD5(String s) {
@@ -414,6 +421,8 @@ public class UniProtInfo {
       String[] bits = p.trim().split("=");
       if (bits.length==2) {
         geneNames.add(bits[1].trim());
+      } else if (bits.length==1) {
+        geneNames.add(bits[0].trim());
       }
     }
   }
