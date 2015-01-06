@@ -61,7 +61,7 @@ provided to the setup scripts as `PSQL_USER`, `PSQL_PWD`,
 Copyright and Licence
 ------------------------
 
-Copyright (C) 2002-2014 FlyMine
+Copyright (C) 2002-2015 FlyMine
 
 See [LICENSE](LICENSE) file for licensing information.
 
