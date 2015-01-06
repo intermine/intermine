@@ -709,7 +709,7 @@ public abstract class WebUtil
                 return true;
             }
         } catch (PathException e) {
-            return false;
+            // Ignore. Dynamic objects can be screwy.
         }
         return false;
     }
