@@ -13,6 +13,7 @@ package org.intermine.metadata;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
@@ -428,43 +429,78 @@ public final class TypeUtil
     }
 
     /**
+     * Encapsulate the logic of requesting an object of a class named <code>name</name>
+     * where that class has a default no-arguments constructor. If any of the contracts are
+     * violated you will get an IllegalArgumentException.
+     * @param <T> The type of the object we are instantiating, for type inference purposes.
+     * @param typeName The name of the class.
+     * @return An instance of that class.
+     */
+    public static <T> T createNew(String typeName) {
+        @SuppressWarnings("unchecked") // If typeName doesn't refer to the class of T, then BOOM!
+        Class<T> clazz = (Class<T>) getTypeByName(typeName);
+        if (clazz == null) {
+            throw new IllegalArgumentException("Cannot get class for " + typeName);
+        }
+        try {
+            Constructor<T> constructor = clazz.getConstructor(new Class[] {});
+            return constructor.newInstance(new Object[] {});
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot create new " + typeName, e);
+        }
+    }
+
+    /**
      * Returns the Class for a given name (promoting primitives to their container class)
+     * and returning <code>null</code> if the name does not refer to any known class.
      *
-     * @param type a classname
+     * @param name a classname
      * @return the corresponding Class
      */
-    public static Class<?> instantiate(String type) {
-        if (type.equals(Integer.TYPE.toString())) {
+    public static Class<?> getTypeByName(String name) {
+        if (name.equals(Integer.TYPE.toString())) {
             return Integer.class;
         }
-        if (type.equals(Boolean.TYPE.toString())) {
+        if (name.equals(Boolean.TYPE.toString())) {
             return Boolean.class;
         }
-        if (type.equals(Double.TYPE.toString())) {
+        if (name.equals(Double.TYPE.toString())) {
             return Double.class;
         }
-        if (type.equals(Float.TYPE.toString())) {
+        if (name.equals(Float.TYPE.toString())) {
             return Float.class;
         }
-        if (type.equals(Long.TYPE.toString())) {
+        if (name.equals(Long.TYPE.toString())) {
             return Long.class;
         }
-        if (type.equals(Short.TYPE.toString())) {
+        if (name.equals(Short.TYPE.toString())) {
             return Short.class;
         }
-        if (type.equals(Byte.TYPE.toString())) {
+        if (name.equals(Byte.TYPE.toString())) {
             return Byte.class;
         }
-        if (type.equals(Character.TYPE.toString())) {
+        if (name.equals(Character.TYPE.toString())) {
             return Character.class;
         }
         Class<?> cls = null;
         try {
-            cls = Class.forName(type);
+            cls = Class.forName(name);
         } catch (Exception e) {
             // do nothing
         }
         return cls;
+    }
+
+    /**
+     * Returns the Class for a given name (promoting primitives to their container class)
+     *
+     * @param type a class-name
+     * @deprecated This method is named incorrectly - use <code>getTypeByName</code> instead.
+     * @return the corresponding Class
+     */
+    @Deprecated
+    public static Class<?> instantiate(String type) {
+        return getTypeByName(type);
     }
 
 

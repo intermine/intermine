@@ -287,7 +287,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
         ObjectStoreInterMineImpl objectStoreInterMineImpl = ((ObjectStoreInterMineImpl) os);
         List<String> precomputes = objectStoreInterMineImpl.precompute(q, indexes, "test");
-        String tableName = precomputes.get(0);
+        String tableName = String.valueOf(precomputes.get(0));
 
         Connection con = null;
         Map indexMap = new HashMap();

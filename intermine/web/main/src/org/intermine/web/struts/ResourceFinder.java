@@ -12,9 +12,14 @@ package org.intermine.web.struts;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
 import javax.servlet.ServletContext;
+
+import org.intermine.web.logic.ResourceOpener;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -26,10 +31,10 @@ import java.util.Collection;
  *
  * @author Alex Kalderimis
  */
-public class ResourceFinder
+public class ResourceFinder implements ResourceOpener
 {
-    private ServletContext context;
-    private static final String WEB_INF = "WEB-INF";
+    private final ServletContext context;
+    private static final String WEB_INF = "/WEB-INF";
 
     /**
      * Constructor. Makes a ResourceFinder with reference to the current servlet context,
@@ -38,6 +43,14 @@ public class ResourceFinder
      */
     public ResourceFinder(ServletContext context) {
         this.context = context;
+        if (this.context == null) {
+            throw new NullPointerException("context must not be null");
+        }
+    }
+
+    @Override
+    public InputStream openResource(String resourceName) {
+        return context.getResourceAsStream(WEB_INF + "/" + resourceName);
     }
 
     /**

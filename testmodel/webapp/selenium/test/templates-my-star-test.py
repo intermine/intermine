@@ -3,14 +3,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
-import unittest, time, re
-from imuser import IMUser
+import unittest, re
+from imuser import TemporaryUser
 
 class TemplatesMyStarTest(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
+        self.user = TemporaryUser("zombie-testing-account-login@intermine.org");
+        self.user.create()
 
     def test_templates_my_star(self):
 
@@ -22,9 +23,6 @@ class TemplatesMyStarTest(Super):
         browser.find_element_by_name("password").send_keys(self.user.password)
         browser.find_element_by_name("action").click()
 
-        # Create a template
-        browser.get(self.base_url + "/import.do")
-
         custom_template = """
             <template name="My_Template_1" title="My Template 1" comment="">
               <query name="CEO_Rivals" model="testmodel" view="CEO.name CEO.salary CEO.seniority CEO.company.name" longDescription="">
@@ -32,7 +30,10 @@ class TemplatesMyStarTest(Super):
               </query>
             </template>"""
 
-        browser.find_element_by_id("xml").send_keys(custom_template)
+        # Create a template
+        browser.get(self.base_url + "/import.do")
+
+        self.wait_for_elem('#xml').send_keys(custom_template)
         browser.find_element_by_css_selector("div > input[type=\"submit\"]").click()
 
         browser.get(self.base_url + "/templates.do")
@@ -69,29 +70,14 @@ class TemplatesMyStarTest(Super):
         self.assert_invisible_id("all_templates_template_item_line_ManagerLookup")
 
     def assert_visible_id(self, id):
-        browser = self.browser
-        for i in range(60):
-            try:
-                if browser.find_element_by_id(id).is_displayed(): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
-        return True
+        elem = self.wait().until(lambda d: d.find_element_by_id(id))
+        self.wait().until(lambda d: elem.is_displayed())
+        self.assertTrue(elem.is_displayed())
 
     def assert_invisible_id(self, id):
-        browser = self.browser
-        for i in range(60):
-            try:
-                if not browser.find_element_by_id(id).is_displayed(): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
-        return True
+        elem = self.wait().until(lambda d: d.find_element_by_id(id))
+        self.wait().until_not(lambda d: elem.is_displayed())
+        self.assertFalse(elem.is_displayed())
 
-    def is_element_present(self, how, what):
-        try: self.browser.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
-        return True
-    
     def tearDown(self):
         self.user.delete()

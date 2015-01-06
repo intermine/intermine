@@ -157,8 +157,8 @@ public class QueryBuilderConstraintAction extends InterMineAction
                         constraintValue);
             }
         } else if (constrainToABag) {
-            ConstraintOp constraintOp = ConstraintOp
-            .getOpForIndex(Integer.valueOf(constraintForm.getBagOp()));
+            ConstraintOp constraintOp =
+                    ConstraintOp.getOpForIndex(Integer.valueOf(constraintForm.getBagOp()));
             String constraintValue = constraintForm.getBagValue();
             // Note, we constrain the parent if the path is an attribute
             Path path1 = query.makePath(constraintForm.getPath());

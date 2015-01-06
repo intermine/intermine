@@ -15,12 +15,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.metadata.Model;
+import org.xml.sax.SAXException;
 
-public class SequenceOntologyTest extends TestCase
+public class SequenceOntologyTest extends XMLTestCase
 {
     protected static final String ENDL = System.getProperty("line.separator");
 
@@ -30,7 +33,7 @@ public class SequenceOntologyTest extends TestCase
 
     }
 
-    public void testGetAllClasses()  throws URISyntaxException, IOException {
+    public void testGetAllClasses()  throws URISyntaxException, IOException, SAXException, ParserConfigurationException {
         File terms = new File(SequenceOntologyTest.class.getClassLoader().getResource("so_terms-test").toURI());
         File oboFile = new File(SequenceOntologyTest.class.getClassLoader().getResource("SequenceOntology.obo").toURI());
         String targetXML = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("so-target.xml"));
@@ -38,16 +41,16 @@ public class SequenceOntologyTest extends TestCase
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology(oboFile, terms);
 
         Model model = so.getModel();
-        assertEquals("testing using so-test failed", targetXML, model.toString());
+        assertXMLEqual(targetXML, model.toString());
     }
 
     // test generating SO without providing the data file. use the default
-    public void testNoFile() throws IOException {
+    public void testNoFile() throws IOException, SAXException, ParserConfigurationException {
         SequenceOntologyFactory.reset();
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
         Model model = so.getModel();
         String targetXML = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("so-target-default.xml"));
-        assertEquals(model.toAdditionsXML(), targetXML, model.toString());
+        assertXMLEqual(targetXML, model.toString());
     }
 
     public void testParents() {

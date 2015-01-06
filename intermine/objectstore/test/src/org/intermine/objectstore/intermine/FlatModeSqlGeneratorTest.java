@@ -281,10 +281,9 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
     }
 
     protected DatabaseSchema getSchema() throws Exception {
-        DatabaseSchema schema = ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest")).getSchema();
-        schema.hasBioSeg = true;
-        return schema;
+        return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.flatmodeunittest")).getSchema();
     }
+
     public String getRegisterOffset1() {
         return "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id";
     }

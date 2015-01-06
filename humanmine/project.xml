@@ -8,7 +8,7 @@
   <sources>
     <source name="ensembl-snp" type="ensembl-snp" dump="true">
      <property name="src.data.dir" location="/SAN_humanmine/data/variation/ensembl/current" />
-      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gff" />
+      <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gvf" />
     </source>
     <source name="ensembl-human" type="ensembl-core">
       <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current" />
@@ -29,20 +29,10 @@
     <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
-<!--
-    <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-      <property name="source.db.name" value="ensembl.9606.variation" />
-      <property name="organism" value="9606" />
-      <property name="sources" value="dbSNP" />
-    </source>
--->
     <source name="pubmed-gene" type="pubmed-gene">
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />
       <property name="src.data.dir.includes" value="gene2pubmed" />
-    </source>
-    <source name="huge-gwas" type="huge-gwas">
-      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
@@ -69,6 +59,9 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
+ <source name="arrayexpress-atlas" type="arrayexpress-atlas">
+   <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/" />
+ </source>
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
@@ -131,6 +124,9 @@
     <source name="panther" type="panther">
         <property name="src.data.dir" location="/micklem/data/panther/current"/>
         <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>
+    <source name="huge-gwas" type="huge-gwas">
+      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml" />

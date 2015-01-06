@@ -43,6 +43,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -81,10 +82,10 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.ShutdownHook;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.Constants;
@@ -116,6 +117,12 @@ public class InitialiserPlugin implements PlugIn
     Map<String, String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
+
+    private static final Map<String, String> DERIVED_PROPERTIES = new HashMap<String, String>() {
+        {
+            put("jwt.publicidentity", "project.title");
+        }
+    };
 
     private ObjectStoreWriter userprofileOSW;
 
@@ -283,8 +290,9 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Super user not found");
         }
         SessionMethods.setInterMineAPI(servletContext, im);
+        ResourceFinder finder = new ResourceFinder(servletContext);
 
-        InterMineContext.initilise(im, webProperties, webConfig);
+        InterMineContext.initialise(im, webProperties, webConfig, finder);
         return im;
     }
 
@@ -313,7 +321,7 @@ public class InitialiserPlugin implements PlugIn
         ClassDescriptor cd = os.getModel().getClassDescriptorByName("PermanentToken");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         if (cd == null) {
-            throw new IllegalStateException("Expected model to containt PermanentToken");
+            throw new IllegalStateException("Expected model to contain PermanentToken");
         }
         String tableDef = DatabaseUtil.getTableDefinition(db, cd);
         LOG.info("Adding table for " + cd.getName());
@@ -434,8 +442,8 @@ public class InitialiserPlugin implements PlugIn
         WebConfig retval = null;
         InputStream xmlInputStream = servletContext
             .getResourceAsStream("/WEB-INF/webconfig-model.xml");
-        InputStream xmlInputStreamForValidation = servletContext
-        .getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        InputStream xmlInputStreamForValidation =
+                servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (xmlInputStream == null) {
             LOG.error("Unable to find /WEB-INF/webconfig-model.xml.");
             blockingErrorKeys.put("errors.init.webconfig.notfound", null);
@@ -634,9 +642,23 @@ public class InitialiserPlugin implements PlugIn
         }
         SessionMethods.setPropertiesOrigins(servletContext, origins);
         Properties trimProperties = trimProperties(webProperties);
+        setComputedProperties(trimProperties);
         SessionMethods.setWebProperties(servletContext, trimProperties);
         MainHelper.loadHelpers(trimProperties);
         return trimProperties;
+    }
+
+    // Propagate properties that derive their default values from other properties.
+    private void setComputedProperties(Properties props) {
+        Map<String, String> computedMapping = DERIVED_PROPERTIES;
+        for (String dest: computedMapping.keySet()) {
+            if (StringUtils.isBlank(props.getProperty(dest))) {
+                String src = computedMapping.get(dest);
+                if (src != null) {
+                    props.setProperty(dest, props.getProperty(src));
+                }
+            }
+        }
     }
 
     private Properties trimProperties(Properties webProperties) {
@@ -756,7 +778,8 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
-            final Model model) {
+            final Model model) throws ServletException {
+        String errorKey = "errors.init.objectstoresummary.classcount";
         Map<String, String> classes = new LinkedHashMap<String, String>();
         Map<String, Integer> classCounts = new LinkedHashMap<String, Integer>();
 
@@ -765,10 +788,11 @@ public class InitialiserPlugin implements PlugIn
                 classes.put(className, TypeUtil.unqualifiedName(className));
             }
             try {
-                classCounts.put(className, new Integer(oss.getClassCount(className)));
+                classCounts.put(className, Integer.valueOf(oss.getClassCount(className)));
             } catch (Exception e) {
                 LOG.error("Unable to get class count for " + className, e);
-                blockingErrorKeys.put("errors.init.objectstoresummary.classcount", e.getMessage());
+                blockingErrorKeys.put(errorKey, e.getMessage());
+                return;
             }
         }
         servletContext.setAttribute("classes", classes);
@@ -778,7 +802,12 @@ public class InitialiserPlugin implements PlugIn
         for (ClassDescriptor cld : model.getClassDescriptors()) {
             ArrayList<String> subclasses = new ArrayList<String>();
             for (String thisClassName : new TreeSet<String>(getChildren(cld))) {
-                if (classCounts.get(thisClassName).intValue() > 0) {
+                Integer classCount = classCounts.get(thisClassName);
+                if (classCount == null) {
+                    blockingErrorKeys.put(errorKey, thisClassName);
+                    return;
+                }
+                if (classCount.intValue() > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
                 }
             }
@@ -875,30 +904,17 @@ public class InitialiserPlugin implements PlugIn
      */
     @Override
     public void destroy() {
-        if (userprofileOSW != null) {
-            try {
-                userprofileOSW.close();
-            } catch (ObjectStoreException e) {
-                LOG.warn("Error closing userprofile writer.", e);
-            }
-            ((ObjectStoreWriterInterMineImpl) userprofileOSW).getDatabase().shutdown();
-        }
-        if (os != null) {
-            if (os instanceof ObjectStoreInterMineImpl) {
-                try {
-                    ((ObjectStoreInterMineImpl) os).close();
-                } catch (ObjectStoreException e) {
-                    LOG.error("Couldn't shut down OS. Memory leaks!");
-                }
-                ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
-            }
-        }
-        if (trackerDelegate != null) {
-            trackerDelegate.close();
-        }
-        InterMineContext.doShutdown();
-    }
+        // We're undeploying the webapp so we need to shut everything down. The ShutdownHook will
+        // shutdown all objects that have registerted themselves. However, this doesn't get
+        // called automatically unless the JVM itself (tomcat) is shut down,
+        ShutdownHook.shutdown();
 
+        // The ShutdownHook is registered JVM-wide so unless we remove it a reference will be held
+        // to the current WebappClassLoader preventing it from being garbage collected. This will
+        // cause a memory leak, where tomcat would run out of PermGen space after several deploy
+        // cycles.
+        Runtime.getRuntime().removeShutdownHook(ShutdownHook.getInstance());
+    }
 
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist

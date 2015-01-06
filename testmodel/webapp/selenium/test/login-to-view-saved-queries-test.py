@@ -5,7 +5,7 @@ from test.querybuildertestcase import QueryBuilderTestCase
 class LoginToViewSavedTest(QueryBuilderTestCase):
 
     def test_on_right_page(self):
-        time.sleep(3)
+        self.wait().until(lambda b: 'query' in b.title)
         self.assertIn('Custom query', self.browser.title)
 
     def test_login_to_view_saved(self):

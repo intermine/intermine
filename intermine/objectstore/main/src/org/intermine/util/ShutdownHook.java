@@ -48,6 +48,14 @@ public final class ShutdownHook extends Thread
     }
 
     /**
+     * Get the instance of this ShutdownHook.
+     * @return the ShutdownHook instance
+     */
+    public static synchronized ShutdownHook getInstance() {
+        return instance;
+    }
+
+    /**
      * Registers an object with the shutdown hook.
      *
      * @param object the object
@@ -59,7 +67,7 @@ public final class ShutdownHook extends Thread
     /**
      * Performs the shutdown.
      */
-    private static synchronized void shutdown() {
+    public static synchronized void shutdown() {
         while (!objects.empty()) {
             Object o = objects.pop();
             try {

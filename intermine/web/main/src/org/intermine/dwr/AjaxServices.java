@@ -13,12 +13,13 @@ package org.intermine.dwr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,8 +49,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.UnknownBagTypeException;
+import org.intermine.api.beans.PartnerLink;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
+import org.intermine.api.mines.ObjectRequest;
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -78,11 +82,13 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.Emailer;
 import org.intermine.metadata.StringUtil;
@@ -689,14 +695,15 @@ public class AjaxServices
      * remote mine.
      *
      * @param mineName name of mine to query
-     * @param organisms gene.organism
-     * @param identifiers identifiers for gene
+     * @param domains The domains the domains these identifiers are valid for (eg. organisms).
+     * @param idents The external object identifiers.
      * @return the links to friendly intermines
      */
-    public static String getFriendlyMineLinks(String mineName, String organisms,
-            String identifiers) {
-        if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
-                || StringUtils.isEmpty(identifiers)) {
+    public static Collection<PartnerLink>
+    getFriendlyMineLinks(String mineName, String domains, String idents) {
+        if (StringUtils.isEmpty(mineName)
+                || StringUtils.isEmpty(domains)
+                || StringUtils.isEmpty(idents)) {
             return null;
         }
         final HttpSession session = WebContextFactory.get().getSession();
@@ -704,70 +711,29 @@ public class AjaxServices
         final ServletContext servletContext = WebContextFactory.get().getServletContext();
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
         final FriendlyMineManager fmm = FriendlyMineManager.getInstance(im, webProperties);
-        InterMineLinkGenerator linkGen = null;
-        Constructor<?> constructor;
-        try {
-            Class<?> clazz = TypeUtil.instantiate(
-                    "org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
-            constructor = clazz.getConstructor(new Class[] {});
-            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
-        } catch (Exception e) {
-            LOG.error("Failed to instantiate FriendlyMineLinkGenerator because: " + e);
-            return null;
-        }
-        Collection<JSONObject> results = linkGen.getLinks(fmm, mineName, organisms, identifiers);
-        if (results == null || results.isEmpty()) {
-            return null;
-        }
-        return results.toString();
-    }
+        final String linkGeneratorClass = webProperties.getProperty("friendlymines.linkgenerator");
 
-    /**
-     * used on REPORT page
-     *
-     * For a gene, display pathways found in other mines for orthologous genes
-     *
-     * @param mineName mine to query
-     * @param orthologues list of genes to query for
-     * @return the links to friendly intermines
-     * @deprecated Josh doesn't think this is used anymore
-     */
-    @Deprecated
-    public static String getFriendlyMinePathways(String mineName, String orthologues) {
-        if (StringUtils.isEmpty(orthologues)) {
-            return null;
-        }
-        Mine mine;
-        HttpSession session = WebContextFactory.get().getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        final ServletContext servletContext = WebContextFactory.get().getServletContext();
-        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
-        mine = linkManager.getMine(mineName);
+        final Mine mine = fmm.getMine(mineName);
+        Collection<PartnerLink> results = Collections.emptySet();
         if (mine == null || mine.getReleaseVersion() == null) {
-            // mine is dead
-            return null;
-        }
-        final String xmlQuery = getXMLQuery("FriendlyMinesPathways.xml", orthologues);
-        try {
-            JSONObject results = linkManager.getQueryRunner()
-                                            .runJSONWebServiceQuery(mine, xmlQuery);
+            LOG.error(mineName + " seems to be dead");
+        } else {
+            // Mine is alive
+            LOG.debug(mine.getName() + " is at " + mine.getReleaseVersion());
+            ObjectRequest req = new ObjectRequest(domains, idents);
+            MultiKey key = new MultiKey(mine.getName(), req);
+            // From cache, or from service.
+            results = fmm.getLinks(key);
             if (results == null) {
-                LOG.error("Couldn't query " + mine.getName() + " for pathways");
-                return null;
+                InterMineLinkGenerator linkGen = TypeUtil.createNew(linkGeneratorClass);
+                if (linkGen != null) {
+                    results = linkGen.getLinks(fmm.getLocalMine(), mine, req);
+                }
             }
-            results.put("mineURL", mine.getUrl());
-            return results.toString();
-        } catch (IOException e) {
-            LOG.error("Couldn't query " + mine.getName() + " for pathways", e);
-            return null;
-        } catch (JSONException e) {
-            LOG.error("Error adding Mine URL to pathways results", e);
-            return null;
-        } catch (Throwable t) {
-            LOG.error(t);
-            return null;
+            fmm.cacheLinks(key, results);
         }
+        LOG.debug("Links: " + results);
+        return results;
     }
 
     private static String getXMLQuery(String filename, Object... positionalArgs) {
@@ -783,7 +749,7 @@ public class AjaxServices
             throw new RuntimeException(filename + " not found", npe);
         } catch (Throwable e) {
             LOG.error(e);
-            throw new RuntimeException("Unexpected exception", e);
+            throw new RuntimeException("Unexpected exception " + e.getMessage());
         }
     }
 
@@ -792,41 +758,38 @@ public class AjaxServices
      * JSONObject as string with ID (intermine ID) and name (ontologyTerm.name)
      *
      * @param orthologues list of rat genes
-     * @return JSONobject.toString of JSON object
+     * @return JSONObject of the shape {status :: string, mineUrl :: string, results :: [[string]]}
      */
-    public static String getRatDiseases(String orthologues) {
+    public static Map<String, Object> getRatDiseases(String orthologues) {
         if (StringUtils.isEmpty(orthologues)) {
             return null;
         }
-        HttpSession session = WebContextFactory.get().getSession();
+        final HashMap<String, Object> map = new HashMap<String, Object>();
+        final HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         final ServletContext servletContext = WebContextFactory.get().getServletContext();
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
-        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
-        Mine mine = linkManager.getMine("RatMine");
+        final FriendlyMineManager mines = FriendlyMineManager.getInstance(im, webProperties);
+        final Mine ratMine = mines.getMine("RatMine");
 
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        if (ratMine == null || ratMine.getReleaseVersion() == null) {
+            map.put("status", "offline"); // mine is dead
+            return map;
+        }
 
-        if (mine == null || mine.getReleaseVersion() == null) {
-            // mine is dead
-            map.put("status", "offline");
-            return new JSONObject(map).toString();
-        }
-        final String xmlQuery = getXMLQuery("RatDiseases.xml", orthologues);
-        try {
-            JSONObject results = linkManager.getQueryRunner()
-                                            .runJSONWebServiceQuery(mine, xmlQuery);
-            if (results != null) {
-                results.put("mineURL", mine.getUrl());
-                results.put("status", "online");
-                return results.toString();
-            }
-        } catch (IOException e) {
-            LOG.error("Couldn't query ratmine for diseases", e);
-        } catch (JSONException e) {
-            LOG.error("Couldn't process ratmine disease results", e);
-        }
-        return null;
+        // It lives!
+        map.put("status", "online");
+        map.put("mineURL", ratMine.getUrl());
+
+        final String xmlQuery = getXMLQuery("RatDiseases.xml");
+        // As object rather than string to get proper escaping.
+        PathQuery pq = PathQueryBinding.unmarshalPathQuery(
+                new StringReader(xmlQuery), PathQuery.USERPROFILE_VERSION, ratMine.getModel());
+        pq.addConstraint(Constraints.lookup("Gene", orthologues, null));
+
+        map.put("results", ratMine.getRows(pq));
+
+        return map;
     }
 
     /**

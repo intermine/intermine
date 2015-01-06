@@ -27,7 +27,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
@@ -42,6 +41,11 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
+import org.intermine.web.logic.config.WebConfig;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
+
 
 /**
  * @author Alexis Kalderimis
@@ -150,16 +154,16 @@ public class JSONRowFormatterTest extends TestCase {
         iterator = getIterator(pq);
         processor = new JSONRowResultProcessor(dummyAPI);
 
-
-        Properties webProperties = new Properties();
+        Properties props = new Properties();
+        WebConfig wc = new WebConfig();
         try {
-            webProperties.load(this.getClass().getClassLoader()
+            props.load(this.getClass().getClassLoader()
                     .getResourceAsStream("web.properties"));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(dummyAPI, webProperties, null);
+        InterMineContext.initialise(dummyAPI, props, wc, new ClassResourceOpener(getClass()));
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
@@ -185,7 +189,7 @@ public class JSONRowFormatterTest extends TestCase {
         assertTrue(fmtr != null);
     }
 
-    public void testFormatHeader() {
+    public void testFormatHeader() throws JSONException {
         JSONRowFormatter fmtr = new JSONRowFormatter();
 
         String expected = testProps.getProperty("result.header");
@@ -231,7 +235,7 @@ public class JSONRowFormatterTest extends TestCase {
         assertEquals(expected, fmtr.formatFooter("Not feeling like it", 400));
     }
 
-    public void testFormatAll() throws IOException {
+    public void testFormatAll() throws IOException, JSONException {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
@@ -246,10 +250,10 @@ public class JSONRowFormatterTest extends TestCase {
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
-        assertEquals(expected, sw.toString());
+        JSONAssert.assertEquals(expected, sw.toString(), false);
     }
 
-    public void testFormatAllBad() {
+    public void testFormatAllBad() throws JSONException {
         JSONRowFormatter fmtr = new JSONRowFormatter();
         StreamedOutput out = new StreamedOutput(pw, fmtr);
         out.setHeaderAttributes(attributes);
@@ -265,7 +269,7 @@ public class JSONRowFormatterTest extends TestCase {
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
-        assertEquals(expected, sw.toString());
+        JSONAssert.assertEquals(expected, sw.toString(), false);
 
     }
 }

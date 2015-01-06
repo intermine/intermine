@@ -9,6 +9,7 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.factory.TrackerFactory;
 import org.intermine.api.tracker.track.ListTrack;
 import org.intermine.api.tracker.track.Track;
@@ -27,14 +29,15 @@ import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.api.template.TemplateManager;
+import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 
 /**
  * Intermediate class which decouples the tracker components from the code that uses them.
  * @author dbutano
  *
  */
-public class TrackerDelegate
+public class TrackerDelegate implements Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
@@ -51,6 +54,7 @@ public class TrackerDelegate
     public TrackerDelegate(String[] trackerClassNames, ObjectStoreWriter osw) {
         Queue<Track> trackQueue = new LinkedList<Track>();
         this.osw = osw;
+        ShutdownHook.registerObject(new WeakReference<Object>(this));
         try {
             connection = getConnection();
             Tracker tracker;
@@ -351,6 +355,13 @@ public class TrackerDelegate
         }
         releaseConnection(connection);
         isClosed = true;
+    }
+
+    /**
+     * Called from ShutdownHook.
+     */
+    public synchronized void shutdown() {
+        close();
     }
 
     /**
