@@ -327,6 +327,10 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         q.addFrom(qcFeature);
         q.addFrom(qcSOTerm);
 
+        // Make sure the class field isn't the first entry in the order by as it would be used for
+        // a large offset constraint BUT the greater than operator is not supported for classes.
+        q.addToOrderBy(qfSOName);
+
         // TODO missing values in the results...e.g. GoldenPathFragment
         QueryObjectReference soTerm = new QueryObjectReference(qcFeature,
                 "sequenceOntologyTerm");
