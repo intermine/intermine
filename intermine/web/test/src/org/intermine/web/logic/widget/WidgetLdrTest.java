@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,8 +11,8 @@ package org.intermine.web.logic.widget;
  */
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;

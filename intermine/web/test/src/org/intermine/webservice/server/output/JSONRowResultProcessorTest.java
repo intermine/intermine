@@ -31,6 +31,11 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
+import org.intermine.web.logic.config.WebConfig;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
+
 
 /**
  * @author alex
@@ -132,7 +137,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         } catch (ObjectStoreException e) {
             e.printStackTrace();
         }
-        InterMineContext.initilise(api, new Properties(), null);
+        InterMineContext.initialise(api, new Properties(), new WebConfig(), new ClassResourceOpener(getClass()));
     }
 
     /**
@@ -151,7 +156,6 @@ public class JSONRowResultProcessorTest extends TestCase {
 
     public void testZeroResults() {
         List<String> inner = new ArrayList<String>();
-        @SuppressWarnings("unchecked")
         List<List<String>> expected = Arrays.asList(inner);
 
         MemoryOutput out  = new MemoryOutput();
@@ -161,7 +165,7 @@ public class JSONRowResultProcessorTest extends TestCase {
         assertEquals(expected.toString(), out.getResults().toString());
     }
 
-    public void testWrite() throws IOException {
+    public void testWrite() throws IOException, JSONException {
         InputStream is = getClass().getResourceAsStream("JSONRowResultProcessorTest.expected");
         StringWriter sw = new StringWriter();
         IOUtils.copy(is, sw);
@@ -179,7 +183,7 @@ public class JSONRowResultProcessorTest extends TestCase {
 //        fw.write(out.getResults().toString());
 //        fw.close();
 
-        assertEquals(expected, out.getResults().toString() + "\n");
+        JSONAssert.assertEquals(expected, out.getResults().toString() + "\n", false);
 
     }
 

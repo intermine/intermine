@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -102,8 +102,8 @@ public class QueryResultService extends AbstractQueryService
         QueryResultInput input = getInput();
         PathQueryBuilder builder = getQueryBuilder(input.getXml());
         PathQuery query = builder.getQuery();
-        setHeaderAttributes(query, input.getStart(), input.getMaxCount());
-        runPathQuery(query, input.getStart(), input.getMaxCount());
+        setHeaderAttributes(query, input.getStart(), input.getLimit());
+        runPathQuery(query, input.getStart(), input.getLimit());
     }
 
     @Override
@@ -304,9 +304,9 @@ public class QueryResultService extends AbstractQueryService
     }
 
     private void runResults(PathQuery pq,  int firstResult, int maxResults) {
-        boolean canGoFaster = false;
-        Iterator<List<ResultElement>> it;
-        String summaryPath = getOptionalParameter("summaryPath");
+        final boolean canGoFaster;
+        final Iterator<List<ResultElement>> it;
+        final String summaryPath = getOptionalParameter("summaryPath");
         if (isNotBlank(summaryPath)) {
             Integer uniqs = (Integer) attributes.get("uniqueValues");
             boolean occurancesOnly = (uniqs == null) || (uniqs < 2);
@@ -323,14 +323,14 @@ public class QueryResultService extends AbstractQueryService
                     attributes.put("filteredCount", r.size());
                 }
                 it = new FilteringResultIterator(r, firstResult, maxResults, filterTerm);
+                canGoFaster = false;
             } catch (ObjectStoreQueryDurationException e) {
                 throw new ServiceException("Query would take too long to run");
             } catch (ObjectStoreException e) {
                 throw new ServiceException("Problem getting summary.", e);
             }
         } else {
-            // Going faster means writing to the DB. Don't do this if it is pointless.
-            canGoFaster = firstResult > BATCH_SIZE || maxResults > BATCH_SIZE;
+            canGoFaster = maxResults > (BATCH_SIZE * 2);
             executor.setBatchSize(BATCH_SIZE);
             try {
                 it = executor.execute(pq, firstResult, maxResults);
@@ -345,6 +345,7 @@ public class QueryResultService extends AbstractQueryService
         if (it.hasNext()) { // Prime the batch fetching pumps
             try {
                 if (canGoFaster) {
+                    // Going faster means writing to the DB. Don't do this if it is pointless.
                     ((ExportResultsIterator) it).goFaster();
                 }
                 processor.write(it, output);
@@ -390,6 +391,14 @@ public class QueryResultService extends AbstractQueryService
 
 
     private QueryResultInput getInput() {
-        return new QueryResultRequestParser(im.getQueryStore(), request).getInput();
+        QueryResultInput qri = new QueryResultRequestParser(im.getQueryStore(),
+                request).getInput();
+        // Table format doesn't actually fetch any rows but we want it to trigger a query in
+        // ObjectStore so results are in cache when Row processors need to fetch them. We need
+        // to set a limit here to prevent runResults() from calling goFaster() and precomputing.
+        if (getFormat() == Format.TABLE) {
+            qri.setLimit(WebServiceRequestParser.MIN_LIMIT);
+        }
+        return qri;
     }
 }

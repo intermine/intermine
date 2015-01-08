@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.model;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -96,9 +96,8 @@ public class ModelService extends WebService
         pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         try {
             Map<String, String> subclasses = new HashMap<String, String>();
-            for (@SuppressWarnings("unchecked")
-            Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
-                String param = e.nextElement();
+            for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
+                String param = (String) e.nextElement();
                 subclasses.put(param, request.getParameter(param));
             }
             Path p = new Path(im.getModel(), pathInfo, subclasses);

@@ -1,6 +1,7 @@
 package org.intermine.webservice.server.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +20,6 @@ public class DisjointListTest {
         numsAndStrings.addLeft(3);
         numsAndStrings.addRight("four");
         assertEquals(numsAndStrings.size(), 4);
-        @SuppressWarnings("unchecked")
         List<Either<Integer, String>> expected = Arrays.asList(
                 new Either.Left<Integer, String>(1),
                 new Either.Right<Integer, String>("two"),

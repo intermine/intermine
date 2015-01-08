@@ -1,7 +1,7 @@
 package org.intermine.bio.ontology;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.obo.dataadapter.OBOAdapter;
 import org.obo.dataadapter.OBOFileAdapter;
 import org.obo.dataadapter.OBOSerializationEngine;
@@ -244,7 +245,13 @@ public class OboParser
         for (Iterator<Map> iter = typeTagValuesList.iterator(); iter.hasNext();) {
             Map<?, ?> tvs = iter.next();
             String id = (String) ((List<?>) tvs.get("id")).get(0);
-            String name = (String) ((List<?>) tvs.get("name")).get(0);
+            String name;
+            List<?> names = (List<?>) tvs.get("name");
+            if (names != null && !names.isEmpty()) {
+                name = (String) names.get(0);
+            } else {
+                throw new BuildException("Ontology term did not have a name:" + id);
+            }
             boolean isTransitive = isTrue(tvs, "is_transitive");
             oboType = new OboTypeDefinition(id, name, isTransitive);
             types.put(oboType.getId() , oboType);
@@ -254,7 +261,13 @@ public class OboParser
         for (Iterator<Map> iter = termTagValuesList.iterator(); iter.hasNext();) {
             Map<?, ?> tvs = iter.next();
             String id = (String) ((List<?>) tvs.get("id")).get(0);
-            String name = (String) ((List<?>) tvs.get("name")).get(0);
+            String name;
+            List<?> names = (List<?>) tvs.get("name");
+            if (names != null && !names.isEmpty()) {
+                name = (String) names.get(0);
+            } else {
+                throw new BuildException("Ontology term did not have a name:" + id);
+            }
             OboTerm term = new OboTerm(id, name);
             term.setObsolete(isTrue(tvs, "is_obsolete"));
             terms.put(term.getId(), term);

@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -99,7 +99,6 @@ public class PathQueryUpdate
 
     private void updateView (Map<String, String> renamedClasses, Map<String, String> renamedFields)
         throws PathException {
-        Path p;
         for (String viewPath : pathQuery.getView()) {
             viewPath = getPathUpdated(viewPath, renamedClasses, renamedFields);
             newPathQuery.addView(viewPath);
@@ -115,7 +114,6 @@ public class PathQueryUpdate
     protected void updateConstraints (Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
         String path, newPath;
-        Path p;
         for (PathConstraint pathConstraint : pathQuery.getConstraints().keySet()) {
             path = pathConstraint.getPath();
             newPath = getPathUpdated(path, renamedClasses, renamedFields);
@@ -161,7 +159,6 @@ public class PathQueryUpdate
 
     private void updateOuterJoins(Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
-        Path p;
         Map<String, OuterJoinStatus> outerJoinStatus = pathQuery.getOuterJoinStatus();
         String newJoinPath;
         for (String joinPath : outerJoinStatus.keySet()) {
@@ -172,7 +169,6 @@ public class PathQueryUpdate
 
     private void updateDescriptionsPath(Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
-        Path p;
         Map<String, String> descriptions = pathQuery.getDescriptions();
         String newDescriptionPath;
         for (String descPath : descriptions.keySet()) {
@@ -184,7 +180,6 @@ public class PathQueryUpdate
     private void updateOrderByPath(Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
         String orderPath, newOrderPath;
-        Path p;
         for (OrderElement orderElement : pathQuery.getOrderBy()) {
             orderPath = orderElement.getOrderPath();
             newOrderPath = getPathUpdated(orderPath, renamedClasses, renamedFields);

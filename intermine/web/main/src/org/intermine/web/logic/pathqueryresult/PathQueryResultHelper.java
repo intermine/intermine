@@ -1,7 +1,7 @@
 package org.intermine.web.logic.pathqueryresult;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -103,7 +103,10 @@ public final class PathQueryResultHelper
             if (fieldConfig.getShowInResults()) {
                 try {
                     Path path = new Path(model, prefix + "." + relPath);
-                    if (path.isOnlyAttribute()) {
+                    // use type (e.g. Protein) not prefix (e.g. Gene.proteins) to do
+                    // attribute check
+                    Path checkIsOnlyAttribute = new Path(model, type + "." + relPath);
+                    if (checkIsOnlyAttribute.isOnlyAttribute()) {
                         view.add(path.getNoConstraintsString());
                     }
                 } catch (PathException e) {

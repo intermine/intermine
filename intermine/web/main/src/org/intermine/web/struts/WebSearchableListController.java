@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -167,6 +167,7 @@ public class WebSearchableListController extends TilesAction
         Comparator<String> comparator = new Comparator<String>() {
 
             private List<Tag> resolveTagsInBag(InterMineBag bag) {
+                @SuppressWarnings("deprecation")
                 List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
                 return tags;
             }

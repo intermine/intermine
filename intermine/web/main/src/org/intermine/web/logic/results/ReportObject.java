@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -762,7 +762,7 @@ public class ReportObject
             long queryStartTime = System.currentTimeMillis();
             // determine the types in the collection
             List<Class<?>> listOfTypes = PathQueryResultHelper.
-            queryForTypesInCollection(object, colName, im.getObjectStore());
+                    queryForTypesInCollection(object, colName, im.getObjectStore());
             long queryTime = System.currentTimeMillis() - queryStartTime;
             LOG.info("TIME - query for types in collection: " + colName + " took: " + queryTime);
 

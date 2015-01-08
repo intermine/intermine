@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -438,6 +438,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         missingTables.add(tables[i].toLowerCase());
                     }
                 }
+
+                // Check if there is a bioseg index in the database for faster range queries
                 boolean hasBioSeg = false;
                 Connection c = null;
                 try {
@@ -457,8 +459,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         }
                     }
                 }
+
+                // if we're above Postgres version 9.2 we can use the built-in range types
+                boolean useRangeTypes = database.isVersionAtLeast("9.2");
+
                 DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
-                        missingTables, formatVersion, hasBioSeg);
+                        missingTables, formatVersion, hasBioSeg, useRangeTypes);
                 os = new ObjectStoreInterMineImpl(database, schema);
                 os.description = osAlias;
 
@@ -1047,10 +1053,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
 
-        try {
-            logTableBatch.close(logTableConnection);
-        } catch (SQLException e1) {
-            LOG.error("Couldn't close OS log table.");
+        if (logTableBatch != null) {
+            try {
+                logTableBatch.close(logTableConnection);
+            } catch (SQLException e1) {
+                LOG.error("Couldn't close OS log table.");
+            }
         }
 
         Connection c = null;

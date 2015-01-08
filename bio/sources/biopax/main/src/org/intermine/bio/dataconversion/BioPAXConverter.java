@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -375,7 +375,8 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
             // Good file name: 83333.owl
             taxonId = Integer.valueOf(filename.split("\\.")[0]);
         } else {
-            String[] bits = filename.split(" ");
+            // underscore or space
+            String[] bits = filename.split("[_\\s]");
 
             // bad filename eg `Human immunodeficiency virus 1.owl`,
             // expecting "Drosophila melanogaster.owl"

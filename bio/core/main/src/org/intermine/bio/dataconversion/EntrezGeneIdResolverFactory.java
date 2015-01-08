@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -360,7 +360,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return xrefs from config
      * **/
     protected Map<String, String> getXrefs() {
-        return configXref;
+        return Collections.unmodifiableMap(configXref);
     }
 
     /** used for testing
@@ -374,7 +374,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return configPrefix from config
      * **/
     protected Map<String, String> getPrefixes() {
-        return configPrefix;
+        return Collections.unmodifiableMap(configPrefix);
     }
 
     /** used for testing

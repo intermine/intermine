@@ -1,7 +1,7 @@
 package org.intermine.api.lucene;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,18 +21,21 @@ public class ResultsWithFacets
 {
 
     private final Collection<KeywordSearchHit> results;
-
+    private int totalHits;
     private final Collection<KeywordSearchFacet> facets;
 
     /**
      * @param results the hits
      * @param facets The facets
+     * @param totalHits count of search results
      */
     public ResultsWithFacets(
             Collection<KeywordSearchHit> results,
-            Collection<KeywordSearchFacet> facets) {
+            Collection<KeywordSearchFacet> facets,
+            int totalHits) {
         this.results = results;
         this.facets = facets;
+        this.totalHits = totalHits;
     }
 
     /** @return the hits **/
@@ -45,4 +48,8 @@ public class ResultsWithFacets
         return facets;
     }
 
+    /** @return the totalHits **/
+    public int getTotalHits() {
+        return totalHits;
+    }
 }

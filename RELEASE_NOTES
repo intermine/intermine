@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,6 +7,83 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+#854 - Google is shutting down OpenID
+#848 - Report page: templates expanded by default
+#841 - List upload fails in metabolicMine
+#839 - Missing icons in Results tables
+#838 - Remove filter icon not being displayed
+#837 - keyword search results: now limited to 100 items
+#832 - Build failing on wrong classes
+#830 - Ontology term without a name
+#829 - BioPAX file name change
+#824 - Duplicate human genes in data file
+#811 - "No simple name for class" error 
+#809 - BioGRID: append MGI prefix
+#800 - Angle bracket issue in column summary dialog
+#797 - Add UI support for range queries.
+#786 - Query with outer join does not validate
+#782 - Entrez gene resolver changed MGI ID format, ID resolver failing
+#781 - publications: no author when author is a consortium
+#779 - FASTA Output Extension
+#778 - Manage Columns needs to allow addition of multiple columns 
+#777 - List conversion - config ignored, all fields displayed
+#772 - Friendly mines repeating 
+#765 - list upload: cannot create a list of authors, for example
+#745 - Tomcat 8
+#742 - FlyMine: Panther human homologues didn't merge
+#728 - GenomicRegionSequence web service missing
+#727 - Webapp - Users can't login or create lists
+#721 - Summary tag doesn't display collections correctly
+#720 - Collections don't appear in summary section when tagged
+#718 - Use Postgres built-in ranges as an alternative to BioSeg
+#716 - Biopax data download - script broken
+#714 - PrecomputedTableManager fails with SimpleObjects
+#712 - Webapp table display - batch size and precomputes
+#709 - Panther, Homologene converters assuming all Homologues are genes
+#696 - Add identifier to widget download
+#686 - Portal - add optional organism constraint
+#681 - Error with Java 8
+#679 - Tomcat reports a memory leak on stopping a webapp
+#676 - Duplicate queries in logs
+#664 - auto-generated python code from List analysis page when logged in
+#653 - Error precomputing objectstore queries containing COUNT(*)
+#648 - Write parser for GVF files
+#641 - Results table - Boolean column not filterable if it contains NULLs
+#635 - List Analysis -> any table/GO widget -> View -> 'Create list'
+#632 - Download FASTA - Options - adding X basepairs as extension
+#631 - Remove modmine from core code
+#626 - Results tables - Integer values appear in results table but not in summary popup
+#625 - choosing either ruby or python in the API tag logs an error
+#618 - We should have automated browser tests
+#617 - URL for docs is wrong in generated code
+#614 - Report page - if bad ID don't throw exception
+#604 - Move model out of OS package
+#603 - Keyword search - memory not freed when removing webapp
+#584 - Generated JSON omitting optional constraints
+#580 - make sure users don't need our CDN
+#575 - Export to galaxy fails
+#574 - Galaxy export failing
+#570 - Keyword search - select all checkbox doesn't work
+#568 - Precompute fails with outer joins
+#567 - Update to new file format - FlyBase expression
+#558 - Update connection pool library
+#538 - icons on results not working in firefox / IE 11
+#529 - Label decoration of faceItem.value in keywordSearchResults.jsp
+#517 - Improve Lucene search
+#516 - JMOL displayer not working
+#504 - results tables: Item check boxes not updated correctly
+#477 - GMOD website
+#470 - OAuth2 authentication
+#465 - Use equals instead of LIKE when user has selected EQUALS
+#452 - LOOKUP query with wildcard is slow
+#449 - Quick search results only retrieving first 100 rows
+#440 - Outer joins - need to sort / filter
+#415 - Too many segments in a range query kills the webapp
+#273 - Some Permalinks are only temporary
+#169 - Load locations of protein domains
+#54 - Query for empty collections / references
+
 
 1.3.9
 

@@ -117,7 +117,6 @@ public class InlineResultsTableTest extends TestCase
      *  higher up using PathQueryResultHelper.queryForTypesInCollection() working over OS
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
     public void testCollectionTypes() throws Exception {
         // Collection
         List<Object> collection = new ArrayList<Object>();

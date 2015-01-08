@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -90,9 +90,9 @@ public class TemplateResultService extends QueryResultService
             populatedTemplate.clearView();
             populatedTemplate.addViews(newView);
         }
-        setHeaderAttributes(populatedTemplate, input.getStart(), input.getMaxCount());
+        setHeaderAttributes(populatedTemplate, input.getStart(), input.getLimit());
         if (populatedTemplate.isValid()) {
-            runPathQuery(populatedTemplate, input.getStart(), input.getMaxCount());
+            runPathQuery(populatedTemplate, input.getStart(), input.getLimit());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
                 + "with model: " + populatedTemplate.verifyQuery();

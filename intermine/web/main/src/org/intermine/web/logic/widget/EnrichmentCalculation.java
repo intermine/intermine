@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,16 +101,14 @@ public final class EnrichmentCalculation
 
     private static ErrorCorrection.Strategy getStrategy(String errorCorrection) {
         ErrorCorrection.Strategy strategy = null;
-        if (StringUtils.isBlank(errorCorrection)) {
-            strategy = ErrorCorrection.Strategy.NONE;
-        } else {
-            for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
-                if (s.getAlgorithm().equalsIgnoreCase(errorCorrection)) {
-                    strategy = s;
-                    break;
-                }
+        StringUtils.defaultIfBlank(errorCorrection, "None");
+        for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
+            if (s.getAlgorithm().equalsIgnoreCase(errorCorrection)) {
+                strategy = s;
+                break;
             }
         }
+
         if (strategy == null) {
             throw new IllegalArgumentException(UNKNOWN_STRATEGY + errorCorrection);
         }

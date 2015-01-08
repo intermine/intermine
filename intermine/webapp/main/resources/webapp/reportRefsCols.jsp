@@ -61,6 +61,7 @@
           <c:set var="inlineResultsTable" value="${collection.table}"/>
           <c:set var="useTableWidget" value="${WEB_PROPERTIES['inline.collections.in.tables']=='true'}" />
           <c:set var="useLocalStorage" value="${WEB_PROPERTIES['use.localstorage']=='true'}" />
+          <c:set var="expandOnLoad" value="${WEB_PROPERTIES['web.collections.expandonload']=='true'}"/>
           <c:choose>
             <c:when test="${useTableWidget}">
               <tiles:insert page="/collectionToTable.do?field=${fieldName}&id=${object.id}&trail=${param.trail}&pathString=${object.classDescriptor.unqualifiedName}.${fieldName}"> 
@@ -77,12 +78,22 @@
           <script type="text/javascript">
             trimTable('#coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner');
             (function($) {
+              var EXPAND_ON_LOAD = ${expandOnLoad};
               $(function(){
-                  if(${useLocalStorage} && typeof(Storage)!=="undefined"){
-                   if(localStorage.${innerDivName}==undefined || localStorage.${innerDivName} == "hide"){
-                     $('#${innerDivName}').hide();
-                     localStorage.${innerDivName}="hide";
-                   }
+                if(${useLocalStorage} && typeof(Storage)!=="undefined"){
+                  if (localStorage.${innerDivName}==undefined) {
+                    if (!EXPAND_ON_LOAD) {
+                      $('#${innerDivName}').hide();
+                    }
+                  }
+                  if(localStorage.${innerDivName} == "hide"){
+                    $('#${innerDivName}').hide();
+                    localStorage.${innerDivName}="hide";
+                  }
+                } else {
+                  if (!EXPAND_ON_LOAD) {
+                    $('#${innerDivName}').hide();
+                  }
                 }
                 $('#${divName}_h3').click(function(e){
                  $('#${innerDivName}').slideToggle('fast');

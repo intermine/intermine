@@ -3,11 +3,11 @@ package org.intermine.webservice.server.lists;
 import java.util.HashSet;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-
-import junit.framework.TestCase;
 
 public class TestFindCommonType extends TestCase {
 

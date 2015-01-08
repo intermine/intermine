@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -152,8 +152,8 @@ public class QueryBuilderConstraintAction extends InterMineAction
                         constraintValue);
             }
         } else if (constrainToABag) {
-            ConstraintOp constraintOp = ConstraintOp
-            .getOpForIndex(Integer.valueOf(constraintForm.getBagOp()));
+            ConstraintOp constraintOp =
+                    ConstraintOp.getOpForIndex(Integer.valueOf(constraintForm.getBagOp()));
             String constraintValue = constraintForm.getBagValue();
             // Note, we constrain the parent if the path is an attribute
             Path path1 = query.makePath(constraintForm.getPath());

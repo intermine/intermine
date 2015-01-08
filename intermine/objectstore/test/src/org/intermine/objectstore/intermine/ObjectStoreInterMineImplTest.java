@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -287,7 +287,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
 
         ObjectStoreInterMineImpl objectStoreInterMineImpl = ((ObjectStoreInterMineImpl) os);
         List<String> precomputes = objectStoreInterMineImpl.precompute(q, indexes, "test");
-        String tableName = precomputes.get(0);
+        String tableName = String.valueOf(precomputes.get(0));
 
         Connection con = null;
         Map indexMap = new HashMap();

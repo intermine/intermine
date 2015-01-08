@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -690,5 +690,27 @@ public abstract class WebUtil
         }
 
         return StringUtils.join(returners, " > ");
+    }
+
+    /**
+     * Check whether the runtime type of an object supports a particular path.
+     * E.g.: An Employee supports the "department.name" path.
+     * @param obj The object we want to inspect.
+     * @param path The headless path we want to use.
+     * @param api A reference to the API object.
+     * @return true if the path is valid for this object.
+     */
+    public static boolean hasValidPath(Object obj, String path, InterMineAPI api) {
+        try {
+            Model m = api.getModel();
+            Collection<ClassDescriptor> clds = m.getClassDescriptorsForClass(obj.getClass());
+            for (ClassDescriptor cd: clds) {
+                new Path(api.getModel(), cd.getUnqualifiedName() + "." + path);
+                return true;
+            }
+        } catch (PathException e) {
+            // Ignore. Dynamic objects can be screwy.
+        }
+        return false;
     }
 }

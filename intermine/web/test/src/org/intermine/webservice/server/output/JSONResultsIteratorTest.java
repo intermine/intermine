@@ -1035,13 +1035,9 @@ public class JSONResultsIteratorTest extends TestCase {
             // rethrow the fail from within the try
             throw e;
         } catch (JSONFormattingException e) {
-            // Test that this is what we thought would happen.
-            assertEquals(
-                "This result element ( Sales 11 Department) " +
-                "does not belong on this map " +
-                "({objectId=5, class=Employee, employees=[{objectId=5, name=Tim Canterbury, class=Employee}]}) " +
-                "- classes don't match (Department ! isa Employee)",
-                e.getMessage());
+            String errMsg = "classes don't match (Department ! isa Employee)";
+           // Test that this is what we thought would happen.
+            assertTrue(e.getMessage().contains(errMsg));
         } catch (Throwable e){
             // All other exceptions are failures
             fail("Got unexpected error: " + e);
@@ -1244,7 +1240,7 @@ public class JSONResultsIteratorTest extends TestCase {
     }
 
     public void testMultipleObjectsWithRefs() throws Exception {
-        
+
         List<String> jsonStrings = new ArrayList<String>();
 
         jsonStrings.add(
@@ -1593,7 +1589,13 @@ public class JSONResultsIteratorTest extends TestCase {
         Types typeContainer = new Types();
         typeContainer.setId(new Integer(100));
         Calendar cal = Calendar.getInstance();
-        cal.set(108 + 1900, 6, 6);
+        // Around noon on 6 July 2008
+        cal.set(Calendar.YEAR, 2008);
+        cal.set(Calendar.MONTH, 6);
+        cal.set(Calendar.DATE, 6);
+        cal.set(Calendar.ZONE_OFFSET, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 12);
+        cal.set(Calendar.MINUTE, 0);
         typeContainer.setDateObjType(cal.getTime());
 
         ResultsRow<Object> row = new ResultsRow<Object>();
@@ -1603,7 +1605,7 @@ public class JSONResultsIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Types.dateObjType");
 
-        String jsonString = "{ class: 'Types', objectId: 100, dateObjType: '2008-07-06' }";
+        String jsonString = "{class: 'Types', objectId: 100, dateObjType: '2008-07-06'}";
 
         JSONResultsIterator jsonIter = new JSONResultsIterator(getIterator(pq));
 

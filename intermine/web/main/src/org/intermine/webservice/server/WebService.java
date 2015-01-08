@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,8 @@ import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.security.KeyStorePublicKeySource;
+import org.intermine.web.security.PublicKeySource;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
@@ -444,9 +446,10 @@ public abstract class WebService
 
     private JWTVerifier.Verification getIdentityFromBearerToken(final String rawString) {
         JWTVerifier verifier;
+        PublicKeySource keys;
+
         try {
-            verifier = new JWTVerifier(InterMineContext.getKeyStore(), webProperties);
-            return verifier.verify(rawString);
+            keys = new KeyStorePublicKeySource(InterMineContext.getKeyStore());
         } catch (KeyStoreException e) {
             throw new ServiceException("Failed to load key store.", e);
         } catch (NoSuchAlgorithmException e) {
@@ -455,6 +458,10 @@ public abstract class WebService
             throw new ServiceException("Key store incorrectly configured", e);
         } catch (IOException e) {
             throw new ServiceException("Failed to load key store.", e);
+        }
+        try {
+            verifier = new JWTVerifier(keys, webProperties);
+            return verifier.verify(rawString);
         } catch (JWTVerifier.VerificationError e) {
             throw new UnauthorizedException(e.getMessage());
         }
@@ -470,10 +477,36 @@ public abstract class WebService
     }
 
     /**
-     * If user name and password is specified in request, then it setups user
-     * profile in session. User was authenticated. It uses HTTP basic access
-     * authentication.
+     * This method is responsible for setting the Permission for the current
+     * request. It can be derived in a number of ways:
+     *
+     * <ul>
+     *   <li>
+     *     <h4>Basic Authentication</h3>
+     *     Standard username and password stuff - best avoided.
+     *   </li>
+     *   <li>
+     *     <h4>Token authentication</h4>
+     *     User passes back an opaque token which has no meaning outside of this
+     *     application. Recommended. The token can be either passed as the value of the
+     *     <code>token</code> query parameter, or provided in the
+     *     <code>Authorization</code> header with the string <code>"Token "</code>
+     *     preceding it, i.e.:
+     *     <code>Authorization: Token somelongtokenstring</code>
+     *   </li>
+     *   <li>
+     *     <h4>JWT bearer tokens</h4>
+     *     The user passes back a bearer token issued by someone we trust (could
+     *     include ourselves). This requires the configuration of a keystore
+     *     {@see KeyStoreBuilder}. Provides delegated authentication capabilities.
+     *     Overkill for most users. The token must be provided in the <code>Authorization</code>
+     *     header, preceded by the string <code>"Bearer "</code>, e.g.:
+     *     <code>Authorization: Bearer yourjwttokenhere</code>
+     *   </li>
+     * </ul>
+     *
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
+     * {@link "http://jwt.io/"}
      */
     private void authenticate() {
 
@@ -489,6 +522,11 @@ public abstract class WebService
         if (StringUtils.isEmpty(authToken)) {
             if (StringUtils.startsWith(authString, "Token ")) {
                 authToken = StringUtils.removeStart(authString, "Token ");
+                try { // Allow bearer tokens to be passed in as normal tokens.
+                    identity = getIdentityFromBearerToken(authToken);
+                } catch (UnauthorizedException e) {
+                    // pass - check the token below.
+                }
             } else if (StringUtils.startsWith(authString, "Bearer ")) {
                 identity = getIdentityFromBearerToken(
                     StringUtils.removeStart(authString, "Bearer "));

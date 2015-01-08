@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,7 +48,7 @@ public class WidgetConfigTest extends WidgetConfigTestCase
         ids.add(e1.getId()); ids.add(e2.getId());
         list.addIdsToBag(ids, "Employee");
 
-        List<String> expected = new ArrayList();
+        List<String> expected = new ArrayList<String>();
         expected.add("ContractorA");
         expected.add("ContractorB");
 
