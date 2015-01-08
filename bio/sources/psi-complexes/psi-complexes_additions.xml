@@ -15,6 +15,19 @@
         <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
     </class>
 
+    <class name="ParameterValue" is-interface="true">
+        <attribute name="base" type="java.lang.Short"/>
+        <attribute name="exponent" type="java.lang.String"/>
+        <attribute name="factor" type="java.lang.Double"/>
+    </class>
+
+    <class name="InteractionParameter" is-interface="true">
+        <reference name="type" referenced-type="InteractionTerm"/>
+        <attribute name="uncertainty" type="java.lang.Double"/>
+        <reference name="unit" referenced-type="OntologyTerm"/>
+        <reference name="value" referenced-type="ParameterValue"/>
+    </class>
+
     <class name="Complex" is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
@@ -41,7 +54,8 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
-        <collection name="allInteractors" referenced-type="Gene"/>
+        <collection name="allInteractors" referenced-type="BioEntity"/>
+        <collection name="parameters" referenced-type="InteractionParameter"/>
     </class>
 
     <class name="InteractionRegion" is-interface="true">
@@ -52,7 +66,6 @@
       <reference name="location" referenced-type="Location"/>
       <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
     </class>
-
 
     <class name="InteractionExperiment" is-interface="true">
         <attribute name="name" type="java.lang.String"/>
