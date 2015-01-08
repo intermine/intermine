@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,6 +12,7 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,23 +20,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.xml.sax.SAXException;
 
 import psidev.psi.mi.jami.commons.MIDataSourceOptionFactory;
 import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
 import psidev.psi.mi.jami.commons.PsiJami;
 import psidev.psi.mi.jami.datasource.InteractionStream;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
+import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.Complex;
+import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Interaction;
 import psidev.psi.mi.jami.model.InteractionEvidence;
-import psidev.psi.mi.jami.model.ModelledInteraction;
 
 
 /**
@@ -47,6 +48,9 @@ public class PsiComplexesConverter extends BioFileConverter
 {
     private static final String DATASET_TITLE = "Complexes";
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
+
+    private static final String COMPLEX_FUNCTION = "curated-complex";
+    private static final String COMPLEX_PROPERTIES = "complex-properties";
 
     private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
     private static final String PROP_FILE = "psi-complexes_config.properties";
@@ -117,8 +121,6 @@ public class PsiComplexesConverter extends BioFileConverter
             interactionSource = dataSourceFactory.
                     getInteractionSourceWith(parsingOptions);
 
-            // writing MITAB and PSI-XML files
-
             // the option factory for reading files and other datasources
             MIWriterOptionFactory optionwriterFactory = MIWriterOptionFactory.getInstance();
 
@@ -135,12 +137,18 @@ public class PsiComplexesConverter extends BioFileConverter
                     // so they will be of type InteractionEvidence
                     if (interaction instanceof InteractionEvidence) {
                         InteractionEvidence interactionEvidence = (InteractionEvidence) interaction;
-                        // process the interaction evidence
 
-System.out.println(interactionEvidence.getShortName());
 
                         Item item = createItem("Complex");
+                        String identifier = interactionEvidence.getImexId();
+                        if (StringUtils.isNotEmpty(identifier)) {
+                            item.setAttribute("identifier", identifier);
+                        }
                         item.setAttribute("name", interactionEvidence.getShortName());
+
+                        // parse annotations
+                        processAnnotations(interactionEvidence, item);
+
                         store(item);
 
                     // modelled interactions are equivalent to abstractInteractions in PSI-MI XML
@@ -169,5 +177,25 @@ System.out.println(interactionEvidence.getShortName());
                 interactionSource.close();
             }
         }
+    }
+
+    private void processAnnotations(InteractionEvidence interactionEvidence,
+            Item item) {
+        StringBuffer complexProperties = new StringBuffer();
+        StringBuffer complexFunction = new StringBuffer();
+
+        Collection<Annotation> annotations = interactionEvidence.getAnnotations();
+        for (Annotation annotation : annotations) {
+            String value = annotation.getValue();
+            CvTerm term = annotation.getTopic();
+            String termName = term.getShortName();
+            if (COMPLEX_PROPERTIES.equals(termName)) {
+                complexProperties.append(value + " ");
+            } else {
+                complexFunction.append(value + " ");
+            }
+        }
+        item.setAttribute("properties", complexProperties.toString());
+        item.setAttribute("function", complexFunction.toString());
     }
 }
