@@ -11,7 +11,6 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
@@ -86,8 +84,6 @@ public class PsiComplexesConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
@@ -191,13 +187,7 @@ public class PsiComplexesConverter extends BioFileConverter
                     // = (ModelledInteraction) interaction;
 //                        // process the modelled interaction
                     } else if (interaction instanceof Complex) {
-                        Complex complex = (Complex) interaction;
-
-                        Item item = createItem("Complex");
-                        item.setAttribute("name", complex.getRecommendedName());
-                        item.setAttribute("systemicName", complex.getSystematicName());
-                        item.setAttribute("properties", complex.getPhysicalProperties());
-                        store(item);
+                        // wait until 3.0
                     }
                 }
 
@@ -213,30 +203,17 @@ public class PsiComplexesConverter extends BioFileConverter
     private void processParameters(InteractionEvidence interactionEvidence,
             Item detail) throws ObjectStoreException {
         for (Parameter parameter : interactionEvidence.getParameters()) {
-            Item parameterItem = createItem("InteractionParameter");
-
+            Item item = createItem("InteractionParameter");
             String typeRefId = getTerm("OntologyTerm", parameter.getType().getMIIdentifier());
-            parameterItem.setReference("type", typeRefId);
-
-            parameterItem.setAttribute("uncertainty",
+            item.setReference("type", typeRefId);
+            item.setAttribute("uncertainty",
                     String.valueOf(parameter.getUncertainty()));
-
-            parameterItem.setReference("unit", getUnit(parameter));
-
-            parameterItem.setReference("value", getParameterValue(parameter));
-
-            store(parameterItem);
-
-            detail.addToCollection("parameters", parameterItem);
+            item.setReference("unit", getTerm("OntologyTerm",
+                    parameter.getUnit().getMIIdentifier()));
+            item.setReference("value", getParameterValue(parameter));
+            store(item);
+            detail.addToCollection("parameters", item);
         }
-    }
-
-    // TODO need OBO file
-    private String getUnit(Parameter parameter) throws ObjectStoreException {
-        Item unitTerm = createItem("OntologyTerm");
-        unitTerm.setIdentifier(parameter.getUnit().getMIIdentifier());
-        store(unitTerm);
-        return unitTerm.getIdentifier();
     }
 
     private String getParameterValue(Parameter parameter)
