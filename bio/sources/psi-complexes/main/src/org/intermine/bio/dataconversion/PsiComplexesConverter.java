@@ -81,7 +81,7 @@ public class PsiComplexesConverter extends BioFileConverter
      *
      * @param taxonIds a space-separated list of taxonIds
      */
-    public void setIntactOrganisms(String taxonIds) {
+    public void setOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
     }
 

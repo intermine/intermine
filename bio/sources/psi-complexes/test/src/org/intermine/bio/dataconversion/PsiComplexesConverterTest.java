@@ -10,8 +10,12 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,26 +23,22 @@ import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
+import org.intermine.xml.full.FullRenderer;
 
 public class PsiComplexesConverterTest extends ItemsTestCase
 {
-
-    PsiComplexesConverter converter;
-    MockItemWriter itemWriter;
-
     public PsiComplexesConverterTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
-        itemWriter = new MockItemWriter(new HashMap<String, Item>());
-        converter = new PsiComplexesConverter(itemWriter,  Model.getInstanceByName("genomic"));
-        converter.setIntactOrganisms("4932");
         super.setUp();
     }
 
     public void testProcess() throws Exception {
-
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        PsiComplexesConverter converter = new PsiComplexesConverter(itemWriter,  Model.getInstanceByName("genomic"));
+        converter.setOrganisms("4932");
         //Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("PsiComplexesConverterTest_src.xml"));
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("aas_yeast.xml"));
         converter.process(reader);
@@ -47,9 +47,10 @@ public class PsiComplexesConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         writeItemsFile(itemWriter.getItems(), "psi-complexes-tgt-items.xml");
 
-        Set<org.intermine.xml.full.Item> expected = readItemSet("PsiComplexesConverterTest_tgt.xml");
+        Set expected = readItemSet("PsiComplexesConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
+
     }
 
 

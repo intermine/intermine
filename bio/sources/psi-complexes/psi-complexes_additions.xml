@@ -39,7 +39,10 @@
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Gene"/>
         <collection name="publications" referenced-type="Publication"/>
+        <!--
+        xrefs' subject is a bioentity. Change the model or come up with something else?
         <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
+        -->
     </class>
 
     <class name="InteractionDetail" is-interface="true">
