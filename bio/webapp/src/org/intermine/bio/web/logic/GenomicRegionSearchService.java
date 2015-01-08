@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
@@ -95,6 +96,9 @@ public class GenomicRegionSearchService
     private static final String CHROMOSOME_LOCATION_MISSING =
         "Chromosome location information is missing";
 
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
+
+
     /**
      * Constructor
      */
@@ -125,6 +129,8 @@ public class GenomicRegionSearchService
      * @throws Exception e
      */
     public String setupWebData() throws Exception {
+        long startTime = System.currentTimeMillis();
+
         // By default, query all organisms in the database
         // pre defined organism short names can be read out from web.properties
         String presetOrganisms = webProperties.getProperty(
@@ -186,13 +192,17 @@ public class GenomicRegionSearchService
         }
 
         if ("".equals(orgFeatureJSONString)) {
-            return prepareWebData(orgList, excludedFeatureTypeList);
+            String retval = prepareWebData(orgList, excludedFeatureTypeList);
+            LOG.info("REGIONS INIT total time:" + (System.currentTimeMillis() - startTime) + "ms");
+            return retval;
         } else {
             return orgFeatureJSONString;
         }
     }
 
     private String prepareWebData(List<String> orgList, List<String> excludedFeatureTypeList) {
+
+        long startTime = System.currentTimeMillis();
 
         Query q = new Query();
         q.setDistinct(true);
@@ -225,7 +235,8 @@ public class GenomicRegionSearchService
         // constraints.addConstraint(new BagConstraint(qfOrgName,
         // ConstraintOp.IN, orgList));
 
-        Results results = objectStore.execute(q);
+        int batchSize = 100000;
+        Results results = objectStore.execute(q, batchSize, true, true, true);
 
         // Parse results data to a map
         Map<String, Set<String>> resultsMap = new LinkedHashMap<String, Set<String>>();
@@ -258,6 +269,9 @@ public class GenomicRegionSearchService
                 }
             }
         }
+
+        LOG.info("REGIONS INIT - organism feature types query took: "
+                + (System.currentTimeMillis() - startTime) + "ms");
 
         // Get all feature types
         for (Set<String> ftSet : resultsMap.values()) {
@@ -712,8 +726,9 @@ public class GenomicRegionSearchService
      * @return featureTypeToSOTermMap
      */
     public Map<String, List<String>> getFeatureTypeToSOTermMap() {
-
         if (featureTypeToSOTermMap == null) {
+            long startTime = System.currentTimeMillis();
+
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
                     .getFeatureAndSOInfo(interMineAPI, classDescrs);
 
@@ -741,6 +756,9 @@ public class GenomicRegionSearchService
                 }
 
                 featureTypeToSOTermMap = newFeatureTypeToSOTermMap;
+
+                LOG.info("REGIONS INIT - getFeatureTypeToSoTermMap() took: "
+                        + (System.currentTimeMillis() - startTime) + "ms");
             }
         }
 
