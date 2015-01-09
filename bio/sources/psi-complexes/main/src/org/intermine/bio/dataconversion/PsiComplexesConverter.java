@@ -11,13 +11,11 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -232,8 +230,7 @@ public class PsiComplexesConverter extends BioFileConverter
         Item item = createItem("InteractionExperiment");
         Experiment experiment = interactionEvidence.getExperiment();
         int taxonId = experiment.getHostOrganism().getTaxId();
-        item.setAttribute("hostOrganism",
-                getOrganism(String.valueOf(taxonId)));
+        item.setReference("hostOrganism", getOrganism(String.valueOf(taxonId)));
         StringBuffer description = new StringBuffer();
         for (Annotation annotation : experiment.getAnnotations()) {
             description.append(annotation.getValue() + " ");
