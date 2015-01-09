@@ -12,14 +12,16 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.util.FormattedTextParser;
 import org.intermine.metadata.StringUtil;
+import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
 /**
@@ -34,6 +36,7 @@ public class HumanGeneConverter extends BioFileConverter
     private static final String HUMAN_TAXONID = "9606";
     private static final String HGNC_PREFIX = "HGNC:";
     private static final String NCBI_PREFIX = "Entrez Gene:";
+    private Set<String> genes = new HashSet<String>();
 
     protected static final Logger LOG = Logger.getLogger(HumanGeneConverter.class);
 
@@ -109,6 +112,13 @@ public class HumanGeneConverter extends BioFileConverter
             String namealiases = line[8];
             String aliases = line[9];
             String maploc = line[10];
+
+            if (genes.contains(ensemblid)) {
+            	// TODO store xrefs
+            	continue;
+            } else {
+            	genes.add(ensemblid);
+            }
 
             Item gene = createItem("Gene");
             gene.setReference("organism", getOrganism(HUMAN_TAXONID));
