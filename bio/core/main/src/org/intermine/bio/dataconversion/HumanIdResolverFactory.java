@@ -107,19 +107,16 @@ public class HumanIdResolverFactory extends IdResolverFactory
             String ensembl = line[3];
             String omim = line[4];
 
-            if (StringUtils.isEmpty(ensembl)) {
-                continue;
-            }
-
-            resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
-
-            resolver.addMainIds(taxonId, ensembl, Collections.singleton(symbol));
-            resolver.addMainIds(taxonId, ensembl, Collections.singleton(HGNC_PREFIX + hgnc));
+            resolver.addMainIds(taxonId, symbol, Collections.singleton(symbol));
+            resolver.addMainIds(taxonId, symbol, Collections.singleton(HGNC_PREFIX + hgnc));
             if (!StringUtils.isEmpty(entrez)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(entrez));
+                resolver.addMainIds(taxonId, symbol, Collections.singleton(entrez));
+            }
+            if (!StringUtils.isEmpty(ensembl)) {
+                resolver.addMainIds(taxonId, symbol, Collections.singleton(ensembl));
             }
             if (!StringUtils.isEmpty(omim)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(OMIM_PREFIX + omim));
+                resolver.addMainIds(taxonId, symbol, Collections.singleton(OMIM_PREFIX + omim));
             }
         }
     }
