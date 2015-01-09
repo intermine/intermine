@@ -11,11 +11,13 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +45,7 @@ import psidev.psi.mi.jami.model.Parameter;
 import psidev.psi.mi.jami.model.ParameterValue;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
 import psidev.psi.mi.jami.model.Publication;
+import psidev.psi.mi.jami.model.Xref;
 
 
 /**
@@ -57,6 +60,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
     private static final String COMPLEX_FUNCTION = "curated-complex";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
+    private static final String GENE_ONTOLOGY = "go";
 
     private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
     private static final String PROP_FILE = "psi-complexes_config.properties";
@@ -174,7 +178,8 @@ public class PsiComplexesConverter extends BioFileConverter
 
                         interactionEvidence.getVariableParameterValues();
 
-                        interactionEvidence.getXrefs();
+                        // parse GO terms
+                        processXrefs(interactionEvidence, complex);
 
                         store(detail);
                         store(complex);
@@ -201,6 +206,27 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
+    private void processXrefs(InteractionEvidence interactionEvidence,
+            Item complex) throws ObjectStoreException {
+        for (Xref xref : interactionEvidence.getXrefs()) {
+            CvTerm dbTerm = xref.getDatabase();
+            String xrefId = xref.getId();
+            CvTerm qualifierTerm = xref.getQualifier();
+            // String version = xref.getVersion(); -- always null
+            if (GENE_ONTOLOGY.equalsIgnoreCase(dbTerm.getShortName())) {
+                String goterm = getTerm("GOTerm", xrefId);
+                Item goAnnotation = createItem("GOAnnotation");
+                if (qualifierTerm != null) {
+                    goAnnotation.setAttribute("qualifier",
+                            qualifierTerm.getShortName());
+                }
+                goAnnotation.setReference("ontologyTerm", goterm);
+                store(goAnnotation);
+                complex.addToCollection("goAnnotation", goAnnotation);
+            }
+        }
+    }
+
     private void processExperiment(InteractionEvidence interactionEvidence,
             Item complex, Item detail) throws ObjectStoreException {
         Item item = createItem("InteractionExperiment");
@@ -215,7 +241,7 @@ public class PsiComplexesConverter extends BioFileConverter
         item.setAttribute("description", description.toString());
         processConfidences(experiment.getConfidences(), complex);
         CvTerm detectionMethod = experiment.getInteractionDetectionMethod();
-        item.setReference("interactionDetectionMethod",
+        item.addToCollection("interactionDetectionMethods",
                 getTerm("OntologyTerm", detectionMethod.getMIIdentifier()));
         Publication publication = experiment.getPublication();
         String pubMedId = publication.getPubmedId();
@@ -294,8 +320,12 @@ public class PsiComplexesConverter extends BioFileConverter
                 complexFunction.append(value + " ");
             }
         }
-        item.setAttribute("properties", complexProperties.toString());
-        item.setAttribute("function", complexFunction.toString());
+        if (StringUtils.isNotEmpty(complexProperties.toString())) {
+            item.setAttribute("properties", complexProperties.toString());
+        }
+        if (StringUtils.isNotEmpty(complexFunction.toString())) {
+            item.setAttribute("function", complexFunction.toString());
+        }
     }
 
     private String getTerm(String termType, String identifier) throws ObjectStoreException {
@@ -322,3 +352,4 @@ public class PsiComplexesConverter extends BioFileConverter
         return refId;
     }
 }
+
