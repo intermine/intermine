@@ -28,6 +28,11 @@
         <reference name="value" referenced-type="ParameterValue"/>
     </class>
 
+    <class name="Confidence" is-interface="true">
+        <reference name="type" referenced-type="InteractionTerm"/>
+        <attribute name="value" type="java.lang.String"/>
+    </class>
+
     <class name="Complex" is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
@@ -59,6 +64,7 @@
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="BioEntity"/>
         <collection name="parameters" referenced-type="InteractionParameter"/>
+        <collection name="confidences" referenced-type="Confidence"/>
     </class>
 
     <class name="InteractionRegion" is-interface="true">
@@ -79,6 +85,7 @@
         <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
         <collection name="comments" referenced-type="Comment"/>
         <collection name="interactions" referenced-type="InteractionDetail" reverse-reference="experiment"/>
+        <collection name="confidences" referenced-type="Confidence"/>
     </class>
 
 </classes>

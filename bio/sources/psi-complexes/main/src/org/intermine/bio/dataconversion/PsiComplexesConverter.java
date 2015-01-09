@@ -42,6 +42,7 @@ import psidev.psi.mi.jami.model.InteractionEvidence;
 import psidev.psi.mi.jami.model.Parameter;
 import psidev.psi.mi.jami.model.ParameterValue;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
+import psidev.psi.mi.jami.model.Publication;
 
 
 /**
@@ -59,7 +60,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
     private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
     private static final String PROP_FILE = "psi-complexes_config.properties";
-    private Map<String, String> pubs = new HashMap<String, String>();
+    private Map<String, String> publications = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Set<String> taxonIds = null;
     private Map<String, String> interactors = new HashMap<String, String>();
@@ -129,24 +130,24 @@ public class PsiComplexesConverter extends BioFileConverter
                     if (interaction instanceof InteractionEvidence) {
                         InteractionEvidence interactionEvidence = (InteractionEvidence) interaction;
 
-                        Item interactionItem = createItem("Complex");
+                        Item complex = createItem("Complex");
 
                         String identifier = interactionEvidence.getImexId();
                         if (StringUtils.isNotEmpty(identifier)) {
-                            interactionItem.setAttribute("identifier", identifier);
+                            complex.setAttribute("identifier", identifier);
                         }
-                        interactionItem.setAttribute("name", interactionEvidence.getShortName());
+                        complex.setAttribute("name", interactionEvidence.getShortName());
 
                         // parse annotations
-                        processAnnotations(interactionEvidence, interactionItem);
+                        processAnnotations(interactionEvidence, complex);
 
                         // parse confidences
-                        for (Confidence confidence : interactionEvidence.getConfidences()) {
-                            String value = confidence.getValue();
-                        }
+                        processConfidences(interactionEvidence.getConfidences(), complex);
 
-                        Experiment experiment = interactionEvidence.getExperiment();
                         Item detail = createItem("InteractionDetail");
+
+                        // parse experiment
+                        processExperiment(interactionEvidence, complex, detail);
 
                         // type, going to be "physical"
                         processType(interactionEvidence, detail);
@@ -176,7 +177,7 @@ public class PsiComplexesConverter extends BioFileConverter
                         interactionEvidence.getXrefs();
 
                         store(detail);
-                        store(interactionItem);
+                        store(complex);
 
                     // modelled interactions are equivalent to abstractInteractions in PSI-MI XML
                     // 3.0. They are returned when the interaction is not an
@@ -197,6 +198,45 @@ public class PsiComplexesConverter extends BioFileConverter
             if (interactionSource != null) {
                 interactionSource.close();
             }
+        }
+    }
+
+    private void processExperiment(InteractionEvidence interactionEvidence,
+            Item complex, Item detail) throws ObjectStoreException {
+        Item item = createItem("InteractionExperiment");
+        Experiment experiment = interactionEvidence.getExperiment();
+        int taxonId = experiment.getHostOrganism().getTaxId();
+        item.setAttribute("hostOrganism",
+                getOrganism(String.valueOf(taxonId)));
+        StringBuffer description = new StringBuffer();
+        for (Annotation annotation : experiment.getAnnotations()) {
+            description.append(annotation.getValue() + " ");
+        }
+        item.setAttribute("description", description.toString());
+        processConfidences(experiment.getConfidences(), complex);
+        CvTerm detectionMethod = experiment.getInteractionDetectionMethod();
+        item.setReference("interactionDetectionMethod",
+                getTerm("OntologyTerm", detectionMethod.getMIIdentifier()));
+        Publication publication = experiment.getPublication();
+        String pubMedId = publication.getPubmedId();
+        item.setReference("publication", getPublication(pubMedId));
+        experiment.getVariableParameters();
+        store(item);
+        detail.setReference("experiment", item);
+    }
+
+
+    private void processConfidences(Collection<Confidence> confidences,
+            Item item) throws ObjectStoreException {
+        for (Confidence entry : confidences) {
+            String value = entry.getValue();
+            CvTerm type = entry.getType();
+            String refId = getTerm("OntologyTerm", type.getMIIdentifier());
+            Item confidence = createItem("Confidence");
+            confidence.setAttribute("value", value);
+            confidence.setReference("type", refId);
+            store(confidence);
+            item.addToCollection("confidences", confidence);
         }
     }
 
@@ -266,6 +306,18 @@ public class PsiComplexesConverter extends BioFileConverter
             store(ontologyTerm);
             refId = ontologyTerm.getIdentifier();
             terms.put(identifier, refId);
+        }
+        return refId;
+    }
+
+    private String getPublication(String pubMedId) throws ObjectStoreException {
+        String refId = publications.get(pubMedId);
+        if (refId == null) {
+            Item item = createItem("Publication");
+            item.setAttribute("pubMedId", pubMedId);
+            store(item);
+            refId = item.getIdentifier();
+            publications.put(pubMedId, refId);
         }
         return refId;
     }
