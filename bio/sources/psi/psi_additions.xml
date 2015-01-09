@@ -31,7 +31,7 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
-        <collection name="allInteractors" referenced-type="BioEntity"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
     </class>
 
     <class name="BioEntity" is-interface="true">
@@ -46,5 +46,7 @@
       <reference name="location" referenced-type="Location"/>
       <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
     </class>
+
+    <class name="Interactor" is-interface="true"/>
 </classes>
 

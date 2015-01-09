@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,16 +34,22 @@ import psidev.psi.mi.jami.commons.PsiJami;
 import psidev.psi.mi.jami.datasource.InteractionStream;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
 import psidev.psi.mi.jami.model.Annotation;
+import psidev.psi.mi.jami.model.CausalRelationship;
 import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.Confidence;
 import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.Entity;
 import psidev.psi.mi.jami.model.Experiment;
+import psidev.psi.mi.jami.model.FeatureEvidence;
 import psidev.psi.mi.jami.model.Interaction;
 import psidev.psi.mi.jami.model.InteractionEvidence;
+import psidev.psi.mi.jami.model.Interactor;
+import psidev.psi.mi.jami.model.Organism;
 import psidev.psi.mi.jami.model.Parameter;
 import psidev.psi.mi.jami.model.ParameterValue;
 import psidev.psi.mi.jami.model.ParticipantEvidence;
 import psidev.psi.mi.jami.model.Publication;
+import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
 
 
@@ -155,26 +162,13 @@ public class PsiComplexesConverter extends BioFileConverter
                         processType(interactionEvidence, detail);
 
                         // parse parameters
-                        processParameters(interactionEvidence, detail);
+                        processParameters(interactionEvidence.getParameters(), detail);
 
                         // parse participants
-                        for (ParticipantEvidence evidence : interactionEvidence.getParticipants()) {
-                            evidence.getAliases();
-                            evidence.getAnnotations();
-                            evidence.getBiologicalRole();
-                            evidence.getCausalRelationships();
-                            evidence.getConfidences();
-                            evidence.getExperimentalPreparations();
-                            evidence.getExperimentalRole();
-                            evidence.getFeatures();
-                            evidence.getIdentificationMethods();
-                            evidence.getInteractor();
-                            evidence.getParameters();
-                            evidence.getStoichiometry();
-                            evidence.getXrefs();
-                        }
+                        processParticipants(interactionEvidence, detail, complex);
 
-                        interactionEvidence.getVariableParameterValues();
+                        // TODO what are these?
+                        // interactionEvidence.getVariableParameterValues();
 
                         // parse GO terms
                         processXrefs(interactionEvidence, complex);
@@ -204,6 +198,131 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
+    private void processParticipants(InteractionEvidence interactionEvidence,
+            Item detail, Item complex) throws ObjectStoreException {
+        for (ParticipantEvidence evidence : interactionEvidence.getParticipants()) {
+
+            Item interactor = createItem("Interactor");
+
+            // annotations
+            parseAnnotations(evidence, interactor);
+
+            // biological role
+            setBiologicalRole(evidence, interactor);
+
+            for (CausalRelationship rels : evidence.getCausalRelationships()) {
+                CvTerm relationType = rels.getRelationType();
+                Entity entity = rels.getTarget();
+                Collection<Xref> xrefs = entity.getFeatures();
+                // TODO what do I do now?
+            }
+
+            processConfidences(evidence.getConfidences(), interactor);
+
+            // experimental prep
+            setExperimentalPrep(evidence, interactor);
+
+            // experimental role
+            setExperimentalRole(evidence, interactor);
+
+            // parse features
+            for (FeatureEvidence feature : evidence.getFeatures()) {
+                //feature.getParticipant();
+                // TODO what now?
+            }
+
+            // participantIdentificationMethods
+            processParticipantIdMethods(evidence, interactor);
+
+            processProtein(evidence, interactor);
+
+            processParameters(evidence.getParameters(), interactor);
+
+            // parse stoich
+            processStoichiometry(evidence, interactor);
+
+            // not parsing xrefs or aliases
+
+            store(interactor);
+
+            detail.addToCollection("allInteractors", interactor);
+            complex.addToCollection("allInteractors", interactor);
+        }
+    }
+
+    private void processParticipantIdMethods(ParticipantEvidence evidence,
+            Item interactor) throws ObjectStoreException {
+        for (CvTerm idMethod : evidence.getIdentificationMethods()) {
+            interactor.addToCollection("participantIdentificationMethods",
+                    getTerm("OntologyTerm", idMethod.getMIIdentifier()));
+        }
+    }
+
+    private void setExperimentalRole(ParticipantEvidence evidence,
+            Item interactor) throws ObjectStoreException {
+        CvTerm experimentalRole = evidence.getExperimentalRole();
+        interactor.setReference("experimentalRole",
+                getTerm("OntologyTerm", experimentalRole.getMIIdentifier()));
+    }
+
+    private void setExperimentalPrep(ParticipantEvidence evidence,
+            Item interactor) throws ObjectStoreException {
+        for (CvTerm prep : evidence.getExperimentalPreparations()) {
+            interactor.addToCollection("experimentalPreparations",
+                    getTerm("OntologyTerm", prep.getMIIdentifier()));
+        }
+    }
+
+    private void setBiologicalRole(ParticipantEvidence evidence, Item interactor)
+        throws ObjectStoreException {
+        CvTerm biologicalRole = evidence.getBiologicalRole();
+        interactor.setReference("biologicalRole",
+                getTerm("OntologyTerm", biologicalRole.getMIIdentifier()));
+    }
+
+    private void parseAnnotations(ParticipantEvidence evidence, Item interactor) {
+        StringBuilder annotations = new StringBuilder();
+        for (Annotation annotation : evidence.getAnnotations()) {
+            annotations.append(annotation.getValue() + " ");
+        }
+        if (StringUtils.isNotEmpty(annotations.toString())) {
+            interactor.setAttribute("annotations", annotations.toString());
+        }
+    }
+
+    private void processProtein(ParticipantEvidence evidence, Item interactor)
+        throws ObjectStoreException {
+        Interactor participant = evidence.getInteractor();
+        Organism organism = participant.getOrganism();
+        Xref xref = participant.getPreferredIdentifier();
+        String accession = xref.getId();
+        Item protein = createItem("Protein");
+        protein.setAttribute("primaryAccession", accession);
+        if (organism != null) {
+            String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
+            protein.setReference("organism", organismRefId);
+        }
+        store(protein);
+        interactor.setReference("subject", protein);
+        interactor.setReference("type", getTerm("OntologyTerm",
+                participant.getInteractorType().getMIIdentifier()));
+    }
+
+    private void processStoichiometry(ParticipantEvidence evidence, Item interactor)
+        throws ObjectStoreException {
+        Stoichiometry stoichiometry = evidence.getStoichiometry();
+        if (stoichiometry == null) {
+            return;
+        }
+        Item stoichiometryItem = createItem("Stoichiometry");
+        stoichiometryItem.setAttribute("min",
+                String.valueOf(stoichiometry.getMinValue()));
+        stoichiometryItem.setAttribute("max",
+                String.valueOf(stoichiometry.getMaxValue()));
+        store(stoichiometryItem);
+        interactor.setReference("stoichiometry", stoichiometryItem);
+    }
+
     private void processXrefs(InteractionEvidence interactionEvidence,
             Item complex) throws ObjectStoreException {
         for (Xref xref : interactionEvidence.getXrefs()) {
@@ -229,8 +348,8 @@ public class PsiComplexesConverter extends BioFileConverter
             Item complex, Item detail) throws ObjectStoreException {
         Item item = createItem("InteractionExperiment");
         Experiment experiment = interactionEvidence.getExperiment();
-        int taxonId = experiment.getHostOrganism().getTaxId();
-        item.setReference("hostOrganism", getOrganism(String.valueOf(taxonId)));
+        String hostOrganism = experiment.getHostOrganism().getScientificName();
+        item.setAttribute("hostOrganism", hostOrganism);
         StringBuffer description = new StringBuffer();
         for (Annotation annotation : experiment.getAnnotations()) {
             description.append(annotation.getValue() + " ");
@@ -263,19 +382,18 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void processParameters(InteractionEvidence interactionEvidence,
-            Item detail) throws ObjectStoreException {
-        for (Parameter parameter : interactionEvidence.getParameters()) {
-            Item item = createItem("InteractionParameter");
+    private void processParameters(Collection<Parameter> collection, Item item)
+        throws ObjectStoreException {
+        for (Parameter parameter : collection) {
+            Item entry = createItem("InteractionParameter");
             String typeRefId = getTerm("OntologyTerm", parameter.getType().getMIIdentifier());
-            item.setReference("type", typeRefId);
-            item.setAttribute("uncertainty",
-                    String.valueOf(parameter.getUncertainty()));
-            item.setReference("unit", getTerm("OntologyTerm",
+            entry.setReference("type", typeRefId);
+            entry.setAttribute("uncertainty", String.valueOf(parameter.getUncertainty()));
+            entry.setReference("unit", getTerm("OntologyTerm",
                     parameter.getUnit().getMIIdentifier()));
-            item.setReference("value", getParameterValue(parameter));
-            store(item);
-            detail.addToCollection("parameters", item);
+            entry.setReference("value", getParameterValue(parameter));
+            store(entry);
+            item.addToCollection("parameters", entry);
         }
     }
 

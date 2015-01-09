@@ -7,8 +7,8 @@
     <class name="Interaction" is-interface="true">
         <reference name="participant1" referenced-type="BioEntity" reverse-reference="interactions" />
         <reference name="participant2" referenced-type="BioEntity" />
-        <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
         <reference name="complex" referenced-type="Complex" />
+        <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
     </class>
 
     <class name="BioEntity" is-interface="true">
@@ -42,9 +42,31 @@
         <reference name="complexAssembly" referenced-type="InteractionTerm"/>
         <collection name="interactions" referenced-type="Interaction" reverse-reference="complex"/>
         <collection name="dataSets" referenced-type="DataSet"/>
-        <collection name="allInteractors" referenced-type="Gene"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
         <collection name="publications" referenced-type="Publication"/>
         <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+    </class>
+
+    <class name="Interactor" is-interface="true">
+        <attribute name="annotations" type="java.lang.String"/>
+        <reference name="subject" referenced-type="BioEntity" />
+        <reference name="experimentalRole" referenced-type="OntologyTerm"/>
+        <reference name="biologicalRole" referenced-type="OntologyTerm"/>
+        <reference name="stoichiometry" referenced-type="Stoichiometry"/>
+        <reference name="type" referenced-type="OntologyTerm"/>
+        <collection name="confidences" referenced-type="Confidence"/>
+        <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
+        <collection name="experimentalPreparations" referenced-type="OntologyTerm"/>
+    </class>
+
+    <class name="Stoichiometry" is-interface="true">
+      <attribute name="min" type="java.lang.Integer"/>
+      <attribute name="max" type="java.lang.Integer"/>
+    </class>
+
+    <class name="CausalRelationship" is-interface="true">
+      <reference name="type" referenced-type="OntologyTerm"/>
+      <reference name="feature" referenced-type="BioEntity"/>
     </class>
 
     <class name="InteractionDetail" is-interface="true">
@@ -59,7 +81,7 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
-        <collection name="allInteractors" referenced-type="BioEntity"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
         <collection name="parameters" referenced-type="InteractionParameter"/>
         <collection name="confidences" referenced-type="Confidence"/>
     </class>
@@ -79,7 +101,6 @@
         <attribute name="hostOrganism" type="java.lang.String" />
         <reference name="publication" referenced-type="Publication"/>
         <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
-        <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
         <collection name="comments" referenced-type="Comment"/>
         <collection name="interactions" referenced-type="InteractionDetail" reverse-reference="experiment"/>
         <collection name="confidences" referenced-type="Confidence"/>

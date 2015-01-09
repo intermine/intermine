@@ -68,7 +68,9 @@
         <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="dataSets" referenced-type="DataSet"/>
-        <collection name="allInteractors" referenced-type="BioEntity"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
     </class>
     <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
+
+    <class name="Interactor" is-interface="true"/>
 </classes>
