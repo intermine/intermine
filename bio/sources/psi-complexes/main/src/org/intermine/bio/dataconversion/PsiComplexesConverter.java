@@ -132,12 +132,12 @@ public class PsiComplexesConverter extends BioFileConverter
                 Iterator interactionIterator = interactionSource.getInteractionsIterator();
 
                 while (interactionIterator.hasNext()) {
-                    Interaction interaction = (Interaction) interactionIterator.next();
+                    Interaction entry = (Interaction) interactionIterator.next();
 
                     // most of the interactions will have experimental data attached to them
                     // so they will be of type InteractionEvidence
-                    if (interaction instanceof InteractionEvidence) {
-                        InteractionEvidence interactionEvidence = (InteractionEvidence) interaction;
+                    if (entry instanceof InteractionEvidence) {
+                        InteractionEvidence interactionEvidence = (InteractionEvidence) entry;
 
                         Item complex = createItem("Complex");
 
@@ -158,14 +158,18 @@ public class PsiComplexesConverter extends BioFileConverter
                         // parse experiment
                         processExperiment(interactionEvidence, complex, detail);
 
-                        // type, going to be "physical"
-                        processType(interactionEvidence, detail);
-
                         // parse parameters
                         processParameters(interactionEvidence.getParameters(), detail);
 
+                        // type, going to be "physical"
+                        processType(interactionEvidence, detail);
+
                         // parse participants
-                        processParticipants(interactionEvidence, detail, complex);
+                        Set<String> proteins
+                            = processParticipants(interactionEvidence, detail, complex);
+
+                        // create interactions
+                        createInteractions(proteins, detail);
 
                         // TODO what are these?
                         // interactionEvidence.getVariableParameterValues();
@@ -184,7 +188,7 @@ public class PsiComplexesConverter extends BioFileConverter
 //                        ModelledInteraction modelledInteraction
                     // = (ModelledInteraction) interaction;
 //                        // process the modelled interaction
-                    } else if (interaction instanceof Complex) {
+                    } else if (entry instanceof Complex) {
                         // wait until 3.0
                     }
                 }
@@ -198,8 +202,36 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void processParticipants(InteractionEvidence interactionEvidence,
+    private void createInteractions(Set<String> proteins, Item detail)
+        throws ObjectStoreException {
+        if (!proteins.isEmpty()) {
+            String interactor = proteins.iterator().next();
+            proteins.remove(interactor);
+
+            for (String protein : proteins) {
+
+                Item interaction = createItem("Interaction");
+                interaction.setReference("participant1", interactor);
+                interaction.setReference("participant2", protein);
+                interaction.addToCollection("details", detail);
+                store(interaction);
+
+                interaction = createItem("Interaction");
+                interaction.setReference("participant1", protein);
+                interaction.setReference("participant2", interactor);
+                interaction.addToCollection("details", detail);
+                store(interaction);
+            }
+            createInteractions(proteins, detail);
+        }
+
+    }
+
+    private Set<String> processParticipants(InteractionEvidence interactionEvidence,
             Item detail, Item complex) throws ObjectStoreException {
+
+        Set<String> participants = new HashSet<String>();
+
         for (ParticipantEvidence evidence : interactionEvidence.getParticipants()) {
 
             Item interactor = createItem("Interactor");
@@ -234,7 +266,8 @@ public class PsiComplexesConverter extends BioFileConverter
             // participantIdentificationMethods
             processParticipantIdMethods(evidence, interactor);
 
-            processProtein(evidence, interactor);
+            String refId = processProtein(evidence, interactor);
+            participants.add(refId);
 
             processParameters(evidence.getParameters(), interactor);
 
@@ -248,6 +281,8 @@ public class PsiComplexesConverter extends BioFileConverter
             detail.addToCollection("allInteractors", interactor);
             complex.addToCollection("allInteractors", interactor);
         }
+
+        return participants;
     }
 
     private void processParticipantIdMethods(ParticipantEvidence evidence,
@@ -290,22 +325,27 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void processProtein(ParticipantEvidence evidence, Item interactor)
+    private String processProtein(ParticipantEvidence evidence, Item interactor)
         throws ObjectStoreException {
         Interactor participant = evidence.getInteractor();
-        Organism organism = participant.getOrganism();
         Xref xref = participant.getPreferredIdentifier();
         String accession = xref.getId();
-        Item protein = createItem("Protein");
-        protein.setAttribute("primaryAccession", accession);
-        if (organism != null) {
-            String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
-            protein.setReference("organism", organismRefId);
+        String refId = interactors.get(accession);
+        if (refId == null) {
+            Item protein = createItem("Protein");
+            protein.setAttribute("primaryAccession", accession);
+            Organism organism = participant.getOrganism();
+            if (organism != null) {
+                String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
+                protein.setReference("organism", organismRefId);
+            }
+            store(protein);
+            refId = protein.getIdentifier();
         }
-        store(protein);
-        interactor.setReference("subject", protein);
+        interactor.setReference("subject", refId);
         interactor.setReference("type", getTerm("OntologyTerm",
                 participant.getInteractorType().getMIIdentifier()));
+        return refId;
     }
 
     private void processStoichiometry(ParticipantEvidence evidence, Item interactor)
