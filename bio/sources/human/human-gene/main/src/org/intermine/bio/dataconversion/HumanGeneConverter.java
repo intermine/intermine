@@ -114,10 +114,10 @@ public class HumanGeneConverter extends BioFileConverter
             String maploc = line[10];
 
             if (genes.contains(ensemblid)) {
-            	// TODO store xrefs
-            	continue;
+                // TODO store xrefs
+                continue;
             } else {
-            	genes.add(ensemblid);
+                genes.add(ensemblid);
             }
 
             Item gene = createItem("Gene");
