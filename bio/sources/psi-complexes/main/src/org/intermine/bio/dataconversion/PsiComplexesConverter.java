@@ -333,7 +333,7 @@ public class PsiComplexesConverter extends BioFileConverter
         String refId = interactors.get(accession);
         if (refId == null) {
             Item protein = createItem("Protein");
-            protein.setAttribute("primaryAccession", accession);
+            protein.setAttribute("primaryIdentifier", accession);
             Organism organism = participant.getOrganism();
             if (organism != null) {
                 String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
