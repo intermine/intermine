@@ -15,21 +15,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 
-
 /**
- * Create an IdResolverFactory for human Ensembl gene ids, this doesn't include any synonyms or id
- * tracking but simply filters for ids that are located on a the main chromosomes.
+ * Create an IdResolverFactory for human Ensembl gene ids
  *
- * @author Richard Smith
+ * @author Julie Sullivan
  */
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
@@ -96,33 +92,26 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
      */
     protected void createFromFile(File f) throws IOException {
 
-        Set<String> validChromosomes = validChromosomes();
-
-        // Ensembl Id | chromosome name
+        // Ensembl Gene ID EntrezGene ID   HGNC ID(s)      HGNC symbol
         Iterator<?> lineIter = FormattedTextParser
                 .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String ensembl = line[0];
-            String chr = line[1];
-            if (validChromosomes.contains(chr)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
+            String entrez = line[1];
+            String hgncID = line[2];
+            String symbol = line[3];
+
+            resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
+            if (!StringUtils.isEmpty(entrez)) {
+                resolver.addMainIds(taxonId, ensembl, Collections.singleton(entrez));
+            }
+            if (!StringUtils.isEmpty(hgncID)) {
+                resolver.addMainIds(taxonId, ensembl, Collections.singleton(hgncID));
+            }
+            if (!StringUtils.isEmpty(symbol)) {
+                resolver.addMainIds(taxonId, ensembl, Collections.singleton(symbol));
             }
         }
-    }
-
-    /**
-     * Get a set of valid chromosome identifiers for human as we want to ignore other data types
-     * @return a set of strings
-     */
-    protected static Set<String> validChromosomes() {
-        Set<String> chrs = new HashSet<String>();
-        for (int i = 1; i <= 22; i++) {
-            chrs.add("" + i);
-        }
-        chrs.add("X");
-        chrs.add("Y");
-        chrs.add("MT");
-        return chrs;
     }
 }
