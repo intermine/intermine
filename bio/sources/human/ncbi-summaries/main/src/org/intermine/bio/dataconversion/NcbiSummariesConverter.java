@@ -75,18 +75,21 @@ public class NcbiSummariesConverter extends BioFileConverter
 
     private void getGene(String entrezIdentifier, String description)
         throws ObjectStoreException {
-        if (genes.contains(entrezIdentifier)) {
-            LOG.error("DUPLICATE entrez " + entrezIdentifier + " for single descr: " + description);
-            return;
-        }
-        genes.add(entrezIdentifier);
-
-        Item gene = createItem("Gene");
-        if (resolveGene(entrezIdentifier) == null) {
+        String ensemblIdentifier = resolveGene(entrezIdentifier);
+        if (ensemblIdentifier == null) {
             LOG.warn("Unresolved Entrez gene: " + entrezIdentifier);
             return;
         }
-        gene.setAttribute("primaryIdentifier", resolveGene(entrezIdentifier));
+
+        if (genes.contains(ensemblIdentifier)) {
+            LOG.error("DUPLICATE ensembl " + ensemblIdentifier + " matches multiple NCBI IDs. "
+                    + entrezIdentifier + " discarded, along with description: " + description);
+            return;
+        }
+        genes.add(ensemblIdentifier);
+
+        Item gene = createItem("Gene");
+        gene.setAttribute("primaryIdentifier", ensemblIdentifier);
         gene.setAttribute("description", description);
         gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
         store(gene);
