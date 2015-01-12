@@ -216,7 +216,7 @@ public class PsiComplexesConverter extends BioFileConverter
                 Item detail1 = copyItem(detail, INTERACTION_DETAIL);
                 detail1.setReference("interaction", interaction);
                 store(detail1);
-                complex.addToCollection("interactions", interaction);
+                interaction.setReference("complex", complex);
                 store(interaction);
 
 
@@ -227,6 +227,7 @@ public class PsiComplexesConverter extends BioFileConverter
                 detail2.setReference("interaction", interaction);
                 store(detail2);
                 complex.addToCollection("interactions", interaction);
+                interaction.setReference("complex", complex);
                 store(interaction);
 
             }
