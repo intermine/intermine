@@ -169,7 +169,7 @@ public class PsiComplexesConverter extends BioFileConverter
                             = processParticipants(interactionEvidence, detail, complex);
 
                         // create interactions
-                        createInteractions(proteins, detail);
+                        createInteractions(proteins, detail, complex);
 
                         // TODO what are these?
                         // interactionEvidence.getVariableParameterValues();
@@ -202,27 +202,28 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void createInteractions(Set<String> proteins, Item detail)
+    private void createInteractions(Set<String> proteins, Item detail, Item complex)
         throws ObjectStoreException {
         if (!proteins.isEmpty()) {
             String interactor = proteins.iterator().next();
             proteins.remove(interactor);
 
             for (String protein : proteins) {
-
                 Item interaction = createItem("Interaction");
                 interaction.setReference("participant1", interactor);
                 interaction.setReference("participant2", protein);
-                interaction.addToCollection("details", detail);
+                detail.setReference("interaction", interaction);
+                complex.addToCollection("interactions", interaction);
                 store(interaction);
 
                 interaction = createItem("Interaction");
                 interaction.setReference("participant1", protein);
                 interaction.setReference("participant2", interactor);
-                interaction.addToCollection("details", detail);
+                detail.setReference("interaction", interaction);
+                complex.addToCollection("interactions", interaction);
                 store(interaction);
             }
-            createInteractions(proteins, detail);
+            createInteractions(proteins, detail, complex);
         }
 
     }
