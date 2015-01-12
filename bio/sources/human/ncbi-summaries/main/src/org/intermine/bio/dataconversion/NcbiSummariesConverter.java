@@ -12,12 +12,15 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
@@ -32,6 +35,7 @@ public class NcbiSummariesConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "NCBI Gene";
     private static final String HUMAN_TAXON_ID = "9606";
     protected static final Logger LOG = Logger.getLogger(NcbiSummariesConverter.class);
+    private Set<String> genes = new HashSet<String>();
 
     private IdResolver rslv;
 
@@ -55,29 +59,37 @@ public class NcbiSummariesConverter extends BioFileConverter
         // Entrez id | description
         @SuppressWarnings("rawtypes")
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        int count = 0;
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             try {
                 String entrez = line[0];
                 String description = line[1];
                 if (!StringUtils.isBlank(description)) {
-                    Item gene = createItem("Gene");
-                    if (resolveGene(entrez) == null) {
-                        LOG.warn("Unresolved Entrez gene: " + entrez);
-                        continue;
-                    } else {
-                        gene.setAttribute("symbol", resolveGene(entrez));
-                    }
-
-                    gene.setAttribute("description", description);
-                    gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
-                    store(gene);
+                    getGene(entrez, description);
                 }
             } catch (IndexOutOfBoundsException e) {
                 LOG.info("Failed to read line: " + Arrays.asList(line));
             }
         }
+    }
+
+    private void getGene(String entrezIdentifier, String description)
+        throws ObjectStoreException {
+        if (genes.contains(entrezIdentifier)) {
+            LOG.error("DUPLICATE entrez " + entrezIdentifier + " for single descr: " + description);
+            return;
+        }
+        genes.add(entrezIdentifier);
+
+        Item gene = createItem("Gene");
+        if (resolveGene(entrezIdentifier) == null) {
+            LOG.warn("Unresolved Entrez gene: " + entrezIdentifier);
+            return;
+        }
+        gene.setAttribute("primaryIdentifier", resolveGene(entrezIdentifier));
+        gene.setAttribute("description", description);
+        gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
+        store(gene);
     }
 
     private String resolveGene(String entrez) {
