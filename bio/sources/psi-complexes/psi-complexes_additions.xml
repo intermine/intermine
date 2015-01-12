@@ -15,7 +15,7 @@
         <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
     </class>
 
-    <class name="SmallMolecule" is-interface="true"/>
+    <class name="SmallMolecule" extends="BioEntity" is-interface="true"/>
 
     <class name="ParameterValue" is-interface="true">
         <attribute name="base" type="java.lang.Short"/>

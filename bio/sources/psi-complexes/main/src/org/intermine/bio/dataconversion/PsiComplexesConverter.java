@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +28,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ItemFactory;
 
 import psidev.psi.mi.jami.commons.MIDataSourceOptionFactory;
 import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
@@ -67,14 +67,24 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String COMPLEX_FUNCTION = "curated-complex";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_DETAIL = "InteractionDetail";
+    private static final String INTERACTION_TYPE = "physical";
+    // TODO put this in config file instead
+    private static final String PROTEIN = "primaryAccession";
     private static final String GENE_ONTOLOGY = "go";
-
+    // TODO types (protein and small molecules are processed now) are hardcoded.
+    // maybe put this in config file? Or check model to see if type is legal?
+    private static final Map<String, String> INTERACTOR_TYPES = new HashMap<String, String>();
     private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
     private static final String PROP_FILE = "psi-complexes_config.properties";
     private Map<String, String> publications = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Set<String> taxonIds = null;
     private Map<String, String> interactors = new HashMap<String, String>();
+
+    static {
+        INTERACTOR_TYPES.put("MI:0326", "Protein");
+        INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
+    }
 
 
     /**
@@ -156,19 +166,25 @@ public class PsiComplexesConverter extends BioFileConverter
                         processConfidences(interactionEvidence.getConfidences(), complex);
 
                         Item detail = createItem(INTERACTION_DETAIL);
-
-                        // parse experiment
-                        processExperiment(interactionEvidence, complex, detail);
+                        detail.setAttribute("type", INTERACTION_TYPE);
 
                         // parse parameters
                         processParameters(interactionEvidence.getParameters(), detail);
 
-                        // type, going to be "physical"
+                        // type, e.g. "physical association", "direct interaction"
                         processType(interactionEvidence, detail);
 
                         // parse participants
-                        Set<String> proteins
+                        ProcessParticipantsResults results
                             = processParticipants(interactionEvidence, detail, complex);
+
+                        Set<String> proteins = results.getProteins();
+                        List<String> participantIdentificationMethods
+                            = results.getParticipantIdentificationMethods();
+
+                        // parse experiment
+                        processExperiment(interactionEvidence, participantIdentificationMethods,
+                                complex, detail);
 
                         // create interactions
                         createInteractions(proteins, detail, complex);
@@ -219,7 +235,6 @@ public class PsiComplexesConverter extends BioFileConverter
                 interaction.setReference("complex", complex);
                 store(interaction);
 
-
                 interaction = createItem("Interaction");
                 interaction.setReference("participant1", protein);
                 interaction.setReference("participant2", interactor);
@@ -229,18 +244,17 @@ public class PsiComplexesConverter extends BioFileConverter
                 complex.addToCollection("interactions", interaction);
                 interaction.setReference("complex", complex);
                 store(interaction);
-
             }
             createInteractions(proteins, detail, complex);
         }
 
     }
 
-    private Set<String> processParticipants(InteractionEvidence interactionEvidence,
+    private ProcessParticipantsResults processParticipants(InteractionEvidence interactionEvidence,
             Item detail, Item complex) throws ObjectStoreException {
 
         Set<String> participants = new HashSet<String>();
-
+        ProcessParticipantsResults results = new ProcessParticipantsResults();
         for (ParticipantEvidence evidence : interactionEvidence.getParticipants()) {
 
             Item interactor = createItem("Interactor");
@@ -273,11 +287,12 @@ public class PsiComplexesConverter extends BioFileConverter
             }
 
             // participantIdentificationMethods
-            processParticipantIdMethods(evidence, interactor);
+            processParticipantIdMethods(evidence, interactor, results);
 
-            String refId = processProtein(evidence, interactor);
-            participants.add(refId);
+            // protein
+            processProtein(evidence, interactor, results);
 
+            // this is always null
             processParameters(evidence.getParameters(), interactor);
 
             // parse stoich
@@ -291,14 +306,14 @@ public class PsiComplexesConverter extends BioFileConverter
             complex.addToCollection("allInteractors", interactor);
         }
 
-        return participants;
+        return results;
     }
 
     private void processParticipantIdMethods(ParticipantEvidence evidence,
-            Item interactor) throws ObjectStoreException {
+            Item interactor, ProcessParticipantsResults results) throws ObjectStoreException {
         for (CvTerm idMethod : evidence.getIdentificationMethods()) {
-            interactor.addToCollection("participantIdentificationMethods",
-                    getTerm("OntologyTerm", idMethod.getMIIdentifier()));
+            String refId = getTerm("OntologyTerm", idMethod.getMIIdentifier());
+            results.addParticipantIdentificationMethods(refId);
         }
     }
 
@@ -334,15 +349,26 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private String processProtein(ParticipantEvidence evidence, Item interactor)
+    private void processProtein(ParticipantEvidence evidence, Item interactor,
+        ProcessParticipantsResults results)
         throws ObjectStoreException {
         Interactor participant = evidence.getInteractor();
         Xref xref = participant.getPreferredIdentifier();
         String accession = xref.getId();
         String refId = interactors.get(accession);
         if (refId == null) {
-            Item protein = createItem("Protein");
-            protein.setAttribute("primaryIdentifier", accession);
+            String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
+            String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
+            if (interactorType == null) {
+                // we don't know how to handle non-protein, non-small molecules
+                return;
+            }
+            Item protein = createItem(interactorType);
+            if (PROTEIN.equals(typeTermIdentifier)) {
+                protein.setAttribute("primaryAccession", accession);
+            } else {
+                protein.setAttribute("primaryIdentifier", accession);
+            }
             Organism organism = participant.getOrganism();
             if (organism != null) {
                 String organismRefId = getOrganism(String.valueOf(organism.getTaxId()));
@@ -352,9 +378,7 @@ public class PsiComplexesConverter extends BioFileConverter
             refId = protein.getIdentifier();
         }
         interactor.setReference("subject", refId);
-        interactor.setReference("type", getTerm("OntologyTerm",
-                participant.getInteractorType().getMIIdentifier()));
-        return refId;
+        results.addProtein(refId);
     }
 
     private void processStoichiometry(ParticipantEvidence evidence, Item interactor)
@@ -394,7 +418,8 @@ public class PsiComplexesConverter extends BioFileConverter
     }
 
     private void processExperiment(InteractionEvidence interactionEvidence,
-            Item complex, Item detail) throws ObjectStoreException {
+            List<String> participantIdentificationMethods, Item complex, Item detail)
+        throws ObjectStoreException {
         Item item = createItem("InteractionExperiment");
         Experiment experiment = interactionEvidence.getExperiment();
         String hostOrganism = experiment.getHostOrganism().getScientificName();
@@ -408,6 +433,7 @@ public class PsiComplexesConverter extends BioFileConverter
         CvTerm detectionMethod = experiment.getInteractionDetectionMethod();
         item.addToCollection("interactionDetectionMethods",
                 getTerm("OntologyTerm", detectionMethod.getMIIdentifier()));
+        item.setCollection("participantIdentificationMethods", participantIdentificationMethods);
         Publication publication = experiment.getPublication();
         String pubMedId = publication.getPubmedId();
         item.setReference("publication", getPublication(pubMedId));
@@ -514,5 +540,43 @@ public class PsiComplexesConverter extends BioFileConverter
             publications.put(pubMedId, refId);
         }
         return refId;
+    }
+
+    // when parsing the participant information, we have a lot of information we need to
+    // pass to other methods
+    private class ProcessParticipantsResults
+    {
+        private Set<String> proteins = new HashSet<String>();
+        private List<String> participantIdentificationMethods = new ArrayList<String>();
+
+        /**
+         * @param refId for proteins in this interactions
+         */
+        protected void addProtein(String refId) {
+            proteins.add(refId);
+        }
+
+        /**
+         * @return proteins refIds for proteins in this interactions
+         */
+        protected Set<String> getProteins() {
+            return proteins;
+        }
+
+        /**
+         * @param refId ref IDs for ontology terms representing the
+         * participant identification methods
+         */
+        protected void addParticipantIdentificationMethods(String refId) {
+            participantIdentificationMethods.add(refId);
+        }
+
+        /**
+         * @return participantIdentificationMethods ref IDs for ontology terms representing the
+         * participant identification methods
+         */
+        protected List<String> getParticipantIdentificationMethods() {
+            return participantIdentificationMethods;
+        }
     }
 }
