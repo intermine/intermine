@@ -27,6 +27,7 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ItemFactory;
 
 import psidev.psi.mi.jami.commons.MIDataSourceOptionFactory;
 import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
@@ -65,6 +66,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
     private static final String COMPLEX_FUNCTION = "curated-complex";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
+    private static final String INTERACTION_DETAIL = "InteractionDetail";
     private static final String GENE_ONTOLOGY = "go";
 
     private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
@@ -153,7 +155,7 @@ public class PsiComplexesConverter extends BioFileConverter
                         // parse confidences
                         processConfidences(interactionEvidence.getConfidences(), complex);
 
-                        Item detail = createItem("InteractionDetail");
+                        Item detail = createItem(INTERACTION_DETAIL);
 
                         // parse experiment
                         processExperiment(interactionEvidence, complex, detail);
@@ -177,7 +179,6 @@ public class PsiComplexesConverter extends BioFileConverter
                         // parse GO terms
                         processXrefs(interactionEvidence, complex);
 
-                        store(detail);
                         store(complex);
 
                     // modelled interactions are equivalent to abstractInteractions in PSI-MI XML
@@ -212,16 +213,22 @@ public class PsiComplexesConverter extends BioFileConverter
                 Item interaction = createItem("Interaction");
                 interaction.setReference("participant1", interactor);
                 interaction.setReference("participant2", protein);
-                detail.setReference("interaction", interaction);
+                Item detail1 = copyItem(detail, INTERACTION_DETAIL);
+                detail1.setReference("interaction", interaction);
+                store(detail1);
                 complex.addToCollection("interactions", interaction);
                 store(interaction);
+
 
                 interaction = createItem("Interaction");
                 interaction.setReference("participant1", protein);
                 interaction.setReference("participant2", interactor);
-                detail.setReference("interaction", interaction);
+                Item detail2 = copyItem(detail, INTERACTION_DETAIL);
+                detail2.setReference("interaction", interaction);
+                store(detail2);
                 complex.addToCollection("interactions", interaction);
                 store(interaction);
+
             }
             createInteractions(proteins, detail, complex);
         }
@@ -508,4 +515,3 @@ public class PsiComplexesConverter extends BioFileConverter
         return refId;
     }
 }
-

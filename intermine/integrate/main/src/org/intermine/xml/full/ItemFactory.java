@@ -85,6 +85,18 @@ public class ItemFactory
     }
 
     /**
+     * Make a new item as a copy of an existing item, with a new identifier.
+     * @param originalItem the item to copy
+     * @param newPrefix new prefix for identifier
+     * @return the new Item
+     */
+    public Item copyItem(Item originalItem, String newPrefix) {
+        Item item = new Item(originalItem);
+        item.setIdentifier(newPrefix  + "_" + (newItemId++));
+        return item;
+    }
+
+    /**
      * Make an empty Item with the given identifier.
      * @param identifier the identifier of the new Item
      * @return the new Item
