@@ -222,7 +222,7 @@
 
   <class className="org.intermine.model.bio.Interactor">
     <fields>
-      <fieldconfig fieldExpr="participant.primaryIdentfier" />
+      <fieldconfig fieldExpr="participant.primaryIdentifier" />
       <fieldconfig fieldExpr="stoichiometry.min" />
       <fieldconfig fieldExpr="stoichiometry.max" />
       <fieldconfig fieldExpr="biologicalRole.name" />
