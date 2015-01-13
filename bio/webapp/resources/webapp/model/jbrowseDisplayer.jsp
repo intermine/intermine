@@ -33,7 +33,7 @@
 
 <!--http://jbrowse.intermine.org/?data=http://www.humanmine.org/human/service/jbrowse/config/9606-->
 
-    <c:set var="dataURL" value="${WEB_PROPERTIES['baseURL']}/${WEB_PROPERTIES['path']}/service/jbrowse/config/${taxon}"/>
+    <c:set var="dataURL" value="${WEB_PROPERTIES['webapp.baseURL']}/${WEB_PROPERTIES['webapp.path']}/service/jbrowse/config/${taxon}"/>
 
 
 
