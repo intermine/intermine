@@ -12,7 +12,7 @@
 
     <h3 class="overlapping">Genome Browser</h3>
 
-    <c:set var="baseUrl" value="/jbrowse"/>
+    <c:set var="baseUrl" value="${WEB_PROPERTIES['jbrowse.install.url']}"/>
     <c:set var="chr" value="${reportObject.object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
     <c:set var="padding" value="${10}"/>
     <c:set var="offset" value="${fn:substringBefore((reportObject.object.length * 0.1), '.')}"/>
@@ -33,11 +33,11 @@
     <c:set var="jbLink" value="${baseUrl}?loc=${genus}_${species}_chr_${chr}:${start}..${end}&tracks=${tracks}"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
-	   panel to see the data. Clicking on individual features to open a report page for that feature.
-	    <br/>
-	    <strong>*</strong> denotes SNPs that are mapped to multiple genome position.
+     panel to see the data. Clicking on individual features to open a report page for that feature.
+      <br/>
+      <strong>*</strong> denotes SNPs that are mapped to multiple genome position.
     <a href="${jbLink}" target="jbrowse">Centre on ${reportObject.object.symbol}</a></p>
-	<iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="${jbLink}"></iframe>
+  <iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="${jbLink}"></iframe>
     <p><a href="javascript:;" onclick="jQuery('iframe').css({height: '600px'});">Expand viewer</a>&nbsp;(more about <a href="http://jbrowse.org">JBrowse</a>)</p>
 </div>
 
@@ -54,7 +54,7 @@ var bookmarkCallback = function(brwsr) {
     }
 var dataDir = window.location.protocol
        + "//" + window.location.host
-	   + "/jbrowse/data";
+     + "/jbrowse/data";
 var b = new Browser({
     containerID: "GenomeBrowser",
     refSeqs: refSeqs,
