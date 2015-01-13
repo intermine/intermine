@@ -12,7 +12,7 @@
 
     <h3 class="overlapping">Genome Browser</h3>
 
-    <c:set var="baseUrl" value="${WEB_PROPERTIES['jbrowse.install.url']}"/>
+    <c:set var="jbrowseURL" value="${WEB_PROPERTIES['jbrowse.install.url']}"/>
     <c:set var="chr" value="${reportObject.object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
     <c:set var="padding" value="${10}"/>
     <c:set var="offset" value="${fn:substringBefore((reportObject.object.length * 0.1), '.')}"/>
@@ -24,13 +24,20 @@
             <c:set var="tracks" value="Gene Track,SNPs"/>
         </c:when>
         <c:otherwise>
-            <c:set var="tracks" value="Gene Track,mRNA Track"/>
+            <c:set var="tracks" value="Gene Track,Transcript Track"/>
         </c:otherwise>
     </c:choose>
     <c:set var="genus" value="${reportObject.object.organism.genus}"/>
     <c:set var="species" value="${reportObject.object.organism.species}"/>
+    <c:set var="taxon" value="${reportObject.object.organism.taxonId}"/>
 
-    <c:set var="jbLink" value="${baseUrl}?loc=${chr}:${start}..${end}&tracks=${tracks}"/>
+<!--http://jbrowse.intermine.org/?data=http://www.humanmine.org/human/service/jbrowse/config/9606-->
+
+    <c:set var="dataURL" value="${WEB_PROPERTIES['baseURL']}/${WEB_PROPERTIES['path']}/service/jbrowse/config/${taxon}"/>
+
+
+
+    <c:set var="jbLink" value="${jbrowseURL}?data=${dataURL}&loc=${chr}:${start}..${end}&tracks=${tracks}"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
      panel to see the data. Clicking on individual features to open a report page for that feature.
