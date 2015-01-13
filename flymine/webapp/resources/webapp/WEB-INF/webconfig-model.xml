@@ -35,6 +35,8 @@
     </fields>
   </class>
 
+
+
   <class className="org.intermine.model.bio.Component">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -199,8 +201,8 @@
 
   <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="gene1.symbol" />
-      <fieldconfig fieldExpr="gene2.symbol" />
+      <fieldconfig fieldExpr="participant1.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant2.primaryIdentifier" />
     </fields>
   </class>
 
@@ -210,11 +212,20 @@
       <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
-  
+
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Interactor">
+    <fields>
+      <fieldconfig fieldExpr="participant.primaryIdentfier" />
+      <fieldconfig fieldExpr="stoichiometry.min" />
+      <fieldconfig fieldExpr="stoichiometry.max" />
+      <fieldconfig fieldExpr="biologicalRole.name" />
     </fields>
   </class>
 
@@ -789,7 +800,7 @@
                       constraints="mRNAExpressionResults.dataSet.name=fly-Fish data set"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name,
                              mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
-                             
+
 <!--       <graphdisplayer id="mouse_human_orthologue_pair"
                       title="Mouse-human orthologue pair"
                       description="dots would be where there is a mouse-human orthologue pair "
@@ -803,7 +814,7 @@
                       seriesValues=""
                       seriesLabels=""
                       constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
-                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>        -->                      
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>        -->
 
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
