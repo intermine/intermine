@@ -30,7 +30,7 @@
     <c:set var="genus" value="${reportObject.object.organism.genus}"/>
     <c:set var="species" value="${reportObject.object.organism.species}"/>
 
-    <c:set var="jbLink" value="${baseUrl}?loc=${genus}_${species}_chr_${chr}:${start}..${end}&tracks=${tracks}"/>
+    <c:set var="jbLink" value="${baseUrl}?loc=${chr}:${start}..${end}&tracks=${tracks}"/>
 
     <p>Click and drag the browser to move the view.  Drag and drop tracks from left menu into the main
      panel to see the data. Clicking on individual features to open a report page for that feature.
@@ -59,7 +59,7 @@ var b = new Browser({
     containerID: "GenomeBrowser",
     refSeqs: refSeqs,
     trackData: trackInfo,
-    defaultTracks: "DNA,gene,mRNA,noncodingRNA",
+    defaultTracks: "DNA,gene,transcript,noncodingRNA",
     location: "chr${chr}:${start}..${end}",
     tracks: "${tracks}",
     bookmark: bookmarkCallback,
