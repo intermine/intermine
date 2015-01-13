@@ -14,25 +14,17 @@
 
     <c:set var="jbrowseURL" value="${WEB_PROPERTIES['jbrowse.install.url']}"/>
     <c:set var="chr" value="${reportObject.object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
-    <c:set var="padding" value="${10}"/>
+
     <c:set var="offset" value="${fn:substringBefore((reportObject.object.length * 0.1), '.')}"/>
 
     <c:set var="start" value="${reportObject.object.chromosomeLocation.start - offset}"/>
     <c:set var="end" value="${reportObject.object.chromosomeLocation.end + offset}"/>
-    <c:choose>
-        <c:when test="${reportObject.type == 'SNP'}">
-            <c:set var="tracks" value="Gene Track,SNPs"/>
-        </c:when>
-        <c:otherwise>
-            <c:set var="tracks" value="Gene Track,Transcript Track"/>
-        </c:otherwise>
-    </c:choose>
+
     <c:set var="genus" value="${reportObject.object.organism.genus}"/>
     <c:set var="species" value="${reportObject.object.organism.species}"/>
     <c:set var="taxon" value="${reportObject.object.organism.taxonId}"/>
 
-<!--http://jbrowse.intermine.org/?data=http://www.humanmine.org/human/service/jbrowse/config/9606-->
-
+    <c:set var="tracks" value="${WEB_PROPERTIES['project.title']}-${taxon}-${reportObject.type}"/>
     <c:set var="dataURL" value="${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/service/jbrowse/config/${taxon}"/>
 
 
