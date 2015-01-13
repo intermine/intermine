@@ -51,7 +51,7 @@
 
     <class name="Interactor" is-interface="true">
         <attribute name="annotations" type="java.lang.String"/>
-        <reference name="subject" referenced-type="BioEntity" />
+        <reference name="participant" referenced-type="BioEntity" />
         <reference name="experimentalRole" referenced-type="OntologyTerm"/>
         <reference name="biologicalRole" referenced-type="OntologyTerm"/>
         <reference name="stoichiometry" referenced-type="Stoichiometry"/>

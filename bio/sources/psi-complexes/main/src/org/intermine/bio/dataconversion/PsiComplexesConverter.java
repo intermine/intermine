@@ -377,7 +377,7 @@ public class PsiComplexesConverter extends BioFileConverter
             store(protein);
             refId = protein.getIdentifier();
         }
-        interactor.setReference("subject", refId);
+        interactor.setReference("participant", refId);
         results.addProtein(refId);
     }
 
