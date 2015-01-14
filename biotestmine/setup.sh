@@ -1,6 +1,9 @@
+#!/bin/bash
+
 # Build and release a biological test mine.
 
 set -e
+set -o pipefail # Pipes are considered failed if any of their commands fail.
 
 DIR="$(cd $(dirname "$0"); pwd)"
 MINENAME=biotestmine
@@ -152,7 +155,7 @@ echo '#---> Loading data (this could take some time) ...'
 cd $DIR
 $PROJECT_BUILD -b -v $SERVER $HOME/${MINENAME}-dump 2>&1 \
     | tee -a $LOAD_LOG \
-    | grep 'action.*took'
+    | grep -E '(action.*took|failed)'
 
 echo '#--- Finished loading data.'
 cp pbuild.log $DIR/log/
