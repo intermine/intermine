@@ -64,6 +64,13 @@ else
         ant -f testmodel/dbmodel/build.xml build-db
     fi
 
+    if [[ "$TEST_SUITE" = "bio-webapp" ]]; then
+        echo '#---> Building and releasing the biotestmine'
+        pip install -r 'biotestmine/test/api/requirements.txt'
+        source config/download_and_configure_tomcat.sh
+        ./biotestmine/setup.sh
+    fi
+
     if [[ "$TEST_SUITE" = "ws" ]]; then
 
         # Warm up the keyword search by requesting results, but ignoring the results
