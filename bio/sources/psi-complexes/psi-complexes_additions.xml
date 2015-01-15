@@ -17,23 +17,6 @@
 
     <class name="SmallMolecule" extends="BioEntity" is-interface="true"/>
 
-    <class name="ParameterValue" is-interface="true">
-        <attribute name="base" type="java.lang.Short"/>
-        <attribute name="exponent" type="java.lang.String"/>
-        <attribute name="factor" type="java.lang.Double"/>
-    </class>
-
-    <class name="InteractionParameter" is-interface="true">
-        <reference name="type" referenced-type="InteractionTerm"/>
-        <attribute name="uncertainty" type="java.lang.Double"/>
-        <reference name="unit" referenced-type="OntologyTerm"/>
-        <reference name="value" referenced-type="ParameterValue"/>
-    </class>
-
-    <class name="Confidence" is-interface="true">
-        <reference name="type" referenced-type="InteractionTerm"/>
-        <attribute name="value" type="java.lang.String"/>
-    </class>
 
     <class name="Complex" is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
@@ -52,11 +35,9 @@
     <class name="Interactor" is-interface="true">
         <attribute name="annotations" type="java.lang.String"/>
         <reference name="participant" referenced-type="BioEntity" />
-        <reference name="experimentalRole" referenced-type="OntologyTerm"/>
         <reference name="biologicalRole" referenced-type="OntologyTerm"/>
         <reference name="stoichiometry" referenced-type="Stoichiometry"/>
         <reference name="type" referenced-type="OntologyTerm"/>
-        <collection name="confidences" referenced-type="Confidence"/>
         <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
         <collection name="experimentalPreparations" referenced-type="OntologyTerm"/>
     </class>
@@ -75,17 +56,12 @@
         <attribute name="role1" type="java.lang.String"/>
         <attribute name="role2" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
-        <attribute name="confidence" type="java.lang.Double"/>
-        <attribute name="confidenceText" type="java.lang.String"/>
         <attribute name="type" type="java.lang.String"/>
         <reference name="relationshipType" referenced-type="InteractionTerm"/>
-        <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Interactor"/>
-        <collection name="parameters" referenced-type="InteractionParameter"/>
-        <collection name="confidences" referenced-type="Confidence"/>
     </class>
 
     <class name="InteractionRegion" is-interface="true">
@@ -95,17 +71,6 @@
       <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
       <reference name="location" referenced-type="Location"/>
       <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
-    </class>
-
-    <class name="InteractionExperiment" is-interface="true">
-        <attribute name="name" type="java.lang.String"/>
-        <attribute name="description" type="java.lang.String"/>
-        <attribute name="hostOrganism" type="java.lang.String" />
-        <reference name="publication" referenced-type="Publication"/>
-        <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
-        <collection name="comments" referenced-type="Comment"/>
-        <collection name="interactions" referenced-type="InteractionDetail" reverse-reference="experiment"/>
-        <collection name="confidences" referenced-type="Confidence"/>
     </class>
 
 </classes>
