@@ -11,19 +11,15 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.taskdefs.PumpStreamHandler;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -49,7 +45,6 @@ public class PubMedGeneConverter extends BioFileConverter
     private Set<String> taxonIds = new HashSet<String>();
     private Map<String, String> publications = new HashMap<String, String>();
     protected IdResolver rslv;
-    private Map<Integer, String> organisms = new HashMap<Integer, String>();
     private Map<String, Item> genes = new HashMap<String, Item>();
 
     /**
@@ -79,13 +74,8 @@ public class PubMedGeneConverter extends BioFileConverter
     public void process(Reader reader)
         throws Exception {
 
-        // init resolver
         if (rslv == null) {
-            LOG.error("if NULL resolver");
             rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
-            if (rslv == null) {
-                throw new RuntimeException("Still null");
-            }
         }
 
         Iterator it = FormattedTextParser.parseTabDelimitedReader(reader);
