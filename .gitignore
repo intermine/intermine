@@ -202,3 +202,4 @@ apache-tomcat*
 prefixed
 failures.list
 *.jks
+biotestmine/project.xml
