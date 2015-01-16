@@ -1670,8 +1670,8 @@ public final class KeywordSearch
                 
                 if (databaseSignature != null) {
                   try {
-                  FileReader signatureFile = new FileReader(path + File.separator + "LUCENE_INDEX_SIGNATURE");
-                  LOG.info("Looking for signature in "+signatureFile);
+                  FileReader signatureFile = new FileReader(path + File.separator + LUCENE_INDEX_SIGNATURE);
+                  LOG.info("Looking for signature in "+path + File.separator + LUCENE_INDEX_SIGNATURE);
                   BufferedReader br = new BufferedReader(signatureFile);
                   try {
                     StringBuilder sb = new StringBuilder();
@@ -1776,7 +1776,7 @@ public final class KeywordSearch
                       // now save the signature.
                       if (databaseSignature != null) {
                         try {
-                          File file = new File(path + File.separator + "LUCENE_INDEX_SIGNATURE");
+                          File file = new File(path + File.separator + LUCENE_INDEX_SIGNATURE);
                           // creates the file
                           file.createNewFile();
                           // creates a FileWriter Object
@@ -1785,6 +1785,7 @@ public final class KeywordSearch
                           writer.write(databaseSignature+"\n"); 
                           writer.flush();
                           writer.close();
+                          LOG.info("Wrote signature file "+path + File.separator + LUCENE_INDEX_SIGNATURE);
                         } catch (IOException e) {
                           LOG.warn("Cannot write signature to the file system. continuing...");
                         }

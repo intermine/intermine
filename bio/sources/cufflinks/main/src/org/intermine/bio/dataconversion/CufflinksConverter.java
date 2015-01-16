@@ -189,10 +189,10 @@ public class CufflinksConverter extends BioFileConverter
               Item score = scoreMap.get(bioentityType).get(primaryId).get(experiment);
               if( fileType.equals("FPKM") ) {
                 try {
-                  score.setAttribute("fpkm",fields[i]);
-                  score.setAttribute("conflo",fields[i+1]);
-                  score.setAttribute("confhi",fields[i+2]);
-                  score.setAttribute("status",fields[i+3]);
+                  if (!fields[i  ].trim().isEmpty() ) score.setAttribute("fpkm",fields[i].trim());
+                  if (!fields[i+1].trim().isEmpty() ) score.setAttribute("conflo",fields[i+1].trim());
+                  if (!fields[i+2].trim().isEmpty() ) score.setAttribute("confhi",fields[i+2].trim());
+                  if (!fields[i+3].trim().isEmpty() ) score.setAttribute("status",fields[i+3].trim());
                 } catch (ArrayIndexOutOfBoundsException e) {
                   throw new BuildException("Incorrect number of fields (" + i + " to " + (i+2) + ") at line " + lineNumber
                       + " in " + getCurrentFile() );
@@ -201,10 +201,10 @@ public class CufflinksConverter extends BioFileConverter
                 score.setReference("experiment", experimentMap.get(experimentColGroupMap.get(colGroup)));
               } else {
                 try {
-                  score.setAttribute("count",fields[i]);
-                  score.setAttribute("countvariance",fields[i+1]);
-                  score.setAttribute("countuncertaintyvar",fields[i+2]);
-                  score.setAttribute("countdispersionvar",fields[i+3]);
+                  if (!fields[i  ].trim().isEmpty() ) score.setAttribute("count",fields[i].trim());
+                  if (!fields[i+1].trim().isEmpty() ) score.setAttribute("countvariance",fields[i+1].trim());
+                  if (!fields[i+2].trim().isEmpty() ) score.setAttribute("countuncertaintyvar",fields[i+2].trim());
+                  if (!fields[i+3].trim().isEmpty() ) score.setAttribute("countdispersionvar",fields[i+3].trim());
                 } catch (ArrayIndexOutOfBoundsException e) {
                   throw new BuildException("Incorrect number of fields (" + i + " to " + (i+3) + ") at line " + lineNumber
                       + " in " + getCurrentFile() );

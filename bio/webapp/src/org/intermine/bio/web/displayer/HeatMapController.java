@@ -84,7 +84,8 @@ public class HeatMapController extends TilesAction
     private static Float fpkmCufflinksScoreMin = new Float(0.);
     private static Float countCufflinksScoreMax = new Float(100.);
     private static Float countCufflinksScoreMin = new Float(0.);
-    private static HashSet<Integer> organisms = null;;
+    private static HashSet<Integer> organisms = null;
+    private static HashSet<String> experiments = null;
     /**
      * {@inheritDoc}
      */
@@ -130,44 +131,36 @@ public class HeatMapController extends TilesAction
 
         DecimalFormat df = new DecimalFormat("#.##");
         organisms = new HashSet<Integer>();
+        experiments = new HashSet<String>();
 
         String expressionType = bag.getType().toLowerCase();
 
-        // get the 2 JSON strings
+        // get the JSON string
         String CufflinksScoreJSONFpkm =
             getJSONString(model, bag, executor, expressionType, FPKM);
 
         //LOG.info("FPKM json string is "+CufflinksScoreJSONFpkm);
         //LOG.info("FPKM min and max are "+fpkmCufflinksScoreMin + " and " +
             //fpkmCufflinksScoreMax);
-        
-        String CufflinksScoreJSONCount =
-            getJSONString(model, bag, executor, expressionType,COUNT);
-
        
         
         // set the attributes
         request.setAttribute("cufflinksScoreJSONFpkm",
                 CufflinksScoreJSONFpkm);
-        request.setAttribute("cufflinksScoreJSONCount",
-                CufflinksScoreJSONCount);
-
         request.setAttribute("minFpkmCufflinksScore",
             df.format(fpkmCufflinksScoreMin));
         request.setAttribute("maxFpkmCufflinksScore",
             df.format(fpkmCufflinksScoreMax));
         request.setAttribute("maxFpkmCufflinksScoreCeiling",
             df.format(Math.ceil(fpkmCufflinksScoreMax)));
-        request.setAttribute("minCountCufflinksScore",
-            df.format(countCufflinksScoreMin+1));
-        request.setAttribute("maxCountCufflinksScore",
-            df.format(countCufflinksScoreMax+1));
-        request.setAttribute("maxCountCufflinksScoreCeiling",
-            df.format(Math.ceil(fpkmCufflinksScoreMax)));
+        // Gene or MRNA
         request.setAttribute("ExpressionType", expressionType);
+        // number of genes or mrnas
         request.setAttribute("FeatureCount", bag.getSize());
+        // organism count. We'll only display if == 1
         request.setAttribute("OrganismCount", organisms.size());
-        // request.setAttribute("FeatureCount", geneCufflinksScoreMapDevelopmentalStage.size());
+        // we need this when setting controllers.
+        request.setAttribute("ExperimentCount",experiments.size());
     }
 
 
@@ -193,17 +186,17 @@ public class HeatMapController extends TilesAction
 
         String id = (String) row.get(0).getField();
         Float score = (Float) row.get(1).getField();
-        String condition = (String) row.get(2).getField();
+        String experimentName = (String) row.get(2).getField();
         Integer thisTaxon = (Integer) row.get(3).getField();
         organisms.add(thisTaxon);
+        experiments.add(experimentName);
 
         if (!CufflinksScoreMap.containsKey(id)) {
           CufflinksScoreMap.put(id,new HashMap<String,Float>());
         }
-        CufflinksScoreMap.get(id).put(condition,score);
+        CufflinksScoreMap.get(id).put(experimentName,score);
       }
       
-
       CufflinksScoreJSON = parseToJSON(scoreType,CufflinksScoreMap);
 
       return CufflinksScoreJSON;

@@ -85,12 +85,12 @@ public class RnaseqExperimentInfoConverter extends BioFileConverter
           if (fields.length == 1 && fields[0].startsWith("#") ) {
             // header field. Is there anything we want to do?
           } else {
-            if (fields.length == 4) {
+            if (fields.length > 1) {
               Item sample = createItem("RNAseqExperiment");
               sample.setAttribute("name",fields[0]);
               setIfNotNull(sample,"experimentGroup",fields[1]);
-              setIfNotNull(sample,"description",fields[2]);
-              setIfNotNull(sample,"url",fields[3]);
+              if (fields.length > 2) setIfNotNull(sample,"description",fields[2]);
+              if (fields.length > 3) setIfNotNull(sample,"url",fields[3]);
               sample.setReference("organism",organismIdentifier);
               try{
                 store(sample);

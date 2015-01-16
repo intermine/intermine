@@ -679,7 +679,6 @@
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/deflines" />
       <property name="src.data.file" value="desc_and_defline_dev.tsv" />
     </source>
-
     <source name="pac-clusters" type="pac-clusters">
       <property name="source.db.name" value="PAC" />
       <property name="dataSourceName" value="pac-clusters" />
@@ -687,7 +686,16 @@
       <property name="createrelations" value="false" />
       <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4835,4836,4837,4838,4839,4840,4841,4842,4843,4844,4845,4846" />
     </source>
-
+    <source name="phytozome-homologs" type="phytozome-homolog" >
+      <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4835,4836,4837,4838,4839,4840,4841,4842,4843,4844,4845,4846" />
+    </source>
+    <source name="phytozome-homologs-redo" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+    </source>
+    <source name="phytozome-homologs-corrected" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="dataSourceName" value="inParanoid" />
+    </source>
     <source name="diversity-P.vulgaris" type="gatkvcf">
       <property name="proteomeId" value="218" />
       <property name="makeLinks" value="false" />
@@ -771,6 +779,26 @@
       <property name="dataSourceName" value="rnaseq-P.vulgaris" />
       <property name="dataSetTitle" value="P.vulgaris RNA-seq" />
     </source>
+
+    <source name="cufflinks-P.trichocarpa-gene-atlas" type="cufflinks">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ptrichocarpa-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.trichocarpa-geneAtlas" />
+      <property name="dataSetTitle" value="P.trichocarpa-geneAtlas RNA-seq" />
+    </source>
+    <source name="cufflinks-C.reinhardtii-gene-atlas" type="cufflinks">
+      <property name="proteomeId" value="281" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-C.reinhardtii-geneAtlas" />
+      <property name="dataSetTitle" value="C.reinhardtii-geneAtlas RNA-seq" />
+    </source>
+    <source name="cufflinks-P.patens-gene-atlas" type="cufflinks">
+      <property name="proteomeId" value="251" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ppatens-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
+      <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq" />
+    </source>
+
     <source name="cufflinks-C.reinhardtii" type="cufflinks">
       <property name="proteomeId" value="281" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii/" />
@@ -789,12 +817,6 @@
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro/" />
     </source>
-    <source name="go3" type="go">
-      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo" />
-    </source>
-    <source name="go2" type="go">
-      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo" />
-    </source>
     <source name="go" type="go">
       <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo" />
     </source>
@@ -802,7 +824,7 @@
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro-go/" />
     </source>
     <source name="Panther-terms" type="ontology-terms">
-      <property name="src.data.dir" value="/projectb/sandbox/plant/interproscan/data/panther/8.1/model/globals/" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
       <property name="src.data.file" value="names.tab" />
       <property name="dataSetTitle" value="PANTHER" />
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
@@ -859,6 +881,7 @@
     <source name="Kegg-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-terms/" />
       <property name="src.data.file" value="ko00001.keg" />
+      <property name="src.map.file" value="kegg_mapping.tsv" />
       <property name="dataSetTitle" value="KEGG" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.KeggTermsConverter" />
       <property name="dataSetURL" value="http://www.genome.jp" />
@@ -869,6 +892,14 @@
       <property name="converter.class" value="org.intermine.bio.dataconversion.ProfileTermsConverter" />
       <property name="dataSetTitle" value="PROFILE" />
       <property name="dataSourceName" value="PROFILE" />
+      <property name="dataSetURL" value="http://www.expasy.org/prosite" />
+    </source>
+    <source name="Prosite-terms" type="ontology-terms">
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/profile-terms/" />
+      <property name="src.data.file" value="prosite.dat" />
+      <property name="converter.class" value="org.intermine.bio.dataconversion.PrositeTermsConverter" />
+      <property name="dataSetTitle" value="PROSITE" />
+      <property name="dataSourceName" value="PROSITE" />
       <property name="dataSetURL" value="http://www.expasy.org/prosite" />
     </source>
     <source name="Superfamily-terms" type="ontology-terms">
@@ -892,8 +923,8 @@
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/pir-terms/" />
       <property name="src.data.file" value="pirsfinfo.dat" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PirTermsConverter" />
-      <property name="dataSetTitle" value="PIR" />
-      <property name="dataSourceName" value="PIR" />
+      <property name="dataSetTitle" value="PIRSF" />
+      <property name="dataSourceName" value="PIRSF" />
       <property name="dataSetURL" value="http://pir.georgetown.edu" />
     </source>
     <source name="Smart-terms" type="ontology-terms">
@@ -907,8 +938,8 @@
     <source name="TIGR-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/tigrfams-terms/" />
       <property name="src.data.file" value="TIGRFAMs_HMM.LIB" />
-      <property name="dataSetTitle" value="TIGRFAM" />
-      <property name="dataSourceName" value="TIGRFAM" />
+      <property name="dataSetTitle" value="TIGRFAMs" />
+      <property name="dataSourceName" value="TIGRFAMs" />
       <property name="dataSetURL" value="http://www.jcvi.org/tigrfams" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.TigrfamsTermsConverter" />
       <property name="dataSetVersion" value="13.0" />
@@ -916,6 +947,7 @@
     <source name="Gene3D-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/gene3d-terms/" />
       <property name="src.data.file" value="gene3d.lib" />
+      <property name="src.map.file" value="model_to_family_map.tsv" />
       <property name="dataSetTitle" value="GENE3D" />
       <property name="dataSourceName" value="GENE3D" />
       <property name="dataSetURL" value="http://gene3d.biochem.ucl.ac.uk/Gene3D" />
@@ -924,8 +956,8 @@
     <source name="Interpro-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/interpro/" />
       <property name="src.data.file" value="interpro.xml" />
-      <property name="dataSetTitle" value="Interpro" />
-      <property name="dataSourceName" value="Interpro" />
+      <property name="dataSetTitle" value="InterPro" />
+      <property name="dataSourceName" value="InterPro" />
       <property name="dataSetURL" value="http://www.ebi.ac.uk/interpro" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.OntologyTermsXMLConverter" />
     </source>
@@ -933,30 +965,22 @@
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms" />
       <property name="src.data.file" value="synonyms.tsv" />
     </source>
-    <source name="cds-transcript" type="cds-transcript">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/cds-transcript" />
-      <property name="src.data.file" value="transcript-cds-protein.tsv" />
-    </source>
     <source name="organism-version" type="organism-version">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/organism-version" />
       <property name="src.data.file" value="organism-version.tsv" />
     </source>
 
-    <source name="organism-version-repeat" type="organism-version">
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/organism-version" />
-      <property name="src.data.file" value="organism-version.tsv" />
-    </source>
   </sources>
   <post-processing>
-    <!--post-process name="create-references" /-->
-    <!-- post-process name="transfer-sequences" / -->
+    <post-process name="create-references" />
+    <post-process name="transfer-sequences" />
     <!-- this runs the postprocessing steps in all sources -->
-    <!--post-process name="do-sources" /-->
-    <!--post-process name="create-gene-flanking-features" /-->
-    <!--post-process name="summarise-objectstore" /-->
-    <!--post-process name="create-autocomplete-index" /-->
-    <!--post-process name="create-search-index" /-->
-    <!--post-process name="add-uniprot-ids" /-->
-    <!--post-process name="transfer-go-terms" /-->
+    <post-process name="do-sources" />
+    <post-process name="create-gene-flanking-features" />
+    <post-process name="summarise-objectstore" />
+    <post-process name="create-autocomplete-index" />
+    <post-process name="create-search-index" />
+    <post-process name="add-uniprot-ids" />
+    <post-process name="transfer-go-terms" />
   </post-processing>
 </project>

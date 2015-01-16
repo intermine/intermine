@@ -88,14 +88,11 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.CufflinksScore">
+  <class className="org.intermine.model.bio.RNAseqExperiment">
     <fields>
-      <fieldconfig fieldExpr="experiment.name" label="Experiment Name" />
-      <fieldconfig fieldExpr="experiment.experimentGroup" label="Experiment Group" />
-      <fieldconfig fieldExpr="fpkm" label="FPKM" />
-      <fieldconfig fieldExpr="conflo" label="Lo Conf" />
-      <fieldconfig fieldExpr="confhi" label="Hi Conf" />
-      <fieldconfig fieldExpr="count" label="Count" />
+      <fieldconfig fieldExpr="name" label="Experiment Name" />
+      <fieldconfig fieldExpr="experimentGroup" label="Experiment Group" />
+      <fieldconfig fieldExpr="description" label="Description" />
     </fields>
   </class>
 
@@ -220,6 +217,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Homolog">
+    <fields>
+      <fieldconfig fieldExpr="gene1.primaryIdentifier"/>
+      <fieldconfig fieldExpr="gene2.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.DiversitySample">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -305,10 +309,22 @@
                      placement="summary"
                      types="DiversitySample"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CorrelatedExpressionDisplayer"
+                     jspName="model/correlatedExpressionDisplayer.jsp"
+                     replacesFields=""
+                     placement="Expression"
+                     types="Gene,Transcript,MRNA" />
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSNPDisplayer"
                      jspName="model/geneSNPDisplayer.jsp"
                      replacesFields=""
                      placement="Genomics"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneHomologDisplayer"
+                     jspName="model/geneHomologDisplayer.jsp"
+                     replacesFields=""
+                     placement="Orthology"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.FamilyAlignmentDisplayer"
@@ -328,6 +344,12 @@
                      replacesFields="proteinAnalysisFeatures,locatedFeatures"
                      placement="summary"
                      types="Protein" />
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CufflinksScoreDisplayer"
+                     jspName="model/cufflinksScoreDisplayer.jsp"
+                     replacesFields="cufflinksscores"
+                     placement="Expression"
+                     types="Gene,Transcript,MRNA" />
 
   </reportdisplayers>
 

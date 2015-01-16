@@ -169,7 +169,8 @@
                                                     <c:set var="aspectTitle" value="${row.value}"/>
                                                 </c:when>
                                                 <c:when test="${row.key == 'description'}">
-                                                    <p><c:out value="${row.value}" />&nbsp;<a href="dataCategories.do">Read more</a></p><br/>
+                                                    <!--<p><c:out value="${row.value}" />&nbsp;<a href="dataCategories.do">Read more</a></p><br/> -->
+                                                    <p><c:out value="${row.value}" />&nbsp;<a href="aspect.do?name=${aspectTitle}">Read more</a></p><br/>
                                                 </c:when>
                                                 <c:when test="${row.key == 'name'}">
                                                     <p>Query for <c:out value="${fn:toLowerCase(row.value)}" />:</p>

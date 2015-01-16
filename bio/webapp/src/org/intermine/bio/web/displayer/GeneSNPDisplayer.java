@@ -57,7 +57,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
       LOG.info("Id is "+geneObj.getId());
 
       // query the consequences, snps and location
-      PathQuery query = getConsequenceTable(geneObj.getPrimaryIdentifier());
+      PathQuery query = getConsequenceTable(geneObj);
       Profile profile = SessionMethods.getProfile(session);
       PathQueryExecutor exec = im.getPathQueryExecutor(profile);
       ExportResultsIterator result;
@@ -65,7 +65,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
         result = exec.execute(query);
       } catch (ObjectStoreException e) {
         // silently return
-        LOG.warn("Had an ObjectStoreException in GeneSNPDisplayer.java");
+        LOG.error("Had an ObjectStoreException in GeneSNPDisplayer: "+e.getMessage());
         return;
       }
 
@@ -79,9 +79,9 @@ public class GeneSNPDisplayer extends ReportDisplayer {
 
         ArrayList<String> thisRow = new ArrayList<String>();
 
-        // copy columns 1-6:
-        // position, reference, alternate, substitution, classification and transcript
-        for(int i=0;i<6;i++) {
+        // copy columns 1-10:
+        // id,name position, reference, alternate, substitution, classification and transcript
+        for(int i=0;i<10;i++) {
           if ( (resElement.get(i) != null) && (resElement.get(i).getField() != null)) {
             thisRow.add(resElement.get(i).getField().toString());
           } else {
@@ -93,7 +93,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
           lastSNPList = new SNPList(thisRow);
         } else {
           // now see if this is a new
-          // (postion,reference,alternate,substition,classification)
+          // (id,name,postion,reference,alternate,substition,classification)
           if (lastSNPList.canCoalesce(thisRow) ) {
             lastSNPList.join(thisRow);
           } else {
@@ -112,44 +112,31 @@ public class GeneSNPDisplayer extends ReportDisplayer {
       
   }
 
-  private PathQuery getConsequenceTable(String identifier) {
+  private PathQuery getConsequenceTable(Gene identifier) {
     PathQuery query = new PathQuery(im.getModel());
-    // this was the old query that was OK sometime, but not for lots
-    // of samples.
-    /*query.addViews( "SNPDiversitySample.snp.locations.start",
-                    "SNPDiversitySample.snp.reference",
-                    "SNPDiversitySample.snp.alternate",
-                    "SNPDiversitySample.snp.consequences.substitution",
-                    "SNPDiversitySample.snp.consequences.type.type",
-                    "SNPDiversitySample.snp.consequences.transcript.primaryIdentifier",
-                    "SNPDiversitySample.genotype",
-                    "SNPDiversitySample.diversitySample.name");
-    query.addOrderBy("SNPDiversitySample.snp.locations.start", OrderDirection.ASC);
-    query.addOrderBy("SNPDiversitySample.snp.reference", OrderDirection.ASC);
-    query.addOrderBy("SNPDiversitySample.snp.alternate", OrderDirection.ASC);
-    query.addOrderBy("SNPDiversitySample.snp.consequences.substitution", OrderDirection.ASC);
-    query.addOrderBy("SNPDiversitySample.snp.consequences.type.type", OrderDirection.ASC);
-    query.addOrderBy("SNPDiversitySample.snp.consequences.transcript.primaryIdentifier", OrderDirection.ASC);
-    query.addOrderBy("SNPDiversitySample.genotype", OrderDirection.DESC);
-    query.addConstraint(Constraints.eq("SNPDiversitySample.snp.consequences.gene.primaryIdentifier",identifier));*/
-    query.addViews( "SNP.locations.start",
-        "SNP.reference",
-        "SNP.alternate",
-        "SNP.consequences.substitution",
-        "SNP.consequences.type.type",
-        "SNP.consequences.transcript.primaryIdentifier");
-query.addOrderBy("SNP.locations.start", OrderDirection.ASC);
-query.addOrderBy("SNP.reference", OrderDirection.ASC);
-query.addOrderBy("SNP.alternate", OrderDirection.ASC);
-query.addOrderBy("SNP.consequences.substitution", OrderDirection.ASC);
-query.addOrderBy("SNP.consequences.type.type", OrderDirection.ASC);
-query.addOrderBy("SNP.consequences.transcript.primaryIdentifier", OrderDirection.ASC);
-//query.addOrderBy("SNPDiversitySample.genotype", OrderDirection.DESC);
-query.addConstraint(Constraints.eq("SNP.consequences.gene.primaryIdentifier",identifier));
+
+    query.addViews( "Genotype.snp.id","Genotype.snp.name",
+        "Genotype.snp.locations.start",
+        "Genotype.snp.reference",
+        "Genotype.snp.alternate",
+        "Genotype.snp.consequences.substitution",
+        "Genotype.snp.consequences.type.type",
+        "Genotype.snp.consequences.transcript.primaryIdentifier",
+        "Genotype.genotype","Genotype.sampleInfo");
+    query.addOrderBy("Genotype.snp.locations.start", OrderDirection.ASC);
+    query.addOrderBy("Genotype.snp.reference", OrderDirection.ASC);
+    query.addOrderBy("Genotype.snp.alternate", OrderDirection.ASC);
+    query.addOrderBy("Genotype.snp.consequences.substitution", OrderDirection.ASC);
+    query.addOrderBy("Genotype.snp.consequences.type.type", OrderDirection.ASC);
+    query.addOrderBy("Genotype.genotype", OrderDirection.ASC);
+    query.addOrderBy("Genotype.snp.consequences.transcript.primaryIdentifier", OrderDirection.ASC);
+    query.addConstraint(Constraints.eq("Genotype.snp.consequences.gene.id",identifier.getId().toString()));
     return query;
   }
 
   public class SNPList {
+    private Integer id;
+    private String name;
     private String position;
     private String reference;
     private String alternate;
@@ -158,34 +145,38 @@ query.addConstraint(Constraints.eq("SNP.consequences.gene.primaryIdentifier",ide
     private TreeSet<String> transcripts;
     private TreeMap<String,GenoSample> genoSamples;
     public SNPList(ArrayList<String> record) {
-      position = new String(record.get(0));
-      reference = new String(record.get(1));
-      alternate = new String(record.get(2));
-      substitution = new String(record.get(3));
-      classification = new String(record.get(4));
+      id = new Integer(record.get(0));
+      name = new String(record.get(1));
+      position = new String(record.get(2));
+      reference = new String(record.get(3));
+      alternate = new String(record.get(4));
+      substitution = new String(record.get(5));
+      classification = new String(record.get(6));
       transcripts = new TreeSet<String>();
-      transcripts.add(record.get(5));
+      transcripts.add(record.get(7));
       genoSamples = new TreeMap<String,GenoSample>();
-      genoSamples.put(record.get(6),new GenoSample(record.get(6),record.get(7)));
+      genoSamples.put(record.get(8),new GenoSample(record.get(8),record.get(9)));
     }
 
+
     public boolean canCoalesce(ArrayList<String> record) {
-      return position.equals(record.get(0)) &&
-             reference.equals(record.get(1)) &&
-             alternate.equals(record.get(2)) &&
-             substitution.equals(record.get(3)) &&
-             classification.equals(record.get(4));
+      return name.equals(record.get(1)) &&
+             position.equals(record.get(2)) &&
+             reference.equals(record.get(3)) &&
+             alternate.equals(record.get(4)) &&
+             substitution.equals(record.get(5)) &&
+             classification.equals(record.get(6));
     }
 
     private void join(ArrayList<String> record) {
-      transcripts.add(record.get(5));
-      if (!genoSamples.containsKey(record.get(6))) {
-        genoSamples.put(record.get(6),new GenoSample(record.get(6),record.get(7)));
-      } else {
-        genoSamples.get(record.get(6)).addSample(record.get(7));
+      transcripts.add(record.get(7));
+      if (!genoSamples.containsKey(record.get(8))) {
+        genoSamples.put(record.get(8),new GenoSample(record.get(8),record.get(9)));
       }
     }
 
+    public String getId() { return id.toString(); }
+    public String getName() { return name; }
     public String getPosition() { return position; }
     public String getReference() { return reference; }
     public String getAlternate() { return alternate; }
@@ -209,8 +200,16 @@ query.addConstraint(Constraints.eq("SNP.consequences.gene.primaryIdentifier",ide
     private String genotype;
     private StringBuffer samples;
     public GenoSample(String g,String s) {
-      genotype = new String(g);
-      samples = new StringBuffer(s);
+      genotype = g;
+      samples = new StringBuffer();
+      final Pattern pattern = Pattern.compile("\"([^\"]+)\":\"([^\"]+)\"");
+      final Matcher matcher = pattern.matcher(s);
+      while (matcher.find()) {
+        if (samples.length() > 0) {
+          samples.append(", ");
+        }
+        samples.append(matcher.group(1));
+      }
     }
     public void addSample(String s) { samples.append(", ").append(s); }
     public String getGenotype() { return genotype; }

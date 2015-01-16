@@ -16,23 +16,23 @@
 
       <div class="body">
         <p>
-          Phytomine contains annotated proteome data from the JGI flagship genomes:
+          Phytomine contains annotated data from the JGI flagship genomes:
           <ul>
            <c:forTokens items="${flagships}" delims="," var="flagship">
 
              <c:set var="field" value="${fn:split(flagship,'|')}" />
              <li>
                <em>${field[0]}</em>  - ${field[1]}
-            <im:querylink text="Query for all proteins." skipBuilder="true">
-                <query name="" model="genomic" view="Protein.primaryIdentifier Protein.organism.shortName Protein.sequence.residues" sortOrder="Protein.primaryIdentifier asc">
-                  <constraint path="Protein.organism.shortName" op="=" value="${field[2]}"/>
+            <im:querylink text="Query for all transcripts." skipBuilder="true">
+                <query name="" model="genomic" view="Transcript.primaryIdentifier Transcript.organism.shortName Transcript.sequence.residues" sortOrder="Transcript.primaryIdentifier asc">
+                  <constraint path="Transcript.organism.shortName" op="=" value="${field[2]}"/>
                 </query>
             </im:querylink>
              </li>
            </c:forTokens>
         </ul>
 
-        In addition, we have also included proteomes from collaborators and the
+        In addition, we have also included data from collaborators and the
         model organism community:
         <ul>
 
@@ -41,9 +41,9 @@
              <c:set var="field" value="${fn:split(other,'|')}" />
              <li>
                <em>${field[0]}</em>  - ${field[1]}
-            <im:querylink text="Query for all proteins." skipBuilder="true">
-                <query name="" model="genomic" view="Protein.primaryIdentifier Protein.organism.shortName Protein.sequence.residues" sortOrder="Protein.primaryIdentifier asc">
-                  <constraint path="Protein.organism.shortName" op="=" value="${field[2]}"/>
+            <im:querylink text="Query for all transcripts." skipBuilder="true">
+                <query name="" model="genomic" view="Transcript.primaryIdentifier Transcript.organism.shortName Transcript.sequence.residues" sortOrder="Transcript.primaryIdentifier asc">
+                  <constraint path="Transcript.organism.shortName" op="=" value="${field[2]}"/>
                 </query>
             </im:querylink>
              </li>
@@ -51,7 +51,6 @@
          </ul>
       </div>
     </td>
-
     <td valign="top" width="40%">
       <div class="heading2">
         Bulk download

@@ -12,6 +12,7 @@ package org.intermine.bio.postprocess;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -28,6 +29,8 @@ import org.intermine.model.bio.Location;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
@@ -58,6 +61,7 @@ public class CreateFlankingRegions
     private static String[] directions = new String[] {"upstream", "downstream"};
 
     private static boolean[] includeGenes = new boolean[] {true, false};
+    private HashSet<String> storedRegions;
 
     private static final Logger LOG = Logger.getLogger(CreateFlankingRegions.class);
 
@@ -72,6 +76,7 @@ public class CreateFlankingRegions
         this.os = osw.getObjectStore();
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("Phytozome");
+        storedRegions = new HashSet<String>();
         try {
             dataSource = (DataSource) os.getObjectByExample(dataSource,
                     Collections.singleton("name"));
@@ -97,6 +102,27 @@ public class CreateFlankingRegions
         dataSet.setUrl("http://www.phytozome.net");
         dataSet.setDataSource(dataSource);
 
+
+        // do not store if this is already there. (post processing
+        // was run before?)
+        LOG.info("Querying for existing flanking regions...");
+        Query q = new Query();
+        QueryClass regC = new QueryClass(GeneFlankingRegion.class);
+        q.addFrom(regC);
+        q.addToSelect(regC);
+        Results existing = os.execute(q);
+        Iterator<Object> existingIter = existing.iterator();
+        while (existingIter.hasNext()) {
+          @SuppressWarnings("unchecked")
+          ResultsRow<Object> row = (ResultsRow<Object>) existingIter.next();
+          GeneFlankingRegion thisReg = (GeneFlankingRegion)row.get(0);
+          // this key needs to be coordinate with storing operation
+          String key = thisReg.getOrganism().getShortName()+":"+
+              thisReg.getPrimaryIdentifier()+":"+thisReg.getIncludeGene();
+          storedRegions.add(key);
+        }
+        LOG.info("Found "+storedRegions.size()+" existing regions.");
+        
         Iterator<?> resIter = results.iterator();
 
         int count = 0;
@@ -161,6 +187,13 @@ public class CreateFlankingRegions
                     if ((geneStart <= 1) || (geneEnd >= chrLength)) {
                         continue;
                     }
+                    // do not process if something already exists
+                    // be sure to coordinate this with setPrimaryIdentifier later.
+                    String key = gene.getOrganism().getShortName()+":"+
+                                 gene.getPrimaryIdentifier()+" "+
+                                 distance+"kb "+direction+":"+includeGene;
+                    if (!storedRegions.contains(key)) {
+                      LOG.debug("Creating region for "+key);
 
                     GeneFlankingRegion region = (GeneFlankingRegion) DynamicUtil
                     .createObject(Collections.singleton(GeneFlankingRegion.class));
@@ -213,8 +246,10 @@ public class CreateFlankingRegions
                     region.setLength(new Integer((location.getEnd().intValue()
                             - location.getStart().intValue()) + 1));
 
+                    
                     osw.store(location);
                     osw.store(region);
+                    }
                 }
             }
         }

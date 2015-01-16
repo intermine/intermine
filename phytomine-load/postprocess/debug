@@ -5,5 +5,4 @@ module load ant
 
 setenv ANT_HOME /usr/share/ant/
 
-java -agentlib:jdwp=transport=dt_socket,address=localhost:9009,server=y,suspend=y -classpath ${ANT_HOME}/lib/ant-launcher.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/xercesImpl.jar -Dant.home=${ANT_HOME} -Dant.library.dir=${ANT_HOME}/lib org.apache.tools.ant.launch.Launcher -cp "" -Daction=add-uniprot-ids
-
+java -agentlib:jdwp=transport=dt_socket,address=localhost:9009,server=y,suspend=y -classpath ${ANT_HOME}/lib/ant-launcher.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/xercesImpl.jar -Dant.home=${ANT_HOME} -Dant.library.dir=${ANT_HOME}/lib org.apache.tools.ant.launch.Launcher -cp "" -Daction=create-gene-flanking-features

@@ -285,6 +285,21 @@
       <property name="annotationVersion" value="v1.1" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
+    <source name="phytozome-chado-E.grandis-early-release" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Eucalyptus" />
+      <property name="species" value="grandis" />
+      <property name="assemblyDbxrefId" value="7816355" />
+      <property name="annotationDbxrefId" value="7816356" />
+      <property name="proteomeId" value="297" />
+      <property name="taxonId" value="71139" />
+      <property name="dataSourceName" value="phytozome-E.grandis-early-release" />
+      <property name="commonName" value="Eucalyptus" />
+      <property name="shortName" value="E. grandis early-release" />
+      <property name="version" value="early-release" />
+      <property name="annotationVersion" value="v2.0" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
     <source name="phytozome-chado-E.salsugineum" type="phytozome-db">
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Eutrema" />
@@ -495,6 +510,21 @@
       <property name="annotationVersion" value="v3.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
+    <source name="phytozome-chado-P.patens-early-release" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Physcomitrella" />
+      <property name="species" value="patens" />
+      <property name="annotationDbxrefId" value="7816352" />
+      <property name="assemblyDbxrefId" value="4417255" />
+      <property name="proteomeId" value="299" />
+      <property name="taxonId" value="3218" />
+      <property name="dataSourceName" value="phytozome-P.patens-early-release" />
+      <property name="commonName" value="Moss" />
+      <property name="shortName" value="P. patens early-release" />
+      <property name="version" value="early-release" />
+      <property name="annotationVersion" value="v3.1" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
     <source name="phytozome-chado-P.persica" type="phytozome-db">
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Prunus" />
@@ -506,6 +536,21 @@
       <property name="commonName" value="Peach" />
       <property name="shortName" value="P. persica" />
       <property name="version" value="current" />
+      <property name="annotationVersion" value="v1.0" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
+    <source name="phytozome-chado-P.persica-early-release" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Prunus" />
+      <property name="species" value="persica" />
+      <property name="assemblyDbxrefId" value="1000137" />
+      <property name="annotatioDnxrefId" value="7816353" />
+      <property name="proteomeId" value="298" />
+      <property name="taxonId" value="3760" />
+      <property name="dataSourceName" value="phytozome-P.persica-early-release" />
+      <property name="commonName" value="Peach" />
+      <property name="shortName" value="P. persica early-release" />
+      <property name="version" value="early-release" />
       <property name="annotationVersion" value="v1.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
@@ -675,6 +720,21 @@
       <property name="shortName" value="S. tuberosum" />
       <property name="version" value="current" />
       <property name="annotationVersion" value="v3.4" />
+      <property name="dataSetTitle" value="Phytozome v10" />
+    </source>
+    <source name="phytozome-chado-T.aestivum-early-release" type="phytozome-db">
+      <property name="source.db.name" value="phytozome" />
+      <property name="genus" value="Triticum" />
+      <property name="species" value="aestivum" />
+      <property name="assemblyDbxrefId" value="7522542" />
+      <property name="annotationDbxrefId" value="7522543" />
+      <property name="proteomeId" value="296" />
+      <property name="taxonId" value="4565" />
+      <property name="dataSourceName" value="phytozome-T.aestivum-early-release" />
+      <property name="commonName" value="wheat" />
+      <property name="shortName" value="T. aestivum early-release" />
+      <property name="version" value="early-release" />
+      <property name="annotationVersion" value="v2.2" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
     <source name="phytozome-chado-T.cacao" type="phytozome-db">
@@ -950,6 +1010,12 @@
       <property name="dataSourceName" value="rnaseq-G.max" />
       <property name="dataSetTitle" value="G.max RNA-seq Info" />
     </source>
+    <source name="cufflinks-G.max-info-redo" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="275" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Gmax/" />
+      <property name="dataSourceName" value="rnaseq-G.max" />
+      <property name="dataSetTitle" value="G.max RNA-seq Info" />
+    </source>
     <source name="cufflinks-P.vulgaris" type="cufflinks">
       <property name="proteomeId" value="218" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Pvulgaris/" />
@@ -980,7 +1046,82 @@
       <property name="dataSourceName" value="rnaseq-E.grandis" />
       <property name="dataSetTitle" value="E.grandis RNA-seq Info" />
     </source>
+
+    <source name="cufflinks-P.trichocarpa-geneAtlas" type="cufflinks">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ptrichocarpa-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.trichocarpa-geneAtlas" />
+      <property name="dataSetTitle" value="P.trichocarpa-geneAtlas RNA-seq" />
+    </source>
+
+    <source name="cufflinks-P.trichocarpa-geneAtlas-info" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ptrichocarpa-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.trichocarpa-geneAtlas" />
+      <property name="dataSetTitle" value="P.trichocarpa-geneAtlas RNA-seq Info" />
+    </source>
+
+    <source name="cufflinks-C.reinhardtii-geneAtlas" type="cufflinks">
+      <property name="proteomeId" value="281" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-C.reinhardtii-geneAtlas" />
+      <property name="dataSetTitle" value="C.reinhardtii-geneAtlas RNA-seq" />
+    </source>
+
+    <source name="cufflinks-C.reinhardtii-geneAtlas-info" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="281" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-C.reinhardtii-geneAtlas" />
+      <property name="dataSetTitle" value="C.reinhardtii-geneAtlas RNA-seq Info" />
+    </source>
+
+    <source name="cufflinks-P.patens-geneAtlas" type="cufflinks">
+      <property name="proteomeId" value="251" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ppatens-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
+      <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq" />
+    </source>
+
+    <source name="cufflinks-P.patens-geneAtlas-info" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="251" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ppatens-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
+      <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq Info" />
+    </source>
+    <source name="cufflinks-P.patens-geneAtlas-info-redo" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="251" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ppatens-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
+      <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq Info" />
+    </source>
+
+
+    <source name="cufflinks-P.trichocarpa-geneAtlas-redo" type="cufflinks">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ptrichocarpa-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.trichocarpa-geneAtlas" />
+      <property name="dataSetTitle" value="P.trichocarpa-geneAtlas RNA-seq" />
+    </source>
+    <source name="cufflinks-C.reinhardtii-geneAtlas-redo" type="cufflinks">
+      <property name="proteomeId" value="281" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-C.reinhardtii-geneAtlas" />
+      <property name="dataSetTitle" value="C.reinhardtii-geneAtlas RNA-seq" />
+    </source>
+    <source name="cufflinks-P.patens-geneAtlas-redo" type="cufflinks">
+      <property name="proteomeId" value="251" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ppatens-geneAtlas/" />
+      <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
+      <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq" />
+    </source>
     <source name="phytozome-homologs" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+    </source>
+    <source name="phytozome-homologs-redo" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+    </source>
+    <source name="phytozome-homologs-corrected" type="inparanoid-homologs" >
+      <property name="dataSourceName" value="inparanoid-homologs" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
     </source>
     <source name="entrez-organism" type="entrez-organism">
@@ -1150,11 +1291,11 @@
     </source>
   </sources>
   <post-processing>
-    <!--post-process name="create-references" /-->
-    <!-- post-process name="transfer-sequences" / -->
+    <post-process name="create-references" />
+    <post-process name="transfer-sequences" />
     <!-- this runs the postprocessing steps in all sources -->
-    <!--post-process name="do-sources" /-->
-    <!--post-process name="create-gene-flanking-features" /-->
+    <post-process name="do-sources" />
+    <post-process name="create-gene-flanking-features" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
     <post-process name="create-search-index" />

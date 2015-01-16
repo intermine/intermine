@@ -17,10 +17,12 @@
             classified in the impact on the transcriptome.<p>
             The data available is:
             <UL>
-              <LI><em>Populus trichocarpa</em> (16 individuals)</LI>
+              <LI><em>Populus trichocarpa</em> (549 individuals)</LI>
               <LI><em>Manihot cassava</em> (18 individuals)</LI>
               <LI><em>Eucalyptus grandis</em> (8 individuals)</LI>
               <LI><em>Brachipodium distachyon</em> (7 individuals)</LI>
+              <LI><em>Phaseolus vulgaris</em> (8 individuals)</LI>
+              
             </UL>
           </DD>
         </DL>

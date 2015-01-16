@@ -9,17 +9,17 @@
       all genome features that have chromosomal locations.
     </intro-text>
     <tile-name>model/genomics.jsp</tile-name>
-    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
   </aspect>
   <aspect name="Transcripts">
-    <subtitle>Transcripts and Expression&lt;br/&gt;data</subtitle>
+    <subtitle>Transcript&lt;br/&gt;data</subtitle>
     <icon-image>model/images/proteins.png</icon-image>
     <large-image>model/images/proteins.png</large-image>
     <intro-text>
       Transcript annotation (including expression) from Phytozome.
     </intro-text>
-    <tile-name>model/proteins.jsp</tile-name>
-    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+    <tile-name>model/transcripts.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
   </aspect>
   <aspect name="Proteins">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
@@ -29,7 +29,17 @@
       Protein annotation (including domain annotation) from Phytozome.
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
-    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Orthology">
+    <subtitle>Orthologs and paralogs&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Orthologs and Paralogs from Phytozome.
+    </intro-text>
+    <tile-name>model/homologs.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
   </aspect>
   <aspect name="Families">
     <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
@@ -39,7 +49,7 @@
       Protein clustering from Phytozome.
     </intro-text>
     <tile-name>model/families.jsp</tile-name>
-    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
   </aspect>
   <aspect name="Diversity">
     <subtitle>SNP&lt;br/&gt;data</subtitle>
@@ -49,7 +59,7 @@
       Population SNP data from Phytozome.
     </intro-text>
     <tile-name>model/diversity.jsp</tile-name>
-    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
   </aspect>
   <aspect name="Expression">
     <subtitle>RNA-Seq&lt;br/&gt;data</subtitle>
@@ -59,7 +69,7 @@
       RNA-Seq data from Phytozome.
     </intro-text>
     <tile-name>model/expression.jsp</tile-name>
-    <aspect-source name="Phytozome" url="http://www.phytozome.net"/>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
   </aspect>
 
 </aspects>

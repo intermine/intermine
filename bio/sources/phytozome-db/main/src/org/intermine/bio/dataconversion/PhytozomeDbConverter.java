@@ -215,8 +215,9 @@ public class PhytozomeDbConverter extends BioDBConverter
           (proteomeId!=null?
               ("d.accession='"+proteomeId+"' AND "):("")) +
           (annotationDbxrefId!=null?
-              ("f.dbxref_id='"+annotationDbxrefId+"' AND "):
-              ("f.is_obsolete='f' AND ")) +
+              ("f.dbxref_id='"+annotationDbxrefId+"' AND "):("")) +
+          (((annotationDbxrefId==null) && (proteomeId==null))?
+              ("f.is_obsolete='f' AND "):("")) +
           "f.organism_id="+organismId+" AND "+
           "d.dbxref_id = fd.dbxref_id AND "+
           "f.feature_id=fd.feature_id";

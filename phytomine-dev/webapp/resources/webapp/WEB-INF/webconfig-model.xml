@@ -274,8 +274,6 @@
     </fields>
   </class>
 
-  
-
 
 <!-- exporters -->
   <tableExportConfig id="sequence" className="org.intermine.bio.web.export.SequenceHttpExporter"/>
@@ -313,6 +311,12 @@
                      replacesFields=""
                      placement="summary"
                      types="DiversitySample"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CorrelatedExpressionDisplayer"
+                     jspName="model/correlatedExpressionDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene" />
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSNPDisplayer"
                      jspName="model/geneSNPDisplayer.jsp"

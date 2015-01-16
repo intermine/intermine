@@ -106,10 +106,16 @@ public class InparanoidHomologsConverter extends BioFileConverter
           String genes1 = fields[2];
           String genes2 = fields[3];
           
-          orthoRegistered += registerPairs(id,genes1,proteomeId[0],genes2,proteomeId[1]);
-          orthoRegistered += registerPairs(id,genes2,proteomeId[1],genes1,proteomeId[0]);
-          paraRegistered += registerPairs(id,genes1,proteomeId[0],genes1,proteomeId[0]);
-          paraRegistered += registerPairs(id,genes2,proteomeId[1],genes2,proteomeId[1]);
+          int field1Ctr = genes1.split(" ").length;
+          int field2Ctr = genes2.split(" ").length;
+          String class1 = (field1Ctr>3)?"many":"one";
+          String class2 = (field2Ctr>3)?"many":"one";
+          String groupName = proteomeId[0].toString()+"_"+proteomeId[1].toString()+"_"+id;
+
+          //orthoRegistered += registerPairs(groupName,genes1,proteomeId[0],genes2,proteomeId[1],class1+"-to-"+class2);
+          //orthoRegistered += registerPairs(groupName,genes2,proteomeId[1],genes1,proteomeId[0],class2+"-to-"+class1);
+          paraRegistered += registerPairs(groupName,genes1,proteomeId[0],genes1,proteomeId[0],class1+"-to-"+class2);
+          paraRegistered += registerPairs(groupName,genes2,proteomeId[1],genes2,proteomeId[1],class2+"-to-"+class1);
           lineNumber++;
 
           if ( (lineNumber%5000)==0 ) {
@@ -119,10 +125,10 @@ public class InparanoidHomologsConverter extends BioFileConverter
       }
       LOG.info("Registered "+orthoRegistered+" orthologs and "+paraRegistered+" paralogs.");
     }
-      private int registerPairs(String id,String g1,Integer p1,String g2,Integer p2) {
-        return registerPairs(id,g1,p1.toString(),g2,p2.toString());
+      private int registerPairs(String groupName,String g1,Integer p1,String g2,Integer p2,String relationship) {
+        return registerPairs(groupName,g1,p1.toString(),g2,p2.toString(),relationship);
       }
-      private int registerPairs(String id,String g1,String p1,String g2,String p2) {
+      private int registerPairs(String groupName,String g1,String p1,String g2,String p2,String relationship) {
         String[] fields1 = g1.split(" ");
         String[] fields2 = g2.split(" ");
         int registered = 0;
@@ -132,7 +138,6 @@ public class InparanoidHomologsConverter extends BioFileConverter
             // register all pairs with genes1 and genes2
             // everything should be an integer. Skip this record if not
             try {
-              Integer.parseInt(id);
               Integer.parseInt(fields1[i1]);
               Integer.parseInt(fields2[i2]);
 
@@ -146,8 +151,9 @@ public class InparanoidHomologsConverter extends BioFileConverter
                 String gene2 = "PAC:"+fields2[i2];
                 o.setReference("gene1",getGene(gene1,p1));
                 o.setReference("gene2",getGene(gene2,p2));
-                o.setAttribute("groupName",p1.toString()+"_"+p2.toString()+"_"+id);
-                o.setAttribute("method", "inParanoid");
+                o.setAttribute("groupName",groupName);
+                //o.setAttribute("method", "inParanoid");
+                o.setAttribute("relationship", relationship);
                 try {
                   store(o);
                 } catch (ObjectStoreException e) {
