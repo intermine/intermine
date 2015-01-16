@@ -324,9 +324,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 }
             }
 
-            LOG.info("REGIONS INIT - getChromosomeInfo() built map with " + entryCount + " entries,"
-                    + " took: " + (System.currentTimeMillis() - startTime) + "ms");
-
             return chrInfoMap;
         }
     }
@@ -429,8 +426,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
             orgTaxonIdMap.put(org.getShortName(), org.getTaxonId());
         }
-        LOG.info("REGIONS INIT - getTaxonInfo() took: "
-                + (System.currentTimeMillis() - startTime) + "ms");
+
         return orgTaxonIdMap;
     }
 
