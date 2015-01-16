@@ -29,8 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
@@ -47,7 +45,6 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -55,7 +52,8 @@ import org.intermine.web.logic.session.SessionMethods;
 /**
  * This class has all database query logics for genomic region search.
  *
- *private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class); @author Fengyuan Hu
+ *private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
+ *@author Fengyuan Hu
  */
 public class GenomicRegionSearchQueryRunner implements Runnable
 {
@@ -230,6 +228,21 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
+
+        return getChromosomeInfo(im, GenomicRegionSearchService.DEFAULT_REGION_INIT_BATCH_SIZE);
+    }
+
+    /**
+     * Query the information of all the organisms and their chromosomes' names and length. The
+     * results is stored in a Map. The result data will be used to validate users' span data.
+     * For each span, its chromosome must match the chrPID and range must not go beyond the length.
+     *
+     * @param im - the InterMineAPI
+     * @param batchSize - the query batch size to use
+     * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
+     */
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im,
+            int batchSize) {
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
@@ -261,8 +274,6 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             ContainsConstraint ccOrg = new ContainsConstraint(orgRef,
                     ConstraintOp.CONTAINS, qcOrg);
             q.setConstraint(ccOrg);
-
-            int batchSize = 100000;
 
             Results results = im.getObjectStore().execute(q, batchSize, true, true, true);
 
@@ -325,11 +336,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      *
      * @param im - the InterMineAPI
      * @param classDescrs map of feature class/type to description
+     * @param batchSize the query batch size to use
      * @return featureTypeToSOTermMap -
      *         a HashMap with featureType as key and its SO info accordingly as value
      */
     public static Map<String, List<String>> getFeatureAndSOInfo(
-            InterMineAPI im, Map<String, String> classDescrs) {
+            InterMineAPI im, Map<String, String> classDescrs, int batchSize) {
 
         Map<String, List<String>> featureTypeToSOTermMap = new HashMap<String, List<String>>();
 
@@ -363,7 +375,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 ConstraintOp.CONTAINS, qcSOTerm);
         q.setConstraint(ccSoTerm);
 
-        Results results = im.getObjectStore().execute(q);
+        Results results = im.getObjectStore().execute(q, batchSize, true, true, true);
 
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
@@ -400,10 +412,10 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * Query the information of all organisms and their taxon ids.
      *
      * @param im - the InterMineAPI
-     * @param profile Profile
+     * @param batchSize the query batch size
      * @return orgTaxonIdMap - a HashMap with organism  as key and its taxonId as value
      */
-    public static Map<String, Integer> getTaxonInfo(InterMineAPI im, Profile profile) {
+    public static Map<String, Integer> getTaxonInfo(InterMineAPI im, int batchSize) {
         long startTime = System.currentTimeMillis();
 
         Map<String, Integer> orgTaxonIdMap = new HashMap<String, Integer>();
@@ -412,7 +424,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         q.addFrom(organisms);
         q.addToSelect(organisms);
 
-        List<?> orgs = im.getObjectStore().executeSingleton(q);
+        List<?> orgs = im.getObjectStore().executeSingleton(q, batchSize, true, true, true);
         for (Object o: orgs) {
             org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
             orgTaxonIdMap.put(org.getShortName(), org.getTaxonId());

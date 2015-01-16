@@ -38,7 +38,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
@@ -78,7 +77,6 @@ public class GenomicRegionSearchService
     private Model model = null;
     private ObjectStore objectStore = null;
     private Properties webProperties = null;
-    private Profile profile = null;
     private WebConfig webConfig = null;
     private Map<String, String> classDescrs = null;
     private static String orgFeatureJSONString = "";
@@ -92,6 +90,12 @@ public class GenomicRegionSearchService
     private static Map<String, List<String>> featureTypeToSOTermMap = null;
     private static Map<String, Integer> orgTaxonIdMap = null;
     private List<String> selectionInfo = new ArrayList<String>();
+
+    /**
+     * Default batch size to be used for region search initialisation queries.
+     */
+    public static final int DEFAULT_REGION_INIT_BATCH_SIZE = 10000;
+    private int initBatchSize = DEFAULT_REGION_INIT_BATCH_SIZE;
 
     private static final String CHROMOSOME_LOCATION_MISSING =
         "Chromosome location information is missing";
@@ -114,11 +118,11 @@ public class GenomicRegionSearchService
                 request.getSession().getServletContext());
         this.webConfig = SessionMethods.getWebConfig(request);
         this.interMineAPI = SessionMethods.getInterMineAPI(request.getSession());
-        this.profile = SessionMethods.getProfile(request.getSession());
         this.model = this.interMineAPI.getModel();
         this.objectStore = this.interMineAPI.getObjectStore();
         this.classDescrs = (Map<String, String>) request.getSession()
                 .getServletContext().getAttribute("classDescriptions");
+        this.initBatchSize = getInitBatchSize();
     }
 
     /**
@@ -235,8 +239,7 @@ public class GenomicRegionSearchService
         // constraints.addConstraint(new BagConstraint(qfOrgName,
         // ConstraintOp.IN, orgList));
 
-        int batchSize = 100000;
-        Results results = objectStore.execute(q, batchSize, true, true, true);
+        Results results = objectStore.execute(q, initBatchSize, true, true, true);
 
         // Parse results data to a map
         Map<String, Set<String>> resultsMap = new LinkedHashMap<String, Set<String>>();
@@ -419,6 +422,21 @@ public class GenomicRegionSearchService
         }
 
         return resultsCssName;
+    }
+
+    private int getInitBatchSize() {
+        String initBatchSizeStr = webProperties.getProperty(
+                "genomicRegionSearch.initBatchSize");
+
+        if (initBatchSizeStr != null && !"".equals(initBatchSizeStr)) {
+            try {
+                return Integer.parseInt(initBatchSizeStr);
+            } catch (NumberFormatException e) {
+                LOG.warn("Couldn't read integer value from 'genomicsRegionSearch.initBatchSize'"
+                        + " property:" + initBatchSizeStr);
+            }
+        }
+        return DEFAULT_REGION_INIT_BATCH_SIZE;
     }
 
     /**
@@ -718,7 +736,7 @@ public class GenomicRegionSearchService
      * @return chrInfoMap
      */
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
-        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI);
+        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI, initBatchSize);
     }
 
     /**
@@ -730,7 +748,7 @@ public class GenomicRegionSearchService
             long startTime = System.currentTimeMillis();
 
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
-                    .getFeatureAndSOInfo(interMineAPI, classDescrs);
+                    .getFeatureAndSOInfo(interMineAPI, classDescrs, initBatchSize);
 
             if (!(featureTypesInOrgs.size() == featureTypeToSOTermMap.size() && featureTypesInOrgs
                     .containsAll(featureTypeToSOTermMap.keySet()))) {
@@ -772,7 +790,7 @@ public class GenomicRegionSearchService
     public Map<String, Integer> getOrganismToTaxonMap() {
         if (orgTaxonIdMap == null) {
             orgTaxonIdMap = GenomicRegionSearchQueryRunner.getTaxonInfo(interMineAPI,
-                    profile);
+                    initBatchSize);
         }
         return orgTaxonIdMap;
     }
