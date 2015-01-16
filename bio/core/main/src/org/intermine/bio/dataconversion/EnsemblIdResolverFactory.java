@@ -103,13 +103,13 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             String mim = line[3];
 
             resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(ensembl));
-            if (!StringUtils.isNotEmpty(entrez)) {
+            if (StringUtils.isNotEmpty(entrez)) {
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(entrez));
             }
-            if (!StringUtils.isEmpty(mim)) {
+            if (StringUtils.isNotEmpty(mim)) {
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(OMIM_PREFIX + mim));
             }
-            if (!StringUtils.isEmpty(symbol)) {
+            if (StringUtils.isNotEmpty(symbol)) {
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(symbol));
             }
         }
