@@ -49,27 +49,21 @@ public class OmimConverterTest extends ItemsTestCase
      * Basic test of converter functionality.
      * @throws Exception
      */
-    public void testSimpleFiles() throws Exception {
-        process("human_gene");
+    public void testProcess() throws Exception {
+        File tmp = new File(getClass().getClassLoader()
+                .getResource("omim.txt").toURI());
+        File datadir = tmp.getParentFile();
+
+        process(datadir);
         assertEquals(42, itemWriter.getItems().size());
     }
 
-    /**
-     * Test the count of items created from the records that have gene type: protein-coding, etc.
-     * @throws Exception
-     */
-    public void testGeneCount() throws Exception {
-        process("human_gene");
-        assertEquals(6, getGenes().size());
-    }
-
-    private void process(String infoFile) throws Exception {
-        File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
-        converter.process(geneInfo);
+    private void process(File infoFile) throws Exception {
+        converter.process(infoFile);
         converter.close();
 
         storedItems = itemWriter.getItems();
-        // writeItemsFile(storedItems, "humangene-tgt-items.xml");
+        writeItemsFile(storedItems, "humangene-tgt-items.xml");
     }
 
     private List<Item> getGenes() {

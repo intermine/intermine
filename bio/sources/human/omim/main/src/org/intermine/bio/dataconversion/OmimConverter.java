@@ -78,11 +78,14 @@ public class OmimConverter extends BioDirectoryConverter
      * {@inheritDoc}
      */
     public void process(File dataDir) throws Exception {
+
+        rslv = IdResolverService.getHumanIdResolver();
+        for (String taxonId : rslv.getTaxons()) {
+            System.out.println(" taxon " + taxonId);
+        }
         Map<String, File> files = readFilesInDir(dataDir);
 
         organism = getOrganism(HUMAN_TAXON);
-
-        rslv = IdResolverService.getHumanIdResolver();
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -281,14 +284,14 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private String resolveGene(String mimId) {
-        int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
+        int resCount = rslv.countResolutions(HUMAN_TAXON, mimId);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
                      + mimId + " count: " + resCount + " - "
                      + rslv.resolveId("" + HUMAN_TAXON, mimId));
             return null;
         }
-        return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
+        return rslv.resolveId(HUMAN_TAXON, mimId).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {

@@ -43,16 +43,15 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
 
     @Override
     protected void createIdResolver() {
-        if (resolver != null
-                && resolver.hasTaxonAndClassName(TAXON_ID, this.clsCol
-                        .iterator().next())) {
+        if (resolver != null && resolver.hasTaxonAndClassName(TAXON_ID,
+                this.clsCol.iterator().next())) {
             return;
         }
         if (resolver == null) {
             if (clsCol.size() > 1) {
                 resolver = new IdResolver();
             } else {
-                resolver = new IdResolver(clsCol.iterator().next());
+                resolver = new IdResolver("creating ID resolver");
             }
         }
 
@@ -60,8 +59,8 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(TAXON_ID, this.clsCol.iterator().next()))) {
-                String resolverFileRoot =
-                        PropertiesUtil.getProperties().getProperty(PROP_KEY);
+
+                String resolverFileRoot = PropertiesUtil.getProperties().getProperty(PROP_KEY);
 
                 if (StringUtils.isBlank(resolverFileRoot)) {
                     String message = "Resolver data file root path is not specified";
@@ -71,9 +70,10 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
 
                 LOG.info("Creating id resolver from data file and caching it.");
                 String resolverFileName = resolverFileRoot.trim() + FILE_SYMBOLIC_LINK;
+
                 File f = new File(resolverFileName);
                 if (f.exists()) {
-                    createFromFile(f);
+                    populateFromFile(f);
                     resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
@@ -90,7 +90,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
      * @param f the file
      * @throws IOException if we can't read from the file
      */
-    protected void createFromFile(File f) throws IOException {
+    protected void populateFromFile(File f) throws IOException {
 
         // Ensembl Gene ID EntrezGene ID   HGNC ID(s)      HGNC symbol
         Iterator<?> lineIter = FormattedTextParser
