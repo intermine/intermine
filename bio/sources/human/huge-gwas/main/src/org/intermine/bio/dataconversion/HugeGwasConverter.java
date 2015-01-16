@@ -269,7 +269,7 @@ public class HugeGwasConverter extends BioFileConverter
             String geneIdentifier = genes.get(symbol);
             if (geneIdentifier == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("symbol", symbol);
+                gene.setAttribute("primaryIdentifier", symbol);
                 gene.setReference("organism", getOrganism(HUMAN_TAXON));
                 geneIdentifier = gene.getIdentifier();
 
