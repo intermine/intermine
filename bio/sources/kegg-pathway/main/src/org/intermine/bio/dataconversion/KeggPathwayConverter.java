@@ -120,8 +120,7 @@ public class KeggPathwayConverter extends BioFileConverter
 
         // init resolver
         if (rslv == null) {
-            Set<String> taxons = new HashSet<String>(taxonIds);
-            rslv = IdResolverService.getIdResolverByOrganism(taxons);
+            rslv = IdResolverService.getIdResolverByOrganism(new HashSet<String>(taxonIds));
         }
 
         while (lineIter.hasNext()) {
