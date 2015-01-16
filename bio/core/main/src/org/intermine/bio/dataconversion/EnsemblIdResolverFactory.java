@@ -30,9 +30,9 @@ import org.intermine.util.PropertiesUtil;
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
-    private final String propKey = "resolver.file.rootpath";
-    private final String resolverFileSymbo = "ensembl";
-    private final String taxonId = "9606";
+    private static final String PROP_KEY = "resolver.file.rootpath";
+    private static final String FILE_SYMBOLIC_LINK = "ensembl";
+    private static final String TAXON_ID = "9606";
 
     /**
      * Construct without SO term of the feature type.
@@ -44,7 +44,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
     @Override
     protected void createIdResolver() {
         if (resolver != null
-                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
+                && resolver.hasTaxonAndClassName(TAXON_ID, this.clsCol
                         .iterator().next())) {
             return;
         }
@@ -59,9 +59,9 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
+                    && !resolver.hasTaxonAndClassName(TAXON_ID, this.clsCol.iterator().next()))) {
                 String resolverFileRoot =
-                        PropertiesUtil.getProperties().getProperty(propKey);
+                        PropertiesUtil.getProperties().getProperty(PROP_KEY);
 
                 if (StringUtils.isBlank(resolverFileRoot)) {
                     String message = "Resolver data file root path is not specified";
@@ -70,7 +70,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + FILE_SYMBOLIC_LINK;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f);
@@ -102,15 +102,15 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             String hgncID = line[2];
             String symbol = line[3];
 
-            resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
+            resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(ensembl));
             if (!StringUtils.isEmpty(entrez)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(entrez));
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(entrez));
             }
             if (!StringUtils.isEmpty(hgncID)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(hgncID));
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(hgncID));
             }
             if (!StringUtils.isEmpty(symbol)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(symbol));
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(symbol));
             }
         }
     }
