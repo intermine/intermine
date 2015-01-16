@@ -209,7 +209,7 @@ public final class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getHumanIdResolver() {
-        return new HumanIdResolverFactory().getIdResolver(false);
+        return new EnsemblIdResolverFactory().getIdResolver(false);
     }
 
     /**

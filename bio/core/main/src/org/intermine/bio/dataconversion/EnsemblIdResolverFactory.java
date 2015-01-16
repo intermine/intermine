@@ -33,7 +33,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
     private static final String PROP_KEY = "resolver.file.rootpath";
     private static final String FILE_SYMBOLIC_LINK = "ensembl";
     private static final String TAXON_ID = "9606";
-
+    private static final String OMIM_PREFIX = "OMIM:";
     /**
      * Construct without SO term of the feature type.
      */
@@ -107,7 +107,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(entrez));
             }
             if (!StringUtils.isEmpty(mim)) {
-                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(mim));
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(OMIM_PREFIX + mim));
             }
             if (!StringUtils.isEmpty(symbol)) {
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(symbol));
