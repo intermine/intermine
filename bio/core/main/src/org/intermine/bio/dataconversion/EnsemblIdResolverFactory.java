@@ -51,7 +51,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             if (clsCol.size() > 1) {
                 resolver = new IdResolver();
             } else {
-                resolver = new IdResolver("creating ID resolver");
+                resolver = new IdResolver(clsCol.iterator().next());
             }
         }
 

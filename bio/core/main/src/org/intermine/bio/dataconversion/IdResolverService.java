@@ -209,8 +209,7 @@ public final class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getHumanIdResolver() {
-        System.out.println("getting new id resolver");
-        return new EnsemblIdResolverFactory().getIdResolver(false);
+        return new HumanIdResolverFactory().getIdResolver(false);
     }
 
     /**

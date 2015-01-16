@@ -57,7 +57,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor

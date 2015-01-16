@@ -13,7 +13,10 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +45,10 @@ public class OmimConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OmimConverter(itemWriter, model);
+
+
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("9606", "FBgn003", Collections.singleton("1234"));
         super.setUp();
     }
 
@@ -55,7 +62,7 @@ public class OmimConverterTest extends ItemsTestCase
         File datadir = tmp.getParentFile();
 
         process(datadir);
-        assertEquals(42, itemWriter.getItems().size());
+        assertEquals(4, itemWriter.getItems().size());
     }
 
     private void process(File infoFile) throws Exception {
