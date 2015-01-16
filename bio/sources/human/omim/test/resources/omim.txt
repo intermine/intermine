@@ -1,1000 +1,863 @@
 *RECORD*
 *FIELD* NO
-100050
+124015
 *FIELD* TI
-100050 AARSKOG SYNDROME, AUTOSOMAL DOMINANT
+*124015 CYTOCHROME P450 OXIDOREDUCTASE; POR
+;;CYTOCHROME P450 REDUCTASE
 *FIELD* TX
 
 DESCRIPTION
 
-Aarskog syndrome is characterized by short stature and facial, limb, and
-genital anomalies. One form of the disorder is X-linked (see 305400),
-but there is also evidence for autosomal dominant and autosomal
-recessive (227330) inheritance (summary by Grier et al., 1983).
+Cytochrome P450 oxidoreductase is a flavoprotein that donates electrons
+to all microsomal P450 enzymes, including the steroidogenic enzymes
+P450c17 (CYP17A1; 609300), P450c21 (CYP21A2; 613815), and CYP51A1
+(601637) (Miller, 1986).
 
-CLINICAL FEATURES
+CLONING
 
-Grier et al. (1983) reported father and 2 sons with typical Aarskog
-syndrome, including short stature, hypertelorism, and shawl scrotum.
-Stretchable skin was present in these patients.
-
-INHERITANCE
-
-Grier et al. (1983) tabulated the findings in 82 previously reported
-cases of Aarskog syndrome and noted that X-linked recessive inheritance
-was repeatedly suggested. However, their family had father-to-son
-transmission, and a family reported by Welch (1974) had affected males
-in 3 consecutive generations. Grier et al. (1983) suggested autosomal
-dominant inheritance with strong sex-influence and possibly
-ascertainment bias resulting from use of the shawl scrotum as a main
-criterion.
-
-Van de Vooren et al. (1983) studied a large family in which Aarskog
-syndrome was segregating with variable expression in 3 generations and
-with male-to-male transmission. Because 3 daughters of affected males
-had no features of Aarskog syndrome and 2 sons of an affected male had
-several features of the syndrome, van de Vooren et al. (1983) suggested
-sex-influenced autosomal dominant inheritance.
-
-*FIELD* RF
-1. Grier, R. E.; Farrington, F. H.; Kendig, R.; Mamunes, P.: Autosomal
-dominant inheritance of the Aarskog syndrome. Am. J. Med. Genet. 15:
-39-46, 1983.
-
-2. van de Vooren, M. J.; Niermeijer, M. F.; Hoogeboom, A. J. M.:
-The Aarskog syndrome in a large family, suggestive for autosomal dominant
-inheritance. Clin. Genet. 24: 439-445, 1983.
-
-3. Welch, J. P.: Elucidation of a 'new' pleiotropic connective tissue
-disorder. Birth Defects Orig. Art. Ser. X(10): 138-146, 1974.
-
-*FIELD* CS
-
-Growth:
-   Mild to moderate short stature
-
-Head:
-   Normocephaly
-
-Hair:
-   Widow's peak
-
-Facies:
-   Maxillary hypoplasia;
-   Broad nasal bridge;
-   Anteverted nostrils;
-   Long philtrum;
-   Broad upper lip;
-   Curved linear dimple below the lower lip
-
-Eyes:
-   Hypertelorism;
-   Ptosis;
-   Down-slanted palpebral fissures;
-   Ophthalmoplegia;
-   Strabismus;
-   Hyperopic astigmatism;
-   Large cornea
-
-Ears:
-   Floppy ears;
-   Lop-ears
-
-Mouth:
-   Cleft lip/palate
-
-GU:
-   Shawl scrotum;
-   Saddle-bag scrotum;
-   Cryptorchidism
-
-Limbs:
-   Brachydactyly;
-   Digital contractures;
-   Clinodactyly;
-   Mild syndactyly;
-   Transverse palmar crease;
-   Lymphedema of the feet
-
-Joints:
-   Ligamentous laxity;
-   Osteochondritis dissecans;
-   Proximal finger joint hyperextensibility;
-   Flexed distal finger joints;
-   Genu recurvatum;
-   Flat feet
-
-Skin:
-   Stretchable skin
-
-Spine:
-   Cervical spine hypermobility;
-   Odontoid anomaly
-
-Heme:
-   Macrocytic anemia;
-   Hemochromatosis
-
-GI:
-   Hepatomegaly;
-   Portal cirrhosis;
-   Imperforate anus;
-   Rectoperineal fistula
-
-Pulmonary:
-   Interstitial pulmonary disease
-
-Thorax:
-   Sternal deformity
-
-Inheritance:
-   Sex-influenced autosomal dominant form;
-   also X-linked form
-
-*FIELD* CN
-Nara Sobreira - updated: 4/22/2013
-
-*FIELD* CD
-Victor A. McKusick: 6/4/1986
-
-*FIELD* ED
-carol: 04/24/2013
-carol: 4/22/2013
-carol: 2/16/2011
-alopez: 6/3/1997
-mimadm: 3/11/1994
-carol: 7/7/1993
-supermim: 3/16/1992
-supermim: 3/20/1990
-ddp: 10/26/1989
-marie: 3/25/1988
-
-*RECORD*
-*FIELD* NO
-100070
-*FIELD* TI
-%100070 AORTIC ANEURYSM, FAMILIAL ABDOMINAL, 1; AAA1
-;;ANEURYSM, ABDOMINAL AORTIC; AAA;;
-ABDOMINAL AORTIC ANEURYSM
-*FIELD* TX
-One locus for abdominal aortic aneurysm (AAA1) maps to chromosome 19q13.
-
-DESCRIPTION
-
-Abdominal aortic aneurysm is a multifactorial disorder with multiple
-genetic and environmental risk factors. The disorder may occur as part
-of a heritable syndrome or in isolation (summary by Kuivaniemi et al.,
-2003).
-
-- Genetic Heterogeneity of Abdominal Aortic Aneurysm
-
-Other mapped loci for abdominal aortic aneurysm include AAA2 (609782) on
-chromosome 4q31; AAA3 (611891) on chromosome 9p21; and AAA4 (614375) on
-chromosome 12q13.3.
-
-CLINICAL FEATURES
-
-Loosemore et al. (1988) described 2 brothers with abdominal aortic
-aneurysm at ages 58 and 62 years, whose father died of ruptured
-abdominal aortic aneurysm at the age of 72 years. Four other sibs died
-of myocardial infarction at ages 47 to 61 years. Loosemore et al. (1988)
-suggested that a deficiency of type III collagen (see 120180) might be
-the basis for the aneurysm formation. The proportion of type III
-collagen in forearm skin biopsies was cited as accurately reflective of
-the proportion in the aorta and was said to have been low in the
-brothers.
-
-Ward (1992) looked for association of dilated peripheral arteries with
-aortic aneurysmal disease by measuring the diameters of the common
-femoral, popliteal, brachial, common carotid, internal carotid, and
-external carotid arteries by color-flow duplex scan in 30 control
-subjects and 36 patients with aortic aneurysm matched for age, sex,
-smoking habits, and hypertension. Mean peripheral artery diameter was
-significantly greater in patients with aortic aneurysms than in controls
-at all measurement sites. Peripheral artery dilatation was identified at
-sites that are seldom, if ever, involved in atherosclerosis. Ward (1992)
-concluded that there is a generalized dilating diathesis in aortic
-aneurysmal disease that may be unrelated to atherosclerosis.
-
-In the study of Verloes et al. (1995), familial male cases showed a
-significantly earlier age at rupture and a greater rupture rate as
-compared with sporadic male cases, as well as a tendency (p less than
-0.05) towards earlier age of diagnosis.
-
-AAA occurs among approximately 1.5% of the male population older than 50
-years of age. Several studies have indicated an increased frequency
-among first-degree relatives of patients with AAA. Aneurysms of the
-peripheral arteries (femoral, popliteal, and isolated iliac) are less
-common than aortic aneurysms (Lawrence et al., 1995), and arteriomegaly
-(diffuse aneurysmal disease) is even less common (Hollier et al., 1983).
-Peripheral aneurysms and arteriomegaly carry a high risk for
-complications such as rupture, embolism, or thrombosis.
-
-INHERITANCE
-
-Tilson and Seashore (1984) reported 50 families in which abdominal
-aortic aneurysm had occurred in 2 or more first-degree relatives, mainly
-males. In 29 families, multiple sibs (up to 4) were affected; in 2
-families, 3 generations were affected; and in 15 families, persons in 2
-generations were affected. Three complex pedigrees were observed: one in
-which both parents and 3 sons were affected; one in which a man and his
-paternal uncle were affected; and one in which a man and his father and
-maternal great-uncle were affected. In the 'one-generation' families,
-there were 3 with only females affected, including a set of identical
-twins. The authors concluded that if a single gene is responsible, it is
-likely to be autosomal but that a multigenic mechanism cannot be
-excluded.
-
-Clifton (1977) reported 3 affected brothers.
-
-In North Carolina, Johnson et al. (1985) found that white males have a
-frequency of abdominal aortic aneurysm about 3 times that in black
-males, black females, or white females; all 3 of the latter groups had
-about comparable frequencies. Frequency was ascertained by a survey of
-autopsies and a survey of abdominal computed tomographic scans in
-subjects over the age of 50 years.
-
-Johansen and Koepsell (1986) compared the family histories of 250
-patients with abdominal aortic aneurysm with those of 250 control
-subjects. Among the control subjects, 2.4% reported a first-degree
-relative with an aneurysm, compared with 19.2% of the patients with
-abdominal aortic aneurysm. This was taken to represent an estimated
-11.6-fold increase in abdominal aortic aneurysm risk among persons with
-an affected first-degree relative. The authors suggested that
-noninvasive screening to detect early abdominal aortic aneurysm may be
-warranted in the relatives of affected persons.
-
-By ultrasound screening, Collin et al. (1988) found an abdominal aortic
-aneurysm in 5.4% of men aged 65 to 74, and in 2.3% of men in this age
-group the aneurysm was 4 cm or more in diameter.
-
-Borkett-Jones et al. (1988) brought to 4 the number of reported sets of
-identical twins concordant for abdominal aortic aneurysm. In a 9-year
-prospective study of 542 consecutive patients undergoing operation for
-abdominal aortic aneurysm, Darling et al. (1989) found that 82 (15.1%)
-had a first-degree relative with an aneurysm as compared to 9 (1.8%) of
-the control group of 500 patients of similar age and sex without
-aneurysmal disease. Patients with familial abdominal aortic aneurysm
-were more likely to be women (35% vs 14%), and men with familial
-abdominal aortic aneurysm tended to be about 5 years younger than the
-women. No significant difference was found between the patients with
-nonfamilial and familial abdominal aortic aneurysms in anatomic extent,
-multiplicity, associated occlusive disease, or blood type. The risk of
-rupture was strongly correlated with familial disease and the presence
-of a female member with aneurysm (63% vs 37%). Darling et al. (1989)
-suggested the term 'black widow syndrome' because of the grim
-significance of the presence of an affected female in the family.
-
-On the basis of a study of first-degree relatives of 91 probands,
-Majumder et al. (1991) rejected the nongenetic model and concluded that
-the most parsimonious genetic model was that susceptibility to abdominal
-aortic aneurysm is determined by a recessive gene at an autosomal
-diallelic major locus.
-
-Fitzgerald et al. (1995) assessed the incidence of abdominal aortic
-aneurysm in the sibs of 120 patients known to have AAA. Twelve percent
-of the sibs were found to have an aneurysm, including 22% of male sibs
-but only 3% of female sibs. Male sibs with hypertension were more likely
-to have AAA.
-
-In the study of Verloes et al. (1995), relative risk for male sibs of a
-male patient was 18. Segregation analysis with the mixed model gave
-single gene effect with dominant inheritance as the most likely
-explanation for the familial occurrence. The frequency of the morbid
-allele was 1:250, and its age-related penetrance was not higher than
-0.4.
-
-As part of a review of abdominal aortic aneurysm as a multifactorial
-process, Henney (1993) reviewed family studies and the molecular
-genetics. In a review focused on surgical aspects, Ernst (1993)
-commented that 'there is little support for atherosclerosis as the
-unitary cause...several factors appear to have an important role,
-including familial clustering...'
-
-Through questionnaire and telephone inquiries, Verloes et al. (1995)
-collected family data on 324 probands with abdominal aortic aneurysm and
-determined multigenerational pedigrees on 313 families, including 39
-with multiple affected patients. There were 276 sporadic cases (264 men;
-12 women); 81 cases belonged to multiplex pedigrees (76 men; 5 women).
-
-Baird et al. (1995) collected information from 126 probands with
-abdominal aortic aneurysm and 100 controls (cataract surgery patients)
-concerning AAA. Of 427 sibs of probands, 19 (4.4%) had probable or
-definite AAA, compared with 5 (1.1%) of 451 sibs of controls. The
-lifetime cumulative risks of AAA at age 83 were 11.7% and 7.5%,
-respectively. The risk of AAA began at an earlier age and increased more
-rapidly for probands' sibs than for controls' sibs. The risk comparison,
-based on the results of ultrasound screening of 54 geographically
-accessible sibs probands and the 100 controls, showed a similar pattern.
-AAA was found on ultrasound in 10 sibs of probands, or 19%, compared to
-8% of controls.
-
-Lawrence et al. (1998) constructed pedigrees for first-degree relatives
-of 140 patients who received the diagnosis of peripheral arterial
-aneurysm, arteriomegaly, or AAA from 1988 through 1996 in Salt Lake
-City, Utah. Patients with peripheral arterial aneurysm (n = 40) had a
-10% (4 of 40) familial incidence rate of an aneurysm, patients with AAA
-(n = 86) had a 22% (19 of 86) familial incidence rate, and patients with
-arteriomegaly (n = 14) had a 36% (5 of 14) familial incidence rate. AAA
-was the aneurysm diagnosed most commonly among first-degree relatives
-(86%; 24 of 28). Most aneurysms (85%) occurred among men. Lawrence et
-al. (1998) suggested that relatives of patients with AAA, peripheral
-arterial aneurysm, or arteriomegaly may be screened by means of a
-physical examination for peripheral aneurysmal disease. Screening by
-means of ultrasound examination of the aorta should be limited to
-first-degree relatives of patients with aortic aneurysms or
-arteriomegaly.
-
-Rossaak et al. (2000) cited a familial incidence of 11 to 20% for AAA.
-
-Kuivaniemi et al. (2003) identified 233 families with at least 2
-individuals diagnosed with abdominal aortic aneurysms. The families
-originated from 9 different nationalities, but all were white. There
-were 653 aneurysm patients in these families, with an average of 2.8
-cases per family. Most of the families were small, with only 2 affected
-individuals. There were, however, 6 families with 6, 3 with 7, and 1
-with 8 affected individuals. Most of the probands (82%) and the affected
-relatives (77%) were male, and the most common relationship to the
-proband was brother. Most of the families (72%) appeared to show an
-autosomal recessive inheritance pattern, whereas in 58 families (25%),
-abdominal aortic aneurysms were inherited in an autosomal dominant
-manner, and in 8 families, the familial aggregation could be explained
-by autosomal dominant inheritance with incomplete penetrance. In the 66
-families where abdominal aortic aneurysms were inherited in a dominant
-manner, 141 transmissions of the disease from 1 generation to another
-were identified, and male-to-male, male-to-female, female-to-male, and
-female-to-female transmissions occurred in 46%, 11%, 32%, and 11%,
-respectively. Kuivaniemi et al. (2003) concluded that abdominal aortic
-aneurysm is a multifactorial disorder with multiple genetic and
-environmental risk factors.
-
-PATHOGENESIS
-
-Newman et al. (1994) and others have pointed to a role of matrix
-metalloproteinases (MMPs) in end-stage AAA. MMP activity is closely
-controlled by the balance of its activators, such as plasmin, and its
-inhibitors. A mutation that reduces the transcription of plasminogen
-activator inhibitor (PAI1; 173360) would result in an increase in the
-activity of tissue plasminogen activator (PLAT; 173370). This in turn
-would increase the conversion of inactive plasminogen (173350) to its
-active form, plasmin, and increase the zymogen activation of MMPs.
-Jean-Claude et al. (1994) observed increased levels of plasmin in AAAs.
-
-It is possible that aneurysms develop due to structural alterations in
-extracellular matrix (ECM) proteins such as elastin (130160), collagens,
-and proteoglycans. Such alterations in type III collagen (see 120180),
-however, have been shown to be rare causes of both abdominal aortic
-aneurysms and intracranial aneurysms (see 105800). Another alternative
-is that the enzymes degrading the structural molecules contribute to
-aneurysm formation. Matrix metalloproteinases (MMPs) are connective
-tissue-degrading enzymes that could play a role in structural
-alterations of the arterial wall through the degradation of collagens
-and other extracellular matrix molecules. MMP3 (185250), MMP9 (120361),
-and PAI1 are present at increased levels in abdominal aortic aneurysms
-(Yoon et al., 1999). Promoters of these genes contain polymorphisms with
-alleles that exhibit different transcriptional activities in vitro.
-
-Tromp et al. (2004) determined the relative expression of MMP13 (600108)
-in aortic tissue samples from 36 patients who underwent abdominal aortic
-aneurysm repair operations and from 20 nonaneurysmal autopsy samples.
-MMP13 was expressed in all parts of the aorta, and its expression was
-elevated in the aneurysmal sac. In further studies using MMP13-specific
-antibody, Tromp et al. (2004) demonstrated that MMP13 protein was
-present in the aneurysmal wall.
-
-Yoshimura et al. (2005) observed a high level of phosphorylated JNK
-(MAPK8; 601158) in human AAA tissue. By DNA microarray analysis of rat
-aortic vascular smooth muscle cells, they demonstrated that Jnk programs
-a gene expression pattern that cooperatively enhances degradation of the
-extracellular matrix, while suppressing biosynthetic enzymes of the ECM,
-such as Lox (153455) and Plod1 (153454). In human monocyte-macrophage
-cells and AAA tissue, JNK played a role in MMP9 secretion. Selective
-inhibition of Jnk in vivo not only prevented the development of AAA but
-also caused regression of established AAA in 2 mouse models. Yoshimura
-et al. (2005) concluded that JNK is a proximal signaling molecule in the
-pathogenesis of AAA that acts by promoting abnormal ECM metabolism.
-
-There are suggestions from several sources that AAA and atherosclerosis
-may be different diseases. In their AAA population, Rossaak et al.
-(2000) found an incidence of diabetes mellitus of 6%. They suggested
-that this relatively low incidence in patients with AAA contrasted with
-that in atherosclerotic disease and lent support to the notion that
-these 2 disorders are indeed distinct. The apparent association of a
-PAI1 polymorphism (4G/5G; 173360.0002) with familial AAA (see MOLECULAR
-GENETICS) was another observation that questioned the idea that
-atherosclerosis causes AAAs: whereas the 4G variant of PAI1 shows a
-protective role in AAA, it is undesirable in the context of coronary
-artery disease and atherosclerosis (Harris, 2001).
+Shephard et al. (1989) isolated and sequenced cDNA clones that code for
+rat and human NADPH-dependent cytochrome P450 reductase.
 
 MAPPING
 
-Shibamura et al. (2004) performed a whole-genome scan of AAA using
-affected relative-pair (ARP) linkage analysis that included covariates
-to allow for genetic heterogeneity. They found strong evidence of
-linkage (lod = 4.64) to a region near marker D19S433 at 51.88 cM on
-chromosome 19 with 36 families (75 ARPs) when including sex and the
-number of affected first-degree relatives of the proband as covariates.
-They then genotyped 83 additional families for the same markers and
-typed additional markers for all families and obtained a lod score of
-4.75 with sex, number of affected first-degree relatives, and their
-interaction as covariates, near marker D19S416 (58.69 cM).
-
-- Pending Confirmation
-
-Elmore et al. (2009) conducted a genomewide association study in 123 AAA
-cases and 112 controls matched for age, sex, and smoking history, and
-identified 4 SNPs associated with AAA in strong LD within a haplotype
-block on chromosome 3p12.3. One of the SNPs from this region, dbSNP
-rs7635818, was genotyped in 502 AAA cases and 736 controls (p = 0.017)
-and a replication set of 448 cases and 410 controls (p = 0.013; combined
-p = 0.0028 and combined OR = 1.33); analysis in the subset of 391 cases
-and 241 controls with a smoking history showed an even stronger
-association (p = 0.00041; OR, 1.80). Elmore et al. (2009) noted that the
-AAA-associated region is located approximately 200 kbp upstream of the
-CNTN3 gene (601325) transcription start site.
+By Southern blot analysis of DNA isolated from a panel of 8 independent
+human-rodent somatic cell hybrids, Shephard et al. (1989) determined
+that cytochrome P450 reductase is encoded by a single gene located on
+7pter-q22. By in situ hybridization to metaphase chromosomes, they
+refined the localization to 7q11.2.
 
 MOLECULAR GENETICS
 
-- Associations Pending Confirmation
+- Congenital Adrenal Hyperplasia due to Cytochrome P450 Oxidoreductase
+Deficiency
 
-Yoon et al. (1999) performed association studies using polymorphisms in
-the MMP3 (185250), MMP9 (120361), and PAI1 (173360) genes and DNA
-isolated from 47 AAA patients, 57 intracranial aneurysm (IA) patients,
-and 174 controls, all from Finland. The frequency of the 5A MMP3 allele
-(185250.0001) was somewhat higher in the AAA than in the control group
-(corrected p = 0.0609), whereas the MMP3 allele frequencies in the IA
-group did not differ from those of the controls. These findings
-suggested that the transcriptionally more active 5A MMP3 allele might be
-a genetic risk factor for AAA among Finns. The findings were in
-agreement with previous studies demonstrating higher levels of MMP3
-expression in AAA than in control tissues. Yoon et al. (1999) found that
-PAI1 and MMP9 genotypes, including the PAI1 4G/5G polymorphism
-(173360.0002), did not associate with aneurysms.
+Apparent combined P450C17 and P450C21 deficiency (see 613571) is a rare
+variant of congenital adrenal hyperplasia, first reported by Peterson et
+al. (1985). Affected girls are born with ambiguous genitalia, indicating
+intrauterine androgen excess. After birth, however, virilization does
+not progress and amounts of circulating androgens are low or normal.
+Affected boys are sometimes born undermasculinized. Boys and girls can
+also present with bone malformations. Findings of biochemical
+investigations of urinary steroid excretion in affected patients have
+shown accumulation of steroid metabolites, indicating impaired C17 and
+C21 hydroxylation, suggesting concurrent partial deficiencies of the 2
+steroidogenic enzymes, P450C17 and P450C21. However, sequencing of the
+genes encoding these enzymes showed no mutations, which accorded with
+the idea of a defect in a cofactor that interacts with both enzymes.
 
-Noting that the 5G variant of the PAI1 4G/5G polymorphism is associated
-with less inhibition of the plasminogen activators and, consequently,
-increased conversion of plasminogen to plasmin and increased activation
-of MMPs, Rossaak et al. (2000) studied the ratios of the 4G:5G genotypes
-in 190 patients with AAA, including 39 patients with strong family
-histories, and 163 controls, and found that 26% of patients with
-familial AAA were homozygous 5G compared with 13% of the control
-population. The 4G allele frequency was 0.47 in the familial AAAs,
-compared with 0.62 in the nonfamilial patients (P = 0.02) and 0.61 in
-the control population (p = 0.03).
+Arlt et al. (2004) investigated the underlying molecular basis of
+congenital adrenal hyperplasia with apparent combined P450C17 and
+P450C21 deficiency in 3 affected children, a brother and sister and a
+third unrelated patient. All 3 patients were compound heterozygotes for
+mutations in the POR gene (see 124015.0005 and 124015.0007-124015.0009),
+whereas their parents and an unaffected sib were heterozygotes. One
+patient (see 124015.0007) had mild bone abnormalities suggesting
+Antley-Bixler syndrome.
 
-Histologically, AAAs are characterized by signs of chronic inflammation,
-destructive remodeling of the extracellular matrix, and depletion of
-vascular smooth muscle cells (Steinmetz et al., 2003). Ogata et al.
-(2005) hypothesized that genes involved in these events could harbor
-changes and make individuals more susceptible to aneurysms. They
-analyzed 387 Caucasian individuals with AAA and 425 controls for 14
-polymorphisms in 13 candidate genes, and found significant association
-between variation in the TIMP1 gene (305370) and AAA in males without a
-family history (p = 0.0047 for nt+434 and p = 0.015 for dbSNP
-rs2070584).
+In a 23-year-old 46,XX Brazilian female with normal breast development,
+primary amenorrhea, and mild arterial hypertension, but no dysmorphic
+features, Fluck et al. (2004) detected compound heterozygosity for
+mutations in the POR gene (see 124015.0003).
 
-Baas et al. (2010) performed an association study of SNPs in the
-TGF-beta receptor genes TGFBR1 (190181) and TGFBR2 (190182) and AAA in a
-Dutch population. In the stage 1 analysis of 376 cases and 648 controls,
-3 of the 4 TGFBR1 SNPs and 9 of the 28 TGFBR2 SNPs had a p value of less
-than 0.07. Genotyping of these SNPs in an independent cohort of 360
-cases and 376 controls in stage 2 confirmed association (p less than
-0.05) for the same allele of 1 SNP in TGFBR1 and 2 SNPs in TGFBR2. Joint
-analysis of the 736 cases and 1,024 controls showed statistically
-significant associations of these SNPs, which sustained after proper
-correction for multiple testing (TGFBR1 dbSNP rs1626340, OR = 1.32, 95%
-CI 1.11-1.56, p = 0.001; TGFBR2 dbSNP rs1036095, OR = 1.32, 95% CI
-1.12-1.54, p = 0.001; dbSNP rs4522809, OR = 1.28, 95% CI 1.12-1.46, p =
-0.0004). Baas et al. (2010) concluded that genetic variation in TGFBR1
-and TGFBR2 associate with AAA in the Dutch population.
+- Antley-Bixler Syndrome with Disordered Steroidogenesis
+
+In 4 unrelated patients with disordered steroidogenesis including 3
+children with bony features of Antley-Bixler syndrome, Fluck et al.
+(2004) found mutations in the POR gene. This was somewhat surprising
+since the affected individuals lacked apparent disorders of bile acid
+synthesis or drug metabolism, which also requires P450 enzymes, and
+knockout of POR is embryonically lethal in mice (Shen et al., 2002; Otto
+et al., 2003).
+
+Huang et al. (2005) sequenced the POR gene in 32 individuals with
+Antley-Bixler syndrome and/or hormonal changes that suggested POR
+deficiency (201750). Fifteen patients carried POR mutations on both
+alleles; 4 carried mutations on only 1 allele. The 34 affected POR
+alleles included 10 with ala287-to-pro (124015.0002), all from whites,
+and 7 with arg457-to-his (R457H; 124015.0005), including 4 Japanese, 1
+African, and 2 Caucasians; 17 of the 34 carried 16 'private' mutations,
+including 9 missense and 7 frameshift mutations. One of the patients
+with an Antley-Bixler syndrome-like skeletal phenotype and abnormal
+steroids and genitalia, in whom Huang et al. (2005) identified compound
+heterozygosity for a frameshift and a missense mutation in the POR gene
+(see 124015.0015 and 124015.0016, respectively), was the patient in whom
+Hurley et al. (2004) had previously found a heterozygous missense
+mutation of unclear significance in the FGFR1 gene (136350.0011). Huang
+et al. (2005) recreated these 11 missense mutations, plus 10 others
+found in databases or reported elsewhere, by site-directed mutagenesis
+and assessed them by 4 assays: assays that were based on cytochrome c,
+which is not a physiologic substrate for POR, correlated fully with
+clinical phenotype, but assays that were based on POR's support of
+catalysis by P450c17 (the enzyme most closely associated with the
+hormonal phenotype) provided an excellent genotype/phenotype
+correlation. Huang et al. (2005) concluded that individuals with an ABS
+phenotype and normal steroidogenesis have FGFR mutations, whereas those
+with ambiguous genitalia and disordered steroidogenesis should be
+recognized as having a distinct new disease: POR deficiency. The
+existence of 2 distinct disorders was first suggested by Reardon et al.
+(2000).
+
+Fukami et al. (2005) reported molecular and genetic findings in 10
+Japanese patients from 8 families with skeletal findings of ABS and
+abnormal genitalia and/or impaired steroidogenesis. POR mutations were
+identified in 15 of 16 alleles from the 8 families; the R457H mutation
+was found in 10 of 16 alleles and was associated with a specific
+haplotype. Fukami et al. (2005) suggested that the high frequency of
+R457H in the Japanese is due to a founder effect. Four other mutations
+were also identified in these patients: a 1-bp insertion (124015.0011),
+a 24-bp deletion (124015.0012), a missense mutation (Y578C;
+124015.0013), and a silent 15A-G transition (G5G; 124015.0014).
+
+ANIMAL MODEL
+
+Otto et al. (2003) found that deletion of the Cpr gene in mice resulted
+in death in early to middle gestation. Cpr -/- embryos exhibited
+multiple abnormalities, including severe inhibition of vasculogenesis
+and hematopoiesis and defects in brain and limb development. Some of the
+abnormalities could be attributed to perturbations in retinoic acid
+homeostasis. Embryos at 9.5 days postcoitum had significantly elevated
+levels of retinoic acid and reduced levels of retinol. Furthermore, some
+of the phenotypes could be either reversed or exacerbated by decreasing
+or increasing maternal retinoic acid exposure, respectively.
+
+*FIELD* AV
+.0001
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, VAL492GLU
+
+In a child with bony features of Antley-Bixler syndrome and disordered
+steroidogenesis (201750), Fluck et al. (2004) found heterozygosity for a
+transversion in the POR gene, 1475T-A, leading to the amino acid
+substitution val492 to glu (V492E). The mutation was inherited from the
+mother, who was heterozygous; no mutation in the exons or first 50
+basepairs of splice donor-acceptor sites on the paternal allele was
+found.
+
+.0002
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, ALA287PRO
+
+In a child with bony features of Antley-Bixler syndrome with genital
+ambiguity and abnormal steroidogenesis (201750), Fluck et al. (2004)
+found apparent homozygosity for a nucleotide substitution 859G-C in the
+POR gene leading to an ala287-to-pro (A287P) substitution. This child
+had been described by Kelley et al. (2002). The mother was heterozygous
+for the mutation; paternal DNA was not available.
+
+Huang et al. (2005) sequenced the POR gene in 29 individuals with
+Antley-Bixler syndrome and/or hormonal findings that suggested POR
+deficiency. Fifteen patients carried POR mutations on both alleles; 4
+carried mutations on only 1 allele. The 34 affected POR alleles included
+10 with A287P, all in Caucasians.
+
+.0003
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, CYS569TYR
+
+In a phenotypically normal woman with amenorrhea and disordered
+steroidogenesis (613571), Fluck et al. (2004) found compound
+heterozygosity for 2 mutations in the POR gene, 1706G-A and 1822G-T,
+leading to the amino acid substitutions cys569 to tyr (C569Y) and val608
+to phe (V608F; 124015.0004), respectively. Parental DNA was not
+available.
+
+.0004
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, VAL608PHE
+
+See 124015.0003 and Fluck et al. (2004).
+
+.0005
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY,
+INCLUDED
+POR, ARG457HIS
+
+In a child with Antley-Bixler syndrome and disordered steroidogenesis
+(201750), Fluck et al. (2004) found compound heterozygosity for a
+1370G-A transition in the POR gene leading to an arg457-to-his (R457H)
+substitution on the maternal allele, and a 731+1G-A change (124015.0006)
+in the first base of the splice donor site of intron 6 on the paternal
+allele. The corresponding minigene construct retained intron 6, leading
+to a premature stop codon.
+
+In a female (46,XX) offspring of healthy, unrelated parents of Polish
+descent with congenital adrenal hyperplasia due to apparent combined
+deficiency of P450C17 and P450C21 (613571), Arlt et al. (2004) described
+compound heterozygosity for 2 mutations in the POR gene: an 849G-C
+transversion in exon 8 resulting in ala284-to-pro (A284P; 124015.0009)
+substitution, and the R457H mutation. (The authors, using the rat
+nomenclature, designated this mutation R454H.) The girl was born with
+clubfeet and ambiguous genitalia, including enlargement of the clitoris
+and partial labial fusion. Virilization did not progress after birth.
+Follow-up at 13 years of age showed a marfanoid habitus, scoliosis,
+arachnodactyly, dysplastic ears, and long, slim limbs. Ovarectomy due to
+rupture of large ovarian cysts was performed at 14 and 16 years of age.
+In this family, 5 preceding and 2 subsequent pregnancies resulted in
+early miscarriages. The unaffected father was heterozygous for A284P;
+the unaffected mother and younger brother were heterozygous for R457H.
+
+Huang et al. (2005) sequenced the POR gene in 29 individuals with a
+diagnosis of Antley-Bixler syndrome and/or hormonal findings that
+suggested POR deficiency. Fifteen patients carried POR mutations on both
+alleles, and 4 carried mutations on only 1 allele. The 34 affected POR
+alleles included 7 with R457H, in 4 Japanese, 1 African, and 2 white
+patients.
+
+Fukami et al. (2005) identified the R457H mutation in 10 of 16 alleles
+from 8 Japanese families with skeletal findings of ABS and abnormal
+genitalia and/or impaired steroidogenesis. R457H was associated with a
+specific haplotype; Fukami et al. (2005) suggested that the high
+frequency of R457H in the Japanese is due to a founder effect.
+
+Adachi et al. (2006) performed SNP analysis in 5 previously reported
+patients with POR deficiency and the R457H mutation (4 Japanese and 1
+Polish), and found that the non-Japanese patient had the same SNP
+pattern as Japanese patients, suggesting that R457H is a global founder
+mutation.
+
+.0006
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, IVS6DS, G-A, +1 
+
+See 124015.0005 and Fluck et al. (2004).
+
+.0007
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, TYR178ASP 
+
+In a brother and sister with congenital adrenal hyperplasia associated
+with apparent combined P450C17 and P450C21 deficiency (613571), Arlt et
+al. (2004) found compound heterozygosity for 2 mutations in the POR
+gene: a 531T-G transversion in exon 5, resulting in tyr178 to asp
+(Y178D), and a 1696G-A transition in exon 13, resulting in cys566 to tyr
+(C566Y; 124015.0008). The girl was born with ambiguous genitalia;
+ultrasound examination showed the presence of a uterus and ovaries, and
+the karyotype was confirmed as 46,XX. In addition, she had a broad nasal
+bridge and ulnar deviation of the wrists with brachytelephalangia and
+flattened metacarpal epiphyses, features resembling those of
+Antley-Bixler syndrome (see 207410). Virilization did not progress after
+birth. In the case of the younger brother, the mother's urinary steroid
+excretion was monitored longitudinally during pregnancy. Her estriol
+concentration failed to rise, and androsterone excretion rose, peaking
+around 20 weeks' gestation. Signs of virilization (acne, hirsutism)
+developed in the mother by 23 weeks' gestation. The mother's
+hyperandrogenism resolved rapidly after birth. The boy's karyotype was
+46,XY and he had normal male genitalia, including descended testes, at
+birth. There was no evidence of skeletal abnormalities. The unaffected
+parents were heterozygous for Y178D and C566Y, respectively.
+
+.0008
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, CYS566TYR 
+
+See 124015.0007 and Arlt et al. (2004).
+
+.0009
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, ALA284PRO 
+
+See 124015.0005 and Arlt et al. (2004).
+
+.0010
+REMOVED FROM DATABASE
+.0011
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 1-BP INS, 1329C  
+
+In 2 Japanese sibs and an unrelated Japanese individual with skeletal
+findings of Antley-Bixler syndrome and abnormal genitalia and/or
+impaired steroidogenesis (201750), Fukami et al. (2005) identified
+compound heterozygosity for mutations in the POR gene, one of which was
+a 1-bp insertion (1329C) in exon 11, resulting in a truncated protein at
+codon 449. On the other allele, the 2 sibs had a 1733A-G transition in
+exon 13, resulting in a tyr578-to-cys substitution (Y578C; 124015.0012);
+the third patient had an R457H mutation in exon 11 (124015.0005).
+
+.0012
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, TYR578CYS  
+
+See 124015.0011 and Fukami et al. (2005).
+
+.0013
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 24-BP DEL, NT1835  
+
+In 2 Japanese sibs with skeletal findings of Antley-Bixler syndrome and
+abnormal genitalia (201750), Fukami et al. (2005) identified compound
+heterozygosity for a 24-bp deletion in exon 14 of the POR gene,
+resulting in the loss of 9 amino acids and the creation of 1 amino acid
+(arg612), and an R457H mutation in exon 11 (124015.0005).
+
+.0014
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 15A-G
+
+In a Japanese boy with skeletal findings of Antley-Bixler syndrome and
+abnormal genitalia (201750), Fukami et al. (2005) identified compound
+heterozygosity for a 15A-G transition in exon 1 of the POR gene,
+resulting in a 'silent' gly5-to-gly (G5G) substitution, and an R457H
+mutation in exon 11 (124015.0005). Computerized modeling analysis
+indicated that the 15A-G transition could disturb an exonic splicing
+enhancer motif.
+
+.0015
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 13-BP INS, NT580
+
+In a male infant with skeletal findings of Antley-Bixler syndrome and
+abnormal steroids and genitalia (201750), in whom Hurley et al. (2004)
+had previously found a heterozygous missense mutation of unclear
+significance in the FGFR1 gene (136350.0011), Huang et al. (2005)
+identified compound heterozygosity for a 13-bp insertion
+(580insTACGTGGACAAGC) and a gly539-to-arg (G539R; 124015.0016)
+substitution in the POR gene. The frameshift was predicted to disrupt
+the flavin mononucleotide (FMN)- and NADPH-binding sites and to result
+in premature termination of the protein. Functional studies showed that
+the G539R mutant retained 46% of the 17-alpha-hydroxylase activity but
+only 8% of the 17,20 lyase activity; consistent with this, the patient
+was able to synthesize cortisol adequately (17-alpha-hydrolase activity)
+but had poor production of sex steroids (17,20 lyase activity).
+
+.0016
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY,
+INCLUDED
+POR, GLY539ARG
+
+See 124015.0015 and Huang et al. (2005).
+
+Hershkovitz et al. (2008) reported 4 undervirilized males of an extended
+Bedouin family. One of these had been reported by Biason-Lauber et al.
+(1997) to carry mutations in the CYP17A1 gene (609300), encoding
+P450c17, causing isolated 17,20-lyase deficiency (202110). Gas
+chromatography-mass spectrometry (GC-MS) urinary steroid profiling and
+serum steroid measurements showed combined deficiencies of 17,20-lyase
+and 21-hydroxylase. Sequencing of exons 1 and 8 of CYP17A1 in 2
+different laboratories showed no mutations. Sequencing of the POR gene
+showed that all 4 patients were homozygous for G539R, which was shown by
+Huang et al. (2005) to retain 46% of normal 17-alpha-hydroxylase
+activity but only 8% of the 17,20-lyase activity of P450c17. Hershkovitz
+et al. (2008) concluded that POR deficiency (613571) can masquerade
+clinically as isolated 17,20-lyase deficiency.
+
+*FIELD* RF
+1. Adachi, M.; Asakura, Y.; Matsuo, M.; Yamamoto, T.; Hanaki, K.;
+Arlt, W.: POR R457H is a global founder mutation causing Antley-Bixler
+syndrome with autosomal recessive trait. (Letter) Am. J. Med. Genet. 140A:
+633-635, 2006.
+
+2. Arlt, W.; Walker, E. A.; Draper, N.; Ivison, H. E.; Ride, J. P.;
+Hammer, F.; Chalder, S. M.; Borucka-Mankiewicz, M.; Hauffa, B. P.;
+Malunowicz, E. M.; Stewart, P. M.; Shackleton, C. H. L.: Congenital
+adrenal hyperplasia caused by mutant P450 oxidoreductase and human
+androgen synthesis: analytical study. Lancet 363: 2128-2135, 2004.
+
+3. Biason-Lauber, A.; Leiberman, E.; Zachmann, M.: A single amino
+acid substitution in the putative redox partner-binding site of P450c17
+as cause of isolated 17,20-lyase deficiency. J. Clin. Endocr. Metab. 82:
+3807-3812, 1997.
+
+4. Fluck, C. E.; Tajima, T.; Pandey, A. V.; Arlt, W.; Okuhara, K.;
+Verge, C. F.; Jabs, E. W.; Mendonca, B. B.; Fujieda, K.; Miller, W.
+L.: Mutant P450 oxidoreductase causes disordered steroidogenesis
+with and without Antley-Bixler syndrome. Nature Genet. 36: 228-230,
+2004.
+
+5. Fukami, M.; Horikawa, R.; Nagai, T.; Tanaka, T.; Naiki, Y.; Sato,
+N.; Okuyama, T.; Nakai, H.; Soneda, S.; Tachibana, K.; Matsuo, N.;
+Sato, S.; Homma, K.; Nishimura, G.; Hasegawa, T.; Ogata, T.: Cytochrome
+P450 oxidoreductase gene mutations and Antley-Bixler syndrome with
+abnormal genitalia and/or impaired steroidogenesis: molecular and
+clinical studies in 10 patients. J. Clin. Endocr. Metab. 90: 414-426,
+2005.
+
+6. Hershkovitz, E.; Parvari, R.; Wudy, S. A.; Hartmann, M. F.; Gomes,
+L. G.; Loewental, N.; Miller, W. L.: Homozygous mutation G539R in
+the gene for P450 oxidoreductase in a family previously diagnosed
+as having 17,20-lyase deficiency. J. Clin. Endocr. Metab. 93: 3584-3588,
+2008.
+
+7. Huang, N.; Pandey, A. V.; Agrawal, V.; Reardon, W.; Lapunzina,
+P. D.; Mowat, D.; Jabs, E. W.; Van Vliet, G.; Sack, J.; Fluck, C.
+E.; Miller, W. L.: Diversity and function of mutations in P450 oxidoreductase
+in patients with Antley-Bixler syndrome and disordered steroidogenesis. Am.
+J. Hum. Genet. 76: 729-749, 2005.
+
+8. Hurley, M. E.; White, M. J.; Green, A. J.; Kelleher, J.: Antley-Bixler
+syndrome with radioulnar synostosis. Pediat. Radiol. 34: 148-151,
+2004.
+
+9. Kelley, R. I.; Kratz, L. E.; Glaser, R. L.; Netzloff, M. L.; Wolf,
+L. M.; Jabs, E. W.: Abnormal sterol metabolism in a patient with
+Antley-Bixler syndrome and ambiguous genitalia. Am. J. Med. Genet. 110:
+95-102, 2002.
+
+10. Miller, W. L.: Congenital adrenal hyperplasia. (Letter) New
+Eng. J. Med. 314: 1321-1322, 1986.
+
+11. Otto, D. M. E.; Henderson, C. J.; Carrie, D.; Davey, M.; Gundersen,
+T. E.; Blomhoff, R.; Adams, R. H.; Tickle, C.; Wolf, C. R.: Identification
+of novel roles of the cytochrome P450 system in early embryogenesis:
+effects on vasculogenesis and retinoic acid homeostasis. Molec. Cell.
+Biol. 23: 6103-6116, 2003.
+
+12. Otto, D. M. E.; Henderson, C. J.; Carrie, D.; Davey, M.; Gundersen,
+T. E.; Blomhoff, R.; Adams, R. H.; Tickle, C.; Wolf, C. R.: Identification
+of novel roles of the cytochrome P450 system in early embryogenesis:
+effects on vasculogenesis and retinoic acid homeostasis. Molec. Cell.
+Biol. 23: 6103-6116, 2003.
+
+13. Peterson, R. E.; Imperato-McGinley, J.; Gautier, T.; Shackleton,
+C.: Male pseudohermaphroditism due to multiple defects in steroid-biosynthetic
+microsomal mixed-function oxidases: a new variant of congenital adrenal
+hyperplasia. New Eng. J. Med. 313: 1182-1191, 1985.
+
+14. Reardon, W.; Smith, A.; Honour, J. W.; Hindmarsh, P.; Das, D.;
+Rumsby, G.; Nelson, I.; Malcolm, S.; Ades, L.; Sillence, D.; Kumar,
+D.; DeLozier-Blanchet, C.; McKee, S.; Kelly, T.; McKeehan, W. L.;
+Baraitser, M.; Winter, R. M.: Evidence for digenic inheritance in
+some cases of Antley-Bixler syndrome? J. Med. Genet. 37: 26-32,
+2000.
+
+15. Shen, A. L.; O'Leary, K. A.; Kasper, C. B.: Association of multiple
+developmental defects and embryonic lethality with loss of microsomal
+NADPH-cytochrome P450 oxidoreductase. J. Biol. Chem. 277: 6536-6541,
+2002.
+
+16. Shephard, E. A.; Phillips, I. R.; Santisteban, I.; West, L. F.;
+Palmer, C. N.; Ashworth, A.; Povey, S.: Isolation of a human cytochrome
+P-450 reductase cDNA clone and localization of the corresponding gene
+to chromosome 7q11.2. Ann. Hum. Genet. 53: 291-301, 1989.
+
+*FIELD* CN
+John A. Phillips, III - updated: 6/15/2009
+Patricia A. Hartz - updated: 3/20/2009
+Marla J. F. O'Neill - updated: 1/26/2009
+Marla J. F. O'Neill - updated: 6/20/2006
+Marla J. F. O'Neill - updated: 9/23/2005
+Marla J. F. O'Neill - updated: 9/1/2005
+Victor A. McKusick - updated: 6/8/2005
+Marla J. F. O'Neill - updated: 10/11/2004
+Victor A. McKusick - updated: 10/6/2004
+Victor A. McKusick - updated: 2/13/2004
+
+*FIELD* CD
+Victor A. McKusick: 10/2/1990
+
+*FIELD* ED
+alopez: 03/24/2011
+alopez: 1/11/2011
+alopez: 9/24/2010
+alopez: 6/15/2009
+mgross: 3/23/2009
+terry: 3/20/2009
+carol: 1/26/2009
+joanna: 1/26/2009
+wwang: 6/8/2007
+wwang: 12/13/2006
+wwang: 10/19/2006
+wwang: 6/22/2006
+terry: 6/20/2006
+alopez: 11/29/2005
+terry: 11/17/2005
+carol: 9/26/2005
+carol: 9/23/2005
+terry: 9/23/2005
+carol: 9/1/2005
+terry: 6/8/2005
+terry: 11/4/2004
+carol: 10/11/2004
+alopez: 10/8/2004
+terry: 10/6/2004
+mgross: 3/17/2004
+alopez: 3/1/2004
+alopez: 2/16/2004
+terry: 2/13/2004
+supermim: 3/16/1992
+carol: 10/2/1990
+
+*RECORD*
+*FIELD* NO
+202110
+*FIELD* TI
+#202110 ADRENAL HYPERPLASIA, CONGENITAL, DUE TO 17-ALPHA-HYDROXYLASE DEFICIENCY
+;;ADRENAL HYPERPLASIA V;;
+17-@ALPHA-HYDROXYLASE DEFICIENCY
+17,20-@LYASE DEFICIENCY, ISOLATED, INCLUDED;;
+17-@ALPHA-HYDROXYLASE/17,20-LYASE DEFICIENCY, COMBINED COMPLETE, INCLUDED;;
+17-@ALPHA-HYDROXYLASE/17,20-LYASE DEFICIENCY, COMBINED PARTIAL, INCLUDED
+*FIELD* TX
+A number sign (#) is used with this entry because the phenotype is
+caused by mutation in the gene encoding steroid 17-monooxygenase
+(CYP17A1; 609300). The enzyme has both 17-alpha-hydroxylase and
+17,20-lyase activities.
+
+CLINICAL FEATURES
+
+Deficiency of adrenal 17-hydroxylation activity was first demonstrated
+in a single patient by Biglieri et al. (1966), who suggested a similar
+defect in the gonad. Production of excessive corticosterone and
+deoxycorticosterone resulted in hypertension and hypokalemic alkalosis.
+Aldosterone synthesis was almost totally absent. The patient had normal
+stature and amenorrhea. Although there were no other cases in the family
+and parental consanguinity was not noted, recessive inheritance was
+possible. Biglieri (1997) reviewed the evolution of the clinical
+features and laboratory findings in this case over 3 years.
+
+Goldsmith et al. (1967) reported a second case in whom the defect in
+17-alpha-hydroxylation may have been less complete than in the first
+case. The patient was a 26-year-old woman with hypertension, primary
+amenorrhea, and lack of secondary sexual characteristics. Mallin (1969)
+described congenital adrenal hyperplasia due to 17-hydroxylase
+deficiency in 2 sisters. New (1970) reported the first affected male.
+The clinical features were pseudohermaphroditism with ambiguous external
+genitalia and prominent breast development at puberty. Unlike the
+previously reported female cases, this male patient did not demonstrate
+severe hypertension or hypokalemia. Testicular feminization was
+simulated in a patient reported by Heremans et al. (1976).
+
+Yazaki et al. (1982) reported a Japanese phenotypic female, born of
+consanguineous parents, with generalized muscle weakness due to
+hypokalemic myopathy, primary amenorrhea, and lack of pubertal
+development. Laparoscopy showed intraabdominal testes and no uterus.
+Karyotype was 46,XY. Laboratory studies showed increased plasma
+progesterone, corticosterone, aldosterone, ACTH (see 176830), LH (see
+152780), and FSH (see 136530). Glucocorticoid replacement normalized
+plasma levels of ACTH, 17-deoxysteroids, and potassium. This patient was
+later found to have a homozygous mutation in the CYP17A1 gene
+(609300.0011; Yamaguchi et al., 1997), consistent with combined complete
+17-alpha-hydroxylase/17,20-lyase deficiency.
+
+Scaroni et al. (1991) reported a family in which 3 members, 2 adult
+females and 1 pubertal-aged genotypic male, had congenital adrenal
+hyperplasia due to 17-alpha hydroxylase deficiency. All presented as
+phenotypic females with lack of sexual development and hypokalemic
+hypertension. Baseline hormonal studies showed low glucocorticoid,
+androgen, and estrogen levels. As a consequence, ACTH, LH, and FSH
+concentrations were increased. Plasma renin and aldosterone were also
+decreased. Short-term dexamethasone treatment normalized potassium and
+reduced blood pressure and the abnormal mineralocorticoid levels.
+
+Martin et al. (2003) reported 11 patients from 6 Brazilian families with
+combined 17-alpha-hydroxylase/17,20-lyase deficiency. All patients had
+elevated basal serum levels of progesterone and suppressed plasma renin
+activity. The authors concluded that basal progesterone measurement is a
+useful marker of P450c17 deficiency and that its use should reduce the
+misdiagnosis of this deficiency in patients presenting with male
+pseudohermaphroditism, primary or secondary amenorrhea, and
+mineralocorticoid excess syndrome.
+
+- Combined Partial 17-alpha-Hydroxylase/17,20-Lyase Deficiency
+
+Oshiro et al. (1995) reported a 32-year-old Japanese woman with combined
+partial 17-alpha-hydroxylase/17,20-lyase deficiency caused by mutation
+in the CYP17A1 gene (609300.0008). The patient was referred because of
+hypertension and amenorrhea. She had menarche at the age of 14 years
+with irregular menstruation until the age of 20, but no menstruation
+thereafter. Hypertension had been known since the age of 20 years. She
+had a flat chest, infantile genitalia, and no pubic or axillary hair.
+Computed tomography revealed bilateral adrenal hyperplasia without
+tumors, uterine hypoplasia, and atrophy of the ovaries. The patient had
+hypokalemia, metabolic alkalosis, and positive Trousseau sign.
+
+Yanase et al. (1989) reported a Japanese woman with combined partial
+17-alpha-hydroxylase/17,20-lyase deficiency caused by mutation in the
+CYP17A1 gene (609300.0002). Functional expression studies showed that
+17-alpha-hydroxylase and 17,20-lyase activities were less than 37% and
+8% of normal, respectively. On a visit to the hospital at the age of 20
+because of occipital headache, the patient was found to have
+hypertension and hypokalemia. Menstruation was irregular. Physical
+examination showed hypoplastic breasts and no pubic or axillary hair.
+Miura et al. (1996) reported follow-up of the Japanese woman reported by
+Yanase et al. (1989). In 1968, she was reported as having
+glucocorticoid-responsive hyperaldosteronism. She was treated with
+dexamethasone, resulting in normal blood pressure and normokalemia for
+28 years. Because of sustained vaginal bleeding, she had a total
+hysterectomy at age 42. No follicles or corpus luteum were detected in
+the ovarian specimen. At age 45 years, she had decreased levels of sex
+steroids and increased levels of gonadotropins. Miura et al. (1996)
+concluded that the disorder resulted in early reduction of gonadal
+function with increasing age.
+
+- Isolated 17,20-Lyase Deficiency 
+
+Geller et al. (1997) reported 2 patients with isolated 17,20-lyase
+deficiency caused by different homozygous mutations in the CYP17A1 gene
+(609300.00012 and 609300.0013, respectively). The first patient had
+genital ambiguity at birth, but was assigned female gender. When seen at
+13 months of age, the patient showed a 2.2-cm phallus, perineal
+hypospadias, bilateral gonads palpable in a bifid scrotum, and a blind
+vaginal pouch seen on urethrocystograms. The parents were first cousins.
+Serum cortisol and electrolytes and blood pressure were normal.
+Gonadotropins were at normal prepubertal level in this patient.
+Testicular stimulation with human chorionic gonadotropin elicited
+grossly subnormal responses of testosterone, DHEA, and androstenedione.
+Basal and hCG-stimulated progesterone was normal. The second patient had
+a 46,XY karyotype, but genital ambiguity at birth when male gender was
+assigned. Gynecomastia developed at 14 years of age, and at 16 years the
+breasts were Tanner stage V; pubic hair was Tanner stage IV, but there
+was minimal body hair. The genitalia were characterized by a 4.5-cm
+phallus, perineal hypospadias, bifid scrotum, small descended testis on
+the right and left in the inguinal canal, and a blind vaginal pouch
+detected by urethrocystography. The parents denied consanguinity.
+
+Biason-Lauber et al. (1997) reported a newborn male patient from Israel
+with micropenis, undescended testes, and a hormonal pattern consistent
+with isolated 17,20-lyase deficiency. They found compound heterozygosity
+for mutations in the CYP17A1 gene. Gupta et al. (2001) studied one of
+the mutations and was unable to demonstrate activity consistent with the
+diagnosis. Hershkovitz et al. (2008) restudied this patient along with 3
+other affected male relatives. They found deficiency of cytochrome P450
+oxidoreductase (POR) caused by homozygosity for a mutation in the POR
+gene (124015.0016) in these individuals. Sequencing of the CYP17A1 in 2
+different laboratories failed to find the mutations reported by
+Biason-Lauber et al. (1997). Hershkovitz et al. (2008) concluded that
+POR deficiency (201750) can masquerade clinically as isolated
+17,20-lyase deficiency.
+
+MAPPING
+
+Mantero et al. (1980) found no evidence of linkage between HLA and
+17-alpha-hydroxylase deficiency. D'Armiento et al. (1983) demonstrated
+that, like 11-beta-hydroxylase deficiency (202010), 17-alpha-hydroxylase
+deficiency is not linked to HLA.
+
+MOLECULAR GENETICS
+
+In a patient with combined 17-alpha-hydroxylase/17,20-lyase deficiency,
+Kagimoto et al. (1988) identified a 4-base duplication in the CYP17A1
+gene (609300.0001), resulting in the loss of both enzymatic activities.
+
+In 2 patients with isolated 17,20-lyase deficiency from a small village
+in Brazil, Geller et al. (1997) identified 2 different homozygous
+mutations in the CYP17A1 gene (609300.0012; 609300.0013). When expressed
+in COS-1 cells, the mutants retained 17-alpha-hydroxylase activity, but
+had minimal 17,20-lyase activity.
+
+Yanase et al. (1991) stated that since the first description by Biglieri
+et al. (1966), at least 122 cases of 17-alpha-hydroxylase deficiency had
+been reported. Furthermore, 14 cases of 17,20-lyase deficiency had been
+reported in which 17-alpha-hydroxylase activity remained normal, this
+being a major reason that the 2 enzymes were long thought to be
+different. Yanase et al. (1991) reviewed 8 cases in which intragenic
+lesions had been identified.
+
+In 11 patients from 6 Brazilian families with combined
+17-alpha-hydroxylase/17,20-lyase deficiency, Martin et al. (2003)
+identified mutations in the CYP17A1 gene (609300.0009;
+609300.0023-609300.0026).
 
 *FIELD* SA
-Norrgard et al. (1985); Norrgard et al. (1984)
+Rovner and Gordon (1978)
 *FIELD* RF
-1. Baas, A. F.; Medic, J.; van't Slot, R.; de Kovel, C. G.; Zhernakova,
-A.; Geelkerken, R. H.; Kranendonk, S. E.; van Sterkenburg, S. M.;
-Grobbee, D. E.; Boll, A. P.; Wijmenga, C.; Blankensteijn, J. D.; Ruigrok,
-Y. M.: Association of the TGF-beta receptor genes with abdominal
-aortic aneurysm. Europ. J. Hum. Genet. 18: 240-244, 2010.
+1. Biason-Lauber, A.; Leiberman, E.; Zachmann, M.: A single amino
+acid substitution in the putative redox partner-binding site of P450c17
+as cause of isolated 17,20-lyase deficiency. J. Clin. Endocr. Metab. 82:
+3807-3812, 1997.
 
-2. Baird, P. A.; Sadovnick, A. D.; Yee, I. M. L.; Cole, C. W.; Cole,
-L.: Sibling risks of abdominal aortic aneurysm. Lancet 346: 601-604,
-1995.
+2. Biglieri, E.G.: A prismatic case: 17-alpha-hydroxylase deficiency:
+1963-1966. J. Clin. Endocr. Metab. 82: 48-50, 1997.
 
-3. Borkett-Jones, H. J.; Stewart, G.; Chilvers, A. S.: Abdominal
-aortic aneurysms in identical twins. J. Roy. Soc. Med. 81: 471-472,
-1988.
+3. Biglieri, E. G.; Herron, M. A.; Brust, N.: 17-Hydroxylation deficiency
+in man. J. Clin. Invest. 45: 1946-1954, 1966.
 
-4. Clifton, M. A.: Familial abdominal aortic aneurysms. Brit. J.
-Surg. 64: 765-766, 1977.
+4. D'Armiento, M.; Reda, G.; Bisignani, G.; Tabolli, S.; Capellaci,
+S.; Lulli, P.; Carbonara, A.; Biglieri, E. G.: No linkage between
+HLA and congenital adrenal hyperplasia due to 17-alpha-hydroxylase
+deficiency. (Letter) New Eng. J. Med. 308: 970-971, 1983.
 
-5. Collin, J.; Araujo, L.; Walton, J.; Lindsell, D.: Oxford screening
-programme for abdominal aortic aneurysm in men aged 65 to 74 years. Lancet 332:
-613-615, 1988. Note: Originally Volume II.
+5. Geller, D. H.; Auchus, R. J.; Mendonca, B. B.; Miller, W. L.:
+The genetic and functional basis of isolated 17,20-lyase deficiency. Nature
+Genet. 17: 201-205, 1997.
 
-6. Darling, R. C., III; Brewster, D. C.; Darling, R. C.; LaMuraglia,
-G. M.; Moncure, A. C.; Cambria, R. P.; Abbott, W. M.: Are familial
-abdominal aortic aneurysms different? J. Vasc. Surg. 10: 39-43,
+6. Goldsmith, O.; Solomon, D. H.; Horton, R.: Hypogonadism and mineralocorticoid
+excess: 17-hydroxylase deficiency. New Eng. J. Med. 277: 673-677,
+1967.
+
+7. Gupta, M. K.; Geller, D. H.; Auchus, R. J.: Pitfalls in characterizing
+P450c17 mutations associated with isolated 17,20-lyase deficiency. J.
+Clin. Endocr. Metab. 86: 4416-4423, 2001.
+
+8. Heremans, G. F. P.; Moolenaar, A. J.; Van Gelderen, H. H.: Female
+phenotype in a male child due to 17-alpha-hydroxylase deficiency. Arch.
+Dis. Child. 51: 721-723, 1976.
+
+9. Hershkovitz, E.; Parvari, R.; Wudy, S. A.; Hartmann, M. F.; Gomes,
+L. G.; Loewental, N.; Miller, W. L.: Homozygous mutation G539R in
+the gene for P450 oxidoreductase in a family previously diagnosed
+as having 17,20-lyase deficiency. J. Clin. Endocr. Metab. 93: 3584-3588,
+2008.
+
+10. Kagimoto, M.; Winter, J. S. D.; Kagimoto, K.; Simpson, E. R.;
+Waterman, M. R.: Structural characterization of normal and mutant
+human steroid 17-alpha-hydroxylase genes: molecular basis of one example
+of combined 17-alpha-hydroxylase/17,20 lyase deficiency. Molec. Endocr. 2:
+564-570, 1988.
+
+11. Mallin, S. R.: Congenital adrenal hyperplasia secondary to 17-hydroxylase
+deficiency. Ann. Intern. Med. 70: 69-76, 1969.
+
+12. Mantero, F.; Scaroni, C.; Pasini, C. V.; Fagiolo, U.: No linkage
+between HLA and congenital adrenal hyperplasia due to 17-alpha-hydroxylase
+deficiency. (Letter) New Eng. J. Med. 303: 530, 1980.
+
+13. Martin, R. M.; Lin, C. J.; Costa, E. M. F.; Leocadia de Oliveira,
+M.; Carrilho, A.; Villar, H.; Longui, C. A.; Mendonca, B. B.: P450c17
+deficiency in Brazilian patients: biochemical diagnosis through progesterone
+levels confirmed by CYP17 genotyping. J. Clin. Endocr. Metab. 88:
+5739-5746, 2003.
+
+14. Miura, K.; Yasuda, K.; Yanase, T.; Yamakita, N.; Sasano, H.; Nawata,
+H.; Inoue, M.; Fukaya, T.; Shizuta, Y.: Mutation of cytochrome P-45017
+alpha gene (CYP17) in a Japanese patient previously reported as having
+glucocorticoid-responsive hyperaldosteronism: with a review of Japanese
+patients with mutations of CYP17. J. Clin. Endocr. Metab. 81: 3797-3801,
+1996.
+
+15. New, M. I.: Male pseudohermaphroditism due to 17-alpha-hydroxylase
+deficiency. J. Clin. Invest. 49: 1930-1941, 1970.
+
+16. Oshiro, C.; Takasu, N.; Wakugami, T.; Komiya, I.; Yamada, T.;
+Eguchi, Y.; Takei, H.: Seventeen alpha-hydroxylase deficiency with
+one base pair deletion of the cytochrome P450c17 (CYP17) gene. J.
+Clin. Endocr. Metab. 80: 2526-2529, 1995.
+
+17. Rovner, D. R.; Gordon, D. L.: Direct evidence for a functional
+block with 18 oxidation in a patient with 17-alpha-hydroxylase deficiency. Trans.
+Assoc. Am. Phys. 91: 416-423, 1978.
+
+18. Scaroni, C.; Biason, A.; Carpene, G.; Opocher, G.; Mantero, F.
+: 17-Alpha-hydroxylase deficiency in three siblings: short- and long-term
+studies. J. Endocr. Invest. 14: 99-108, 1991.
+
+19. Yamaguchi, H.; Nakazato, M.; Miyazato, M.; Kangawa, K.; Matsukura,
+S.: A 5-prime-splice site mutation in the cytochrome P450 steroid
+17-alpha-hydroxylase gene in 17-alpha-hydroxylase deficiency. J.
+Clin. Endocr. Metab. 82: 1934-1938, 1997.
+
+20. Yanase, T.; Kagimoto, M.; Suzuki, S.; Hashiba, K.; Simpson, E.
+R.; Waterman, M. R.: Deletion of a phenylalanine in the N-terminal
+region of human cytochrome P-450(17a) results in partial combined
+17-alpha-hydroxylase/17,20-lyase deficiency. J. Biol. Chem. 264:
+18076-18082, 1989. Note: Erratum: J. Biol. Chem. 264: 21433 only,
 1989.
 
-7. Elmore, J. R.; Obmann, M. A.; Kuivaniemi, H.; Tromp, G.; Gerhard,
-G. S.; Franklin, D. P.; Boddy, A. M.; Carey, D. J.: Identification
-of a genetic variant associated with abdominal aortic aneurysms on
-chromosome 3p12.3 by genome wide association. J. Vasc. Surg. 49:
-1525-1531, 2009.
+21. Yanase, T.; Simpson, E. R.; Waterman, M. R.: 17-Alpha-hydroxylase/17,20-lyase
+deficiency: from clinical investigation to molecular definition. Endocr.
+Rev. 12: 91-108, 1991.
 
-8. Ernst, C. B.: Abdominal aortic aneurysm. New Eng. J. Med. 328:
-1167-1172, 1993.
-
-9. Fitzgerald, P.; Ramsbottom, D.; Burke, P.; Grace, P.; McAnen, O.;
-Croke, D. T.; Collins, P.; Johnson, A.; Bouchier-Hayes, D.: Abdominal
-aortic aneurysm in the Irish population. Brit. J. Surg. 82: 483-486,
-1995.
-
-10. Harris, E. L.: Personal Communication. Dunedin, New Zealand 
-11/27/2001.
-
-11. Henney, A. M.: Abdominal aortic aneurysm: molecular genetics. Lancet 341:
-216-217, 1993.
-
-12. Hollier, L. H.; Stanson, A. W.; Gloviczki, P.; Pairolero, P. C.;
-Joyce, J. W.; Bernatz, P. E.; Cherry, K. J.: Arteriomegaly: classification
-and morbid implications of diffuse aneurysmal disease. Surgery 93:
-700-708, 1983.
-
-13. Jean-Claude, J.; Newman, K. M.; Li, H.; Gregory, A. K.; Tilson,
-M. D.: Possible key role for plasmin in the pathogenesis of abdominal
-aortic aneurysms. Surgery 116: 472-478, 1994.
-
-14. Johansen, K.; Koepsell, T.: Familial tendency for abdominal aortic
-aneurysms. JAMA 256: 1934-1936, 1986.
-
-15. Johnson, G., Jr.; Avery, A.; McDougal, E. G.; Burnham, S. J.;
-Keagy, B. A.: Aneurysms of the abdominal aorta: incidence in blacks
-and whites in North Carolina. Arch. Surg. 120: 1138-1140, 1985.
-
-16. Kuivaniemi, H.; Shibamura, H.; Arthur, C.; Berguer, R.; Cole,
-C. W.; Juvonen, T.; Kline, R. A.; Limet, R.; MacKean, G.; Norrgard,
-O.; Pals, G.; Powell, J. T.; Rainio, P.; Sakalihasan, N.; van Vlijmen-van
-Keulen, C.; Verloes, A.; Tromp, G.: Familial abdominal aortic aneurysms:
-collection of 233 multiplex families. J. Vasc. Surg. 37: 340-345,
-2003.
-
-17. Lawrence, P. F.; Lorenzo-Rivero, S.; Lyon, J. L.: The incidence
-of iliac, femoral, and popliteal artery aneurysms in hospitalized
-patients. J.  Vasc. Surg. 22: 409-415, 1995.
-
-18. Lawrence, P. F.; Wallis, C.; Dobrin, P. B.; Bhirangi, K.; Gugliuzza,
-N.; Galt, S.; Kraiss, L.: Peripheral aneurysms and arteriomegaly:
-is there a familial pattern? J. Vasc. Surg. 28: 599-605, 1998.
-
-19. Loosemore, T. M.; Child, A. H.; Dormandy, J. A.: Familial abdominal
-aortic aneurysms. J. Roy. Soc. Med. 81: 472-473, 1988.
-
-20. Majumder, P. P.; St. Jean, P. L.; Ferrell, R. E.; Webster, M.
-W.; Steed, D. L.: On the inheritance of abdominal aortic aneurysm. Am.
-J. Hum. Genet. 48: 164-170, 1991.
-
-21. Newman, K. M.; Malon, A. M.; Shin, R. D.; Scholes, J. V.; Ramey,
-W. G.; Tilson, M. D.: Matrix metalloproteinases in abdominal aortic
-aneurysm: characterization, purification, and their possible sources. Connect.
-Tissue Res. 30: 265-276, 1994.
-
-22. Norrgard, O.; Angquist, K.-A.; Johnson, O.: Familial aortic aneurysms:
-serum concentrations of triglyceride, cholesterol, HDL-cholesterol
-and (VLDL + LDL)-cholesterol. Brit. J. Surg. 72: 113-116, 1985.
-
-23. Norrgard, O.; Rais, O.; Angquist, K. A.: Familial occurrence
-of abdominal aortic aneurysms. Surgery 95: 650-656, 1984.
-
-24. Ogata, T.; Shibamura, H.; Tromp, G.; Sinha, M.; Goddard, K. A.
-B.; Sakalihasan, N.; Limet, R.; MacKean, G. L.; Arthur, C.; Sueda,
-T.; Land, S.; Kuivaniemi, H.: Genetic analysis of polymorphisms in
-biologically relevant candidate genes in patients with abdominal aortic
-aneurysms. J. Vasc. Surg. 41: 1036-1042, 2005.
-
-25. Rossaak, J. I.; van Rij, A. M.; Jones, G. T.; Harris, E. L.:
-Association of the 4G/5G polymorphism in the promoter region of plasminogen
-activator inhibitor-1 with abdominal aortic aneurysms. J. Vasc. Surg. 31:
-1026-1032, 2000.
-
-26. Shibamura, H.; Olson, J. M.; van Vlijmen-van Keulen, C.; Buxbaum,
-S. G.; Dudek, D. M.; Tromp, G.; Ogata, T.; Skunca, M.; Sakalihasan,
-N.; Pals, G.; Limet, R.; MacKean, G. L.; Defawe, O.; Verloes, A.;
-Arthur, C.; Lossing, A. G.; Burnett, M.; Sueda, T.; Kuivaniemi, H.
-: Genome scan for familial abdominal aortic aneurysm using sex and
-family history as covariates suggests genetic heterogeneity and identifies
-linkage to chromosome 19q13. Circulation 109: 2103-2108, 2004.
-
-27. Steinmetz, E. F.; Buckley, C.; Thompson, R. W.: Prospects for
-the medical management of abdominal aortic aneurysms. Vasc. Endovascular
-Surg. 37: 151-163, 2003.
-
-28. Tilson, M. D.; Seashore, M. R.: Fifty families with abdominal
-aortic aneurysms in two or more first-order relatives. Am. J. Surg. 147:
-551-553, 1984.
-
-29. Tromp, G.; Gatalica, Z.; Skunca, M.; Berguer, R.; Siegel, T.;
-Kline, R. A.; Kuivaniemi, H.: Elevated expression of matrix metalloproteinase-13
-in abdominal aortic aneurysms. Ann. Vasc. Surg. 18: 414-420, 2004.
-
-30. Verloes, A.; Sakalihasan, N.; Koulischer, L.; Limet, R.: Aneurysms
-of the abdominal aorta: familial and genetic aspects in three hundred
-thirteen pedigrees. J. Vas. Surg. 21: 646-655, 1995.
-
-31. Ward, A. S.: Aortic aneurysmal disease: a generalized dilating
-diathesis? Arch. Surg. 127: 990-991, 1992.
-
-32. Yoon, S.; Tromp, G.; Vongpunsawad, S.; Ronkainen, A.; Juvonen,
-T.; Kuivaniemi, H.: Genetic analysis of MMP3, and PAI-1 in Finnish
-patients with abdominal aortic or intracranial aneurysms. Biochem.
-Biophys. Res. Commun. 265: 563-568, 1999.
-
-33. Yoshimura, K.; Aoki, H.; Ikeda, Y.; Fujii, K.; Akiyama, N.; Furutani,
-A.; Hoshii, Y.; Tanaka, N.; Ricci, R.; Ishihara, T.; Esato, K.; Hamano,
-K.; Matsuzaki, M.: Regression of abdominal aortic aneurysm by inhibition
-of c-Jun N-terminal kinase. Nature Med. 11: 1330-1338, 2005.
+22. Yazaki, K.; Kuribayashi, T.; Yamamura, Y.; Kurihara, T.; Araki,
+S.: Hypokalemic myopathy associated with 17-alpha-hydroxylase deficiency:
+a case report. Neurology 32: 94-97, 1982.
 
 *FIELD* CS
 
-Vascular:
-   Abdominal aortic aneurysm;
-   Generalized dilating diathesis
+GU:
+   Ambiguous genitalia;
+   Primary amenorrhea;
+   Male pseudohermaphroditism
 
-Misc:
-   Estimated 11.6-fold increase among persons with an affected first-degree
-   relative
+Thorax:
+   Gynecomastia
+
+Endo:
+   Adrenogenital syndrome
+
+Metabolic:
+   Hypertension;
+   Hypokalemic alkalosis
+
+Lab:
+   17-alpha-hydroxylase deficiency;
+   ACTH increased;
+   FSH increased
 
 Inheritance:
-   Autosomal dominant vs. recessive at an autosomal major locus or multifactorial;
-   COL3A1 gene (120180.0004) mutations cause about 2%
-
-*FIELD* CN
-Ada Hamosh - updated: 12/20/2011
-Marla J. F. O'Neill - updated: 12/2/2011
-Marla J. F. O'Neill - updated: 9/25/2009
-Marla J. F. O'Neill - updated: 3/20/2006
-Victor A. McKusick - updated: 12/2/2005
-Victor A. McKusick - updated: 12/14/2001
-Victor A. McKusick - updated: 1/20/1999
-Clair A. Francomano - updated: 5/12/1995
-
-*FIELD* CD
-Victor A. McKusick: 6/4/1986
-
-*FIELD* ED
-terry: 02/02/2012
-alopez: 1/11/2012
-terry: 12/20/2011
-carol: 12/6/2011
-terry: 12/2/2011
-carol: 9/30/2009
-carol: 9/25/2009
-terry: 6/3/2009
-terry: 1/7/2009
-alopez: 3/13/2008
-terry: 3/10/2008
-wwang: 3/21/2006
-terry: 3/20/2006
-carol: 12/13/2005
-alopez: 12/13/2005
-alopez: 12/12/2005
-terry: 12/2/2005
-terry: 6/27/2002
-terry: 4/4/2002
-alopez: 1/8/2002
-alopez: 1/7/2002
-terry: 12/14/2001
-carol: 3/28/2000
-mgross: 3/16/1999
-carol: 1/29/1999
-terry: 1/20/1999
-carol: 12/28/1998
-carol: 12/15/1998
-terry: 11/11/1997
-terry: 11/10/1997
-alopez: 7/9/1997
-mark: 10/2/1996
-terry: 10/24/1995
-mark: 7/11/1995
-warfield: 4/6/1994
-mimadm: 3/11/1994
-carol: 7/13/1993
-
-*RECORD*
-*FIELD* NO
-100100
-*FIELD* TI
-#100100 ABDOMINAL MUSCLES, ABSENCE OF, WITH URINARY TRACT ABNORMALITY AND
-CRYPTORCHIDISM
-;;PRUNE BELLY SYNDROME;;
-EAGLE-BARRETT SYNDROME; EGBRS
-*FIELD* TX
-A number sign (#) is used with this entry because of evidence that
-absence of abdominal muscles with urinary tract abnormality and
-cryptorchidism can be caused by homozygous mutation in the CHRM3 gene
-(118494) on chromosome 1q43.
-
-DESCRIPTION
-
-In its rare complete form, 'prune belly' syndrome comprises megacystis
-(massively enlarged bladder) with disorganized detrusor muscle,
-cryptorchidism, and thin abdominal musculature with overlying lax skin
-(summary by Weber et al., 2011).
-
-CLINICAL FEATURES
-
-This condition was first described by Frolich (1839). The appellation
-'prune belly syndrome' is descriptive because the intestinal pattern is
-evident through the thin, lax, protruding abdominal wall in the infant
-(Osler, 1901). (Osler did not use the term 'prune belly.' His article on
-this subject and one 'on a family form of recurring epistaxis,
-associated with multiple telangiectases of the skin and mucous
-membranes'--see 187300--appeared successively in the November 1901 issue
-of the Johns Hopkins Hospital Bulletin. Osler wrote: 'In the summer of
-1897 a case of remarkable distension of the abdomen was admitted to the
-wards, with greatly distended bladder, and on my return in September,
-Dr. Futcher, knowing that I would be interested in it, sent for the
-child.') The full syndrome probably occurs only in males (Williams and
-Burkholder, 1967).
-
-A possibly related syndrome was described in a single patient by Texter
-and Murphy (1968). The triad consisted of absence of the right testis,
-kidney, and rectus abdominis muscle.
-
-King and Prescott (1978) presented evidence to support the suggestion
-that the maldevelopment of the abdominal musculature and abdominal
-laxity are secondary phenomena, the primary event being marked
-distention of the abdomen in the fetal period because of obstruction of
-the urinary tract. Likewise, Pagon et al. (1979) suggested that the
-abdominal muscle deficiency is secondary to fetal abdominal distention
-of various causes, most often perhaps, urethral obstruction with
-enlarged bladder. 'Prune belly' occurs, in the main, as a consequence of
-posterior urethral valves; thus the predominance as a male-limited
-multifactorial trait.
-
-Gaboardi et al. (1982) reported 2 brothers and a sister with prune belly
-syndrome with bilateral hydronephrosis, megaureter and megabladder, but
-no urethral stenosis.
-
-A better prognosis than is usually thought to obtain was suggested by
-the series of 19 patients reported by Burke et al. (1969).
-
-Greskovich and Nyberg (1988) gave a review in which they stated
-incorrectly that the term prune belly syndrome was coined by Osler.
-
-Dorst and Seidel (1982) suggested Eagle-Barrett syndrome as a 'kinder
-and more appropriate designation' than prune belly syndrome. Eagle and
-Barrett (1950) described 9 cases of congenital deficiency of abdominal
-musculature with associated genitourinary abnormalities. They pointed
-out that genitourinary symptoms are often not present and that the
-obstructive manifestations in the genitourinary tract must be searched
-for and corrected at the earliest possible moment. Eagle and Barrett
-(1950) stated that 42 cases had been reported before their report of 9
-cases. Every case except 1 was in a male.
-
-Smolkin et al. (2008) reported a male infant born with protrusion of
-both sides of the abdomen, consistent with prune belly; mild scoliosis,
-unilateral auricular sinus, bilateral cryptorchidism with normal-sized
-penis, and right-sided congenital hip dislocation were also noted. Chest
-x-ray showed multiple segmentation defects, including 11 pairs of ribs,
-bilateral cervical ribs, and T8 to T12 and S3 hemivertebrae with
-resultant scoliosis. Abdominal ultrasound demonstrated absence of upper
-abdominal muscles, liver in the right flank protrusion and both spleen
-and bowel in the left flank protrusion; the right kidney was normal, but
-the left kidney was absent, and there were normal-appearing
-intraabdominal testes. Smolkin et al. (2008) noted that their patient
-with prune belly syndrome had 2 previously unreported malformations,
-auricular sinus and hemivertebrae, and suggested that on the basis of
-the heterogeneous phenotype and the as-yet-unknown etiology, the
-designation be changed to 'prune belly association.'
-
-Weber et al. (2005) reported a consanguineous Turkish family in which 3
-brothers had posterior urethral valves (PUVs) and 2 other brothers had
-PUV in association with prune belly syndrome; 1 of the latter boys died
-of urosepsis. The affected sibs had dysfunctional or areflexic bladders
-with vesicoureteral reflux and variably decreased glomerular filtration
-rates. The most severely affected brother had hydronephrosis, severe
-dysplasia of the right kidney, cryptorchidism, and prune belly
-abnormalities of the abdominal wall. There was also a sister who had
-normal renal function and no urinary tract abnormalities except for
-minimal left lower pole calyx hypoplasia. Abdominal ultrasound in both
-parents revealed no abnormalities of the kidneys or urinary tract. No
-associated extrarenal abnormalities were observed in any of the family
-members. Weber et al. (2011) restudied the Turkish family originally
-described by Weber et al. (2005), into which a sixth affected brother
-with a malformed bladder had been born. Examination of affected
-individuals also revealed bilaterally impaired pupillary constriction to
-light and dry mouths.
-
-INHERITANCE
-
-Autosomal recessive inheritance is suggested by some reports. For
-example, in Lebanon, where the rate of consanguinity is high, Afifi et
-al. (1972) described an affected offspring of first-cousin parents.
-
-Garlinger and Ott (1974) described 2 affected brothers in 1 family and 2
-affected male cousins in a second, and found 3 other reports of affected
-sibs, 2 of affected cousins and 1 of concordant male twins. In the first
-family the parents were nonconsanguineous. In the second family the
-affected boys' mothers were half sisters; they had different maternal
-grandmothers.
-
-Ramasamy et al. (2005) reported 2 brothers with deficient abdominal wall
-musculature and bilateral undescended testes, neither of whom had
-dilation of the urinary tract. There was no earlier family history of
-prune belly syndrome. Ramasamy et al. (2005) reviewed reported cases of
-'complete' familial prune belly syndrome, in which the full clinical
-triad was present, noting that 28% of patients were female in the
-familial form of the syndrome compared to only 5% of nonfamilial cases.
-They stated that their findings strongly supported an autosomal
-recessive, sex-influenced mode of inheritance.
-
-POPULATION GENETICS
-
-In British Columbia, Baird and MacDonald (1981) found that the incidence
-of prune belly syndrome between 1964 and 1978 was 1 in 29,231 live
-births.
-
-MAPPING
-
-Weber et al. (2005) performed genomewide linkage analysis in a
-consanguineous Turkish family in which 5 brothers had posterior urethral
-valve/prune belly syndrome and identified a 35-cM region of homozygosity
-on chromosome 1q41-q44, with a maximum multipoint lod score of Z(max) =
-3.134 (theta = 0) for the SNPs dbSNP rs158724-dbSNP rs720163. A second
-alternative locus was identified on chromosome 11p11 with a lod score of
-Z(max) = 3.61 (theta = 0). Equal significance for either locus was
-obtained when the affection status of the sibs' sister was set to
-'unknown' (lod score of Z(max) = 3.01; theta = 0).
-
-MOLECULAR GENETICS
-
-In a consanguineous Turkish family with posterior urethral valve/prune
-belly syndrome, previously studied by Weber et al. (2005), Weber et al.
-(2011) performed exon capture and massively parallel sequencing and
-identified a homozygous frameshift mutation in the CHRM3 gene on
-chromosome 1q43 (118494.0001) that segregated with disease and was not
-found in 374 Turkish control chromosomes.
-
-*FIELD* SA
-Burton and Dillard (1984); Harley et al. (1972); Lee  (1977); Monie
-and Monie (1979); Riccardi and Grum (1977); Roberts  (1956); Welch
-and Kearney (1974); Woodhouse et al. (1982)
-*FIELD* RF
-1. Afifi, A. K.; Rebeiz, J.; Mire, J.; Andonian, S. J.; Der Kaloustian,
-V. M.: The myopathology of the prune belly syndrome. J. Neurol.
-Sci. 15: 153-166, 1972.
-
-2. Baird, P. A.; MacDonald, E. C.: An epidemiologic study of congenital
-malformations of the anterior abdominal wall in more than half a million
-consecutive live births. Am. J. Hum. Genet. 33: 470-478, 1981.
-
-3. Burke, E. C.; Shin, M. H.; Kelalis, P. P.: Prune belly syndrome:
-clinical findings and survival. Am. J. Dis. Child. 117: 668-671,
-1969.
-
-4. Burton, B. K.; Dillard, R. G.: Prune belly syndrome: observations
-supporting the hypothesis of abdominal overdistention. Am. J. Med.
-Genet. 17: 669-672, 1984.
-
-5. Dorst, J. P.; Seidel, H. M.: Eagle-Barrett syndrome. (Letter) Pediatrics 69:
-504 only, 1982.
-
-6. Eagle, J. F., Jr.; Barrett, G. S.: Congenital deficiency of abdominal
-musculature with associated genitourinary abnormalities: a syndrome:
-report of nine cases. Pediatrics 6: 721-736, 1950.
-
-7. Frolich, F.: Der Mangel der Muskeln, insbesondere der Seitenbauchmuskeln. 
-Dissertation: Wurzburg (pub.)  1839.
-
-8. Gaboardi, F.; Sterpa, A.; Thiebat, E.; Cornali, R.; Manfredi, M.;
-Bianchi, C.; Giacomoni, M. A.; Bertagnoli, L.: Prune-belly syndrome:
-report of three siblings. Helv. Paediat. Acta 37: 283-288, 1982.
-
-9. Garlinger, P.; Ott, J.: Prune belly syndrome: possible genetic
-implications. Birth Defects Orig. Art. Ser. X(8): 173-180, 1974.
-
-10. Greskovich, F. J., III; Nyberg, L. M., Jr.: The prune belly syndrome:
-a review of its etiology, defects, treatment and prognosis. J. Urol. 140:
-707-712, 1988.
-
-11. Harley, L. M.; Chen, Y.; Rattner, W. H.: Prune belly syndrome. J.
-Urol. 108: 174-176, 1972.
-
-12. King, C. R.; Prescott, G.: Pathogenesis of the prune-belly anomaly. J.
-Pediat. 93: 273-274, 1978.
-
-13. Lee, S. M.: Prune-belly syndrome in a 54-year-old man. JAMA 237:
-2216-2217, 1977.
-
-14. Monie, I. W.; Monie, B. J.: Prune-belly syndrome and fetal ascites. Teratology 19:
-111-117, 1979.
-
-15. Osler, W.: Congenital absence of the abdominal muscles with distended
-and hypertrophied urinary bladder. Bull. Johns Hopkins Hosp. 12:
-331-333, 1901.
-
-16. Pagon, R. A.; Smith, D. W.; Shepard, T. H.: Urethral obstruction
-malformation complex: a cause of abdominal deficiency and the 'prune
-belly'. J. Pediat. 94: 900-906, 1979.
-
-17. Ramasamy, R.; Haviland, M.; Woodard, J. R.; Barone, J. G.: Patterns
-of inheritance in familial prune belly syndrome. Urology 65: 1227
-only, 2005.
-
-18. Riccardi, V. M.; Grum, C. M.: The prune belly anomaly: heterogeneity
-and superficial X-linkage mimicry. J. Med. Genet. 14: 266-270, 1977.
-
-19. Roberts, P.: Congenital absence of the abdominal muscles with
-associated abnormalities of the genito-urinary tract. Arch. Dis.
-Child. 31: 236-239, 1956.
-
-20. Smolkin, T.; Soudack, M.; Goldstein, I.; Sujov, P.; Makhoul, I.
-R.: Prune belly syndrome: expanding the phenotype. Clin. Dysmorph. 17:
-133-135, 2008.
-
-21. Texter, J. H.; Murphy, G. P.: The right-sided syndrome: congenital
-absence of the right testis, kidney and rectus: urologic diagnosis
-and treatment. Johns Hopkins Med. J. 122: 224-228, 1968.
-
-22. Weber, S.; Mir, S.; Schlingmann, K. P.; Nurnberg, G.; Becker,
-C.; Kara, P. E.; Ozkayin, N.; Konrad, M.; Nurnberg, P.; Schaefer,
-F.: Gene locus ambiguity in posterior urethral valves/prune-belly
-syndrome. Pediat. Nephrol. 20: 1036-1042, 2005.
-
-23. Weber, S.; Thiele, H.; Mir, S.; Toliat, M. R.; Sozeri, B.; Reutter,
-H.; Draaken, M.; Ludwig, M.; Altmuller, J.; Frommolt, P.; Stuart,
-H. M.; Ranjzad, P.; and 12 others: Muscarinic acetylcholine receptor
-M3 mutation causes urinary bladder disease and a prune-belly-like
-syndrome. Am. J. Hum. Genet. 89: 668-674, 2011.
-
-24. Welch, K. J.; Kearney, G. P.: Abdominal musculature deficiency
-syndrome: prune belly. J. Urol. 111: 693-700, 1974.
-
-25. Williams, D. I.; Burkholder, G. V.: The prune belly syndrome. J.
-Urol. 98: 244-251, 1967.
-
-26. Woodhouse, C. R. J.; Ransley, P. G.; Innes-Williams, D.: Prune
-belly syndrome--report of 47 cases. Arch. Dis. Child. 57: 856-859,
-1982.
-
-*FIELD* CS
-INHERITANCE:
    Autosomal recessive
 
-HEAD AND NECK:
-   [Eyes];
-   Impaired pupillary constriction to light;
-   [Mouth];
-   Dry mouth
+*FIELD* CN
+John A. Phillips, III - updated: 6/15/2009
+Cassandra L. Kniffin - reorganized: 4/21/2005
+John A. Phillips, III - updated: 4/1/2005
+John A. Phillips, III - updated: 10/14/2004
+Marla J. F. O'Neill - updated: 5/19/2004
+John A. Phillips, III - updated: 2/11/2004
+John A. Phillips, III - updated: 4/8/2003
+Victor A. McKusick - updated: 1/10/2003
+John A. Phillips, III - updated: 8/8/2002
+John A. Phillips, III - updated: 7/12/2002
+John A. Phillips, III - updated: 2/14/2002
+John A. Phillips, III - updated: 7/30/2001
+John A. Phillips, III - updated: 6/29/2001
+John A. Phillips, III - updated: 3/8/2001
+John A. Phillips, III - updated: 3/5/2001
+John A. Phillips, III - updated: 5/12/1998
+Victor A. McKusick - updated: 9/30/1997
+John A. Phillips, III - updated: 6/28/1997
+John A. Phillips, III - updated: 2/25/1997
+John A. Phillips, III - updated: 1/18/1997
+Jennifer P. Macke - updated: 11/14/1996
+John A. Phillips, III - updated: 9/16/1996
 
-CARDIOVASCULAR:
-   [Heart];
-   Congenital heart defect;
-   Patent ductus arteriosus
+*FIELD* CD
+Victor A. McKusick: 6/2/1986
 
-CHEST:
-   [Ribs, sternum, clavicles, and scapulae];
-   Flared ribs;
-   Pectus excavatum;
-   Pectus carinatum
+*FIELD* ED
+carol: 07/12/2013
+alopez: 6/15/2009
+carol: 1/29/2008
+alopez: 7/13/2007
+tkritzer: 4/21/2005
+ckniffin: 4/7/2005
+alopez: 4/1/2005
+alopez: 10/14/2004
+carol: 5/20/2004
+terry: 5/19/2004
+carol: 3/17/2004
+carol: 2/23/2004
+alopez: 2/11/2004
+carol: 10/17/2003
+tkritzer: 4/16/2003
+tkritzer: 4/14/2003
+terry: 4/8/2003
+carol: 3/5/2003
+carol: 1/13/2003
+terry: 1/10/2003
+cwells: 8/8/2002
+alopez: 7/12/2002
+alopez: 2/14/2002
+carol: 2/11/2002
+cwells: 8/1/2001
+cwells: 7/30/2001
+cwells: 7/3/2001
+cwells: 6/29/2001
+alopez: 3/8/2001
+mgross: 3/5/2001
+alopez: 5/12/1998
+psherman: 3/19/1998
+mark: 1/10/1998
+alopez: 12/8/1997
+terry: 9/30/1997
+jenny: 8/27/1997
+mark: 6/16/1997
+alopez: 6/10/1997
+jenny: 6/3/1997
+jenny: 5/28/1997
+jenny: 3/7/1997
+jenny: 3/4/1997
+jenny: 2/25/1997
+jamie: 11/14/1996
+carol: 9/25/1996
+carol: 9/16/1996
+terry: 5/24/1996
+mark: 2/9/1996
+terry: 1/30/1996
+mimadm: 11/12/1995
+carol: 12/13/1994
+carol: 1/8/1993
+carol: 1/7/1993
+carol: 10/26/1992
+carol: 7/24/1992
 
-ABDOMEN:
-   [External features];
-   Absent abdominal musculature;
-   Visible intestinal pattern (so-called 'prune belly');
-   Thin, lax, protruding abdominal wall;
-   [Gastrointestinal];
-   Imperforate anus
-
-GENITOURINARY:
-   [Internal genitalia, male];
-   Cryptorchidism;
-   [Kidneys];
-   Hydronephrosis;
-   [Ureters];
-   Posterior urethral valves;
-   Hydroureter;
-   [Bladder];
-   Distended bladder;

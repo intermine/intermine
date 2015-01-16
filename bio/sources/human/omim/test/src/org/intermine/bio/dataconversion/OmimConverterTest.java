@@ -48,7 +48,7 @@ public class OmimConverterTest extends ItemsTestCase
 
 
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("9606", "FBgn003", Collections.singleton("1234"));
+        converter.rslv.addResolverEntry("9606", "ENSG001", Collections.singleton("609300"));
         super.setUp();
     }
 

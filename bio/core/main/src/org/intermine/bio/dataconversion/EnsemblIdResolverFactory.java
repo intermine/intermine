@@ -99,15 +99,15 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             String[] line = (String[]) lineIter.next();
             String ensembl = line[0];
             String entrez = line[1];
-            String hgncID = line[2];
-            String symbol = line[3];
+            String symbol = line[2];
+            String mim = line[3];
 
             resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(ensembl));
-            if (!StringUtils.isEmpty(entrez)) {
+            if (!StringUtils.isNotEmpty(entrez)) {
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(entrez));
             }
-            if (!StringUtils.isEmpty(hgncID)) {
-                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(hgncID));
+            if (!StringUtils.isEmpty(mim)) {
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(mim));
             }
             if (!StringUtils.isEmpty(symbol)) {
                 resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(symbol));
