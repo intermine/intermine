@@ -33,10 +33,8 @@ import psidev.psi.mi.jami.commons.PsiJami;
 import psidev.psi.mi.jami.datasource.InteractionStream;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
 import psidev.psi.mi.jami.model.Annotation;
-import psidev.psi.mi.jami.model.CausalRelationship;
 import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Entity;
 import psidev.psi.mi.jami.model.Feature;
 import psidev.psi.mi.jami.model.Interaction;
 import psidev.psi.mi.jami.model.InteractionCategory;
@@ -60,6 +58,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
     private static final String PROTEIN = "protein";
+    private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     // TODO types (protein and small molecules are processed now) are hardcoded.
     // maybe put this in config file? Or check model to see if type is legal?
@@ -149,16 +148,8 @@ public class PsiComplexesConverter extends BioFileConverter
                         // type, e.g. "physical association", "direct interaction"
                         processType(interactionEvidence, detail);
 
-                        // parse participants
-                        Set<String> proteins
-                            = processParticipants(interactionEvidence, detail, complex);
-
-                        // create interactions
-                        Set<String> remainingInteractors = new HashSet<String>(proteins);
-                        for (String protein : proteins) {
-                            remainingInteractors.remove(protein);
-                            createInteractions(protein, remainingInteractors, detail, complex);
-                        }
+                        // parse participants and interactions
+                        processInteractions(interactionEvidence, detail, complex);
 
                         // parse GO terms
                         processXrefs(interactionEvidence, complex);
@@ -176,35 +167,35 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void createInteractions(String proteinRefId, Set<String> proteins, DetailHolder detail,
-        Item complex)
+    private void createInteractions(Map<String, Set<String>> featureToBindingRegions,
+            DetailHolder detail, Item complex)
         throws ObjectStoreException {
 
-        for (String protein : proteins) {
-            Item interaction1 = createItem("Interaction");
-            interaction1.setReference("participant1", proteinRefId);
-            interaction1.setReference("participant2", protein);
-            interaction1.setReference("complex", complex);
-            store(interaction1);
-            Item detail1 = createItem("InteractionDetail");
-            detail1.setReference("interaction", interaction1);
-            store(detail1);
+        for (Map.Entry<String, Set<String>> entry : featureToBindingRegions.entrySet()) {
 
-            Item interaction2 = createItem("Interaction");
-            interaction2.setReference("participant1", protein);
-            interaction2.setReference("participant2", proteinRefId);
-            interaction2.setReference("complex", complex);
-            store(interaction2);
-            Item detail2 = createItem("InteractionDetail");
-            detail2.setReference("interaction", interaction2);
-            store(detail2);
+            String accession = entry.getKey();
+            Set<String> bindingSites = entry.getValue();
+
+            for (String bindingRegion : bindingSites) {
+                Item interaction = createItem("Interaction");
+                interaction.setReference("participant1", interactors.get(accession));
+                interaction.setReference("participant2", interactors.get(bindingRegion));
+                interaction.setReference("complex", complex);
+                store(interaction);
+
+                // TODO add relationship type and all interactors to detail
+                Item detailItem = createItem("InteractionDetail");
+                detailItem.setReference("interaction", interaction);
+                store(detailItem);
+            }
         }
+
     }
 
-    private Set<String> processParticipants(Complex interactionEvidence,
+    private void processInteractions(Complex interactionEvidence,
             DetailHolder detail, Item complex) throws ObjectStoreException {
 
-        Set<String> results = new HashSet<String>();
+        Map<String, Set<String>> featureToBindingRegions = new HashMap<String, Set<String>>();
 
         for (ModelledParticipant modelledParticipant : interactionEvidence.getParticipants()) {
 
@@ -216,21 +207,32 @@ public class PsiComplexesConverter extends BioFileConverter
             // biological role
             setBiologicalRole(modelledParticipant, interactor);
 
-            for (Feature feature : modelledParticipant.getFeatures()) {
-                Collection linkedFeatures = feature.getLinkedFeatures();
-                // TODO what do I do now?
-            }
-
-            for (CausalRelationship rels : modelledParticipant.getCausalRelationships()) {
-                CvTerm relationType = rels.getRelationType();
-                Entity entity = rels.getTarget();
-                Collection<Xref> xrefs = entity.getFeatures();
-                // TODO what do I do now?
-            }
-
             // protein
-            String refId = processProtein(modelledParticipant, interactor);
-            results.add(refId);
+            ProteinHolder protein = processProtein(modelledParticipant, interactor);
+
+            // not a protein or small molecule, skip for now
+            if (protein == null) {
+                return;
+            }
+
+            Set<String> bindingRegions = new HashSet<String>();
+
+            // interactions
+            for (Feature feature : modelledParticipant.getFeatures()) {
+                Collection<Feature> linkedFeatures = feature.getLinkedFeatures();
+                for (Feature linkedFeature : linkedFeatures) {
+                    CvTerm term = linkedFeature.getType();
+                    String type = term.getShortName();
+
+                    // only create interactions if we have binding information
+                    if (BINDING_SITE.equals(type)) {
+                        String accession = linkedFeature.getParticipant()
+                                .getInteractor().getPreferredIdentifier().getId();
+                        bindingRegions.add(accession);
+                    }
+                }
+            }
+            featureToBindingRegions.put(protein.getAccession(), bindingRegions);
 
             // parse stoich
             processStoichiometry(modelledParticipant, interactor);
@@ -243,7 +245,7 @@ public class PsiComplexesConverter extends BioFileConverter
             complex.addToCollection("allInteractors", interactor);
         }
 
-        return results;
+        createInteractions(featureToBindingRegions, detail, complex);
     }
 
 
@@ -255,14 +257,11 @@ public class PsiComplexesConverter extends BioFileConverter
     }
 
 
-    private String processProtein(ModelledParticipant modelledParticipant, Item interactor)
+    private ProteinHolder processProtein(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
         Interactor participant = modelledParticipant.getInteractor();
 
         Xref xref = participant.getPreferredIdentifier();
-        if (xref == null) {
-            return null;
-        }
         String accession = xref.getId();
 
         String refId = interactors.get(accession);
@@ -286,9 +285,10 @@ public class PsiComplexesConverter extends BioFileConverter
             }
             store(protein);
             refId = protein.getIdentifier();
+            interactors.put(accession, refId);
         }
         interactor.setReference("participant", refId);
-        return refId;
+        return new ProteinHolder(accession, refId);
     }
 
     private void processStoichiometry(ModelledParticipant modelledParticipant, Item interactor)
@@ -379,6 +379,26 @@ public class PsiComplexesConverter extends BioFileConverter
             terms.put(identifier, refId);
         }
         return refId;
+    }
+
+    private class ProteinHolder
+    {
+        private String refId;
+        private String accession;
+
+        protected ProteinHolder(String accession, String refId) {
+            this.accession = accession;
+            this.refId = refId;
+        }
+
+        protected String getAccession() {
+            return accession;
+        }
+
+        protected String getRefId() {
+            return refId;
+        }
+
     }
 
     // temporary class to hold interaction details

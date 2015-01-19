@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,20 +10,14 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.model.fulldata.Item;
-import org.intermine.xml.full.FullRenderer;
 
 public class PsiComplexesConverterTest extends ItemsTestCase
 {
@@ -37,10 +31,10 @@ public class PsiComplexesConverterTest extends ItemsTestCase
 
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        PsiComplexesConverter converter = new PsiComplexesConverter(itemWriter,  Model.getInstanceByName("genomic"));
+        PsiComplexesConverter converter = new PsiComplexesConverter(itemWriter, Model.getInstanceByName("genomic"));
         converter.setPsiOrganisms("4932");
         //Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("PsiComplexesConverterTest_src.xml"));
-        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("aas_yeast.xml"));
+        Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("swr1_yeast-1.xml"));
         converter.process(reader);
         converter.close();
 
