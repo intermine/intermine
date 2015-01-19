@@ -32,7 +32,6 @@ import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
 import psidev.psi.mi.jami.commons.PsiJami;
 import psidev.psi.mi.jami.datasource.InteractionStream;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
-import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.CausalRelationship;
 import psidev.psi.mi.jami.model.Complex;
@@ -210,17 +209,17 @@ public class PsiComplexesConverter extends BioFileConverter
 
         Set<String> results = new HashSet<String>();
 
-        for (ModelledParticipant evidence : interactionEvidence.getParticipants()) {
+        for (ModelledParticipant modelledParticipant : interactionEvidence.getParticipants()) {
 
             Item interactor = createItem("Interactor");
 
             // annotations
-            processAnnotations(evidence, interactor);
+            processAnnotations(modelledParticipant, interactor);
 
             // biological role
-            setBiologicalRole(evidence, interactor);
+            setBiologicalRole(modelledParticipant, interactor);
 
-            for (CausalRelationship rels : evidence.getCausalRelationships()) {
+            for (CausalRelationship rels : modelledParticipant.getCausalRelationships()) {
                 CvTerm relationType = rels.getRelationType();
                 Entity entity = rels.getTarget();
                 Collection<Xref> xrefs = entity.getFeatures();
@@ -228,11 +227,11 @@ public class PsiComplexesConverter extends BioFileConverter
             }
 
             // protein
-            String refId = processProtein(evidence, interactor);
+            String refId = processProtein(modelledParticipant, interactor);
             results.add(refId);
 
             // parse stoich
-            processStoichiometry(evidence, interactor);
+            processStoichiometry(modelledParticipant, interactor);
 
             // not parsing xrefs or aliases
 
@@ -246,28 +245,23 @@ public class PsiComplexesConverter extends BioFileConverter
     }
 
 
-    private void setBiologicalRole(ModelledParticipant evidence, Item interactor)
+    private void setBiologicalRole(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
-        CvTerm biologicalRole = evidence.getBiologicalRole();
+        CvTerm biologicalRole = modelledParticipant.getBiologicalRole();
         interactor.setReference("biologicalRole",
                 getTerm("OntologyTerm", biologicalRole.getMIIdentifier()));
     }
 
 
-    private String processProtein(ModelledParticipant evidence, Item interactor)
+    private String processProtein(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
-        Interactor participant = evidence.getInteractor();
+        Interactor participant = modelledParticipant.getInteractor();
 
-        Collection<Alias> xrefs = participant.getAliases();
-
-        String accession = null;
-
-        for (Alias alias : xrefs) {
-            accession = alias.getName();
-            System.out.println(accession);
+        Xref xref = participant.getPreferredIdentifier();
+        if (xref == null) {
+            return null;
         }
-
-        System.out.println(" **** " + accession);
+        String accession = xref.getId();
 
         String refId = interactors.get(accession);
         if (refId == null) {
@@ -295,9 +289,9 @@ public class PsiComplexesConverter extends BioFileConverter
         return refId;
     }
 
-    private void processStoichiometry(ModelledParticipant evidence, Item interactor)
+    private void processStoichiometry(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
-        Stoichiometry stoichiometry = evidence.getStoichiometry();
+        Stoichiometry stoichiometry = modelledParticipant.getStoichiometry();
         if (stoichiometry == null) {
             return;
         }
@@ -340,9 +334,9 @@ public class PsiComplexesConverter extends BioFileConverter
     }
 
 
-    private void processAnnotations(ModelledParticipant evidence, Item interactor) {
+    private void processAnnotations(ModelledParticipant modelledParticipant, Item interactor) {
         StringBuilder annotations = new StringBuilder();
-        for (Annotation annotation : evidence.getAnnotations()) {
+        for (Annotation annotation : modelledParticipant.getAnnotations()) {
             annotations.append(annotation.getValue() + " ");
         }
         if (StringUtils.isNotEmpty(annotations.toString())) {
