@@ -564,7 +564,7 @@
 
     <source name="psi-complexes" type="psi-complexes">
       <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
-      <property name="intact.organisms" value="7227 6239 4932"/>
+      <property name="psi.organisms" value="7227 6239 4932"/>
     </source>
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>

@@ -78,24 +78,6 @@ public class Item implements Comparable<Item>
     }
 
     /**
-     * Construct an item as a copy of another item
-     *
-     *@param item the item to clone
-     * @see ItemFactory
-     */
-    protected Item(Item item) {
-        this.className = item.className;
-        this.implementations = item.implementations;
-        this.attributes = item.attributes;
-        this.references = item.references;
-        this.collections = item.collections;
-        this.classDescriptor = item.classDescriptor;
-        this.implementationClassDescriptors = item.implementationClassDescriptors;
-        this.model = item.model;
-    }
-
-
-    /**
      * Set the Model to use when checking calls to the other set methods
      *
      * @param model the Model

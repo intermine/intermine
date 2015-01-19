@@ -37,6 +37,7 @@ import psidev.psi.mi.jami.model.CausalRelationship;
 import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.Entity;
+import psidev.psi.mi.jami.model.Feature;
 import psidev.psi.mi.jami.model.Interaction;
 import psidev.psi.mi.jami.model.InteractionCategory;
 import psidev.psi.mi.jami.model.Interactor;
@@ -56,7 +57,6 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String DATASET_TITLE = "Complexes";
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
-    private static final String INTERACTION_DETAIL = "InteractionDetail";
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
     private static final String PROTEIN = "protein";
@@ -88,7 +88,7 @@ public class PsiComplexesConverter extends BioFileConverter
      *
      * @param taxonIds a space-separated list of taxonIds
      */
-    public void setOrganisms(String taxonIds) {
+    public void setPsiOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
     }
 
@@ -107,7 +107,7 @@ public class PsiComplexesConverter extends BioFileConverter
         MIDataSourceFactory dataSourceFactory = MIDataSourceFactory.getInstance();
 
         Map<String, Object> parsingOptions = MIDataSourceOptionFactory.getInstance().getOptions(
-                MIFileType.psimi_xml, InteractionCategory.complex, null, false, null, reader);
+                MIFileType.psimi_xml, InteractionCategory.complex, null, true, null, reader);
 
         InteractionStream interactionSource = null;
         try {
@@ -144,8 +144,7 @@ public class PsiComplexesConverter extends BioFileConverter
                         // parse annotations
                         processAnnotations(interactionEvidence, complex);
 
-                        Item detail = createItem(INTERACTION_DETAIL);
-                        detail.setAttribute("type", INTERACTION_TYPE);
+                        DetailHolder detail = new DetailHolder();
 
                         // type, e.g. "physical association", "direct interaction"
                         processType(interactionEvidence, detail);
@@ -155,7 +154,11 @@ public class PsiComplexesConverter extends BioFileConverter
                             = processParticipants(interactionEvidence, detail, complex);
 
                         // create interactions
-                        createInteractions(proteins, detail, complex);
+                        Set<String> remainingInteractors = new HashSet<String>(proteins);
+                        for (String protein : proteins) {
+                            remainingInteractors.remove(protein);
+                            createInteractions(protein, remainingInteractors, detail, complex);
+                        }
 
                         // parse GO terms
                         processXrefs(interactionEvidence, complex);
@@ -173,39 +176,33 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void createInteractions(Set<String> proteins, Item detail, Item complex)
+    private void createInteractions(String proteinRefId, Set<String> proteins, DetailHolder detail,
+        Item complex)
         throws ObjectStoreException {
-        if (!proteins.isEmpty()) {
-            String interactor = proteins.iterator().next();
-            proteins.remove(interactor);
 
-            for (String protein : proteins) {
-                Item interaction = createItem("Interaction");
-                interaction.setReference("participant1", interactor);
-                interaction.setReference("participant2", protein);
-                Item detail1 = copyItem(detail, INTERACTION_DETAIL);
-                detail1.setReference("interaction", interaction);
-                store(detail1);
-                interaction.setReference("complex", complex);
-                store(interaction);
+        for (String protein : proteins) {
+            Item interaction1 = createItem("Interaction");
+            interaction1.setReference("participant1", proteinRefId);
+            interaction1.setReference("participant2", protein);
+            interaction1.setReference("complex", complex);
+            store(interaction1);
+            Item detail1 = createItem("InteractionDetail");
+            detail1.setReference("interaction", interaction1);
+            store(detail1);
 
-                interaction = createItem("Interaction");
-                interaction.setReference("participant1", protein);
-                interaction.setReference("participant2", interactor);
-                Item detail2 = copyItem(detail, INTERACTION_DETAIL);
-                detail2.setReference("interaction", interaction);
-                store(detail2);
-                complex.addToCollection("interactions", interaction);
-                interaction.setReference("complex", complex);
-                store(interaction);
-            }
-            createInteractions(proteins, detail, complex);
+            Item interaction2 = createItem("Interaction");
+            interaction2.setReference("participant1", protein);
+            interaction2.setReference("participant2", proteinRefId);
+            interaction2.setReference("complex", complex);
+            store(interaction2);
+            Item detail2 = createItem("InteractionDetail");
+            detail2.setReference("interaction", interaction2);
+            store(detail2);
         }
-
     }
 
     private Set<String> processParticipants(Complex interactionEvidence,
-            Item detail, Item complex) throws ObjectStoreException {
+            DetailHolder detail, Item complex) throws ObjectStoreException {
 
         Set<String> results = new HashSet<String>();
 
@@ -218,6 +215,11 @@ public class PsiComplexesConverter extends BioFileConverter
 
             // biological role
             setBiologicalRole(modelledParticipant, interactor);
+
+            for (Feature feature : modelledParticipant.getFeatures()) {
+                Collection linkedFeatures = feature.getLinkedFeatures();
+                // TODO what do I do now?
+            }
 
             for (CausalRelationship rels : modelledParticipant.getCausalRelationships()) {
                 CvTerm relationType = rels.getRelationType();
@@ -237,7 +239,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
             store(interactor);
 
-            detail.addToCollection("allInteractors", interactor);
+            detail.addInteractor(interactor);
             complex.addToCollection("allInteractors", interactor);
         }
 
@@ -326,11 +328,11 @@ public class PsiComplexesConverter extends BioFileConverter
     }
 
     private void processType(Complex interactionEvidence,
-            Item detail) throws ObjectStoreException {
+            DetailHolder detail) throws ObjectStoreException {
         CvTerm cvterm = interactionEvidence.getInteractionType();
         String identifier = cvterm.getMIIdentifier();
         String refId = getTerm("InteractionTerm", identifier);
-        detail.setReference("relationshipType", refId);
+        detail.setRelationshipType(refId);
     }
 
 
@@ -377,5 +379,32 @@ public class PsiComplexesConverter extends BioFileConverter
             terms.put(identifier, refId);
         }
         return refId;
+    }
+
+    // temporary class to hold interaction details
+    private class DetailHolder
+    {
+        protected String relationshipType;
+        protected Set<Item> allInteractors;
+
+        public DetailHolder() {
+            allInteractors = new HashSet<Item>();
+        }
+
+        protected String getRelationshipType() {
+            return relationshipType;
+        }
+
+        protected void setRelationshipType(String relationshipType) {
+            this.relationshipType = relationshipType;
+        }
+
+        protected Set<Item> getAllInteractors() {
+            return allInteractors;
+        }
+
+        protected void addInteractor(Item interactor) {
+            allInteractors.add(interactor);
+        }
     }
 }

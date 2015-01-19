@@ -106,17 +106,6 @@ public abstract class DataConverter
     }
 
     /**
-     * Create a new item that is a clone of an existing item.
-     *
-     * @param item item to copy
-     * @param className class the class of object, e.g. InteractionDetail
-     * @return a new item
-     */
-    public Item copyItem(Item item, String className) {
-        return itemFactory.copyItem(item, alias(className));
-    }
-
-    /**
      * Generate an identifier for an item, assign ids sequentially with a
      * different alias per class, e.g. ClassA: 1_1, 1_2  ClassB: 2_1
      * @param className the class of the item

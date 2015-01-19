@@ -38,7 +38,7 @@ public class PsiComplexesConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         PsiComplexesConverter converter = new PsiComplexesConverter(itemWriter,  Model.getInstanceByName("genomic"));
-        converter.setOrganisms("4932");
+        converter.setPsiOrganisms("4932");
         //Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("PsiComplexesConverterTest_src.xml"));
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("aas_yeast.xml"));
         converter.process(reader);
