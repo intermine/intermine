@@ -517,6 +517,7 @@ following [json-schema](http://json-schema.org/) schema:
 <servlet-mapping>
   <servlet-name>ws-genomic-region-to-fasta</servlet-name>
   <url-pattern>/service/regions/fasta</url-pattern>
+  <url-pattern>/service/regions/sequence</url-pattern>
   <metadata>
       <name>Genomic Intervals as FASTA</name>
       <minVersion>8</minVersion>
