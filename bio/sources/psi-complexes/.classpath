@@ -16,7 +16,6 @@
 	<classpathentry kind="lib" path="main/lib/jaxb-api-2.2.7.jar"/>
 	<classpathentry kind="lib" path="main/lib/jaxb-impl-2.2.7.jar"/>
 	<classpathentry kind="lib" path="main/lib/stax-utils-20070216.jar"/>
-	<classpathentry kind="lib" path="main/lib/stax2-api-3.0.3.jar"/>
 	<classpathentry kind="lib" path="main/lib/jaxb-core-2.2.7.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
