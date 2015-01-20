@@ -34,6 +34,7 @@ import psidev.psi.mi.jami.commons.MIWriterOptionFactory;
 import psidev.psi.mi.jami.commons.PsiJami;
 import psidev.psi.mi.jami.datasource.InteractionStream;
 import psidev.psi.mi.jami.factory.MIDataSourceFactory;
+import psidev.psi.mi.jami.model.Alias;
 import psidev.psi.mi.jami.model.Annotation;
 import psidev.psi.mi.jami.model.Complex;
 import psidev.psi.mi.jami.model.CvTerm;
@@ -63,6 +64,8 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
+    private static final String EBI = "intact";
+    private static final String COMPLEX_NAME = "complex recommended name";
     // TODO types (protein and small molecules are processed now) are hardcoded.
     // maybe put this in config file? Or check model to see if type is legal?
     private static final Map<String, String> INTERACTOR_TYPES = new HashMap<String, String>();
@@ -137,13 +140,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
                         Item complex = createItem("Complex");
 
-                        Xref xref = interactionEvidence.getPreferredIdentifier();
-                        if (xref != null && StringUtils.isNotEmpty(xref.getId())) {
-                            complex.setAttribute("identifier", xref.getId());
-                        }
-                        complex.setAttribute("name", interactionEvidence.getShortName());
-                        complex.setAttribute("systematicName",
-                                interactionEvidence.getSystematicName());
+                        processIdentifiers(interactionEvidence, complex);
 
                         // parse annotations
                         processAnnotations(interactionEvidence, complex);
@@ -152,8 +149,6 @@ public class PsiComplexesConverter extends BioFileConverter
 
                         // type, e.g. "physical association", "direct interaction"
                         processType(interactionEvidence, detail);
-
-
 
                         // parse participants and interactions
                         processInteractions(interactionEvidence, detail, complex);
@@ -171,6 +166,24 @@ public class PsiComplexesConverter extends BioFileConverter
                 interactionSource.close();
             }
 
+        }
+    }
+
+    private void processIdentifiers(Complex interactionEvidence, Item complex) {
+        String identifier = getComplexIdentifier(interactionEvidence);
+        if (StringUtils.isNotEmpty(identifier)) {
+            complex.setAttribute("identifier", identifier);
+        }
+        complex.setAttribute("shortName", interactionEvidence.getShortName());
+        complex.setAttribute("systematicName",
+                interactionEvidence.getSystematicName());
+
+        Collection<Alias> aliases = interactionEvidence.getAliases();
+        for (Alias alias : aliases) {
+            CvTerm type = alias.getType();
+            if (COMPLEX_NAME.equals(type.getShortName())) {
+                complex.setAttribute("name", alias.getName());
+            }
         }
     }
 
@@ -274,6 +287,17 @@ public class PsiComplexesConverter extends BioFileConverter
         CvTerm interactorType = modelledParticipant.getInteractor().getInteractorType();
         interactor.setReference("type",
                 getTerm("OntologyTerm", interactorType.getMIIdentifier()));
+    }
+
+    private String getComplexIdentifier(Complex complex) {
+        Collection<Xref> xrefs = complex.getIdentifiers();
+        for (Xref xref : xrefs) {
+            CvTerm cvTerm = xref.getDatabase();
+            if (EBI.equalsIgnoreCase(cvTerm.getShortName())) {
+                return xref.getId();
+            }
+        }
+        return null;
     }
 
     private ProteinHolder processProtein(ModelledParticipant modelledParticipant, Item interactor)
