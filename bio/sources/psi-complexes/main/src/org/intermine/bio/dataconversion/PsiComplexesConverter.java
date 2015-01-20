@@ -11,11 +11,13 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -134,9 +136,9 @@ public class PsiComplexesConverter extends BioFileConverter
 
                         Item complex = createItem("Complex");
 
-                        String identifier = null; // get from xrefs
-                        if (StringUtils.isNotEmpty(identifier)) {
-                            complex.setAttribute("identifier", identifier);
+                        Xref xref = interactionEvidence.getPreferredIdentifier();
+                        if (xref != null && StringUtils.isNotEmpty(xref.getId())) {
+                            complex.setAttribute("identifier", xref.getId());
                         }
                         complex.setAttribute("name", interactionEvidence.getShortName());
 
@@ -186,6 +188,8 @@ public class PsiComplexesConverter extends BioFileConverter
                 // TODO add relationship type and all interactors to detail
                 Item detailItem = createItem("InteractionDetail");
                 detailItem.setReference("interaction", interaction);
+                detailItem.setCollection("allInteractors", detail.getAllInteractors());
+                detailItem.setReference("relationshipType", detail.getRelationshipType());
                 store(detailItem);
             }
         }
@@ -241,7 +245,7 @@ public class PsiComplexesConverter extends BioFileConverter
 
             store(interactor);
 
-            detail.addInteractor(interactor);
+            detail.addInteractor(interactor.getIdentifier());
             complex.addToCollection("allInteractors", interactor);
         }
 
@@ -405,10 +409,10 @@ public class PsiComplexesConverter extends BioFileConverter
     private class DetailHolder
     {
         protected String relationshipType;
-        protected Set<Item> allInteractors;
+        protected List<String> allInteractors;
 
         public DetailHolder() {
-            allInteractors = new HashSet<Item>();
+            allInteractors = new ArrayList<String>();
         }
 
         protected String getRelationshipType() {
@@ -419,11 +423,11 @@ public class PsiComplexesConverter extends BioFileConverter
             this.relationshipType = relationshipType;
         }
 
-        protected Set<Item> getAllInteractors() {
+        protected List<String> getAllInteractors() {
             return allInteractors;
         }
 
-        protected void addInteractor(Item interactor) {
+        protected void addInteractor(String interactor) {
             allInteractors.add(interactor);
         }
     }
