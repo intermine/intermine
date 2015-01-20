@@ -36,8 +36,6 @@
         <reference name="biologicalRole" referenced-type="OntologyTerm"/>
         <reference name="stoichiometry" referenced-type="Stoichiometry"/>
         <reference name="type" referenced-type="OntologyTerm"/>
-        <collection name="participantIdentificationMethods" referenced-type="InteractionTerm"/>
-        <collection name="experimentalPreparations" referenced-type="OntologyTerm"/>
     </class>
 
     <class name="Stoichiometry" is-interface="true">

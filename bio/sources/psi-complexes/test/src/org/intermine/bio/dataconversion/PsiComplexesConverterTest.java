@@ -12,19 +12,12 @@ package org.intermine.bio.dataconversion;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Set;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.FullRenderer;
-import org.intermine.xml.full.Item;
 
 public class PsiComplexesConverterTest extends ItemsTestCase
 {
@@ -54,21 +47,4 @@ public class PsiComplexesConverterTest extends ItemsTestCase
 
     }
 
-    /**
-     * Render the given Item as XML
-     * @param item the Item to render
-     * @return an XML representation of the Item
-     */
-    public static String render(XMLOutputFactory factory, Item item) {
-        StringWriter sw = new StringWriter();
-        factory = XMLOutputFactory.newInstance();
-        XMLStreamWriter writer;
-        try {
-            writer = factory.createXMLStreamWriter(sw);
-            FullRenderer.renderImpl(writer, item);
-        } catch (XMLStreamException e) {
-            throw new RuntimeException("unexpected failure while creating Item XML", e);
-        }
-        return sw.toString();
-    }
 }
