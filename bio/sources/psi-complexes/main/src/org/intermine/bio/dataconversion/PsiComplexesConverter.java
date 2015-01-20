@@ -188,10 +188,10 @@ public class PsiComplexesConverter extends BioFileConverter
 
                 // TODO add relationship type and all interactors to detail
                 Item detailItem = createItem("InteractionDetail");
+                detailItem.setAttribute("type", INTERACTION_TYPE);
                 detailItem.setReference("interaction", interaction);
-                detailItem.setCollection("allInteractors", detail.getAllInteractors());
                 detailItem.setReference("relationshipType", detail.getRelationshipType());
-                detailItem.setReference("type", INTERACTION_TYPE);
+                detailItem.setCollection("allInteractors", detail.getAllInteractors());
                 store(detailItem);
             }
         }
