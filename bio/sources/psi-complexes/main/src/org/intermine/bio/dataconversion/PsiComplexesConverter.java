@@ -142,6 +142,8 @@ public class PsiComplexesConverter extends BioFileConverter
                             complex.setAttribute("identifier", xref.getId());
                         }
                         complex.setAttribute("name", interactionEvidence.getShortName());
+                        complex.setAttribute("systematicName",
+                                interactionEvidence.getSystematicName());
 
                         // parse annotations
                         processAnnotations(interactionEvidence, complex);
@@ -150,6 +152,8 @@ public class PsiComplexesConverter extends BioFileConverter
 
                         // type, e.g. "physical association", "direct interaction"
                         processType(interactionEvidence, detail);
+
+
 
                         // parse participants and interactions
                         processInteractions(interactionEvidence, detail, complex);
