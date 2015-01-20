@@ -191,7 +191,7 @@ public class PsiComplexesConverter extends BioFileConverter
                 detailItem.setReference("interaction", interaction);
                 detailItem.setCollection("allInteractors", detail.getAllInteractors());
                 detailItem.setReference("relationshipType", detail.getRelationshipType());
-                detailItem.setReference("type", getTerm("OntologyTerm", INTERACTION_TYPE));
+                detailItem.setReference("type", INTERACTION_TYPE);
                 store(detailItem);
             }
         }
