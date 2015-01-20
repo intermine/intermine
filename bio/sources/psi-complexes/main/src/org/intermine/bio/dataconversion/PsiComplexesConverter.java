@@ -54,7 +54,7 @@ import psidev.psi.mi.jami.model.Xref;
  */
 public class PsiComplexesConverter extends BioFileConverter
 {
-    private static final String DATASET_TITLE = "Complexes";
+    private static final String DATASET_TITLE = "IntAct Complexes";
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
@@ -62,6 +62,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String PROTEIN = "protein";
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
+    private static final String PUBMED = "pubmed";
     // TODO types (protein and small molecules are processed now) are hardcoded.
     // maybe put this in config file? Or check model to see if type is legal?
     private static final Map<String, String> INTERACTOR_TYPES = new HashMap<String, String>();
@@ -190,6 +191,7 @@ public class PsiComplexesConverter extends BioFileConverter
                 detailItem.setReference("interaction", interaction);
                 detailItem.setCollection("allInteractors", detail.getAllInteractors());
                 detailItem.setReference("relationshipType", detail.getRelationshipType());
+                detailItem.setReference("type", getTerm("OntologyTerm", INTERACTION_TYPE));
                 store(detailItem);
             }
         }
@@ -243,6 +245,9 @@ public class PsiComplexesConverter extends BioFileConverter
 
             // not parsing xrefs or aliases
 
+            // interactor type - protein or small molecule
+            setInteractorType(modelledParticipant, interactor);
+
             store(interactor);
 
             detail.addInteractor(interactor.getIdentifier());
@@ -260,6 +265,12 @@ public class PsiComplexesConverter extends BioFileConverter
                 getTerm("OntologyTerm", biologicalRole.getMIIdentifier()));
     }
 
+    private void setInteractorType(ModelledParticipant modelledParticipant, Item interactor)
+        throws ObjectStoreException {
+        CvTerm interactorType = modelledParticipant.getInteractor().getInteractorType();
+        interactor.setReference("type",
+                getTerm("OntologyTerm", interactorType.getMIIdentifier()));
+    }
 
     private ProteinHolder processProtein(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
@@ -327,6 +338,11 @@ public class PsiComplexesConverter extends BioFileConverter
                 goAnnotation.setReference("ontologyTerm", goterm);
                 store(goAnnotation);
                 complex.addToCollection("goAnnotation", goAnnotation);
+            } else if (PUBMED.equalsIgnoreCase(dbTerm.getShortName())) {
+                Item item = createItem("Publication");
+                item.setAttribute("pubMedId", xrefId);
+                store(item);
+                complex.addToCollection("publications", item);
             }
         }
     }

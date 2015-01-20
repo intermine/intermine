@@ -28,6 +28,7 @@
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Interactor"/>
         <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+        <collection name="publications" referenced-type="Publication"/>
     </class>
 
     <class name="Interactor" is-interface="true">
