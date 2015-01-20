@@ -17,7 +17,6 @@
 
     <class name="SmallMolecule" extends="BioEntity" is-interface="true"/>
 
-
     <class name="Complex" is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
@@ -28,7 +27,6 @@
         <collection name="interactions" referenced-type="Interaction" reverse-reference="complex"/>
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Interactor"/>
-        <collection name="publications" referenced-type="Publication"/>
         <collection name="goAnnotation" referenced-type="GOAnnotation"/>
     </class>
 
