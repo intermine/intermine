@@ -62,7 +62,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
-    private static final String PROTEIN = "protein";
+    private static final String PROTEIN = "MI:0326";
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
