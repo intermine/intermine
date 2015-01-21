@@ -213,20 +213,16 @@ public class PsiComplexesConverter extends BioFileConverter
                 detailItem.setReference("relationshipType", detail.getRelationshipType());
                 detailItem.setCollection("allInteractors", detail.getAllInteractors());
 
-                List<String> regions = processRegions(accession, bindingRegion);
-                if (!regions.isEmpty()) {
-                    detailItem.setCollection("interactingRegions", regions);
-                }
+                processRegions(detailItem, accession, bindingRegion);
+
                 store(detailItem);
             }
         }
 
     }
 
-    private List<String> processRegions(String accession, BindingRegion bindingRegion)
+    private void processRegions(Item detail, String accession, BindingRegion bindingRegion)
         throws ObjectStoreException {
-        List<String> refIds = new ArrayList<String>();
-
         for (Range range : bindingRegion.getRanges()) {
             Item location = createItem("Location");
             Position startPosition = range.getStart();
@@ -243,10 +239,9 @@ public class PsiComplexesConverter extends BioFileConverter
             store(location);
             Item region = createItem("InteractionRegion");
             region.setReference("location", location);
+            region.setReference("interactionDetail", detail);
             store(region);
-            refIds.add(region.getIdentifier());
         }
-        return refIds;
     }
 
     private void processInteractions(Complex interactionEvidence,
