@@ -168,7 +168,7 @@ public class OboConverter extends DataConverter
             return null;
         }
         String termId = (term.getId() == null ? term.getName() : term.getId());
-        if (prefix != null && !termId.startsWith(prefix)) {
+        if (prefix != null && !termId.toLowerCase().startsWith(prefix.toLowerCase())) {
             final String msg = "Not processing OBO term: " + term.getId() + " " + term.getName()
                     + " because it does not start with prefix " + prefix;
             LOG.info(msg);
