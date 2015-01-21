@@ -239,7 +239,7 @@ public class PsiComplexesConverter extends BioFileConverter
             store(location);
             Item region = createItem("InteractionRegion");
             region.setReference("location", location);
-            region.setReference("interactionDetail", detail);
+            region.setReference("interaction", detail);
             store(region);
         }
     }
