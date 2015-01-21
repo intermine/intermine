@@ -36,6 +36,7 @@ public class OboConverterTest extends ItemsTestCase {
     public void test1() throws Exception {
         OboConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
                                                   "OntologyTerm");
+        converter.setPrefix("SO");
         OboTerm a = new OboTerm("SO:42", "parent");
         OboTerm b = new OboTerm("SO:43", "child");
         OboTerm c = new OboTerm("SO:44", "partof");
@@ -55,6 +56,32 @@ public class OboConverterTest extends ItemsTestCase {
         converter.storeItems();
         //writeItemsFile(itemWriter.getItems(), "obo-converter-tgt.xml");
         assertEquals(readItemSet("OboConverterTest.xml"), itemWriter.getItems());
+    }
+
+    public void testPrefix() throws Exception {
+        OboConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
+                                                  "OntologyTerm");
+        converter.setPrefix("MONKEY");
+        OboTerm a = new OboTerm("SO:42", "parent");
+        OboTerm b = new OboTerm("SO:43", "child");
+        OboTerm c = new OboTerm("SO:44", "partof");
+        OboTerm d = new OboTerm("SO:45", "obsolete");
+        d.setObsolete(true);
+        c.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
+        b.addSynonym(new OboTermSynonym("syn1", "narrow_synonym"));
+        b.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
+        d.addSynonym(new OboTermSynonym("syn2", "exact_synonym"));
+        d.addSynonym(new OboTermSynonym("syn3", "narrow_synonym"));
+        OboRelation r1 = new OboRelation("SO:43","SO:42",new OboTypeDefinition("is_a", "is_a", true));
+        OboRelation r2 = new OboRelation("SO:44","SO:43",new OboTypeDefinition("part_of", "part_of", true));
+        OboRelation r3 = new OboRelation("SO:43","SO:45",new OboTypeDefinition("is_a", "is_a", true));
+
+        converter.setOboTerms(Arrays.asList(new OboTerm[] {a, b, c, d}));
+        converter.setOboRelations(Arrays.asList(new OboRelation[] {r1,r2,r3} ));
+        converter.storeItems();
+
+        // prefix should make sure no terms gets stored, only the ontology is
+        assertEquals(itemWriter.getItems().size(), 1);
     }
 
 }
