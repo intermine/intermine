@@ -212,8 +212,11 @@ public class PsiComplexesConverter extends BioFileConverter
                 detailItem.setReference("interaction", interaction);
                 detailItem.setReference("relationshipType", detail.getRelationshipType());
                 detailItem.setCollection("allInteractors", detail.getAllInteractors());
-                detailItem.setCollection("interactingRegions", processRegions(accession,
-                        bindingRegion));
+
+                List<String> regions = processRegions(accession, bindingRegion);
+                if (!regions.isEmpty()) {
+                    detailItem.setCollection("interactingRegions", regions);
+                }
                 store(detailItem);
             }
         }
@@ -228,8 +231,13 @@ public class PsiComplexesConverter extends BioFileConverter
             Item location = createItem("Location");
             Position startPosition = range.getStart();
             Position endPosition = range.getEnd();
-            location.setAttribute("start", String.valueOf(startPosition.getStart()));
-            location.setAttribute("end", String.valueOf(endPosition.getStart()));
+            Long start = startPosition.getStart();
+            Long end = endPosition.getStart();
+            if (start + end == 0) {
+                continue;
+            }
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
             location.setReference("locatedOn", interactors.get(bindingRegion.getAccession()));
             location.setReference("feature", interactors.get(accession));
             store(location);
