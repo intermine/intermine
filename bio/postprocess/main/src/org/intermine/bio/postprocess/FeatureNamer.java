@@ -81,10 +81,10 @@ public class FeatureNamer {
 
     int count = 0;
     osw.beginTransaction();
-    while (resIter.hasNext() && count < 5000000) {
+    while (resIter.hasNext()) {
       ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
       BioEntity feat = (BioEntity) rr.get(0);
-      if (!feat.getPrimaryIdentifier().isEmpty() ) {
+      if (feat.getPrimaryIdentifier()!=null && !feat.getPrimaryIdentifier().isEmpty() ) {
         feat.setName(feat.getPrimaryIdentifier());
         osw.store(feat);
       } else {
