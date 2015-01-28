@@ -48,7 +48,7 @@ public class ReactomeConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "reactome-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "reactome-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("ReactomeConverterTest_tgt.xml");
 
