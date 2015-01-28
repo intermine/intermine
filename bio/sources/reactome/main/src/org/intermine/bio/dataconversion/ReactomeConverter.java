@@ -41,7 +41,7 @@ public class ReactomeConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(ReactomeConverter.class);
     private Set<String> taxonIds;
     private Map<String, Item> pathways = new HashMap<String, Item>();
-    private Map<String, String> proteins = new HashMap<String, String>();
+    private Map<String, Item> proteins = new HashMap<String, Item>();
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     /**
@@ -90,11 +90,12 @@ public class ReactomeConverter extends BioFileConverter
                 // invalid organism
                 continue;
             }
-
-            String proteinRefId = getProtein(accession, taxonId);
-
             Item pathway = getPathway(pathwayIdentifier, pathwayName);
-            pathway.addToCollection("proteins", proteinRefId);
+
+            Item protein = getProtein(accession, taxonId);
+            protein.addToCollection("pathways", pathway);
+
+            pathway.addToCollection("proteins", protein);
         }
     }
 
@@ -102,6 +103,9 @@ public class ReactomeConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void close() throws ObjectStoreException {
+        for (Item item : proteins.values()) {
+            store(item);
+        }
         for (Item item : pathways.values()) {
             store(item);
         }
@@ -126,7 +130,7 @@ public class ReactomeConverter extends BioFileConverter
     }
 
 
-    private Item getPathway(String pathwayId, String pathwayName) {
+    private Item getPathway(String pathwayId, String pathwayName) throws ObjectStoreException {
         Item item = pathways.get(pathwayId);
         if (item == null) {
             item = createItem("Pathway");
@@ -137,17 +141,15 @@ public class ReactomeConverter extends BioFileConverter
         return item;
     }
 
-    private String getProtein(String accession, String taxonId)
+    private Item getProtein(String accession, String taxonId)
         throws ObjectStoreException {
-        String refId = proteins.get(accession);
-        if (refId == null) {
-            Item item = createItem("Protein");
+        Item item = proteins.get(accession);
+        if (item == null) {
+            item = createItem("Protein");
             item.setAttribute("primaryAccession", accession);
             item.setReference("organism", getOrganism(taxonId));
-            store(item);
-            refId = item.getIdentifier();
-            proteins.put(accession, refId);
+            proteins.put(accession, item);
         }
-        return refId;
+        return item;
     }
 }
