@@ -15,7 +15,7 @@
 <collection name="proteins"><reference ref_id="4_1"/></collection>
 </item>
 <item id="2_1" class="DataSet">
-<attribute name="name" value="Reactome pathways"/>
+<attribute name="name" value="Reactome pathways data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
 <item id="5_1" class="Organism">
