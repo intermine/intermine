@@ -10,11 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
