@@ -114,12 +114,9 @@
       <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current" />
       <property name="kegg.organisms" value="9606 10090" />
     </source>
-    <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/current" />
-      <property name="biopax.organisms" value="9606 10090" />
-      <property name="biopax.datasourcename" value="Reactome" />
-      <property name="biopax.datasetname" value="Reactome data set" />
-      <property name="biopax.curated" value="false" />
+    <source name="reactome" type="reactome">
+      <property name="src.data.dir" location="/micklem/data/reactome/uniprot/flat" />
+      <property name="reactome.organisms" value="9606 10090" />
     </source>
     <source name="panther" type="panther">
         <property name="src.data.dir" location="/micklem/data/panther/current"/>
