@@ -7,11 +7,11 @@
 
   <sources>
     <source name="ensembl-snp" type="ensembl-snp" dump="true">
-     <property name="src.data.dir" location="/data/humanmine/variation/ensembl/current" />
+     <property name="src.data.dir" location="/SAN_humanmine/data/variation/ensembl/current" />
       <property name="ensembl-snp.includes" value="Homo_sapiens_incl_consequences.gvf" />
     </source>
     <source name="ensembl-human" type="ensembl-core">
-      <property name="src.data.dir" location="/data/humanmine/ensembl/homo_sapiens/current" />
+      <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current" />
       <property name="src.data.dir.includes" value="9606.xml" />
     </source>
     <source name="ensembl-human-chr-fasta" type="fasta">
@@ -21,7 +21,7 @@
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
       <property name="fasta.classAttribute" value="primaryIdentifier" />
       <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/data/humanmine/ensembl/homo_sapiens/current/fasta" />
+      <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/homo_sapiens/current/fasta" />
     </source>
     <source name="human-gene" type="human-gene">
       <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
@@ -38,7 +38,7 @@
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
     <source name="ensembl-mouse" type="ensembl-core">
-      <property name="src.data.dir" location="/data/humanmine/ensembl/mus_musculus/current" />
+      <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/mus_musculus/current" />
       <property name="src.data.dir.includes" value="10090_mgi_pid.xml" />
     </source>
     <source name="ensembl-mouse-chr-fasta" type="fasta">
@@ -48,7 +48,7 @@
       <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
       <property name="fasta.classAttribute" value="primaryIdentifier" />
       <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/data/humanmine/ensembl/mus_musculus/current/fasta" />
+      <property name="src.data.dir" location="/SAN_humanmine/data/ensembl/mus_musculus/current/fasta" />
     </source>
     <source name="mgi-alleles" type="mgi-alleles" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
