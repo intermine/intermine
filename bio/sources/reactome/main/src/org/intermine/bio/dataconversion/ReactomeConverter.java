@@ -50,7 +50,7 @@ public class ReactomeConverter extends BioFileConverter
      * @param model the Model
      */
     public ReactomeConverter(ItemWriter writer, Model model) {
-        super(writer, model, "Reactome", "Reactome pathways");
+        super(writer, model, "Reactome", "Reactome pathways data set");
     }
 
     /**

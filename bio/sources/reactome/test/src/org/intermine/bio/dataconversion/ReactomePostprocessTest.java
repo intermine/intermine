@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.intermine.bio.postprocess.ReactomePostProcess;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
@@ -79,7 +80,7 @@ public class ReactomePostprocessTest extends XMLTestCase {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setUpData() throws Exception {
         DataSet dataset = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataset.setName("Reactome data set");
+        dataset.setName("Reactome pathways data set");
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein1.addGenes(gene);

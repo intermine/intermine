@@ -1,4 +1,4 @@
-package org.intermine.bio.dataconversion;
+package org.intermine.bio.postprocess;
 
 /*
  * Copyright (C) 2002-2015 FlyMine
@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.postprocess.PostProcessUtil;
 import org.intermine.bio.util.Constants;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -82,7 +81,7 @@ public class ReactomePostProcess extends PostProcessor
         throws ObjectStoreException, IllegalAccessException, SQLException {
 
         reactomeDataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        reactomeDataSet.setName("Reactome data set");
+        reactomeDataSet.setName("Reactome pathways data set");
         reactomeDataSet =
             (DataSet) osw.getObjectByExample(reactomeDataSet, Collections.singleton("name"));
 
