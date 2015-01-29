@@ -72,14 +72,13 @@ public class PsiComplexesConverter extends BioFileConverter
     // maybe put this in config file? Or check model to see if type is legal?
     private static final Map<String, String> INTERACTOR_TYPES = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
-    private Set<String> taxonIds = null;
+    // accession to stored object ID
     private Map<String, String> interactors = new HashMap<String, String>();
 
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
     }
-
 
     /**
      * Constructor
@@ -88,15 +87,6 @@ public class PsiComplexesConverter extends BioFileConverter
      */
     public PsiComplexesConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-    }
-
-    /**
-     * Sets the list of taxonIds that should be imported if using split input files.
-     *
-     * @param taxonIds a space-separated list of taxonIds
-     */
-    public void setPsiOrganisms(String taxonIds) {
-        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
     }
 
     /**
@@ -190,64 +180,8 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void createInteractions(Map<String, Set<BindingRegion>> featureToBindingRegions,
-            DetailHolder detail, Item complex)
-        throws ObjectStoreException {
-
-        for (Map.Entry<String, Set<BindingRegion>> entry : featureToBindingRegions.entrySet()) {
-
-            String accession = entry.getKey();
-            Set<BindingRegion> bindingRegions = entry.getValue();
-
-            for (BindingRegion bindingRegion : bindingRegions) {
-                Item interaction = createItem("Interaction");
-                interaction.setReference("participant1", interactors.get(accession));
-                interaction.setReference("participant2", interactors.get(
-                        bindingRegion.getAccession()));
-                interaction.setReference("complex", complex);
-                store(interaction);
-
-                Item detailItem = createItem("InteractionDetail");
-                detailItem.setAttribute("type", INTERACTION_TYPE);
-                detailItem.setAttribute("relationshipType", detail.getRelationshipType());
-                detailItem.setReference("interaction", interaction);
-                detailItem.setCollection("allInteractors", detail.getAllInteractors());
-
-                processRegions(detailItem, accession, bindingRegion);
-
-                store(detailItem);
-            }
-        }
-    }
-
-    private void processRegions(Item detail, String accession, BindingRegion bindingRegion)
-        throws ObjectStoreException {
-        for (Range range : bindingRegion.getRanges()) {
-            Item location = createItem("Location");
-            Position startPosition = range.getStart();
-            Position endPosition = range.getEnd();
-            Long start = startPosition.getStart();
-            Long end = endPosition.getStart();
-            if (start + end == 0) {
-                continue;
-            }
-            location.setAttribute("start", String.valueOf(start));
-            location.setAttribute("end", String.valueOf(end));
-            location.setReference("locatedOn", interactors.get(bindingRegion.getAccession()));
-            location.setReference("feature", interactors.get(accession));
-            store(location);
-            Item region = createItem("InteractionRegion");
-            region.setReference("location", location);
-            region.setReference("interaction", detail);
-            store(region);
-        }
-    }
-
     private void processInteractions(Complex interactionEvidence,
             DetailHolder detail, Item complex) throws ObjectStoreException {
-
-        Map<String, Set<BindingRegion>> featureToBindingRegions
-            = new HashMap<String, Set<BindingRegion>>();
 
         for (ModelledParticipant modelledParticipant : interactionEvidence.getParticipants()) {
 
@@ -260,16 +194,16 @@ public class PsiComplexesConverter extends BioFileConverter
             setBiologicalRole(modelledParticipant, interactor);
 
             // protein
-            ProteinHolder protein = processProtein(modelledParticipant, interactor);
+            String refId = processProtein(modelledParticipant.getInteractor());
 
             // not a protein or small molecule, skip for now
-            if (protein == null) {
+            if (refId == null) {
                 return;
             }
 
-            Set<BindingRegion> bindingSites = new HashSet<BindingRegion>();
+            interactor.setReference("participant", refId);
 
-            // interactions
+            // interactions and regions
             for (Feature feature : modelledParticipant.getFeatures()) {
                 Collection<Feature> linkedFeatures = feature.getLinkedFeatures();
                 for (Feature linkedFeature : linkedFeatures) {
@@ -278,14 +212,30 @@ public class PsiComplexesConverter extends BioFileConverter
 
                     // only create interactions if we have binding information
                     if (BINDING_SITE.equals(type)) {
-                        String accession = linkedFeature.getParticipant()
-                                .getInteractor().getPreferredIdentifier().getId();
-                        BindingRegion region = new BindingRegion(linkedFeature, accession);
-                        bindingSites.add(region);
+                        String binderRefId = processProtein(linkedFeature.getParticipant()
+                                .getInteractor());
+
+                        Item interaction = createItem("Interaction");
+                        interaction.setReference("participant1", refId);
+                        interaction.setReference("participant2", binderRefId);
+                        interaction.setReference("complex", complex);
+                        store(interaction);
+                        interactor.addToCollection("interactions", interaction);
+
+                        Item detailItem = createItem("InteractionDetail");
+                        detailItem.setAttribute("type", INTERACTION_TYPE);
+                        detailItem.setAttribute("relationshipType", detail.getRelationshipType());
+                        detailItem.setReference("interaction", interaction);
+                        detailItem.setCollection("allInteractors", detail.getAllInteractors());
+
+                        processRegions(interactor, linkedFeature.getRanges(), detailItem, refId,
+                                binderRefId);
+
+                        store(detailItem);
                     }
                 }
             }
-            featureToBindingRegions.put(protein.getAccession(), bindingSites);
+
 
             // parse stoich
             processStoichiometry(modelledParticipant, interactor);
@@ -300,9 +250,32 @@ public class PsiComplexesConverter extends BioFileConverter
             detail.addInteractor(interactor.getIdentifier());
             complex.addToCollection("allInteractors", interactor);
         }
-
-        createInteractions(featureToBindingRegions, detail, complex);
     }
+
+    private void processRegions(Item interactor, Collection<Range> ranges, Item detail,
+        String locatedOn, String feature)
+        throws ObjectStoreException {
+        for (Range range : ranges) {
+            Item location = createItem("Location");
+            Position startPosition = range.getStart();
+            Position endPosition = range.getEnd();
+            Long start = startPosition.getStart();
+            Long end = endPosition.getStart();
+            if (start + end == 0) {
+                continue;
+            }
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
+            location.setReference("locatedOn", locatedOn);
+            location.setReference("feature", feature);
+            store(location);
+            Item region = createItem("InteractionRegion");
+            region.setReference("location", location);
+            region.setReference("interactor", interactor);
+            store(region);
+        }
+    }
+
 
     private void setBiologicalRole(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
@@ -329,10 +302,8 @@ public class PsiComplexesConverter extends BioFileConverter
         return null;
     }
 
-    private ProteinHolder processProtein(ModelledParticipant modelledParticipant, Item interactor)
+    private String processProtein(Interactor participant)
         throws ObjectStoreException {
-        Interactor participant = modelledParticipant.getInteractor();
-
         Xref xref = participant.getPreferredIdentifier();
         String accession = xref.getId();
 
@@ -359,8 +330,7 @@ public class PsiComplexesConverter extends BioFileConverter
             refId = protein.getIdentifier();
             interactors.put(accession, refId);
         }
-        interactor.setReference("participant", refId);
-        return new ProteinHolder(accession, refId);
+        return refId;
     }
 
     private void processStoichiometry(ModelledParticipant modelledParticipant, Item interactor)
@@ -410,7 +380,6 @@ public class PsiComplexesConverter extends BioFileConverter
         detail.setRelationshipType(termName);
     }
 
-
     private void processAnnotations(ModelledParticipant modelledParticipant, Item interactor) {
         StringBuilder annotations = new StringBuilder();
         for (Annotation annotation : modelledParticipant.getAnnotations()) {
@@ -454,55 +423,6 @@ public class PsiComplexesConverter extends BioFileConverter
             terms.put(identifier, refId);
         }
         return refId;
-    }
-
-    private class BindingRegion
-    {
-        private String accession;
-        // we keep these as ranges because we don't have the participant stored yet
-        private Collection<Range> ranges;
-
-        protected BindingRegion(Feature feature, String accession) {
-            this.setAccession(accession);
-            this.setRanges(feature.getRanges());
-        }
-
-        public Collection<Range> getRanges() {
-            return ranges;
-        }
-
-        public void setRanges(Collection<Range> ranges) {
-            this.ranges = ranges;
-        }
-
-        public String getAccession() {
-            return accession;
-        }
-
-        public void setAccession(String accession) {
-            this.accession = accession;
-        }
-
-    }
-
-    private class ProteinHolder
-    {
-        private String refId;
-        private String accession;
-
-        protected ProteinHolder(String accession, String refId) {
-            this.accession = accession;
-            this.refId = refId;
-        }
-
-        protected String getAccession() {
-            return accession;
-        }
-
-        protected String getRefId() {
-            return refId;
-        }
-
     }
 
     // temporary class to hold interaction details

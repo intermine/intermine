@@ -19,7 +19,7 @@
         <attribute name="role2" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
         <attribute name="type" type="java.lang.String"/>
-        <reference name="relationshipType" referenced-type="InteractionTerm"/>
+        <attribute name="relationshipType" type="java.lang.String"/>
         <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="dataSets" referenced-type="DataSet"/>
