@@ -252,7 +252,7 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.ProteinFamilyOrganism">
+  <class className="org.intermine.model.bio.ProteinFamilyMember">
     <fields>
       <fieldconfig fieldExpr="organism.shortName" label="Organism" />
       <fieldconfig fieldExpr="count" label="Number of members" />

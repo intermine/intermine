@@ -39,7 +39,9 @@ public class PrositeTermsConverter extends OntologyTermsFileConverter {
   // @Override
   String cleanName(String name) {
     // this consists of a name ":" and PATTERN or MATRIX.
+    if (name==null) return null;
     String[] fields = name.split(";");
+    if (fields.length < 1) return null;
     name = fields[0].trim();
     return name;
   }

@@ -31,6 +31,7 @@ public class PirTermsConverter extends OntologyTermsFileConverter {
   public PirTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
     identifierKey = "^>.*";
+    identifierReplacement = "^>\\s*";
     nameKey = null;
     descKey =null;
     endOfRecord = null;
@@ -39,7 +40,7 @@ public class PirTermsConverter extends OntologyTermsFileConverter {
     // split on space
     String[] fields = line.split(" +");
     // identifier is the word after the >
-    identifierLine = fields[0].substring(identifierKey.length());
+    identifierLine = fields[0].replaceAll(identifierReplacement,"").trim();
     // skip the curation status field. And parent field.
     StringBuffer d = new StringBuffer(line.length());
     for(int i=2;i<fields.length;i++) {
@@ -80,8 +81,10 @@ public class PirTermsConverter extends OntologyTermsFileConverter {
       relation.setAttribute("direct", "true");
       relation.setAttribute("redundant", "false");
       // Set the reverse reference
-      termMap.get(idMap.get(child)).addToCollection("relations", relation.getIdentifier());
-      termMap.get(idMap.get(parentMap.get(child))).addToCollection("relations", relation.getIdentifier());
+      //termMap.get(idMap.get(child)).addToCollection("relations", relation.getIdentifier());
+      //termMap.get(idMap.get(parentMap.get(child))).addToCollection("relations", relation.getIdentifier());
+      termMap.get(child).addToCollection("relations", relation.getIdentifier());
+      termMap.get(parentMap.get(child)).addToCollection("relations", relation.getIdentifier());
       relations.add(relation);
       // walk the parentage and add indirect parents
       // this is probably acyclic. But verify
@@ -97,8 +100,8 @@ public class PirTermsConverter extends OntologyTermsFileConverter {
         indirectRelation.setAttribute("relationship", "part_of");
         indirectRelation.setAttribute("direct", "false");
         indirectRelation.setAttribute("redundant", "false");
-        termMap.get(idMap.get(child)).addToCollection("relations", indirectRelation.getIdentifier());
-        termMap.get(idMap.get(ancestor)).addToCollection("relations", indirectRelation.getIdentifier());
+        termMap.get(child).addToCollection("relations", indirectRelation.getIdentifier());
+        termMap.get(ancestor).addToCollection("relations", indirectRelation.getIdentifier());
         relations.add(indirectRelation);
       }
     }

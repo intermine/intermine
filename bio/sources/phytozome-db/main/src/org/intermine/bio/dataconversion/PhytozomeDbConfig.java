@@ -78,6 +78,7 @@ public class PhytozomeDbConfig {
     referenceMap.put(new MultiKey("MRNA","Protein"),"protein");
     referenceMap.put(new MultiKey("CDS","Gene"),"gene");
     referenceMap.put(new MultiKey("CDS","Protein"),"protein");
+    referenceMap.put(new MultiKey("CDS","MRNA"),"transcript");
   }
   
   //TODO: is there a way to discover this?

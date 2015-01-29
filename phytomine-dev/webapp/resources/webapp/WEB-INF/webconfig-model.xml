@@ -88,14 +88,11 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.CufflinksScore">
+  <class className="org.intermine.model.bio.RNAseqExperiment">
     <fields>
-      <fieldconfig fieldExpr="experiment.name" label="Experiment Name" />
-      <fieldconfig fieldExpr="experiment.experimentGroup" label="Experiment Group" />
-      <fieldconfig fieldExpr="fpkm" label="FPKM" />
-      <fieldconfig fieldExpr="conflo" label="Lo Conf" />
-      <fieldconfig fieldExpr="confhi" label="Hi Conf" />
-      <fieldconfig fieldExpr="count" label="Count" />
+      <fieldconfig fieldExpr="name" label="Experiment Name" />
+      <fieldconfig fieldExpr="experimentGroup" label="Experiment Group" />
+      <fieldconfig fieldExpr="description" label="Description" />
     </fields>
   </class>
 
@@ -211,8 +208,8 @@
 
   <class className="org.intermine.model.bio.Transcript">
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
+      <fieldconfig fieldExpr="primaryIdentifier" label="Transcript Identifier"/>
+      <fieldconfig fieldExpr="gene.primaryIdentifier" label="Gene Identifier"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false"/>
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
@@ -255,10 +252,23 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.ProteinFamilyOrganism">
+  <class className="org.intermine.model.bio.ProteinFamilyMember">
     <fields>
-      <fieldconfig fieldExpr="organism.shortName" label="Organism" />
-      <fieldconfig fieldExpr="count" label="Number of members" />
+      <fieldconfig fieldExpr="proteinFamily.clusterId" label="Cluster ID" />
+      <fieldconfig fieldExpr="proteinFamily.clusterName" label="Cluster Name" />
+      <fieldconfig fieldExpr="proteinFamily.memberCount" label="Member Count" />
+      <fieldconfig fieldExpr="proteinFamily.methodId" label="Method ID"/>
+      <fieldconfig fieldExpr="proteinFamily.methodName" label="Method Name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.OntologyAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="ontologyTerm.ontology.name" label="Ontology" />
+      <fieldconfig fieldExpr="ontologyTerm.identifier" label="Term" />
+      <fieldconfig fieldExpr="ontologyTerm.name" label="Name" />
+      <fieldconfig fieldExpr="ontologyTerm.namespace" label="Namespace" />
+      <fieldconfig fieldExpr="ontologyTerm.description" label="Description" />
     </fields>
   </class>
 
@@ -315,8 +325,8 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CorrelatedExpressionDisplayer"
                      jspName="model/correlatedExpressionDisplayer.jsp"
                      replacesFields=""
-                     placement="summary"
-                     types="Gene" />
+                     placement="Expression"
+                     types="Gene,Transcript,MRNA" />
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSNPDisplayer"
                      jspName="model/geneSNPDisplayer.jsp"
@@ -327,7 +337,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneHomologDisplayer"
                      jspName="model/geneHomologDisplayer.jsp"
                      replacesFields=""
-                     placement="Genomics"
+                     placement="Orthology"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.FamilyAlignmentDisplayer"
@@ -347,6 +357,12 @@
                      replacesFields="proteinAnalysisFeatures,locatedFeatures"
                      placement="summary"
                      types="Protein" />
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CufflinksScoreDisplayer"
+                     jspName="model/cufflinksScoreDisplayer.jsp"
+                     replacesFields="cufflinksscores"
+                     placement="Expression"
+                     types="Gene,Transcript,MRNA" />
 
   </reportdisplayers>
 

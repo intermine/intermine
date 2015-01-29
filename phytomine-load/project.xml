@@ -1144,20 +1144,12 @@
     </source>
 
     <source name="Panther-terms" type="ontology-terms">
-      <property name="src.data.dir" value="/projectb/sandbox/plant/interproscan/data/panther/8.1/model/globals/" />
+      <property name="src.data.dir" value="/projectb/sandbox/phytomine/panther-terms/" />
       <property name="src.data.file" value="names.tab" />
       <property name="dataSetTitle" value="PANTHER" />
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter" />
     </source>
-    <source name="Panther-terms-reload" type="ontology-terms">
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
-      <property name="src.data.file" value="names.tab" />
-      <property name="dataSetTitle" value="PANTHER" />
-      <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
-      <property name="converter.class" value="org.intermine.bio.dataconversion.PantherTermsConverter" />
-    </source>
-
     <source name="Enzyme-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/enzyme-terms/" />
       <property name="src.data.file" value="enzyme.dat" />
@@ -1251,8 +1243,8 @@
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/pir-terms/" />
       <property name="src.data.file" value="pirsfinfo.dat" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PirTermsConverter" />
-      <property name="dataSetTitle" value="PIR" />
-      <property name="dataSourceName" value="PIR" />
+      <property name="dataSetTitle" value="PIRSF" />
+      <property name="dataSourceName" value="PIRSF" />
       <property name="dataSetURL" value="http://pir.georgetown.edu" />
     </source>
     <source name="Smart-terms" type="ontology-terms">
@@ -1266,8 +1258,8 @@
     <source name="TIGR-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/tigrfams-terms/" />
       <property name="src.data.file" value="TIGRFAMs_HMM.LIB" />
-      <property name="dataSetTitle" value="TIGRFAM" />
-      <property name="dataSourceName" value="TIGRFAM" />
+      <property name="dataSetTitle" value="TIGRFAMs" />
+      <property name="dataSourceName" value="TIGRFAMs" />
       <property name="dataSetURL" value="http://www.jcvi.org/tigrfams" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.TigrfamsTermsConverter" />
       <property name="dataSetVersion" value="13.0" />
@@ -1275,7 +1267,7 @@
     <source name="Gene3D-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/gene3d-terms/" />
       <property name="src.data.file" value="gene3d.lib" />
-      <property name="src.map.file" value="model_to_family_map.csv" />
+      <property name="src.map.file" value="model_to_family_map.tsv" />
       <property name="dataSetTitle" value="GENE3D" />
       <property name="dataSourceName" value="GENE3D" />
       <property name="dataSetURL" value="http://gene3d.biochem.ucl.ac.uk/Gene3D" />

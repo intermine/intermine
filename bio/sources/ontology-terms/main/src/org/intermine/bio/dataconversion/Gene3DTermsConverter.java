@@ -62,14 +62,17 @@ public class Gene3DTermsConverter extends OntologyTermsFileConverter {
       nameMap = new HashMap<String,String>();
       descMap = new HashMap<String,String>();
       while( (line= br.readLine()) != null ) {
-        String[] fields = line.split(",",3);
+        String[] fields = line.split("\\t",3);
+        if (fields.length < 2) {
+          throw new BuildException("Too few fields in map file: "+line);
+        }
         // field1 (name) may need to have a G3DSA: prepended
         if (fields[1].startsWith("G3DSA:")) {
           nameMap.put(fields[0], fields[1]);
         } else if (!fields[1].isEmpty()) {
           nameMap.put(fields[0], "G3DSA:"+fields[1]);
         }
-        if (!fields[2].isEmpty()) {
+        if (fields[2] != null && !fields[2].isEmpty()) {
           descMap.put(fields[0],fields[2]);
         }
       }

@@ -886,6 +886,14 @@
       <property name="converter.class" value="org.intermine.bio.dataconversion.KeggTermsConverter" />
       <property name="dataSetURL" value="http://www.genome.jp" />
     </source>
+    <source name="Kegg-terms-redo" type="ontology-terms">
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-terms/" />
+      <property name="src.data.file" value="ko00001.keg" />
+      <property name="src.map.file" value="kegg_mapping.tsv" />
+      <property name="dataSetTitle" value="KEGG" />
+      <property name="converter.class" value="org.intermine.bio.dataconversion.KeggTermsConverter" />
+      <property name="dataSetURL" value="http://www.genome.jp" />
+    </source>
     <source name="Profile-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/profile-terms/" />
       <property name="src.data.file" value="prosite.dat" />
@@ -920,6 +928,14 @@
       <property name="dataSetVersion" value="P41.1" />
     </source>
     <source name="Pir-terms" type="ontology-terms">
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/pir-terms/" />
+      <property name="src.data.file" value="pirsfinfo.dat" />
+      <property name="converter.class" value="org.intermine.bio.dataconversion.PirTermsConverter" />
+      <property name="dataSetTitle" value="PIRSF" />
+      <property name="dataSourceName" value="PIRSF" />
+      <property name="dataSetURL" value="http://pir.georgetown.edu" />
+    </source>
+    <source name="Pir-terms-redo" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/pir-terms/" />
       <property name="src.data.file" value="pirsfinfo.dat" />
       <property name="converter.class" value="org.intermine.bio.dataconversion.PirTermsConverter" />
@@ -962,6 +978,18 @@
       <property name="converter.class" value="org.intermine.bio.dataconversion.OntologyTermsXMLConverter" />
     </source>
     <source name="tsv-synonyms" type="tsv-synonyms">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms" />
+      <property name="src.data.file" value="synonyms.tsv" />
+    </source>
+    <source name="tsv-synonyms-redo" type="tsv-synonyms">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms" />
+      <property name="src.data.file" value="synonyms.tsv" />
+    </source>
+    <source name="tsv-synonyms-redo2" type="tsv-synonyms">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms" />
+      <property name="src.data.file" value="synonyms.tsv" />
+    </source>
+    <source name="tsv-synonyms-redo3" type="tsv-synonyms">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/synonyms" />
       <property name="src.data.file" value="synonyms.tsv" />
     </source>

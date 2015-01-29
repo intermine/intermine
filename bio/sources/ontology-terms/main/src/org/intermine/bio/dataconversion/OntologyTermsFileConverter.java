@@ -153,6 +153,7 @@ public class OntologyTermsFileConverter extends BioFileConverter
           rel.setAttribute("direct",((ParentChild)pair).getDirect()?"true":"false");
           rel.setReference("childTerm", termMap.get(((ParentChild)pair).getChild()));
           rel.setReference("parentTerm", termMap.get(((ParentChild)pair).getParent()));
+          store(rel);
         }
         LOG.info("Added "+parentChildren.size()+" relationships.");
         finalProcessing();

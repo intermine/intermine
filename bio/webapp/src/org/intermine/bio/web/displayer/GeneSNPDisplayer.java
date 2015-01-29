@@ -144,6 +144,7 @@ public class GeneSNPDisplayer extends ReportDisplayer {
     private String classification;
     private TreeSet<String> transcripts;
     private TreeMap<String,GenoSample> genoSamples;
+    private Integer sampleCount;
     public SNPList(ArrayList<String> record) {
       id = new Integer(record.get(0));
       name = new String(record.get(1));
@@ -156,6 +157,8 @@ public class GeneSNPDisplayer extends ReportDisplayer {
       transcripts.add(record.get(7));
       genoSamples = new TreeMap<String,GenoSample>();
       genoSamples.put(record.get(8),new GenoSample(record.get(8),record.get(9)));
+      // we'll only calculate on-demand
+      sampleCount = null;
     }
 
 
@@ -194,14 +197,25 @@ public class GeneSNPDisplayer extends ReportDisplayer {
                                                     }
                                                     return retArray; }
     public Integer getGenoSampleCount() { return genoSamples.keySet().size() ; }
+    public Integer getSampleCount() {
+      if (sampleCount == null ) {
+        sampleCount = new Integer(0);
+        for( GenoSample g : genoSamples.values() ) {
+          sampleCount += g.getSampleCount();
+        }
+      }
+      return sampleCount;                        
+    }
   }
 
   public class GenoSample {
     private String genotype;
     private StringBuffer samples;
+    private Integer sampleCount;
     public GenoSample(String g,String s) {
       genotype = g;
       samples = new StringBuffer();
+      sampleCount = new Integer(0);
       final Pattern pattern = Pattern.compile("\"([^\"]+)\":\"([^\"]+)\"");
       final Matcher matcher = pattern.matcher(s);
       while (matcher.find()) {
@@ -209,10 +223,12 @@ public class GeneSNPDisplayer extends ReportDisplayer {
           samples.append(", ");
         }
         samples.append(matcher.group(1));
+        sampleCount++;
       }
     }
-    public void addSample(String s) { samples.append(", ").append(s); }
+    public void addSample(String s) { samples.append(", ").append(s); sampleCount++; }
     public String getGenotype() { return genotype; }
     public String getSamples() { return samples.toString(); }
+    public Integer getSampleCount() { return sampleCount; }
   }
 }
