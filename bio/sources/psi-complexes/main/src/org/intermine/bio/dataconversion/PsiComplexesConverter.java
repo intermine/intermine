@@ -209,8 +209,8 @@ public class PsiComplexesConverter extends BioFileConverter
 
                 Item detailItem = createItem("InteractionDetail");
                 detailItem.setAttribute("type", INTERACTION_TYPE);
+                detailItem.setAttribute("relationshipType", detail.getRelationshipType());
                 detailItem.setReference("interaction", interaction);
-                detailItem.setReference("relationshipType", detail.getRelationshipType());
                 detailItem.setCollection("allInteractors", detail.getAllInteractors());
 
                 processRegions(detailItem, accession, bindingRegion);
@@ -218,7 +218,6 @@ public class PsiComplexesConverter extends BioFileConverter
                 store(detailItem);
             }
         }
-
     }
 
     private void processRegions(Item detail, String accession, BindingRegion bindingRegion)
@@ -308,15 +307,15 @@ public class PsiComplexesConverter extends BioFileConverter
     private void setBiologicalRole(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
         CvTerm biologicalRole = modelledParticipant.getBiologicalRole();
-        interactor.setReference("biologicalRole",
-                getTerm("OntologyTerm", biologicalRole.getMIIdentifier()));
+        String termName = biologicalRole.getFullName();
+        interactor.setAttribute("biologicalRole", termName);
     }
 
     private void setInteractorType(ModelledParticipant modelledParticipant, Item interactor)
         throws ObjectStoreException {
         CvTerm interactorType = modelledParticipant.getInteractor().getInteractorType();
-        interactor.setReference("type",
-                getTerm("OntologyTerm", interactorType.getMIIdentifier()));
+        String termName = interactorType.getFullName();
+        interactor.setAttribute("type", termName);
     }
 
     private String getComplexIdentifier(Complex complex) {
@@ -407,9 +406,8 @@ public class PsiComplexesConverter extends BioFileConverter
     private void processType(Complex interactionEvidence,
             DetailHolder detail) throws ObjectStoreException {
         CvTerm cvterm = interactionEvidence.getInteractionType();
-        String identifier = cvterm.getMIIdentifier();
-        String refId = getTerm("InteractionTerm", identifier);
-        detail.setRelationshipType(refId);
+        String termName = cvterm.getFullName();
+        detail.setRelationshipType(termName);
     }
 
 
