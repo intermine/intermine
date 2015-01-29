@@ -12,19 +12,15 @@ package org.intermine.bio.dataconversion;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 
@@ -74,6 +70,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private Map<String, String> terms = new HashMap<String, String>();
     // accession to stored object ID
     private Map<String, String> interactors = new HashMap<String, String>();
+    private Map<String, String> publications = new HashMap<String, String>();
 
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
@@ -365,10 +362,7 @@ public class PsiComplexesConverter extends BioFileConverter
                 store(goAnnotation);
                 complex.addToCollection("goAnnotation", goAnnotation);
             } else if (PUBMED.equalsIgnoreCase(dbTerm.getShortName())) {
-                Item item = createItem("Publication");
-                item.setAttribute("pubMedId", xrefId);
-                store(item);
-                complex.addToCollection("publications", item);
+                complex.addToCollection("publications", getPublication(xrefId));
             }
         }
     }
@@ -421,6 +415,18 @@ public class PsiComplexesConverter extends BioFileConverter
             store(ontologyTerm);
             refId = ontologyTerm.getIdentifier();
             terms.put(identifier, refId);
+        }
+        return refId;
+    }
+
+    private String getPublication(String pubMedId) throws ObjectStoreException {
+        String refId = publications.get(pubMedId);
+        if (refId == null) {
+            Item item = createItem("Publication");
+            item.setAttribute("pubMedId", pubMedId);
+            store(item);
+            refId = item.getIdentifier();
+            publications.put(pubMedId, refId);
         }
         return refId;
     }
