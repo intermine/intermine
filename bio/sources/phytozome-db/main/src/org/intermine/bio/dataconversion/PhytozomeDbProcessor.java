@@ -262,6 +262,14 @@ public class PhytozomeDbProcessor {
   }
   private void fillRelationships() throws ObjectStoreException, SQLException {
     // and for the relationships between features
+    // this picks out everything that connects A to B with a (subject,object)
+    // in the feature_relationship table, and A to B through an intermediate I.
+    // In the latter case, the relationship can be (subject) A is related to
+    // (object)I and (subject) I is related to (object)B. But we also include
+    // (subject) A is related to (object) I and (subject) B is related to (object I)
+    // (as well as the relationship with subject and object reversed). Some things
+    // such as proteins and CDSs are related to each other since both are subjects
+    // to the same mRNA.
     String query =
             "SELECT " +
             "s.type_id as subject_type_id," +
@@ -285,8 +293,38 @@ public class PhytozomeDbProcessor {
             "WHERE o.feature_id=r2.object_id " +
             "AND i.feature_id=r2.subject_id " +
             "AND i.feature_id=r1.object_id " +
-            "AND s.feature_id=r1.subject_id ";
-            
+            "AND s.feature_id=r1.subject_id " +
+            "UNION " +
+            "SELECT " +
+            "s.type_id as subject_type_id, " +
+            "o.type_id AS object_type_id, " +
+            "r1.subject_id, r2.object_id " +
+            "FROM feature_relationship r1, " +
+            "feature_relationship r2, " +
+            tempFeatureTableName + " s," +
+            tempFeatureTableName + " i," +
+            tempFeatureTableName + " o " +
+            "WHERE o.feature_id=r2.object_id " +
+            "AND i.feature_id=r2.subject_id " +
+            "AND i.feature_id=r1.subject_id " +
+            "AND s.feature_id=r1.object_id " +
+            "AND s.type_id != o.type_id"+
+            "UNION " +
+            "SELECT " +
+            "s.type_id as subject_type_id, " +
+            "o.type_id AS object_type_id, " +
+            "r1.subject_id, r2.object_id " +
+            "FROM feature_relationship r1, " +
+            "feature_relationship r2, " +
+            tempFeatureTableName + " s," +
+            tempFeatureTableName + " i," +
+            tempFeatureTableName + " o " +
+            "WHERE o.feature_id=r2.subject_id " +
+            "AND i.feature_id=r2.object_id " +
+            "AND i.feature_id=r1.object_id " +
+            "AND s.feature_id=r1.subject_id " +
+            "AND s.type_id != o.type_id";
+
     Statement stmt = converter.getDatabase().getConnection().createStatement();
     ResultSet res = stmt.executeQuery(query);
     int count = 0;
@@ -419,6 +457,7 @@ public class PhytozomeDbProcessor {
       
       Item feat = converter.createItem(PhytozomeDbConfig.getIntermineType(chadoType));
       feat.setAttribute("primaryIdentifier", name);
+      feat.setAttribute("name", name);
       feat.setAttribute("secondaryIdentifier",uniqueName);
       feat.setAttribute("length",Integer.toString(seqlen));
       feat.setReference("organism", orgId);
@@ -503,10 +542,10 @@ public class PhytozomeDbProcessor {
       LOG.info("Done with query.");
       String idIndexQuery = "CREATE INDEX " + tempChromosomeTableName +
           "_feature_index ON " + tempChromosomeTableName + "(feature_id)";
-      LOG.info("executing: " + idIndexQuery);
+      LOG.info("Executing: " + idIndexQuery);
       stmt.execute(idIndexQuery);
       String analyze = "ANALYZE " + tempChromosomeTableName;
-      LOG.info("executing: " + analyze);
+      LOG.info("Executing: " + analyze);
       stmt.execute(analyze);
       LOG.info("Done with analyze.");
       LOG.info("Querying temp chromosome table.");
@@ -538,6 +577,7 @@ public class PhytozomeDbProcessor {
       }
       Item chrom = converter.createItem("Chromosome");
       chrom.setAttribute("primaryIdentifier", name);
+      chrom.setAttribute("name", name);
       chrom.setAttribute("secondaryIdentifier",uniqueName);
       chrom.setAttribute("length",Integer.toString(seqlen));
       chrom.setReference("organism", orgId);
@@ -546,7 +586,7 @@ public class PhytozomeDbProcessor {
       converter.recordObject(featureId,chrom.getIdentifier());
       count++;
     }
-    LOG.info("created " + count + " chromosomes");
+    LOG.info("Created " + count + " chromosomes");
     res.close();
     
   }
