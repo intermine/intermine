@@ -308,7 +308,7 @@ public class PhytozomeDbProcessor {
             "AND i.feature_id=r2.subject_id " +
             "AND i.feature_id=r1.subject_id " +
             "AND s.feature_id=r1.object_id " +
-            "AND s.type_id != o.type_id"+
+            "AND s.type_id != o.type_id "+
             "UNION " +
             "SELECT " +
             "s.type_id as subject_type_id, " +
