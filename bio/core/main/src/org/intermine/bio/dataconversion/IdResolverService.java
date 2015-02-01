@@ -61,9 +61,10 @@ public class IdResolverService
         // HACK - for worm in ncbi
         IdResolverService.getWormIdResolver();
         // HACK - resolve human ids to HGNC symbols
-        IdResolverService.getHumanIdResolver();
+        // IdResolverService.getHumanIdResolver();
         Set<String> validTaxonIds = new HashSet<String>(taxonIds);
         validTaxonIds.remove("6239");
+        //validTaxonIds.remove("9606");
         return new EntrezGeneIdResolverFactory().getIdResolver(validTaxonIds);
     }
 
