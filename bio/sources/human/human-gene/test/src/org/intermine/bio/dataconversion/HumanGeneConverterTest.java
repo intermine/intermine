@@ -51,7 +51,7 @@ public class HumanGeneConverterTest extends ItemsTestCase
      */
     public void testSimpleFiles() throws Exception {
         process("human_gene");
-        assertEquals(42, itemWriter.getItems().size());
+        assertEquals(54, itemWriter.getItems().size());
     }
 
     /**

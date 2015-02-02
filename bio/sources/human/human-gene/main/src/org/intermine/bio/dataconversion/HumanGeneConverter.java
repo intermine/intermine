@@ -148,6 +148,10 @@ public class HumanGeneConverter extends BioFileConverter
 
             gene.setAttribute("symbol", symbol);
 
+            if (!entrezid.isEmpty()) {
+                gene.setAttribute("secondaryIdentifier", entrezid);
+            }
+
             if (!name.isEmpty()) {
                 gene.setAttribute("name", name);
             }
