@@ -22,9 +22,6 @@
 <!-- for google webmaster -->
 <meta name="google-site-verification" content="${WEB_PROPERTIES['searchengines.google']}" />
 
-<!-- for yahoo -->
-<META name="y_key" content="${WEB_PROPERTIES['searchengines.yahoo']}" />
-
 <!-- for microsoft -->
 <meta name="msvalidate.01" content="${WEB_PROPERTIES['searchengines.msn']}" />
 
@@ -118,12 +115,12 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         "token": "${PROFILE.dayToken}",
         "help": "${WEB_PROPERTIES['feedback.destination']}"
     });
-    
+
     var notification = new FailureNotification({message: $SERVICE.root + " is incorrect"});
 
     $SERVICE.fetchVersion().then(reportVersion, notification.render);
-  
-    // Load list widgets.  
+
+    // Load list widgets.
     (function() {
       if (window['list-widgets'] != null) {
         // Make sure we have all deps required in `global.web.properties`, otherwise we fail!!!
@@ -131,7 +128,7 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         window.widgets = new ListWidgets({ 'root': $SERVICE.root, 'token': $SERVICE.token });
       }
     })();
-    
+
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua && ua.msie && parseInt(ua.version, 10) < 9) { // removed in 1.9.1
         new Notification({message: '<fmt:message key="old.browser"/>'}).render();
