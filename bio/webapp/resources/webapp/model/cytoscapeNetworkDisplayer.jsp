@@ -75,6 +75,7 @@
                   <option value="sif">SIF</option>
                   <option value="png">PNG</option>
                   <option value="svg">SVG</option>
+                  <option value="pdf">PDF</option>
                   <option value="tab">TSV</option>
                   <option value="csv">CSV</option>
               </select>
@@ -272,19 +273,89 @@
     // 'export' is reserved! (http://www.quackit.com/javascript/javascript_reserved_words.cfm)
     function exportNet(type) {
         if (type=="tab" || type=="csv") {
-            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet);
+
+          window.location.href = 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet
+          // This no longer works due to a Flash security update:
+            // vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type=' + type + '&fullInteractingGeneSet='+fullInteractingGeneSet);
         } else {
-            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
+
+          function base64toBlob(base64Data, contentType) {
+              contentType = contentType || '';
+              var sliceSize = 1024;
+              var byteCharacters = atob(base64Data);
+              var bytesLength = byteCharacters.length;
+              var slicesCount = Math.ceil(bytesLength / sliceSize);
+              var byteArrays = new Array(slicesCount);
+
+              for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+                  var begin = sliceIndex * sliceSize;
+                  var end = Math.min(begin + sliceSize, bytesLength);
+
+                  var bytes = new Array(end - begin);
+                  for (var offset = begin, i = 0 ; offset < end; ++i, ++offset) {
+                      bytes[i] = byteCharacters[offset].charCodeAt(0);
+                  }
+                  byteArrays[sliceIndex] = new Uint8Array(bytes);
+              }
+              return new Blob(byteArrays, { type: contentType });
+          }
+
+          var exportFile = function(data, name, contentType, binary) {
+
+              try {
+
+                contentType = 'application/octet-stream';
+                var a = document.createElement('a');
+                var blob;
+                if (binary) {
+                  blob = base64toBlob(data, contentType);
+                } else {
+                  blob = new Blob([data], {'type':contentType, });
+                }
+                a.href = window.URL.createObjectURL(blob);
+                a.download = name;
+                a.click();
+
+              } catch(e) {
+                  console.log("Exporting from the interaction network is not supported by your browser.");
+              }
+
+          }
+
+
+          switch (type) {
+
+            case "pdf": exportFile(vis.pdf(), "network.pdf", "application/octet-stream", true); break;
+            case "xgmml": exportFile(vis.xgmml(), "network.xgmml", "application/octet-stream", false); break;
+            case "svg": exportFile(vis.svg(), "network.svg", "application/octet-stream", false); break;
+            case "sif": exportFile(vis.sif(), "network.sif", "application/octet-stream", false); break;
+            case "png": exportFile(vis.png(), "network.png", "image/png", true); break;
+
+          }
+
         }
     }
-
-    jQuery("#exportoptions").change(function () {
-        exportNet(jQuery("#exportoptions option:selected").val());
-    });
 
     jQuery("#exportbutton").click(function () {
         exportNet(jQuery("#exportoptions option:selected").val());
     });
+
+    try {
+      var testblob = new Blob();
+    } catch(e) {
+      jQuery("#exportoptions > option").each(function() {
+          var nextoption = jQuery(this);
+          if (nextoption.val() != "csv" && nextoption.val() != "tab") {
+            nextoption.attr("disabled", "disabled");
+          }
+      });
+      jQuery("#exportoptions option[value=csv]").attr("selected", "selected");
+    }
+
+    jQuery("#exportbutton").click(function () {
+        exportNet(jQuery("#exportoptions option:selected").val());
+    });
+
 })();
 </script>
 
