@@ -314,7 +314,9 @@
                 }
                 a.href = window.URL.createObjectURL(blob);
                 a.download = name;
+                document.querySelector('body').appendChild(a);
                 a.click();
+                document.querySelector('body').removeChild(a);
 
               } catch(e) {
                   console.log("Exporting from the interaction network is not supported by your browser.");
