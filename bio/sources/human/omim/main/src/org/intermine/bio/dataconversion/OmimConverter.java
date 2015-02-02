@@ -80,9 +80,6 @@ public class OmimConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
 
         rslv = IdResolverService.getHumanIdResolver();
-        for (String taxonId : rslv.getTaxons()) {
-            System.out.println(" taxon " + taxonId);
-        }
         Map<String, File> files = readFilesInDir(dataDir);
 
         organism = getOrganism(HUMAN_TAXON);
