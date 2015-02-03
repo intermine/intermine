@@ -163,7 +163,6 @@ public class PsiComplexesConverter extends BioFileConverter
         if (StringUtils.isNotEmpty(identifier)) {
             complex.setAttribute("identifier", identifier);
         }
-        complex.setAttribute("shortName", interactionEvidence.getShortName());
         String systematicName = interactionEvidence.getSystematicName();
         if (StringUtils.isNotEmpty(systematicName)) {
             complex.setAttribute("systematicName", systematicName);
@@ -225,8 +224,7 @@ public class PsiComplexesConverter extends BioFileConverter
                         detailItem.setReference("interaction", interaction);
                         detailItem.setCollection("allInteractors", detail.getAllInteractors());
 
-                        processRegions(interactor, linkedFeature.getRanges(), detailItem, refId,
-                                binderRefId);
+                        processRegions(linkedFeature.getRanges(), detailItem, refId, binderRefId);
 
                         store(detailItem);
                     }
@@ -249,8 +247,8 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void processRegions(Item interactor, Collection<Range> ranges, Item detail,
-        String locatedOn, String feature)
+    private void processRegions(Collection<Range> ranges, Item detail, String locatedOn,
+        String feature)
         throws ObjectStoreException {
         for (Range range : ranges) {
             Item location = createItem("Location");
@@ -268,7 +266,7 @@ public class PsiComplexesConverter extends BioFileConverter
             store(location);
             Item region = createItem("InteractionRegion");
             region.setReference("location", location);
-            region.setReference("interactor", interactor);
+            region.setReference("interaction", detail);
             store(region);
         }
     }

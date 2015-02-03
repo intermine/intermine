@@ -37,7 +37,7 @@
         <reference name="participant" referenced-type="BioEntity" />
         <reference name="stoichiometry" referenced-type="Stoichiometry"/>
         <collection name="interactions" referenced-type="Interaction"/>
-        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interactor"/>
+
     </class>
 
     <class name="Stoichiometry" is-interface="true">
@@ -59,6 +59,7 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Interactor"/>
+        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="InteractionDetail"/>
     </class>
 
     <class name="InteractionRegion" is-interface="true">
@@ -67,7 +68,7 @@
       <reference name="gene" referenced-type="Gene" />
       <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
       <reference name="location" referenced-type="Location"/>
-      <reference name="interactor" referenced-type="Interactor" reverse-reference="interactingRegions"/>
+      <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
     </class>
 
 </classes>
