@@ -1,0 +1,5 @@
+<project name="phytozome-db" default="default" basedir=".">
+  <description>build, test, package phytozome-db</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

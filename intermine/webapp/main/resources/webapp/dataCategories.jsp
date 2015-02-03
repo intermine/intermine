@@ -5,6 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
+<<<<<<< HEAD
 <div class="body">
   <div id="leftCol">
     <div id="pageDesc" class="pageDesc">
@@ -17,11 +18,10 @@
            <img border="0" class="arrow" src="images/right-arrow.gif" alt="Go"/>
          </html:link>
     </im:boxarea>
-  </div>
-</div>
 
-<div id="rightCol">
-  <im:boxarea titleKey="dataCategories.title" stylename="gradientbox">
+  </div>
+  <div id="rightCol">
+   <im:boxarea titleKey="dataCategories.title" stylename="gradientbox">
     <c:choose>
       <c:when test="${!empty ASPECTS}">
         <tiles:insert name="aspects.tile"/>
@@ -51,3 +51,4 @@
     </c:choose>
   </im:boxarea>
 </div>
+<!-- /dataCategories -->

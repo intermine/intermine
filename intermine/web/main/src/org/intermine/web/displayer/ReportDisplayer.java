@@ -35,7 +35,7 @@ public abstract class ReportDisplayer
 
     protected ReportDisplayerConfig config;
     protected InterMineAPI im;
-    private static final Logger LOG = Logger.getLogger(ReportDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(ReportDisplayer.class);
 
 
     /**
@@ -58,11 +58,19 @@ public abstract class ReportDisplayer
     public void execute(HttpServletRequest request, ReportObject reportObject) {
         request.setAttribute("reportObject", reportObject);
         request.setAttribute("jspPage", getJspPage());
+        Profile p = SessionMethods.getProfile(request.getSession());
+        // JWC. are we logged in?
+        if (p.isLoggedIn()) {
+          LOG.info("User "+p.getUsername()+" is logged in.");
+        } else {
+          LOG.info("User is not logged in.");
+        }
         try {
             display(request, reportObject);
         } catch (ReportDisplayerNoResultsException e) {
             request.setAttribute("displayerName", getClass().getSimpleName());
             request.setAttribute("jspPage", "reportDisplayerNoResults.jsp");
+            
         } catch (Exception e) {
             // failed to display so put an error message in place instead
             LOG.error("Error rendering report displayer " + getClass() + " for "

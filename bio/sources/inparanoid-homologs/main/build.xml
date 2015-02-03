@@ -1,0 +1,4 @@
+<project name="inparanoid-homologs-tasks" default="default" basedir=".">
+  <description>build inparanoid-homologs tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<userprofile>
+  <items/>
+  <bags/>
+  <queries>
+  </queries>
+<template-queries>
+
+
+<template name="Region_Gene" title="Genes in a genomic Region." longDescription="Show all the genes within a region of a particular chromosome on an organism." comment="">
+    <query name="Region_Gene" model="genomic"
+     view="Gene.primaryIdentifier Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end Gene.chromosomeLocation.strand"
+     sortOrder="Gene.chromosomeLocation.start ASC" constraintLogic="A and B and C and D" >
+    <constraint path="Gene.organism.name" editable="true" op="=" code="A" value="Zea mays" />
+    <constraint path="Gene.chromosome.primaryIdentifier" editable="true" op="=" code="B" value="1" />
+    <constraint path="Gene.chromosomeLocation.start" editable="true" op="&lt;=" code="C" value="1050000" />
+    <constraint path="Gene.chromosomeLocation.end" editable="true" op="&gt;=" code="D" value="1000000" />
+    </query>
+</template>
+
+<template name="Gene_Protein" title="Gene --&gt; Proteins." longDescription="Show the proteins for a specified gene." comment="06.06.07 updated to work from gene class - Philip">
+  <query name="Gene_Protein" model="genomic"
+     view="Gene.primaryIdentifier Gene.proteins.primaryIdentifier Gene.proteins.length" longDescription="Show the proteins for a particular gene." sortOrder="Gene.primaryIdentifier asc">
+    <pathDescription pathString="Gene.proteins" description="Protein"/>
+    <constraint path="Gene" editable="true" op="LOOKUP" value="(Enter gene name)"/>
+  </query>
+</template>
+
+<template name="Organism_MRNA_Sequence" title="Show all mRNAs for an organism with nucleotide sequence." longDescription="Show all the mRNAs from a particular organism." comment="">
+  <query name="Organism_MRNA_Sequence" model="genomic"
+     view="MRNA.primaryIdentifier MRNA.length MRNA.sequence.residues" longDescription="Show all the proteins from a particular organism."
+     sortOrder="MRNA.primaryIdentifier asc">
+  </query>
+</template>
+
+<template name="Organism_Protein" title="All proteins for an organism" longDescription="Show all the proteins from a particular organism." comment="">
+  <query name="Organism_Protein" model="genomic"
+     view="Protein.primaryIdentifier Protein.primaryAccession" longDescription="Show all the proteins from a particular organism."
+     sortOrder="Protein.primaryIdentifier asc">
+    <constraint path="Protein.organism.name" editable="true" description="Show all the proteins from the organism:" op="=" value="Zea mays"/>
+  </query>
+</template>
+
+<template name="Organism_Protein_Sequence" title="Show all proteins in an organism with polypeptide sequence." >
+  <query name="Organism_Protein_Sequence" model="genomic"
+     view="Protein.primaryIdentifier Protein.organism.name Protein.length Protein.sequence.residues"
+     sortOrder="Protein.primaryIdentifier ASC">
+    <constraint path="Protein.organism.name" editable="true" description="Show all proteins from the organism with the polypeptide sequence" op="=" value="Zea mays" />
+  </query>
+</template>
+
+<template name="GOTerm" title="GO term lookup.">
+    <query name="GOTerm" model="genomic"
+     view="OntologyTerm.identifier OntologyTerm.namespace OntologyTerm.name OntologyTerm.description"
+     sortOrder="OntologyTerm.identifier ASC" >
+    <constraint path="OntologyTerm.identifier" op="=" code="A" value="GO:2000906" />
+    </query>
+</template>
+
+<template name="Protein_Domain_GO" title="Protein Domains with GO terms.">
+
+  <query name="Protein_Domain_GO" model="genomic" view="Protein.primaryIdentifier Protein.proteinfeatures.evidence Protein.proteinfeatures.crossreference.identifier Protein.proteinfeatures.crossreference.subject.primaryIdentifier Protein.proteinfeatures.crossreference.subject.ontologyAnnotations.ontologyTerm.identifier Protein.proteinfeatures.crossreference.subject.ontologyAnnotations.ontologyTerm.namespace Protein.proteinfeatures.crossreference.subject.ontologyAnnotations.ontologyTerm.name" sortOrder="Protein.primaryIdentifier ASC" >
+    <constraint path="Protein.organism.shortName" editable="true" op="=" code="A" value="P. trichocarpa" />
+    <pathDescription pathString="Protein.organism.shortName" description="Organism Name"/>
+    <pathDescription pathString="Protein.primaryIdentifier" description="Protein Name"/>
+    <pathDescription pathString="Protein.proteinfeatures.evidence" description="Program Name"/>
+    <pathDescription pathString="Protein.proteinfeatures.crossreference.identifier" description="Domain Name"/>
+    <pathDescription pathString="Protein.proteinfeatures.crossreference.subject.primaryIdentifier" description="InterPro Name"/>
+    <pathDescription pathString="Protein.proteinfeatures.crossreference.subject.ontologyAnnotations.ontologyTerm.identifier" description="GO Term"/>
+    <pathDescription pathString="Protein.proteinfeatures.crossreference.subject.ontologyAnnotations.ontologyTerm.namespace" description="GO Class"/>
+    <pathDescription pathString="Protein.proteinfeatures.crossreference.subject.ontologyAnnotations.ontologyTerm.name" description="GO Description"/>
+  </query>
+</template>
+
+<template name="Family_Protein_Member" title="Protein Families of a Specific Protein" >
+  <query name="Family_Protein_Member" model="genomic"
+       view="ProteinFamily.clusterId ProteinFamily.clusterName ProteinFamily.methodId ProteinFamily.msa" longDescription="" sortOrder="ProteinFamily.clusterId asc">
+    <constraint path="ProteinFamily.proteins.primaryIdentifier" op="=" editable="true" value="Glyma14g36880.1" />
+  </query>
+</template>
+
+<template name="Family_KOG_Member" title="Protein Families of a Specific KOG Identifier" >
+  <query name="Family_KOG_Member" model="genomic"
+         view="ProteinFamily.clusterId ProteinFamily.clusterName ProteinFamily.methodId ProteinFamily.consensus.residues" sortOrder="ProteinFamily.clusterId ASC" >
+    <constraint path="ProteinFamily.crossReferences.identifier" op="=" editable="true" value="K02907" />
+  </query>
+</template>
+
+<template name="SNP_Range" title="SNPs within Range of Genomic Coordinates.">
+  <query name="SNP_Range" model="genomic" view="SNPLocation.locatedOn.primaryIdentifier SNPLocation.start SNPLocation.reference SNPLocation.snps.alternate SNPLocation.snps.consequences.gene.primaryIdentifier SNPLocation.snps.consequences.substitution SNPLocation.snps.source.name" longDescription="" sortOrder="SNPLocation.locatedOn.primaryIdentifier asc" constraintLogic="A and B and C">
+    <constraint path="SNPLocation.start" description="Start Coordinate" editable="true" code="A" op="&gt;=" value="1"/>
+    <constraint path="SNPLocation.start" description="End Coordinate" editable="true" code="B" op="&lt;=" value="100000"/>
+    <constraint path="SNPLocation.locatedOn.primaryIdentifier" description="Chromosome" editable="true" code="C" op="=" value="Chr01"/>
+  </query>
+</template>
+
+<template name="SNP_Affected_Gene" title="SNPs Near an Annotated Gene.">
+  <query name="SNP_Affected_Gene" model="genomic" view="SNPLocation.locatedOn.primaryIdentifier SNPLocation.start SNPLocation.reference SNPLocation.snps.source.name SNPLocation.snps.alternate SNPLocation.snps.consequences.type.type SNPLocation.snps.consequences.substitution" longDescription="" sortOrder="SNPLocation.locatedOn.primaryIdentifier asc">
+    <constraint path="SNPLocation.snps.consequences.gene.primaryIdentifier" description="Affected Gene" editable="true" op="=" value="Potri.001G000500"/>
+  </query>
+</template>
+
+</template-queries>
+
+<tags>
+
+  <tag name="im:summary" objectIdentifier="BindingSite.factor" type="reference" />
+  <tag name="im:summary" objectIdentifier="BioEntity.organism" type="reference" />
+  <tag name="im:summary" objectIdentifier="BioEntity.synonyms" type="collection" />
+  <tag name="im:summary" objectIdentifier="Gene.proteins" type="collection" />
+  <tag name="im:summary" objectIdentifier="Gene.publications" type="collection" />
+  <tag name="im:summary" objectIdentifier="MicroarrayOligo.transcript" type="reference" />
+  <tag name="im:summary" objectIdentifier="Protein.comments" type="collection" />
+  <tag name="im:summary" objectIdentifier="Protein.genes" type="collection" />
+  <tag name="im:summary" objectIdentifier="Protein.publications" type="collection" />
+  <tag name="im:summary" objectIdentifier="RegulatoryRegion.gene" type="reference" />
+
+  <tag name="im:public" objectIdentifier="Organism_Protein_Sequence" type="template" />
+  <tag name="im:public" objectIdentifier="Organism_MRNA_Sequence" type="template" />
+  <tag name="im:public" objectIdentifier="GOtermidentifier_name" type="template" />
+  <tag name="im:public" objectIdentifier="Region_Gene" type="template" />
+  <tag name="im:public" objectIdentifier="Protein_Domain_GO" type="template" />
+  <tag name="im:public" objectIdentifier="Gene_Identifiers" type="template" />
+  <tag name="im:public" objectIdentifier="Gene_Protein" type="template" />
+  <tag name="im:public" objectIdentifier="Gene_allGOTerms" type="template" />
+  <tag name="im:public" objectIdentifier="Gene_particularGoannotation" type="template" />
+  <tag name="im:public" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template" />
+  <tag name="im:public" objectIdentifier="GOTerm" type="template" />
+  <tag name="im:public" objectIdentifier="Organism_Protein" type="template" />
+  <tag name="im:public" objectIdentifier="Protein_GOterms" type="template" />
+  <tag name="im:public" objectIdentifier="Protein_GOtermsSpecificOntology" type="template" />
+  <tag name="im:public" objectIdentifier="SNP_Range" type="template" />
+  <tag name="im:public" objectIdentifier="SNP_Affected_Gene" type="template" />
+
+  <tag name="im:public" objectIdentifier="Family_Protein_Member" type="template" />
+  <tag name="im:public" objectIdentifier="Family_KOG_Member" type="template" />
+
+  <tag name="im:preferredBagType" objectIdentifier="org.intermine.model.bio.Gene" type="class" />
+  <tag name="im:preferredBagType" objectIdentifier="org.intermine.model.bio.Protein" type="class" />
+
+  <tag name="im:hidden" objectIdentifier="BioEntity.objects" type="collection" />
+  <tag name="im:hidden" objectIdentifier="BioEntity.relations" type="collection" />
+  <tag name="im:hidden" objectIdentifier="BioEntity.subjects" type="collection" />
+  <tag name="im:hidden" objectIdentifier="Evidence.relations" type="collection" />
+
+  <tag name="im:frontpage" objectIdentifier="Gene_GO" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Gene_Protein" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Gene_allGOTerms" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Organism_GoTerm_GeneWithannotation" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Organism_Protein" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Protein_GOterms" type="template" />
+  <tag name="im:frontpage" objectIdentifier="SNP_Range" type="template" />
+  <tag name="im:frontpage" objectIdentifier="SNP_Affected_Gene" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Family_Protein_Member" type="template" />
+  <tag name="im:frontpage" objectIdentifier="Family_KOG_Member" type="template" />
+
+
+  <tag name="im:converter" objectIdentifier="Gene_To_Protein_Type_Converter" type="template" />
+  <tag name="im:converter" objectIdentifier="Protein_To_Gene_Type_Converter" type="template" />
+
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.Chromosome" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.ChromosomeBand" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.GOTerm" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.Gene" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.MRNA" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.NcRNA" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.SnoRNA" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.TFBindingSite" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.Transcript" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="org.intermine.model.bio.UTR" type="class" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Chromosome.features" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Chromosome.genes" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Chromosome.transcripts" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Gene.UTRs" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Gene.transcripts" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="LocatedSequenceFeature.overlappingFeatures" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="MRNA.UTRs" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Protein.genes" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Transcript.introns" type="collection" />
+  <tag name="im:aspect:Genomes" objectIdentifier="CDS.MRNA" type="reference" />
+  <tag name="im:aspect:Genomes" objectIdentifier="LocatedSequenceFeature.chromosome" type="reference" />
+  <tag name="im:aspect:Genomes" objectIdentifier="LocatedSequenceFeature.chromosomeLocation" type="reference" />
+  <tag name="im:aspect:Genomes" objectIdentifier="LocatedSequenceFeature.sequence" type="reference" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Transcript.gene" type="reference" />
+  <tag name="im:aspect:Genomes" objectIdentifier="Region_Gene" type="template" />
+
+  <tag name="im:aspect:Genes" objectIdentifier="Gene_Protein" type="template" />
+  <tag name="im:aspect:Genes" objectIdentifier="Organism_MRNA_Sequence" type="template" />
+  <tag name="im:aspect:Genes" objectIdentifier="GO_name_Gene" type="template" />
+  <tag name="im:aspect:Genes" objectIdentifier="Gene_GO" type="template" />
+  <tag name="im:aspect:Genes" objectIdentifier="Gene_allGOTerms" type="template" />
+  <tag name="im:aspect:Genes" objectIdentifier="Gene_particularGoannotation" type="template" />
+  <tag name="im:aspect:Genes" objectIdentifier="GOTerm" type="template" />
+
+  <tag name="im:aspect:Proteins" objectIdentifier="org.intermine.model.bio.Protein" type="class" />
+  <tag name="im:aspect:Proteins" objectIdentifier="org.intermine.model.bio.ProteinDomain" type="class" />
+  <tag name="im:aspect:Proteins" objectIdentifier="org.intermine.model.bio.ProteinInteraction" type="class" />
+  <tag name="im:aspect:Proteins" objectIdentifier="CDS.polypeptides" type="collection" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Gene.proteins" type="collection" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein.features" type="collection" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein.keywords" type="collection" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein.proteinDomains" type="collection" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein_Domain_GO" type="template" />
+  <tag name="im:aspect:Proteins" objectIdentifier="CDS.protein" type="reference" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Protein.sequence" type="reference" />
+  <tag name="im:aspect:Proteins" objectIdentifier="ProteinInteraction.protein" type="reference" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_Protein" type="template" />
+  <tag name="im:aspect:Proteins" objectIdentifier="Organism_Protein_Sequence" type="template" />
+
+  <tag name="im:aspect:Families" objectIdentifier="Family_Protein_Member" type="template" />
+  <tag name="im:aspect:Families" objectIdentifier="Family_KOG_Member" type="template" />
+
+  <tag name="im:aspect:Diversity" objectIdentifier="SNP_Range" type="template" />
+  <tag name="im:aspect:Diversity" objectIdentifier="SNP_Affected_Gene" type="template" />
+
+
+</tags>
+</userprofile>

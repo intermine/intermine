@@ -1,0 +1,1 @@
+convert -size 8x8 xc:white -fill #6E9E75 -stroke #6E9E75 -draw "arc -8,16 8,0 90,0" corner_t_r.png

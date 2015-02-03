@@ -270,8 +270,34 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 CreateLocationOverlapIndex cloi =
                         new CreateLocationOverlapIndex(getObjectStoreWriter());
                 cloi.create();
+            } else if ("link-ins".equals(operation)) {
+                CreateFlyBaseLinkIns.createLinkInFile(getObjectStoreWriter().getObjectStore());
+            } else if ("modmine-metadata-cache".equals(operation)) {
+                CreateModMineMetaDataCache.createCache(getObjectStoreWriter().getObjectStore());
+            } else if ("add-uniprot-ids".equals(operation)) {
+              AddUniProtIds task = new AddUniProtIds(getObjectStoreWriter());
+              task.execute();
+            } else if ("transfer-go-terms".equals(operation)) {
+              TransferGOAnnotations task = new TransferGOAnnotations(getObjectStoreWriter());
+              task.execute();           
+            } else if ("transfer-ontology-terms".equals(operation)) {
+              TransferOntologyAnnotations task = new TransferOntologyAnnotations(getObjectStoreWriter());
+              task.execute();
+            } else if ("rename-ontologies".equals(operation)) {
+              OntologyRenamer task = new OntologyRenamer(getObjectStoreWriter());
+              task.execute();
+            } else if ("name-features".equals(operation)) {
+              FeatureNamer task = new FeatureNamer(getObjectStoreWriter());
+              task.execute();
+            } else if ("add-singleton-sequence".equals(operation)) {
+              SingletonSequenceTransfer task = new SingletonSequenceTransfer(getObjectStoreWriter());
+              task.execute();
+            } else if ("populate-child-features".equals(operation)) {
+            	PopulateChildFeatures jb = new PopulateChildFeatures(getObjectStoreWriter());
+            	jb.populateCollection();
+            } else {
+              throw new BuildException("unknown operation: " + operation);
             }
-
         } catch (BuildException e) {
             LOGGER.error("Failed postprocess. Operation was: " + operation, e);
             throw e;

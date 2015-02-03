@@ -78,6 +78,24 @@
   </servlet-mapping>
 
 <!-- ================================================================================= -->
+<!-- Caliban Authenticator -->
+<!-- ================================================================================= -->
+
+  <servlet>
+  <servlet-name>caliban-auth</servlet-name>
+  <servlet-class>org.intermine.web.logic.login.CalibanAuthenticator</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+  </servlet>
+
+  <servlet-mapping>
+  <servlet-name>caliban-auth</servlet-name>
+  <url-pattern>/caliban</url-pattern>
+  </servlet-mapping>
+
+<!-- ================================================================================= -->
 <!-- Intermine Web Service mapping -->
 <!-- ================================================================================= -->
 

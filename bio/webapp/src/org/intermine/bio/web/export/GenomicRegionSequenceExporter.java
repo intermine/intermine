@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.lang.NumberFormatException;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.biojava.bio.seq.DNATools;
@@ -40,6 +41,9 @@ public class GenomicRegionSequenceExporter
 {
     private ObjectStore os;
     private OutputStream out;
+    
+   
+
     // Map to hold DNA sequence of a whole chromosome in memory
     private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
 
@@ -66,6 +70,7 @@ public class GenomicRegionSequenceExporter
         org.setShortName(aRegion.getOrganism());
 
         org = os.getObjectByExample(org, Collections.singleton("shortName"));
+
 
         for (GenomicRegion gr : grList) {
             Chromosome chr = (Chromosome) DynamicUtil.createObject(
@@ -107,7 +112,7 @@ public class GenomicRegionSequenceExporter
             List<String> headerBits = new ArrayList<String>();
             headerBits.add(gr.getChr() + ":" + start + ".." + end);
             headerBits.add(end - start + 1 + "bp");
-            headerBits.add(gr.getOrganism());
+            headerBits.add(org.getShortName());
             String header = StringUtil.join(headerBits, " ");
 
             String seqName = "genomic_region_" + gr.getChr() + "_"

@@ -1569,7 +1569,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             os.databaseAltered(tablesAltered);
             tablesAltered.clear();
         } catch (SQLException e) {
-            throw new ObjectStoreException("Error committing transaction", e);
+            throw new ObjectStoreException("Error committing transaction" + e.getMessage(), e);
         }
     }
 

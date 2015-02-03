@@ -38,7 +38,11 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.BioEntity;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.proxy.ProxyCollection;
+import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
@@ -127,7 +131,7 @@ public class AttributeLinksController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-            + "\\.([^.]+)(\\.list)?\\"
+            + "\\.([^0-9].+?)(\\.list)?\\"
             + ".(url|text|imageName|usePost|delimiter|enctype|dataset|useCheckbox)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
@@ -136,6 +140,7 @@ public class AttributeLinksController extends TilesAction
             String key = (String) entry.getKey();
             String value = (String) entry.getValue();
             Matcher matcher = p.matcher(key);
+            //LOG.info("Parsing key "+key+" with pattern "+regexp);
             if (matcher.matches()) {
 
                 String dbName = matcher.group(1);
@@ -172,7 +177,41 @@ public class AttributeLinksController extends TilesAction
                 } else {
                     try {
                         if (imo != null) {
-                            attrValue = imo.getFieldValue(attrName);
+                          // let's walk a pathquery
+                          InterMineObject currentImo = imo;
+                          for(String attribute: attrName.split("\\.")) {
+                            try {
+                              attrValue = currentImo.getFieldValue(attribute);
+                              if (attrValue instanceof ProxyCollection) {
+                                for( Object o : ((ProxyCollection)attrValue).asList()) {
+                                  // not right. Just pulling the first one
+                                  currentImo = (InterMineObject)o;
+                                  break;
+                                }
+                              } else if (attrValue instanceof ProxyReference) {
+                                currentImo = ((ProxyReference)attrValue).getObject();
+                              } else if (attrValue instanceof InterMineObject) {
+                                currentImo = (InterMineObject)attrValue;
+                              }
+                            } catch (IllegalAccessException e) {
+                              // before giving up, see if this is one of the coded
+                              // cases
+                              if ((currentImo instanceof Location) && attribute.equals("region") ) {
+                                BioEntity chrom = (BioEntity)(currentImo.getFieldValue("locatedOn"));
+                                LOG.info("Constructing region string from "+((Location)currentImo).getStart()+" and "+((Location)currentImo).getEnd());
+                                attrValue = chrom.getPrimaryIdentifier()+":"+((Location)currentImo).getStart()+".."+((Location)currentImo).getEnd();
+                              } else if ((currentImo instanceof Location) && attribute.equals("paddedRegion") ) {
+                                BioEntity chrom = (BioEntity)(currentImo.getFieldValue("locatedOn"));
+                                Integer startRegion = ((Location)currentImo).getStart();
+                                Integer endRegion = ((Location)currentImo).getEnd();
+                                Integer extension = (endRegion-startRegion)/10;
+                                startRegion = (startRegion > extension)?startRegion-extension:1;
+                                attrValue = chrom.getPrimaryIdentifier()+":"+(startRegion)+".."+(endRegion+extension);
+                              } else {
+                                throw (new IllegalAccessException(e.getMessage()));
+                              }
+                            }
+                          }
                         } else { //it's a bag!
                             attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
                             if (!"*".equalsIgnoreCase(taxId)) {
@@ -195,6 +234,7 @@ public class AttributeLinksController extends TilesAction
                             config.put("valid", Boolean.TRUE);
                         }
                     } catch (IllegalAccessException e) {
+                      
                         config.put("attributeValue", e);
                         config.put("valid", Boolean.FALSE);
                         LOG.error("configuration problem in AttributeLinkDisplayerController: "

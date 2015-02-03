@@ -7,7 +7,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/standard-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-2.5-final-20040302.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jstl-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/struts-core-1.3.10.jar" sourcepath="/home/ajk59/.m2/repository/org/apache/struts/struts-core/1.3.10/struts-core-1.3.10-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/struts-core-1.3.10.jar" sourcepath="/global/u1/j/jcarlson/src/struts-1.3.10/src"/>
 	<classpathentry kind="lib" path="lib/struts-taglib-1.3.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/struts-tiles-1.3.10.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/struts-extras-1.3.10.jar"/>

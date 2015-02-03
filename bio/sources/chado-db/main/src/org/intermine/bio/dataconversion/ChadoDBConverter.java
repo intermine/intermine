@@ -24,12 +24,17 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.model.bio.Organism;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.metadata.StringUtil;
+import org.intermine.xml.full.Attribute;
+import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to read from a Chado database into items
@@ -44,6 +49,10 @@ public class ChadoDBConverter extends BioDBConverter
     private String processors = "";
 
     private final Set<OrganismData> organismsToProcess = new HashSet<OrganismData>();
+    // be default, the version is 'current'
+    private String organismVersion = "current";
+    private Integer taxonId = null;
+    private String dbxrefId;
 
     private final OrganismRepository organismRepository;
 
@@ -95,7 +104,25 @@ public class ChadoDBConverter extends BioDBConverter
             organismsToProcess.add(od);
         }
     }
-
+    public void setOrganism(String organism) {
+      try {
+        taxonId = Integer.valueOf(organism);
+      } catch (NumberFormatException e) {
+        throw new RuntimeException("can't find taxon id for: " + organism);
+      }
+    }
+    public void setVersion(String version) {
+      organismVersion = version;
+    }
+    public String getVersion() {
+      return organismVersion;
+    }
+    public void setDbxrefId(String dbxref) {
+      dbxrefId = dbxref;
+  }
+    public String getDbxrefId() {
+      return dbxrefId;
+    }
     /**
      * Set the class names of the ChadoProcessors to run.
      * @param processors a space separated list of the fully-qualified class names of module
@@ -133,6 +160,22 @@ public class ChadoDBConverter extends BioDBConverter
             throw new IllegalArgumentException("processors not set in ChadoDBConverter");
         }
 
+        // register the (versioned) organisms
+        if (taxonId != null ) {
+          Item organism = createItem("Organism");
+          organism.setAttribute("taxonId", taxonId.toString());
+          organism.setAttribute("version",organismVersion);
+          try {
+            store(organism);
+          } catch (ObjectStoreException e) {
+            throw new RuntimeException("failed to store organism with taxonId: " + taxonId, e);
+          }
+          addOrganism(organism);
+          organismsToProcess.add(organismRepository.getOrganismDataByTaxon(taxonId));
+        } else {
+          throw new BuildException("No taxonId specified.");
+        }
+        
         Map<OrganismData, Integer> tempChadoOrgMap = getChadoOrganismIds(getConnection());
 
         for (OrganismData od: organismsToProcess) {
@@ -143,6 +186,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
             chadoToOrgData.put(chadoId, od);
         }
+        
 
         if (chadoToOrgData.size() == 0) {
             throw new RuntimeException("can't find any known organisms in the organism table");

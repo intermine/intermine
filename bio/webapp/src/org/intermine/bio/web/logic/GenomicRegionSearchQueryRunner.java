@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.model.ChromosomeInfo;
@@ -243,11 +244,13 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
                 // Add orderby
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
-
-                ExportResultsIterator results = im.getPathQueryExecutor().execute(query);
+                PathQueryExecutor pQE = im.getPathQueryExecutor(profile);
+                // JWC bigger batch size.
+                pQE.setBatchSize(100000);
+                ExportResultsIterator results = pQE.execute(query);
 
                 // a List contains all the chrInfo (organism, chrPID, length)
-                List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
+                List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>(500000);
                 // a Set contains all the orgName
                 Set<String> orgSet = new HashSet<String>();
 

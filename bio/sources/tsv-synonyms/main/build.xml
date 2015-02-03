@@ -1,0 +1,4 @@
+<project name="tsv-synonyms-tasks" default="default" basedir=".">
+  <description>build tsv-synonyms tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

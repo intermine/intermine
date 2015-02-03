@@ -135,7 +135,31 @@ public abstract class BioDBConverter extends DBConverter
         location.setReference("feature", locatedSequenceFeatureId);
         return location;
     }
+    /**
+     * Make a Location Relation between a LocatedSequenceFeature and a Chromosome.
+     * @param chromosomeId Chromosome Item identifier
+     * @param locatedSequenceFeatureId the Item identifier of the feature
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @return the new Location object
+     */
+    protected Item makeLocation(String chromosomeId, String locatedSequenceFeatureId,
+                                int start, int end, int strand) {
+        Item location = createItem("Location");
 
+        if (start < end) {
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
+        } else {
+            location.setAttribute("start", String.valueOf(end));
+            location.setAttribute("end", String.valueOf(start));
+        }
+        location.setAttribute("strand", String.valueOf(strand));
+        location.setReference("locatedOn", chromosomeId);
+        location.setReference("feature", locatedSequenceFeatureId);
+        return location;
+    }
     /**
      * The Organism item created from the taxon id passed to the constructor.
      * @param taxonId NCBI taxonomy id of organism to create
@@ -155,6 +179,13 @@ public abstract class BioDBConverter extends DBConverter
             organisms.put(taxonString, organism);
         }
         return organism;
+    }
+    /**
+     * Add an organism stored by other means.
+     * @param A stored organism.
+     */
+    public void addOrganism(Item organism) {
+      organisms.put(organism.getAttribute("taxonId").getValue(), organism);
     }
 
     /**

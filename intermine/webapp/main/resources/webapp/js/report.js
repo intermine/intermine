@@ -14,7 +14,7 @@ function trimTable(e) {
   if (rows.length > 10) {
       var count = 10;
       rows.each(function(index) {
-        if (count > 0) {
+        if (count > 0) {
           count--;
         } else {
           // hide rows 10+
@@ -57,7 +57,7 @@ function showMoreRows(e, round, maxCount) {
   var rows = table.find('tbody tr:hidden')
   // traverse rows
   rows.each(function(index) {
-    if (count > 0) {
+    if (count > 0) {
       // show row
       jQuery(this).css('display', '');
       count = parseInt(count) - 1;
@@ -223,7 +223,7 @@ function showMoreRowsTemplate(e, round, maxCount) {
   var count = maxCount;
   // traverse rows
   rows.each(function(index) {
-   if (count > 0) {
+   if (count > 0) {
       // show row
       jQuery(this).show();
       count = parseInt(count) - 1;

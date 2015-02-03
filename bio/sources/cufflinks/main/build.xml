@@ -1,0 +1,4 @@
+<project name="cufflinks-tasks" default="default" basedir=".">
+  <description>build cufflinks tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

@@ -100,9 +100,22 @@ public class TransferSequences
         QueryClass qcChr = new QueryClass(Chromosome.class);
         q.addFrom(qcChr);
         q.addToSelect(qcChr);
-        QueryObjectReference seqRef = new QueryObjectReference(qcChr, "sequence");
-        ContainsConstraint cc = new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL);
-        q.setConstraint(cc);
+        QueryObjectReference seqRef = new QueryObjectReference(qcChr, "sequence");        
+        QueryClass qcLoc = new QueryClass(Location.class);
+        q.addFrom(qcLoc);
+        QueryObjectReference locChromRef = new QueryObjectReference(qcLoc,"locatedOn");
+        QueryObjectReference locFeatRef = new QueryObjectReference(qcLoc,"feature");
+        QueryClass qcFeat = new QueryClass(SequenceFeature.class);
+        q.addFrom(qcFeat);
+        QueryObjectReference featSeqRef = new QueryObjectReference(qcFeat, "sequence");
+
+        ConstraintSet cSet = new ConstraintSet(ConstraintOp.AND);
+        cSet.addConstraint(new ContainsConstraint(seqRef, ConstraintOp.IS_NOT_NULL));
+        cSet.addConstraint(new ContainsConstraint(featSeqRef, ConstraintOp.IS_NULL));
+        cSet.addConstraint(new ContainsConstraint(locChromRef,ConstraintOp.CONTAINS,qcChr));
+        cSet.addConstraint(new ContainsConstraint(locFeatRef,ConstraintOp.CONTAINS,qcFeat));
+        q.setConstraint(cSet);
+        q.setDistinct(true);
 
         SingletonResults res = os.executeSingleton(q);
         Iterator<?> chrIter = res.iterator();

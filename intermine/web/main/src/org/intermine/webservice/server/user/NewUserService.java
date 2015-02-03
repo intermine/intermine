@@ -87,23 +87,6 @@ public class NewUserService extends JSONService
 
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
-
-        MailAction welcomeMessage = new WelcomeAction(input.getUsername());
-        if (!InterMineContext.queueMessage(welcomeMessage)) {
-            LOG.error("Mail queue capacity exceeded. Not sending welcome message");
-        }
-
-        String mailingList = null;
-        if (input.subscribeToList()) {
-            mailingList = getProperty("mail.mailing-list");
-            MailAction subscribe = new SubscribeAction(input.getUsername());
-            if (!InterMineContext.queueMessage(subscribe)) {
-                LOG.error("Mail queue capacity exceeded. Not sending subscription message");
-            }
-        }
-        user.put("subscribedToList", mailingList != null);
-        user.put("mailingList", mailingList);
-
         Profile p = pm.getProfile(input.getUsername());
         if (p == null) {
             throw new ServiceException("Creating profile failed");

@@ -89,6 +89,12 @@ public abstract class MailUtils
             properties.put("mail.smtp.auth", authFlag);
         }
 
+        // with no specified domain, look at property
+        if (!to.contains("@") ) {
+          String mailDomain = (String) webProperties.get("mail.defaultDomain");
+          if (mailDomain != null && !mailDomain.isEmpty() ) 
+            to = new String(to + "@" + mailDomain);
+        }
         Session session;
         if (authFlag != null && ("true".equals(authFlag) || "t".equals(authFlag))) {
             Authenticator authenticator = new Authenticator() {

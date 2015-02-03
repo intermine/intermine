@@ -1,0 +1,4 @@
+<project name="organism-version-tasks" default="default" basedir=".">
+  <description>build organism-version tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

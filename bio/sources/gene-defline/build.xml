@@ -1,0 +1,5 @@
+<project name="gene-defline" default="default" basedir=".">
+  <description>build, test, package gene-defline</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

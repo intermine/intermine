@@ -1,0 +1,75 @@
+<aspects>
+  <aspect name="Genomics">
+    <subtitle>Genome annotation</subtitle>
+    <icon-image>model/images/genomics.gif</icon-image>
+    <large-image>model/images/genomics.gif</large-image>
+    <intro-text>
+      The gene structure and other genome annotation in PhytoMine are provided by
+      a variety of curated source databases.  In most cases PhytoMine includes
+      all genome features that have chromosomal locations.
+    </intro-text>
+    <tile-name>model/genomics.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Transcripts">
+    <subtitle>Transcript&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Transcript annotation (including expression) from Phytozome.
+    </intro-text>
+    <tile-name>model/transcripts.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Proteins">
+    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Protein annotation (including domain annotation) from Phytozome.
+    </intro-text>
+    <tile-name>model/proteins.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Orthology">
+    <subtitle>Orthologs and paralogs&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/proteins.png</icon-image>
+    <large-image>model/images/proteins.png</large-image>
+    <intro-text>
+      Orthologs and Paralogs from Phytozome.
+    </intro-text>
+    <tile-name>model/homologs.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Families">
+    <subtitle>Protein and proteomics&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/families.png</icon-image>
+    <large-image>model/images/families.png</large-image>
+    <intro-text>
+      Protein clustering from Phytozome.
+    </intro-text>
+    <tile-name>model/families.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Diversity">
+    <subtitle>SNP&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/diversity.png</icon-image>
+    <large-image>model/images/diversity.png</large-image>
+    <intro-text>
+      Population SNP data from Phytozome.
+    </intro-text>
+    <tile-name>model/diversity.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+  <aspect name="Expression">
+    <subtitle>RNA-Seq&lt;br/&gt;data</subtitle>
+    <icon-image>model/images/expression.png</icon-image>
+    <large-image>model/images/expressioniversity.png</large-image>
+    <intro-text>
+      RNA-Seq data from Phytozome.
+    </intro-text>
+    <tile-name>model/expression.jsp</tile-name>
+    <aspect-source name="Phytozome" url="http://phytozome.jgi.doe.gov"/>
+  </aspect>
+
+</aspects>

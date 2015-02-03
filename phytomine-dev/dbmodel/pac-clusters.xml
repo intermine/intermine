@@ -1,0 +1,8 @@
+    <source name="pac-clusters" type="pac-clusters">
+      <property name="source.db.name" value="pac-clusters" />
+      <property name="dataSourceName" value="pac-clusters"/>
+      <property name="organisms" value="218851 59689 3702 15368 3711 85681 3649 3055 81985 3659 2711 574566 71139 72664 57918 3847 29730 180498 4006 3750 3983 4155 564608 296587 3880 436017 4530 3218 3760 3694 38727 3885 3988 4558 4555 4081 88036 4113 3641 3067 29760 4577"/>
+      <property name="methodIds" value="3418,3419,3420,3421,3422,3423,3424,3425,3426,3427,3428,3429,3430,3431,3432,3433,3434,3435,3436,3437" />
+      <property name="dataSetTitle" value="PAC Clusters"/>
+      <property name="createrelations" value="false"/>
+    </source>

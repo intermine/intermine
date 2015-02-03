@@ -5,8 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
-	<classpathentry kind="src" path="/bio-testall-dbmodel"/>
-	<classpathentry kind="src" path="/intermine-model-main"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/><classpathentry kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry kind="src" path="/intermine-model-main"/><classpathentry kind="lib" path="/bio-skeleton-phytomine/dbmodel/build/classes"/><classpathentry kind="output" path="bin"/>
 </classpath>

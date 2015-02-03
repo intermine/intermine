@@ -1,0 +1,5 @@
+<project name="phytozome-homolog" default="default" basedir=".">
+  <description>build, test, package phytozome-homolog</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

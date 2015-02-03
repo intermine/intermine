@@ -1,0 +1,105 @@
+diff --git a/bio/sources/go-annotation/main/src/org/intermine/bio/postprocess/GoPostprocess.java b/bio/sources/go-annotation/main/src/org/intermine/bio/postprocess/GoPostprocess.java
+index 873ac1a..dddb660 100644
+--- a/bio/sources/go-annotation/main/src/org/intermine/bio/postprocess/GoPostprocess.java
++++ b/bio/sources/go-annotation/main/src/org/intermine/bio/postprocess/GoPostprocess.java
+@@ -18,12 +18,15 @@ import java.util.Set;
+ 
+ import org.apache.log4j.Logger;
+ import org.intermine.bio.util.Constants;
++import org.intermine.model.bio.CrossReference;
+ import org.intermine.model.bio.GOAnnotation;
+ import org.intermine.model.bio.GOEvidence;
+ import org.intermine.model.bio.GOEvidenceCode;
+ import org.intermine.model.bio.Gene;
+ import org.intermine.model.bio.OntologyTerm;
+ import org.intermine.model.bio.Protein;
++import org.intermine.model.bio.ProteinDomain;
++import org.intermine.model.bio.ProteinAnalysisFeature;
+ import org.intermine.model.bio.Publication;
+ import org.intermine.objectstore.ObjectStore;
+ import org.intermine.objectstore.ObjectStoreException;
+@@ -72,7 +75,7 @@ public class GoPostprocess extends PostProcessor
+ 
+         osw.beginTransaction();
+ 
+-        Iterator<?> resIter = findProteinProperties(false);
++        Iterator<?> resIter = findProteinDomains(false);
+ 
+         int count = 0;
+         Gene lastGene = null;
+@@ -81,8 +84,11 @@ public class GoPostprocess extends PostProcessor
+         while (resIter.hasNext()) {
+             ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
+             Gene thisGene = (Gene) rr.get(0);
+-            GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
++            GOTerm thisAnnotation = (GOTerm) rr.get(1);
+ 
++
++            LOG.debug("store gene " + thisGene.getPrimaryIdentifier() + " with "
++                    + thisAnnotation.getIdentifier()) + " GO.");
+             // process last set of annotations if this is a new gene
+             if (lastGene != null && !(lastGene.equals(thisGene))) {
+                 for (GOAnnotation item : annotations.values()) {
+@@ -129,7 +135,7 @@ public class GoPostprocess extends PostProcessor
+ 
+         LOG.info("Created " + count + " new GOAnnotation objects for Genes"
+                 + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
+-        osw.commitTransaction();
++        osw.abortTransaction();
+     }
+ 
+     private boolean hasDupes(Map<OntologyTerm, GOAnnotation> annotations, OntologyTerm term,
+@@ -179,13 +185,13 @@ public class GoPostprocess extends PostProcessor
+     }
+ 
+     /**
+-     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene,
+-     *  Protein and GOTerm.
++     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene
++     *  and GOTerm.
+      *
+      * @param restrictToPrimaryGoTermsOnly Only get primary Annotation items linking the gene
+      *  and the go term.
+      */
+-    private Iterator<?> findProteinProperties(boolean restrictToPrimaryGoTermsOnly)
++    private Iterator<?> findProteinDomains(boolean restrictToPrimaryGoTermsOnly)
+         throws ObjectStoreException {
+         Query q = new Query();
+ 
+@@ -199,6 +205,15 @@ public class GoPostprocess extends PostProcessor
+         QueryClass qcProtein = new QueryClass(Protein.class);
+         q.addFrom(qcProtein);
+ 
++        QueryClass qcPAF = new QueryClass(ProteinAnalysisFeature.class);
++        q.addFrom(qcPAF);
++
++        QueryClass qcCrossReference= new QueryClass(CrossReference.class);
++        q.addFrom(qcCrossReference);
++
++        QueryClass qcProteinDomain = new QueryClass(ProteinDomain.class);
++        q.addFrom(qcPAF);
++        
+         QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
+         q.addFrom(qcAnnotation);
+         q.addToSelect(qcAnnotation);
+@@ -208,9 +223,17 @@ public class GoPostprocess extends PostProcessor
+         QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
+         cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
+ 
+-        QueryObjectReference annSubjectRef =
+-            new QueryObjectReference(qcAnnotation, "subject");
+-        cs.addConstraint(new ContainsConstraint(annSubjectRef, ConstraintOp.CONTAINS, qcProtein));
++        QueryObjectReference protAnalysisRef = new QueryObjectReference(qcPAF, "protein");
++        cs.addConstraint(new ContainsConstraint(protAnalysisRef, ConstraintOp.CONTAINS, qcProtein));
++
++        QueryObjectReference crossRefRef = new QueryObjectReference(qcPAF, "crossreference");
++        cs.addConstraint(new ContainsConstraint(crossRefRef, ConstraintOp.CONTAINS, qcCrossReference));
++
++        QueryObjectReference proteinDomainRef = new QueryObjectReference(qcCrossReference, "subject");
++        cs.addConstraint(new ContainsConstraint(proteinDomainRef, ConstraintOp.CONTAINS, qcProteinDomain));
++
++        QueryCollectionReference goTermRef = new QueryCollectionReference(qcProteinDomain, "goAnnotation");
++        cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcAnnotation));
+ 
+         q.setConstraint(cs);
+ 

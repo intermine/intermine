@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # Run an InterMine production build and dump the database occasionally.
 # The project.xml in the current directory controls which actions to

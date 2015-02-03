@@ -1,0 +1,64 @@
+<project type="bio">
+  <property name="target.model" value="genomic" />
+  <property name="source.location" location="../bio/sources/" />
+  <property name="common.os.prefix" value="common" />
+  <property name="intermine.properties.file" value="phytomine-dev.properties" />
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
+  <sources>
+    <source name="interpro" type="interpro">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro/" />
+    </source>
+    <source name="go" type="go">
+      <property name="src.data.file" location="/projectb/sandbox/plant/phytomine/go/gene_ontology.obo" />
+      <property name="createrelations" value="false" />
+    </source>
+    <source name="interpro-go" type="interpro-go">
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro-go/" />
+    </source>
+    <source name="diversity-P.trichocarpa" type="gatkvcf">
+      <property name="organisms" value="3694" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
+      <property name="dataSourceName" value="diversity-P.trichocarpa"/>
+      <property name="dataSetTitle" value="P.trichocarpa Diversity"/>
+    </source>
+    <source name="cufflinks-P.vulgaris" type="cufflinks">
+      <property name="organisms" value="3885" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Pvulgaris/" />
+      <property name="dataSourceName" value="rnaseq-P.vulgaris"/>
+      <property name="dataSetTitle" value="P.vulgaris RNA-seq"/>
+    </source>
+    <source name="phytozome-chado-P.vulgaris" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="genus" value="Phaseolus"/>
+      <property name="species" value="vulgaris"/>
+      <property name="organisms" value="3885"/>
+      <property name="dataSourceName" value="phytozome-P.vulgaris"/>
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="P.vulgaris Phytozome"/>
+    </source>
+    <source name="phytozome-clusters" type="chado-db">
+      <property name="source.db.name" value="phytozome"/>
+      <property name="dataSourceName" value="phytozome-clusters"/>
+      <property name="organisms" value = "2711 2850 3055 3067 3218 3641 3649 3659 3694 3702 3711 3750 3760 3847 3880 3885 3983 3988 4006 4081 4113 4155 4530 4555 4558 4577 5306 5911 6669 7739 10228 15368 29730 29760 31033 38727 45351 57918 59689 71139 72664 81985 85681 88036 218851 296587 436017 564608 574566" />
+      <property name="processors" value="org.intermine.bio.dataconversion.PhytozomeClusterProcessor"/>
+      <property name="converter.class" value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+      <property name="dataSetTitle" value="Phytozome Clusters"/>
+    </source>
+    <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml" />
+    </source>
+  </sources>
+  <post-processing>
+    <post-process name="create-references" />
+    <post-process name="transfer-sequences" />
+
+    <!-- this runs the postprocessing steps in all sources -->
+    <post-process name="do-sources" />
+
+    <post-process name="summarise-objectstore" />
+    <post-process name="create-autocomplete-index" />
+    <post-process name="create-search-index" />
+  </post-processing>
+
+</project>

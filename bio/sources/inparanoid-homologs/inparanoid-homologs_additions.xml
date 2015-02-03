@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+<class name="Homolog" is-interface="true">
+  <attribute name="relationship" type="java.lang.String" />
+  <attribute name="type" type="java.lang.String" />
+  <attribute name="method" type="java.lang.String" />
+  <attribute name="tree" type="java.lang.String" />
+  <attribute name="bootscore" type="java.lang.Double" />
+  <attribute name="groupName" type="java.lang.String" />
+  <reference name="gene1" referenced-type="Gene" />
+  <reference name="organism1" referenced-type="Organism" />
+  <reference name="gene2" referenced-type="Gene" />
+  <reference name="organism2" referenced-type="Organism" />
+  <reference name="proteinfamily" referenced-type="ProteinFamily" />
+</class>
+
+</classes>

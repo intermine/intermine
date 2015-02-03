@@ -527,8 +527,12 @@ public class PathQuery implements Cloneable
             charCode++;
             code = "" + charCode;
         }
+        if ( code.charAt(0) > MAX_CODE ) {
+          throw new IllegalArgumentException("The constraint add more than the maximum number "
+              + "of allowed constraints.");
+        }
         if (logic == null) {
-            logic = new LogicExpression(code);
+          logic = new LogicExpression(code);
         } else {
             logic = new LogicExpression("(" + logic.toString() + ") AND " + code);
         }

@@ -1,0 +1,4 @@
+<project name="pac-clusters-tasks" default="default" basedir=".">
+  <description>build pac-clusters tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
