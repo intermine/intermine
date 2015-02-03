@@ -74,10 +74,18 @@ iframe { border:0; width: 100%; }
 
     // if we do not have a name of the list generate one from user's time
     if ($('input#newBagName').val().length == 0) {
-      var extraFilter = "all organisms".toLowerCase(),
-        t = new Date(),
+      var extraFilter = "${bagExtraFilter}";
+      if (extraFilter == null || extraFilter == "") {
+        extraFilter = "all organisms".toLowerCase();
+      }
+      var bagType = "${bagType}";
+      if (bagType == null || bagType == "") {
+        bagType = "Any item".toLowerCase();
+      }
+            
+      var  t = new Date(),
         m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      $('input#newBagName').val("Gene list for " + extraFilter + " " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "." + t.getMinutes());
+      $('input#newBagName').val(bagType + " list for " + extraFilter + " " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "." + t.getMinutes());
     }
 
     // Get the paths to libraries.
