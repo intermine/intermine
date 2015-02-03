@@ -147,7 +147,7 @@ public class BioGridConverter extends BioFileConverter
         if (od != null) {
             if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
                 return true;
-            } 
+            }
         } else {
             LOG.error("Could not find Taxon ID for organism " + bits[0] + " " + bits[1]);
         }
