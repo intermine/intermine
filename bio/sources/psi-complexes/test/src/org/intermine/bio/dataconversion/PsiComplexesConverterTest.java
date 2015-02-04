@@ -38,12 +38,11 @@ public class PsiComplexesConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "psi-complexes-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "psi-complexes-tgt-items.xml");
 
         Set expected = readItemSet("PsiComplexesConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
-
     }
 
 }

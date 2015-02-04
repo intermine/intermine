@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="main/lib/jami-xml-1.1.0.jar"/>
 	<classpathentry kind="lib" path="main/lib/jsr173-1.0.jar"/>
 	<classpathentry kind="lib" path="main/lib/stax2-api-3.0.3.jar"/>
+	<classpathentry kind="lib" path="main/lib/chebiWS-client-2.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

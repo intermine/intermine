@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -44,6 +45,9 @@ import psidev.psi.mi.jami.model.Position;
 import psidev.psi.mi.jami.model.Range;
 import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
+import uk.ac.ebi.chebi.webapps.chebiWS.client.ChebiWebServiceClient;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.ChebiWebServiceFault_Exception;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 
 
 /**
@@ -53,6 +57,7 @@ import psidev.psi.mi.jami.model.Xref;
  */
 public class PsiComplexesConverter extends BioFileConverter
 {
+    private static final Logger LOG = Logger.getLogger(PsiComplexesConverter.class);
     private static final String DATASET_TITLE = "IntAct Complexes";
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
@@ -315,6 +320,11 @@ public class PsiComplexesConverter extends BioFileConverter
                 protein.setAttribute("primaryAccession", accession);
             } else {
                 protein.setAttribute("primaryIdentifier", accession);
+                // small molecule
+                String smallMolecule = getChebiName(accession);
+                if (StringUtils.isNotEmpty(smallMolecule)) {
+                    protein.setAttribute("name", smallMolecule);
+                }
             }
             Organism organism = participant.getOrganism();
             if (organism != null) {
@@ -326,6 +336,17 @@ public class PsiComplexesConverter extends BioFileConverter
             interactors.put(accession, refId);
         }
         return refId;
+    }
+
+    private String getChebiName(String identifier) {
+        try {
+            ChebiWebServiceClient client = new ChebiWebServiceClient();
+            Entity entity = client.getCompleteEntity(identifier);
+            return entity.getChebiAsciiName();
+        } catch (ChebiWebServiceFault_Exception e) {
+            LOG.warn(e.getMessage());
+        }
+        return null;
     }
 
     private void processStoichiometry(ModelledParticipant modelledParticipant, Item interactor)
