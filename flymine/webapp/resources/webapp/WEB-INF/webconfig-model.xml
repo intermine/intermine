@@ -213,10 +213,11 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.InteractionExperiment">
+
+  <class className="org.intermine.model.bio.InteractionDetail">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationshipType"/>
     </fields>
   </class>
 
@@ -232,7 +233,7 @@
       <fieldconfig fieldExpr="participant.primaryIdentifier" />
       <fieldconfig fieldExpr="stoichiometry.min" />
       <fieldconfig fieldExpr="stoichiometry.max" />
-      <fieldconfig fieldExpr="biologicalRole.name" />
+      <fieldconfig fieldExpr="biologicalRole" />
     </fields>
   </class>
 
