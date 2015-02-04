@@ -16,10 +16,10 @@
 
 
 <iframe name="esyn" class="seamless" scrolling="no" id="iframe"
-src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${symbol}&organism=${taxon}&interactionType=physical&includeInteractors=true&source=biogrid"
+src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${symbol}&organism=${taxon}&interactionType=any&includeInteractors=true&source=biogrid"
 width="500" height="500"></iframe>
 
-    <p>These are interactions from BioGRID. See <a href="http://esyn.org/">esyn</a> for details.
+    <p>These are physical (yellow lines) and genetic (green lines) interactions from BioGRID. See <a href="http://esyn.org/">esyn</a> for details.
 
 
 </c:if>
