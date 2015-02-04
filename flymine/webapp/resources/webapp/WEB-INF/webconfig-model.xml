@@ -83,6 +83,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Complex">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.CrossReference">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
