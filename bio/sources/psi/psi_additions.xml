@@ -29,7 +29,7 @@
         <attribute name="relationshipType" type="java.lang.String"/>
         <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
-        <collection name="interactingRegions" referenced-type="InteractionRegion"/>
+        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Interactor"/>
     </class>
@@ -44,6 +44,7 @@
       <reference name="gene" referenced-type="Gene" />
       <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
       <reference name="location" referenced-type="Location"/>
+      <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
     </class>
 
     <class name="Interactor" is-interface="true"/>

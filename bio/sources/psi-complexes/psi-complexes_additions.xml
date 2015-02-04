@@ -19,7 +19,6 @@
 
     <class name="Complex" is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
-        <attribute name="shortName" type="java.lang.String"/>
         <attribute name="name" type="java.lang.String"/>
         <attribute name="systematicName" type="java.lang.String"/>
         <attribute name="function" type="java.lang.String"/>
@@ -59,7 +58,7 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="dataSets" referenced-type="DataSet"/>
         <collection name="allInteractors" referenced-type="Interactor"/>
-        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="InteractionDetail"/>
+        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
     </class>
 
     <class name="InteractionRegion" is-interface="true">
