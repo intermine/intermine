@@ -74,6 +74,7 @@
         <li><a href="http://www.wormbase.org/tools/wormmine" target="_blank">WormMine</a></li>
         <li><a href="http://yeastmine.yeastgenome.org" target="_blank">YeastMine</a></li>
         <li><a href="http://www.zebrafishmine.org" target="_blank">ZebrafishMine</a></li>
+        <li><a href="http://www.humanmine.org" target="_blank">HumanMine</a></li>
     </ul>
 
     <p class="footer-copy">&copy; 2002 - 2015 Department of Genetics, University of Cambridge, Downing Street,<br />
