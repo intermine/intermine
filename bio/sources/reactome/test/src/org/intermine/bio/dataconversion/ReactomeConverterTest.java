@@ -10,9 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.StringReader;
-import java.util.Collections;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -35,17 +34,14 @@ public class ReactomeConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new ReactomeConverter(itemWriter, model);
-        converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
-        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
     }
 
     public void testProcess() throws Exception {
-
-        String input = "pathway\tgene" + ENDL + "pathway1\tFBgn001" + ENDL;
-        converter.setReactomeOrganisms("7227");
-        converter.setCurrentFile(new File("7227.tsv"));
-        converter.process(new StringReader(input));
+        final String currentFile = "ReactomeConverterTest_src.txt";
+        Reader reader = new InputStreamReader(getClass().getClassLoader()
+                .getResourceAsStream(currentFile));
+        converter.setReactomeOrganisms("10116");
+        converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file

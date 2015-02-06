@@ -144,9 +144,12 @@ public class BioGridConverter extends BioFileConverter
             return false;
         }
         OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
-
-        if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
-            return true;
+        if (od != null) {
+            if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
+                return true;
+            }
+        } else {
+            LOG.error("Could not find Taxon ID for organism " + bits[0] + " " + bits[1]);
         }
         return false;
     }
