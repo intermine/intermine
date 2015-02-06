@@ -252,8 +252,8 @@ public class PsiComplexesConverter extends BioFileConverter
         }
     }
 
-    private void processRegions(Collection<Range> ranges, Item detail, String locatedOn,
-        String feature)
+    private void processRegions(Collection<Range> ranges, Item detail, String feature,
+        String locatedOn)
         throws ObjectStoreException {
         for (Range range : ranges) {
             Item location = createItem("Location");
