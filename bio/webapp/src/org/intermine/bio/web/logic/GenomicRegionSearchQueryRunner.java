@@ -244,7 +244,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
                 // Add orderby
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
-                PathQueryExecutor pQE = im.getPathQueryExecutor(profile);
+                PathQueryExecutor pQE = im.getPathQueryExecutor();
                 // JWC bigger batch size.
                 pQE.setBatchSize(100000);
                 ExportResultsIterator results = pQE.execute(query);

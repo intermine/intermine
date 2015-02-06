@@ -10,7 +10,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.export.GenomicRegionSequenceExporter;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;

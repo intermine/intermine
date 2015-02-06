@@ -75,6 +75,7 @@ import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.modelproduction.MetadataManager;
@@ -83,7 +84,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -98,7 +99,10 @@ import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.struts.KeywordSearchFacet;
+import org.intermine.api.lucene.KeywordSearchFacet;
+import org.intermine.api.lucene.KeywordSearchFacetData;
+import org.intermine.api.lucene.KeywordSearchFacetType;
+import org.intermine.api.lucene.KeywordSearchHit;
 
 import com.browseengine.bobo.api.BoboBrowser;
 import com.browseengine.bobo.api.BoboIndexReader;
@@ -468,8 +472,9 @@ class InterMineObjectFetcher extends Thread
 
                     for (InterMineObject object : row) {
                         long time2 = System.currentTimeMillis();
-
-                        Set<Class<?>> objectClasses = DynamicUtil.decomposeClass(object.getClass());
+                       
+                        Set<Class<?>> objectClasses = Util.decomposeClass(object.getClass());
+                       //JWC? wuz Set<Class<?>> objectClasses = DynamicUtil.decomposeClass(object.getClass());
                         Class objectTopClass = objectClasses.iterator().next();
                         ClassDescriptor classDescriptor =
                                 os.getModel().getClassDescriptorByName(objectTopClass.getName());
@@ -816,7 +821,7 @@ class InterMineObjectFetcher extends Thread
             LOG.info("decomposedClassesCache: No entry for " + baseClass + ", adding...");
             attributes = new Vector<ClassAttributes>();
 
-            for (Class<?> cls : DynamicUtil.decomposeClass(baseClass)) {
+            for (Class<?> cls : Util.decomposeClass(baseClass)) {
                 ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
                 attributes.add(new ClassAttributes(cld.getUnqualifiedName(), cld
                         .getAllAttributeDescriptors()));

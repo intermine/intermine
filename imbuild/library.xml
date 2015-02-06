@@ -31,8 +31,8 @@
     <property name="gen.src.dir" location="${build.dir}/gen/src"/>
     <property name="build.javadoc.dir" value="${build.dir}/javadoc"/>
     <!-- Compilation settings -->
-    <property name="javac.source" value="1.6"/>
-    <property name="javac.target" value="1.6"/>
+    <property name="javac.source" value="1.7"/>
+    <property name="javac.target" value="1.7"/>
     <property name="javac.compiler" value="modern"/>
     <property name="javac.debug" value="on"/>
     <property name="javac.debuglevel" value="lines,vars,source"/>
