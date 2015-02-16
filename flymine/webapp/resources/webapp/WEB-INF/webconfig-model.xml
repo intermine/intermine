@@ -84,6 +84,11 @@
   </class>
 
   <class className="org.intermine.model.bio.Complex">
+     <headerconfig>
+      <titles>
+        <title mainTitles="identifier"/>
+      </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
