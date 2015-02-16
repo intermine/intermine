@@ -86,7 +86,7 @@
   <class className="org.intermine.model.bio.Complex">
      <headerconfig>
       <titles>
-        <title mainTitles="identifier"/>
+        <title mainTitles="identifier|name"/>
       </titles>
     </headerconfig>
     <fields>
