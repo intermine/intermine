@@ -305,10 +305,17 @@ public class PsiComplexesConverter extends BioFileConverter
     private String processProtein(Interactor participant)
         throws ObjectStoreException {
         Xref xref = participant.getPreferredIdentifier();
-        String accession = xref.getId();
+        String originalAccession = xref.getId();
+        String accession = null;
+        boolean createSynonym = false;
         // Chop off the PRO ontology, we aren't using it yet
         // P00424-PRO0000006097, P00425-PRO0000006098, P00427-PRO_0000006108
-        accession = trimAccession(accession);
+        if (originalAccession.contains("-")) {
+            accession = originalAccession.substring(0, originalAccession.indexOf("-"));
+            createSynonym = true;
+        } else {
+            accession = originalAccession;
+        }
         String refId = interactors.get(accession);
         if (refId == null) {
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
@@ -337,15 +344,13 @@ public class PsiComplexesConverter extends BioFileConverter
             refId = protein.getIdentifier();
             interactors.put(accession, refId);
         }
+        if (createSynonym) {
+            createSynonym(refId, originalAccession, true);
+        }
         return refId;
     }
 
-    private String trimAccession(String accession) {
-        if (accession.contains("-")) {
-            return accession.substring(0, accession.indexOf("-"));
-        }
-        return accession;
-    }
+
 
     private String getChebiName(String identifier) {
         try {
