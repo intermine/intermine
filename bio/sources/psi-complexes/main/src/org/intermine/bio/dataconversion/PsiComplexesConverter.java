@@ -306,7 +306,9 @@ public class PsiComplexesConverter extends BioFileConverter
         throws ObjectStoreException {
         Xref xref = participant.getPreferredIdentifier();
         String accession = xref.getId();
-
+        // Chop off the PRO ontology, we aren't using it yet
+        // P00424-PRO0000006097, P00425-PRO0000006098, P00427-PRO_0000006108
+        accession = trimAccession(accession);
         String refId = interactors.get(accession);
         if (refId == null) {
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
@@ -316,7 +318,6 @@ public class PsiComplexesConverter extends BioFileConverter
                 return null;
             }
             Item protein = createItem(interactorType);
-            accession = trimAccession(accession);
             if (PROTEIN.equals(typeTermIdentifier)) {
                 protein.setAttribute("primaryAccession", accession);
             } else {
