@@ -316,6 +316,7 @@ public class PsiComplexesConverter extends BioFileConverter
                 return null;
             }
             Item protein = createItem(interactorType);
+            accession = trimAccession(accession);
             if (PROTEIN.equals(typeTermIdentifier)) {
                 protein.setAttribute("primaryAccession", accession);
             } else {
@@ -336,6 +337,13 @@ public class PsiComplexesConverter extends BioFileConverter
             interactors.put(accession, refId);
         }
         return refId;
+    }
+
+    private String trimAccession(String accession) {
+        if (accession.contains("-")) {
+            return accession.substring(0, accession.indexOf("-"));
+        }
+        return accession;
     }
 
     private String getChebiName(String identifier) {
