@@ -355,13 +355,7 @@ public class PsiComplexesConverter extends BioFileConverter
         if (stoichiometry == null) {
             return;
         }
-        Item stoichiometryItem = createItem("Stoichiometry");
-        stoichiometryItem.setAttribute("min",
-                String.valueOf(stoichiometry.getMinValue()));
-        stoichiometryItem.setAttribute("max",
-                String.valueOf(stoichiometry.getMaxValue()));
-        store(stoichiometryItem);
-        interactor.setReference("stoichiometry", stoichiometryItem);
+        interactor.setAttribute("stoichiometry", String.valueOf(stoichiometry.getMaxValue()));
     }
 
     private void processXrefs(Complex interactionEvidence,

@@ -33,15 +33,9 @@
         <attribute name="annotations" type="java.lang.String"/>
         <attribute name="type" type="java.lang.String"/>
         <attribute name="biologicalRole" type="java.lang.String"/>
+        <attribute name="stoichiometry" type="java.lang.Integer"/>
         <reference name="participant" referenced-type="BioEntity" />
-        <reference name="stoichiometry" referenced-type="Stoichiometry"/>
         <collection name="interactions" referenced-type="Interaction"/>
-
-    </class>
-
-    <class name="Stoichiometry" is-interface="true">
-      <attribute name="min" type="java.lang.Integer"/>
-      <attribute name="max" type="java.lang.Integer"/>
     </class>
 
     <class name="CausalRelationship" is-interface="true">
