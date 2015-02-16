@@ -346,6 +346,8 @@ public class PsiComplexesConverter extends BioFileConverter
         }
         if (createSynonym) {
             createSynonym(refId, originalAccession, true);
+            String proIdentifier = originalAccession.substring(originalAccession.indexOf("-") + 1);
+            createSynonym(refId, proIdentifier, true);
         }
         return refId;
     }
