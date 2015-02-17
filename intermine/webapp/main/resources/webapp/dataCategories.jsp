@@ -105,6 +105,21 @@
   <!-- ******************************************************* -->
 
   <tr>
+    <td class="leftcol">
+    <p><h2>Interactions</h2></p></td>
+    <td> 
+    Mouse and human interaction data from BioGrid and IntAct.
+    </td>
+    <td > 
+      <a href="http://thebiogrid.org/" target="_new">BioGrid</a>
+      <br/>
+      <a href="http://www.ebi.ac.uk/intact/" target="_new">IntAct</a>
+    </td>
+  </tr>
+
+  <!-- ******************************************************* -->
+
+  <tr>
     <td rowspan="3"  class="leftcol">
     <p><h2>Phenotype</h2></p></td>
     <td> 
