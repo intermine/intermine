@@ -2987,33 +2987,44 @@ The different token types are:
 
    <!-- New in version 18 -->
 
-   <servlet>
-     <servlet-name>ws-complexes</servlet-name>
+    <servlet>
+     <servlet-name>ws-complexes-export</servlet-name>
      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
      <init-param>
         <param-name>GET</param-name>
-        <param-value>org.intermine.webservice.server.jbrowse.Config</param-value>
+        <param-value>org.intermine.webservice.server.complexes.Export</param-value>
      </init-param>
    </servlet>
 
-  <servlet-mapping>
-     <servlet-name>ws-complexes</servlet-name>
-     <url-pattern>/service/complexes/export</url-pattern>
-     <metadata>
-         <name>Complex Interactions for Interaction Viewer</name>
-         <minVersion>18</minVersion>
-         <method type="GET" authenticationRequired="false">
-             <summary>Get Information on Complex Interaction</summary>
-             <description>
-                 Retrieve complex interaction object required to render the complex viewer.
-             </description>
-             <param required="true" type="String" description="The complex identifier">name</param>
-             <returns>
+   <servlet-mapping>
+    <servlet-name>ws-complexes-export</servlet-name>
+    <url-pattern>/service/complexes/export/*</url-pattern>
+    <metadata>
+        <name>Complex Interaction Lookup</name>
+        <minVersion>18</minVersion>
+        <method type="GET" authenticationRequired="false" slug="/:domain">
+            <name>Find Complexes by Identifier</name>
+            <summary>Lookup Complexes by Identifier</summary>
+            <description format="markdown">
+                This service provides the JSON needed for the Complex Viewer.
+            </description>
+            <param
+                required="true"
+                type="String"
+                default="json"
+                description="The format to return">format</param>
+            <param
+                required="true"
+                type="String"
+                default="{identifier}"
+                description="Identifier of the complex">identifier</param>
+            <returns>
                 <format accept="application/json">json</format>
+                <format accept="application/xml">xml</format>
             </returns>
         </method>
     </metadata>
-  </servlet-mapping>
+   </servlet-mapping>
 
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
