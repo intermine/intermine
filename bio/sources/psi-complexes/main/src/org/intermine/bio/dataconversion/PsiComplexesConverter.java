@@ -68,6 +68,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
     private static final String EBI = "intact";
+    private String xrefDatabase;
     private static final String COMPLEX_NAME = "complex recommended name";
     // TODO types (protein and small molecules are processed now) are hardcoded.
     // maybe put this in config file? Or check model to see if type is legal?
@@ -89,6 +90,15 @@ public class PsiComplexesConverter extends BioFileConverter
      */
     public PsiComplexesConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+    }
+
+    /**
+     * Sets the database, e.g. SGD, from which we should get the identifier
+     *
+     * @param identifierSource the data source for the identifier
+     */
+    public void setComplexesSource(String identifierSource) {
+        xrefDatabase = identifierSource;
     }
 
     /**
@@ -304,9 +314,15 @@ public class PsiComplexesConverter extends BioFileConverter
 
     private String processProtein(Interactor participant)
         throws ObjectStoreException {
+
+        String accession, primaryIdentifier = null;
+        for (Xref xref : participant.getXrefs()) {
+            if (xrefDatabase.equalsIgnoreCase(xref.getDatabase().getShortName())) {
+                primaryIdentifier = xref.getId();
+            }
+        }
         Xref xref = participant.getPreferredIdentifier();
         String originalAccession = xref.getId();
-        String accession = null;
         boolean createSynonym = false;
         // Chop off the PRO ontology, we aren't using it yet
         // P00424-PRO0000006097, P00425-PRO0000006098, P00427-PRO_0000006108
@@ -316,7 +332,11 @@ public class PsiComplexesConverter extends BioFileConverter
         } else {
             accession = originalAccession;
         }
-        String refId = interactors.get(accession);
+        if (StringUtils.isEmpty(primaryIdentifier)) {
+            // if no SGD identifier, eg. for small molecules, accession and identifier are equal
+            primaryIdentifier = accession;
+        }
+        String refId = interactors.get(primaryIdentifier);
         if (refId == null) {
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
@@ -327,10 +347,11 @@ public class PsiComplexesConverter extends BioFileConverter
             Item protein = createItem(interactorType);
             if (PROTEIN.equals(typeTermIdentifier)) {
                 protein.setAttribute("primaryAccession", accession);
+                protein.setAttribute("primaryIdentifier", primaryIdentifier);
             } else {
-                protein.setAttribute("primaryIdentifier", accession);
+                protein.setAttribute("primaryIdentifier", primaryIdentifier);
                 // small molecule
-                String smallMolecule = getChebiName(accession);
+                String smallMolecule = getChebiName(primaryIdentifier);
                 if (StringUtils.isNotEmpty(smallMolecule)) {
                     protein.setAttribute("name", smallMolecule);
                 }
@@ -342,7 +363,7 @@ public class PsiComplexesConverter extends BioFileConverter
             }
             store(protein);
             refId = protein.getIdentifier();
-            interactors.put(accession, refId);
+            interactors.put(primaryIdentifier, refId);
         }
         if (createSynonym) {
             createSynonym(refId, originalAccession, true);
