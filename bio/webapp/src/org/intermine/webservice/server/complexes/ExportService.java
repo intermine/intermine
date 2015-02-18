@@ -11,12 +11,14 @@ package org.intermine.webservice.server.complexes;
  */
 
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
+import org.intermine.model.bio.Interactor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
@@ -33,7 +35,9 @@ import psidev.psi.mi.jami.factory.InteractionWriterFactory;
 import psidev.psi.mi.jami.json.InteractionViewerJson;
 import psidev.psi.mi.jami.json.MIJsonOptionFactory;
 import psidev.psi.mi.jami.json.MIJsonType;
+import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.InteractionCategory;
+import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.model.impl.DefaultComplex;
 
 /**
@@ -45,6 +49,7 @@ public class ExportService extends JSONService
 {
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
+    private static final String EBI = "intact";
 
     /**
      * Default constructor.
@@ -115,9 +120,11 @@ public class ExportService extends JSONService
         Results results = im.getObjectStore().execute(q);
 
         DefaultComplex complex = new DefaultComplex(identifier);
+        setComplexIdentifier(complex, identifier);
+
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
-            String protein = (String) row.get(0);
+            Interactor protein = (Interactor) row.get(0);
             String stoichiometry = (String) row.get(1);
         }
         return complex;
@@ -129,5 +136,15 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.stoichiometry");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         return MainHelper.makeQuery(query, new HashMap(), new HashMap(), null, new HashMap());
+    }
+
+    private void setComplexIdentifier(DefaultComplex complex, String identifier) {
+        Collection<Xref> xrefs = complex.getIdentifiers();
+        for (Xref xref : xrefs) {
+            CvTerm cvTerm = xref.getDatabase();
+            if (EBI.equalsIgnoreCase(cvTerm.getShortName())) {
+
+            }
+        }
     }
 }
