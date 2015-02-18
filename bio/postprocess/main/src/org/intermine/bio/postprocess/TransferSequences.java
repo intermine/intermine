@@ -196,6 +196,22 @@ public class TransferSequences
                     continue;
                 }
 
+                /**
+                 * In human intermine, SNP is not a sequence alteration, which I think is wrong
+                 * But here are the kinds of types that are alterations:
+                 *
+                 *      Deletion
+                 *      Genetic Marker
+                 *      Indel
+                 *      Insertion
+                 *      SNV
+                 *      Substitution
+                 *      Tandem Repeat
+                 */
+                if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) {
+                    continue;
+                }
+
                 if (feature instanceof Gene) {
                     Gene gene = (Gene) feature;
                     if (gene.getLength() != null && gene.getLength().intValue() > 2000000) {
