@@ -36,16 +36,6 @@ import psidev.psi.mi.jami.json.MIJsonType;
 import psidev.psi.mi.jami.model.InteractionCategory;
 import psidev.psi.mi.jami.model.impl.DefaultComplex;
 
-/*
- * Copyright (C) 2002-2015 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
 /**
  * Web service that produces JSON required by the complex viewer.
  *
@@ -86,18 +76,19 @@ public class ExportService extends JSONService
         MIJsonOptionFactory optionFactory = MIJsonOptionFactory.getInstance();
 
         // get json writer for complexes from factory
-        InteractionWriter writer = null;
         InteractionWriterFactory writerFactory = InteractionWriterFactory.getInstance();
+        InteractionWriter writer = null;
 
         try {
             // you will try to use a cachedOlsClient if available, otherwise, you don't sort
             // your features using ols
-            writer = writerFactory.getInteractionWriterWith(optionFactory.getJsonOptions(output,
-                    InteractionCategory.modelled, null, MIJsonType.n_ary_only,
+            writer = writerFactory.getInteractionWriterWith(optionFactory.getJsonOptions(
+                    getRawOutput(), InteractionCategory.modelled, null, MIJsonType.n_ary_only,
                     new CachedOlsOntologyTermFetcher(), null));
         } catch (BridgeFailedException e) {
-            writer = writerFactory.getInteractionWriterWith(optionFactory.getJsonOptions(output,
-                    InteractionCategory.modelled, null, MIJsonType.n_ary_only, null, null));
+            writer = writerFactory.getInteractionWriterWith(optionFactory.getJsonOptions(
+                    getRawOutput(), InteractionCategory.modelled, null, MIJsonType.n_ary_only,
+                    null, null));
         }
 
         try {

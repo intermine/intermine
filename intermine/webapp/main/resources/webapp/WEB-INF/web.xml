@@ -2992,7 +2992,7 @@ The different token types are:
      <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
      <init-param>
         <param-name>GET</param-name>
-        <param-value>org.intermine.webservice.server.complexes.Export</param-value>
+        <param-value>org.intermine.webservice.server.complexes.ExportService</param-value>
      </init-param>
    </servlet>
 
@@ -3002,25 +3002,19 @@ The different token types are:
     <metadata>
         <name>Complex Interaction Lookup</name>
         <minVersion>18</minVersion>
-        <method type="GET" authenticationRequired="false" slug="/:domain">
+        <method type="GET" authenticationRequired="false">
             <name>Find Complexes by Identifier</name>
             <summary>Lookup Complexes by Identifier</summary>
             <description format="markdown">
                 This service provides the JSON needed for the Complex Viewer.
             </description>
             <param
-                required="true"
+                required="false"
                 type="String"
                 default="json"
                 description="The format to return">format</param>
-            <param
-                required="true"
-                type="String"
-                default="{identifier}"
-                description="Identifier of the complex">identifier</param>
             <returns>
                 <format accept="application/json">json</format>
-                <format accept="application/xml">xml</format>
             </returns>
         </method>
     </metadata>
