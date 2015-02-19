@@ -49,7 +49,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
 
 /**

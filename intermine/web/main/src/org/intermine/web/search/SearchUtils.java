@@ -26,7 +26,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
