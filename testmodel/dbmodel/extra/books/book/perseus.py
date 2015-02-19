@@ -75,7 +75,7 @@ class BookHandler(ContentHandler):
 
     def set_text_end(self, comp):
         loc = comp.get('textLocation')
-        loc.set('end', self.text_position)
+        loc.set('rangeEnd', self.text_position)
 
     def start_book(self, attrs):
         fac = self.factory
@@ -103,7 +103,7 @@ class BookHandler(ContentHandler):
 
     def initLocation(self, composition):
         location = self.factory.add('TextLocation')
-        location.set('start', self.text_position)
+        location.set('rangeStart', self.text_position)
         location.set('foundIn', composition)
         composition.set('textLocation', location)
 
