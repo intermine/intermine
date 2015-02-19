@@ -37,7 +37,7 @@ class BookHandler(ContentHandler):
         self.endChunk()
         comp = self.current.pop(name)
         loc = comp.get('textLocation')
-        loc.set('end', self.text_position)
+        loc.set('rangeEnd', self.text_position)
         self.character_context = CharacterContext.NONE
 
     def start_book(self, attrs):
@@ -54,7 +54,7 @@ class BookHandler(ContentHandler):
         self.untitled_poems = 0
         self.text_position = 1
         self.text_buffer = []
-        book_location = fac.add('TextLocation', start = self.text_position)
+        book_location = fac.add('TextLocation', rangeStart = self.text_position)
         book_location.set('foundIn', book)
         book.set('textLocation', book_location)
         return book
@@ -70,7 +70,7 @@ class BookHandler(ContentHandler):
 
     def initLocation(self, composition):
         location = self.factory.add('TextLocation')
-        location.set('start', self.text_position)
+        location.set('rangeStart', self.text_position)
         location.set('foundIn', composition)
         composition.set('textLocation', location)
 
@@ -211,8 +211,8 @@ class BookHandler(ContentHandler):
             line_no = offset + 1 + idx
             name = '{};{}'.format(poem.get('name'), line_no)
             text_location = self.factory.add('TextLocation')
-            text_location.set('start', line_start)
-            text_location.set('end', line_start + len(line_text))
+            text_location.set('rangeStart', line_start)
+            text_location.set('rangeEnd', line_start + len(line_text))
             line = self.factory.add('Line',
                 number = line_no, name = name,
                 author = author, book = book, stanza = stanza,
@@ -221,7 +221,7 @@ class BookHandler(ContentHandler):
             line_start += len(line_text) + 1
             stanza.add_to('lines', line)
             stanza.add_to('subSections', line)
-            stanza.get('textLocation').set('end', text_location.get('end'))
+            stanza.get('textLocation').set('rangeEnd', text_location.get('rangeEnd'))
             if self.debug:
                 text = ' '.join(self.text_buffer)
                 start = text_location.get('start')

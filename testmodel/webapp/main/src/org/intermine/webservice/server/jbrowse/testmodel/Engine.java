@@ -199,8 +199,8 @@ public class Engine extends CommandRunner {
             ret.put("score", ((FavouritePassage) s).getRating());
         }
         TextLocation loc = s.getTextLocation();
-        ret.put("start", loc.getStart() - 1);
-        ret.put("end", loc.getEnd());
+        ret.put("start", loc.getRangeStart() - 1);
+        ret.put("end", loc.getRangeEnd());
         ret.put("strand", 1); // There are no reverse text features.
         List<Map<String, Object>> subsections = new ArrayList<Map<String, Object>>();
         for (Composition comp: s.getSubSections()) {

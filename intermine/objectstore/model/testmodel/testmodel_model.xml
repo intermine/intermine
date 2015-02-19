@@ -113,8 +113,8 @@
         <reference name="composition" referenced-type="Composition" reverse-reference="text"/>
     </class>
     <class name="TextLocation" is-interface="false">
-        <attribute name="start" type="int"/>
-        <attribute name="end" type="int"/>
+        <attribute name="rangeStart" type="int"/>
+        <attribute name="rangeEnd" type="int"/>
         <reference name="foundIn" referenced-type="Composition"
                 reverse-reference="textLocation"/>
     </class>

@@ -22,7 +22,7 @@ class BibliophileHandler(object):
             section = self.sections[name]
             subsection = self.factory.add('Section', name = name + ':' + span)
             section.add_to('subSections', subsection)
-            loc = self.factory.add('TextLocation', start = start, end = end)
+            loc = self.factory.add('TextLocation', rangeStart = start, rangeEnd = end)
             subsection.set('textLocation', loc)
             return subsection
 

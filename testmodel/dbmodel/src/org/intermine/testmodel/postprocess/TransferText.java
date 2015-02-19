@@ -39,8 +39,8 @@ public class TransferText extends PostProcessor {
             Text bookText = book.getText();
             if (bookText == null) continue;
             ClobAccess reference = bookText.getText();
-            int start = loc.getStart() - 1;
-            int end = Math.min(reference.length(), loc.getEnd());
+            int start = loc.getRangeStart() - 1;
+            int end = Math.min(reference.length(), loc.getRangeEnd());
 
             Text sectionText = new Text(); 
             sectionText.setLength(end - start);
