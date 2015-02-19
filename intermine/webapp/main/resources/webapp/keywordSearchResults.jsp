@@ -360,7 +360,7 @@ input.submit {
             <input type="hidden" id="ids" name="ids" value="" />
             <input type="hidden" id="allChecked" name="allChecked" value="false" />
             <input type="hidden" name="source" value="keywordSearchResults" />
-
+            <input type="hidden" id="totalHits" name="totalHits" value="${searchTotalHits}" />
             <input type="hidden" id="searchTerm" name="searchTerm" value="${fn:escapeXml(searchTerm)}" />
             <input type="hidden" id="jsonFacets" name="jsonFacets" value="<c:out value="${jsonFacets}"/>" />
 

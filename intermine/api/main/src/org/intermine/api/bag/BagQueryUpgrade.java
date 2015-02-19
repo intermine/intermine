@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,9 +48,7 @@ public class BagQueryUpgrade
      */
     public BagQueryResult getBagQueryResult() {
         BagQueryResult bagQueryResult = null;
-        LOG.warn("ContentsOrderByExtraValue before: " + bag.getName());
         List<BagValue> bagValueList = bag.getContentsOrderByExtraValue();
-        LOG.warn("ContentsOrderByExtraValue after: " + bag.getName());
         List<BagQueryResult> bagQueryResultList = new ArrayList<BagQueryResult>();
         List<String> primaryIdentifiersList = new ArrayList<String>();
         String extra;
@@ -78,7 +76,6 @@ public class BagQueryUpgrade
                     }
                 }
             }
-            LOG.warn("after bagValueListCycle: " + bag.getName());
             bagQueryResultList.add(bagQueryRunner.searchForBag(bag.getType(),
                     primaryIdentifiersList, prevExtra, false));
             bagQueryResult = combineBagQueryResult(bagQueryResultList);
@@ -88,7 +85,6 @@ public class BagQueryUpgrade
         } catch (InterMineException ie) {
             LOG.warn("Cannot upgrade the list " + bag.getTitle(), ie);
         }
-        LOG.warn("before returning bagQueryResult: " + bag.getName());
         return bagQueryResult;
     }
 

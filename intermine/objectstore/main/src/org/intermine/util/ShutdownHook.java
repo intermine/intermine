@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,6 +48,14 @@ public final class ShutdownHook extends Thread
     }
 
     /**
+     * Get the instance of this ShutdownHook.
+     * @return the ShutdownHook instance
+     */
+    public static synchronized ShutdownHook getInstance() {
+        return instance;
+    }
+
+    /**
      * Registers an object with the shutdown hook.
      *
      * @param object the object
@@ -59,7 +67,7 @@ public final class ShutdownHook extends Thread
     /**
      * Performs the shutdown.
      */
-    private static synchronized void shutdown() {
+    public static synchronized void shutdown() {
         while (!objects.empty()) {
             Object o = objects.pop();
             try {

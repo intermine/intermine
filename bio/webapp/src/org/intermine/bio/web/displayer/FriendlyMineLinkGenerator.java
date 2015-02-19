@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -84,10 +84,11 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
         LinkFetcher fetcher = new LinkFetcher(thisMine, mine);
         return fetcher.fetch(req);
     }
-    
-    private class LinkFetcher {
 
-        final private Mine thisMine, thatMine;
+    private class LinkFetcher
+    {
+
+        private final Mine thisMine, thatMine;
         private MustBeIn predicate;
 
         LinkFetcher(Mine thisMine, Mine mine) {
@@ -151,7 +152,7 @@ public final class FriendlyMineLinkGenerator implements InterMineLinkGenerator
         }
 
         /**
-         * Processes the results of queries produced by getHomologueQuery - ie. they 
+         * Processes the results of queries produced by getHomologueQuery - ie. they
          * have three views: Gene.primaryIdentifier, Gene.symbol, Organism.shortName
          * @param mine The data source
          * @param q The query

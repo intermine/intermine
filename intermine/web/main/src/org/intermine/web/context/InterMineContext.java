@@ -1,7 +1,7 @@
 package org.intermine.web.context;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -68,7 +68,7 @@ public final class InterMineContext implements Shutdownable
      * @param wc The application configuration.
      * @param resourceOpener Something to use to open resources.
      */
-    public static synchronized void initilise(
+    public static synchronized void initialise(
             final InterMineAPI imApi,
             final Properties webProps,
             final WebConfig wc,
@@ -168,7 +168,10 @@ public final class InterMineContext implements Shutdownable
     }
 
     /**
-     * Send the signal that shutdown is happening - try and release resources.
+     * Send the signal that shutdown is happening - try and release resources.  This class registers
+     * with ShutdownHook on construction, this method is called automatically on JVM shutdown and
+     * by InitialiserPlugin which calls ShutdownHook.shutdown() explicitly when a webapp is
+     * undeployed.
      */
     public static void doShutdown() {
         if (mailQueue != null && mailService != null) {

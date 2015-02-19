@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -163,7 +163,7 @@ public class JSONRowFormatterTest extends TestCase {
             e.printStackTrace();
         }
 
-        InterMineContext.initilise(dummyAPI, props, wc, new ClassResourceOpener(getClass()));
+        InterMineContext.initialise(dummyAPI, props, wc, new ClassResourceOpener(getClass()));
     }
 
     private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {

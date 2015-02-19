@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,7 +41,7 @@ public final class ErrorCorrection
         /** The Holm-Bonferroni error correction strategy **/
         HOLM_BONFERRONI("Holm-Bonferroni"),
         /** Do not perform error correction **/
-        NONE("");
+        NONE("None");
 
         private final String algorithm;
 
