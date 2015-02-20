@@ -183,7 +183,7 @@ public final class Indexer
         long maxMem = Runtime.getRuntime().maxMemory() / 1024;
         double percentUsed = (freeMem * 1d) / (maxMem * 1d) * 100d;
         LOG.info(String.format(
-            "docs indexed=%s; thread state=%s; docs/ms=%d; memory=%,.2f%% free (of %sk); time=%dms",
+            "docs indexed=%s; thread=%s; docs/ms=%.2f; memory=%,.2f%% free (of %sk); time=%dms",
                 indexed,
                 fetchThread.getState(),
                 (indexed * 1.0F / (System.currentTimeMillis() - time)),
