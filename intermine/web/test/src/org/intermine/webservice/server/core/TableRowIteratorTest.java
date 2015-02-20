@@ -20,6 +20,7 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ResultCell;
+import org.intermine.api.types.F;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Company;

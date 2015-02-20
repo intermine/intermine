@@ -26,10 +26,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
+import org.intermine.api.types.Producer;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -57,11 +57,25 @@ public final class KeywordSearch
         //don't
     }
 
-    public static Browser getBrowser(ObjectStore os, String dirPath)
-            throws CorruptIndexException, IOException {
-        LuceneIndexContainer index = loadIndexFromDatabase(os, dirPath);
+    /**
+     * Return an object which can search an object-store.
+     * @param os The object store, which should contain a pre-built index.
+     * @param dirPath The context path.
+     * @return A browser.
+     * @throws IOException If we can't read the configuration.
+     */
+    public static Browser getBrowser(ObjectStore os, String dirPath) throws IOException {
+        return new Browser(getIndexProducer(os, dirPath), getConfig(os));
+    }
 
-        return new Browser(index, getConfig(os));
+    private static Producer<LuceneIndexContainer> getIndexProducer(
+            final ObjectStore os, final String dirPath) {
+        return new Producer<LuceneIndexContainer>() {
+            @Override
+            public LuceneIndexContainer produce() {
+                return loadIndexFromDatabase(os, dirPath);
+            }
+        };
     }
 
     /**
@@ -293,6 +307,8 @@ public final class KeywordSearch
 
     /**
      * delete the directory used for the index (used in postprocessing)
+     * @param index the Index to delete
+     * @param config Information telling us whether to delete this or not.
      */
     public static void deleteIndexDirectory(
             LuceneIndexContainer index, Configuration config) {

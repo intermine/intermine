@@ -126,6 +126,13 @@ public class InterMineObjectFetcher extends Thread
         this.attributePrefixes = attributePrefixes;
     }
 
+    /**
+     * Construct a document fetcher thread.
+     * @param os The object store
+     * @param classKeys The class keys
+     * @param indexingQueue The indexing queue to report object we find on.
+     * @param config The configuration.
+     */
     public InterMineObjectFetcher(
             ObjectStore os,
             Map<String, List<FieldDescriptor>> classKeys,
@@ -218,6 +225,7 @@ public class InterMineObjectFetcher extends Thread
         return error;
     }
 
+    @SuppressWarnings("unchecked")
     private Document handleObject(
             InterMineObject object,
             HashSet<Class<? extends InterMineObject>> seenClasses,

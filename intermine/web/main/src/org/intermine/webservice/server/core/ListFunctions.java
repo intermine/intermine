@@ -13,6 +13,8 @@ package org.intermine.webservice.server.core;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.intermine.api.types.Function;
+
 /**
  * Similar to Apache CollectionUtils - but with Generics.
  * @author Alex Kalderimis
