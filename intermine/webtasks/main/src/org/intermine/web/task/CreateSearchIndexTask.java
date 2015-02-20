@@ -94,7 +94,7 @@ public class CreateSearchIndexTask extends Task
         }
         if (!(objectStore instanceof ObjectStoreInterMineImpl)) {
             // Yes, yes, this is horrific...
-            throw new RuntimeException("Got invalid ObjectStore - must be an "
+            throw new BuildException("Got invalid ObjectStore - must be an "
                     + "instance of ObjectStoreInterMineImpl!");
         }
 
@@ -112,8 +112,7 @@ public class CreateSearchIndexTask extends Task
             ClassKeyHelper.readKeys(objectStore.getModel(), classKeyProperties);
 
         //index and save
-        KeywordSearch.saveIndexToDatabase(objectStore, classKeys);
-        KeywordSearch.deleteIndexDirectory();
+        KeywordSearch.createIndex(objectStore, classKeys);
     }
 
 

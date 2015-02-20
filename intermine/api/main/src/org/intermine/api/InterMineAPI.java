@@ -10,6 +10,7 @@ package org.intermine.api;
  *
  */
 
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -64,6 +65,8 @@ public class InterMineAPI
     private final Map<Profile, PathQueryExecutor> pqeCache =
         new IdentityHashMap<Profile, PathQueryExecutor>();
     private ObjectStoreWriter userProfile;
+
+    private Map<Class<?>, Object> resources = new HashMap<Class<?>, Object>();
 
     /**
      * Protected no-argument constructor only used for building test implementations of this class.
@@ -262,5 +265,31 @@ public class InterMineAPI
      */
     public QueryStore getQueryStore() {
         return queryStore;
+    }
+
+    /**
+     * Register a resource. The signature guarantees that only correspondingly
+     * typed values will be registered by their keys.
+     * @param <T> the type of the value.
+     * @param klass The class of the value.
+     * @param value The value
+     */
+    public <T> void registerResource(Class<? extends T> klass, T value) {
+        resources.put(klass, value);
+    }
+
+    /**
+     * Get a resource of a particular type. Poor-man's dependency injection.
+     * @param <T> the type of the value.
+     * @param klass The type of thing we want.
+     * @return A thing.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getResource(Class<? extends T> klass) {
+        T ret = (T) resources.get(klass);
+        if (ret == null) {
+            throw new RuntimeException("No resource configured for " + klass.getName());
+        }
+        return ret;
     }
 }

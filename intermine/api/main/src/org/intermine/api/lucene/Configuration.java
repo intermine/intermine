@@ -55,41 +55,63 @@ public class Configuration
     private String tempDirectory;
     private Model model;
 
+    private boolean shouldDelete;
+
+    /**
+     * Construct a new set of configuration.
+     * @param model The data model
+     * @param options The options in raw property form.
+     */
     public Configuration(Model model, Properties options) {
         this.model = model;
         parseProperties(options);
     }
 
+    /**
+     * @return The special references.
+     */
     public HashMap<Class<? extends InterMineObject>, String[]> getSpecialReferences() {
         return specialReferences;
     }
 
+    /** @return the ignored classes **/
     public HashSet<Class<? extends InterMineObject>> getIgnoredClasses() {
         return ignoredClasses;
     }
 
+    /** @return the class boosts */
     public HashMap<ClassDescriptor, Float> getClassBoost() {
         return classBoost;
     }
 
+    /** @return the ignored fields **/
     public HashMap<Class<? extends InterMineObject>, Set<String>> getIgnoredFields() {
         return ignoredFields;
     }
 
+    /** @return the facets **/
     public Vector<KeywordSearchFacetData> getFacets() {
         return facets;
     }
 
+    /** @return the attribute prefixes **/
     public HashMap<String, String> getAttributePrefixes() {
         return attributePrefixes;
     }
 
+    /** @return are we in debug mode? **/
     public boolean isDebugOutput() {
         return debugOutput;
     }
 
+    /** @return the configured temp directory location **/
     public String getTempDirectory() {
         return tempDirectory;
+    }
+
+    /** @return whether we should delete the index when we are done. **/
+    public boolean shouldDelete() {
+        return shouldDelete;
     }
 
     // Private Methods
@@ -102,7 +124,7 @@ public class Configuration
         }
         tempDirectory = options.getProperty("index.temp.directory", "");
         debugOutput = Boolean.parseBoolean(options.getProperty("debug", "true"));
-
+        shouldDelete = Boolean.parseBoolean(options.getProperty("delete.index", "true"));
         debugConfiguredState();
     }
 
@@ -205,6 +227,7 @@ public class Configuration
         String classToIndex = key.substring("index.references.".length());
         ClassDescriptor cld = model.getClassDescriptorByName(classToIndex);
         if (cld != null) {
+            @SuppressWarnings("unchecked")
             Class<? extends InterMineObject> cls =
                     (Class<? extends InterMineObject>) cld.getType();
 
