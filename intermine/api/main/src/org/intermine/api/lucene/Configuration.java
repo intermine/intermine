@@ -231,9 +231,8 @@ public class Configuration
             Class<? extends InterMineObject> cls =
                     (Class<? extends InterMineObject>) cld.getType();
 
-            // special fields (references to follow) come as
-            // a
-            // space-separated list
+            // special fields (references to follow) come as a space-separated list
+            // eg: index.references.Employee = department address
             String[] specialFields;
             if (!StringUtils.isBlank(value)) {
                 specialFields = value.split("\\s+");
