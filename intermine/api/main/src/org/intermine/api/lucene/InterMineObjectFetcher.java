@@ -126,6 +126,17 @@ public class InterMineObjectFetcher extends Thread
         this.attributePrefixes = attributePrefixes;
     }
 
+    public InterMineObjectFetcher(
+            ObjectStore os,
+            Map<String, List<FieldDescriptor>> classKeys,
+            ObjectPipe<Document> indexingQueue,
+            Configuration config) {
+        this(os, classKeys, indexingQueue,
+                config.getIgnoredClasses(), config.getIgnoredFields(),
+                config.getSpecialReferences(), config.getClassBoost(), config.getFacets(),
+                config.getAttributePrefixes());
+    }
+
     /**
      * get list of fields contained in the fetched documents
      * @return fields
@@ -214,10 +225,11 @@ public class InterMineObjectFetcher extends Thread
         throws PathException, ObjectStoreException, IllegalAccessException {
         long objectParseStart = System.currentTimeMillis();
         long objectParseTime = 0L;
+        Model model = os.getModel();
         Set<Class<?>> clazzes = Util.decomposeClass(object.getClass());
         Set<ClassDescriptor> classDescs = new HashSet<ClassDescriptor>();
         for (Class<?> clazz: clazzes) {
-            classDescs.add(os.getModel().getClassDescriptorByName(clazz.getName()));
+            classDescs.add(model.getClassDescriptorByName(clazz.getName()));
         }
         // create base doc for object
         Document doc = createDocument(object, classDescs);
@@ -433,17 +445,20 @@ public class InterMineObjectFetcher extends Thread
 
         // id has to be stored so we can fetch the actual objects for the
         // results
-        doc.add(new Field("id", object.getId().toString(), Field.Store.YES,
+        doc.add(new Field("id", object.getId().toString(),
+                Field.Store.YES,
                 Field.Index.NOT_ANALYZED_NO_NORMS));
 
         for (ClassDescriptor cld: classDescriptors) {
             // special case for faceting
-            doc.add(new Field("Category", cld.getUnqualifiedName(), Field.Store.NO,
+            doc.add(new Field("Category", cld.getUnqualifiedName(),
+                    Field.Store.NO,
                     Field.Index.NOT_ANALYZED_NO_NORMS));
             addToDocument(doc, "classname", cld.getUnqualifiedName(), 1F, false);
 
             for (ClassDescriptor superCld: cld.getAllSuperDescriptors()) {
-                doc.add(new Field("Category", superCld.getUnqualifiedName(), Field.Store.NO,
+                doc.add(new Field("Category", superCld.getUnqualifiedName(),
+                        Field.Store.NO,
                         Field.Index.NOT_ANALYZED_NO_NORMS));
             }
 

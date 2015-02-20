@@ -58,15 +58,6 @@ import com.browseengine.bobo.facets.impl.MultiValueFacetHandler;
 import com.browseengine.bobo.facets.impl.PathFacetHandler;
 import com.browseengine.bobo.facets.impl.SimpleFacetHandler;
 
-/*
- * Copyright (C) 2002-2015 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
 
 /**
  * Α thing that can find result within an index.
@@ -94,10 +85,10 @@ public final class Browser
 
     /**
      * Create a new search browser.
-     * @param index
-     * @param config
-     * @throws CorruptIndexException
-     * @throws IOException
+     * @param index The index we will search
+     * @param config The search configuration
+     * @throws CorruptIndexException If the index is corrupt.
+     * @throws IOException If we have trouble interacting with the outside world.
      */
     Browser(LuceneIndexContainer index, Configuration config)
             throws CorruptIndexException, IOException {
@@ -473,5 +464,33 @@ public final class Browser
         return sb.toString().trim();
     }
 
+    /**
+     * Cleanly dispose of this object.
+     */
+    public void close() {
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                LOG.error("Not able to free Lucene index file.");
+                e.printStackTrace();
+            }
+        }
+        reader = null;
+        if (boboIndexReader != null) {
+            try {
+                boboIndexReader.close();
+            } catch (IOException e) {
+                LOG.error("Not able to close bobo Index Reader (Lucene).");
+                e.printStackTrace();
+            }
+        }
+        boboIndexReader = null;
+    }
+
+    /** @return the facets for this browser **/
+    public Collection<KeywordSearchFacetData> getFacets() {
+        return config.getFacets();
+    }
 
 }

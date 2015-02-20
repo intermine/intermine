@@ -25,7 +25,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.util.Emailer;
 import org.intermine.util.ShutdownHook;
 import org.intermine.util.Shutdownable;
@@ -192,7 +191,6 @@ public final class InterMineContext implements Shutdownable
         mailQueue = null;
         mailService = null;
         isInitialised = false;
-        KeywordSearch.close();
         destroyDaemonThreads("com.browseengine.bobo.util.MemoryManager");
     }
 

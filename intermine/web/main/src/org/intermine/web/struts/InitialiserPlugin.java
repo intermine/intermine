@@ -45,6 +45,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
 import org.apache.struts.config.ModuleConfig;
@@ -54,6 +55,8 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.lucene.Browser;
+import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -211,10 +214,25 @@ public class InitialiserPlugin implements PlugIn
         cleanTags(im.getTagManager());
 
         initKeylessClasses(servletContext, webConfig);
+        initialiseKeywordSearch(im, servletContext.getRealPath("/"));
 
         doRegistration(webProperties);
 
         LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    private void initialiseKeywordSearch(InterMineAPI im, String dirPath) {
+        Browser browser;
+        try {
+            browser = KeywordSearch.getBrowser(im.getObjectStore(), dirPath);
+            im.registerResource(Browser.class, browser);
+        } catch (CorruptIndexException e) {
+            blockingErrorKeys.put("errors.init.keywordsearch.corrupt", null);
+            LOG.error("Search index is corrupt", e);
+        } catch (IOException e) {
+            blockingErrorKeys.put("errors.init.keywordsearch.io", null);
+            LOG.error("Could not initialise key-word search", e);
+        }
     }
 
     private void initSearch(final ServletContext servletContext,

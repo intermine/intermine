@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.lucene.KeywordSearch;
+import org.intermine.api.lucene.Browser;
 import org.intermine.api.lucene.KeywordSearchFacet;
 import org.intermine.api.lucene.KeywordSearchFacetData;
 import org.intermine.api.lucene.ResultsWithFacets;
@@ -72,14 +72,13 @@ public class KeywordSearchResultsController extends TilesAction
         long time = System.currentTimeMillis();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ServletContext servletContext = request.getSession().getServletContext();
-        String contextPath = servletContext.getRealPath("/");
         synchronized (this) {
             // if this decreases performance too much we might have to change it
             intialiseLogging(SessionMethods.getWebProperties(servletContext).getProperty(
                     "project.title", "unknown").toLowerCase());
         }
-        KeywordSearch.initKeywordSearch(im, contextPath);
-        Collection<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
+        Browser browser = im.getResource(Browser.class);
+        Collection<KeywordSearchFacetData> facets = browser.getFacets();
         int totalHits = 0;
 
         // term
@@ -110,7 +109,7 @@ public class KeywordSearchResultsController extends TilesAction
         long searchTime = System.currentTimeMillis();
 
         ResultsWithFacets results =
-                KeywordSearch.runBrowseWithFacets(im, searchTerm, offset, facetValues, ids);
+                browser.runBrowseWithFacets(im, searchTerm, offset, facetValues, ids);
 
         Collection<KeywordSearchResult> searchResultsParsed =
                 SearchUtils.parseResults(im, wc, results.getHits());
@@ -143,7 +142,7 @@ public class KeywordSearchResultsController extends TilesAction
 
         // pagination
         context.putAttribute("searchOffset", Integer.valueOf(offset));
-        context.putAttribute("searchPerPage", Integer.valueOf(KeywordSearch.PER_PAGE));
+        context.putAttribute("searchPerPage", Integer.valueOf(Browser.PER_PAGE));
         context.putAttribute("searchTotalHits", Integer.valueOf(totalHits));
 
         // facet lists

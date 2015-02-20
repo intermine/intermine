@@ -58,7 +58,7 @@ public final class Indexer
      * Return an initialised indexer.
      * @param os The object store we are loading data from
      * @param classKeys The class keys
-     * @param properties The options for this indexer
+     * @param config The options for this indexer
      * @return An indexer.
      */
     public static Indexer getIndexer(
@@ -77,6 +77,11 @@ public final class Indexer
         this.config = config;
     }
 
+    /**
+     * Create an index from the object store. This is a long running method.
+     * @return An index.
+     * @throws IOException if we have trouble communicating with the real world.
+     */
     public LuceneIndexContainer createIndex() throws IOException {
         long time = System.currentTimeMillis();
         File tempFile = null;
@@ -220,9 +225,9 @@ public final class Indexer
 
     /**
      *  Save an index into the DB.
-     * @param index
-     * @throws IOException
-     * @throws SQLException
+     * @param index The index to store.
+     * @throws IOException If we have issues doing I/O
+     * @throws SQLException If we cannot write into the database.
      */
     public void saveIndex(LuceneIndexContainer index) throws IOException, SQLException {
 
