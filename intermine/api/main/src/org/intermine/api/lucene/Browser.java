@@ -39,6 +39,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
+import org.intermine.api.types.Producer;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 
@@ -83,17 +84,31 @@ public final class Browser
     private Configuration config;
     private BoboIndexReader boboIndexReader;
 
+    // Using a producer enables us to employ lazy initialisation, which is important
+    // for large indices.
+    private Producer<LuceneIndexContainer> indexProducer;
+
     /**
      * Create a new search browser.
-     * @param index The index we will search
+     * @param getIndex Something that will produce an index when we need it.
      * @param config The search configuration
      * @throws CorruptIndexException If the index is corrupt.
      * @throws IOException If we have trouble interacting with the outside world.
      */
-    Browser(LuceneIndexContainer index, Configuration config)
-            throws CorruptIndexException, IOException {
-        this.index = index;
+    Browser(Producer<LuceneIndexContainer> getIndex, Configuration config) {
+        this.index = null;
+        this.indexProducer = getIndex;
         this.config = config;
+        this.reader = null;
+    }
+
+    // Potentially expensive method that reads the index.
+    private synchronized void init() throws CorruptIndexException, IOException {
+        if (index != null) {
+            return; // Already initialised.
+        }
+        index = indexProducer.produce();
+
         reader = IndexReader.open(index.getDirectory(), true);
         HashSet<FacetHandler<?>> facetHandlers = new HashSet<FacetHandler<?>>();
         facetHandlers.add(new SimpleFacetHandler("Category"));
@@ -108,6 +123,23 @@ public final class Browser
             }
         }
         boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
+    }
+
+    //--- These three accessors guarantee lazy initialisation of the index.
+
+    private IndexReader getReader() throws CorruptIndexException, IOException {
+        init();
+        return reader;
+    }
+
+    private LuceneIndexContainer getIndex() throws CorruptIndexException, IOException {
+        init();
+        return index;
+    }
+
+    private BoboIndexReader getBoboReader() throws CorruptIndexException, IOException {
+        init();
+        return boboIndexReader;
     }
 
     /**
@@ -127,22 +159,25 @@ public final class Browser
 
         IndexSearcher searcher = null;
         try {
-            searcher = new IndexSearcher(reader);
+            IndexReader r = getReader();
+            searcher = new IndexSearcher(r);
 
             Analyzer analyzer = new WhitespaceAnalyzer();
             org.apache.lucene.search.Query query;
+            LuceneIndexContainer idx = getIndex();
 
             // pass entire list of field names to the multi-field parser
             // => search through all fields
-            String[] fieldNamesArray = new String[index.getFieldNames().size()];
-            index.getFieldNames().toArray(fieldNamesArray);
+            String[] fieldNamesArray = new String[idx.getFieldNames().size()];
+            idx.getFieldNames().toArray(fieldNamesArray);
             QueryParser queryParser =
-                    new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer, index
-                            .getFieldBoosts());
+                    new MultiFieldQueryParser(
+                            Version.LUCENE_30, fieldNamesArray, analyzer,
+                            idx.getFieldBoosts());
             query = queryParser.parse(queryString);
 
             // required to expand search terms
-            query = query.rewrite(reader);
+            query = query.rewrite(r);
             LOG.debug("Actual query: " + query);
 
             TopDocs topDocs = searcher.search(query, 500);
@@ -315,20 +350,19 @@ public final class Browser
     public BrowseResult runBrowseSearch(String searchString, int offset,
             Map<String, String> facetValues, List<Integer> ids, boolean pagination, int listSize) {
         BrowseResult result = null;
-        if (index == null) {
-            return result;
-        }
         long time = System.currentTimeMillis();
         String queryString = parseQueryString(searchString);
 
         try {
+            LuceneIndexContainer idx = getIndex();
+            IndexReader r = getReader();
             Analyzer analyzer = new WhitespaceAnalyzer();
 
             // pass entire list of field names to the multi-field parser
             // => search through all fields
-            String[] fieldNamesArray = new String[index.getFieldNames().size()];
+            String[] fieldNamesArray = new String[idx.getFieldNames().size()];
 
-            index.getFieldNames().toArray(fieldNamesArray);
+            idx.getFieldNames().toArray(fieldNamesArray);
             QueryParser queryParser =
                     new MultiFieldQueryParser(Version.LUCENE_30, fieldNamesArray, analyzer);
             queryParser.setDefaultOperator(Operator.AND);
@@ -336,7 +370,7 @@ public final class Browser
             org.apache.lucene.search.Query query = queryParser.parse(queryString);
 
             // required to expand search terms
-            query = query.rewrite(reader);
+            query = query.rewrite(r);
 
             LOG.debug("Rewritten query: " + query);
 
@@ -395,7 +429,7 @@ public final class Browser
             // execute query and return result
             Browsable browser = null;
             try {
-                browser = new BoboBrowser(boboIndexReader);
+                browser = new BoboBrowser(getBoboReader());
                 result = browser.browse(browseRequest);
             } finally {
                 if (browser != null) {

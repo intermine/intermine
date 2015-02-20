@@ -10,10 +10,10 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.types.Producer;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**

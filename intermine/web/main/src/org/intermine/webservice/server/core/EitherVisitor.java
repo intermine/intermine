@@ -1,5 +1,7 @@
 package org.intermine.webservice.server.core;
 
+import org.intermine.api.types.Function;
+
 /*
  * Copyright (C) 2002-2015 FlyMine
  *
