@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -42,16 +41,11 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -63,10 +57,11 @@ import org.intermine.util.ObjectPipe;
  * a lucene document for them, add references (if applicable) and put the final
  * document in the indexing queue
  * @author nils
+ * @author Alex Kalderimis
  */
 public class InterMineObjectFetcher extends Thread
 {
-    private static final Store STORE_FIELD = Field.Store.YES;
+    private static final Store STORE_FIELD = Field.Store.NO;
 
     private static final String CATEGORY = "Category";
 
@@ -495,9 +490,9 @@ public class InterMineObjectFetcher extends Thread
         }
 
         // id has to be stored so we can fetch the actual objects for the
-        // results
+        // results - everything else uses STORE_FIELD
         doc.add(new Field("id", object.getId().toString(),
-                STORE_FIELD,
+                Field.Store.YES,
                 Field.Index.NOT_ANALYZED_NO_NORMS));
 
         // Documents have one classname per cld, and multiple Categories
