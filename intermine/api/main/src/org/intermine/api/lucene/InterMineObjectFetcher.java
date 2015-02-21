@@ -301,7 +301,7 @@ public class InterMineObjectFetcher extends Thread
             Document doc,
             Map<String, KeywordSearchFacetData> referenceFacetFields,
             Map<ClassDescriptor, Set<String>> references)
-            throws IllegalAccessException {
+        throws IllegalAccessException {
         // find all references and add them
         for (Set<String> refSet: references.values()) {
             for (String reference: refSet) {
@@ -347,7 +347,7 @@ public class InterMineObjectFetcher extends Thread
 
     private void handleReferenceFacet(Document doc, String reference,
             InterMineObject ref, KeywordSearchFacetData referenceFacet)
-            throws IllegalAccessException {
+        throws IllegalAccessException {
         //handle PATH facets FIXME: UNTESTED!
         if (referenceFacet.getType() == KeywordSearchFacetType.PATH) {
             String virtualPathField =
