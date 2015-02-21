@@ -87,17 +87,17 @@ public final class Indexer
         File tempFile = null;
         LOG.debug("Creating keyword search index...");
 
-        LOG.info("Indexing - Temp Dir: " + config.getTempDirectory());
+        LOG.debug("Indexing - Temp Dir: " + config.getTempDirectory());
 
         ObjectPipe<Document> indexingQueue = new ObjectPipe<Document>();
 
-        LOG.info("Starting fetcher thread...");
+        LOG.debug("Starting fetcher thread...");
         InterMineObjectFetcher fetchThread = new InterMineObjectFetcher(
                 os, classKeys, indexingQueue, config);
         fetchThread.start(); // Start fetching in the background.
 
-        // index the docs queued by the fetchers
-        LOG.info("Preparing index...");
+        // index the docs queued by the fetcher
+        LOG.debug("Preparing index...");
         LuceneIndexContainer index = new LuceneIndexContainer();
         try {
             tempFile = makeTempFile(config.getTempDirectory(), index);
@@ -116,7 +116,7 @@ public final class Indexer
             }
         }
 
-        LOG.info("Indexing directory: " + tempFile.getAbsolutePath());
+        LOG.debug("Indexing directory: " + tempFile.getAbsolutePath());
 
         IndexWriter writer;
         writer = new IndexWriter(index.getDirectory(), new WhitespaceAnalyzer(), true,
@@ -182,7 +182,7 @@ public final class Indexer
         long freeMem = Runtime.getRuntime().freeMemory() / 1024;
         long maxMem = Runtime.getRuntime().maxMemory() / 1024;
         double percentUsed = (freeMem * 1d) / (maxMem * 1d) * 100d;
-        LOG.info(String.format(
+        LOG.debug(String.format(
             "docs indexed=%s; thread=%s; docs/ms=%.2f; memory=%,.2f%% free (of %sk); time=%dms",
                 indexed,
                 fetchThread.getState(),

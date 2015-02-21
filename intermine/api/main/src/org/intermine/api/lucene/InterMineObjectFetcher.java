@@ -29,6 +29,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -50,8 +51,11 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.ObjectPipe;
 
 /**
@@ -77,7 +81,7 @@ public class InterMineObjectFetcher extends Thread
     final ObjectPipe<Document> indexingQueue;
     final Set<Class<? extends InterMineObject>> ignoredClasses;
     final Map<Class<? extends InterMineObject>, Set<String>> ignoredFields;
-    final Map<Class<? extends InterMineObject>, String[]> specialReferences;
+    final Map<ClassDescriptor, String[]> specialReferences;
     final Map<ClassDescriptor, Float> classBoost;
     final Vector<KeywordSearchFacetData> facets;
 
@@ -121,7 +125,7 @@ public class InterMineObjectFetcher extends Thread
             ObjectPipe<Document> indexingQueue,
             Set<Class<? extends InterMineObject>> ignoredClasses,
             Map<Class<? extends InterMineObject>, Set<String>> ignoredFields,
-            Map<Class<? extends InterMineObject>, String[]> specialReferences,
+            Map<ClassDescriptor, String[]> specialReferences,
             Map<ClassDescriptor, Float> classBoost, Vector<KeywordSearchFacetData> facets,
             Map<String, String> attributePrefixes) {
         super();
@@ -172,11 +176,10 @@ public class InterMineObjectFetcher extends Thread
         try {
             long time = System.currentTimeMillis();
             long objectParseTime = 0;
-            LOG.info("Fetching all InterMineObjects...");
+            LOG.debug("Fetching all InterMineObjects...");
 
-            HashSet<Class<? extends InterMineObject>> seenClasses =
-                    new HashSet<Class<? extends InterMineObject>>();
-            HashMap<String, InterMineResultsContainer> referenceResults =
+            Set<ClassDescriptor> seenClasses = new HashSet<ClassDescriptor>();
+            Map<String, InterMineResultsContainer> referenceResults =
                     new HashMap<String, InterMineResultsContainer>();
 
             try {
@@ -189,7 +192,7 @@ public class InterMineObjectFetcher extends Thread
                 QueryField qf = new QueryField(qc, "class");
                 q.setConstraint(new BagConstraint(qf, ConstraintOp.NOT_IN, ignoredClasses));
 
-                LOG.info("QUERY: " + q.toString());
+                LOG.debug("QUERY: " + q.toString());
 
                 Results results = os.execute(q, 1000, true, false, true);
 
@@ -208,7 +211,7 @@ public class InterMineObjectFetcher extends Thread
                         doneMessage.append(" NO_NORMS");
                     }
                 }
-                LOG.info("COMPLETED index with " + i + " records.  Fields: " + doneMessage);
+                LOG.debug("COMPLETED index with " + i + " records.  Fields: " + doneMessage);
             } finally {
                 for (InterMineResultsContainer resultsContainer : referenceResults.values()) {
                     ((ObjectStoreInterMineImpl) os).releaseGoFaster(resultsContainer.getResults()
@@ -236,22 +239,17 @@ public class InterMineObjectFetcher extends Thread
         return error;
     }
 
-    @SuppressWarnings("unchecked")
     private Document handleObject(
             InterMineObject object,
-            HashSet<Class<? extends InterMineObject>> seenClasses,
-            HashMap<String, InterMineResultsContainer> referenceResults)
+            Set<ClassDescriptor> seenClasses,
+            Map<String, InterMineResultsContainer> referenceResults)
         throws PathException, ObjectStoreException, IllegalAccessException {
         long objectParseStart = System.currentTimeMillis();
         long objectParseTime = 0L;
         Model model = os.getModel();
 
         // Construct a set of all the class-descriptors relevant to this object.
-        Set<Class<?>> clazzes = Util.decomposeClass(object.getClass());
-        Set<ClassDescriptor> classDescs = new HashSet<ClassDescriptor>();
-        for (Class<?> clazz: clazzes) {
-            classDescs.add(model.getClassDescriptorByName(clazz.getName()));
-        }
+        Set<ClassDescriptor> classDescs = model.getClassDescriptorsForClass(object.getClass());
 
         // create base doc for object
         Document doc = createDocument(object, classDescs);
@@ -266,23 +264,21 @@ public class InterMineObjectFetcher extends Thread
 
         // if we have not seen an object of this class before, query references
         for (ClassDescriptor cld: classDescs) {
-            Class<? extends FastPathObject> clazz = cld.getType();
-            if (!seenClasses.contains(clazz)) {
-                LOG.info("Getting references for new class: " + clazz);
-
-                // query all references that we need
-                for (String reference : references.get(cld)) {
-                    // do not count this towards objectParseTime
-                    objectParseTime += (System.currentTimeMillis() - objectParseStart);
-                    queryReference(referenceResults, reference);
-                    // start counting objectParseTime again
-                    objectParseStart = System.currentTimeMillis();
-                }
-
-                seenClasses.add((Class<? extends InterMineObject>) clazz);
+            if (seenClasses.contains(cld) || !references.containsKey(cld)) {
+                continue;
             }
-        }
 
+            // query all references that we need
+            for (String reference : references.get(cld)) {
+                // do not count this towards objectParseTime
+                objectParseTime += (System.currentTimeMillis() - objectParseStart);
+                queryReference(referenceResults, reference);
+                // start counting objectParseTime again
+                objectParseStart = System.currentTimeMillis();
+            }
+
+            seenClasses.add(cld);
+        }
 
         addAllReferences(
             object, referenceResults, doc,
@@ -294,12 +290,11 @@ public class InterMineObjectFetcher extends Thread
     }
 
     private void queryReference(
-            HashMap<String, InterMineResultsContainer> referenceResults,
+            Map<String, InterMineResultsContainer> referenceResults,
             String reference) throws PathException, ObjectStoreException {
         LOG.debug("Querying reference " + reference);
-        Query queryReference = getPathQuery(reference);
-        Results resultsc = os.execute(queryReference, 1000, true, false,
-                true);
+        Query queryReference = getOSQuery(reference);
+        Results resultsc = os.execute(queryReference, 1000, true, false, true);
         ((ObjectStoreInterMineImpl) os).goFaster(queryReference);
         referenceResults.put(reference, new InterMineResultsContainer(resultsc));
         LOG.debug("Querying reference " + reference + " done -- "
@@ -307,9 +302,9 @@ public class InterMineObjectFetcher extends Thread
     }
 
     private void addAllReferences(InterMineObject imo,
-            HashMap<String, InterMineResultsContainer> referenceResults,
+            Map<String, InterMineResultsContainer> referenceResults,
             Document doc,
-            HashMap<String, KeywordSearchFacetData> referenceFacetFields,
+            Map<String, KeywordSearchFacetData> referenceFacetFields,
             Map<ClassDescriptor, Set<String>> references)
             throws IllegalAccessException {
         // find all references and add them
@@ -318,83 +313,89 @@ public class InterMineObjectFetcher extends Thread
                 InterMineResultsContainer resultsContainer = referenceResults.get(reference);
                 //step through the reference results (ordered) while ref.id = obj.id
                 ListIterator<ResultsRow<InterMineObject>> rows = resultsContainer.getIterator();
-                while (rows.hasNext()) {
-                    @SuppressWarnings("rawtypes")
+                ROWS: while (rows.hasNext()) {
                     // ResultRow has two columns: 0 = id, 1 = InterMineObject
-                    ResultsRow next = rows.next();
+                    ResultsRow<InterMineObject> next = rows.next();
 
                     // It is possible that the inner loop iterator "lags behind" the
                     // current object's id. See:
                     // https://github.com/intermine/intermine/issues/473
                     // so we advance up to the current object if we are behind it.
-                    while (rows.hasNext() && ((Integer) next.get(0)).compareTo(imo.getId()) < 0) {
-                        next = rows.next();
+                    while (next.get(0).getId().compareTo(imo.getId()) < 0) {
+                        continue ROWS;
                     }
 
                     // reference is not for the current object?
-                    if (!next.get(0).equals(imo.getId())) {
-                        // go back one step, if we can
+                    // (ie. this object doesn't have this ref)
+                    if (!next.get(0).equals(imo)) {
+                        // rewind one step, if we can
                         if (rows.hasPrevious()) {
                             rows.previous();
                         }
 
-                        break;
+                        break ROWS;
                     }
 
                     // add reference to doc
-                    InterMineObject ref = (InterMineObject) next.get(1);
+                    InterMineObject ref = next.get(1);
                     addObjectToDocument(ref, reference, doc);
 
                     //check if this reference contains an attribute we need for a facet
                     KeywordSearchFacetData referenceFacet = referenceFacetFields.get(reference);
                     if (referenceFacet != null) {
-                        //handle PATH facets FIXME: UNTESTED!
-                        if (referenceFacet.getType() == KeywordSearchFacetType.PATH) {
-                            String virtualPathField =
-                                    "path_" + referenceFacet.getName().toLowerCase();
-                            for (String field : referenceFacet.getFields()) {
-                                if (field.startsWith(reference + ".")) {
-                                    String facetAttribute =
-                                            field.substring(field.lastIndexOf('.') + 1);
-                                    Object facetValue = ref.getFieldValue(facetAttribute);
+                        handleReferenceFacet(doc, reference, ref, referenceFacet);
+                    }
+                }
+            }
+        }
+    }
 
-                                    if (facetValue instanceof String
-                                            && !StringUtils
-                                                    .isBlank((String) facetValue)) {
-                                        Field f = doc.getField(virtualPathField);
+    private void handleReferenceFacet(Document doc, String reference,
+            InterMineObject ref, KeywordSearchFacetData referenceFacet)
+            throws IllegalAccessException {
+        //handle PATH facets FIXME: UNTESTED!
+        if (referenceFacet.getType() == KeywordSearchFacetType.PATH) {
+            String virtualPathField =
+                    "path_" + referenceFacet.getName().toLowerCase();
+            for (String field : referenceFacet.getFields()) {
+                if (field.startsWith(reference + ".")) {
+                    String facetAttribute =
+                            field.substring(field.lastIndexOf('.') + 1);
+                    Object facetValue = ref.getFieldValue(facetAttribute);
 
-                                        if (f != null) {
-                                            f.setValue(f.stringValue() + "/"
-                                                    + facetValue);
-                                        } else {
-                                            doc.add(new Field(virtualPathField,
-                                                    (String) facetValue,
-                                                    STORE_FIELD,
-                                                    Field.Index.NOT_ANALYZED_NO_NORMS));
-                                        }
-                                    }
-                                }
-                            }
+                    if (facetValue instanceof String
+                            && !StringUtils
+                                    .isBlank((String) facetValue)) {
+                        Field f = doc.getField(virtualPathField);
+
+                        if (f != null) {
+                            f.setValue(f.stringValue() + "/"
+                                    + facetValue);
                         } else {
-                            //SINGLE/MULTI facet
-                            //add attribute to document a second time, but unstemmed
-                            //and with the field name corresponding to the facet name
-                            String facetAttribute =
-                                    referenceFacet.getField()
-                                            .substring(
-                                                    referenceFacet.getField()
-                                                            .lastIndexOf('.') + 1);
-                            Object facetValue = ref.getFieldValue(facetAttribute);
-
-                            if (facetValue instanceof String
-                                    && !StringUtils.isBlank((String) facetValue)) {
-                                doc.add(new Field(referenceFacet.getField(),
-                                        (String) facetValue, STORE_FIELD,
-                                        Field.Index.NOT_ANALYZED_NO_NORMS));
-                            }
+                            doc.add(new Field(virtualPathField,
+                                    (String) facetValue,
+                                    STORE_FIELD,
+                                    Field.Index.NOT_ANALYZED_NO_NORMS));
                         }
                     }
                 }
+            }
+        } else {
+            //SINGLE/MULTI facet
+            //add attribute to document a second time, but unstemmed
+            //and with the field name corresponding to the facet name
+            String facetAttribute =
+                    referenceFacet.getField()
+                            .substring(
+                                    referenceFacet.getField()
+                                            .lastIndexOf('.') + 1);
+            Object facetValue = ref.getFieldValue(facetAttribute);
+
+            if (facetValue instanceof String
+                    && !StringUtils.isBlank((String) facetValue)) {
+                doc.add(new Field(referenceFacet.getField(),
+                        (String) facetValue, STORE_FIELD,
+                        Field.Index.NOT_ANALYZED_NO_NORMS));
             }
         }
     }
@@ -402,54 +403,57 @@ public class InterMineObjectFetcher extends Thread
     private Map<ClassDescriptor, Set<String>> determineReferences(
             Set<ClassDescriptor> classDescs,
             HashMap<String, KeywordSearchFacetData> referenceFacetFields) {
+
         Map<ClassDescriptor, Set<String>> references = new HashMap<ClassDescriptor, Set<String>>();
-        for (Entry<Class<? extends InterMineObject>, String[]> specialClass
-                : specialReferences.entrySet()) {
-            Class<? extends InterMineObject> superType = specialClass.getKey();
+
+        for (Entry<ClassDescriptor, String[]> specialClass: specialReferences.entrySet()) {
+            ClassDescriptor hasRefs = specialClass.getKey();
             for (ClassDescriptor cld: classDescs) {
-                Class<?> type = cld.getType();
-                Set<String> refs = new HashSet<String>();
-                references.put(cld, refs);
-                if (superType.isAssignableFrom(type)) {
-                    for (String reference : specialClass.getValue()) {
+                if (hasRefs.equals(cld)) {
+                    Set<String> refs = new HashSet<String>();
+                    references.put(cld, refs);
+                    for (String fieldExpr : specialClass.getValue()) {
                         // TODO: avoid the stringification - we have the cld, so we don't need
                         // to roundtrip through the path resolution mechanism.
-                        String fullReference = cld.getUnqualifiedName() + "." + reference;
+                        String fullReference = cld.getUnqualifiedName() + "." + fieldExpr;
                         refs.add(fullReference);
 
                         //check if this reference returns a field we are
                         //faceting by. if so, add it to referenceFacetFields
                         for (KeywordSearchFacetData facet : facets) {
                             for (String field : facet.getFields()) {
-                                if (field.startsWith(reference + ".")
-                                        && !field.substring(reference.length() + 1)
+                                if (field.startsWith(fieldExpr + ".")
+                                        && !field.substring(fieldExpr.length() + 1)
                                                 .contains(".")) {
                                     referenceFacetFields.put(fullReference, facet);
                                 }
                             }
                         }
                     }
+
+                    break;
                 }
             }
         }
+
         return references;
     }
 
     private int iterateOverObjects(long time, long objectParseTime,
-            HashSet<Class<? extends InterMineObject>> seenClasses,
-            HashMap<String, InterMineResultsContainer> referenceResults,
+            Set<ClassDescriptor> seenClasses,
+            Map<String, InterMineResultsContainer> referenceResults,
             Results results, ListIterator<ResultsRow<InterMineObject>> it)
         throws PathException, ObjectStoreException, IllegalAccessException {
         int i = 0;
         int size = results.size();
-        LOG.info("Query returned " + size + " results");
+        LOG.debug("Query returned " + size + " results");
 
         //iterate over objects
         while (it.hasNext()) {
             ResultsRow<InterMineObject> row = it.next();
 
             if (i % 10000 == 1) {
-                LOG.info("IMOFetcher: fetched " + i + " of " + size + " in "
+                LOG.debug("IMOFetcher: fetched " + i + " of " + size + " in "
                         + (System.currentTimeMillis() - time) + "ms total, "
                         + (objectParseTime) + "ms spent on parsing");
             }
@@ -511,6 +515,9 @@ public class InterMineObjectFetcher extends Thread
     }
 
     private void addCategory(Document doc, ClassDescriptor cld) {
+        if ("InterMineObject".equals(cld.getUnqualifiedName())) {
+            return;
+        }
         doc.add(new Field(CATEGORY, cld.getUnqualifiedName(),
                 STORE_FIELD,
                 Field.Index.NOT_ANALYZED_NO_NORMS));
@@ -541,7 +548,6 @@ public class InterMineObjectFetcher extends Thread
         Set<ObjectValueContainer> attributes =
                 getAttributeMapForObject(object, prefix);
         for (ObjectValueContainer a : attributes) {
-            LOG.info("Adding " + a.getLuceneName() + " = " + a.getValue() + " to document");
             addToDocument(doc, a.getLuceneName(), a.getValue(), a.getBoost(), false);
 
             // index all key fields as raw data with a higher boost, favors
@@ -669,7 +675,7 @@ public class InterMineObjectFetcher extends Thread
         Vector<ClassAttributes> attributes = decomposedClassesCache.get(baseClass);
 
         if (attributes == null) {
-            LOG.info("decomposedClassesCache: No entry for " + baseClass + ", adding...");
+            LOG.debug("decomposedClassesCache: No entry for " + baseClass + ", adding...");
             attributes = new Vector<ClassAttributes>();
 
             for (Class<?> cls : Util.decomposeClass(baseClass)) {
@@ -684,67 +690,26 @@ public class InterMineObjectFetcher extends Thread
         return attributes;
     }
 
-    private Query getPathQuery(String pathString) throws PathException {
-        Query q = new Query();
-        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
-
+    private Query getOSQuery(String pathString) throws PathException {
         Path path = new Path(os.getModel(), pathString);
-        List<ClassDescriptor> classDescriptors = path.getElementClassDescriptors();
-        List<String> fields = path.getElements();
-
-        ClassDescriptor parentClassDescriptor = null;
-        QueryClass parentQueryClass = null;
-
-        for (int i = 0; i < classDescriptors.size(); i++) {
-            ClassDescriptor classDescriptor = classDescriptors.get(i);
-
-            Class<?> classInCollection = classDescriptor.getType();
-
-            QueryClass queryClass = new QueryClass(classInCollection);
-            q.addFrom(queryClass);
-
-            if (i == 0) {
-                // first class
-                QueryField topId = new QueryField(queryClass, "id");
-                q.addToSelect(topId);
-                q.addToOrderBy(topId); // important for optimization in run()
-            } else {
-                if (parentClassDescriptor == null) {
-                    continue;
-                }
-                String fieldName = fields.get(i - 1);
-                if (parentClassDescriptor.getReferenceDescriptorByName(fieldName, true) != null) {
-                    LOG.info(parentClassDescriptor.getType().getSimpleName() + " -> " + fieldName
-                            + " (OBJECT)");
-                    QueryObjectReference objectReference =
-                            new QueryObjectReference(parentQueryClass, fieldName);
-                    ContainsConstraint cc =
-                            new ContainsConstraint(objectReference, ConstraintOp.CONTAINS,
-                                    queryClass);
-                    constraints.addConstraint(cc);
-                } else if (parentClassDescriptor.getCollectionDescriptorByName(fieldName, true)
-                        != null) {
-                    LOG.info(parentClassDescriptor.getType().getSimpleName() + " -> " + fieldName
-                            + " (COLLECTION)");
-                    QueryCollectionReference collectionReference =
-                            new QueryCollectionReference(parentQueryClass, fieldName);
-                    ContainsConstraint cc =
-                            new ContainsConstraint(collectionReference, ConstraintOp.CONTAINS,
-                                    queryClass);
-                    constraints.addConstraint(cc);
-                } else {
-                    LOG.warn("Unknown field '" + parentClassDescriptor.getUnqualifiedName()
-                            + "'::'" + fieldName + "' in path '" + pathString + "'!");
-                }
-            }
-
-            parentClassDescriptor = classDescriptor;
-            parentQueryClass = queryClass;
+        if (path.endIsAttribute()) {
+            throw new RuntimeException("The path must be a reference, not an attribute");
+        }
+        if (path.isRootPath()) {
+            throw new RuntimeException("The path must be a reference, not a root path");
+        }
+        Path rootPath = path.getPrefix();
+        while (!rootPath.isRootPath()) {
+            rootPath = rootPath.getPrefix();
         }
 
-        q.setConstraint(constraints);
-        q.addToSelect(parentQueryClass); // select last class
+        PathQuery pq = new PathQuery(os.getModel());
+        pq.addViews(
+            rootPath.append("id").toString(),
+            path.append("id").toString()
+        );
+        pq.addOrderBy(rootPath.append("id").toString(), OrderDirection.ASC);
 
-        return q;
+        return MainHelper.makeSimpleQuery(pq);
     }
 }

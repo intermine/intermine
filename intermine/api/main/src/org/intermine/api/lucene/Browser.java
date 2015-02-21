@@ -39,6 +39,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
+import org.intermine.api.types.Closeable;
 import org.intermine.api.types.Producer;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -65,7 +66,7 @@ import com.browseengine.bobo.facets.impl.SimpleFacetHandler;
  * @author Alex Kalderimis
  *
  */
-public final class Browser
+public final class Browser implements Closeable
 {
 
     private static final Logger LOG = Logger.getLogger(Browser.class);
@@ -111,8 +112,12 @@ public final class Browser
 
         reader = IndexReader.open(index.getDirectory(), true);
         HashSet<FacetHandler<?>> facetHandlers = new HashSet<FacetHandler<?>>();
-        facetHandlers.add(new SimpleFacetHandler("Category"));
+
+        boolean configuredCategory = false;
         for (KeywordSearchFacetData facet : config.getFacets()) {
+            if (!configuredCategory) { // Special treatment of Category.
+                configuredCategory = "Category".equals(facet.getField());
+            }
             if (facet.getType().equals(KeywordSearchFacetType.MULTI)) {
                 facetHandlers.add(new MultiValueFacetHandler(facet.getField()));
             } else if (facet.getType().equals(KeywordSearchFacetType.PATH)) {
@@ -121,6 +126,10 @@ public final class Browser
             } else {
                 facetHandlers.add(new SimpleFacetHandler(facet.getField()));
             }
+        }
+        if (!configuredCategory) {
+            LOG.info("Adding default category facet");
+            facetHandlers.add(new MultiValueFacetHandler("Category"));
         }
         boboIndexReader = BoboIndexReader.getInstance(reader, facetHandlers);
     }
