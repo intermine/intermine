@@ -532,6 +532,9 @@ public class Path
      * Return a list of field names, one per path element (except for the first, which is a
      * class). To clarify, this does not include the root class of the path.
      *
+     * eg: a path representing "Employee.department.name" will produce a list of
+     * <code>["department", "name"]</code>
+     *
      * @return a list of field names
      */
     public List<String> getElements() {

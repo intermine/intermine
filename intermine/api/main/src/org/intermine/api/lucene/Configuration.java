@@ -13,6 +13,7 @@ package org.intermine.api.lucene;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -40,8 +41,12 @@ public class Configuration
 
     private static final Logger LOG = Logger.getLogger(Configuration.class);
 
-    private HashMap<Class<? extends InterMineObject>, String[]> specialReferences
-        = new HashMap<Class<? extends InterMineObject>, String[]>();
+    private static final Set<String> BOOLEAN_PROPS = new HashSet<String>(Arrays.asList(
+        "index.temp.directory", "debug", "delete.index"
+    ));
+
+    private Map<ClassDescriptor, String[]> specialReferences
+        = new HashMap<ClassDescriptor, String[]>();
     private HashSet<Class<? extends InterMineObject>> ignoredClasses
         = new HashSet<Class<? extends InterMineObject>>();
     private HashMap<ClassDescriptor, Float> classBoost
@@ -70,7 +75,7 @@ public class Configuration
     /**
      * @return The special references.
      */
-    public HashMap<Class<? extends InterMineObject>, String[]> getSpecialReferences() {
+    public Map<ClassDescriptor, String[]> getSpecialReferences() {
         return specialReferences;
     }
 
@@ -134,10 +139,10 @@ public class Configuration
             LOG.debug("- " + class1.getSimpleName());
         }
 
-        LOG.debug("Indexing - Special References:");
-        for (Entry<Class<? extends InterMineObject>, String[]> specialReference
+        LOG.info("Indexing - Special References:");
+        for (Entry<ClassDescriptor, String[]> specialReference
                 : specialReferences.entrySet()) {
-            LOG.debug("- " + specialReference.getKey() + " = "
+            LOG.info("- " + specialReference.getKey().getUnqualifiedName() + " = "
                     + Arrays.toString(specialReference.getValue()));
         }
 
@@ -177,11 +182,7 @@ public class Configuration
             handleBoost(key, value);
         } else if (key.startsWith("index.prefix")) {
             handlePrefix(key, value);
-        } else if ("search.debug".equals(key) && !StringUtils.isBlank(value)) {
-            debugOutput =
-                    "1".equals(value) || "true".equals(value.toLowerCase())
-                            || "on".equals(value.toLowerCase());
-        } else {
+        } else if (!BOOLEAN_PROPS.contains(key)) {
             LOG.error("Cannot handle configuration - bad config?: " + key + " = " + value);
         }
     }
@@ -227,10 +228,6 @@ public class Configuration
         String classToIndex = key.substring("index.references.".length());
         ClassDescriptor cld = model.getClassDescriptorByName(classToIndex);
         if (cld != null) {
-            @SuppressWarnings("unchecked")
-            Class<? extends InterMineObject> cls =
-                    (Class<? extends InterMineObject>) cld.getType();
-
             // special fields (references to follow) come as a space-separated list
             // eg: index.references.Employee = department address
             String[] specialFields;
@@ -240,7 +237,7 @@ public class Configuration
                 specialFields = null;
             }
 
-            specialReferences.put(cls, specialFields);
+            specialReferences.put(cld, specialFields);
         } else {
             LOG.error("keyword_search.properties: classDescriptor for '"
                     + classToIndex + "' not found!");
