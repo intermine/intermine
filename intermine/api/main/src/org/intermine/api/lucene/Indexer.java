@@ -200,7 +200,7 @@ public final class Indexer
      * @throws IOException
      */
     private static File makeTempFile(String tempDir, LuceneIndexContainer index)
-            throws IOException {
+        throws IOException {
         LOG.debug("Creating search index tmp dir: " + tempDir);
         File tempFile = File.createTempFile("search_index", "", new File(tempDir));
         if (!tempFile.delete()) {
@@ -321,7 +321,7 @@ public final class Indexer
     }
 
     private void writeObjectToDB(String key, Object object)
-            throws IOException, SQLException {
+        throws IOException, SQLException {
         LOG.debug("Saving stream to database...");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
 
