@@ -346,11 +346,11 @@ public abstract class WebService
                 checkEnabled();
                 authenticate();
                 // JWC: test on authentication always.
-                if (!SessionMethods.getProfile(request.getSession()).isLoggedIn()) {
-                  LOG.info("User is not logged in.");
+                //if (!SessionMethods.getProfile(request.getSession()).isLoggedIn()) {
+                 // LOG.info("User is not logged in.");
                   //response.sendRedirect("https://signon.phytozome.net/");
                   //return;
-                }
+                //}
                 initialised = true;
                 postInit();
                 validateState();

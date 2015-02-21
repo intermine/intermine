@@ -5,7 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-<<<<<<< HEAD
 <div class="body">
   <div id="leftCol">
     <div id="pageDesc" class="pageDesc">
