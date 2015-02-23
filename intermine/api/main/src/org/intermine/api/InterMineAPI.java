@@ -29,6 +29,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.types.ClassKeys;
+import org.intermine.api.types.Closeable;
 import org.intermine.api.util.AnonProfile;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -42,7 +43,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
  *
  * @author Richard Smith
  */
-public class InterMineAPI
+public class InterMineAPI implements Closeable
 {
     protected ObjectStore objectStore;
     protected Model model;
@@ -280,6 +281,7 @@ public class InterMineAPI
 
     /**
      * Get a resource of a particular type. Poor-man's dependency injection.
+     * Throws an error if there isn't anything registered at that key
      * @param <T> the type of the value.
      * @param klass The type of thing we want.
      * @return A thing.
@@ -291,5 +293,22 @@ public class InterMineAPI
             throw new RuntimeException("No resource configured for " + klass.getName());
         }
         return ret;
+    }
+
+    /**
+     * Close this object, releasing any resources that it holds.
+     */
+    public void close() {
+        closeResources();
+        // closeObjectStores(); We might potentially want to close these too.
+    }
+
+    private void closeResources() {
+        for (Object resource: resources.values()) {
+            if (resource instanceof Closeable) {
+                ((Closeable) resource).close();
+            }
+        }
+        resources.clear();
     }
 }

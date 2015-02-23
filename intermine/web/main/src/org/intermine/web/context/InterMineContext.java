@@ -183,6 +183,7 @@ public final class InterMineContext implements Shutdownable
             // Tell the pool to close.
             mailService.shutdownNow();
         }
+        im.close();
         im = null;
         webProperties = null;
         webConfig = null;
