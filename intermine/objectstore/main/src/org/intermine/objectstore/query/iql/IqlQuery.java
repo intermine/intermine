@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.iql;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -691,7 +691,8 @@ public class IqlQuery
             OverlapConstraint oc = (OverlapConstraint) cc;
             return "RANGE(" + nodeToString(q, oc.getLeft().getStart(), parameters, null) + ", "
                 + nodeToString(q, oc.getLeft().getEnd(), parameters, null) + ", "
-                + nodeToString(q, oc.getLeft().getParent(), parameters, null) + ") OVERLAPS RANGE("
+                + nodeToString(q, oc.getLeft().getParent(), parameters, null) + ")"
+                + " " + cc.getOp() + " RANGE("
                 + nodeToString(q, oc.getRight().getStart(), parameters, null) + ", "
                 + nodeToString(q, oc.getRight().getEnd(), parameters, null) + ", "
                 + nodeToString(q, oc.getRight().getParent(), parameters, null) + ")";

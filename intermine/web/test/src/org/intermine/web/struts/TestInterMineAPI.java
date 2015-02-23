@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,12 +14,12 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.types.ClassKeys;
 
 /**
  * InterMineAPITest is a class created only to allow some tests.

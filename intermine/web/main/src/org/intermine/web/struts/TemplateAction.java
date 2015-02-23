@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -394,7 +394,7 @@ public class TemplateAction extends InterMineAction
                             }
                         } else {
                             ConstraintOp constraintOp = ConstraintOp
-                            .getOpForIndex(Integer.valueOf(op));
+                                    .getOpForIndex(Integer.valueOf(op));
                             String constraintValue = "";
                             String multiValueAttribute = tf.getMultiValueAttribute(key);
                             if (multiValueAttribute != null && !("".equals(multiValueAttribute))) {

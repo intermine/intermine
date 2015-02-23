@@ -1,7 +1,7 @@
 package org.intermine.web.logic.pathqueryresult;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,6 @@ public class PathQueryResultsHelperTest extends TestCase
     ObjectStoreWriter uosw;
     ObjectStore os;
     private Department department;
-    private Manager manager;
     private List<Class<?>> types;
     private Set<Employee> employees;
     private Employee employee;
@@ -100,7 +99,6 @@ public class PathQueryResultsHelperTest extends TestCase
 
         department = d1;
         employee = e1;
-        manager = m1;
     }
 
     private void initWebConfig() {
@@ -262,7 +260,6 @@ public class PathQueryResultsHelperTest extends TestCase
         osw.store(m1);
         osw.store(d1);
         List<Class<?>> classes = PathQueryResultHelper.queryForTypesInCollection(d1, field, os);
-        @SuppressWarnings("unchecked")
         List<Class<? extends Employee>> expectedClasses = Arrays.asList(Employee.class, Manager.class);
         assertEquals(expectedClasses, classes);
         osw.delete(d1);

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -66,13 +66,15 @@ public class SaveFromIdsToBagAction extends InterMineAction
 
             if ("true".equals(allChecked)) {
                 // TODO do something more clever than running the search again
+                String totalHits = (String) request.getParameter("totalHits");
+                int listSize = Integer.parseInt(totalHits);
                 String searchTerm = (String) request.getParameter("searchTerm");
                 JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));
                 Map<String, String> facetMap = jsonToJava(jsonRequest);
                 int offset = 0;
                 boolean pagination = false;
                 BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetMap,
-                        new ArrayList<Integer>(), pagination);
+                        new ArrayList<Integer>(), pagination, listSize);
 
                 if (result != null) {
                     LOG.error("processing result! " + result.getNumHits());

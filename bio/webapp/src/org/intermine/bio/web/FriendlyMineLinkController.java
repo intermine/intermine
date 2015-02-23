@@ -1,7 +1,7 @@
 package org.intermine.bio.web;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -72,24 +72,27 @@ public class FriendlyMineLinkController  extends TilesAction
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
         final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Collection<Mine> mines = linkManager.getFriendlyMines();
+        Mine localMine = linkManager.getLocalMine();
         request.setAttribute("mines", mines);
+        request.setAttribute("localMine", localMine);
         return null;
     }
 
 
     private static String getIdentifierField(InterMineBag bag) {
-        Class c = null;
+        Class<?> c = null;
         try {
             c = Class.forName(bag.getQualifiedType());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }
-        String identifierField = IDENTIFIER;
+
         // hack so we can use ensembl for ratmine
         if (TypeUtil.getFieldInfo(c, ALTERNATIVE_IDENTIFIER) != null) {
-            identifierField = ALTERNATIVE_IDENTIFIER;
+            return ALTERNATIVE_IDENTIFIER;
+        } else {
+            return IDENTIFIER;
         }
-        return identifierField;
     }
 }

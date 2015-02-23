@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -93,7 +93,7 @@ public class TorqueModelOutputTask extends Task
             }
 
             schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml, missingTables,
-                    FORMAT_VERSION, false);
+                    FORMAT_VERSION, false, false);
         } catch (ClassCastException e) {
             throw new BuildException("Objectstore " + osName
                     + " is not an ObjectStoreInterMineImpl", e);

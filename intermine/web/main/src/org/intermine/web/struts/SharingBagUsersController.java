@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,6 +54,7 @@ public class SharingBagUsersController extends TilesAction
         request.setAttribute("currentSharingUsers", bm.getUsersSharingBag(bagName,
             profile.getUsername()));
         TagManager tm = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> tags = tm.getTags(TagNames.IM_PUBLIC, bagName, TagTypes.BAG,
                                     profile.getUsername());
         if (tags.isEmpty() || !profile.isSuperuser()) {

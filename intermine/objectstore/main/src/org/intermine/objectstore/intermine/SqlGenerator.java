@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -2001,7 +2001,9 @@ public final class SqlGenerator
     }
 
     /**
-     * Converts an OverlapConstraint to a String suitable for putting in an SQL query.
+     * Converts an OverlapConstraint to a String suitable for putting in an SQL query. This will
+     * try to use a Postgres range type column first, if not present it will try BioSeg, if not
+     * present it will use simple constraints on start and end fields.
      *
      * @param state the current SqlGenerator state
      * @param buffer the StringBuffer to place text into
@@ -2027,6 +2029,7 @@ public final class SqlGenerator
             buffer.append("(");
         }
 
+        // make sure the parents of each range are the same object
         QueryObjectReference leftParent = c.getLeft().getParent();
         QueryObjectReference rightParent = c.getRight().getParent();
         buffer.append(state.getFieldToAlias(leftParent.getQueryClass()).get(leftParent
@@ -2035,25 +2038,32 @@ public final class SqlGenerator
             .append(state.getFieldToAlias(rightParent.getQueryClass()).get(rightParent
                     .getFieldName()))
             .append(" AND ");
-        if (schema.hasBioSeg()) {
-            buffer.append("bioseg_create(");
+
+        // TODO get column type and use appropriate range type, currently uses int4range which is
+        // correct for integer columns, we could support other range types
+        boolean useRangeFunction = schema.hasBioSeg() || schema.useRangeTypes();
+
+        if (useRangeFunction) {
+            // either built in ranges or bioseg, prefer to use build int ranges
+            String rangeFunction = (schema.useRangeTypes()) ? "int4range(" : "bioseg_create(";
+            buffer.append(rangeFunction);
             queryEvaluableToString(buffer, c.getLeft().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getLeft().getEnd(), q, state);
-            buffer.append(") ");
+            buffer.append(")");
             if ((ConstraintOp.CONTAINS == c.getOp())
                     || (ConstraintOp.DOES_NOT_CONTAIN == c.getOp())) {
-                buffer.append("@>");
+                buffer.append(" @> ");
             } else if ((ConstraintOp.IN == c.getOp()) || (ConstraintOp.NOT_IN == c.getOp())) {
-                buffer.append("<@");
+                buffer.append(" <@ ");
             } else if ((ConstraintOp.OVERLAPS == c.getOp())
                     || (ConstraintOp.DOES_NOT_OVERLAP == c.getOp())) {
-                buffer.append("&&");
+                buffer.append(" && ");
             } else {
                 throw new IllegalArgumentException("Illegal constraint op " + c.getOp()
                         + " for range");
             }
-            buffer.append(" bioseg_create(");
+            buffer.append(rangeFunction);
             queryEvaluableToString(buffer, c.getRight().getStart(), q, state);
             buffer.append(", ");
             queryEvaluableToString(buffer, c.getRight().getEnd(), q, state);
@@ -2096,6 +2106,7 @@ public final class SqlGenerator
             buffer.append(")");
         }
     }
+
 
     /**
      * Converts an Object to a String, in a form suitable for SQL.

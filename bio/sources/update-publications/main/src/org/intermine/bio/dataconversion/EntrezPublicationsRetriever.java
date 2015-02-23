@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -712,6 +712,15 @@ public class EntrezPublicationsRetriever
             } else if ("Pages".equals(name)) {
                 pubMap.put("pages", characters.toString());
             } else if ("Author".equals(name)) {
+                String authorString = characters.toString();
+                @SuppressWarnings("unchecked")
+                List<String> authorList = (List<String>) pubMap.get("authors");
+                if (authorList == null) {
+                    authorList = new ArrayList<String>();
+                    pubMap.put("authors", authorList);
+                }
+                authorList.add(authorString);
+            } else if ("CollectiveName".equals(name)) {
                 String authorString = characters.toString();
                 @SuppressWarnings("unchecked")
                 List<String> authorList = (List<String>) pubMap.get("authors");

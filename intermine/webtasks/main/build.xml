@@ -3,6 +3,16 @@
   
   <description>build, test, package intermine-webapp-tasks</description>
   <import file="../../../imbuild/library.xml"/>
+
+  <target name="build-jwt-verifier" depends="init, compile">
+      <jar includes="org/intermine/**" destfile="${dist.dir}/verify-jwt.jar">
+          <manifest>
+              <attribute name="Main-Class" value="org.intermine.web.commandline.JWTVerification"/>
+              <attribute name="Class-Path" value="${mf.cp}"/>
+          </manifest>
+          <fileset dir="${build.classes.dir}"/>
+      </jar>
+  </target>
   
 </project>
 

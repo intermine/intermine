@@ -44,7 +44,6 @@
     <merge-additions file="bio/sources/mosquito/anoph-expr/anoph-expr_additions.xml"/>
     <merge-additions file="bio/sources/fly/bdgp-insitu/bdgp-insitu_additions.xml"/>
     <merge-additions file="bio/sources/biogrid/biogrid_additions.xml"/>
-    <merge-additions file="bio/sources/biopax/biopax_additions.xml"/>
     <merge-additions file="bio/sources/treefam/treefam_additions.xml"/>
     <merge-additions file="bio/sources/interpro-go/interpro-go_additions.xml"/>
     <merge-additions file="bio/sources/human/protein-atlas/protein-atlas_additions.xml"/>

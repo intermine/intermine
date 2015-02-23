@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.iql;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -46,7 +46,9 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         results.put("EmptyNorConstraintSet", NO_RESULT);
         results.put("QueryClassBagNotViaNand", NO_RESULT); // Has trouble with "1 = 1" - both are UnknownTypeValues
         results.put("QueryClassBagNotViaNor", NO_RESULT);
-        results.put("Range1", NO_RESULT);
+        results.put("RangeOverlaps", NO_RESULT);
+        results.put("RangeDoesNotOverlap", NO_RESULT);
+        results.put("RangeOverlapsValues", NO_RESULT);
         results.put("SubclassCollection", NO_RESULT);
         results.put("SubclassCollection2", NO_RESULT);
         results.put("ObjectPathExpression5", NO_RESULT);

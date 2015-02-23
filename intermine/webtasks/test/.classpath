@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web-tasks"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel-dbmodel"/>
+	<classpathentry kind="lib" path="/testmodel-dbmodel/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/testmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,7 +1,7 @@
 package org.intermine.sql;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,9 +10,13 @@ package org.intermine.sql;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.TestCase;
+
 import org.postgresql.ds.PGPoolingDataSource;
 
 public class DatabaseTest extends TestCase
@@ -85,6 +89,30 @@ public class DatabaseTest extends TestCase
         Database db = new Database(props);
         assertEquals("secret", db.getPassword());
     }
+
+    public void testVersionIsAtLeast() throws Exception {
+        Database db = new Database(props);
+        db.version = "9.3";
+        assertTrue(db.isVersionAtLeast("9.2"));
+        assertTrue(db.isVersionAtLeast("9.1.7"));
+        assertTrue(db.isVersionAtLeast("8"));
+        assertTrue(db.isVersionAtLeast("9.3"));
+        assertTrue(db.isVersionAtLeast("9.3.0"));
+        assertFalse(db.isVersionAtLeast("10"));
+        assertFalse(db.isVersionAtLeast("9.4"));
+        assertFalse(db.isVersionAtLeast("9.3.1"));
+        db.version = "9.2.1";
+        assertTrue(db.isVersionAtLeast("9.2"));
+        assertTrue(db.isVersionAtLeast("9.2.0"));
+        assertTrue(db.isVersionAtLeast("9.2.1.0"));
+        assertFalse(db.isVersionAtLeast("9.2.1.1"));
+        assertFalse(db.isVersionAtLeast("9.2.2"));
+        db.version = "9.4beta3";
+        assertTrue(db.isVersionAtLeast("9.2"));
+        assertTrue(db.isVersionAtLeast("9.4.0"));
+        assertFalse(db.isVersionAtLeast("9.5"));
+    }
+
 /*
     public void manyTables(int tableCount) throws Exception {
         LOG.warn("Starting test with tableCount = " + tableCount);

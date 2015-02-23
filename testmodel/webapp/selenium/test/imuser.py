@@ -1,49 +1,47 @@
 import requests
 import json
 import os
+import uuid
 
 DEFAULT_BASE = 'http://localhost:8080/intermine-demo'
 
-class IMUser:
+class TemporaryUser:
+    """A helper class for creating new users on a target webservice"""
 
-	def __init__(self, name, password=None):
-		self.base_url = os.getenv('TESTMODEL_BASE', DEFAULT_BASE)
+    def __init__(self, name=None, password=None):
+        self.base_url = os.getenv('TESTMODEL_BASE', DEFAULT_BASE)
+        self.name = name if name is not None else '__TEMPORARY_USER__'
+        self.password = password if password is not None else 'password'
 
-		if password is None:
-			self.create(name, "password")
-		else:
-			self.create(name, password)
+    def create(self):
+        """Create the new user - SHOULD BE CALLED IN SETUP"""
 
-	def create(self, name, password):
+        try:
+            self.delete()
+        except:
+            pass
 
-		self.name = name
-		self.password = password
+        methodURI = '/service/users'
+        payload = {'name': self.name, 'password': self.password}
 
-		try:
-			self.delete()
-		except:
-			pass
+        result = requests.post(self.base_url + methodURI, data=payload)
+        j = result.json()
 
-		methodURI = '/service/users'
-		payload = {'name': name, 'password': password}
+        if j['statusCode'] == 200:
+            print "User created successfully: " + self.name
+        else:
+            print "Error creating user: " + j['error']
 
-		result = requests.post(self.base_url + methodURI, data=payload)
-		j = result.json()
+    def _get_deregistration_token(self):
+        """Get the deregistration token for this user"""
+        methodURI = '/service/user/deregistration'
+        result = requests.post(self.base_url + methodURI, auth=(self.name, self.password))
+        j = result.json()
+        return j['token']['uuid']
 
-		if j['statusCode'] == 200:
-			print "User created successfully: " + self.name
-		else:
-			print "Error creating user: " + j['error']
+    def delete(self):
+        """Delete this user from the webservice - YOU MUST CALL THIS IN tearDown!!"""
+        methodURI = '/service/user'
+        payload = {'deregistrationToken': self._get_deregistration_token()}
+        requests.delete(self.base_url + methodURI, params=payload, auth=(self.name, self.password))
 
-	def get_deregistration_token(self):
-
-		methodURI = '/service/user/deregistration'
-		result = requests.post(self.base_url + methodURI, auth=(self.name, self.password))
-		j = result.json()
-		return j['token']['uuid']
-
-	def delete(self):
-
-		methodURI = '/service/user'
-		payload = {'deregistrationToken': self.get_deregistration_token()}
-		response = requests.delete(self.base_url + methodURI, params=payload, auth=(self.name, self.password))

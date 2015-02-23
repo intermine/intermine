@@ -43,17 +43,23 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
     public void testReadConfig() throws Exception {
 
         factory.readConfig(idresolverConfig);
-        assertEquals(6, factory.getXrefs().size());
-        assertTrue(factory.getXrefs().containsKey("7955"));
-        assertFalse(factory.getXrefs().containsValue("OMIM"));
-        assertTrue(factory.getPrefixes().containsKey("10090"));
-        assertNotNull(factory.getStrain(Collections.singleton("559292")));
-        assertTrue(factory.getIgnoredTaxonIds().contains("6239"));
+
+        assertEquals(5, factory.getXrefs().size());
+        assertTrue("7955 is one of " + factory.getXrefs().keySet(),
+                factory.getXrefs().containsKey("7955"));
+        assertFalse("OMIM is not one of " + factory.getXrefs().values(),
+                factory.getXrefs().containsValue("OMIM"));
+        assertTrue("10116 is one of " + factory.getPrefixes().keySet(),
+                factory.getPrefixes().containsKey("10116"));
+        assertNotNull("{559292} has a strain",
+                factory.getStrain(Collections.singleton("559292")));
+        assertTrue("We are ignoring 6239",
+                factory.getIgnoredTaxonIds().contains("6239"));
 
     }
 
     public void testGetStrain() throws Exception {
-        Set<String> taxSet = new LinkedHashSet<String>(Arrays.asList(new String[] {"10090", "4932"}));
+        Set<String> taxSet = new LinkedHashSet<String>(Arrays.asList(new String[] {"10090", "4932", "10116", "9606"}));
         assertTrue(factory.getStrain(taxSet).containsKey("559292"));
     }
 
@@ -84,10 +90,21 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
             fail("data file not found");
         }
 
-        factory.createFromFile(entrezFile, new HashSet<String>(Arrays.asList(new String[] {"7227", "4932", "10090", "7955"})));
-        assertTrue(IdResolverFactory.resolver.getTaxons().size() == 5);
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"7955", "102", "4932", "101", "10090"})), IdResolverFactory.resolver.getTaxons());
+        factory.createFromFile(entrezFile, new HashSet<String>(Arrays.asList(new String[] {"7227", "4932", "10090", "7955", "9606", "10116"})));
+        assertTrue(IdResolverFactory.resolver.getTaxons().size() == 7);
+        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"7955", "102", "4932", "101", "10116", "9606", "10090"})), IdResolverFactory.resolver.getTaxons());
+
+        // mouse
         String mouseGene = IdResolverFactory.resolver.resolveId("10090", "gene", "Abca2").iterator().next();
-        assertTrue("MGI:99606".equals(mouseGene));
+        assertEquals("MGI:99606", mouseGene);
+
+        // rat
+        String ratGene = IdResolverFactory.resolver.resolveId("10116", "gene", "Asip").iterator().next();
+        assertEquals("RGD:2003", ratGene);
+
+        // hgnc
+        String peopleGene = IdResolverFactory.resolver.resolveId("9606", "gene", "HGNC:5").iterator().next();
+        assertEquals("1", peopleGene);
+
     }
 }

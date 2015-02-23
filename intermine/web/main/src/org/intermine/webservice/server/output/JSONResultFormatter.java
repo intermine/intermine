@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,7 +63,9 @@ public abstract class JSONResultFormatter extends JSONFormatter
 
         // Handle all non-reserved keys in the attribute map.
         for (String key : attributes.keySet()) {
-            if (RESERVED_KEYS.contains(key)) { continue; }
+            if (RESERVED_KEYS.contains(key)) {
+                continue;
+            }
             Object val = attributes.get(key);
             sb.append("\"" + key + "\":");
 

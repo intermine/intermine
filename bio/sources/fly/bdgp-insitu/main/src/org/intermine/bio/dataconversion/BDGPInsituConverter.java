@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -217,7 +217,7 @@ public class BDGPInsituConverter extends BioFileConverter
         } else if (terms.containsKey(name)) {
             return terms.get(name);
         }
-        Item termItem = createItem("OntologyTerm");
+        Item termItem = createItem("MRNAExpressionTerm");
         termItem.setAttribute("name", name);
         termItem.setReference("ontology", ontology);
         store(termItem);

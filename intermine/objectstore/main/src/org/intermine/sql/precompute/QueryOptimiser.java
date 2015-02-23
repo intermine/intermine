@@ -1,7 +1,7 @@
 package org.intermine.sql.precompute;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -248,6 +248,9 @@ public final class QueryOptimiser
                                     + " bailing out early (time limit: "
                                     + context.getMaxQueryParseTime() + ")");
                 }
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Optimiser failed to parse query - the query will still be executed but "
+                        + "precomputed tables won't be used. Query: " + query);
             } finally {
                 if (context.isVerbose()) {
                     System.out .println("Optimised SQL: " + bestQuery.getBestQueryString());

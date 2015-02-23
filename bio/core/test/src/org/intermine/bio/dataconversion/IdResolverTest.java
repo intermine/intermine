@@ -1,6 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
@@ -201,7 +202,7 @@ public class IdResolverTest extends TestCase
 
     public void testWriteToFile() throws Exception {
         //File cacheFile = new File("build/resolver.cache");
-        File cacheFile = File.createTempFile("resolver", "cache");
+        File cacheFile = getResolverCache();
         resolver.writeToFile(cacheFile);
         File testFile = new File(getClass().getClassLoader().
                 getResource("resolver.cache.test").toURI());
@@ -209,8 +210,12 @@ public class IdResolverTest extends TestCase
         assertEquals("The files differ!", FileUtils.readFileToString(testFile, "utf-8"), FileUtils.readFileToString(cacheFile, "utf-8"));
     }
 
+    private File getResolverCache() throws IOException {
+        return File.createTempFile("resolver", "cache");
+    }
+
     public void testFileRoundTrip() throws Exception {
-        File f = new File("build/resolver.cache");
+        File f = getResolverCache();
         resolver.writeToFile(f);
 
         IdResolver readFromFile = new IdResolver();

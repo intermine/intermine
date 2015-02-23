@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -117,8 +117,8 @@ public class KeywordSearchResultsController extends TilesAction
                 SearchUtils.parseResults(im, wc, results.getHits());
 
         Collection<KeywordSearchFacet> searchResultsFacets = results.getFacets();
+        totalHits = results.getTotalHits();
 
-        totalHits = searchResultsParsed.size();
         logSearch(searchTerm, totalHits, time, offset, searchTime, facetValues, searchBag);
         LOG.debug("SEARCH RESULTS FOR " + searchTerm  + ": " + totalHits);
 

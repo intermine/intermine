@@ -1,7 +1,7 @@
 package org.intermine.sql.precompute;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -470,7 +470,8 @@ public class PrecomputedTableManager
             Statement stmt = con.createStatement();
             stmt.execute(sql);
         } catch (SQLException e) {
-            LOG.warn("Error while executing " + sql, e);
+            LOG.warn("Error while creating index on " + table + ", table creation will proceed. "
+                    + sql);
         }
     }
 

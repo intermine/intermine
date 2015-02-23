@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -118,6 +118,11 @@ public final class MetadataManager
      * The name of the key used to store the serial number identifying the production db
      */
     public static final String SERIAL_NUMBER = "serialNumber";
+
+    /**
+     * Description of range type columns defined in the database.
+     */
+    public static final String RANGE_DEFINITIONS = "rangeDefinitions";
 
     /**
      * Store a (key, value) pair in the metadata table of the database
@@ -412,8 +417,8 @@ public final class MetadataManager
          * @param con a database Connection, to which this object will have exclusive access, and
          * which must not be in autocommit mode. The connection will be closed when this object is
          * closed
+         * * @param commitMode whether autoCommit should be on or off when restoring object
          * @param obj a LargeObject to write to
-         * @param commitMode The commit mode to leave the connection in.
          */
         public LargeObjectOutputStream(Connection con, LargeObject obj, boolean commitMode) {
             this.con = con;
@@ -549,7 +554,7 @@ public final class MetadataManager
          *
          * @param con a Connection that will be exclusively used by this object until it is closed
          * @param obj a LargeObject
-         * @param commitMode the commit mode to restore the connection to.
+         * @param commitMode whether autoCommit should be on or off when restoring object
          */
         public LargeObjectInputStream(Connection con, LargeObject obj, boolean commitMode) {
             this.con = con;

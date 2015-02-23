@@ -1,7 +1,7 @@
 package org.intermine.api.lucene;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -671,19 +671,22 @@ public final class KeywordSearch
             Map<String, String> facetValues,
             List<Integer> ids)
         throws ObjectStoreException {
-        BrowseResult results = runBrowseSearch(searchString, offset, facetValues, ids);
+        // last parameter used only when creating lists
+        BrowseResult results = runBrowseSearch(searchString, offset, facetValues, ids, 0);
         Collection<KeywordSearchFacet> searchResultsFacets = Collections.emptySet();
         Collection<KeywordSearchHit> searchHits = Collections.emptySet();
-
+        int totalHits = 0;
         if (results != null) {
-            LOG.debug("Browse found " + results.getNumHits() + " hits");
+            totalHits = results.getNumHits();
+            LOG.debug("Browse found " + totalHits + " hits");
             BrowseHit[] browseHits = results.getHits();
             Set<Integer> objectIds = getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = Objects.getObjects(im, objectIds);
             searchHits = getSearchHits(browseHits, objMap);
             searchResultsFacets = parseFacets(results, facets, facetValues);
+            results.close();
         }
-        return new ResultsWithFacets(searchHits, searchResultsFacets);
+        return new ResultsWithFacets(searchHits, searchResultsFacets, totalHits);
     }
 
     /**
@@ -692,11 +695,12 @@ public final class KeywordSearch
      * @param offset display offset
      * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
      * @param ids ids to research the search to (for search in list)
+     * @param listSize size of the list (used only when creating one)
      * @return bobo browse result or null if failed
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
-            Map<String, String> facetValues, List<Integer> ids) {
-        return runBrowseSearch(searchString, offset, facetValues, ids, true);
+            Map<String, String> facetValues, List<Integer> ids, int listSize) {
+        return runBrowseSearch(searchString, offset, facetValues, ids, true, 0);
     }
 
     /**
@@ -706,10 +710,11 @@ public final class KeywordSearch
      * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
      * @param ids ids to research the search to (for search in list)
      * @param pagination if TRUE only return 100
+     * @param listSize siza of a list of results being created
      * @return bobo browse result or null if failed
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
-            Map<String, String> facetValues, List<Integer> ids, boolean pagination) {
+            Map<String, String> facetValues, List<Integer> ids, boolean pagination, int listSize) {
         BrowseResult result = null;
         if (index == null) {
             return result;
@@ -762,8 +767,12 @@ public final class KeywordSearch
                 // used on keywordsearch results page
                 browseRequest.setCount(PER_PAGE);
             } else {
-                // hack when creating lists from results
-                browseRequest.setCount(10000);
+                // when creating lists from results
+                // this check should be not necessary and reproduces previous behaviour
+                if (listSize == 0) {
+                    listSize = 10000;
+                }
+                browseRequest.setCount(listSize);
             }
 
             // add faceting selections
@@ -821,6 +830,8 @@ public final class KeywordSearch
 
         return result;
     }
+
+
 
     private static String parseQueryString(String qs) {
         String queryString = qs;
@@ -1214,5 +1225,39 @@ public final class KeywordSearch
 
             index = null;
         }
+    }
+
+    /**
+     * set all the variables to NULL
+     */
+    public static void close() {
+        if (reader != null) {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                LOG.error("Not able to free Lucene index file.");
+                e.printStackTrace();
+            }
+        }
+        reader = null;
+        if (boboIndexReader != null) {
+            try {
+                boboIndexReader.close();
+            } catch (IOException e) {
+                LOG.error("Not able to close bobo Index Reader (Lucene).");
+                e.printStackTrace();
+            }
+        }
+        boboIndexReader = null;
+        indexingQueue = null;
+        index = null;
+        properties = null;
+        tempDirectory = null;
+        specialReferences = null;
+        ignoredClasses = null;
+        ignoredFields = null;
+        classBoost = null;
+        facets = null;
+        attributePrefixes = null;
     }
 }

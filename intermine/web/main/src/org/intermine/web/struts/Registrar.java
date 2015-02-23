@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -71,7 +71,9 @@ public class Registrar extends Thread
         String data = "";
         for (String key: params.keySet()) {
             String value = params.get(key);
-            if (value == null) { continue; }
+            if (value == null) {
+                continue;
+            }
             if (!data.isEmpty()) {
                 data += "&";
             }

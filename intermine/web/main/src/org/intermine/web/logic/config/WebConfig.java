@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -220,8 +220,7 @@ public class WebConfig
      */
     private static List<String> getMappingFileNames(final Properties props, final String prefix) {
         final List<String> returnVal = new ArrayList<String>();
-        for (@SuppressWarnings("rawtypes")
-        final Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+        for (final Enumeration<?> e = props.propertyNames(); e.hasMoreElements();) {
             final String key = (String) e.nextElement();
             if (key.startsWith(prefix)) {
                 returnVal.add(props.getProperty(key));
@@ -256,8 +255,7 @@ public class WebConfig
                 throw new Error("Problem reading from " + fileName, e);
             }
             if (!props.isEmpty()) {
-                for (@SuppressWarnings("rawtypes")
-                final Enumeration e = props.propertyNames(); e.hasMoreElements();) {
+                for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements();) {
                     final String key = (String) e.nextElement();
                     if (theseProps.containsKey(key)) {
                         throw new IllegalStateException(

@@ -4,41 +4,32 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from test.testmodeltestcase import TestModelTestCase as Super
 import unittest, time, re
-from imuser import IMUser
+from imuser import TemporaryUser
 
 class AccountLogin(Super):
 
     def setUp(self):
         Super.setUp(self)
-        self.user = IMUser("zombie-testing-account-login@intermine.org");
+        self.user = TemporaryUser("zombie-testing-account-login@intermine.org");
+        self.user.create()
 
     def test_account_login(self):
 
         browser = self.browser
         browser.get(self.base_url + "/begin.do")
-        browser.find_element_by_link_text("Log in").click()
+        self.click_and_wait_for_refresh(self.findLink("Log in"))
         browser.find_element_by_name("username").clear()
         browser.find_element_by_name("username").send_keys(self.user.name)
         browser.find_element_by_name("password").clear()
         browser.find_element_by_name("password").send_keys(self.user.password)
-        browser.find_element_by_name("action").click()
+        self.click_and_wait_for_refresh(browser.find_element_by_name("action"))
 
         # Long emails are truncated and appended with an ellipsis,
         # so we can't assert by comparing user.name to what's on the DOM.
         # Look for Log out link instead?
-        for i in range(60):
-            try:
-                if self.is_element_present(By.LINK_TEXT, "Log out"): break
-            except: pass
-            time.sleep(1)
-        else: self.fail("time out")
+        log_out = self.findLink("Log out")
 
-        self.assertTrue(self.is_element_present(By.LINK_TEXT, "Log out"))
+        self.assertTrue(log_out.is_displayed())
 
-    def is_element_present(self, how, what):
-        try: self.browser.find_element(by=how, value=what)
-        except NoSuchElementException, e: return False
-        return True
-    
     def tearDown(self):
         self.user.delete()
