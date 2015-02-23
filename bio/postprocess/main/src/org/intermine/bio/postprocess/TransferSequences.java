@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -193,6 +193,22 @@ public class TransferSequences
                 }
 
                 if (PostProcessUtil.isInstance(model, feature, "SNP")) {
+                    continue;
+                }
+
+                /**
+                 * In human intermine, SNP is not a sequence alteration, which I think is wrong
+                 * But here are the kinds of types that are alterations:
+                 *
+                 *      Deletion
+                 *      Genetic Marker
+                 *      Indel
+                 *      Insertion
+                 *      SNV
+                 *      Substitution
+                 *      Tandem Repeat
+                 */
+                if (PostProcessUtil.isInstance(model, feature, "SequenceAlteration")) {
                     continue;
                 }
 

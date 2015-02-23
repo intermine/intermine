@@ -8,6 +8,7 @@ env:
     matrix:
         - TEST_SUITE=webapp # Long tests should be listed first, to make most of 
         - TEST_SUITE=bio    # concurrency
+        # - TEST_SUITE=bio-webapp : this is not possible until we replace the build script with py
         - TEST_SUITE=ws CLIENT=JS
         - TEST_SUITE=ws CLIENT=PY
         - TEST_SUITE=all

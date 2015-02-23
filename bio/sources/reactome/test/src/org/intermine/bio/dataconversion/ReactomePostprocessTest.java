@@ -1,7 +1,7 @@
-package org.intermine.bio.postprocess;
+package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.custommonkey.xmlunit.XMLTestCase;
+import org.intermine.bio.postprocess.ReactomePostProcess;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Gene;
@@ -35,7 +36,7 @@ import org.intermine.util.DynamicUtil;
 /**
  * Tests for the BioPAXPostprocess class.
  */
-public class BioPAXPostprocessTest extends XMLTestCase {
+public class ReactomePostprocessTest extends XMLTestCase {
 
     private ObjectStoreWriter osw;
 
@@ -65,7 +66,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
     }
 
     public void testPostProcess() throws Exception {
-        BioPAXPostProcess bp = new BioPAXPostProcess(osw);
+        ReactomePostProcess bp = new ReactomePostProcess(osw);
         bp.postProcess();
 
         Gene resGene = (Gene) getFromDb(Gene.class).iterator().next();
@@ -79,7 +80,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setUpData() throws Exception {
         DataSet dataset = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataset.setName("Reactome data set");
+        dataset.setName("Reactome pathways data set");
         Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein1.addGenes(gene);

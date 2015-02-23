@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -144,9 +144,12 @@ public class BioGridConverter extends BioFileConverter
             return false;
         }
         OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
-
-        if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
-            return true;
+        if (od != null) {
+            if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
+                return true;
+            }
+        } else {
+            LOG.error("Could not find Taxon ID for organism " + bits[0] + " " + bits[1]);
         }
         return false;
     }

@@ -2,9 +2,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- This section is rendered with Ajax to improve responsiveness -->
-<c:if test="${!empty mines}">
+<c:if test="${!empty mines && imf:hasValidPath(object, 'organism.shortName', INTERMINE_API)}">
 <script type="text/javascript" charset="utf-8" src="js/other-mines-links.js"></script>
 <h3 class="goog"><fmt:message key="othermines.title"/></h3>
 <div id="friendlyMines">
