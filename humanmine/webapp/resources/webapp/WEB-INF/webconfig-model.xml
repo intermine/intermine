@@ -301,9 +301,6 @@
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
-    <bagdisplayers>
-      <displayer src="snpToGeneFormDisplayer.tile" showOnLeft="true"/>
-    </bagdisplayers>
   </class>
 
   <class className="org.intermine.model.bio.Source">
