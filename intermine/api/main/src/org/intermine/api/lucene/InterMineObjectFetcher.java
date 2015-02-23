@@ -308,7 +308,7 @@ public class InterMineObjectFetcher extends Thread
                 InterMineResultsContainer resultsContainer = referenceResults.get(reference);
                 //step through the reference results (ordered) while ref.id = obj.id
                 ListIterator<ResultsRow<InterMineObject>> rows = resultsContainer.getIterator();
-                ROWS: while (rows.hasNext()) {
+                while (rows.hasNext()) {
                     // ResultRow has two columns: 0 = id, 1 = InterMineObject
                     ResultsRow<InterMineObject> next = rows.next();
 
@@ -316,8 +316,8 @@ public class InterMineObjectFetcher extends Thread
                     // current object's id. See:
                     // https://github.com/intermine/intermine/issues/473
                     // so we advance up to the current object if we are behind it.
-                    while (next.get(0).getId().compareTo(imo.getId()) < 0) {
-                        continue ROWS;
+                    if (next.get(0).getId().compareTo(imo.getId()) < 0) {
+                        continue;
                     }
 
                     // reference is not for the current object?
@@ -328,7 +328,7 @@ public class InterMineObjectFetcher extends Thread
                             rows.previous();
                         }
 
-                        break ROWS;
+                        break;
                     }
 
                     // add reference to doc
