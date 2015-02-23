@@ -877,10 +877,11 @@ public abstract class WebService
      */
     protected String getRequestFileName() {
         String fileName = request.getParameter("fileName");
-        if (fileName == null || fileName.trim().length() == 0) {
-            fileName = getDefaultFileName();
+        if (StringUtils.isBlank(fileName)) {
+            return getDefaultFileName();
+        } else {
+            return fileName.trim();
         }
-        return fileName;
     }
 
     /**
