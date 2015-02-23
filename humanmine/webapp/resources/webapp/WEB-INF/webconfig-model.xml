@@ -296,7 +296,6 @@
       <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
