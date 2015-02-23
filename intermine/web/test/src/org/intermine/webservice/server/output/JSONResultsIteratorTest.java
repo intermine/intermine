@@ -1673,7 +1673,7 @@ public class JSONResultsIteratorTest extends TestCase {
         } catch (IllegalArgumentException e) {
             // Test that this is what we thought would happen.
             assertEquals(
-                "These names are not valid classes: a=Manager,b=Fool",
+                "Fool is not a valid class name",
                 e.getMessage());
         }
         try {
