@@ -811,7 +811,7 @@ public abstract class WebService
         }
         // TODO: retrieve the content types from the formats.
         String filename = getRequestFileName();
-        switch (format) {
+        switch (getFormat()) {
             case HTML:
                 output = new StreamedOutput(out, new HTMLTableFormatter(),
                         separator);
@@ -909,12 +909,13 @@ public abstract class WebService
     }
 
     /**
-     * If the request has a prameter 'fileName' use that for the fileName
-     * Otherwise use the default fileName
-     * @return String the fileName to use for the exported file
+     * If the request has a <code>filename</code> parameter then use that
+     * for the fileName, otherwise use the default fileName
+     * @return the fileName to use for the exported file
      */
     protected String getRequestFileName() {
-        String fileName = request.getParameter("fileName");
+        String param = WebServiceRequestParser.FILENAME_PARAMETER;
+        String fileName = request.getParameter(param);
         if (StringUtils.isBlank(fileName)) {
             return getDefaultFileName();
         } else {
