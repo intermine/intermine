@@ -176,7 +176,6 @@
   <class className="org.intermine.model.bio.GWASResult">
     <fields>
       <fieldconfig fieldExpr="SNP.primaryIdentifier"/>
-      <fieldconfig fieldExpr="SNP.alleles"/>
       <fieldconfig fieldExpr="SNP.chromosomeLocation.start"/>
       <fieldconfig fieldExpr="SNP.chromosome.primaryIdentifier"/>
       <fieldconfig fieldExpr="phenotype"/>
@@ -296,7 +295,6 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp"/>
-      <fieldconfig fieldExpr="alleles"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="organism.name"/>
