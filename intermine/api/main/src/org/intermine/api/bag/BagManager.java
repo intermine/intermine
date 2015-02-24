@@ -479,6 +479,18 @@ public class BagManager
     }
 
     /**
+     * Fetch global and user bags current of the specified type or a subclass 
+     * or any superclass of the specified type.
+     * @param profile the user to fetch bags for
+     * @param type an unqualified class name
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getCurrentBagsOfTypeS(Profile profile,
+                                                          String type) {
+        return filterBagsByType(getBags(profile), type, true, true);
+    }
+
+    /**
      * Fetch global and user bags of the specified type or a subclass of the specified type.
      * @param profile the user to fetch bags for
      * @param type an unqualified class name
@@ -487,7 +499,7 @@ public class BagManager
      */
     public Map<String, InterMineBag> getBagsOfType(Profile profile, String type,
                                                    boolean onlyCurrent) {
-        return filterBagsByType(getBags(profile), type, onlyCurrent);
+        return filterBagsByType(getBags(profile), type, onlyCurrent, false);
     }
 
     /**
@@ -497,11 +509,11 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getCurrentUserBagsOfType(Profile profile, String type) {
-        return filterBagsByType(getUserBags(profile), type, true);
+        return filterBagsByType(getUserBags(profile), type, true, false);
     }
 
     private Map<String, InterMineBag> filterBagsByType(Map<String, InterMineBag> bags,
-            String type, boolean onlyCurrent) {
+            String type, boolean onlyCurrent, boolean includeSupers) {
         Set<String> classAndSubs = new HashSet<String>();
         classAndSubs.add(type);
 
@@ -512,6 +524,11 @@ public class BagManager
         for (ClassDescriptor cld : model.getAllSubs(bagTypeCld)) {
             classAndSubs.add(cld.getUnqualifiedName());
         }
+	if( includeSupers ){
+	    for (ClassDescriptor cld : bagTypeCld.getAllSuperDescriptors()) {
+		classAndSubs.add(cld.getUnqualifiedName());
+	    }
+	}
 
         Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
         for (Map.Entry<String, InterMineBag> entry : bags.entrySet()) {
