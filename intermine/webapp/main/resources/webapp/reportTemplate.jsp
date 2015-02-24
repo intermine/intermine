@@ -77,6 +77,7 @@
                 }
             });
             $('#${elemId} h3').click(function(e) {
+                // FIXME!!!
                 var options = {
                     type: 'table',
                     service: $SERVICE,
