@@ -38,9 +38,7 @@
     };
 
     this.LIST_EVENTS = {
-        "list-creation:success": successifier,
-        "list-creation:failure": failuriser,
-        "list-update:success": successifier,
-        "list-update:failure": failuriser
+        success: successifier,
+        failure: failuriser
     };
 }).call(window, jQuery, Backbone);

@@ -54,25 +54,33 @@
 
 <script type="text/javascript">
 jQuery(function() {
-    intermine.css.headerIcon = "fm-header-icon";
     var customGalaxy = "${GALAXY_URL}";
-    if (customGalaxy) intermine.options.GalaxyCurrent = customGalaxy;
-    var opts = {
-        type: 'table',
-        service: $SERVICE,
-        error: FailureNotification.notify,
-        query: ${queryJson},
-        events: LIST_EVENTS,
-        properties: { pageSize: ${pageSize} }
-    };
-    var widget = jQuery('#${tableContainerId}').imWidget(opts);
-    var url = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
-    widget.states.on('revert add', function () {
-        var query = widget.states.currentQuery;
-        var xml = query.toXML();
-        var $trail = jQuery('.objectTrailLinkResults');
-        $trail.attr({href: url + '?method=xml&query=' + escape(xml)});
-    });
+    var url = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
+    if (customGalaxy) {
+        imtables.configure('Download.Galaxy.Current', customGalaxy);
+    }
+    imtables.loadDash(
+        '#${tableContainerId}',
+        {size: ${pageSize}},
+        {service: {root: $SERVICE.root, token: $SERVICE.token}, query: ${queryJson}}
+    ).then(
+        withTable,
+        FailureNotification.notify
+    );
+
+    function withTable (table) {
+        console.log(table);
+        table.history.on('changed:current', updateTrail);
+        table.bus.on('list-action:failure', LIST_EVENTS['failure']);
+        table.bus.on('list-action:success', LIST_EVENTS['success']);
+        
+        function updateTrail () {
+            var query = table.history.getCurrentQuery()
+            var xml = query.toXML();
+            var $trail = jQuery('.objectTrailLinkResults');
+            $trail.attr({href: url + '?method=xml&query=' + escape(xml)});
+        }
+    }
 });
 </script>
 
