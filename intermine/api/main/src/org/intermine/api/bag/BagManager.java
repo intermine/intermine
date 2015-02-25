@@ -479,7 +479,7 @@ public class BagManager
     }
 
     /**
-     * Fetch global and user bags current of the specified type or a subclass 
+     * Fetch global and user bags current of the specified type or a subclass
      * or any superclass of the specified type.
      * @param profile the user to fetch bags for
      * @param type an unqualified class name
@@ -524,11 +524,11 @@ public class BagManager
         for (ClassDescriptor cld : model.getAllSubs(bagTypeCld)) {
             acceptableTypes.add(cld.getUnqualifiedName());
         }
-	if( includeSupers ){
-	    for (ClassDescriptor cld : bagTypeCld.getAllSuperDescriptors()) {
-		acceptableTypes.add(cld.getUnqualifiedName());
-	    }
-	}
+        if (includeSupers) {
+            for (ClassDescriptor cld : bagTypeCld.getAllSuperDescriptors()) {
+                acceptableTypes.add(cld.getUnqualifiedName());
+            }
+        }
 
         Map<String, InterMineBag> bagsOfType = new HashMap<String, InterMineBag>();
         for (Map.Entry<String, InterMineBag> entry : bags.entrySet()) {
