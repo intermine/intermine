@@ -1,7 +1,7 @@
 package org.intermine.api.mines;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -130,7 +130,10 @@ public class LocalMine implements ConfigurableMine
 
     @Override
     public String getDefaultValue() {
-        return defaultValues.iterator().next();
+        if (defaultValues != null && !defaultValues.isEmpty()) {
+            return defaultValues.iterator().next();
+        }
+        return null;
     }
 
     @Override

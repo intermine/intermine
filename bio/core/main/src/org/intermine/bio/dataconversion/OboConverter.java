@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,6 +52,7 @@ public class OboConverter extends DataConverter
     protected Map<OboTermSynonym, Item> synToItem = new HashMap<OboTermSynonym, Item>();
     protected Item ontology;
     private boolean createRelations = true;
+    protected String prefix = null;
 
     /**
      * Constructor for this class.
@@ -85,6 +86,19 @@ public class OboConverter extends DataConverter
         } else {
             this.createRelations = false;
         }
+    }
+
+    /**
+     * The prefix of ontology terms to be processed. Everything before the colon, e.g GO or SO
+     * or ZFA. Whilst processing, if a term is encountered without this prefix it will be
+     * discarded.
+     *
+     * See https://github.com/intermine/intermine/issues/901 for details.
+     *
+     * @param prefix prefix of the identifier for the terms of interest, eg. GO or SO or ZFA
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     /**
@@ -154,6 +168,12 @@ public class OboConverter extends DataConverter
             return null;
         }
         String termId = (term.getId() == null ? term.getName() : term.getId());
+        if (prefix != null && !termId.toLowerCase().startsWith(prefix.toLowerCase())) {
+            final String msg = "Not processing OBO term: " + term.getId() + " " + term.getName()
+                    + " because it does not start with prefix " + prefix;
+            LOG.info(msg);
+            return null;
+        }
         Item item = nameToTerm.get(termId);
         if (item == null) {
             item = createItem(termClass);
