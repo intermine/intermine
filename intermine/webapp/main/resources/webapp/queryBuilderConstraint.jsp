@@ -359,7 +359,8 @@
         </a>
     </LEGEND>
     <p style="text-align: left;">
-<fmt:message key="query.filterRangeHelpText" />
+        <fmt:message key="query.filterRangeHelpText" />
+          <br/>
         <!-- OP -->
                      <html:select property="rangeOp" styleId="range1" disabled="true">
                       <c:forEach items="${dec.rangeQueryOps}" var="op">
