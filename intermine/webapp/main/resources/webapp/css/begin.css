@@ -214,7 +214,7 @@ html, body {
     font-size: 13px;
 }
 
-#search-bochs, #lists-bochs, #welcome-bochs {
+.bochs {
     width: 280px;
     float: left;
     margin-right: 46px;
@@ -223,7 +223,7 @@ html, body {
     padding: 0 6px;
 }
 
-#welcome-bochs {
+.bochs:last-child {
     margin-right: 0;
 }
 
@@ -257,7 +257,8 @@ html, body {
     background: #9f67ad;
 }
 
-#welcome-bochs div.inner h3 {
+/* Default inner title style */
+.bochs div.inner h3 {
     background: #c3c3c3;
     color: #535353;
     padding-left: 10px;
@@ -268,21 +269,16 @@ html, body {
     line-height: 20px;
 }
 
-#search-bochs img.title {
+.bochs img.title {
     position: absolute;
     top: 6px;
     left: 18px;
 }
 
-#lists-bochs img.title {
-    position: absolute;
-    top: 6px;
-    left: 18px;
-}
-
-#search-bochs div.inner span.ugly-hack {
+.bochs .inner .ugly-hack {
     float: left;
     width: 82px;
+    height: 2em;
 }
 
 #search-bochs div.inner p {
@@ -291,11 +287,6 @@ html, body {
 
 #lists-bochs div.inner p {
     margin: 10px 0 0 70px;
-}
-
-#welcome-bochs div.inner p {
-    margin: 10px 0 0 0px;
-    line-height: 21px;
 }
 
 #welcome-bochs div.inner p a {
@@ -364,9 +355,17 @@ html, body {
     border-radius: 15px;
 }
 
-#search-bochs input[type =
-"text"].input.eg {
+#search-bochs input[type="text"].input.eg {
     color: #888;
+}
+#search-bochs input[type="text"].input.eg:focus {
+    outline: none;
+}
+
+.bochs .inner p {
+    position: relative;
+    top: 48px;
+    line-height: 21px;
 }
 
 #boxes input[type =
@@ -374,16 +373,6 @@ html, body {
     background: url("../themes/purple/homepage/button-plush.png") no-repeat scroll center bottom transparent;
     color: #FFFFFF;
     padding: 2px 34px; /*float:right; margin-right:30%; margin-bottom:8px;*/
-}
-
-#lists-bochs div.inner span {
-    color: #7a7a7a;
-    font-weight: bold;
-    font-size: 12px;
-    letter-spacing: 0px;
-    text-transform: uppercase;
-    line-height: 30px;
-    margin: 0 4px 0 8px;
 }
 
 #lists-bochs textarea.eg {
@@ -403,7 +392,7 @@ html, body {
     display: inline-block;
 }
 
-#welcome-bochs a.button {
+a.button {
     font-size: 13px;
     text-transform: uppercase;
     font-family: "Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
@@ -434,13 +423,13 @@ html, body {
     cursor: pointer;
 }
 
-#welcome-bochs a.button.gray {
+a.button.gray {
     color: #505050; /*margin-right:30%; float:right; line-height:29px;*/
     display: -moz-inline-stack /* FF2 inline-block */;
     display: inline-block;
 }
 
-#welcome-bochs a.button.gray div {
+a.button.gray div {
     background-image: url("../themes/metabolic/buttons/btn-gray-left.png");
     margin-top: 12px;
     height: 30px;
@@ -448,7 +437,7 @@ html, body {
     background-repeat: no-repeat;
 }
 
-#welcome-bochs a.button.gray span {
+a.button.gray span {
     background-image: url("../themes/metabolic/buttons/btn-gray-right.png");
     height: 30px;
     padding: 8px 18px 0 0;
@@ -458,7 +447,7 @@ html, body {
     cursor: pointer;
 }
 
-#welcome-bochs a.button.gray span, x:-moz-any-link {
+a.button.gray span, x:-moz-any-link {
     height: 22px;
 }
 
