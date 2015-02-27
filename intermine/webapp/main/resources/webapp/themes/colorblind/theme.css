@@ -5,7 +5,7 @@
 #boxes div.input,#welcome-bochs a.button.gray div,#welcome-bochs a.button.gray span,#templates table#menu td.active,#templates table#menu td.active span.right,#templates table#menu td.active span.left,#bottom-wrap,#templates div.content p.more{background:none;}
 #boxes input.dark[type="submit"],#boxes input.light[type="submit"],input[type="submit"],input[type="button"]{background:#FFF;color:#000;}
 #content-wrap{background:#000!important;padding-top:10px;}
-#listTags{background-color:#D2CEBF;margin-left:10px;padding:3px 10px;}
+#listTags{background-color:#D2CEBF;}
 #lists-bochs div.inner h3{background:#9E9E9E;color:#FFF;}
 #lists-bochs div.inner textarea{background:#000;border:1px solid #A52825;color:#FFF!important;}
 #loginbar a:link,#loginbar a:visited,#loginbar,ul#submenulist li.myminebagstabtitle a,ul#submenulist li.myminehistorytabtitle a,ul#submenulist li.myminesavedqueriestabtitle a,ul#submenulist li.myminesavedtemplatestabtitle a,ul#submenulist li.myminepasswordtabtitle a,.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult,.keywordSearchResults .resultTableContainer table.dbsources table.inner td,#lists-bochs div.inner a{color:#000;}

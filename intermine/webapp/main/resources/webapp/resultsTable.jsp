@@ -11,9 +11,12 @@
 
 <tiles:importAttribute name="invalid" ignore="true"/>
 <tiles:importAttribute name="bag" ignore="true"/>
+<tiles:importAttribute name="bagName" ignore="true"/>
 <tiles:importAttribute name="cssClass" ignore="true"/>
 <tiles:importAttribute name="pageSize" ignore="true"/>
 <tiles:importAttribute name="query" ignore="true"/>
+<tiles:importAttribute name="consumerContainer" ignore="true"/>
+<tiles:importAttribute name="consumerBtnClass" ignore="true"/>
 
 <c:if test="${empty query}">
     <c:set var="query" value="${QUERY}"/>
@@ -34,11 +37,17 @@
 
 <c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
 
-<c:if test="${! empty query.title}">
+<c:if test="${! empty query.title }">
+  <%-- We want to ignore path-queries. This is horrific. I know that --%>
+  <c:catch var="exception">
+    <c:set var="templateName" value="${ query.name }"/>
+  </c:catch>
+  <c:if test="${empty exception}">
     <tiles:insert template="templateTitle.jsp">
         <tiles:put name="templateQuery" beanName="query"/>
         <tiles:put name="clickable" value="true"/>
     </tiles:insert>
+  </c:if>
 </c:if>
 
 <c:choose>
@@ -59,9 +68,16 @@ jQuery(function() {
     if (customGalaxy) {
         imtables.configure('Download.Galaxy.Current', customGalaxy);
     }
+    var consumers, consumerBtnClass;
+    <c:if test="${!empty consumerContainer}">
+    consumers = document.querySelector('${consumerContainer}');
+    </c:if>
+    <c:if test="${!empty consumerBtnClass}">
+    consumerBtnClass = '${consumerBtnClass}';
+    </c:if>
     imtables.loadDash(
         '#${tableContainerId}',
-        {size: ${pageSize}},
+        {size: ${pageSize}, consumerContainer: consumers, consumerBtnClass: consumerBtnClass},
         {service: {root: $SERVICE.root, token: $SERVICE.token}, query: ${queryJson}}
     ).then(
         withTable,
@@ -69,7 +85,6 @@ jQuery(function() {
     );
 
     function withTable (table) {
-        console.log(table);
         table.history.on('changed:current', updateTrail);
         table.bus.on('list-action:failure', LIST_EVENTS['failure']);
         table.bus.on('list-action:success', LIST_EVENTS['success']);

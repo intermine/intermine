@@ -233,7 +233,7 @@ table.dbsources td.leftcol {
       background: #353B40;
     }*/
 
-#listTags { background-color: #D2CEBF; margin-left: 10px; padding: 3px 10px; }
+#listTags { background-color: #D2CEBF; }
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #DFDFDF; }

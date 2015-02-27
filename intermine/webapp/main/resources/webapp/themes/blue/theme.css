@@ -308,7 +308,7 @@ table.internal td {
   margin:5px 6px 5px 6px;
   font-size: 12px; color: #333;}
 
-#listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
+#listTags { background-color: #F5F0FF; }
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #63B7DE; }
