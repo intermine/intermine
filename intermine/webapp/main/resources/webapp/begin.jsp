@@ -11,33 +11,49 @@
 <html:xhtml/>
 
 <div id="content-wrap">
-        <div id="boxes">
+        <div id="boxes" class="grid small-grid-1of2 large-grid-1of4">
+              <div class="grid-cell">
                 <div id="search-bochs" class="bochs">
                         <img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
                         <div class="inner">
                                 <h3><c:out value="${WEB_PROPERTIES['begin.searchBox.title']}" /></h3>
                                 <span class="ugly-hack">&nbsp;</span>
-                                <span>
+                                <span class="help">
                                     <c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" />
                                 </span>
 
                                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-                                        <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
+                                        <center>
+                                            <div class="input">
+                                                <input id="actionsInput"
+                                                    name="searchTerm"
+                                                    class="input"
+                                                    type="text"
+                                                    value="${WEB_PROPERTIES['begin.searchBox.example']}">
+                                            </div>
+                                        </center>
                                         <div class="bottom">
-                                                <center>
-                                                        <input id="mainSearchButton" name="searchSubmit" class="button dark" type="submit" value="search"/>
-                                                </center>
+                                            <center>
+                                                <input id="mainSearchButton"
+                                                       name="searchSubmit"
+                                                       class="button dark"
+                                                       type="submit"
+                                                       value="search">
+                                            </center>
                                         </div>
                                 </form>
                                 <div style="clear:both;"></div>
                         </div>
+                    </div>
                 </div>
-                <div id="lists-bochs" class="bochs">
+
+                <div class="grid-cell">
+                    <div id="lists-bochs" class="bochs">
                         <img class="title" src="images/icons/lists-64.png" title="lists"/>
                         <div class="inner">
                                 <h3><c:out value="${WEB_PROPERTIES['begin.listBox.title']}" /></h3>
                                 <span class="ugly-hack">&nbsp;</span>
-                                <span>
+                                <span class="help">
                                     <c:out value="${WEB_PROPERTIES['begin.listBox.description']}" escapeXml="false" />
                                 </span>
 
@@ -86,8 +102,11 @@
                                         </div>
                                 </form>
                         </div>
+                    </div>
                 </div>
-                <div id="welcome-bochs" class="bochs">
+
+                <div class="grid-cell">
+                   <div id="welcome-bochs" class="bochs">
                         <div class="inner">
                             <c:choose>
                                 <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
@@ -135,23 +154,26 @@
                                     </div>
                                 </c:if>
                         </div>
+                    </div>
                 </div>
 
-                <div class="bochs" id="api">
-                    <img class="title" src="images/begin/java-perl-python-ruby-2.png" alt="perl java python ruby" />
-                    <div class="inner">
-                        <h3><fmt:message key="api.box.title"/></h3>
-                        <p>
-                            <fmt:message key="api.box.blurb">
-                            <fmt:param>${WEB_PROPERTIES['project.title']}</fmt:param>
-                            </fmt:message>
-                        </p>
-                        <div class="bottom">
-                            <center>
-                                <a class="button gray" href="${WEB_PROPERTIES['apidocs']}">
-                                    <div><span><fmt:message key="api.box.link"/></span></div>
-                                </a>
-                            </center>
+                <div class="grid-cell">
+                    <div class="api bochs">
+                        <img class="title" src="images/begin/java-perl-python-ruby-2.png" alt="perl java python ruby" />
+                        <div class="inner">
+                            <h3><fmt:message key="api.box.title"/></h3>
+                            <p>
+                                <fmt:message key="api.box.blurb">
+                                <fmt:param>${WEB_PROPERTIES['project.title']}</fmt:param>
+                                </fmt:message>
+                            </p>
+                            <div class="bottom">
+                                <center>
+                                    <a class="button gray" href="${WEB_PROPERTIES['apidocs']}">
+                                        <div><span><fmt:message key="api.box.link"/></span></div>
+                                    </a>
+                                </center>
+                            </div>
                         </div>
                     </div>
                 </div>
