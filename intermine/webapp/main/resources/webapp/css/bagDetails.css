@@ -168,8 +168,15 @@ div.orthologues a:not(:first-child) { margin-left:10px; }
   width: 100%;
 }
 
-.table-rhs-tools.im-query-consumers .im-export-dialogue-button .btn {
+.table-rhs-tools.im-query-consumers .im-export-dialogue-button > .btn {
     white-space: normal;
 }
-
+.table-rhs-tools.imtables.im-query-consumers .btn {
+    text-align: left;
+}
+.table-rhs-tools .list-dialogue-button .btn.dropdown-toggle > .caret {
+    position: absolute;
+    right: 7px;
+    top: 45%;
+}
 

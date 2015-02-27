@@ -246,33 +246,35 @@
         <div style="clear:both;"></div>
         <!-- /widgets -->
 
-        <!-- templates -->
-
+        <!-- LIST TEMPLATES -->
         <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
         <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
+
         <div class="heading">
-          <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>
-          </div>
+          <a id="relatedTemplates">
+            <fmt:message key="bags.templates.executed">
+              <fmt:param>${bag.name}</fmt:param>
+            </fmt:message>
+          </a>
+        </div>
 
+        <div class="body">
+            <fmt:message key="bagDetails.templatesHelp"/>
 
-          <div class="body">
-          <fmt:message key="bagDetails.templatesHelp"/>
-
-          <%-- Each aspect --%>
-          <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
-          <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
-            <tiles:insert name="reportAspect.tile">
-              <tiles:put name="placement" value="im:aspect:${aspect}"/>
-              <tiles:put name="trail" value="|bag.${bag.name}"/>
-              <tiles:put name="interMineIdBag" beanName="bag"/>
-              <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
-              <tiles:put name="opened" value="${status.index == 0}" />
-            </tiles:insert>
-          </div>
-          </c:forEach>
-        </div>  <!-- templates body -->
-
-        <!-- /templates -->
+            <%-- Insert templates grouped by aspect --%>
+            <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+                <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
+                    <tiles:insert name="reportAspect.tile">
+                    <tiles:put name="placement" value="im:aspect:${aspect}"/>
+                    <tiles:put name="trail" value="|bag.${bag.name}"/>
+                    <tiles:put name="interMineIdBag" beanName="bag"/>
+                    <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+                    <tiles:put name="opened" value="${status.index == 0}" />
+                    </tiles:insert>
+                </div>
+            </c:forEach>
+        </div>
+        <!-- /LIST TEMPLATES -->
 
       </c:if>
     </c:when>
