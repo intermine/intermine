@@ -407,27 +407,21 @@ public class AjaxServices
     }
 
     /**
-     * This method gets a map of ids of elements that were in the past (during session) toggled and
-     * returns them in JSON
-     * @return JSON serialized to a String
-     * @throws JSONException
+     * This method gets a collection of elements that were in the past (during session) toggled.
+     * @return The toggled elements as records of the form {id :: Any, open :: bool}
      */
-    public static String getToggledElements() {
+    public static Collection<Map<String, Object>> getToggledElements() {
         HttpSession session = WebContextFactory.get().getSession();
         WebState webState = SessionMethods.getWebState(session);
-        Collection<JSONObject> lists = new HashSet<JSONObject>();
-        try {
-            for (Map.Entry<String, Boolean> entry : webState.getToggledElements().entrySet()) {
-                JSONObject list = new JSONObject();
-                list.put("id", entry.getKey());
-                list.put("opened", entry.getValue().toString());
-                lists.add(list);
-            }
-        } catch (JSONException jse) {
-            LOG.error("Errors generating json objects", jse);
+        Collection<Map<String, Object>> toggledElements = new ArrayList<Map<String, Object>>();
+        for (Map.Entry<String, Boolean> entry : webState.getToggledElements().entrySet()) {
+            Map<String, Object> toggledElement = new HashMap<String, Object>();
+            toggledElement.put("id", entry.getKey());
+            toggledElement.put("open", entry.getValue());
+            toggledElements.add(toggledElement);
         }
 
-        return lists.toString();
+        return toggledElements;
     }
 
     /**
