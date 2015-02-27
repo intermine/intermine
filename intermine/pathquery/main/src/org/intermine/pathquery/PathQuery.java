@@ -2315,6 +2315,7 @@ public class PathQuery implements Cloneable
     protected Map<String, Object> getHeadAttributes() {
         Map<String, Object> ret = new LinkedHashMap<String, Object>();
         ret.put("title", getTitle());
+        ret.put("name", getTitle());
         ret.put("description", getDescription());
         ret.put("select", getView());
 
