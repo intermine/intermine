@@ -8,22 +8,23 @@
   padding-right: 10px;padding-left: 10px;
   vertical-align: top;}
 
-#bagDescriptionTextarea{
-  width:100%;text-align: center;}
-
 #bagDescriptionDiv{
   padding:10px;
   overflow: auto;
   text-align:left;position:relative;}
 
-#bagDescriptionDiv h3 { display:inline; }
+#bagDescriptionDiv h3 { margin: 0; }
 
 #textarea {
   padding:5px; margin:0;
-  width:900px;height:25px;margin-bottom:4px;}
+  height:25px;
+  margin-bottom:4px;}
 
 #emptyDesc{
-  text-align:center;font-style: italic;display:inline; position:absolute; left:40%;margin-top:4px;}
+  text-align:center;
+  font-style: italic;
+  margin-top:4px;
+}
 
 table tr td.tableleftcol {
     padding:0 15px 0 0;
@@ -134,3 +135,41 @@ div.orthologues a:not(:first-child) { margin-left:10px; }
     border:none; padding: 2px 2px 2px 16px; cursor:pointer; font-weight:normal; }
 #toggle-widgets ol li a.inactive { background: url("../images/icons/toggle-expand-16.png") no-repeat left;
     font-weight: normal; }
+
+.table-rhs-tools.im-query-consumers {
+    display: flex;
+}
+
+@media (min-width: 850px) {
+    .table-rhs-tools.im-query-consumers {
+        display: block;
+    }
+}
+
+.inline-tag-editor {
+    padding: 0 1em 1em 1em;
+}
+.table-rhs-tools.im-query-consumers > div {
+  margin: 0 15px 15px 15px;
+  flex: 1;
+}
+.table-rhs-tools.im-query-consumers .btn-group {
+  display: flex;
+}
+.table-rhs-tools.im-query-consumers .btn-group-justified > .btn {
+  flex: 1;
+}
+
+.table-rhs-tools.im-query-consumers .btn-group .im-show-code-gen-dialogue {
+    flex: 1;
+}
+.table-rhs-tools.im-query-consumers > div > .btn-group,
+.table-rhs-tools.im-query-consumers > div > .btn {
+  width: 100%;
+}
+
+.table-rhs-tools.im-query-consumers .im-export-dialogue-button .btn {
+    white-space: normal;
+}
+
+

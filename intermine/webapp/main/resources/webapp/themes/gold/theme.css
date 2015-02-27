@@ -245,7 +245,7 @@ table.internal td {
 
 ul#button_bar span { color:#FFF; }
 
-#listTags { background-color: #F5F0FF; margin-left: 10px; padding: 3px 10px; }
+#listTags { background-color: #F5F0FF; }
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #FAF0C8; }

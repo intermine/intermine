@@ -14,7 +14,7 @@
 <tiles:importAttribute name="onChangeCode" ignore="true"/>
 
 <c:if test="${vertical}">
-  <div>
+  <div class="inline-tag-editor">
 </c:if>
 <%-- editorId is id specific for each InlineTagEditor - used for creating unique javascript ids --%>
 <%-- The hidden input stores the name of the element we are referring to --%>

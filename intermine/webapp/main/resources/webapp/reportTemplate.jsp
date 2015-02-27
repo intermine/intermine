@@ -69,6 +69,7 @@
             $('#${tableContainerId}').remove();
         };
         $(function() {
+            // FIXME - this will need changing when we upgrade imjs
             $SERVICE.query(query).pipe($SERVICE.count).fail(disableTemplate).done(function(c) {
                 var cstr = intermine.utils.numToString(c, ",", 3);
                 $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
@@ -77,15 +78,7 @@
                 }
             });
             $('#${elemId} h3').click(function(e) {
-                // FIXME!!!
-                var options = {
-                    type: 'table',
-                    service: $SERVICE,
-                    query: query,
-                    events: LIST_EVENTS,
-                    properties: {pageSize: 10}
-                };
-                jQuery('#${tableContainerId}').imWidget(options);
+                loadTable('#${tableContainerId}', query, 10);
                 if(typeof(Storage) !=="undefined"){
                   localStorage.${elemId} = "show";
                 }
@@ -114,6 +107,26 @@
             } else {
                 if (EXPAND_ON_LOAD) {
                     $('#${elemId} h3').click();
+                }
+            }
+
+            function loadTable(elem, query, pageSize) {
+                var customGalaxy = "${GALAXY_URL}";
+                if (customGalaxy) {
+                    imtables.configure('Download.Galaxy.Current', customGalaxy);
+                }
+                imtables.loadDash(
+                    elem,
+                    {size: pageSize},
+                    {service: {root: $SERVICE.root, token: $SERVICE.token}, query: query}
+                ).then(
+                    withTable,
+                    FailureNotification.notify
+                );
+
+                function withTable (table) {
+                    table.bus.on('list-action:failure', LIST_EVENTS['failure']);
+                    table.bus.on('list-action:success', LIST_EVENTS['success']);
                 }
             }
         });

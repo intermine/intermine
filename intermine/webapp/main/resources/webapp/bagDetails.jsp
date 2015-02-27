@@ -30,346 +30,260 @@
   numberOfTableRowsToShow = (numberOfTableRowsToShow == '') ? 30 : parseInt(numberOfTableRowsToShow);
 </script>
 <script type="text/javascript" src="<html:rewrite page='/js/report.js'/>"></script>
-
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
 
 <div class="body">
-<c:choose>
-<c:when test="${!empty bag}">
-<div class="heading results">
-  <img src="images/icons/lists-64.png" alt="lists icon" style="width:32px" />
-  <h1>
-      <fmt:message key="bagDetails.title"/>
-      <span style="font-size:0.9em;font-weight:normal">
-          for <b>${bag.name}</b>
-          (${bag.size}&nbsp;<c:out value="${imf:formatPathStr(bag.type, INTERMINE_API, WEBCONFIG)}s"/>)
-      </span>
-  </h1>
-</div>
+  <c:choose>
+    <c:when test="${!empty bag}">
 
-<table cellspacing="0" width="100%">
-<tr>
-  <TD colspan=2 align="left" style="padding-bottom:10px">
+      <div class="heading results">
+        <img src="images/icons/lists-64.png" alt="lists icon" style="width:32px" />
+        <h1>
+            <fmt:message key="bagDetails.title"/>
+            <span style="font-size:0.9em;font-weight:normal">
+                for <b>${bag.name}</b>
+                (${bag.size}&nbsp;<c:out value="${imf:formatPathStr(bag.type, INTERMINE_API, WEBCONFIG)}s"/>)
+            </span>
+        </h1>
+      </div>
 
-<script type="text/javascript" src="js/toolbar.js"></script>
-<script type="text/javascript" charset="utf-8">
-    jQuery(document).ready(function () {
-        jQuery(".tb_button").click(function () {
-            toggleToolBarMenu(this);
-        });
+      <script type="text/javascript" src="js/toolbar.js"></script>
+      <script type="text/javascript" src="js/bag-details.js"></script>
 
-      // textarea resizer
-      javascript:jQuery('textarea#textarea').autoResize({
-          // on resize:
-          onResize : function() {
-            javascript:jQuery(this).css({opacity:0.8});
-          },
-          // after resize:
-          animateCallback : function() {
-            javascript:jQuery(this).css({opacity:1});
-          },
-          // quite slow animation:
-          animateDuration : 300,
-          // more extra space:
-          extraSpace : 10
-      });
-        AjaxServices.getToggledElements(function(json) {
-            var jSONObject = jQuery.parseJSON(json);
-            jQuery.each(jSONObject, function(i) {
-              var toggledElement = jSONObject[i];
-              if(toggledElement['opened'] == 'false') {
-                  jQuery('#widgetcontainer' + toggledElement['id']).hide();
-              }
-            })
-        });
-    });
-</script>
+      <%-- Fitting above large, rows below that. --%>
+      <div class="grid medium-grid-fit grid-full">
 
+        <div class="grid-cell"> <%-- Left column, auto resizing --%>
+          <c:if test ="${bag.type ne 'Submission'}">
 
-
-<div id="tool_bar_item_display" style="display:none;width:100px" class="tool_bar_item">
-    <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">Related templates</html:link><br/>
-    <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">Related widgets</html:link>
-    <hr/>
-    <a href="javascript:hideMenu('tool_bar_item_display')"><fmt:message key="confirm.cancel"/></a>
-</div>
-
-<div id="tool_bar_item_export" style="display:none;width:300px" class="tool_bar_item">
-    <c:set var="tableName" value="bag.${bag.name}" scope="request"/>
-    <c:set var="pagedTable" value="${pagedResults}" scope="request"/>
-    <tiles:get name="export.tile"/>
-    <hr>
-    <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
-</div>
-
-<div id="tool_bar_item_use" style="display:none;width:100px" class="tool_bar_item">
-    <html:link action="/modifyBagDetailsAction.do?useBag=1&bagName=${bag.name}">In a query</html:link><br/>
-  <html:link action="/templates">In a template</html:link>
-    <hr/>
-    <a href="javascript:hideMenu('tool_bar_item_use')" ><fmt:message key="confirm.cancel"/></a>
-</div>
-
-<div id="tool_bar_item_edit" style="display:none;width:300px" class="tool_bar_item">
-        <html:form action="/modifyBagDetailsAction">
-      <html:hidden property="bagName" value="${bag.name}"/>
-  <%-- add selected to bag --%>
-  <fmt:message key="bagDetails.addRecords"/>:<br/>
-   <c:choose>
-   <c:when test="${!empty PROFILE.savedBags && fn:length(PROFILE.savedBags) > 1}">
-          <html:select property="existingBagName">
-             <c:forEach items="${PROFILE.savedBags}" var="entry">
-              <c:if test="${param.bagName != entry.key}">
-                <html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
-              </c:if>
-             </c:forEach>
-          </html:select>
-     <input type="submit" name="addToBag" id="addToBag" value="Add" />
-     <script type="text/javascript" charset="utf-8">
-          jQuery('#addToBag').attr('disabled', true);
-        </script>
-    </c:when>
-    <c:otherwise>
-      <em><fmt:message key="toolbar.noLists"/></em>
-    </c:otherwise>
-    </c:choose>
-  <br/>
-    <%-- remove selected from bag --%>
-    <fmt:message key="bagDetails.deleteRecords"/>:<br>
-    <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove" disabled="true" />
-    <hr>
-  <a href="javascript:hideMenu('tool_bar_item_edit')" ><fmt:message key="confirm.cancel"/></a>
-  </html:form>
-</div>
-
-</TD>
-</TR>
-<TR>
-
-<TD valign="top" class="tableleftcol">
-
-<c:if test ="${bag.type ne 'Submission'}">
-<div class="results collection-table nowrap nomargin">
-
-<style type="text/css">
-    .bag-detail-table { max-width: 1000px; }
-</style>
-
-<%-- Table displaying bag elements --%>
-<tiles:insert name="resultsTable.tile">
-     <tiles:put name="pagedResults" beanName="pagedResults" />
-     <tiles:put name="currentPage" value="bagDetails" />
-     <tiles:put name="bagName" value="${bag.name}" />
-     <tiles:put name="highlightId" value="${highlightId}"/>
-     <tiles:put name="cssClass" value="bag-detail-table"/>
-     <tiles:put name="pageSize" value="10"/>
-</tiles:insert>
-</div>
-
-<table style="margin-top: 10px;">
-  <tr>
-      <c:if test="${PROFILE.loggedIn}">
-        <td>
-            <div id="listTags">
-              <table>
-                <tr>
-                  <td><b>Tags&nbsp;&nbsp;</b></td>
-                  <td>
-                    <c:set var="taggable" value="${bag}"/>
-                    <tiles:insert name="inlineTagEditor.tile">
-                      <tiles:put name="taggable" beanName="taggable"/>
-                      <tiles:put name="vertical" value="true"/>
-                      <tiles:put name="show" value="true"/>
-                    </tiles:insert>
-                  </td>
-                 </tr>
-              </table>
+            <%-- CONTENTS --%>
+            <div class="results">
+              <%-- Table displaying bag elements --%>
+              <tiles:insert name="resultsTable.tile">
+                  <tiles:put name="currentPage" value="bagDetails" />
+                  <tiles:put name="bagName" value="${bag.name}" />
+                  <tiles:put name="highlightId" value="${highlightId}"/>
+                  <tiles:put name="cssClass" value="bag-detail-table"/>
+                  <tiles:put name="consumerContainer" value=".table-rhs-tools"/>
+                  <tiles:put name="consumerBtnClass" value="btn-primary"/>
+                  <tiles:put name="pageSize" value="10"/>
+              </tiles:insert>
             </div>
-        </td>
-      </c:if>
-  </tr>
-</table>
 
-<div id="clearLine">&nbsp;</div>
-</c:if>
+          </c:if>
 
-<div style="clear:both">
+          <%-- LHS BagDisplayers --%>
+          <c:if test="${!invalid}">
+              <tiles:insert page="/bagDisplayers.jsp">
+                  <tiles:put name="bag" beanName="bag"/>
+                  <tiles:put name="showOnLeft" value="true"/>
+              </tiles:insert>
+          </c:if>
 
-<%-- Bag Description --%>
-<c:choose>
-    <c:when test="${myBag == 'true'}">
-      <div id="bagDescriptionDiv" onclick="jQuery('#bagDescriptionDiv').toggle();jQuery('#bagDescriptionTextarea').toggle();jQuery('#textarea').focus()">
-        <h3><img src="images/icons/description.png" title="Description of your list"/>&nbsp;Description</h3>
-        <c:choose>
-          <c:when test="${! empty bag.description}">
-            <p><c:out value="${bag.description}" escapeXml="false" /></p>
-          </c:when>
-          <c:otherwise>
-            <div id="emptyDesc"><fmt:message key="bagDetails.bagDescr"/></div>
-          </c:otherwise>
-        </c:choose>
+          <%-- DATE CREATED --%>
+          <div>
+            <small>Date Created:  <im:dateDisplay date="${bag.dateCreated}" /></small>
+          </div>
+
+        </div> <%-- End left column --%>
+
+        <div class="grid-cell quarter"> <%-- RHS column, one-quarter width on large screens --%>
+
+          <%-- The table can put some tools here, if it wants --%>
+          <div class="table-rhs-tools"></div>
+
+          <c:if test="${!invalid}">
+
+            <%-- LIST CONVERSION --%>
+            <div id="convertList" class="listtoolbox" align="left">
+              <html:form action="/modifyBagDetailsAction">
+              <html:hidden property="bagName" value="${bag.name}"/>
+                <tiles:insert name="convertBag.tile">
+                  <tiles:put name="bag" beanName="bag" />
+                  <tiles:put name="idname" value="cp" />
+                  <tiles:put name="orientation" value="h" />
+                </tiles:insert>
+              </html:form>
+            </div>
+
+            <%-- BagDisplayers --%>
+            <div>
+              <html:form action="/modifyBagDetailsAction">
+              <html:hidden property="bagName" value="${bag.name}"/>
+                <tiles:insert page="/bagDisplayers.jsp">
+                <tiles:put name="bag" beanName="bag"/>
+                <tiles:put name="showOnLeft" value="false"/>
+                </tiles:insert>
+              </html:form>
+
+            </div>
+
+            <%-- LINK OUTS --%>
+            <div id="linkOuts" class="listtoolbox" align="left">
+              <p>
+                <tiles:insert name="attributeLinks.tile">
+                    <tiles:put name="bag" beanName="bag" />
+                </tiles:insert>
+              </p>
+            </div>
+
+        </c:if> <%-- End if valid --%>
+
+          <%-- Bag Description --%>
+          <c:choose>
+            <c:when test="${myBag == 'true'}">
+                <div class="listtoolbox" id="bagDescriptionDiv" onclick="toggleDescription()">
+                    <h3>
+                        <img src="images/icons/description.png" title="Description of your list"/>
+                        Description
+                    </h3>
+                    <c:choose>
+                        <c:when test="${! empty bag.description}">
+                          <p><c:out value="${bag.description}"/></p>
+                        </c:when>
+                        <c:otherwise>
+                          <div id="emptyDesc"><fmt:message key="bagDetails.bagDescr"/></div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                <div class="listtoolbox" id="bagDescriptionTextarea" style="display:none">
+                    <h3>
+                        <img src="images/icons/description.png" title="Description of your list"/>
+                        Description
+                    </h3>
+                    <div>
+                        <textarea id="textarea" placeholder="enter a description"><c:if test="${! empty bag.description}"><c:out value="${bag.description}" /></c:if></textarea>
+                    </div>
+                    <div>
+                        <button onclick="cancelEditBagDescription()">
+                          <fmt:message key="confirm.cancel"/>
+                        </button>
+                        <button onclick="saveBagDescription('${bag.name}'); return false;">
+                          <fmt:message key="button.save"/>
+                        </button>
+                    </div>
+                </div>
+            </c:when>
+            <c:when test="${! empty bag.description}">
+                <div id="listtoolbox bagDescriptionDiv">
+                    <b>Description:</b><c:out value="${bag.description}"/>
+                </div>
+            </c:when>
+          </c:choose>
+
+          <%-- TAGS --%>
+          <div class="listtoolbox" id="listTags">
+            <div class="grid">
+                <div class="grid-cell cell-no-grow">
+                    <h4>Tags</h4>
+                </div>
+                <c:choose>
+                    <c:when test="${PROFILE.loggedIn}">
+                    <div class="grid-cell">
+                        <c:set var="taggable" value="${bag}"/>
+                        <tiles:insert name="inlineTagEditor.tile">
+                            <tiles:put name="taggable" beanName="taggable"/>
+                            <tiles:put name="vertical" value="true"/>
+                            <tiles:put name="show" value="true"/>
+                        </tiles:insert>
+                    </div>
+                    <div class="grid-cell cell-no-grow">
+                        <div class="inline-tag-editor">
+                            <tiles:insert name="setFavourite.tile" >
+                                <tiles:put name="name" value="${bag.name}"/>
+                                <tiles:put name="type" value="bag"/>
+                            </tiles:insert>
+                        </div>
+                    </div>
+                    </c:when>
+                    <c:otherwise>
+                    <div class="grid-cell">
+                        <div class="inline-tag-editor">
+                        <fmt:message key="login.to.tag.lists"/>: <im:login/>
+                        </div>
+                    </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+          </div>
+
+          <%-- TODO: allow users to remove list items --%>
+
+        </div> <%-- End RHS column --%>
+        
       </div>
-      <div id="bagDescriptionTextarea" style="display:none">
-        <textarea id="textarea"><c:if test="${! empty bag.description}"><c:out value="${fn:replace(bag.description,'<br/>','')}" /></c:if></textarea>
-        <div align="right">
-          <input type="button" onclick="jQuery('#bagDescriptionTextarea').toggle();
-              jQuery('#bagDescriptionDiv').toggle(); return false;" value='<fmt:message key="confirm.cancel"/>' />
-          <input type="button" onclick="saveBagDescription('${bag.name}'); return false;" value='<fmt:message key="button.save"/>' />
+
+      <c:if test="${!invalid}">
+
+        <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
+
+        <!-- Widgets -->
+        <div class="heading" style="clear:both;margin-top:15px">
+            <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
         </div>
-      </div>
-      </c:when>
-      <c:when test="${! empty bag.description}">
-      <div id="bagDescriptionDiv">
-          <b>Description:</b> ${bag.description}
-      </div>
-      </c:when>
-</c:choose>
-<small>Date Created:  <im:dateDisplay date="${bag.dateCreated}" /></small>
-</div>
 
-<%-- BagDisplayers on Left --%>
-    <c:if test="${!invalid}">
-        <tiles:insert page="/bagDisplayers.jsp">
+        <div id="toggle-widgets">
+          <p>Click to select widgets you would like to display:</p>
+          <ol>
+          <c:forEach items="${widgets}" var="widget">
+            <li>
+              <a class="widget-toggler" href="#" title="toggle ${widget.title}" data-widget="${widget.id}">
+                <c:out value="${widget.title}"/>
+              </a>
+            </li>
+          </c:forEach>
+          </ol>
+          <div style="clear:both"></div>
+        </div>
+
+        <c:forEach items="${widgets}" var="widget">
+          <tiles:insert name="widget.tile">
+            <tiles:put name="widget" beanName="widget"/>
             <tiles:put name="bag" beanName="bag"/>
-            <tiles:put name="showOnLeft" value="true"/>
-        </tiles:insert>
-    </c:if>
+            <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
+          </tiles:insert>
+        </c:forEach>
+        <div style="clear:both;"></div>
+        <!-- /widgets -->
 
-</TD>
+        <!-- templates -->
 
-<c:if test="${!invalid}">
-    <TD align="left" valign="top" width="40%">
-
-
-    <!-- closing toolbar div -->
-
-    <div id="convertList" class="listtoolbox" align="left">
-      <html:form action="/modifyBagDetailsAction">
-      <html:hidden property="bagName" value="${bag.name}"/>
-        <tiles:insert name="convertBag.tile">
-          <tiles:put name="bag" beanName="bag" />
-          <tiles:put name="idname" value="cp" />
-          <tiles:put name="orientation" value="h" />
-        </tiles:insert>
-      </html:form>
-</c:if>
-<c:if test="${!invalid}">
+        <c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
+        <c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
+        <div class="heading">
+          <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>
+          </div>
 
 
-    <%-- BagDisplayers --%>
-      <html:form action="/modifyBagDetailsAction">
-      <html:hidden property="bagName" value="${bag.name}"/>
-        <tiles:insert page="/bagDisplayers.jsp">
-        <tiles:put name="bag" beanName="bag"/>
-        <tiles:put name="showOnLeft" value="false"/>
-        </tiles:insert>
-      </html:form>
+          <div class="body">
+          <fmt:message key="bagDetails.templatesHelp"/>
 
-    </div>
+          <%-- Each aspect --%>
+          <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
+          <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
+            <tiles:insert name="reportAspect.tile">
+              <tiles:put name="placement" value="im:aspect:${aspect}"/>
+              <tiles:put name="trail" value="|bag.${bag.name}"/>
+              <tiles:put name="interMineIdBag" beanName="bag"/>
+              <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+              <tiles:put name="opened" value="${status.index == 0}" />
+            </tiles:insert>
+          </div>
+          </c:forEach>
+        </div>  <!-- templates body -->
 
+        <!-- /templates -->
 
-    <!-- link outs -->
-    <div id="linkOuts" class="listtoolbox" align="left">
-        <p>
-    <tiles:insert name="attributeLinks.tile">
-        <tiles:put name="bag" beanName="bag" />
-    </tiles:insert>
-    </p>
-    </div>
+      </c:if>
+    </c:when>
 
-    </TD>
-</c:if>
-</TR>
-</TABLE>
+    <c:otherwise>
+      <!--  No list found with this name -->
+      <div class="bigmessage">
+        <html:link action="/bag?subtab=view">View all lists</html:link>
+      </div>
+    </c:otherwise>
 
-<c:if test="${!invalid}">
-
-<div class="heading" style="clear:both;margin-top:15px">
-     <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
-</div>
-
-<div id="toggle-widgets">
-  <p>Click to select widgets you would like to display:</p>
-  <ol>
-  <c:forEach items="${widgets}" var="widget">
-    <li><a href="#" title="toggle widget" data-widget="${widget.id}">${widget.title}</a></li>
-  </c:forEach>
-  </ol>
-  <div style="clear:both"></div>
-</div>
-
-<script language="javascript">
-  (function() {
-    jQuery('#toggle-widgets ol li').each(function(index) {
-      jQuery(this).find('a').click(function(e) {
-        // Toggle us.
-        var link = jQuery(e.target);
-        link.toggleClass('inactive');
-
-        // Toggle widget.
-        var widgetId = link.attr('data-widget');
-        var w = jQuery('#' + widgetId + '-widget');
-        w.toggle();
-
-        // Save.
-        AjaxServices.saveToggleState(widgetId, w.is(":visible"));
-
-        e.preventDefault();
-      });
-    });
-  })();
-</script>
-
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
-
-<script type="text/javascript">
-  //window.widgets = new intermine.widgets(window.service, "${PROFILE.dayToken}");
-</script>
-
-<c:forEach items="${widgets}" var="widget">
-  <tiles:insert name="widget.tile">
-    <tiles:put name="widget" beanName="widget"/>
-    <tiles:put name="bag" beanName="bag"/>
-    <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
-  </tiles:insert>
-</c:forEach>
-<div style="clear:both;"></div>
-
-<!-- templates -->
-
-<c:set var="templateIdPrefix" value="bagDetailsTemplate${bag.type}"/>
-<c:set value="${fn:length(CATEGORIES)}" var="aspectCount"/>
-<div class="heading">
-   <a id="relatedTemplates">Template results for '${bag.name}' &nbsp;</a>
-  </div>
-
-
-  <div class="body">
-  <fmt:message key="bagDetails.templatesHelp"/>
-
-  <%-- Each aspect --%>
-  <c:forEach items="${CATEGORIES}" var="aspect" varStatus="status">
-  <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
-    <tiles:insert name="reportAspect.tile">
-      <tiles:put name="placement" value="im:aspect:${aspect}"/>
-      <tiles:put name="trail" value="|bag.${bag.name}"/>
-      <tiles:put name="interMineIdBag" beanName="bag"/>
-      <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
-      <tiles:put name="opened" value="${status.index == 0}" />
-    </tiles:insert>
-  </div>
-  </c:forEach>
-</div>  <!-- templates body -->
-
-<!-- /templates -->
-</c:if>
-</c:when>
-<c:otherwise>
-<!--  No list found with this name -->
-<div class="bigmessage">
- <br />
- <html:link action="/bag?subtab=view">View all lists</html:link>
-</div>
-</c:otherwise>
-</c:choose>
-</div>  <!-- whole page body -->
+  </c:choose>
+</div>  <!-- end .body -->
 <!-- /bagDetails.jsp -->
