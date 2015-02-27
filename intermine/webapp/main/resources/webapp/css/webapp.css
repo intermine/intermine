@@ -105,7 +105,6 @@ li {
 }
 
 #header {
-    width: 1000px;
     padding: 0;
     margin: 0;
     height: 50px;
@@ -166,7 +165,6 @@ tbody#summary_table td {
 div#menucontainer {
     clear: both;
     padding-left: 10px;
-    width: 1000px;
 }
 
 ul#nav {
@@ -215,6 +213,16 @@ ul#loginbar a {
     padding: 0px;
 }
 
+.page-container {
+    width: 100%;
+}
+
+@media (min-width: 1000px) {
+    .page-container {
+        width: 1000px;
+    }
+}
+
 /* =SUBMENU
  --------------------------*/
 div#quicksearch {
@@ -248,8 +256,9 @@ div#quicksearch {
     font-size: 12px;
 }
 
-#submenudiv {
-    width: 990px;
+#quicksearch, #loginbar {
+    position: relative;
+    right: 1em;
 }
 
 ul#submenulist {
@@ -1027,12 +1036,34 @@ label {
     padding-left: 20px;
 }
 
-/* mymine submenu */
-/*ul#submenulist li { margin-right:5px; padding-left:6px; }*/
-ul#submenulist li span {;
+/* These are the tabs we can hide -
+ * api is pretty useless, and is accessible from home,
+ * activelink is where we are now, so nice to know, but not essential,
+ * and home can be accessed when set up correctly by clicking on the brand
+ */
+#api,
+#home,
+#menucontainer .nav > .activelink {
+    display: none;
 }
 
-ul#submenulist li.first, ul#submenulist li a, ul#submenulist li.first a { /*border:none;*/
+/*
+ * We reveal them in the order: home > activelink > api
+ */
+@media (min-width: 700px) {
+    #api {
+        display: list-item;
+    }
+}
+@media (min-width: 600px) {
+    #menucontainer .nav .activelink {
+        display: list-item;
+    }
+}
+@media (min-width: 550px) {
+    #home {
+        display: list-item;
+    }
 }
 
 #submenu.submenu_mymine ul#submenulist li#subactive_mymine, ul#submenulist li#subactive_bag {
@@ -1688,10 +1719,11 @@ div.bottom-footer ul.footer-links li a { text-decoration:none; text-transform:ca
   flex-wrap: wrap;
   width: 100%; /* Act as a container */
 }
+ /* With gutters */
 .grid-guttered {
-  margin: -1em 0 0 -1em; /* With gutters */
+  margin: -1em 0 0 -1em;
 }
-.grid > .grid-cell {
+.grid-guttered > .grid-cell {
   padding: 1em 0 0 1em;
 }
 

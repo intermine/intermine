@@ -138,9 +138,6 @@ html ul.tabs li.active, html ul.tabs li.active a:hover { /*--Makes sure that the
     width: 230px;
 }
 
-#actions .plainbox.api {;
-}
-
 #actions .plainbox.api h1 {
     background-image: url('../themes/metabolic/icons/perl-java-ico.gif');
 }
@@ -215,17 +212,21 @@ html, body {
 }
 
 .bochs {
+    /*
     width: 280px;
     float: left;
     margin-right: 46px;
+    */
     position: relative;
     background: url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top;
     padding: 0 6px;
 }
 
+/*
 .bochs:last-child {
     margin-right: 0;
 }
+*/
 
 #boxes div.inner {
     background: #FFF;
@@ -249,8 +250,13 @@ html, body {
     font-weight: normal;
 }
 
-#search-bochs div.inner h3 {
+#search-bochs .inner h3 {
     background: #5c0075;
+}
+.bochs .inner .help {
+    display: inline-block;
+    margin-top: 32px;
+    font-size: 14px;
 }
 
 #lists-bochs div.inner h3 {
@@ -306,7 +312,7 @@ html, body {
 #lists-bochs div.inner textarea {
     padding: 6px 8px 4px 8px;
     height: 50px;
-    width: 240px !important;
+    width: 90%;
     border: none;
     -moz-box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
@@ -648,35 +654,6 @@ a.button.gray span, x:-moz-any-link {
     letter-spacing: -1px;
 }
 
-#low #api {
-    width: 300px;
-    padding: 14px;
-    float: left;
-}
-
-#low #api img {
-    float: left;
-    padding: 0 10px 50px 0;
-}
-
-#low #api ul {
-    color: #535353;
-    font-size: 12px;
-    list-style-type: none;
-    margin-top: 5px;
-}
-
-#low #api ul a {
-    color: #535353;
-    font-size: 13px;
-    text-decoration: underline;
-    font-size: 12px;
-}
-
-#low #api ul a:hover {
-    color: #000;
-}
-
 #low #rss {
     width: 560px;
     padding: 14px;
@@ -801,6 +778,3 @@ a.button.gray span, x:-moz-any-link {
 	color: #000;
 }
 
-#api-langs li {
-    float: left;
-}

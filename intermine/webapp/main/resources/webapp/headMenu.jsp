@@ -34,7 +34,7 @@
       </c:forEach>
     </div>
   </c:if>
-  <div id="header">
+  <div id="header" class="page-container">
     <a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" width="45px" height="43px" alt="Logo" /></a>
     <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
     <p id="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span>
@@ -43,7 +43,7 @@
 
     <!-- Tab Menu -->
   <fmt:message key="${pageName}.tab" var="tab" />
-  <div id="menucontainer">
+  <div id="menucontainer" class="page-container">
     <ul id="nav">
       <li id="home" <c:if test="${tab == 'begin'}">class="activelink"</c:if>>
         <a href="/${WEB_PROPERTIES['webapp.path']}/begin.do">
@@ -78,7 +78,7 @@
         </a>
       </li>
       <li id="api"  <c:if test="${tab == 'api'}">class="activelink"</c:if>>
-        <a href="/${WEB_PROPERTIES['webapp.path']}/api.do">
+        <a href="${WEB_PROPERTIES['apidocs']}">
           <fmt:message key="menu.api"/>
         </a>
       </li>
@@ -150,7 +150,7 @@
     <c:set var="submenuid" value="${submenuid}fixed"/>
   </c:if>
   <div id="${submenuid}" class="${styleClass}">
-    <div id="submenudiv">
+    <div id="submenudiv" class="page-container">
       <div id="quicksearch">
         <tiles:insert name="quickSearch.tile">
           <tiles:put name="menuItem" value="true"/>
