@@ -237,6 +237,8 @@ public final class PathQueryResultHelper
         PathQuery query = new PathQuery(model);
         query.addViews(getDefaultViewForClass(imBag.getType(), model, webConfig));
         query.addConstraint(Constraints.in(imBag.getType(), imBag.getName()));
+        // TODO - remove hard-coded human language.
+        query.setTitle("Contents of " + imBag.getName());
         return query;
     }
 
