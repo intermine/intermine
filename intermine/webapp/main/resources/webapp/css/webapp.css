@@ -260,6 +260,14 @@ div#quicksearch {
     position: relative;
     right: 1em;
 }
+@media (max-width: 540px) {
+    #loginbar {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+    }
+}
+
 
 ul#submenulist {
     border: none; /*padding:11px 0;*/
@@ -1043,6 +1051,7 @@ label {
  */
 #api,
 #home,
+#category,
 #menucontainer .nav > .activelink {
     display: none;
 }
@@ -1050,17 +1059,23 @@ label {
 /*
  * We reveal them in the order: home > activelink > api
  */
-@media (min-width: 700px) {
+@media (min-width: 776px) {
     #api {
         display: list-item;
     }
 }
-@media (min-width: 600px) {
+@media (min-width: 700px) {
+    #category {
+        display: list-item;
+    }
+}
+@media (min-width: 650px) {
+    #home.activelink,
     #menucontainer .nav .activelink {
         display: list-item;
     }
 }
-@media (min-width: 550px) {
+@media (min-width: 600px) {
     #home {
         display: list-item;
     }
@@ -1412,12 +1427,11 @@ select#extraConstraintSelect {
 }
 
 /* login bar */
-ul#loginbar li {
+#loginbar li {
     border-right-style: solid;
     border-right-width: 1px;
 }
-
-ul#loginbar li.last {
+#loginbar li.last {
     border: none;
 }
 
