@@ -46,6 +46,10 @@ li {
   background-position: top;
   vertical-align: middle; text-align: left;}
 
+.listtoolbox .imtables {
+    background: transparent;
+}
+
 .listtoolbox h3, #bagDescriptionDiv h3 {
   color:#333; font-size:1.2em;}
 
