@@ -34,8 +34,8 @@ import org.intermine.util.IntToIntMap;
  */
 public class PkQueryIdUpgrader implements IdUpgrader
 {
-    private static final Logger LOG = Logger
-            .getLogger(PkQueryIdUpgrader.class);
+    private static final Logger LOG = Logger.getLogger(PkQueryIdUpgrader.class);
+
     private Source source = null;
     EquivalentObjectFetcher eof;
     private IntToIntMap newIdsCacheSingle = new IntToIntMap();
