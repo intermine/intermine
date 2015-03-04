@@ -65,9 +65,8 @@ div.modelbrowse {
 
 #queryBuilderBrowser {
   float:left;
-  width:500px;
-  /*margin-right:10px;*/
-  position:relative;
+  width:50%;
+  margin-right: -1px;
 }
 
 #browserbody {
@@ -76,8 +75,8 @@ div.modelbrowse {
 }
 
 #rightColumn {
-  margin-left:505px;
-  width:495px;
+  float: left;
+  width: 50%;
 }
 
 #queryBuilderContainer {
@@ -211,8 +210,19 @@ img.tinyQuestionMark {
   text-align: center;
 }
 
-#sidebar { margin-left:830px;height:35px;
-  width:495px;}
+#sidebar {
+    height:35px;
+    width:100%;
+}
+
+#bigGreen {
+    position: absolute;
+    right: 1em;
+}
+
+#bigGreen > div, #bigGreen > form {
+    float: left;
+}
 
 span.tree_tee .ver
 {
