@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -191,7 +190,14 @@ public abstract class WebUtil
         return StringUtil.split(prop, ":");
     }
 
-    public interface HeadResource {
+    /**
+     * The type of things that can be used as resources in the head section
+     * of an HTML page.
+     * @author Alex Kalderimis
+     *
+     */
+    public interface HeadResource
+    {
 
         /** @return the key **/
         String getKey();
