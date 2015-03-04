@@ -1480,4 +1480,30 @@ public class AjaxServices
         BagManager bagManager = im.getBagManager();
         return bagManager.getUsersSharingBag(bagName, profile.getUsername());
     }
+
+    /**
+     * Remove a number of objects identified by id from a bag, and return the number removed.
+     * @param bagName The name of the bag.
+     * @param ids The ids of the objects to remove.
+     * @return The number of objects removed (may be 0).
+     */
+    public int removeIdsFromBag(String bagName, Collection<Integer> ids) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        BagManager bagManager = im.getBagManager();
+        InterMineBag bag = bagManager.getUserBag(profile, bagName);
+        if (bag == null) {
+            throw new RuntimeException("That bag does not belong to this user.");
+        }
+        int priorSize = 0, postSize = 0;
+        try {
+            priorSize = bag.getSize();
+            bag.removeIdsFromBag(ids, true);
+            postSize = bag.getSize();
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+        return priorSize - postSize;
+    }
 }
