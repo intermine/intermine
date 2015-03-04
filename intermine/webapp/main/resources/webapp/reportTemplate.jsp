@@ -62,21 +62,22 @@
 
     (function($) {
         var EXPAND_ON_LOAD = ${expandOnLoad};
-        intermine.css.headerIcon = "fm-header-icon";
         var query = ${tquery.json};
         var disableTemplate = function() {
             $('#${elemId} h3').addClass('no-results').unbind('click');
             $('#${tableContainerId}').remove();
         };
         $(function() {
-            // FIXME - this will need changing when we upgrade imjs
-            $SERVICE.query(query).pipe($SERVICE.count).fail(disableTemplate).done(function(c) {
-                var cstr = intermine.utils.numToString(c, ",", 3);
-                $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
-                if (c < 1) {
-                    disableTemplate();
-                }
-            });
+            $SERVICE.count(query).then(
+                function(c) {
+                    var cstr = intermine.utils.numToString(c, ",", 3);
+                    $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
+                    if (c < 1) {
+                        disableTemplate();
+                    }
+                },
+                disableTemplate
+            );
             $('#${elemId} h3').click(function(e) {
                 loadTable('#${tableContainerId}', query, 10);
                 if(typeof(Storage) !=="undefined"){
