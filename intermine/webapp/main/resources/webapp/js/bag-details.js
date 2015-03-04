@@ -25,6 +25,7 @@ var Remover, ListOperations;
         this.tableModel = options.tableModel;
         this.selection = options.selection;
         this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.selection, 'add remove reset', this.render);
       },
 
       template: _.template(
@@ -32,17 +33,24 @@ var Remover, ListOperations;
           '<i class="fa fa-caret-<%= active ? "down" : "right" %>"></i> ' +
           'Remove Items' +
         '</h3>' +
-        '<div class="grid grid-full imtables" style="display: <%= active ? "block" : "none" %>">' +
+        '<div class="grid medium-grid-full grid-fit imtables" ' +
+             '<% if (!active) { %><%= hidden %><% } %>>' +
           '<div class="grid-cell">' +
           ' <button class="btn btn-default stop-removing">Cancel</button>' +
           '</div><div class="grid-cell">' +
-          ' <button class="btn btn-default remove-items">Remove selected</button>' +
+          ' <button class="<% if (nothingSelected) { %>disabled <% } %>' +
+                          'btn btn-default remove-items">' +
+            'Remove selected' +
+           '</button>' +
           '</div>' +
         '</div>'
       ),
 
       data: function () {
-        return this.model.toJSON();
+        return _.extend({
+          nothingSelected: this.selection.isEmpty(),
+          hidden: 'style="display:none"'
+        }, this.model.toJSON());
       },
 
       events: function () {
@@ -54,6 +62,21 @@ var Remover, ListOperations;
       },
 
       removeItems: function (e) {
+        var ids = this.selection.pluck('id');
+        var bagName = this.bag.name;
+        if (ids.length) {
+          AjaxServices.removeIdsFromBag(bagName, ids, {
+            callback: function (delta) {
+              if (delta > 0) {
+                // This is terrible for performance, but it ensures correctness.
+                location.reload();
+              } else {
+                LIST_EVENTS.failure(new Error("No items were removed"));
+              }
+            },
+            errorHandler: LIST_EVENTS.failure
+          });
+        }
         this.stopRemoving(e);
       },
 
