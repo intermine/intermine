@@ -109,10 +109,8 @@ setOption(['CDN'], 'server', "${WEB_PROPERTIES['head.cdn.location']}");
 
 if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     // Set up the service, if required.
-    var root = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}";
-    if (!intermine.funcutils && window.imjs && window.imjs.utils) {
-      intermine.funcutils = window.imjs.utils;
-    }
+    var root = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}";
+
     $SERVICE = new intermine.Service({
         "root": root,
         "token": "${PROFILE.dayToken}",

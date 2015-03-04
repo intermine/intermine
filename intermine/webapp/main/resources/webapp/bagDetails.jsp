@@ -68,6 +68,7 @@
                   <tiles:put name="consumerContainer" value=".table-rhs-tools"/>
                   <tiles:put name="consumerBtnClass" value="btn-primary"/>
                   <tiles:put name="pageSize" value="10"/>
+                  <tiles:put name="successCallBack" value="addBagItemRemover"/>
               </tiles:insert>
             </div>
 
@@ -94,7 +95,7 @@
           <div class="table-rhs-tools"></div>
 
           <c:if test="${!invalid}">
-
+           
             <%-- LIST CONVERSION --%>
             <div id="convertList" class="listtoolbox" align="left">
               <html:form action="/modifyBagDetailsAction">
@@ -128,11 +129,20 @@
               </p>
             </div>
 
+            <%-- This component is instantiated in bag-details.js --%>
+            <div id="list-operations" class="listtoolbox"></div>
+
         </c:if> <%-- End if valid --%>
 
           <%-- Bag Description --%>
           <c:choose>
             <c:when test="${myBag == 'true'}">
+
+                <c:if test="${!invalid}">
+                    <%-- This component is instantiated in bag-details.js --%>
+                    <div id="item-remover" class="listtoolbox"></div>
+                </c:if>
+
                 <div class="listtoolbox" id="bagDescriptionDiv" onclick="toggleDescription()">
                     <h3>
                         <img src="images/icons/description.png" title="Description of your list"/>

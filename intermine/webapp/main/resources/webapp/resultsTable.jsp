@@ -17,6 +17,7 @@
 <tiles:importAttribute name="query" ignore="true"/>
 <tiles:importAttribute name="consumerContainer" ignore="true"/>
 <tiles:importAttribute name="consumerBtnClass" ignore="true"/>
+<tiles:importAttribute name="successCallBack" ignore="true"/>
 
 <c:if test="${empty query}">
     <c:set var="query" value="${QUERY}"/>
@@ -88,6 +89,9 @@ jQuery(function() {
         table.history.on('changed:current', updateTrail);
         table.bus.on('list-action:failure', LIST_EVENTS['failure']);
         table.bus.on('list-action:success', LIST_EVENTS['success']);
+        <c:if test="${!empty successCallBack}">
+        ${successCallBack}(table);
+        </c:if>
         
         function updateTrail () {
             var query = table.history.getCurrentQuery()
