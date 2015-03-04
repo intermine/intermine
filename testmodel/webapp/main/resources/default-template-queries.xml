@@ -236,20 +236,25 @@
     <tag name="im:public" objectIdentifier="employeesFromCompanyAndDepartment" type="template"/>
     <tag name="im:aspect:People" objectIdentifier="employeeByName" type="template"/>
     <tag name="im:public" objectIdentifier="employeeByName" type="template"/>
+    <tag name="im:report" objectIdentifier="employeeByName" type="template"/>
     <tag name="im:aspect:People" objectIdentifier="employeesOfACertainAge" type="template"/>
     <tag name="im:public" objectIdentifier="employeesOfACertainAge" type="template"/>
     <tag name="im:aspect:People" objectIdentifier="ManagerLookup" type="template"/>
+    <tag name="im:report" objectIdentifier="ManagerLookup" type="template"/>
     <tag name="im:public" objectIdentifier="ManagerLookup" type="template"/>
     <tag name="im:converter" objectIdentifier="convertEmployeesToAddresses" type="template"/>
     <tag name="im:converter" objectIdentifier="convertContractorToEmployees" type="template"/>
     <tag name="im:converter" objectIdentifier="convertEmployeeToManager" type="template"/>
     <tag name="im:public" objectIdentifier="fourConstraints" type="template"/>
     <tag name="im:public" objectIdentifier="Employee_Colleagues" type="template"/>
+    <tag name="im:report" objectIdentifier="Employee_Colleagues" type="template"/>
     <tag name="im:aspect:People" objectIdentifier="Employee_Colleagues" type="template"/>
     <tag name="im:public" objectIdentifier="Department_Employees" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Departments" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Employees" type="template"/>
+    <tag name="im:report" objectIdentifier="Company_Employees" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Contractors" type="template"/>
+    <tag name="im:report" objectIdentifier="Company_Contractors" type="template"/>
     <tag name="im:public" objectIdentifier="Underwater_People" type="template"/>
     <tag name="im:public" objectIdentifier="CEO_Rivals" type="template"/>
     <tag name="im:public" objectIdentifier="Global-List" type="bag"/>
