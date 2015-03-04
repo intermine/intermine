@@ -191,6 +191,19 @@ var Remover, ListOperations;
         }
       },
 
+      subtractList: function () {
+        if (!this.model.get('combineWith')) {
+          return LIST_EVENTS.failure(new Error('Must choose a list to subtract from'));
+        }
+        var fromList = this.model.get('combineWith');
+        var listDetails = this.getListDetails();
+        listDetails.from = [fromList];
+        listDetails.exclude = [this.bag.name];
+        listDetails.description = 'Contents of ' + fromList + ' excluding ' +
+          this.bag.type + 's in ' + this.bag.name;
+        $SERVICE.complement(listDetails).then(LIST_EVENTS.success, LIST_EVENTS.failure);
+      },
+
       deleteList: function () {
         var name = this.bag.name;
         var warning = "Do you really want to delete " + name + "? This cannot be undone.";

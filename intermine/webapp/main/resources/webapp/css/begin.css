@@ -212,11 +212,7 @@ html, body {
 }
 
 .bochs {
-    /*
-    width: 280px;
-    float: left;
-    margin-right: 46px;
-    */
+    min-width: 280px;
     position: relative;
     background: url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top;
     padding: 0 6px;
@@ -302,7 +298,7 @@ html, body {
 
 #lists-bochs div.inner select {
     margin: 10px 0 0 12px;
-    width: 256px;
+    width: 90%;
 }
 
 #lists-bochs div.inner .textarea {
@@ -347,11 +343,10 @@ html, body {
     padding: 2px 36px;
 }
 
-#search-bochs input[type =
-"text"].input {
+#search-bochs input[type="text"].input {
     border: none;
     padding: 10px;
-    width: 236px;
+    width: 80%;
     font-size: 12px;
     -moz-box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
@@ -361,10 +356,10 @@ html, body {
     border-radius: 15px;
 }
 
-#search-bochs input[type="text"].input.eg {
+.bochs .eg {
     color: #888;
 }
-#search-bochs input[type="text"].input.eg:focus {
+.bochs .input.eg:focus {
     outline: none;
 }
 
@@ -379,10 +374,6 @@ html, body {
     background: url("../themes/purple/homepage/button-plush.png") no-repeat scroll center bottom transparent;
     color: #FFFFFF;
     padding: 2px 34px; /*float:right; margin-right:30%; margin-bottom:8px;*/
-}
-
-#lists-bochs textarea.eg {
-    color: #888;
 }
 
 #lists-bochs div.inner a {
@@ -719,6 +710,12 @@ a.button.gray span, x:-moz-any-link {
     background: url("../themes/purple/homepage/content-grad-bottom.png") repeat-x bottom;
     padding: 0 18px 25px 18px;
     margin-top: 10px !important;
+}
+
+@media (max-width: 560px) {
+    #bottom-wrap {
+        display: none;
+    }
 }
 
 /* im:frontpage tagged lists */
