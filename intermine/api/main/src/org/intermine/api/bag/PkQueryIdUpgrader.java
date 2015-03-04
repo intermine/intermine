@@ -1,4 +1,4 @@
-package org.intermine.web.bag;
+package org.intermine.api.bag;
 
 /*
  * Copyright (C) 2002-2015 FlyMine
@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.bag.IdUpgrader;
 import org.intermine.dataloader.BaseEquivalentObjectFetcher;
 import org.intermine.dataloader.EquivalentObjectFetcher;
 import org.intermine.dataloader.Source;

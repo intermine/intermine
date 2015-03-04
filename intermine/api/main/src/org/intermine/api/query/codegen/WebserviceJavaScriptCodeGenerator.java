@@ -15,6 +15,8 @@ import java.util.Formattable;
 import java.util.Formatter;
 
 import org.intermine.pathquery.PathQuery;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A Class for generating JavaScript that would run a given query.
@@ -58,19 +60,29 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         }
 
         final String url = wsCodeGenInfo.getServiceBaseURL();
-        final String cdnLocation = wsCodeGenInfo.getProperty("head.cdn.location",
-                "http://cdn.intermine.org");
-        final String json = query.getJson();
+        final String json = getQueryAsJSObject(query);
         final String token = wsCodeGenInfo.getUserToken();
 
         StringBuffer sb = new StringBuffer()
               .append(JSStrings.getString("PRELUDE"))
-              .append(String.format(JSStrings.getString("IMPORTS"), cdnLocation))
-              .append(JSStrings.getString("PLACEHOLDER"))
-              .append(JSStrings.getString("SCRIPT", new StringLiteral(url),
-                  new StringLiteral(token), json));
+              .append(JSStrings.getString("IMPORTS"))
+              .append(JSStrings.getString("SCRIPT",
+                      new StringLiteral(url),
+                      new StringLiteral(token),
+                      json));
 
         return sb.toString().replaceAll("\n", wsCodeGenInfo.getLineBreak());
+    }
+
+    private String getQueryAsJSObject(PathQuery query) {
+        String ugly = query.getJson();
+        try {
+            JSONObject jo = new JSONObject(ugly);
+            jo.remove("model"); // Not required here. Doesn't hurt, just nicer without.
+            return jo.toString(2);
+        } catch (JSONException e) {
+            return ugly; // Cannot prettify. Boo.
+        }
     }
 
     private class StringLiteral implements Formattable
