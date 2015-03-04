@@ -152,12 +152,14 @@ public class QueryToListService extends AbstractQueryService
             InterMineBag newList =
                     profile.createBag(tempName, type, description, im.getClassKeys());
             newList.addToBagFromQuery(q);
-            try {
-                im.getBagManager().addTagsToBag(tags, newList, profile);
-            } catch (TagManager.TagNameException e) {
-                throw new BadRequestException(e.getMessage());
-            } catch (TagManager.TagNamePermissionException e) {
-                throw new ServiceForbiddenException(e.getMessage());
+            if (profile.isLoggedIn()) { // Anon. users cannot have tags.
+                try {
+                    im.getBagManager().addTagsToBag(tags, newList, profile);
+                } catch (TagManager.TagNameException e) {
+                    throw new BadRequestException(e.getMessage());
+                } catch (TagManager.TagNamePermissionException e) {
+                    throw new ServiceForbiddenException(e.getMessage());
+                }
             }
             profile.renameBag(tempName, name);
 
