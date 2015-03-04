@@ -23,7 +23,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.web.bag.PkQueryIdUpgrader;
+import org.intermine.api.bag.PkQueryIdUpgrader;
 
 /**
  * Tests for the InterMineBagHandler class.
@@ -70,7 +70,7 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
         Company oldCompany = createCompanyWithId("Old company");
 
         // no new object so expect an empt set
-        Set<Integer> newIds = new PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
+        Set<Integer> newIds = new org.intermine.api.bag.PkQueryIdUpgrader(os).getNewIds(oldCompany, os);
         assertEquals(new HashSet<Integer>(), newIds);
     }
 
