@@ -55,6 +55,7 @@
     <merge-additions file="bio/sources/orthodb/orthodb_additions.xml"/>
     <merge-additions file="bio/sources/human/hpo-annotation/hpo-annotation_additions.xml"/>
     <merge-additions file="bio/sources/ensembl/ensembl-snp/ensembl-snp_additions.xml"/>
+    <merge-additions file="bio/sources/reactome/reactome_additions.xml"/>
   </target>
 
 </project>
