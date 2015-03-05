@@ -37,10 +37,12 @@
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
+<!--
     <source name="ensembl-mouse" type="ensembl-core">
       <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current" />
       <property name="src.data.dir.includes" value="10090_mgi_pid.xml" />
     </source>
+-->
     <source name="ensembl-mouse-chr-fasta" type="fasta">
       <property name="fasta.taxonId" value="10090" />
       <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence" />
