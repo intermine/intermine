@@ -212,10 +212,11 @@ html, body {
 }
 
 .bochs {
-    min-width: 280px;
     position: relative;
     background: url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top;
     padding: 0 6px;
+    display: flex;
+    flex: 1 0 100%;
 }
 
 /*
@@ -224,11 +225,16 @@ html, body {
 }
 */
 
-#boxes div.inner {
+#boxes .grid-cell {
+    display: flex;
+}
+
+#boxes .inner {
     background: #FFF;
     min-height: 210px;
     border-bottom: 1px solid #dfdfdf;
     padding-bottom: 60px;
+    flex: 1 0 100%;
 }
 
 #boxes div.inner div.bottom {

@@ -17,7 +17,6 @@
                         <img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
                         <div class="inner">
                                 <h3><c:out value="${WEB_PROPERTIES['begin.searchBox.title']}" /></h3>
-                                <span class="ugly-hack">&nbsp;</span>
                                 <span class="help">
                                     <c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" />
                                 </span>
@@ -52,7 +51,6 @@
                         <img class="title" src="images/icons/lists-64.png" title="lists"/>
                         <div class="inner">
                                 <h3><c:out value="${WEB_PROPERTIES['begin.listBox.title']}" /></h3>
-                                <span class="ugly-hack">&nbsp;</span>
                                 <span class="help">
                                     <c:out value="${WEB_PROPERTIES['begin.listBox.description']}" escapeXml="false" />
                                 </span>
