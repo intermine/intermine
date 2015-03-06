@@ -5,6 +5,8 @@ use warnings;
 
 use feature ':5.10';
 
+use Env qw/COMPANY/; # Defaults to Enormo
+
 use InterMine::Model;
 use InterMine::Item::Document;
 
@@ -154,14 +156,16 @@ my $doc = InterMine::Item::Document->new(
     auto_write => 1,
 );
 
+my $prefix = $COMPANY // "Enormo";
+
 my $comp_address = "1 Enormo Way, Hugeville";
 my @secretary_names = map {get_random_name(1)} 1 .. 300;
-my $comp_name = "EnormoCorp";
+my $comp_name = "${prefix}Corp";
 my ($ceo_title, $ceo_name) = get_random_title_and_name();
-my @dep_names = map {get_random_dep_name} 1 .. 500;
-my $manager_st = "Enormo Cres.";
+my @dep_names = map {get_random_dep_name} 1 .. 2_000;
+my $manager_st = "$prefix Cres.";
 my $grades = 40;
-my $emp_st = "Enormo. Avenue";
+my $emp_st = "$prefix. Avenue";
 
 print "Making company $comp_name\n";
 
@@ -243,7 +247,7 @@ for my $department (@deps) {
             department => $department,
             age => get_employee_age(),
             end => int(rand(10)),
-            fullTime => (rand(10) > 4) ? "true" : "false",
+            fullTime => (rand(10) > 2) ? "true" : "false",
             address => $doc->add_item(Address => (address => int(rand(10_000))  .' Enormo Av.')),
         ));
     }
@@ -3162,52 +3166,80 @@ NOEL     29,844 0.012   999
 VANG     29,844 0.012   1000
 
 DEP_INITIAL
-Long-Distance
-Quasi
-Independent
 Central
-Regional
-Fundamental
-Peripheral
 Community
+Fixed-Term
+Fundamental
+Human
+Independent
+International
+Local
+Long-Distance
+National
 Online
-Quantitative
+Peripheral
+Permanent
+Public
+Robotic
+In-House
 Qualitative
+Quantitative
+Quasi
+Regional
 
 DEP_MEDIAL
-Technical
-Debt
 Asset
-Human
+Automotive
+Community
+Debt
+Development
+Delivery
+Desktop
+Diversity
+Engagement
+Engineering
+Enterprise
 Financial
 Fiscal
-Engineering
-Automotive
 Health
-Safety
+Human
 Information
-Warehouse
-Development
-Engagement
+Liability
+Mobile
+Product
+Risk
+Safety
+Sustainability
+Technical
 Valuation
+Warehouse
+Web
 
 DEP_FINAL
-Monitoring
-Dynamics
-Publishing
-Delivery
+Accounting
+Analysis
+Architecture
+Archives
 Authority
 Board
+Consolidation
+Delivery
+Design
+Development
+Dynamics
+Empowerment
 Group
-Accounting
-Resources
 Logistics
-Analysis
-Research
+Management
+Marketing
+Monitoring
 Planning
+Publishing
+Relations
+Research
+Resources
+Restructuring
+Sales
 Strategy
 Technology
-Sales
-Archives
-
 
