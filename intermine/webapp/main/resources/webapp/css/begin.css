@@ -211,7 +211,14 @@ div#navtrail {
     position: relative;
     background: url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top;
     padding: 0 6px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-flex: 1 0 100%;
+    -webkit-flex: 1 0 100%;
+    -ms-flex: 1 0 100%;
     flex: 1 0 100%;
 }
 
@@ -222,6 +229,10 @@ div#navtrail {
 */
 
 #boxes .grid-cell {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
 }
 
@@ -230,6 +241,9 @@ div#navtrail {
     min-height: 210px;
     border-bottom: 1px solid #dfdfdf;
     padding-bottom: 60px;
+    -webkit-box-flex: 1 0 100%;
+    -webkit-flex: 1 0 100%;
+    -ms-flex: 1 0 100%;
     flex: 1 0 100%;
 }
 
