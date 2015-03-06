@@ -256,17 +256,15 @@
         </div>
     </c:if>
 
-                <div id="low">
-                        <div id="rss" style="display:none;">
-                                <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
-                                <table id="articles"></table>
-                                <c:if test="${!empty WEB_PROPERTIES['links.blog']}">
-                                    <p class="more"><a target="new" href="${WEB_PROPERTIES['links.blog']}">More news</a></p>
-                                </c:if>
-                        </div>
-
-                        <div style="clear:both;"></div>
-                </div>
+            <div id="low" class="grid">
+                    <div id="rss" class="grid-cell" style="display:none;">
+                            <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
+                            <table id="articles"></table>
+                            <c:if test="${!empty WEB_PROPERTIES['links.blog']}">
+                                <p class="more"><a target="new" href="${WEB_PROPERTIES['links.blog']}">More news</a></p>
+                            </c:if>
+                    </div>
+            </div>
         </div>
 </div>
 
