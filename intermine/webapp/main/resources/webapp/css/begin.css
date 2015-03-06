@@ -297,6 +297,10 @@ div#navtrail {
     text-decoration: underline;
 }
 
+.api.bochs .inner h3 {
+    background: #949494;
+}
+
 #lists-bochs div.inner select {
     margin: 10px 0 0 12px;
     width: 90%;
