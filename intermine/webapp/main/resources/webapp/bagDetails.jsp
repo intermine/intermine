@@ -1,3 +1,4 @@
+<!doctype html>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -147,7 +148,6 @@
 
 <TD valign="top" class="tableleftcol">
 
-<c:if test ="${bag.type ne 'Submission'}">
 <div class="results collection-table nowrap nomargin">
 
 <style type="text/css">
@@ -190,7 +190,7 @@
 </table>
 
 <div id="clearLine">&nbsp;</div>
-</c:if>
+
 
 <div style="clear:both">
 
