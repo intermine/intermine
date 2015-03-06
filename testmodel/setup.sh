@@ -117,10 +117,20 @@ ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
 
 cd $DIR/dbmodel
 
-echo "------> Loading demo data set..."
-ant -Ddont.minify=true -Drelease=demo \
-    clean \
-    load-workers-and-books >> $LOG
+echo "------> Loading demo data set - this should take about 3-4 minutes."
+TASKS="clean load-workers-and-books"
+if test ! -z $EXTRA_DATA; then
+    MEGACORP_XML="resources/testmodel_mega_data.xml"
+    if test ! -f $MEGACORP_XML; then
+        echo "-----> Generating mega-corp"
+        COMPANY=Mega perl \
+            "$DIR/../intermine/objectstore/test/scripts/create_enormo_corp.pl" \
+            "$DIR/../intermine/objectstore/model/testmodel/testmodel_model.xml" \
+            $MEGACORP_XML
+    fi
+    TASKS="$TASKS enormocorp megacorp"
+fi
+ant -Ddont.minify=true -Drelease=demo -v $TASKS >> $LOG
 
 cd $DIR/webapp/main
 
