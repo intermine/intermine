@@ -102,7 +102,19 @@ make
 
 cd $DIR/dbmodel
 echo "------> Loading demo data set - this should take about 3-4 minutes."
-ant -v clean load-workers-and-books >> $LOG
+TASKS="clean load-workers-and-books"
+if test ! -z $EXTRA_DATA; then
+    MEGACORP_XML="resources/testmodel_mega_data.xml"
+    if test ! -f $MEGACORP_XML; then
+        echo "-----> Generating mega-corp"
+        COMPANY=Mega perl \
+            "$DIR/../intermine/objectstore/test/scripts/create_enormo_corp.pl" \
+            "$DIR/../intermine/objectstore/model/testmodel/testmodel_model.xml" \
+            $MEGACORP_XML
+    fi
+    TASKS="$TASKS enormocorp megacorp"
+fi
+ant -v $TASKS >> $LOG
 
 cd $DIR/webapp/main
 
