@@ -70,22 +70,30 @@ div#header p {
 --------------------------*/
 
 ul#nav a{
-  text-decoration:none; color: #FFF; font-weight:bold;	background-image:url('corner_t_r.png'); background-repeat: no-repeat;	background-position: right top;	color:white;}
+  text-decoration:none;
+  color: #FFF;
+  font-weight:bold;
+  color:white;
+}
 
 ul#nav a:hover,ul#nav li#mymine a:hover{
   color:#333;}
 
-ul#nav li#mymine a{
-  color:#000;background:url('corner_my_t_r.png') no-repeat top right;}
+ul#nav li#mymine a {
+  color: #000;
+}
 
 ul#nav li.activelink a{
-  color:white;background:url('corner_act_t_r.png') no-repeat top right;}
+  color:white;
+}
 
 ul#nav li#mymine {
-  background:#D2CEBF url('corner_my_t_l.png') no-repeat;}
+  background:#D2CEBF;
+}
 
 ul#nav li.activelink {
-  background:#000 url('corner_act_t_l.png') no-repeat;}
+  background:#000;
+}
 
 ul#submenulist li#subactive_bag {height:37px;
   font-weight:bold;color:#FFF;background:url('submenu_indent.png') no-repeat bottom center;}
@@ -96,7 +104,9 @@ ul#submenulist li#subactive_mymine {
 ul#submenulist li#subactive_mymine span { color:#000 !important; }
 
 ul#nav li{
-  text-align: center;background:#9E9E9E url('corner_t_l.png') no-repeat;}
+  text-align: center;
+  background:#9E9E9E;
+}
 
 .submenu{
   background:#000;

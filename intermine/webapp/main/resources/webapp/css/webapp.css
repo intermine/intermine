@@ -6,11 +6,9 @@
  list of anything affecting the content;}
 
  */
-/* =Tag Redefinition
- --------------------------*/ * {
-    /*padding:0px;*/ /* creating more trouble for us than its worth... */
-    margin: 0px;
-}
+
+@import url(http://fonts.googleapis.com/css?family=Montserrat);
+@import url(http://fonts.googleapis.com/css?family=Lato);
 
 ul {
     padding-left: 0;
@@ -27,8 +25,12 @@ ul {
 html, body {
     margin: 0;
     padding: 0;
-    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Helvetica, Arial, sans-serif;
-    font-size: 100%; /* NN4 */
+    font-family: Montserrat, Helvetica, 'Lucida Grande', Verdana, Geneva, Lucida, Arial, sans-serif;
+    font-size: 14px; /* NN4 */
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Lato', Montserrat, Helvetica, 'Lucida Grande', Verdana, Geneva, Lucida, Arial, sans-serif;
 }
 
 /* =A */
@@ -201,6 +203,7 @@ ul#loginbar {
     font-weight: bold;
     float: right;
     margin-top: 5px;
+    margin-bottom: 0;
 }
 
 ul#loginbar li {
@@ -718,6 +721,8 @@ ul#nav, ul#nav li {
     margin: 0px;
     padding: 0px;
     list-style-type: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
 }
 
 ul#nav {
