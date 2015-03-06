@@ -81,7 +81,9 @@ ul#submenulist li#subactive_mymine {
     font-weight:bold;color:#FFF;background:url('submenu_my.png') no-repeat bottom center;}
 
 ul#nav li{
-    text-align: center;background:#9F67AD url('corner_t_l.png') no-repeat;}
+    text-align: center;
+    background: #9F67AD;
+}
 
 .submenu{
     background:#5C0075;

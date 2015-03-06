@@ -195,15 +195,11 @@ div#navtrail {
     width: 1002px !important;
 }
 
-html, body {
-    font-family: 'Lucida Grande', Geneva, Lucida, Helvetica, Arial, sans-serif;
-}
-
 /* Verdana is too wide! */
 /* newer FlyMine */
 /*body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') repeat-x top !important; }*/
 #content-wrap {
-    padding: 25px 16px 16px 16px;
+    padding: 0px 16px 16px 16px;
 }
 
 #content-wrap p {
@@ -246,7 +242,6 @@ html, body {
 
 #boxes div.inner h3 {
     color: #FFF;
-    font-family: "Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
     padding: 4px 0 4px 80px;
     font-size: 24px;
     font-weight: normal;
@@ -279,7 +274,7 @@ html, body {
 
 .bochs img.title {
     position: absolute;
-    top: 6px;
+    top: 28px;
     left: 18px;
 }
 
