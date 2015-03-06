@@ -81,6 +81,15 @@
                      sourceName="enormocorp"
                      sourceType="testsource"/>
   </target>
+
+  <target name="megacorp" depends="loadsadata">
+    <!-- Invalidate (delete) summary properties -->
+    <delete file="${objectstoresummary.properties}"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+                     xmlResource="testmodel_mega_data.xml"
+                     sourceName="megacorp"
+                     sourceType="testsource"/>
+  </target>
   <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->
 
   <target name="-init-presetdef-jar" depends="-pre-init">
