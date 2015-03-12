@@ -14,7 +14,7 @@
 <html:xhtml/>
 
 <div class="body">
-<im:boxarea title="Data" stylename="plainbox"><p>metabolicMine integrates data from a large number of sources into a single data warehouse.  This page lists the data that are included in the current release.  Many more data sets will be added in future releases, please contact us if there are any particular data you would like to see included.</p></im:boxarea>
+<im:boxarea title="Data" stylename="plainbox"><p>HumanMine integrates data from a large number of sources into a single data warehouse.  This page lists the data that are included in the current release.  Many more data sets will be added in future releases, please contact us if there are any particular data you would like to see included.</p></im:boxarea>
 
 
 <div style="padding: 10px 40px">
@@ -100,7 +100,7 @@
                <td><a href="http://www.ebi.ac.uk/intact/">IntAct</a></td>
                <td>Human, Mouse</td>
                <td>November 2014</td>
-       </tr>  
+       </tr>
        <tr>
                <td>Interactions</td>
                <td><a href="http://thebiogrid.org/">BioGRID</a></td>
@@ -118,7 +118,7 @@
                <td><a href="http://www.omim.org/">OMIM</a></td>
                <td>Human</td>
                <td>October 2013</td>
-       </tr>  
+       </tr>
        <tr>
                <td>Orthologues</td>
                <td><a href="http://www.pantherdb.org/>Panther</a></td>
@@ -130,7 +130,7 @@
                <td><a href="http://www.informatics.jax.org/">MGI</a></td>
                <td>Mouse</td>
                <td>November 2014</td>
-       </tr>  
+       </tr>
 </table>
 
 </div>
