@@ -253,13 +253,18 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 return null;
             }
             InterMineObject o = (InterMineObject) nimo;
+
+            // fetch equivalent objects from cache or database according to source primary keys
             long time1 = System.currentTimeMillis();
             Set<InterMineObject> equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
+
+            // TODO what does this check mean?
             if ((type != FROM_DB) && ((equivObjects.size() == 0) || ((equivObjects.size() == 1)
                     && (o.getId() != null) && (pureObjects.contains(o.getId()))
                     && (type == SOURCE)))) {
+                // TODO explain what shortcut does
                 return shortcut(o, equivObjects, type, time2, source, skelSource);
             }
             if ((equivObjects.size() == 1) && (type == SKELETON)) {
@@ -535,6 +540,8 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             IllegalAccessException {
         // Take a shortcut!
         InterMineObject newObj = DynamicUtil.createObject(o.getClass());
+
+        // create an id for new object or use id of first equivalent object
         Integer newId;
         if (equivObjects.size() == 0) {
             newId = getSerial();
@@ -543,6 +550,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             newId = equivObjects.iterator().next().getId();
         }
         newObj.setId(newId);
+
         if (type == SOURCE) {
             if (writtenObjects.contains(newId)) {
                 // There are duplicate objects
