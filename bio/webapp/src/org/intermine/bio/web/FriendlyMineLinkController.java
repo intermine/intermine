@@ -64,6 +64,12 @@ public class FriendlyMineLinkController  extends TilesAction
         String identifierList = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "",
                 identifierField);
         request.setAttribute("identifiers", identifierList);
+
+        // temporary hack to use symbols where ensembl is not a synonym
+        String symbolList = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "",
+                identifierField);
+        request.setAttribute("symbols", symbolList);
+
         if (StringUtils.isNotEmpty(organisms)) {
             request.setAttribute("organisms", organisms);
         }

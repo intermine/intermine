@@ -32,7 +32,11 @@
       <!-- go get some data! -->
       <script type="text/javascript" charset="utf-8">
         var mine = {name: '${mine.name}', url: '${mine.url}'};
-        var req = {origin: '${localMine.name}', domain: '${organisms}', identifiers: '${identifiers}'};
+        var identifier = '${identifiers}';
+        if ('${mine.name}' == 'MouseMine') {
+            identifier = '${symbols}';
+        }
+        var req = {origin: '${localMine.name}', domain: '${organisms}', identifiers: '${identifier}'};
         FriendlyMines.getLinks('#partner_mine_${mine.name}', mine, req);
       </script>
     </div>
