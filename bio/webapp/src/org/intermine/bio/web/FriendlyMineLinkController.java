@@ -67,7 +67,7 @@ public class FriendlyMineLinkController  extends TilesAction
 
         // temporary hack to use symbols where ensembl is not a synonym
         String symbolList = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "",
-                identifierField);
+                "symbol");
         request.setAttribute("symbols", symbolList);
 
         if (StringUtils.isNotEmpty(organisms)) {

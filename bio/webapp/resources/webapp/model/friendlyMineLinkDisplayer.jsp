@@ -36,7 +36,7 @@
         if ('${mine.name}' == 'MouseMine') {
             identifier = '${symbols}';
         }
-        var req = {origin: '${localMine.name}', domain: '${organisms}', identifiers: '${identifier}'};
+        var req = {origin: '${localMine.name}', domain: '${organisms}', identifiers: identifier};
         FriendlyMines.getLinks('#partner_mine_${mine.name}', mine, req);
       </script>
     </div>
