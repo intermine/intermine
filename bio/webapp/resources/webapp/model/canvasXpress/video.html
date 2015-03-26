@@ -1,0 +1,258 @@
+<html>
+
+  <head>
+
+    <title>Video</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            "video": [[0, 2, "text", "Canvas over Video", [307, 250, "30Pt Verdana, sans-serif", "rgb(255,255,255)"]],
+                      [3, 2, "text", "Check this dive", [100, 100, "15Pt Verdana, sans-serif", "rgb(0,255,255)"]],
+                      [5.20, 0.01, "line", "arrowHead", [325, 0, 320, 30, "rgb(255,0,255)", 3]],
+                      [5.21, 0.01, "line", "arrowHead", [325, 0, 318, 60, "rgb(255,0,255)", 3]],
+                      [5.22, 0.01, "line", "arrowHead", [325, 0, 316, 90, "rgb(255,0,255)", 3]],
+                      [5.23, 0.01, "line", "arrowHead", [325, 0, 314, 120, "rgb(255,0,255)", 3]],
+                      [5.24, 0.01, "line", "arrowHead", [325, 0, 312, 150, "rgb(255,0,255)", 3]],
+                      [5.25, 0.01, "line", "arrowHead", [325, 0, 310, 180, "rgb(255,0,255)", 3]],
+                      [5.26, 0.01, "line", "arrowHead", [325, 0, 308, 210, "rgb(255,0,255)", 3]],
+                      [5.27, 0.01, "line", "arrowHead", [325, 0, 306, 230, "rgb(255,0,255)", 3]],
+                      [5.28, 0.01, "line", "arrowHead", [325, 0, 304, 260, "rgb(255,0,255)", 3]],
+                      [5.29, 0.01, "line", "arrowHead", [325, 0, 302, 280, "rgb(255,0,255)", 3]],
+                      [5.30, 0.9, "line", "arrowHead", [325, 0, 300, 300, "rgb(255,0,255)", 3]],
+                      [6, 2, "text", "Wow", [307, 250, "30Pt Verdana, sans-serif", "rgb(255,0,0)"]],
+                      [9, 2, "text", "Here is another one", [100, 100, "15Pt Verdana, sans-serif", "rgb(0,255,255)"]],
+                      [11.2, 0.8, "line", "line", [133, 0, 40, 500, "rgb(255,0,255)", 3]],
+                      [15.6, 1, "text", "He is behind", [100, 100, "15Pt Verdana, sans-serif", "rgb(0,255,255)"]],
+                      [15.6, 0.29, "shape", "circle", [300, 325, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [15.9, 0.09, "shape", "circle", [280, 315, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.0, 0.09, "shape", "circle", [260, 315, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.1, 0.09, "shape", "circle", [250, 310, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.2, 0.09, "shape", "circle", [220, 300, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.3, 0.09, "shape", "circle", [200, 290, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.4, 0.09, "shape", "circle", [180, 275, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.5, 0.09, "shape", "circle", [160, 260, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.6, 0.10, "shape", "circle", [130, 230, 100, 100, false, "rgb(255,0,0)", "open"]],
+                      [16.7, 1, "text", "Gone!", [100, 100, "15Pt Verdana, sans-serif", "rgb(0,255,255)"]],
+                      [18, 2, "text", "Anyway you get the point!", [307, 250, "30Pt Verdana, sans-serif", "rgb(255,255,255)"]],
+                      [44, 2, "text", "That's all folks", [500, 400, "20Pt Verdana, sans-serif", "rgb(0,255,255)"]]]
+          },
+          {"backgroundType": "video",
+           "backgroundVideo": ["http://video-js.zencoder.com/oceans-clip.mp4", "http://video-js.zencoder.com/oceans-clip.webm"],
+           "graphType": "Video",
+           "videoAutoplay": true,
+           "videoClassName": "video-js vjs-default-skin",
+           "videoColor": "rgb(255,0,0,0.3)",
+           "videoCurrentTime": true,
+           "videoGrid": true,
+           "videoGridStep": 10,
+           "videoPlaybackRate": 1,
+           "videoPoster": "http://video-js.zencoder.com/oceans-clip.jpg"
+          }
+        );
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Video">
+
+            <h1>Video</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./background.html#backgroundType">backgroundType</a>,
+                      <a href="./background.html#backgroundVideo">backgroundVideo</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./videos.html#videoAutoplay">videoAutoplay</a>,
+                      <a href="./videos.html#videoClassName">videoClassName</a>,
+                      <a href="./videos.html#videoColor">videoColor</a>,
+                      <a href="./videos.html#videoCurrentTime">videoCurrentTime</a>,
+                      <a href="./videos.html#videoGrid">videoGrid</a>,
+                      <a href="./videos.html#videoGridStep">videoGridStep</a>,
+                      <a href="./videos.html#videoPlaybackRate">videoPlaybackRate</a>,
+                      <a href="./videos.html#videoPoster">videoPoster</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

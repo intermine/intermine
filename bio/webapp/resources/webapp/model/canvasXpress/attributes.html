@@ -1,0 +1,486 @@
+<html>
+
+  <head>
+
+    <title>Attributes</title>
+
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+    <style type="text/css">
+      table.example {margin: 10px; border-collapse: collapse;}
+      td.example {vertical-align: top;}
+      div br {clear: both;}
+      div.code, div.json, div.pre {font-size: small; clear: both;}
+      div.desc {font-size: small;}
+      div.h3 {font-size: 150%}
+      div.h4 {font-size: 120%}
+      table.config {font-size: small; border-collapse: collapse; margin: 10px; width: 540px;}
+      td.first-col {border: 1px solid #000000; padding: 4px; width: 35%; vertical-align: top;}
+      td.sec-col {border: 1px solid #1D222B; padding: 4px; width: 65%; vertical-align: top;}
+      tr.private {background-color: #EEEEEE;}
+      tr.public {background-color: #FFFFFF;}
+      span.light {font-size: small; color: #777777; font-style: italic;}
+      caption {background-color:  #DDDDDD; border-top: 1px solid #1D222B;  border-right: 1px solid #1D222B;  border-left: 1px solid #1D222B; color: #FFFFFF: font-size: 150%; padding: 2px 6px; text-align: left;}
+      div.canvas {margin: 10px;}
+    </style>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress('canvas1',
+                                   {nodes: [{id: 'Id1',  color: 'rgb(255,0,0)', shape: 'sphere', width: 20, height: 20, x: 0, y:   0, labelPosition: 'top'},
+                                            {id: 'Id2',  color: 'rgb(255,0,0)', shape: 'square', width: 20, height: 20, x: 200, y: -80, labelPosition: 'top'},
+                                            {id: 'Id3',  color: 'rgb(255,0,0)', shape: 'triangle', width: 20, height: 20, x: 400, y: -80, labelPosition: 'top'},
+                                            {id: 'Id4',  color: 'rgb(255,0,0)', shape: 'star', width: 20, height: 20, x: 600, y:   0, labelPosition: 'top'},
+                                            {id: 'Id5',  color: 'rgb(255,0,0)', shape: 'rhombus', width: 20, height: 20, x: 0,   y:  50, labelPosition: 'top'},
+                                            {id: 'Id6',  color: 'rgb(255,0,0)', shape: 'octagon', width: 20, height: 20, x: 200, y:  10, labelPosition: 'top'},
+                                            {id: 'Id7',  color: 'rgb(255,0,0)', shape: 'oval', width: 20, height: 20, x: 400, y:  10, labelPosition: 'top'},
+                                            {id: 'Id8',  color: 'rgb(255,0,0)', shape: 'plus', width: 20, height: 20, x: 600, y:  50, labelPosition: 'top'},
+                                            {id: 'Id9',  color: 'rgb(255,0,0)', shape: 'minus', width: 20, height: 20, x: 0,   y: 100, labelPosition: 'top'},
+                                            {id: 'Id10', color: 'rgb(255,0,0)', shape: 'pacman', width: 20, height: 20, x: 200, y:  80, labelPosition: 'top'},
+                                            {id: 'Id11', color: 'rgb(255,0,0)', shape: 'mdavid', width: 20, height: 20, x: 400, y:  80, labelPosition: 'top'},
+                                            {id: 'Id12', color: 'rgb(255,0,0)', shape: 'rect2', width: 20, height: 20, x: 600, y: 100, labelPosition: 'top'},
+                                            {id: 'Id13', color: 'rgb(255,0,0)', shape: 'rect3', width: 20, height: 20, x: 0,   y: 150, labelPosition: 'top'},
+                                            {id: 'Id14', color: 'rgb(255,0,0)', shape: 'arc', width: 20, height: 20, x: 200, y: 150, labelPosition: 'top'},
+                                            {id: 'Id15', color: 'rgb(255,0,0)', shape: 'rectangle', width: 20, height: 20, x: 400, y: 150, labelPosition: 'top'},
+                                            {id: 'Id16', color: 'rgb(255,0,0)', shape: 'image', imagePath: 'dna1.png', width: 20, height: 20, x: 600, y: 150, labelPosition: 'top'},
+                                            {id: 'Id17', color: 'rgb(255,0,0)', shape: 'oval2', width: 20, height: 20, x: 0,   y: 200, labelPosition: 'top'},
+                                            {id: 'Id18', color: 'rgb(255,0,0)', shape: 'oval3', width: 20, height: 20, x: 200, y: 200, labelPosition: 'top'},
+                                            {id: 'Id19', color: 'rgb(255,0,0)', shape: 'ellipse', width: 20, height: 20, x: 400, y: 200, labelPosition: 'top'},
+                                            {id: 'Id20', color: 'rgb(255,0,0)', shape: 'ellipse2', width: 20, height: 20, x: 600, y: 200, labelPosition: 'top'},
+                                            {id: 'Id21', color: 'rgb(255,0,0)', shape: 'ellipse3', width: 20, height: 20, x: 0,   y: 250, labelPosition: 'top'},
+                                            {id: 'Id22', color: 'rgb(255,0,0)', shape: 'pie', width: 20, height: 20, x: 200, y: 250, labelPosition: 'top'},
+                                            {id: 'Id23', color: 'rgb(255,0,0)', shape: 'pie0', width: 20, height: 20, x: 400, y: 250, labelPosition: 'top'},
+                                            {id: 'Id24', color: 'rgb(255,0,0)', shape: 'pie1', width: 20, height: 20, x: 600, y: 250, labelPosition: 'top'},
+                                            {id: 'Id25', color: 'rgb(255,0,0)', shape: 'pie2', width: 20, height: 20, x: 0,   y: 300, labelPosition: 'top'},
+                                            {id: 'Id26', color: 'rgb(255,0,0)', shape: 'pie3', width: 20, height: 20, x: 200, y: 330, labelPosition: 'top'},
+                                            {id: 'Id27', color: 'rgb(255,0,0)', shape: 'pie4', width: 20, height: 20, x: 400, y: 330, labelPosition: 'top'},
+                                            {id: 'Id28', color: 'rgb(255,0,0)', shape: 'pie5', width: 20, height: 20, x: 600, y: 300, labelPosition: 'top'},
+                                            {id: 'Id29', color: 'rgb(255,0,0)', shape: 'pie6', width: 20, height: 20, x: 0,   y: 350, labelPosition: 'top'},
+                                            {id: 'Id30', color: 'rgb(255,0,0)', shape: 'pie7', width: 20, height: 20, x: 200, y: 420, labelPosition: 'top'},
+                                            {id: 'Id31', color: 'rgb(255,0,0)', shape: 'pie8', width: 20, height: 20, x: 400, y: 420, labelPosition: 'top'},
+                                            {id: 'Id32', color: 'rgb(255,0,0)', shape: 'pie9', width: 20, height: 20, x: 600, y: 350, labelPosition: 'top'}],
+                                   edges:  [{id1: 'Id2', id2: 'Id1', color: 'rgb(0,255,0)', type: 'line'},
+                                            {id1: 'Id3', id2: 'Id2', color: 'rgb(0,255,0)', type: 'dashedLine'},
+                                            {id1: 'Id4', id2: 'Id3', color: 'rgb(0,255,0)', type: 'dottedLine'},
+                                            {id1: 'Id5', id2: 'Id6', color: 'rgb(0,255,0)', type: 'arrowLine'},
+                                            {id1: 'Id6', id2: 'Id7', color: 'rgb(0,255,0)', type: 'arrowHeadLine'},
+                                            {id1: 'Id7', id2: 'Id8', color: 'rgb(0,255,0)', type: 'arrowTailLine'},
+                                            {id1: 'Id9', id2: 'Id10', color: 'rgb(0,255,0)', type: 'squareLine'},
+                                            {id1: 'Id10', id2: 'Id11', color: 'rgb(0,255,0)', type: 'squareHeadLine'},
+                                            {id1: 'Id11', id2: 'Id12', color: 'rgb(0,255,0)', type: 'squareTailLine'},
+                                            {id1: 'Id13', id2: 'Id14', color: 'rgb(0,255,0)', type: 'squareHeadArrowTailLine'},
+                                            {id1: 'Id14', id2: 'Id15', color: 'rgb(0,255,0)', type: 'squareHeadArrowTailDashedLine'},
+                                            {id1: 'Id15', id2: 'Id16', color: 'rgb(0,255,0)', type: 'squareHeadArrowTailDottedLine'},
+                                            {id1: 'Id17', id2: 'Id18', color: 'rgb(0,255,0)', type: 'arrowHeadSquareTailLine'},
+                                            {id1: 'Id18', id2: 'Id19', color: 'rgb(0,255,0)', type: 'arrowHeadSquareTailDashedLine'},
+                                            {id1: 'Id19', id2: 'Id20', color: 'rgb(0,255,0)', type: 'arrowHeadSquareTailDottedLine'},
+                                            {id1: 'Id21', id2: 'Id26', color: 'rgb(0,255,0)', type: 'bezierLine'},
+                                            {id1: 'Id22', id2: 'Id27', color: 'rgb(0,255,0)', type: 'arrowBezierLine'},
+                                            {id1: 'Id23', id2: 'Id28', color: 'rgb(0,255,0)', type: 'arrowTailBezierLine'},
+                                            {id1: 'Id1', id2: 'Id2', color: 'rgb(0,255,0)', type: 'squareHeadCurvedLine'},
+                                            {id1: 'Id2', id2: 'Id3', color: 'rgb(0,255,0)', type: 'curvedLine'},
+                                            {id1: 'Id3', id2: 'Id4', color: 'rgb(0,255,0)', type: 'squareCurvedLine'},
+                                            {id1: 'Id30', id2: 'Id29', color: 'rgb(0,255,0)', type: 'arrowHeadCurvedLine'},
+                                            {id1: 'Id31', id2: 'Id30', color: 'rgb(0,255,0)', type: 'curvedLine'},
+                                            {id1: 'Id32', id2: 'Id31', color: 'rgb(0,255,0)', type: 'arrowCurvedLine'},
+                                            {id1: 'Id29', id2: 'Id30', color: 'rgb(0,255,0)', type: 'bezierYLine'},
+                                            {id1: 'Id24', id2: 'Id31', color: 'rgb(0,255,0)', type: 'arrowBezierYLine'}]},
+                                   {'calculateLayout': false,
+                                    'graphType': 'Network'});
+
+        var cx2 = new CanvasXpress('canvas2',
+                                   {nodes: [{id: 'Id1',  color: 'rgb(255,0,0)', shape: 'sphere', size: 1, x: 0, y:   0, labelPosition: 'top'},
+                                            {id: 'Id2',  color: 'rgb(255,0,0)', shape: 'square', size: 1, x: 200, y: -80, labelPosition: 'top'},
+                                            {id: 'Id3',  color: 'rgb(255,0,0)', shape: 'triangle', size: 1, x: 400, y: -80, labelPosition: 'top'},
+                                            {id: 'Id4',  color: 'rgb(255,0,0)', shape: 'star', size: 1, x: 600, y:   0, labelPosition: 'top'},
+                                            {id: 'Id5',  color: 'rgb(255,0,0)', shape: 'rhombus', size: 1, x: 0,   y:  50, labelPosition: 'top'},
+                                            {id: 'Id6',  color: 'rgb(255,0,0)', shape: 'octagon', size: 1, x: 200, y:  10, labelPosition: 'top'},
+                                            {id: 'Id7',  color: 'rgb(255,0,0)', shape: 'oval', size: 1, x: 400, y:  10, labelPosition: 'top'},
+                                            {id: 'Id8',  color: 'rgb(255,0,0)', shape: 'plus', size: 1, x: 600, y:  50, labelPosition: 'top'},
+                                            {id: 'Id9',  color: 'rgb(255,0,0)', shape: 'minus', size: 1, x: 0,   y: 100, labelPosition: 'top'},
+                                            {id: 'Id10', color: 'rgb(255,0,0)', shape: 'pacman', size: 1, x: 200, y:  80, labelPosition: 'top'},
+                                            {id: 'Id11', color: 'rgb(255,0,0)', shape: 'mdavid', size: 1, x: 400, y:  80, labelPosition: 'top'},
+                                            {id: 'Id12', color: 'rgb(255,0,0)', shape: 'rect2', size: 1, x: 600, y: 100, labelPosition: 'top'},
+                                            {id: 'Id13', color: 'rgb(255,0,0)', shape: 'rect3', size: 1, x: 0,   y: 150, labelPosition: 'top'},
+                                            {id: 'Id14', color: 'rgb(255,0,0)', shape: 'arc', size: 1, x: 200, y: 150, labelPosition: 'top'},
+                                            {id: 'Id15', color: 'rgb(255,0,0)', shape: 'rectangle', size: 1, x: 400, y: 150, labelPosition: 'top'},
+                                            {id: 'Id16', color: 'rgb(255,0,0)', shape: 'image', imagePath: 'dna1.png', size: 1, x: 600, y: 150, labelPosition: 'top'},
+                                            {id: 'Id17', color: 'rgb(255,0,0)', shape: 'oval2', size: 1, x: 0,   y: 200, labelPosition: 'top'},
+                                            {id: 'Id18', color: 'rgb(255,0,0)', shape: 'oval3', size: 1, x: 200, y: 200, labelPosition: 'top'},
+                                            {id: 'Id19', color: 'rgb(255,0,0)', shape: 'ellipse', size: 1, x: 400, y: 200, labelPosition: 'top'},
+                                            {id: 'Id20', color: 'rgb(255,0,0)', shape: 'ellipse2', size: 1, x: 600, y: 200, labelPosition: 'top'},
+                                            {id: 'Id21', color: 'rgb(255,0,0)', shape: 'ellipse3', size: 1, x: 0,   y: 250, labelPosition: 'top'},
+                                            {id: 'Id22', color: 'rgb(255,0,0)', shape: 'pie', size: 1, x: 200, y: 250, labelPosition: 'top'},
+                                            {id: 'Id23', color: 'rgb(255,0,0)', shape: 'pie0', size: 1, x: 400, y: 250, labelPosition: 'top'},
+                                            {id: 'Id24', color: 'rgb(255,0,0)', shape: 'pie1', size: 1, x: 600, y: 250, labelPosition: 'top'},
+                                            {id: 'Id25', color: 'rgb(255,0,0)', shape: 'pie2', size: 1, x: 0,   y: 300, labelPosition: 'top'},
+                                            {id: 'Id26', color: 'rgb(255,0,0)', shape: 'pie3', size: 1, x: 200, y: 330, labelPosition: 'top'},
+                                            {id: 'Id27', color: 'rgb(255,0,0)', shape: 'pie4', size: 1, x: 400, y: 330, labelPosition: 'top'},
+                                            {id: 'Id28', color: 'rgb(255,0,0)', shape: 'pie5', size: 1, x: 600, y: 300, labelPosition: 'top'},
+                                            {id: 'Id29', color: 'rgb(255,0,0)', shape: 'pie6', size: 1, x: 0,   y: 350, labelPosition: 'top'},
+                                            {id: 'Id30', color: 'rgb(255,0,0)', shape: 'pie7', size: 1, x: 200, y: 420, labelPosition: 'top'},
+                                            {id: 'Id31', color: 'rgb(255,0,0)', shape: 'pie8', size: 1, x: 400, y: 420, labelPosition: 'top'},
+                                            {id: 'Id32', color: 'rgb(255,0,0)', shape: 'pie9', size: 1, x: 600, y: 350, labelPosition: 'top'}],
+                                   edges:  [{id1: 'Id2', id2: 'Id1', color: 'rgb(0,255,0)', type: 'line'},
+                                            {id1: 'Id3', id2: 'Id2', color: 'rgb(0,255,0)', type: 'dashedLine'},
+                                            {id1: 'Id4', id2: 'Id3', color: 'rgb(0,255,0)', type: 'dottedLine'},
+                                            {id1: 'Id5', id2: 'Id6', color: 'rgb(0,255,0)', type: 'arrowLine'},
+                                            {id1: 'Id6', id2: 'Id7', color: 'rgb(0,255,0)', type: 'arrowHeadLine'},
+                                            {id1: 'Id7', id2: 'Id8', color: 'rgb(0,255,0)', type: 'arrowTailLine'},
+                                            {id1: 'Id9', id2: 'Id10', color: 'rgb(0,255,0)', type: 'squareLine'},
+                                            {id1: 'Id10', id2: 'Id11', color: 'rgb(0,255,0)', type: 'squareHeadLine'},
+                                            {id1: 'Id11', id2: 'Id12', color: 'rgb(0,255,0)', type: 'squareTailLine'},
+                                            {id1: 'Id13', id2: 'Id14', color: 'rgb(0,255,0)', type: 'squareHeadArrowTailLine'},
+                                            {id1: 'Id14', id2: 'Id15', color: 'rgb(0,255,0)', type: 'squareHeadArrowTailDashedLine'},
+                                            {id1: 'Id15', id2: 'Id16', color: 'rgb(0,255,0)', type: 'squareHeadArrowTailDottedLine'},
+                                            {id1: 'Id17', id2: 'Id18', color: 'rgb(0,255,0)', type: 'arrowHeadSquareTailLine'},
+                                            {id1: 'Id18', id2: 'Id19', color: 'rgb(0,255,0)', type: 'arrowHeadSquareTailDashedLine'},
+                                            {id1: 'Id19', id2: 'Id20', color: 'rgb(0,255,0)', type: 'arrowHeadSquareTailDottedLine'},
+                                            {id1: 'Id21', id2: 'Id26', color: 'rgb(0,255,0)', type: 'bezierLine'},
+                                            {id1: 'Id22', id2: 'Id27', color: 'rgb(0,255,0)', type: 'arrowBezierLine'},
+                                            {id1: 'Id23', id2: 'Id28', color: 'rgb(0,255,0)', type: 'arrowTailBezierLine'},
+                                            {id1: 'Id1', id2: 'Id2', color: 'rgb(0,255,0)', type: 'squareHeadCurvedLine'},
+                                            {id1: 'Id2', id2: 'Id3', color: 'rgb(0,255,0)', type: 'curvedLine'},
+                                            {id1: 'Id3', id2: 'Id4', color: 'rgb(0,255,0)', type: 'squareCurvedLine'},
+                                            {id1: 'Id30', id2: 'Id29', color: 'rgb(0,255,0)', type: 'arrowHeadCurvedLine'},
+                                            {id1: 'Id31', id2: 'Id30', color: 'rgb(0,255,0)', type: 'curvedLine'},
+                                            {id1: 'Id32', id2: 'Id31', color: 'rgb(0,255,0)', type: 'arrowCurvedLine'},
+                                            {id1: 'Id29', id2: 'Id30', color: 'rgb(0,255,0)', type: 'bezierYLine'},
+                                            {id1: 'Id24', id2: 'Id31', color: 'rgb(0,255,0)', type: 'arrowBezierYLine'}]},
+                                   {'calculateLayout': false,
+                                    'graphType': 'Network'});
+
+        var cx3 = new CanvasXpress('canvas3',
+                                   {'z': {'Description': ['Kinase related gene', 'Protease related gene', 'GPCR related gene', 'Phosphatase related gene', 'Transport related gene', 'Membrane related gene', 'Metabolism related gene', 'Replication related gene', 'Synthesis related gene', 'Sensor related gene', 'Structural related gene', 'Transport related gene'],
+                                          'Type': ['A', 'B', 'A', 'B', 'A', 'B', 'A', 'B', 'A', 'B', 'A', 'B'],
+                                          'Locus': ['Locus1', 'Locus2', 'Locus3', 'Locus4', 'Locus5', 'Locus6', 'Locus7', 'Locus8', 'Locus9', 'Locus10', 'Locus11', 'Locus12'],
+                                          'Symbol': ['Symbol1', 'Symbol2', 'Symbol3', 'Symbol4', 'Symbol5', 'Symbol6', 'Symbol7', 'Symbol8', 'Symbol9', 'Symbol10', 'Symbol11', 'Symbol12']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart', 'Colon'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2', 'Patient3', 'Patient3'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M', 'F'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample', 'Colon biopsy']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1', 'Gene2', 'Gene3', 'Gene4', 'Gene5', 'Gene6', 'Gene7', 'Gene8', 'Gene9', 'Gene10', 'Gene11', 'Gene12'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5', 'Smp6'],
+                                          'data': [[10, 35, 88, 50, 23, 67], [40, 65, 18, 70, 3, 72], [30, 75, 48, 10, 53, 8], [23, 3, 53, 33, 18, 36], [15, 25, 78, 40, 73, 17], [35, 69, 16, 73, 7, 62], [38, 70, 18, 70, 13, 58], [21, 9, 43, 39, 3, 26], [40, 65, 15, 70, 13, 67], [10, 39, 78, 45, 33, 72], [42, 75, 28, 80, 5, 68], [43, 63, 13, 63, 8, 76],]}},
+                                   {'graphType': 'Scatter3D',
+                                    'images': ['dna.png', 'prot.png', 'prot.png', 'prot.png', 'nuc.png', 'prot.png'],
+                                    'scatterType': 'image',
+                                    'sizes': ['20', '24', '26', '28']});
+        cx3.draw();
+
+        var cx4 = new CanvasXpress('canvas4',
+                                   {'z': {'Description': ['Kinase related gene', 'Protease related gene', 'GPCR related gene', 'Phosphatase related gene', 'Transport related gene', 'Membrane related gene', 'Metabolism related gene', 'Replication related gene', 'Synthesis related gene', 'Sensor related gene', 'Structural related gene', 'Transport related gene'],
+                                          'Type': ['A', 'B', 'A', 'B', 'A', 'B', 'A', 'B', 'A', 'B', 'A', 'B'],
+                                          'Locus': ['Locus1', 'Locus2', 'Locus3', 'Locus4', 'Locus5', 'Locus6', 'Locus7', 'Locus8', 'Locus9', 'Locus10', 'Locus11', 'Locus12'],
+                                          'Symbol': ['Symbol1', 'Symbol2', 'Symbol3', 'Symbol4', 'Symbol5', 'Symbol6', 'Symbol7', 'Symbol8', 'Symbol9', 'Symbol10', 'Symbol11', 'Symbol12']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart', 'Colon'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2', 'Patient3', 'Patient3'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M', 'F'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample', 'Colon biopsy']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1', 'Gene2', 'Gene3', 'Gene4', 'Gene5', 'Gene6', 'Gene7', 'Gene8', 'Gene9', 'Gene10', 'Gene11', 'Gene12'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5', 'Smp6'],
+                                          'data': [[10, 35, 88, 50, 23, 67], [40, 65, 18, 70, 3, 72], [30, 75, 48, 10, 53, 8], [23, 3, 53, 33, 18, 36], [15, 25, 78, 40, 73, 17], [35, 69, 16, 73, 7, 62], [38, 70, 18, 70, 13, 58], [21, 9, 43, 39, 3, 26], [40, 65, 15, 70, 13, 67], [10, 39, 78, 45, 33, 72], [42, 75, 28, 80, 5, 68], [43, 63, 13, 63, 8, 76],]}},
+                                   {'graphType': 'Scatter2D',
+                                    'images': ['dna.png', 'prot.png', 'prot1.png', 'prot2.png', 'nuc.png', 'prot4.png', 'prot5.png', 'prot6.png', 'prot7.png', 'prot8.png', 'prot9.png', 'met.png'],
+                                    'scatterType': 'image',
+                                    'sizes': ['30', '34', '36', '38']});
+        cx4.draw();
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li class="current"><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./contact.html">Contact</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <h3><a href="./documentation.html">API Documentation</a></h3>
+
+          <ul class="graphTypes">
+            <li><a href="./3d_scatter_plot_and_networks.html">3D Scatter Plot and Networks</a></li>
+            <li><a href="./acknowledgment.html">Acknowledgment</a></li>
+            <li><a href="./animation.html">Animation</a></li>
+            <li><a href="./attributes.html">Attributes</a></li>
+            <li><a href="./axes.html">Axes</a></li>
+            <li><a href="./axis_ticks_and_titles.html">Axis Ticks and Titles</a></li>
+            <li><a href="./background.html">Background</a></li>
+            <li><a href="./bars_and_points_adjustment.html">Bars and Points Adjustment</a></li>
+            <li><a href="./clustering.html">Clustering</a></li>
+            <li><a href="./colors.html">Colors</a></li>
+            <li><a href="./data.html">Data</a></li>
+            <li><a href="./decorations.html">Decorations</a></li>
+            <li><a href="./dendrograms.html">Dendrograms</a></li>
+            <li><a href="./foreground.html">Foreground</a></li>
+            <li><a href="./general.html">General</a></li>
+            <li><a href="./gradients.html">Gradients</a></li>
+            <li><a href="./heatmaps_and_networks.html">Heatmaps and Networks</a></li>
+            <li><a href="./indicators.html">Indicators</a></li>
+            <li><a href="./legends.html">Legends</a></li>
+            <li><a href="./lines.html">Lines</a></li>
+            <li><a href="./margins.html">Margins</a></li>
+            <li><a href="./one_dimensional_plots.html">One dimensional plots</a></li>
+            <li><a href="./overlays.html">Overlays</a></li>
+            <li><a href="./patterns.html">Patterns</a></li>
+            <li><a href="./random.html">Random</a></li>
+            <li><a href="./samples.html">Samples</a></li>
+            <li><a href="./scatter_and_one_d_plots.html">Scatter and One-D Plots</a></li>
+            <li><a href="./scatter_plots.html">Scatter Plots</a></li>
+            <li><a href="./shadows.html">Shadows</a></li>
+            <li><a href="./text.html">Text</a></li>
+            <li><a href="./titles__subtitles_and_citations.html">Titles, Subtitles and Citations</a></li>
+            <li><a href="./variables.html">Variables</a></li>
+            <li><a href="./zooming_and_panning.html">Zooming and Panning</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="documentation">
+
+            <h1>Attributes</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class="config">
+
+                <caption><b>Properties related to Shapes, Sizes, Images and Time :</b></caption>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>images</b>
+                    </div>
+                    <div>
+                      <span class="light">{array}</span>&nbsp;[]
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Array of urls of images used in scatter plots.
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>shapes</b>
+                    </div>
+                    <div>
+                      <span class="light">{array}</span>&nbsp;
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Shapes used in network graphs
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>sizes</b>
+                    </div>
+                    <div>
+                      <span class="light">{array}</span>&nbsp;
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Sizes used invisualizations
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>timeFormat</b>
+                    </div>
+                    <div>
+                      <span class="light">{option}</span>&nbsp;isoDate
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Time Format according to date.format.js Steven Levithan <stevenlevithan.com>
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+              </table>
+
+              <br />
+
+              <h1>Examples</h1>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> calculateLayout, graphType</i>.<br><a href='' onclick='showCode(event, "canvas1")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> calculateLayout, graphType</i>.<br><a href='' onclick='showCode(event, "canvas2")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> graphType, images, scatterType, sizes</i>.<br><a href='' onclick='showCode(event, "canvas3")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas3' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> graphType, images, scatterType, sizes</i>.<br><a href='' onclick='showCode(event, "canvas4")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas4' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+
+        Copyright &copy; 2010 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

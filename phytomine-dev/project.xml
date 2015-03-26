@@ -9,7 +9,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Aquilegia" />
       <property name="species" value="coerulea" />
-      <property name="dbxrefId" value="7371494" />
+      <property name="assemblyDbxrefId" value="7371494" />
       <property name="proteomeId" value="195" />
       <property name="taxonId" value="218851" />
       <property name="dataSourceName" value="phytozome-A.coerulea" />
@@ -23,7 +23,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Arabidopsis" />
       <property name="species" value="halleri" />
-      <property name="dbxrefId" value="7079025" />
+      <property name="assemblyDbxrefId" value="7079025" />
       <property name="proteomeId" value="264" />
       <property name="taxonId" value="81970" />
       <property name="dataSourceName" value="phytozome-A.halleri" />
@@ -36,7 +36,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Arabidopsis" />
       <property name="species" value="lyrata" />
-      <property name="dbxrefId" value="3455682" />
+      <property name="assemblyDbxrefId" value="3455682" />
       <property name="proteomeId" value="107" />
       <property name="taxonId" value="59689" />
       <property name="dataSourceName" value="phytozome-A.lyrata" />
@@ -50,7 +50,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Arabidopsis" />
       <property name="species" value="thaliana" />
-      <property name="dbxrefId" value="3455683" />
+      <property name="assemblyDbxrefId" value="3455683" />
       <property name="proteomeId" value="167" />
       <property name="taxonId" value="3702" />
       <property name="dataSourceName" value="phytozome-A.thaliana" />
@@ -64,7 +64,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Amborella" />
       <property name="species" value="trichopoda" />
-      <property name="dbxrefId" value="7414414" />
+      <property name="assemblyDbxrefId" value="7414414" />
       <property name="proteomeId" value="291" />
       <property name="taxonId" value="13333" />
       <property name="dataSourceName" value="phytozome-A.trichopoda" />
@@ -78,7 +78,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Brachypodium" />
       <property name="species" value="distachyon" />
-      <property name="dbxrefId" value="7371495" />
+      <property name="assemblyDbxrefId" value="7371495" />
       <property name="proteomeId" value="283" />
       <property name="taxonId" value="15368" />
       <property name="dataSourceName" value="phytozome-B.distachyon" />
@@ -92,7 +92,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Brassica" />
       <property name="species" value="rapa FPsc" />
-      <property name="dbxrefId" value="" />
+      <property name="assemblyDbxrefId" value="" />
       <property name="proteomeId" value="277" />
       <property name="taxonId" value="3711" />
       <property name="dataSourceName" value="phytozome-B.rapa_FPsc" />
@@ -106,7 +106,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Boechera" />
       <property name="species" value="stricta" />
-      <property name="dbxrefId" value="7271518" />
+      <property name="assemblyDbxrefId" value="7271518" />
       <property name="proteomeId" value="278" />
       <property name="taxonId" value="72658" />
       <property name="dataSourceName" value="phytozome-B.stricta" />
@@ -120,7 +120,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Citrus" />
       <property name="species" value="clementina" />
-      <property name="dbxrefId" value="4399346" />
+      <property name="assemblyDbxrefId" value="4399346" />
       <property name="proteomeId" value="182" />
       <property name="taxonId" value="85681" />
       <property name="dataSourceName" value="phytozome-C.clementina" />
@@ -134,7 +134,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Capsella" />
       <property name="species" value="grandiflora" />
-      <property name="dbxrefId" value="7271520" />
+      <property name="assemblyDbxrefId" value="7271520" />
       <property name="proteomeId" value="266" />
       <property name="taxonId" value="264402" />
       <property name="dataSourceName" value="phytozome-C.grandiflora" />
@@ -147,7 +147,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Carica" />
       <property name="species" value="papaya" />
-      <property name="dbxrefId" value="3455687" />
+      <property name="assemblyDbxrefId" value="3455687" />
       <property name="proteomeId" value="113" />
       <property name="taxonId" value="3649" />
       <property name="dataSourceName" value="phytozome-C.papaya" />
@@ -161,7 +161,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Chlamydomonas" />
       <property name="species" value="reinhardtii" />
-      <property name="dbxrefId" value="7251957" />
+      <property name="assemblyDbxrefId" value="7251957" />
       <property name="proteomeId" value="281" />
       <property name="taxonId" value="3055" />
       <property name="dataSourceName" value="phytozome-C.reinhardtii" />
@@ -175,7 +175,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Capsella" />
       <property name="species" value="rubella" />
-      <property name="dbxrefId" value="3455688" />
+      <property name="assemblyDbxrefId" value="3455688" />
       <property name="proteomeId" value="183" />
       <property name="taxonId" value="81985" />
       <property name="dataSourceName" value="phytozome-C.rubella" />
@@ -189,7 +189,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Cucumis" />
       <property name="species" value="sativus" />
-      <property name="dbxrefId" value="3455689" />
+      <property name="assemblyDbxrefId" value="3455689" />
       <property name="proteomeId" value="122" />
       <property name="taxonId" value="3659" />
       <property name="dataSourceName" value="phytozome-C.sativus" />
@@ -203,7 +203,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Citrus" />
       <property name="species" value="sinensis" />
-      <property name="dbxrefId" value="3455690" />
+      <property name="assemblyDbxrefId" value="3455690" />
       <property name="proteomeId" value="154" />
       <property name="taxonId" value="2711" />
       <property name="dataSourceName" value="phytozome-C.sinensis" />
@@ -217,7 +217,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Coccomyxa" />
       <property name="species" value="subellipsoidea C-169" />
-      <property name="dbxrefId" value="3506186" />
+      <property name="assemblyDbxrefId" value="3506186" />
       <property name="proteomeId" value="227" />
       <property name="taxonId" value="574566" />
       <property name="dataSourceName" value="phytozome-C.subellipsoidea_C-169" />
@@ -231,7 +231,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Eucalyptus" />
       <property name="species" value="grandis" />
-      <property name="dbxrefId" value="3455691" />
+      <property name="assemblyDbxrefId" value="3455691" />
       <property name="proteomeId" value="201" />
       <property name="taxonId" value="71139" />
       <property name="dataSourceName" value="phytozome-E.grandis" />
@@ -245,7 +245,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Eutrema" />
       <property name="species" value="salsugineum" />
-      <property name="dbxrefId" value="6656197" />
+      <property name="assemblyDbxrefId" value="6656197" />
       <property name="proteomeId" value="173" />
       <property name="taxonId" value="72664" />
       <property name="dataSourceName" value="phytozome-E.salsugineum" />
@@ -259,7 +259,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Fragaria" />
       <property name="species" value="vesca" />
-      <property name="dbxrefId" value="3455705" />
+      <property name="assemblyDbxrefId" value="3455705" />
       <property name="proteomeId" value="226" />
       <property name="taxonId" value="57918" />
       <property name="dataSourceName" value="phytozome-F.vesca" />
@@ -273,7 +273,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Glycine" />
       <property name="species" value="max" />
-      <property name="dbxrefId" value="7132375" />
+      <property name="assemblyDbxrefId" value="7132375" />
       <property name="proteomeId" value="275" />
       <property name="taxonId" value="3847" />
       <property name="dataSourceName" value="phytozome-G.max" />
@@ -287,7 +287,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Gossypium" />
       <property name="species" value="raimondii" />
-      <property name="dbxrefId" value="3505788" />
+      <property name="assemblyDbxrefId" value="3505788" />
       <property name="proteomeId" value="221" />
       <property name="taxonId" value="29730" />
       <property name="dataSourceName" value="phytozome-G.raimondii" />
@@ -301,7 +301,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Linum" />
       <property name="species" value="usitatissimum" />
-      <property name="dbxrefId" value="3455692" />
+      <property name="assemblyDbxrefId" value="3455692" />
       <property name="proteomeId" value="200" />
       <property name="taxonId" value="4006" />
       <property name="dataSourceName" value="phytozome-L.usitatissimum" />
@@ -315,7 +315,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Malus" />
       <property name="species" value="domestica" />
-      <property name="dbxrefId" value="3455693" />
+      <property name="assemblyDbxrefId" value="3455693" />
       <property name="proteomeId" value="196" />
       <property name="taxonId" value="3750" />
       <property name="dataSourceName" value="phytozome-M.domestica" />
@@ -329,7 +329,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Manihot" />
       <property name="species" value="esculenta" />
-      <property name="dbxrefId" value="3455694" />
+      <property name="assemblyDbxrefId" value="3455694" />
       <property name="proteomeId" value="147" />
       <property name="taxonId" value="3983" />
       <property name="dataSourceName" value="phytozome-M.esculenta" />
@@ -343,7 +343,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Mimulus" />
       <property name="species" value="guttatus" />
-      <property name="dbxrefId" value="7522540" />
+      <property name="assemblyDbxrefId" value="7522540" />
       <property name="proteomeId" value="256" />
       <property name="taxonId" value="4155" />
       <property name="dataSourceName" value="phytozome-M.guttatus" />
@@ -357,7 +357,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Micromonas" />
       <property name="species" value="pusilla CCMP1545" />
-      <property name="dbxrefId" value="3506185" />
+      <property name="assemblyDbxrefId" value="3506185" />
       <property name="proteomeId" value="228" />
       <property name="taxonId" value="564608" />
       <property name="dataSourceName" value="phytozome-M.pusilla_CCMP1545" />
@@ -367,16 +367,16 @@
       <property name="annotationVersion" value="v3.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
-    <source name="phytozome-chado-M.pusilla_RCC299" type="phytozome-db">
+    <source name="phytozome-chado-M.sp_RCC299" type="phytozome-db">
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Micromonas" />
-      <property name="species" value="pusilla RCC299" />
-      <property name="dbxrefId" value="3506184" />
+      <property name="species" value="sp. RCC299" />
+      <property name="assemblyDbxrefId" value="3506184" />
       <property name="proteomeId" value="229" />
       <property name="taxonId" value="296587" />
-      <property name="dataSourceName" value="phytozome-M.pusilla_RCC299" />
-      <property name="commonName" value="Micromonas pusilla RCC299" />
-      <property name="shortName" value="M. pusilla_RCC299" />
+      <property name="dataSourceName" value="phytozome-M.sp_RCC299" />
+      <property name="commonName" value="Micromonas sp. RCC299" />
+      <property name="shortName" value="M. sp_RCC299" />
       <property name="version" value="current" />
       <property name="annotationVersion" value="v3.0" />
       <property name="dataSetTitle" value="Phytozome v10" />
@@ -385,7 +385,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Medicago" />
       <property name="species" value="truncatula" />
-      <property name="dbxrefId" value="7016636" />
+      <property name="assemblyDbxrefId" value="7016636" />
       <property name="proteomeId" value="285" />
       <property name="taxonId" value="3880" />
       <property name="dataSourceName" value="phytozome-M.truncatula" />
@@ -399,7 +399,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Ostreococcus" />
       <property name="species" value="lucimarinus" />
-      <property name="dbxrefId" value="3506187" />
+      <property name="assemblyDbxrefId" value="3506187" />
       <property name="proteomeId" value="231" />
       <property name="taxonId" value="436017" />
       <property name="dataSourceName" value="phytozome-O.lucimarinus" />
@@ -413,7 +413,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Oryza" />
       <property name="species" value="sativa" />
-      <property name="dbxrefId" value="3455679" />
+      <property name="assemblyDbxrefId" value="3455679" />
       <property name="proteomeId" value="204" />
       <property name="taxonId" value="4530" />
       <property name="dataSourceName" value="phytozome-O.sativa" />
@@ -427,7 +427,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Panicum" />
       <property name="species" value="hallii" />
-      <property name="dbxrefId" value="7079024" />
+      <property name="assemblyDbxrefId" value="7079024" />
       <property name="proteomeId" value="274" />
       <property name="taxonId" value="206008" />
       <property name="dataSourceName" value="phytozome-P.hallii" />
@@ -441,7 +441,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Physcomitrella" />
       <property name="species" value="patens" />
-      <property name="dbxrefId" value="4417255" />
+      <property name="assemblyDbxrefId" value="4417255" />
       <property name="proteomeId" value="251" />
       <property name="taxonId" value="3218" />
       <property name="dataSourceName" value="phytozome-P.patens" />
@@ -455,7 +455,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Prunus" />
       <property name="species" value="persica" />
-      <property name="dbxrefId" value="6581333" />
+      <property name="assemblyDbxrefId" value="6581333" />
       <property name="proteomeId" value="139" />
       <property name="taxonId" value="3760" />
       <property name="dataSourceName" value="phytozome-P.persica" />
@@ -469,7 +469,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Populus" />
       <property name="species" value="trichocarpa" />
-      <property name="dbxrefId" value="3496333" />
+      <property name="assemblyDbxrefId" value="3496333" />
       <property name="proteomeId" value="210" />
       <property name="taxonId" value="3694" />
       <property name="dataSourceName" value="phytozome-P.trichocarpa" />
@@ -483,7 +483,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Panicum" />
       <property name="species" value="virgatum" />
-      <property name="dbxrefId" value="6788273" />
+      <property name="assemblyDbxrefId" value="6788273" />
       <property name="proteomeId" value="273" />
       <property name="taxonId" value="38727" />
       <property name="dataSourceName" value="phytozome-P.virgatum" />
@@ -497,7 +497,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Phaseolus" />
       <property name="species" value="vulgaris" />
-      <property name="dbxrefId" value="6197692" />
+      <property name="assemblyDbxrefId" value="6197692" />
       <property name="proteomeId" value="218" />
       <property name="taxonId" value="3885" />
       <property name="dataSourceName" value="phytozome-P.vulgaris" />
@@ -511,7 +511,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Ricinus" />
       <property name="species" value="communis" />
-      <property name="dbxrefId" value="3455698" />
+      <property name="assemblyDbxrefId" value="3455698" />
       <property name="proteomeId" value="119" />
       <property name="taxonId" value="3988" />
       <property name="dataSourceName" value="phytozome-R.communis" />
@@ -525,7 +525,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Sorghum" />
       <property name="species" value="bicolor" />
-      <property name="dbxrefId" value="4417257" />
+      <property name="assemblyDbxrefId" value="4417257" />
       <property name="proteomeId" value="255" />
       <property name="taxonId" value="4558" />
       <property name="dataSourceName" value="phytozome-S.bicolor" />
@@ -539,7 +539,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Setaria" />
       <property name="species" value="italica" />
-      <property name="dbxrefId" value="3455700" />
+      <property name="assemblyDbxrefId" value="3455700" />
       <property name="proteomeId" value="164" />
       <property name="taxonId" value="4555" />
       <property name="dataSourceName" value="phytozome-S.italica" />
@@ -553,7 +553,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Solanum" />
       <property name="species" value="lycopersicum" />
-      <property name="dbxrefId" value="3492328" />
+      <property name="assemblyDbxrefId" value="3492328" />
       <property name="proteomeId" value="225" />
       <property name="taxonId" value="4081" />
       <property name="dataSourceName" value="phytozome-S.lycopersicum" />
@@ -567,7 +567,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Selaginella" />
       <property name="species" value="moellendorffii" />
-      <property name="dbxrefId" value="3455701" />
+      <property name="assemblyDbxrefId" value="3455701" />
       <property name="proteomeId" value="91" />
       <property name="taxonId" value="88036" />
       <property name="dataSourceName" value="phytozome-S.moellendorffii" />
@@ -581,7 +581,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Spirodela" />
       <property name="species" value="polyrhiza" />
-      <property name="dbxrefId" value="7414415" />
+      <property name="assemblyDbxrefId" value="7414415" />
       <property name="proteomeId" value="290" />
       <property name="taxonId" value="29656" />
       <property name="dataSourceName" value="phytozome-S.polyrhiza" />
@@ -595,7 +595,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Salix" />
       <property name="species" value="purpurea" />
-      <property name="dbxrefId" value="7460889" />
+      <property name="assemblyDbxrefId" value="7460889" />
       <property name="proteomeId" value="289" />
       <property name="taxonId" value="77065" />
       <property name="dataSourceName" value="phytozome-S.purpurea" />
@@ -609,7 +609,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Solanum" />
       <property name="species" value="tuberosum" />
-      <property name="dbxrefId" value="950457" />
+      <property name="assemblyDbxrefId" value="950457" />
       <property name="proteomeId" value="206" />
       <property name="taxonId" value="4113" />
       <property name="dataSourceName" value="phytozome-S.tuberosum" />
@@ -623,7 +623,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Theobroma" />
       <property name="species" value="cacao" />
-      <property name="dbxrefId" value="950421" />
+      <property name="assemblyDbxrefId" value="950421" />
       <property name="proteomeId" value="233" />
       <property name="taxonId" value="3641" />
       <property name="dataSourceName" value="phytozome-T.cacao" />
@@ -637,7 +637,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Volvox" />
       <property name="species" value="carteri" />
-      <property name="dbxrefId" value="3455703" />
+      <property name="assemblyDbxrefId" value="3455703" />
       <property name="proteomeId" value="199" />
       <property name="taxonId" value="3067" />
       <property name="dataSourceName" value="phytozome-V.carteri" />
@@ -651,7 +651,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Vitis" />
       <property name="species" value="vinifera" />
-      <property name="dbxrefId" value="3455704" />
+      <property name="assemblyDbxrefId" value="3455704" />
       <property name="proteomeId" value="145" />
       <property name="taxonId" value="29760" />
       <property name="dataSourceName" value="phytozome-V.vinifera" />
@@ -665,7 +665,7 @@
       <property name="source.db.name" value="phytozome" />
       <property name="genus" value="Zea" />
       <property name="species" value="mays" />
-      <property name="dbxrefId" value="6927874" />
+      <property name="assemblyDbxrefId" value="6927874" />
       <property name="proteomeId" value="284" />
       <property name="taxonId" value="4577" />
       <property name="dataSourceName" value="phytozome-Z.mays" />
@@ -684,10 +684,37 @@
       <property name="dataSourceName" value="pac-clusters" />
       <property name="dataSetTitle" value="Phytozome Clusters" />
       <property name="createrelations" value="false" />
-      <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4835,4836,4837,4838,4839,4840,4841,4842,4843,4844,4845,4846" />
+      <property name="methodIds" value="2289,4965" />
+      <!--property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4865,4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" /-->
     </source>
+    <source name="pac-clusters-2" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="2290,4964" />
+      <!--property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4865,4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" /-->
+    </source>
+    <source name="pac-clusters-3" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="2295,4963" />
+      <!--property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4865,4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" /-->
+    </source>
+
+    <source name="pac-clusters-all" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4865,4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" />
+    </source>
+
     <source name="phytozome-homologs" type="inparanoid-homologs" >
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
     </source>
     <source name="diversity-P.vulgaris" type="gatkvcf">
       <property name="proteomeId" value="218" />
@@ -773,19 +800,28 @@
       <property name="dataSetTitle" value="P.vulgaris RNA-seq" />
     </source>
 
-    <source name="cufflinks-P.trichocarpa-gene-atlas" type="cufflinks">
+    <source name="cufflinks-P.trichocarpa-geneAtlas" type="cufflinks">
       <property name="proteomeId" value="210" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ptrichocarpa-geneAtlas/" />
       <property name="dataSourceName" value="rnaseq-P.trichocarpa-geneAtlas" />
       <property name="dataSetTitle" value="P.trichocarpa-geneAtlas RNA-seq" />
     </source>
-    <source name="cufflinks-C.reinhardtii-gene-atlas" type="cufflinks">
+
+    <source name="coexpression-P.trichocarpa-geneAtlas" type="coexpression">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ptrichocarpa-geneAtlas/" />
+      <property name="src.data.dir.includes" value="coexpression.tsv" />
+      <property name="dataSourceName" value="rnaseq-P.trichocarpa-geneAtlas" />
+      <property name="dataSetTitle" value="P.trichocarpa-geneAtlas RNA-seq" />
+    </source>
+
+    <source name="cufflinks-C.reinhardtii-geneAtlas" type="cufflinks">
       <property name="proteomeId" value="281" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Creinhardtii-geneAtlas/" />
       <property name="dataSourceName" value="rnaseq-C.reinhardtii-geneAtlas" />
       <property name="dataSetTitle" value="C.reinhardtii-geneAtlas RNA-seq" />
     </source>
-    <source name="cufflinks-P.patens-gene-atlas" type="cufflinks">
+    <source name="cufflinks-P.patens-geneAtlas" type="cufflinks">
       <property name="proteomeId" value="251" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ppatens-geneAtlas/" />
       <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
@@ -1000,6 +1036,7 @@
     <post-process name="create-gene-flanking-features" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
+    <post-process name="create-overlap-relations-flymine" />
     <post-process name="create-search-index" />
     <post-process name="add-uniprot-ids" />
     <post-process name="transfer-go-terms" />

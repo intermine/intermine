@@ -1,0 +1,255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+  <head>
+
+    <title>Pie</title>
+
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <style type="text/css">
+      table.example {margin: 10px; border-collapse: collapse;}
+      div br {clear: both;}
+      div.code, div.json, div.pre {font-size: small; }
+      div.desc {font-size: small;}
+      div.h3 {font-size: 150%}
+      div.h4 {font-size: 120%}
+      table.config {font-size: small; border-collapse: collapse; margin: 10px; width: 800px}
+      td.first-col {border: 1px solid #000000; padding: 4px; width: 35%; vertical-align: top}
+      td.sec-col {border: 1px solid #1D222B; padding: 4px; width: 65%; vertical-align: top}
+      tr.private {background-color: #EEEEEE}
+      tr.public {background-color: #FFFFFF}
+      span.light {font-size: small; color: #777777; font-style: italic}
+      caption {background-color:  #DDDDDD; border-top: 1px solid #1D222B;  border-right: 1px solid #1D222B;  border-left: 1px solid #1D222B; color: #FFFFFF: font-size: 150%; padding: 2px 6px; text-align: left;}
+      div.canvas {margin: 10px;}
+    </style>
+
+    <!--[if IE]><script type="text/javascript" src="./js/excanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script>
+
+      var showDemo = function () {
+        new CanvasXpress('canvas',
+                         {y: {vars:  ['Gene1',  'Gene2', 'Gene3',  'Gene4', 'Gene5',  'Gene6'],
+                              smps:  ['Smp1',   'Smp2',  'Smp3',   'Smp4',  'Smp5',   'Smp6',  'Smp7',   'Smp8',  'Smp9',   'Smp10',  'Smp11',   'Smp12',  'Smp13',   'Smp14',  'Smp15',   'Smp16'],
+                              data:  [[10, 12, 3, 4, 100, 43, 32, 44, 25, 1, 35, 25, 28, 1, 23, 24],
+                                      [12, 4, 60, 5, 24, 14, 32, 13, 45, 26, 34, 52, 12, 67, 3, 15],
+                                      [7, 12, 20, 13, 49, 52, 42, 92, 46, 24, 26, 12, 2, 34, 7, 56],
+                                      [21, 10, 30, 8, 65, 166, 47, 58, 93, 26, 8, 35, 23, 3, 25, 2],
+                                      [15, 14, 100, 5, 34, 30, 82, 51, 46, 16, 28, 83, 4, 9, 35, 8],
+                                      [100, 82, 73, 4, 3, 4, 5, 2, 4, 67, 23, 12, 34, 25, 6, 25, 6]]}},
+                         {graphType: 'Pie',
+                          layout: '3X5',
+                          xAxis: ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5',   'Smp6',  'Smp7',   'Smp8',  'Smp9',   'Smp10',  'Smp11',   'Smp12',  'Smp13',   'Smp14',  'Smp15'],
+                          background: 'rgb(244,244,244)',
+                          colorScheme: 'basic',
+                          pieSegmentPrecision: 0,
+                          pieSegmentSeparation: 1,
+                          showPieGrid: true,
+                          showPieSampleLabel: true,
+                          pieSegmentLabels: 'inside'});
+        new CanvasXpress('canvas1',
+                         {y: {vars:  ['Gene1',  'Gene2', 'Gene3',  'Gene4', 'Gene5',  'Gene6'],
+                              smps:  ['Smp1'],
+                              data: [[6.1],
+                                     [7.3],
+                                     [4.2],
+                                     [12.7],
+                                     [9.1],
+                                     [60.6]]}},
+                         {graphType: 'Pie',
+                          pieSegmentPrecision: 1,
+                          pieSegmentSeparation: 2,
+                          pieSegmentLabels: 'outside',
+                          pieType: 'solid'});
+      }
+
+      var jumpTo = function(url) {
+        parent.location=url
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./about.html">About</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./contact.html">Contact</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="content">
+
+          <div id="examples">
+
+            <div class="chooseGraph">
+              <select onchange="jumpTo(this.value)">
+                <option selected="selected">Select a Graph...</option>
+                <option value="./bar.html">Bar graphs</option>
+                <option value="./line.html">Line graphs</option>
+                <option value="./barline.html">Bar-line combination</option>
+                <option value="./boxplot.html">Boxplots</option>
+                <option value="./dotplot.html">Dotplots</option>
+                <option value="./area.html">Area graphs</option>
+                <option value="./stacked.html">Stacked graphs</option>
+                <option value="./correlation.html">Correlation plots</option>
+                <option value="./venn.html">Venn diagrams</option>
+                <option value="./heatmap.html">Heatmaps</option>
+                <option value="./scatter2d.html">2D-scatter plots</option>
+                <option value="./scatter3d.html">3D-scatter plots</option>
+                <option value="./pie.html">Pie charts</option>
+                <option value="./candlestick.html">Stock Market charts</option>
+                <option value="./network.html">Networks (or pathways)</option>
+                <option value="./genome.html">Genome browser</option>
+                <option value="./layout.html">Complex plot layouts</option>
+                <option value="./extjs.html">Ext-JS Panel</option>
+              </select>
+            </div>
+            <br>
+
+          </div>
+
+          <h1>Pie</h1>
+
+          <div class='desc'>
+            <p>
+
+              You can resize the image using the handle that appears when you
+              mouse over the south and east sides of the canvas. You maybe wondering why
+              sometimes it resizes to where you released the mouse button and sometimes
+              it does not. The reason is because of the 'autoExtend' property which is a
+              feature (not a bug). If you set the autoExtent to 'false', then it resizes
+              to where you release your mouse button.
+
+            </p>
+          </div>
+
+          <div class="canvas">
+            <canvas id="canvas" width="613" height="500"></canvas>
+            <br /><br />
+          </div>
+
+          <div class="code">
+            <pre>
+              new CanvasXpress('canvas',
+                               {y: {vars:  ['Gene1',  'Gene2', 'Gene3',  'Gene4', 'Gene5',  'Gene6'],
+                                    smps:  ['Smp1',   'Smp2',  'Smp3',   'Smp4',  'Smp5',   'Smp6',  'Smp7',   'Smp8',  'Smp9',   'Smp10',  'Smp11',   'Smp12',  'Smp13',   'Smp14',  'Smp15',   'Smp16'],
+                                    data:  [[10, 12, 3, 4, 100, 43, 32, 44, 25, 1, 35, 25, 28, 1, 23, 24],
+                                            [12, 4, 60, 5, 24, 14, 32, 13, 45, 26, 34, 52, 12, 67, 3, 15],
+                                            [7, 12, 20, 13, 49, 52, 42, 92, 46, 24, 26, 12, 2, 34, 7, 56],
+                                            [21, 10, 30, 8, 65, 166, 47, 58, 93, 26, 8, 35, 23, 3, 25, 2],
+                                            [15, 14, 100, 5, 34, 30, 82, 51, 46, 16, 28, 83, 4, 9, 35, 8],
+                                            [100, 82, 73, 4, 3, 4, 5, 2, 4, 67, 23, 12, 34, 25, 6, 25, 6]]}},
+                               {graphType: 'Pie',
+                                layout: '3X5',
+                                xAxis: ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5',   'Smp6',  'Smp7',   'Smp8',  'Smp9',   'Smp10',  'Smp11',   'Smp12',  'Smp13',   'Smp14',  'Smp15'],
+                                background: 'rgb(244,244,244)',
+                                colorScheme: 'basic',
+                                pieSegmentPrecision: 0,
+                                pieSegmentSeparation: 1,
+                                showPieGrid: true,
+                                showPieSampleLabel: true,
+                                pieSegmentLabels: 'inside'});
+            </pre>
+          </div>
+
+          <div class="canvas">
+            <canvas id="canvas1" width="613" height="500"></canvas>
+            <br /><br />
+          </div>
+
+          <div class="code">
+            <pre>
+              new CanvasXpress('canvas1',
+                               {y: {vars:  ['Gene1',  'Gene2', 'Gene3',  'Gene4', 'Gene5',  'Gene6'],
+                                    smps:  ['Smp1'],
+                                    data: [[6.1],
+                                           [7.3],
+                                           [4.2],
+                                           [12.7],
+                                           [9.1],
+                                           [60.6]]}},
+                               {graphType: 'Pie',
+                                pieSegmentPrecision: 1,
+                                pieSegmentSeparation: 2,
+                                pieSegmentLabels: 'outside',
+                                pieType: 'solid'});
+            </pre>
+          </div>
+
+        </div>
+
+        <div class="clear"></div>
+
+      </div>
+
+      <div class="footer">
+
+        Copyright &copy; 2010 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

@@ -1,0 +1,2090 @@
+<html>
+
+  <head>
+
+    <title>Network</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            "nodes" : [{
+              "id" : "Id0",
+              "name" : "Myriel",
+              "group" : 1
+            }, {
+              "id" : "Id1",
+              "name" : "Napoleon",
+              "group" : 1
+            }, {
+              "id" : "Id2",
+              "name" : "Mlle. Baptistine",
+              "group" : 1
+            }, {
+              "id" : "Id3",
+              "name" : "Mme. Magloire",
+              "group" : 1
+            }, {
+              "id" : "Id4",
+              "name" : "Countess de Lo",
+              "group" : 1
+            }, {
+              "id" : "Id5",
+              "name" : "Geborand",
+              "group" : 1
+            }, {
+              "id" : "Id6",
+              "name" : "Champtercier",
+              "group" : 1
+            }, {
+              "id" : "Id7",
+              "name" : "Cravatte",
+              "group" : 1
+            }, {
+              "id" : "Id8",
+              "name" : "Count",
+              "group" : 1
+            }, {
+              "id" : "Id9",
+              "name" : "Old Man",
+              "group" : 1
+            }, {
+              "id" : "Id10",
+              "name" : "Labarre",
+              "group" : 2
+            }, {
+              "id" : "Id11",
+              "name" : "Valjean",
+              "group" : 2
+            }, {
+              "id" : "Id12",
+              "name" : "Marguerite",
+              "group" : 3
+            }, {
+              "id" : "Id13",
+              "name" : "Mme. de R",
+              "group" : 2
+            }, {
+              "id" : "Id14",
+              "name" : "Isabeau",
+              "group" : 2
+            }, {
+              "id" : "Id15",
+              "name" : "Gervais",
+              "group" : 2
+            }, {
+              "id" : "Id16",
+              "name" : "Tholomyes",
+              "group" : 3
+            }, {
+              "id" : "Id17",
+              "name" : "Listolier",
+              "group" : 3
+            }, {
+              "id" : "Id18",
+              "name" : "Fameuil",
+              "group" : 3
+            }, {
+              "id" : "Id19",
+              "name" : "Blacheville",
+              "group" : 3
+            }, {
+              "id" : "Id20",
+              "name" : "Favourite",
+              "group" : 3
+            }, {
+              "id" : "Id21",
+              "name" : "Dahlia",
+              "group" : 3
+            }, {
+              "id" : "Id22",
+              "name" : "Zephine",
+              "group" : 3
+            }, {
+              "id" : "Id23",
+              "name" : "Fantine",
+              "group" : 3
+            }, {
+              "id" : "Id24",
+              "name" : "Mme. Thenardier",
+              "group" : 4
+            }, {
+              "id" : "Id25",
+              "name" : "Thenardier",
+              "group" : 4
+            }, {
+              "id" : "Id26",
+              "name" : "Cosette",
+              "group" : 5
+            }, {
+              "id" : "Id27",
+              "name" : "Javert",
+              "group" : 4
+            }, {
+              "id" : "Id28",
+              "name" : "Fauchelevent",
+              "group" : 0
+            }, {
+              "id" : "Id29",
+              "name" : "Bamatabois",
+              "group" : 2
+            }, {
+              "id" : "Id30",
+              "name" : "Perpetue",
+              "group" : 3
+            }, {
+              "id" : "Id31",
+              "name" : "Simplice",
+              "group" : 2
+            }, {
+              "id" : "Id32",
+              "name" : "Scaufflaire",
+              "group" : 2
+            }, {
+              "id" : "Id33",
+              "name" : "Woman 1",
+              "group" : 2
+            }, {
+              "id" : "Id34",
+              "name" : "Judge",
+              "group" : 2
+            }, {
+              "id" : "Id35",
+              "name" : "Champmathieu",
+              "group" : 2
+            }, {
+              "id" : "Id36",
+              "name" : "Brevet",
+              "group" : 2
+            }, {
+              "id" : "Id37",
+              "name" : "Chenildieu",
+              "group" : 2
+            }, {
+              "id" : "Id38",
+              "name" : "Cochepaille",
+              "group" : 2
+            }, {
+              "id" : "Id39",
+              "name" : "Pontmercy",
+              "group" : 4
+            }, {
+              "id" : "Id40",
+              "name" : "Boulatruelle",
+              "group" : 6
+            }, {
+              "id" : "Id41",
+              "name" : "Eponine",
+              "group" : 4
+            }, {
+              "id" : "Id42",
+              "name" : "Anzelma",
+              "group" : 4
+            }, {
+              "id" : "Id43",
+              "name" : "Woman 2",
+              "group" : 5
+            }, {
+              "id" : "Id44",
+              "name" : "Mother Innocent",
+              "group" : 0
+            }, {
+              "id" : "Id45",
+              "name" : "Gribier",
+              "group" : 0
+            }, {
+              "id" : "Id46",
+              "name" : "Jondrette",
+              "group" : 7
+            }, {
+              "id" : "Id47",
+              "name" : "Mme. Burgon",
+              "group" : 7
+            }, {
+              "id" : "Id48",
+              "name" : "Gavroche",
+              "group" : 8
+            }, {
+              "id" : "Id49",
+              "name" : "Gillenormand",
+              "group" : 5
+            }, {
+              "id" : "Id50",
+              "name" : "Magnon",
+              "group" : 5
+            }, {
+              "id" : "Id51",
+              "name" : "Mlle. Gillenormand",
+              "group" : 5
+            }, {
+              "id" : "Id52",
+              "name" : "Mme. Pontmercy",
+              "group" : 5
+            }, {
+              "id" : "Id53",
+              "name" : "Mlle. Vaubois",
+              "group" : 5
+            }, {
+              "id" : "Id54",
+              "name" : "Lt. Gillenormand",
+              "group" : 5
+            }, {
+              "id" : "Id55",
+              "name" : "Marius",
+              "group" : 8
+            }, {
+              "id" : "Id56",
+              "name" : "Baroness T",
+              "group" : 5
+            }, {
+              "id" : "Id57",
+              "name" : "Mabeuf",
+              "group" : 8
+            }, {
+              "id" : "Id58",
+              "name" : "Enjolras",
+              "group" : 8
+            }, {
+              "id" : "Id59",
+              "name" : "Combeferre",
+              "group" : 8
+            }, {
+              "id" : "Id60",
+              "name" : "Prouvaire",
+              "group" : 8
+            }, {
+              "id" : "Id61",
+              "name" : "Feuilly",
+              "group" : 8
+            }, {
+              "id" : "Id62",
+              "name" : "Courfeyrac",
+              "group" : 8
+            }, {
+              "id" : "Id63",
+              "name" : "Bahorel",
+              "group" : 8
+            }, {
+              "id" : "Id64",
+              "name" : "Bossuet",
+              "group" : 8
+            }, {
+              "id" : "Id65",
+              "name" : "Joly",
+              "group" : 8
+            }, {
+              "id" : "Id66",
+              "name" : "Grantaire",
+              "group" : 8
+            }, {
+              "id" : "Id67",
+              "name" : "Mother Plutarch",
+              "group" : 9
+            }, {
+              "id" : "Id68",
+              "name" : "Gueulemer",
+              "group" : 4
+            }, {
+              "id" : "Id69",
+              "name" : "Babet",
+              "group" : 4
+            }, {
+              "id" : "Id70",
+              "name" : "Claquesous",
+              "group" : 4
+            }, {
+              "id" : "Id71",
+              "name" : "Montparnasse",
+              "group" : 4
+            }, {
+              "id" : "Id72",
+              "name" : "Toussaint",
+              "group" : 5
+            }, {
+              "id" : "Id73",
+              "name" : "Child 1",
+              "group" : 10
+            }, {
+              "id" : "Id74",
+              "name" : "Child 2",
+              "group" : 10
+            }, {
+              "id" : "Id75",
+              "name" : "Brujon",
+              "group" : 4
+            }, {
+              "id" : "Id76",
+              "name" : "Mme. Hucheloup",
+              "group" : 8
+            }],
+            "edges" : [{
+              "id1" : "Id1",
+              "id2" : "Id0",
+              "value" : 1
+            }, {
+              "id1" : "Id2",
+              "id2" : "Id0",
+              "value" : 8
+            }, {
+              "id1" : "Id3",
+              "id2" : "Id0",
+              "value" : 10
+            }, {
+              "id1" : "Id3",
+              "id2" : "Id2",
+              "value" : 6
+            }, {
+              "id1" : "Id4",
+              "id2" : "Id0",
+              "value" : 1
+            }, {
+              "id1" : "Id5",
+              "id2" : "Id0",
+              "value" : 1
+            }, {
+              "id1" : "Id6",
+              "id2" : "Id0",
+              "value" : 1
+            }, {
+              "id1" : "Id7",
+              "id2" : "Id0",
+              "value" : 1
+            }, {
+              "id1" : "Id8",
+              "id2" : "Id0",
+              "value" : 2
+            }, {
+              "id1" : "Id9",
+              "id2" : "Id0",
+              "value" : 1
+            }, {
+              "id1" : "Id11",
+              "id2" : "Id10",
+              "value" : 1
+            }, {
+              "id1" : "Id11",
+              "id2" : "Id3",
+              "value" : 3
+            }, {
+              "id1" : "Id11",
+              "id2" : "Id2",
+              "value" : 3
+            }, {
+              "id1" : "Id11",
+              "id2" : "Id0",
+              "value" : 5
+            }, {
+              "id1" : "Id12",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id13",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id14",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id15",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id17",
+              "id2" : "Id16",
+              "value" : 4
+            }, {
+              "id1" : "Id18",
+              "id2" : "Id16",
+              "value" : 4
+            }, {
+              "id1" : "Id18",
+              "id2" : "Id17",
+              "value" : 4
+            }, {
+              "id1" : "Id19",
+              "id2" : "Id16",
+              "value" : 4
+            }, {
+              "id1" : "Id19",
+              "id2" : "Id17",
+              "value" : 4
+            }, {
+              "id1" : "Id19",
+              "id2" : "Id18",
+              "value" : 4
+            }, {
+              "id1" : "Id20",
+              "id2" : "Id16",
+              "value" : 3
+            }, {
+              "id1" : "Id20",
+              "id2" : "Id17",
+              "value" : 3
+            }, {
+              "id1" : "Id20",
+              "id2" : "Id18",
+              "value" : 3
+            }, {
+              "id1" : "Id20",
+              "id2" : "Id19",
+              "value" : 4
+            }, {
+              "id1" : "Id21",
+              "id2" : "Id16",
+              "value" : 3
+            }, {
+              "id1" : "Id21",
+              "id2" : "Id17",
+              "value" : 3
+            }, {
+              "id1" : "Id21",
+              "id2" : "Id18",
+              "value" : 3
+            }, {
+              "id1" : "Id21",
+              "id2" : "Id19",
+              "value" : 3
+            }, {
+              "id1" : "Id21",
+              "id2" : "Id20",
+              "value" : 5
+            }, {
+              "id1" : "Id22",
+              "id2" : "Id16",
+              "value" : 3
+            }, {
+              "id1" : "Id22",
+              "id2" : "Id17",
+              "value" : 3
+            }, {
+              "id1" : "Id22",
+              "id2" : "Id18",
+              "value" : 3
+            }, {
+              "id1" : "Id22",
+              "id2" : "Id19",
+              "value" : 3
+            }, {
+              "id1" : "Id22",
+              "id2" : "Id20",
+              "value" : 4
+            }, {
+              "id1" : "Id22",
+              "id2" : "Id21",
+              "value" : 4
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id16",
+              "value" : 3
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id17",
+              "value" : 3
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id18",
+              "value" : 3
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id19",
+              "value" : 3
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id20",
+              "value" : 4
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id21",
+              "value" : 4
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id22",
+              "value" : 4
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id12",
+              "value" : 2
+            }, {
+              "id1" : "Id23",
+              "id2" : "Id11",
+              "value" : 9
+            }, {
+              "id1" : "Id24",
+              "id2" : "Id23",
+              "value" : 2
+            }, {
+              "id1" : "Id24",
+              "id2" : "Id11",
+              "value" : 7
+            }, {
+              "id1" : "Id25",
+              "id2" : "Id24",
+              "value" : 13
+            }, {
+              "id1" : "Id25",
+              "id2" : "Id23",
+              "value" : 1
+            }, {
+              "id1" : "Id25",
+              "id2" : "Id11",
+              "value" : 12
+            }, {
+              "id1" : "Id26",
+              "id2" : "Id24",
+              "value" : 4
+            }, {
+              "id1" : "Id26",
+              "id2" : "Id11",
+              "value" : 31
+            }, {
+              "id1" : "Id26",
+              "id2" : "Id16",
+              "value" : 1
+            }, {
+              "id1" : "Id26",
+              "id2" : "Id25",
+              "value" : 1
+            }, {
+              "id1" : "Id27",
+              "id2" : "Id11",
+              "value" : 17
+            }, {
+              "id1" : "Id27",
+              "id2" : "Id23",
+              "value" : 5
+            }, {
+              "id1" : "Id27",
+              "id2" : "Id25",
+              "value" : 5
+            }, {
+              "id1" : "Id27",
+              "id2" : "Id24",
+              "value" : 1
+            }, {
+              "id1" : "Id27",
+              "id2" : "Id26",
+              "value" : 1
+            }, {
+              "id1" : "Id28",
+              "id2" : "Id11",
+              "value" : 8
+            }, {
+              "id1" : "Id28",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id29",
+              "id2" : "Id23",
+              "value" : 1
+            }, {
+              "id1" : "Id29",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id29",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id30",
+              "id2" : "Id23",
+              "value" : 1
+            }, {
+              "id1" : "Id31",
+              "id2" : "Id30",
+              "value" : 2
+            }, {
+              "id1" : "Id31",
+              "id2" : "Id11",
+              "value" : 3
+            }, {
+              "id1" : "Id31",
+              "id2" : "Id23",
+              "value" : 2
+            }, {
+              "id1" : "Id31",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id32",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id33",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id33",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id34",
+              "id2" : "Id11",
+              "value" : 3
+            }, {
+              "id1" : "Id34",
+              "id2" : "Id29",
+              "value" : 2
+            }, {
+              "id1" : "Id35",
+              "id2" : "Id11",
+              "value" : 3
+            }, {
+              "id1" : "Id35",
+              "id2" : "Id34",
+              "value" : 3
+            }, {
+              "id1" : "Id35",
+              "id2" : "Id29",
+              "value" : 2
+            }, {
+              "id1" : "Id36",
+              "id2" : "Id34",
+              "value" : 2
+            }, {
+              "id1" : "Id36",
+              "id2" : "Id35",
+              "value" : 2
+            }, {
+              "id1" : "Id36",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id36",
+              "id2" : "Id29",
+              "value" : 1
+            }, {
+              "id1" : "Id37",
+              "id2" : "Id34",
+              "value" : 2
+            }, {
+              "id1" : "Id37",
+              "id2" : "Id35",
+              "value" : 2
+            }, {
+              "id1" : "Id37",
+              "id2" : "Id36",
+              "value" : 2
+            }, {
+              "id1" : "Id37",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id37",
+              "id2" : "Id29",
+              "value" : 1
+            }, {
+              "id1" : "Id38",
+              "id2" : "Id34",
+              "value" : 2
+            }, {
+              "id1" : "Id38",
+              "id2" : "Id35",
+              "value" : 2
+            }, {
+              "id1" : "Id38",
+              "id2" : "Id36",
+              "value" : 2
+            }, {
+              "id1" : "Id38",
+              "id2" : "Id37",
+              "value" : 2
+            }, {
+              "id1" : "Id38",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id38",
+              "id2" : "Id29",
+              "value" : 1
+            }, {
+              "id1" : "Id39",
+              "id2" : "Id25",
+              "value" : 1
+            }, {
+              "id1" : "Id40",
+              "id2" : "Id25",
+              "value" : 1
+            }, {
+              "id1" : "Id41",
+              "id2" : "Id24",
+              "value" : 2
+            }, {
+              "id1" : "Id41",
+              "id2" : "Id25",
+              "value" : 3
+            }, {
+              "id1" : "Id42",
+              "id2" : "Id41",
+              "value" : 2
+            }, {
+              "id1" : "Id42",
+              "id2" : "Id25",
+              "value" : 2
+            }, {
+              "id1" : "Id42",
+              "id2" : "Id24",
+              "value" : 1
+            }, {
+              "id1" : "Id43",
+              "id2" : "Id11",
+              "value" : 3
+            }, {
+              "id1" : "Id43",
+              "id2" : "Id26",
+              "value" : 1
+            }, {
+              "id1" : "Id43",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id44",
+              "id2" : "Id28",
+              "value" : 3
+            }, {
+              "id1" : "Id44",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id45",
+              "id2" : "Id28",
+              "value" : 2
+            }, {
+              "id1" : "Id47",
+              "id2" : "Id46",
+              "value" : 1
+            }, {
+              "id1" : "Id48",
+              "id2" : "Id47",
+              "value" : 2
+            }, {
+              "id1" : "Id48",
+              "id2" : "Id25",
+              "value" : 1
+            }, {
+              "id1" : "Id48",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id48",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id49",
+              "id2" : "Id26",
+              "value" : 3
+            }, {
+              "id1" : "Id49",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id50",
+              "id2" : "Id49",
+              "value" : 1
+            }, {
+              "id1" : "Id50",
+              "id2" : "Id24",
+              "value" : 1
+            }, {
+              "id1" : "Id51",
+              "id2" : "Id49",
+              "value" : 9
+            }, {
+              "id1" : "Id51",
+              "id2" : "Id26",
+              "value" : 2
+            }, {
+              "id1" : "Id51",
+              "id2" : "Id11",
+              "value" : 2
+            }, {
+              "id1" : "Id52",
+              "id2" : "Id51",
+              "value" : 1
+            }, {
+              "id1" : "Id52",
+              "id2" : "Id39",
+              "value" : 1
+            }, {
+              "id1" : "Id53",
+              "id2" : "Id51",
+              "value" : 1
+            }, {
+              "id1" : "Id54",
+              "id2" : "Id51",
+              "value" : 2
+            }, {
+              "id1" : "Id54",
+              "id2" : "Id49",
+              "value" : 1
+            }, {
+              "id1" : "Id54",
+              "id2" : "Id26",
+              "value" : 1
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id51",
+              "value" : 6
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id49",
+              "value" : 12
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id39",
+              "value" : 1
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id54",
+              "value" : 1
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id26",
+              "value" : 21
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id11",
+              "value" : 19
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id16",
+              "value" : 1
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id25",
+              "value" : 2
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id41",
+              "value" : 5
+            }, {
+              "id1" : "Id55",
+              "id2" : "Id48",
+              "value" : 4
+            }, {
+              "id1" : "Id56",
+              "id2" : "Id49",
+              "value" : 1
+            }, {
+              "id1" : "Id56",
+              "id2" : "Id55",
+              "value" : 1
+            }, {
+              "id1" : "Id57",
+              "id2" : "Id55",
+              "value" : 1
+            }, {
+              "id1" : "Id57",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id57",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id58",
+              "id2" : "Id55",
+              "value" : 7
+            }, {
+              "id1" : "Id58",
+              "id2" : "Id48",
+              "value" : 7
+            }, {
+              "id1" : "Id58",
+              "id2" : "Id27",
+              "value" : 6
+            }, {
+              "id1" : "Id58",
+              "id2" : "Id57",
+              "value" : 1
+            }, {
+              "id1" : "Id58",
+              "id2" : "Id11",
+              "value" : 4
+            }, {
+              "id1" : "Id59",
+              "id2" : "Id58",
+              "value" : 15
+            }, {
+              "id1" : "Id59",
+              "id2" : "Id55",
+              "value" : 5
+            }, {
+              "id1" : "Id59",
+              "id2" : "Id48",
+              "value" : 6
+            }, {
+              "id1" : "Id59",
+              "id2" : "Id57",
+              "value" : 2
+            }, {
+              "id1" : "Id60",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id60",
+              "id2" : "Id58",
+              "value" : 4
+            }, {
+              "id1" : "Id60",
+              "id2" : "Id59",
+              "value" : 2
+            }, {
+              "id1" : "Id61",
+              "id2" : "Id48",
+              "value" : 2
+            }, {
+              "id1" : "Id61",
+              "id2" : "Id58",
+              "value" : 6
+            }, {
+              "id1" : "Id61",
+              "id2" : "Id60",
+              "value" : 2
+            }, {
+              "id1" : "Id61",
+              "id2" : "Id59",
+              "value" : 5
+            }, {
+              "id1" : "Id61",
+              "id2" : "Id57",
+              "value" : 1
+            }, {
+              "id1" : "Id61",
+              "id2" : "Id55",
+              "value" : 1
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id55",
+              "value" : 9
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id58",
+              "value" : 17
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id59",
+              "value" : 13
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id48",
+              "value" : 7
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id57",
+              "value" : 2
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id61",
+              "value" : 6
+            }, {
+              "id1" : "Id62",
+              "id2" : "Id60",
+              "value" : 3
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id59",
+              "value" : 5
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id48",
+              "value" : 5
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id62",
+              "value" : 6
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id57",
+              "value" : 2
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id58",
+              "value" : 4
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id61",
+              "value" : 3
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id60",
+              "value" : 2
+            }, {
+              "id1" : "Id63",
+              "id2" : "Id55",
+              "value" : 1
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id55",
+              "value" : 5
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id62",
+              "value" : 12
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id48",
+              "value" : 5
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id63",
+              "value" : 4
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id58",
+              "value" : 10
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id61",
+              "value" : 6
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id60",
+              "value" : 2
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id59",
+              "value" : 9
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id57",
+              "value" : 1
+            }, {
+              "id1" : "Id64",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id63",
+              "value" : 5
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id64",
+              "value" : 7
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id48",
+              "value" : 3
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id62",
+              "value" : 5
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id58",
+              "value" : 5
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id61",
+              "value" : 5
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id60",
+              "value" : 2
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id59",
+              "value" : 5
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id57",
+              "value" : 1
+            }, {
+              "id1" : "Id65",
+              "id2" : "Id55",
+              "value" : 2
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id64",
+              "value" : 3
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id58",
+              "value" : 3
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id59",
+              "value" : 1
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id62",
+              "value" : 2
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id65",
+              "value" : 2
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id63",
+              "value" : 1
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id61",
+              "value" : 1
+            }, {
+              "id1" : "Id66",
+              "id2" : "Id60",
+              "value" : 1
+            }, {
+              "id1" : "Id67",
+              "id2" : "Id57",
+              "value" : 3
+            }, {
+              "id1" : "Id68",
+              "id2" : "Id25",
+              "value" : 5
+            }, {
+              "id1" : "Id68",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id68",
+              "id2" : "Id24",
+              "value" : 1
+            }, {
+              "id1" : "Id68",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id68",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id68",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id25",
+              "value" : 6
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id68",
+              "value" : 6
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id24",
+              "value" : 1
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id27",
+              "value" : 2
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id69",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id25",
+              "value" : 4
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id69",
+              "value" : 4
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id68",
+              "value" : 4
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id24",
+              "value" : 1
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id70",
+              "id2" : "Id58",
+              "value" : 1
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id69",
+              "value" : 2
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id68",
+              "value" : 2
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id70",
+              "value" : 2
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id71",
+              "id2" : "Id25",
+              "value" : 1
+            }, {
+              "id1" : "Id72",
+              "id2" : "Id26",
+              "value" : 2
+            }, {
+              "id1" : "Id72",
+              "id2" : "Id27",
+              "value" : 1
+            }, {
+              "id1" : "Id72",
+              "id2" : "Id11",
+              "value" : 1
+            }, {
+              "id1" : "Id73",
+              "id2" : "Id48",
+              "value" : 2
+            }, {
+              "id1" : "Id74",
+              "id2" : "Id48",
+              "value" : 2
+            }, {
+              "id1" : "Id74",
+              "id2" : "Id73",
+              "value" : 3
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id69",
+              "value" : 3
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id68",
+              "value" : 3
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id25",
+              "value" : 3
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id41",
+              "value" : 1
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id70",
+              "value" : 1
+            }, {
+              "id1" : "Id75",
+              "id2" : "Id71",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id64",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id65",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id66",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id63",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id62",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id48",
+              "value" : 1
+            }, {
+              "id1" : "Id76",
+              "id2" : "Id58",
+              "value" : 1
+            }],
+            "m" : {
+              "Name" : "Les Miserables",
+              "Description" : "Coappearance network of characters in the novel Les Miserables",
+              "Reference" : "D. E. Knuth, The Stanford GraphBase: A Platform for Combinatorial Computing, Addison-Wesley, Reading, MA (1993)."
+            }
+          },
+          {"backgroundGradient1Color": "rgb(112,179,222)",
+           "backgroundGradient2Color": "rgb(226,236,248)",
+           "colorNodeBy": "group",
+           "gradient": true,
+           "graphType": "Network",
+           "indicatorCenter": "rainbow",
+           "nodeFontColor": "rgb(29,34,43)",
+           "showAnimation": true
+          }
+        );
+
+        var cx2 = new CanvasXpress("canvas2",
+          {
+            "nodes" : [{
+              "id" : "Gene1",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene2",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene3",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene4",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene5",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene6",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene7",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "Gene8",
+              "color" : "rgb(255,0,0)",
+              "shape" : "square"
+            }, {
+              "id" : "SNP1",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP2",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP3",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP4",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP5",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP6",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP7",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "SNP8",
+              "color" : "rgb(0,255,0)",
+              "shape" : "sphere"
+            }, {
+              "id" : "PH1",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star"
+            }, {
+              "id" : "PH1a",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star",
+              "parentNode" : "PH1"
+            }, {
+              "id" : "PH1b",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star",
+              "parentNode" : "PH1"
+            }, {
+              "id" : "PH2",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star"
+            }, {
+              "id" : "PH2a",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star",
+              "parentNode" : "PH2"
+            }, {
+              "id" : "PH2b",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star",
+              "parentNode" : "PH2"
+            }, {
+              "id" : "PH2ba",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star",
+              "parentNode" : "PH2b"
+            }, {
+              "id" : "PH3",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star"
+            }, {
+              "id" : "PH4",
+              "color" : "rgb(0,255,255)",
+              "shape" : "star"
+            }],
+            "edges" : [{
+              "id1" : "Gene1",
+              "id2" : "Gene2",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP1",
+              "id2" : "PH1",
+              "color" : "rgb(51,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene2",
+              "id2" : "Gene7",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene2",
+              "id2" : "Gene8",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene1",
+              "id2" : "Gene3",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP4",
+              "id2" : "PH4",
+              "color" : "rgb(51,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "PH1",
+              "id2" : "PH1a",
+              "color" : "rgb(102,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "PH1",
+              "id2" : "PH1b",
+              "color" : "rgb(102,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene4",
+              "id2" : "SNP3",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene6",
+              "id2" : "SNP4",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "PH2",
+              "id2" : "PH2a",
+              "color" : "rgb(51,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "PH2",
+              "id2" : "PH2b",
+              "color" : "rgb(102,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene6",
+              "id2" : "SNP5",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene7",
+              "id2" : "SNP6",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP6",
+              "id2" : "SNP7",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene1",
+              "id2" : "Gene4",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene1",
+              "id2" : "Gene5",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP7",
+              "id2" : "Gene6",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP6",
+              "id2" : "SNP8",
+              "color" : "rgb(153,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene3",
+              "id2" : "SNP1",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "Gene3",
+              "id2" : "SNP2",
+              "color" : "rgb(51,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP2",
+              "id2" : "PH2",
+              "color" : "rgb(153,12,255)",
+              "type" : "line"
+            }, {
+              "id1" : "SNP3",
+              "id2" : "PH3",
+              "color" : "rgb(51,12,152)",
+              "type" : "line"
+            }, {
+              "id1" : "PH2b",
+              "id2" : "PH2ba",
+              "color" : "rgb(102,12,152)",
+              "type" : "line"
+            }]
+          },
+          {"backgroundGradient1Color": "rgb(112,179,222)",
+           "backgroundGradient2Color": "rgb(226,236,248)",
+           "gradient": true,
+           "graphType": "Network",
+           "networkLayoutType": "radial",
+           "nodeFontColor": "rgb(29,34,43)",
+           "showAnimation": true
+          }
+        );
+
+        var cx3 = new CanvasXpress("canvas3",
+          {
+            "nodes" : [{
+              "id" : "Cell",
+              "shape" : "image",
+              "eventless" : true,
+              "width" : 525,
+              "height" : 400,
+              "imagePath" : "cell.png",
+              "x" : 250,
+              "y" : 250,
+              "hideLabel" : true
+            }, {
+              "id" : "Gene1",
+              "exp1" : 1,
+              "exp2" : 2,
+              "exp3" : 4,
+              "exp4" : {
+                "cl1" : 2,
+                "cl2" : 4,
+                "cl3" : 3
+              },
+              "exp5" : {
+                "cl1" : 12,
+                "cl2" : 1,
+                "cl3" : 5
+              },
+              "shape" : "image",
+              "width" : 40,
+              "height" : 40,
+              "imagePath" : "prot.png",
+              "x" : 155,
+              "y" : 160
+            }, {
+              "id" : "Gene2",
+              "exp1" : 2,
+              "exp2" : 4,
+              "exp3" : 1,
+              "exp4" : {
+                "cl1" : 7,
+                "cl2" : 1,
+                "cl3" : 8
+              },
+              "exp5" : {
+                "cl1" : 1,
+                "cl2" : 11,
+                "cl3" : 8
+              },
+              "color" : "rgb(255,0,0)",
+              "shape" : "sphere",
+              "size" : 1,
+              "x" : 155,
+              "y" : 340
+            }, {
+              "id" : "Gene3",
+              "exp1" : 1,
+              "exp2" : 5,
+              "exp3" : 1,
+              "exp4" : {
+                "cl1" : 12,
+                "cl2" : 4,
+                "cl3" : 8
+              },
+              "exp5" : {
+                "cl1" : 3,
+                "cl2" : 7,
+                "cl3" : 5
+              },
+              "color" : "rgb(255,0,0)",
+              "shape" : "sphere",
+              "size" : 1,
+              "x" : 355,
+              "y" : 160
+            }, {
+              "id" : "Gene4",
+              "label" : "Receptor Gene4",
+              "exp1" : 4,
+              "exp2" : 2,
+              "exp3" : 1,
+              "exp4" : {
+                "cl1" : 1,
+                "cl2" : 14,
+                "cl3" : 7
+              },
+              "exp5" : {
+                "cl1" : 2,
+                "cl2" : 1,
+                "cl3" : 15
+              },
+              "color" : "rgb(255,0,0)",
+              "shape" : "sphere",
+              "size" : 1,
+              "x" : 355,
+              "y" : 340
+            }, {
+              "id" : "Gene5",
+              "exp1" : 1,
+              "exp2" : 3,
+              "exp3" : 2,
+              "exp4" : {
+                "cl1" : 4,
+                "cl2" : 4,
+                "cl3" : 8
+              },
+              "exp5" : {
+                "cl1" : 6,
+                "cl2" : 7,
+                "cl3" : 2
+              },
+              "color" : "rgb(255,0,0)",
+              "shape" : "sphere",
+              "width" : 20,
+              "height" : 20,
+              "x" : 255,
+              "y" : 100
+            }, {
+              "id" : "Met",
+              "shape" : "image",
+              "width" : 40,
+              "height" : 40,
+              "imagePath" : "met.png",
+              "x" : 255,
+              "y" : 400,
+              "hideLabel" : true
+            }, {
+              "id" : "Gene7",
+              "exp1" : 3,
+              "exp2" : 3,
+              "exp3" : 4,
+              "exp4" : {
+                "cl1" : 2,
+                "cl2" : 14,
+                "cl3" : 1
+              },
+              "exp5" : {
+                "cl1" : 9,
+                "cl2" : 3,
+                "cl3" : 5
+              },
+              "shape" : "image",
+              "width" : 40,
+              "height" : 40,
+              "imagePath" : "prot7.png",
+              "x" : 50,
+              "y" : 250
+            }, {
+              "id" : "DNA",
+              "shape" : "image",
+              "width" : 40,
+              "height" : 40,
+              "imagePath" : "dna1.png",
+              "x" : 450,
+              "y" : 250,
+              "hideLabel" : true
+            }],
+            "edges" : [{
+              "id1" : "Gene1",
+              "id2" : "Gene2",
+              "color" : "rgb(51,12,255)",
+              "width" : "3",
+              "type" : "curvedArrowHeadLine"
+            }, {
+              "id1" : "Gene4",
+              "id2" : "Gene3",
+              "color" : "rgb(51,12,255)",
+              "width" : "3",
+              "type" : "curvedArrowHeadLine"
+            }, {
+              "id1" : "Gene5",
+              "id2" : "Met",
+              "color" : "rgb(51,12,255)",
+              "width" : "3",
+              "type" : "arrowHeadLine"
+            }, {
+              "id1" : "Gene3",
+              "id2" : "DNA",
+              "color" : "rgb(51,12,255)",
+              "width" : "3",
+              "type" : "bezierArrowHeadLine"
+            }, {
+              "id1" : "Gene7",
+              "id2" : "Gene1",
+              "color" : "rgb(51,12,255)",
+              "width" : "3",
+              "type" : "bezierArrowHeadLine"
+            }],
+            "legend" : {
+              "nodes" : [{
+                "shape" : "sphere",
+                "color" : "rgb(255,0,0)",
+                "text" : "Gene",
+                "id" : "nodesLegendId0"
+              }],
+              "edges" : [{
+                "type" : "arrowHeadLine",
+                "text" : "Activate",
+                "id" : "edgesLegendId0"
+              }],
+              "text" : [{
+                "text" : "Cool Pathway",
+                "x" : 150,
+                "y" : 460,
+                "id" : "textLegendId0"
+              }],
+              "pos" : {
+                "nodes" : {
+                  "x" : -5,
+                  "y" : -5
+                },
+                "edges" : {
+                  "x" : 360,
+                  "y" : -5
+                },
+                "decorations" : {
+                  "x" : 20,
+                  "y" : 80
+                }
+              }
+            }
+          },
+          {"backgroundGradient1Color": "rgb(112,179,222)",
+           "backgroundGradient2Color": "rgb(226,236,248)",
+           "calculateLayout": false,
+           "decorations": ["exp1", "exp2", "exp3"],
+           "decorationsPosition": "top",
+           "decorationsType": "bar",
+           "gradient": true,
+           "graphType": "Network",
+           "networkFreezeOnLoad": true,
+           "nodeFontColor": "rgb(29,34,43)",
+           "showAnimation": true,
+           "showDecorations": true
+          }
+        );
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Network">
+
+            <h1>Network</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./background.html#backgroundGradient1Color">backgroundGradient1Color</a>,
+                      <a href="./background.html#backgroundGradient2Color">backgroundGradient2Color</a>,
+                      <a href="./network_graphs.html#colorNodeBy">colorNodeBy</a>,
+                      <a href="./gradients.html#gradient">gradient</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./indicators.html#indicatorCenter">indicatorCenter</a>,
+                      <a href="./network_graphs.html#nodeFontColor">nodeFontColor</a>,
+                      <a href="./animation.html#showAnimation">showAnimation</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas2")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./background.html#backgroundGradient1Color">backgroundGradient1Color</a>,
+                      <a href="./background.html#backgroundGradient2Color">backgroundGradient2Color</a>,
+                      <a href="./gradients.html#gradient">gradient</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./network_graphs.html#networkLayoutType">networkLayoutType</a>,
+                      <a href="./network_graphs.html#nodeFontColor">nodeFontColor</a>,
+                      <a href="./animation.html#showAnimation">showAnimation</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas3")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas3' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./background.html#backgroundGradient1Color">backgroundGradient1Color</a>,
+                      <a href="./background.html#backgroundGradient2Color">backgroundGradient2Color</a>,
+                      <a href="./network_graphs.html#calculateLayout">calculateLayout</a>,
+                      <a href="./decorations.html#decorations">decorations</a>,
+                      <a href="./decorations.html#decorationsPosition">decorationsPosition</a>,
+                      <a href="./decorations.html#decorationsType">decorationsType</a>,
+                      <a href="./gradients.html#gradient">gradient</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./network_graphs.html#networkFreezeOnLoad">networkFreezeOnLoad</a>,
+                      <a href="./network_graphs.html#nodeFontColor">nodeFontColor</a>,
+                      <a href="./animation.html#showAnimation">showAnimation</a>,
+                      <a href="./decorations.html#showDecorations">showDecorations</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

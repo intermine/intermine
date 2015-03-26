@@ -6,6 +6,7 @@
   <class name="MSA" is-interface="true">
     <attribute name="primaryIdentifier" type="java.lang.String" />
     <attribute name="alignment" type="java.lang.String" />
+    <attribute name="HMM" type="java.lang.String" />
   </class>
   <class name="ProteinFamily" is-interface="true">
     <attribute name="clusterId" type="java.lang.Integer" />

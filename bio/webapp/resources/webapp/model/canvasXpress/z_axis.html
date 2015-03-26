@@ -1,0 +1,580 @@
+<html>
+
+  <head>
+
+    <title>Z-Axis</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li class="current"><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./3d_attributes.html">3D Attributes</a></li>
+            <li><a href="./acknowledgment.html">Acknowledgment</a></li>
+            <li><a href="./animation.html">Animation</a></li>
+            <li><a href="./area_graphs.html">Area Graphs</a></li>
+            <li><a href="./aspect_ratio.html">Aspect Ratio</a></li>
+            <li><a href="./axis.html">Axis</a></li>
+            <li><a href="./axis_resizer.html">Axis Resizer</a></li>
+            <li><a href="./background.html">Background</a></li>
+            <li><a href="./bins.html">Bins</a></li>
+            <li><a href="./boxplot_graphs.html">Boxplot Graphs</a></li>
+            <li><a href="./candlestick_plots.html">Candlestick Plots</a></li>
+            <li><a href="./circular_graphs.html">Circular Graphs</a></li>
+            <li><a href="./citations_or_references.html">Citations or References</a></li>
+            <li><a href="./clustering.html">Clustering</a></li>
+            <li><a href="./colors.html">Colors</a></li>
+            <li><a href="./combination_plots.html">Combination Plots</a></li>
+            <li><a href="./correlation_graphs.html">Correlation Graphs</a></li>
+            <li><a href="./doe.html">DOE</a></li>
+            <li><a href="./data.html">Data</a></li>
+            <li><a href="./data_filters.html">Data Filters</a></li>
+            <li><a href="./data_point_attributes.html">Data Point Attributes</a></li>
+            <li><a href="./data_table.html">Data Table</a></li>
+            <li><a href="./data_table_filter.html">Data Table/Filter</a></li>
+            <li><a href="./debug.html">Debug</a></li>
+            <li><a href="./decorations.html">Decorations</a></li>
+            <li><a href="./dendrograms.html">Dendrograms</a></li>
+            <li><a href="./events.html">Events</a></li>
+            <li><a href="./foreground.html">Foreground</a></li>
+            <li><a href="./general.html">General</a></li>
+            <li><a href="./general_attributes.html">General Attributes</a></li>
+            <li><a href="./genome_browser.html">Genome Browser</a></li>
+            <li><a href="./gradients.html">Gradients</a></li>
+            <li><a href="./heatmap_graphs.html">Heatmap Graphs</a></li>
+            <li><a href="./histograms.html">Histograms</a></li>
+            <li><a href="./images.html">Images</a></li>
+            <li><a href="./indicators.html">Indicators</a></li>
+            <li><a href="./legends.html">Legends</a></li>
+            <li><a href="./line_graphs.html">Line Graphs</a></li>
+            <li><a href="./lines.html">Lines</a></li>
+            <li><a href="./margins.html">Margins</a></li>
+            <li><a href="./network_graphs.html">Network Graphs</a></li>
+            <li><a href="./overlays.html">Overlays</a></li>
+            <li><a href="./patterns.html">Patterns</a></li>
+            <li><a href="./pie_charts.html">Pie Charts</a></li>
+            <li><a href="./plot_area.html">Plot area</a></li>
+            <li><a href="./r_axis.html">R-Axis</a></li>
+            <li><a href="./random.html">Random</a></li>
+            <li><a href="./remote_procedures.html">Remote Procedures</a></li>
+            <li><a href="./samples.html">Samples</a></li>
+            <li><a href="./scatter_plot_matrix.html">Scatter Plot Matrix</a></li>
+            <li><a href="./scatter_plots.html">Scatter Plots</a></li>
+            <li><a href="./shadows.html">Shadows</a></li>
+            <li><a href="./skins.html">Skins</a></li>
+            <li><a href="./snapshots.html">Snapshots</a></li>
+            <li><a href="./space_and_width.html">Space and Width</a></li>
+            <li><a href="./tag_cloud.html">Tag Cloud</a></li>
+            <li><a href="./text.html">Text</a></li>
+            <li><a href="./titles_and_subtitles.html">Titles and Subtitles</a></li>
+            <li><a href="./variables.html">Variables</a></li>
+            <li><a href="./venn_diagrams.html">Venn Diagrams</a></li>
+            <li><a href="./videos.html">Videos</a></li>
+            <li><a href="./x_axis.html">X-Axis</a></li>
+            <li><a href="./x_axis2.html">X-Axis2</a></li>
+            <li><a href="./y_axis.html">Y-Axis</a></li>
+            <li><a href="./z_axis.html">Z-Axis</a></li>
+            <li><a href="./zooming_and_panning.html">Zooming and Panning</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="documentation">
+
+            <h1><a onclick="CanvasXpress.showAllExamples(event, 'Z-Axis')" href="#">Z-Axis</a></h1>
+
+            <div class='desc'>
+
+              <p>
+
+                Z axes parameters
+
+              </p>
+
+            </div>
+
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'setMaxZ')" href="#" id="setMaxZ">setMaxZ</a>
+                  </span>
+                  <span class="typeProperty">float</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Maximum value to set the data in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">null</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'setMinZ')" href="#" id="setMinZ">setMinZ</a>
+                  </span>
+                  <span class="typeProperty">float</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Minimum value to set the data in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">null</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxis')" href="#" id="zAxis">zAxis</a>
+                  </span>
+                  <span class="typeProperty">array</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the samples groups or variables to be displayed in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="zAxisAbsMax">zAxisAbsMax</a></span>
+                  <span class="typeProperty">float</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Maximum non-filtered value for the data plotted in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="zAxisAbsMin">zAxisAbsMin</a></span>
+                  <span class="typeProperty">float</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Minimum non-filtered value for the data plotted in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisCurrent')" href="#" id="zAxisCurrent">zAxisCurrent</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Index (zero-based) of the sample that is currently displayed in the Z axis
+		    when there are multiple series in an ScatterBubble2D
+		    plot. Use ctrl + arrow keys to cycle through data
+		    series.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisExact')" href="#" id="zAxisExact">zAxisExact</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to force exact values for the data in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="zAxisMaxStrLength">zAxisMaxStrLength</a></span>
+                  <span class="typeProperty">string</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Longest string of all the values in the ticks in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="zAxisMinorValues">zAxisMinorValues</a></span>
+                  <span class="typeProperty">array</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Values for the minor ticks in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisShow')" href="#" id="zAxisShow">zAxisShow</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show on not the values of the ticks in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisTickColor')" href="#" id="zAxisTickColor">zAxisTickColor</a>
+                  </span>
+                  <span class="typeProperty">color</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Color for the tick lines in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">rgb(204,204,204)</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisTickFormat')" href="#" id="zAxisTickFormat">zAxisTickFormat</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Format for the tick values in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisTickStyle')" href="#" id="zAxisTickStyle">zAxisTickStyle</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Style for the tick lines in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">solid</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    solid,
+                    dotted
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="zAxisTicks">zAxisTicks</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of ticks in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">10</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'zAxisTitle')" href="#" id="zAxisTitle">zAxisTitle</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Title for the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="zAxisValues">zAxisValues</a></span>
+                  <span class="typeProperty">array</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Values for the ticks in the Z axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.io.PrintWriter;
+import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -21,7 +23,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -43,10 +45,18 @@ public class CufflinksPostProcess extends PostProcessor {
 
   ObjectStoreWriter osw;
   private static final Logger LOG = Logger.getLogger(CufflinksPostProcess.class);
+  PrintWriter writer;
+  private static final int batchSize = 100000;
   
   public CufflinksPostProcess(ObjectStoreWriter osw) {
     super(osw);
     this.osw = osw;
+    try {
+    writer = new PrintWriter(new File("cufflinks_class.txt"));
+    } catch (Exception e) {
+      throw new BuildException("Problem opening writer file.");
+    }
+    
   }
 
   public void postProcess() throws BuildException {
@@ -56,36 +66,49 @@ public class CufflinksPostProcess extends PostProcessor {
     processSet("BioEntity");
     LOG.info("Processing Experiments...");
     processSet("Experiment");
+    writer.flush();
+    writer.close();
   }
   
   private void processSet(String setName) throws BuildException {
-    //Look for high and low expression cases and mark them as such.
-    List<ResultsRow<Object>> results = getCufflinksIterator(setName);
+    
+    boolean doMore = true;
+    int offset = 0;
+    int ctr = 0;
+
     Integer lastId = null;
     ArrayList<CufflinksScore> cuffGroup = null;
-    int ctr = 0;
-    for (ResultsRow<Object> rr : results) {
-      @SuppressWarnings("unchecked")
-      CufflinksScore cs = (CufflinksScore)rr.get(0);
-      Integer id = (Integer)rr.get(1);
+    
+    while (doMore) {
+      //Look for high and low expression cases and mark them as such.
+      List<ResultsRow<Object>> results = getCufflinksIterator(setName,offset);
+      doMore = false;
+      offset += batchSize;
+      for (ResultsRow<Object> rr : results) {
+        doMore = true;
+        @SuppressWarnings("unchecked")
+        CufflinksScore cs = (CufflinksScore)rr.get(0);
+        Integer id = (Integer)rr.get(1);
 
-      if (lastId == null) {
-        lastId = id;
-        cuffGroup = new ArrayList<CufflinksScore>();
-        cuffGroup.add(cs);
-      } else if (lastId.equals(id)) {
-        cuffGroup.add(cs);
-      } else if (!lastId.equals(id) ) {
-        processCuffGroup(cuffGroup,setName);
-        lastId = id;
-        cuffGroup = new ArrayList<CufflinksScore>();
-        cuffGroup.add(cs);
-      }
-      ctr++;
-      if( (ctr%10000) == 0) {
-        LOG.info("Processed "+ctr+" records...");
+        if (lastId == null) {
+          lastId = id;
+          cuffGroup = new ArrayList<CufflinksScore>();
+          cuffGroup.add(cs);
+        } else if (lastId.equals(id)) {
+          cuffGroup.add(cs);
+        } else if (!lastId.equals(id) ) {
+          processCuffGroup(cuffGroup,setName);
+          lastId = id;
+          cuffGroup = new ArrayList<CufflinksScore>();
+          cuffGroup.add(cs);
+        }
+        ctr++;
+        if( (ctr%10000) == 0) {
+          LOG.info("Processed "+ctr+" records...");
+        }
       }
     }
+    // process the final set
     processCuffGroup(cuffGroup,setName);
     LOG.info("Processed "+ctr+" records...");
   }
@@ -101,8 +124,9 @@ public class CufflinksPostProcess extends PostProcessor {
         double fpkm = cs.getFpkm();
         if (fpkm == 0.) {
           // exactly zero
-          LOG.info("Setting Not Expressed for "+cs.getId());
+          LOG.debug("Setting Not Expressed for "+cs.getId());
           cs.setLocusExpressionLevel("Not expressed");
+          cs.setLibraryExpressionLevel("Not expressed");
           osw.store(cs);
         } else {
           nSamples++;
@@ -121,22 +145,34 @@ public class CufflinksPostProcess extends PostProcessor {
         for( CufflinksScore cs : group) {
           double fpkm = cs.getFpkm();
           if (fpkm != 0.) {
+
+            writer.println((Math.log(fpkm)-mean)/stddev);
             if (Math.log(fpkm) > mean + stddev) {
               if (groupBy.equals("BioEntity") ) {
-                cs.setLocusExpressionLevel("High-ish");
+                cs.setLocusExpressionLevel("High");
               } else {
-                cs.setLibraryExpressionLevel("High-ish");
+                cs.setLibraryExpressionLevel("High");
               }
-              LOG.info("Storing high "+groupBy+" cufflinks for "+cs.getId());
+              LOG.debug("Storing high "+groupBy+" cufflinks for "+cs.getId());
               osw.store(cs);
             } else if (Math.log(fpkm) < mean - stddev) {
               if( groupBy.equals("BioEntity") ) {
-                cs.setLocusExpressionLevel("Low-ish");
+                cs.setLocusExpressionLevel("Low");
               } else {
-                cs.setLibraryExpressionLevel("Low-ish");
+                cs.setLibraryExpressionLevel("Low");
               }
-              LOG.info("Storing low "+groupBy+" cufflinks for "+cs.getId());
+              LOG.debug("Storing low "+groupBy+" cufflinks for "+cs.getId());
               osw.store(cs);
+            } else {
+              if( groupBy.equals("BioEntity") ) {
+                if( cs.getLocusExpressionLevel() != null && !cs.getLocusExpressionLevel().isEmpty() ) {
+                  LOG.warn("Locus expression level is not right for "+cs.getId());
+                }
+              } else {
+                if( cs.getLibraryExpressionLevel() != null && !cs.getLibraryExpressionLevel().isEmpty() ) {
+                  LOG.warn("Library expression level is not right for "+cs.getId());
+                }
+              }
             }
           }
         }
@@ -148,7 +184,7 @@ public class CufflinksPostProcess extends PostProcessor {
 
     
   }
-  private List<ResultsRow<Object>> getCufflinksIterator(String groupBy) throws BuildException {
+  private List<ResultsRow<Object>> getCufflinksIterator(String groupBy,int offset) throws BuildException {
     try {
       Query q = new Query();
 
@@ -179,7 +215,7 @@ public class CufflinksPostProcess extends PostProcessor {
       }
 
       ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-      List<ResultsRow<Object>> res = osw.getObjectStore().execute(q, 0, 1000, true, true,ObjectStore.SEQUENCE_IGNORE);
+      List<ResultsRow<Object>> res = osw.getObjectStore().execute(q, offset, batchSize, true, true,ObjectStore.SEQUENCE_IGNORE);
       return res;
     } catch (ObjectStoreException e) {
       LOG.error("Problem in query: " + e.getMessage());

@@ -1,0 +1,608 @@
+<html>
+
+  <head>
+
+    <title>One dimensional plots</title>
+
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+    <style type="text/css">
+      table.example {margin: 10px; border-collapse: collapse;}
+      td.example {vertical-align: top;}
+      div br {clear: both;}
+      div.code, div.json, div.pre {font-size: small; clear: both;}
+      div.desc {font-size: small;}
+      div.h3 {font-size: 150%}
+      div.h4 {font-size: 120%}
+      table.config {font-size: small; border-collapse: collapse; margin: 10px; width: 540px;}
+      td.first-col {border: 1px solid #000000; padding: 4px; width: 35%; vertical-align: top;}
+      td.sec-col {border: 1px solid #1D222B; padding: 4px; width: 65%; vertical-align: top;}
+      tr.private {background-color: #EEEEEE;}
+      tr.public {background-color: #FFFFFF;}
+      span.light {font-size: small; color: #777777; font-style: italic;}
+      caption {background-color:  #DDDDDD; border-top: 1px solid #1D222B;  border-right: 1px solid #1D222B;  border-left: 1px solid #1D222B; color: #FFFFFF: font-size: 150%; padding: 2px 6px; text-align: left;}
+      div.canvas {margin: 10px;}
+    </style>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress('canvas1',
+                                   {'z': {'Description': ['Kinase related gene'],
+                                          'Type': ['A'],
+                                          'Locus': ['Locus1'],
+                                          'Symbol': ['Symbol1']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23]]}},
+                                   {'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'showLegend': false,
+                                    'smpHairline': true,
+                                    'smpHairlineColor': 'rgb(204,204,204)',
+                                    'smpHairlineWidth': 0.3});
+
+        var cx2 = new CanvasXpress('canvas2',
+                                   {'z': {'Description': ['Kinase related gene'],
+                                          'Type': ['A'],
+                                          'Locus': ['Locus1'],
+                                          'Symbol': ['Symbol1']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23]]}},
+                                   {'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'showLegend': false,
+                                    'smpHairline': true,
+                                    'smpHairlineColor': 'rgb(255,0,255)',
+                                    'smpHairlineWidth': 0.5});
+
+        var cx3 = new CanvasXpress('canvas3',
+                                   {'z': {'Description': ['Kinase related gene', 'Protease related gene', 'GPCR related gene'],
+                                          'Type': ['A', 'B', 'A'],
+                                          'Locus': ['Locus1', 'Locus2', 'Locus3'],
+                                          'Symbol': ['Symbol1', 'Symbol2', 'Symbol3']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2', 'Patient3'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1', 'Gene2', 'Gene3'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23], [40, 65, 18, 70, 3], [30, 75, 48, 10, 53]]}},
+                                   {'blockContrast': true,
+                                    'blockFactor': 1,
+                                    'blockSeparationFactor': 1,
+                                    'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'seriesSeparationFactor': 2,
+                                    'showLegend': false});
+
+        var cx4 = new CanvasXpress('canvas4',
+                                   {'z': {'Description': ['Kinase related gene', 'Protease related gene', 'GPCR related gene'],
+                                          'Type': ['A', 'B', 'A'],
+                                          'Locus': ['Locus1', 'Locus2', 'Locus3'],
+                                          'Symbol': ['Symbol1', 'Symbol2', 'Symbol3']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2', 'Patient3'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1', 'Gene2', 'Gene3'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23], [40, 65, 18, 70, 3], [30, 75, 48, 10, 53]]}},
+                                   {'blockFactor': 1,
+                                    'blockSeparationFactor': 2,
+                                    'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'seriesSeparationFactor': 4,
+                                    'showLegend': false});
+
+        var cx5 = new CanvasXpress('canvas5',
+                                   {'z': {'Description': ['Kinase related gene'],
+                                          'Type': ['A'],
+                                          'Locus': ['Locus1'],
+                                          'Symbol': ['Symbol1']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23]]}},
+                                   {'blockFactor': 1.5,
+                                    'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'showLegend': false});
+
+        var cx6 = new CanvasXpress('canvas6',
+                                   {'z': {'Description': ['Kinase related gene'],
+                                          'Type': ['A'],
+                                          'Locus': ['Locus1'],
+                                          'Symbol': ['Symbol1']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23]]}},
+                                   {'blockFactor': 2,
+                                    'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'showLegend': false});
+
+        var cx7 = new CanvasXpress('canvas7',
+                                   {'z': {'Description': ['Kinase related gene', 'Protease related gene', 'GPCR related gene'],
+                                          'Type': ['A', 'B', 'A'],
+                                          'Locus': ['Locus1', 'Locus2', 'Locus3'],
+                                          'Symbol': ['Symbol1', 'Symbol2', 'Symbol3']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2', 'Patient3'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1', 'Gene2', 'Gene3'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23], [40, 65, 18, 70, 3], [30, 75, 48, 10, 53]]}},
+                                   {'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'plotByVariable': true,
+                                    'showLegend': false});
+
+        var cx8 = new CanvasXpress('canvas8',
+                                   {'z': {'Description': ['Kinase related gene', 'Protease related gene', 'GPCR related gene'],
+                                          'Type': ['A', 'B', 'A'],
+                                          'Locus': ['Locus1', 'Locus2', 'Locus3'],
+                                          'Symbol': ['Symbol1', 'Symbol2', 'Symbol3']},
+                                    'x': {'Tissue': ['Stomach', 'Liver', 'Pancreas', 'Lung', 'Heart'],
+                                          'Patient': ['Patient1', 'Patient2', 'Patient1', 'Patient2', 'Patient3'],
+                                          'Gender': ['M', 'M', 'F', 'F', 'M'],
+                                          'Description': ['Sample from Stomach', 'Liver biopsy', 'Sample from Pancreas', 'Lung biopsy', 'Heart sample']},
+                                    'y': {'desc': ['intensity'],
+                                          'vars': ['Gene1', 'Gene2', 'Gene3'],
+                                          'smps': ['Smp1', 'Smp2', 'Smp3', 'Smp4', 'Smp5'],
+                                          'data': [[10, 35, 88, 50, 23], [40, 65, 18, 70, 3], [30, 75, 48, 10, 53]]}},
+                                   {'graphOrientation': 'vertical',
+                                    'graphType': 'Bar',
+                                    'is3DPlot': true,
+                                    'showLegend': false});
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li class="current"><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./contact.html">Contact</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <h3><a href="./documentation.html">API Documentation</a></h3>
+
+          <ul class="graphTypes">
+            <li><a href="./3d_scatter_plot_and_networks.html">3D Scatter Plot and Networks</a></li>
+            <li><a href="./acknowledgment.html">Acknowledgment</a></li>
+            <li><a href="./animation.html">Animation</a></li>
+            <li><a href="./attributes.html">Attributes</a></li>
+            <li><a href="./axes.html">Axes</a></li>
+            <li><a href="./axis_ticks_and_titles.html">Axis Ticks and Titles</a></li>
+            <li><a href="./background.html">Background</a></li>
+            <li><a href="./bars_and_points_adjustment.html">Bars and Points Adjustment</a></li>
+            <li><a href="./clustering.html">Clustering</a></li>
+            <li><a href="./colors.html">Colors</a></li>
+            <li><a href="./data.html">Data</a></li>
+            <li><a href="./decorations.html">Decorations</a></li>
+            <li><a href="./dendrograms.html">Dendrograms</a></li>
+            <li><a href="./foreground.html">Foreground</a></li>
+            <li><a href="./general.html">General</a></li>
+            <li><a href="./gradients.html">Gradients</a></li>
+            <li><a href="./heatmaps_and_networks.html">Heatmaps and Networks</a></li>
+            <li><a href="./indicators.html">Indicators</a></li>
+            <li><a href="./legends.html">Legends</a></li>
+            <li><a href="./lines.html">Lines</a></li>
+            <li><a href="./margins.html">Margins</a></li>
+            <li><a href="./one_dimensional_plots.html">One dimensional plots</a></li>
+            <li><a href="./overlays.html">Overlays</a></li>
+            <li><a href="./patterns.html">Patterns</a></li>
+            <li><a href="./random.html">Random</a></li>
+            <li><a href="./samples.html">Samples</a></li>
+            <li><a href="./scatter_and_one_d_plots.html">Scatter and One-D Plots</a></li>
+            <li><a href="./scatter_plots.html">Scatter Plots</a></li>
+            <li><a href="./shadows.html">Shadows</a></li>
+            <li><a href="./text.html">Text</a></li>
+            <li><a href="./titles__subtitles_and_citations.html">Titles, Subtitles and Citations</a></li>
+            <li><a href="./variables.html">Variables</a></li>
+            <li><a href="./zooming_and_panning.html">Zooming and Panning</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="documentation">
+
+            <h1>One dimensional plots</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class="config">
+
+                <caption><b>General parameters for one dimensional plots</b></caption>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>blockContrast</b>
+                    </div>
+                    <div>
+                      <span class="light">{boolean}</span>&nbsp;false
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      A flag to creates a shade between the samples so there are two backgrounds, one for the odd samples and one for the even samples.
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>blockFactor</b>
+                    </div>
+                    <div>
+                      <span class="light">{integer}</span>&nbsp;1
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Factor to adjust the size of the sample blocks in the one dimensional graphs. The default is 1. If you want to make the blocks wider then increase this parameter (2 is twice as big). This only works if the auto adjust property is set to 'false'
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>blockSeparationFactor</b>
+                    </div>
+                    <div>
+                      <span class="light">{integer}</span>&nbsp;1
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Factor to adjust the spacing between the sample blocks in the one dimensional graphs. The default is 1. If you  want to make the blocks wider apart then increse this parameter (2 is twice as much). This only works if the auto adjust property is set to 'false'
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>is3DPlot</b>
+                    </div>
+                    <div>
+                      <span class="light">{boolean}</span>&nbsp;false
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Flag to create or not a 3D plot
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>plotByVariable</b>
+                    </div>
+                    <div>
+                      <span class="light">{boolean}</span>&nbsp;false
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Flag to indicate whether to group the data variable rather than by sample
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>seriesSeparationFactor</b>
+                    </div>
+                    <div>
+                      <span class="light">{float}</span>&nbsp;2
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      Factor to adjust the spacing between the series in the bar graphs
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>smpHairline</b>
+                    </div>
+                    <div>
+                      <span class="light">{option}</span>&nbsp;false
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      This is a thin line that appears in the middle of the bar graphs just for aesthetics.
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>smpHairlineColor</b>
+                    </div>
+                    <div>
+                      <span class="light">{color}</span>&nbsp;rgb(204,204,204)
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      The color for the thin line that appears in the middle of the bar graphs
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="public">
+                  <td class= "first-col">
+                    <div>
+                      <b>smpHairlineWidth</b>
+                    </div>
+                    <div>
+                      <span class="light">{float}</span>&nbsp;0.3
+                    </div>
+                  </td>
+                  <td class= "sec-col">
+                    <div>
+                      The width for the thin line that appears in the middle of the sample block just for aesthetics.
+                    </div>
+                    <div>
+                      <span class="light"></span>
+                    </div>
+                  </td>
+                </tr>
+
+              </table>
+
+              <br />
+
+              <h1>Examples</h1>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> graphOrientation, graphType, showLegend, smpHairline, smpHairlineColor, smpHairlineWidth</i>.<br><a href='' onclick='showCode(event, "canvas1")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> graphOrientation, graphType, showLegend, smpHairline, smpHairlineColor, smpHairlineWidth</i>.<br><a href='' onclick='showCode(event, "canvas2")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> blockContrast, blockFactor, blockSeparationFactor, graphOrientation, graphType, seriesSeparationFactor, showLegend</i>.<br><a href='' onclick='showCode(event, "canvas3")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas3' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> blockFactor, blockSeparationFactor, graphOrientation, graphType, seriesSeparationFactor, showLegend</i>.<br><a href='' onclick='showCode(event, "canvas4")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas4' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> blockFactor, graphOrientation, graphType, showLegend</i>.<br><a href='' onclick='showCode(event, "canvas5")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas5' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> blockFactor, graphOrientation, graphType, showLegend</i>.<br><a href='' onclick='showCode(event, "canvas6")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas6' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> graphOrientation, graphType, plotByVariable, showLegend</i>.<br><a href='' onclick='showCode(event, "canvas7")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas7' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;"> <b>Properties used:</b><i> graphOrientation, graphType, is3DPlot, showLegend</i>.<br><a href='' onclick='showCode(event, "canvas8")'>Show code</a></td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas8' width='540' height='540'></canvas></td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+
+        Copyright &copy; 2010 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

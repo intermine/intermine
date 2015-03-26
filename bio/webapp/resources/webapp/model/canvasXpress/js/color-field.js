@@ -51,12 +51,13 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
     {
       var c = this.convertFormat(color, true);
       color = (c && c.color)? c.color : 'transparent';
+      var op = c? c.alpha : 1;
       this.trigger.setStyle({
         'background-color': color,
-        filter: 'alpha(opacity='+Math.floor(c.alpha*100)+')',
-        '-moz-opacity': c.alpha,
-        '-khtml-opacity': c.alpha,
-        opacity: c.alpha
+        filter: 'alpha(opacity='+Math.floor(op*100)+')',
+        '-moz-opacity': op,
+        '-khtml-opacity': op,
+        opacity: op
       });
     }
   },

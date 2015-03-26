@@ -1,20 +1,461 @@
 // icons in for this tool comes from http://prothemedesign.com/circular-icons/
 // license says free for any use but no re-distribution, so please download it
 // directly from that site yourself or make/choose your own icons
+
+// the text legned feature requires the Ext.ux.CheckColumn.js (CheckColumn.js in Extjs package)
+function notImplemented() { Ext.Msg.alert('Error', 'Not implemented') }
 Ext.canvasXpress = Ext.extend(Ext.Panel, {
   data: false,
   options: false,
-  events: false,
+  cxpevents: false,
+  //bodyStyle: 'overflow: auto;',
+  layout: 'fit',
   contextMenu: true,
   menuTitle: 'Customize',
   showPrint: true,
+  showToolbar: true,
   changedNodes: [],
   changedEdges: [],
   removedNodes: [], // should be handled for removenode and saveallchanges events by child class that does not commit delete changes immediately to DB (which causes nodeIndice issue etc.)
   removedEdges: [], // same as above (removeedge instead of removenode of course)
   initComponent: function() {
+    this.canvasId = (this.id || Ext.id()) + 'canvas';
+    if(!this.stackViewObj) this.stackViewObj = {};
+    if(!this.listeners) this.listeners = { scope: this };
+    if(!this.listeners.resize)
+      this.listeners.resize = this.resizeCanvas.createDelegate(this);
+    if(this.options && this.options.graphType == 'Network')
+    {
+      var saveNewView = {
+          icon: this.imgDir + 'picture_add.png',
+          text: 'Save as A New View',
+          scope: this,
+          handler: this.storeView
+        }, items = [
+          {
+            icon: this.imgDir + 'add.png',
+            tooltip: 'Add Node/Edge/Legend/Network',
+            menu : {
+              items: [{
+                icon: this.imgDir + 'bullet_red.png',
+                text: 'Add Node',
+                handler: this.editNode.createDelegate(this, [null, null, true], true)
+              }, {
+                icon: this.imgDir + 'arrow.png',
+                text: 'Add Edge',
+                scope: this,
+                handler: this.editEdge
+              }, {
+                icon: this.imgDir + 'network.png',
+                text: 'Save as A New Network',
+                scope: this,
+                handler: this.editNetwork.createDelegate(this, [true])
+              }],
+              listeners: {
+                scope: this,
+                show: function(m) {
+                  for(var i = m.items.items.length; i > 2; i--)
+                    m.remove(m.items.items[i]);
+                  var al = [], l = this.canvas.data.legend;
+                  if(!l || !l.nodes || !l.nodes.length)
+                    m.add({
+                      icon: this.imgDir + 'add.png',
+                      text: 'Node Legend',
+                      handler: this.editLegend.createDelegate(this, ['node'], true)
+                    });
+                  if(!l || !l.edges || !l.edges.length)
+                    m.add({
+                      icon: this.imgDir + 'add.png',
+                      text: 'Edge Legend',
+                      handler: this.editLegend.createDelegate(this, ['edge'], true)
+                    });
+                  if(!l || !l.text || !l.text.length)
+                    m.add({
+                      icon: this.imgDir + 'add.png',
+                      text: 'Text Legend',
+                      handler: this.editLegend.createDelegate(this, ['text'], true)
+                    });
+                }
+              }
+            }
+          },
+          {
+            icon: this.imgDir + 'edit.png',
+            tooltip: 'Edit Legend/Network',
+            itemId: 'editmenu',
+            menu : {
+              items: [{
+                text: 'Edit Network',
+                itemId: 'editnet',
+                icon: this.imgDir + 'network.png',
+                scope: this,
+                handler: this.editNetwork,
+                disabled: !(this.networkInfo && this.networkInfo.id)
+              }],
+              listeners: {
+                scope: this,
+                show: function(m) {
+                  for(var i = m.items.items.length; i > 0; i--)
+                    m.remove(m.items.items[i]);
+                  var al = [], l = this.canvas.data.legend;
+                  if(!(!l || !l.nodes || !l.nodes.length))
+                    m.add({
+                      icon: this.imgDir + 'edit.png',
+                      text: 'Node Legend',
+                      handler: this.editLegend.createDelegate(this, ['node'], true)
+                    });
+                  if(!(!l || !l.edges || !l.edges.length))
+                    m.add({
+                      icon: this.imgDir + 'edit.png',
+                      text: 'Edge Legend',
+                      handler: this.editLegend.createDelegate(this, ['edge'], true)
+                    });
+                  if(!(!l || !l.text || !l.text.length))
+                    m.add({
+                      icon: this.imgDir + 'edit.png',
+                      text: 'Text Legend',
+                      handler: this.editLegend.createDelegate(this, ['text'], true)
+                    });
+                }
+              }
+            }
+          },
+          {
+            icon: this.imgDir + 'save.png',
+            tooltip: 'Save the Entire Network and Reload It (could be slow!)',
+            disabled: true,
+            scope: this,
+            handler: this.saveMap
+          },
+          {
+            icon: this.imgDir + 'turn_left.png',
+            tooltip: 'Undo',
+            disabled: true,
+            scope: this,
+            handler: function(){this.canvas.undoNetworkOp()}
+          },
+          {
+            icon: this.imgDir + 'turn_right.png',
+            tooltip: 'Redo',
+            disabled: true,
+            scope: this,
+            handler: function(){this.canvas.redoNetworkOp()}
+          },
+          {
+            icon: this.imgDir + 'power_on.png',
+            tooltip: 'Show Snapshot Control',
+            scope: this,
+            handler: function(b, e) {
+              this.toggleSnapshotCtrl(b, [e.xy[0] + 15, e.xy[1] + 15]);
+              this.toggleToolbarBtn(/power_on/.test(b.icon)?
+                {text:'Snapshot Control',icon:this.imgDir + 'power_off.png',tip:'Hide Snapshot Control'} :
+                {text:'Snapshot Control',icon:this.imgDir + 'power_on.png',tip:'Show Snapshot Control'});
+            }
+          },
+          {
+            tooltip: 'View Menu (currently in original view)',
+            icon: this.imgDir + 'picture.png',
+            itemId: 'views',
+            menu: {
+              items: [saveNewView],
+              listeners: {
+                scope: this,
+                show: function(m) {
+                  m.removeAll();
+                  if(this.pViews && this.pViews.length) // has existing pathway views
+                  {
+                    if(this.viewInfo) m.add({text:'Current view: <b>'+this.viewInfo.name+'</b>'}, '-');
+                    m.add(saveNewView, {
+                      icon: this.imgDir + 'pictures.png',
+                      text: 'Manage View(s) for This Network',
+                      scope: this,
+                      handler: function() {
+                        var win = new Ext.canvasXpress.ViewManager({list:this.pViews}, this);
+                        win.show();
+                      }
+                    });
+                    if(this.viewInfo) // current network is a view
+                    {
+                      m.add({
+                        icon: this.imgDir + 'picture_save.png',
+                        text: 'Save the Current View',
+                        handler: this.storeView.createDelegate(this, [true])
+                      }, {
+                        icon: this.imgDir + 'picture_delete.png',
+                        text: 'Delete the Current View',
+                        scope: this,
+                        handler: function() {
+                          Ext.Msg.confirm('Warning', 'Are you sure you would like to delete the view? This operation is NOT reversible!', function(btn) {
+                            if(btn == 'yes') this.deleteView(this.viewInfo.id);
+                          }, this);
+                        }
+                      }, {
+                        icon: this.imgDir + 'picture_edit.png',
+                        text: 'Edit the Current View',
+                        handler: this.editView.createDelegate(this, [this.viewInfo])
+                      }, '-', {
+                        icon: this.imgDir + 'turn_left.png',
+                        text: 'Revert to the Original View',
+                        scope: this,
+                        handler: this.revertView
+                      });
+                    }
+                    else m.add('-');
+                    for(var i = 0; i < this.pViews.length; i++)
+                    {
+                      if(!(this.viewInfo && this.viewInfo.id == this.pViews[i].id))
+                        m.add({
+                          text: 'View "' + this.pViews[i].name + '"',
+                          handler: this.loadView.createDelegate(this, [this.pViews[i]])
+                        });
+                    }
+                  }
+                  else m.add(saveNewView);
+                }
+              }
+            }
+          },
+          {
+            tooltip: 'Simple Search',
+            icon: this.imgDir + 'simple_find.png',
+            scope: this,
+            handler: this.simpleSearch
+          },
+          {
+            tooltip: 'Advanced Search',
+            icon: this.imgDir + 'advanced_find.png',
+            scope: this,
+            menu: [
+              {
+                text: 'Nodes',
+                icon: this.imgDir + 'bullet_red.png',
+                scope: this,
+                handler: this.showSearchNodes
+              },
+              {
+                text: 'Edges',
+                icon: this.imgDir + 'arrow.png',
+                scope: this,
+                handler: this.showSearchEdges
+              },
+              {
+                text: 'Mixed',
+                icon: this.imgDir + 'network.png',
+                scope: this,
+                handler: this.showSearchAll
+              }
+            ]
+          },
+          {
+            tooltip: 'Zoom Out',
+            icon: this.imgDir + 'magnifier_zoom_out.png',
+            scope: this,
+            handler: function() { this.canvas.zoom *= 0.85; this.canvas.draw(); }
+          },
+          {
+            tooltip: 'Zoom In',
+            icon: this.imgDir + 'magnifier_zoom_in.png',
+            scope: this,
+            handler: function() { this.canvas.zoom *= 1.15; this.canvas.draw(); }
+          },
+          {
+            tooltip: 'Show Hidden Nodes',
+            icon: this.imgDir + 'eye.png',
+            itemId: 'hidenode',
+            menu: [{
+              icon: this.imgDir + 'eye.png',
+              text: 'All Hidden Nodes',
+              handler: this.toggleNode.createDelegate(this, [null, false])
+            }],
+            disabled: true
+          },
+          {
+            tooltip: 'Export Network as An Image for Printing/Importing Elsewhere',
+            icon: this.imgDir + 'print.png',
+        		canvasId: this.canvasId,
+        		handler: this.onPrintGraph
+          },
+          {
+            tooltip: 'Tiled Views',
+            icon: this.imgDir + 'application_view_tile.png',
+            menu: {
+              items:[{
+                icon: this.imgDir + 'application_tile_horizontal.png',
+                text: 'Add Current View to Tile Stack',
+                scope: this,
+                handler: function() {
+                  var f = function(b, t) {
+                    if(!this.stackViewObj.stackViews) this.stackViewObj.stackViews = [[]];
+                    this.stackViewObj.stackViews[0][0] = t;
+                    Ext.Msg.prompt('Caption for the current tile', 'Please enter the caption for the current tile', function(btn, txt) {
+                      if(btn == 'ok')
+                        this.stackViewObj.stackViews.push([txt, this.canvas.canvas.toDataURL("image/png")]);
+                    }, this);
+                  }.createDelegate(this);
+                  if(this.stackViewObj.stackViews && this.stackViewObj.stackViews.length)
+                    f('ok', this.stackViewObj.stackViews[0][0]);
+                  else
+                    Ext.Msg.prompt('Main Caption', 'Please enter the title caption for all the tiles you will be adding:', f, this);
+                }
+              }],
+              listeners: {
+                scope: this,
+                show: function(m) {
+                  for(var i = m.items.items.length; i; i--)
+                    m.remove(m.items.items[i]);
+                  if(this.stackViewObj.stackViews && this.stackViewObj.stackViews.length)
+                  {
+                    m.add({
+                      icon: this.imgDir + 'application_view_tile.png',
+                      text: 'View the Tiles Now',
+                      scope: this,
+                      handler: this.showTiles
+                    }, {
+                      icon: this.imgDir + 'refresh.png',
+                      text: 'Clear the Tiles!',
+                      scope: this,
+                      handler: function() {
+                        Ext.Msg.confirm('Are you sure?', 'Resetting all tiled views is not reversible, are you sure you would like to remove all tiled views now?', function(b) {
+                          if(b == 'yes') delete this.stackViewObj.stackViews;
+                        }, this);
+                      }
+                    }, {
+                      icon: this.imgDir + 'pencil.png',
+                      text: 'Edit the Tile Titles',
+                      scope: this,
+                      handler: function() {
+                        var win = new Ext.Window({
+                          width: 400,
+                          height: 300,
+                          layout: 'fit',
+                          items: {
+                            xtype: 'editorgrid',
+                            title: 'Just click to edit any title',
+                            store: new Ext.data.ArrayStore({
+                              autoDestroy: true,
+                              fields: ['text', 'img'],
+                              data: this.stackViewObj.stackViews
+                            }),
+                            cm: new Ext.grid.ColumnModel({
+                              columns: [
+                                {
+                                  header: 'Title',
+                                  dataIndex: 'text',
+                                  editor: new Ext.form.TextField({
+                                    listeners: {
+                                      scope: this,
+                                      change: function(c, nv, ov) {
+                                        var r = c.gridEditor.record, s = r.store, idx = s.indexOf(r);
+                                        this.stackViewObj.stackViews[idx][0] = nv;
+                                      }
+                                    }
+                                  })
+                                }
+                              ]
+                            }),
+                            width: 390,
+                            height: 290,
+                            autoExpandColumn: 0,
+                            frame: false,
+                            clicksToEdit: 1
+                          }
+                        });
+                        win.show();
+                      }
+                    }, {
+                      text: 'Set the Number of Tiles Per Row',
+                      scope: this,
+                      handler: function() {
+                        Ext.Msg.prompt('Tile per Row', 'Please enter how many tiles should be put in each row:', function(btn, txt) {
+                          if(btn == 'ok')
+                          {
+                            if(!isNaN(txt) && txt >= 1 && txt <= 10)
+                              this.stackViewObj.perRow = Math.floor(txt);
+                            else
+                              Ext.Msg.alert('Error', txt + ' is an invalid number! Only numbers between 1 and 10 are accepted');
+                          }
+                        }, this, false, this.stackViewObj.perRow || 2);
+                      }
+                    });
+                  }
+                }
+              }
+            }
+          },
+          {
+            icon: this.imgDir + 'refresh.png',
+            tooltip: 'Reset View/Selection (unselect all nodes and view entire network)',
+            scope: this,
+            handler: function() { this.canvas.redraw() }
+          }
+        ];
+      if(this.toolButtons)
+      {
+        for(var i = 0; i < this.toolButtons.length; i++)
+          items.push(this.toolButtons[i]);
+      }
+      this.tbar = { items: items };
+    }
+    // initToolbarState will change toolbar buttons based on the network info when it finishes loading
     Ext.canvasXpress.superclass.initComponent.apply(this, arguments);
     this.resetChanges();
+  },
+  resizeCanvas: function(p, aw, ah, rw, rh) {
+    if(this.noResize)
+    {
+      delete this.noResize;
+      return;
+    }
+    if(!this.canvas) return;
+    if(this.options.graphType == 'Network')
+    {
+      var tmp = this.canvas.networkFreeze;
+      this.canvas.networkFreeze = false;
+      this.canvas.setDimensions(aw - 7 * 2, ah - 7 - 35); // these are hard-coded middle-container and north-container etc w/h
+      this.canvas.networkFreeze = tmp;
+    }
+    else
+      this.canvas.setDimensions(aw - 7 * 2, ah - 7 - 35); // these are hard-coded middle-container and north-container etc w/h
+  },
+  showTiles: function() {
+    var perrow = this.stackViewObj.perRow || 2, html = ['<html><head><style>td { text-align:center; }</style></head><body><h3>' + this.stackViewObj.stackViews[0][0] + '</h3>\n<table>'], w = Math.floor((window.innerWidth-15) / perrow) - 10;
+    for(var i = 1; i < this.stackViewObj.stackViews.length; i++)
+    {
+      var img = this.stackViewObj.stackViews[i];
+      if(!((i-1) % perrow))
+      {
+        if(html.length > 1) html.push('</tr>');
+        html.push('<tr>');
+      }
+      html.push('<td><img src="', img[1], '" style="width:' + w + 'px;" /><br><b>' + img[0] + '</b></td>');
+    }
+    window.open().document.write(html.join('\n') + '</tr>\n</table>\n</body></html>');
+  },
+  toggleSaveNetworkBtn: function() {
+    this.toggleToolbarBtn({text:'Save All Changes and Reload the Network',
+      toggle: !this.viewInfo && this.hasUnsavedChanges() && this.hasListener('saveallchanges')? 1 : 2});
+  },
+  toggleToolbarBtn: function(obj) {
+    var tb = this.getTopToolbar();
+    if (tb && tb.items && tb.items.items) {
+      var it = tb.items.items, b, re = new RegExp(obj.text);
+      for(var i = 0; i < it.length; i++)
+      if(re.test(it[i].tooltip))
+      {
+        b = it[i];
+        break;
+      }
+      if(b)
+      {
+        if(obj.icon) b.setIcon(obj.icon);
+        if(obj.tip) b.setTooltip(obj.tip);
+        if(obj.toggle)
+        {
+          if(obj.toggle == 1) b.enable();
+          else b.disable();
+        }
+      }
+    }
   },
   onRender:function() {
     Ext.canvasXpress.superclass.onRender.apply(this, arguments);
@@ -24,12 +465,11 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   },
   afterRender: function() {
     Ext.canvasXpress.superclass.afterRender.apply(this, arguments);
-    this.canvasId = this.id + 'canvas';
     // To cope with the remote services divs we resize the canvas
-    var dw = this.options.decreaseWidth ? this.options.decreaseWidth : 0;
-    var dh = this.options.decreaseHeight ? this.options.decreaseHeight : 0;
+    var dw = this.options.decreaseWidth || 0;
+    var dh = this.options.decreaseHeight || 0;
     var pw = this.el.dom.parentNode ? this.el.dom.parentNode.clientWidth - dw : 500;
-    var ph = this.el.dom.parentNode ? this.el.dom.parentNode.clientHeight - dh : 500;
+    var ph = this.el.dom.parentNode ? this.el.dom.parentNode.clientHeight - dh: 500;
     // Add the canvas tag
     Ext.DomHelper.append(this.body, {
       tag: 'canvas',
@@ -38,32 +478,49 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
       height: dh && ph ? ph : this.height || ph
     });
     // first set up default events
-    var events = {};
+    var cxpevents = {};
     switch(this.options.graphType) {
       case 'Network':
         this.addEvents(
           'endnodedrag','removenode','removeedge',
           'expandgroup','togglenode','togglechildren','saveallchanges',
           'updatenode','updateedge','updatenodes','updateedges',
-          'updatelegend','updateorder','leftclick','importdata');
-        events.enddragnode = this.endDrag.createDelegate(this);
-        if(this.hasListener('leftclick'))
-          events.click = function(o, e) {
+          'updatelegend','updateorder','leftclick','importdata',
+          'loadview','saveview','deleteview','doubleclick','updatetag');
+        cxpevents.enddragnode = this.endDrag.createDelegate(this);
+        cxpevents.click = function(o, e) {
+          if(this.selectCallback)
+            this.selectCallback(o, e);
+          else if(this.hasListener('leftclick'))
             this.fireEvent('leftclick', o, e)
-          }.createDelegate(this);
+        }.createDelegate(this);
+        cxpevents.dblclick = function(o, e) {
+          if(this.hasListener('doubleclick'))
+            this.fireEvent('doubleclick', o, e)
+        }.createDelegate(this);
+        cxpevents.stackchange = function(idx, len) {
+          this.toggleToolbarBtn({text:'^Redo$',toggle:idx<len-1?1:2});
+          this.toggleToolbarBtn({text:'^Undo$',toggle:idx>=1?1:2});
+        }.createDelegate(this);
         if(!this.hasListener('removenode'))
           this.on('removenode', function(n, f) { f() });
         if(!this.hasListener('removeedge'))
           this.on('removeedge', function(n, f) { f() });
     }
-    Ext.applyIf(this.events, events);
+    if(!this.cxpevents) this.cxpevents = {};
+    Ext.applyIf(this.cxpevents, cxpevents);
     // Now get the canvasXpress object
-    this.canvas = new CanvasXpress(this.canvasId, this.data, this.options, this.events);
+    this.canvas = new CanvasXpress(this.canvasId, this.data, this.options, this.cxpevents);
     this.canvas.Ext = this;
     this.canvas.highlightNode = []; // clear up the initial highlight
-    var ss = this.canvas.shapes.sort();
-    if(ss[0] != 'image') ss.unshift('image');
-    if(ss[0] != 'custom') ss.unshift('custom');
+    var ss = this.canvas.shapes, found = false;
+    for(var i = 0; i < ss.length; i++)
+      if(ss[i] == 'custom')
+      {
+        found = true;
+        break;
+      }
+    if(!found) ss.unshift('custom');
 
     if (this.canvas.version < 2) {
       var msg = 'Please download a newer version of canvasXpress at:<br>';
@@ -71,12 +528,26 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
       msg += 'You are using an older version that dO NOT support all the functionality of this panel';
       Ext.MessageBox.alert('Warning', msg);
     }
-    this.on('destroy', function(p) {
+    this.on('destroy', function(p) { // cleanup the associated toolbar, windows etc.
       if(p.snapshotCtrl) p.snapshotCtrl.close();
+      if(this.searchWin) this.searchWin.close();
+      if(this.simpleSearchWin) this.simpleSearchWin.close();
     });
     this.on('beforedestroy', function(p) {
-      p.canvas.destroy();
+      p.canvas.destroy(p.canvas.target);
     });
+    this.on('beforeclose', function(p) {
+      p.canvas.destroy(p.canvas.target);
+    });
+  },
+  initToolbarState: function() { // call it only after the network data is loaded and better, drawn
+    var hn = Ext.canvasXpress.utils.getHiddenNodes(this), tb = this.getTopToolbar();
+    if(hn.length > 1)
+    {
+      var btn = tb.getComponent('hidenode');
+      btn.menu = new Ext.menu.Menu(hn);
+      btn.enable();
+    }
   },
   onContextMenu: function (e, o, r) {
     if (e.browserEvent) {
@@ -88,11 +559,66 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
       e.stopEvent();
     }
   },
+  selectNode: function(callback) {
+//     Ext.Msg.alert('Select the node', 'Next please click on the node you want to select it');
+    this.selectCallback = function(o) {
+      if(o.nodes && o.nodes.length)
+      {
+        var node = o.nodes[0];
+//         this.canvas.flashNode(node.id);
+//         Ext.Msg.confirm('This Node?', 'Is the flashing node the correct one?', function(btn) {
+//           if(btn == 'yes')
+//           {
+
+            callback(node);
+            this.selectCallback = null;
+
+//           }
+//           else
+//             Ext.Msg.alert('Please select', 'Please select the node again');
+//         }, this);
+      }
+    }.createDelegate(this);
+  },
   networkMenu: function(o, type, it) {
-    var xy = this.canvas.adjustedCoordinates(this.clickXY);
+//     var xy = this.canvas.adjustedCoordinates(this.clickXY);
+    var xy = this.canvas.findXYCoordinates(this.clickXY);
     var items = [];
     if(type == 'cs') // right click menu only
     {
+      var func = function(nodes) {
+        this.clipboard.type = 'nodes';
+        // find the edges
+        var n1 = nodes, es = [], all = this.canvas.data.edges;
+        if(n1.length > 1)
+        {
+          var idmap = {};
+          for(var i = 0; i < n1.length; i++)
+            idmap[n1[i].id] = 1;
+          for(var i = 0; i < all.length; i++)
+          {
+            var e = all[i];
+            if(idmap[e.id1] && idmap[e.id2])
+              es.push(e);
+          }
+        }
+        this.clipboard.obj = {
+          bounds: {minX:this.canvas.minX, minY:this.canvas.minY, maxX:this.canvas.maxX, maxY:this.canvas.maxY},
+          nodes: this.canvas.cloneObject(n1),
+          edges: this.canvas.cloneObject(es),
+          extra: this.copyExtra? this.copyExtra(n1, es) : null
+        };
+      }, func1 = function(nodes) {
+        this.clipboard.type = 'nodestyle';
+        this.clipboard.obj = { node: this.canvas.cloneObject(nodes[0]) };
+      };
+
+      var tags = [], tagn = this.canvas.data.taggedNodes;
+      if(tagn)
+        for(var i in tagn)
+          tags.push(i);
+      tags.sort(Ext.canvasXpress.utils.ciSort);
+
       if(o && o.nodes && o.nodes.length) // canvasXpress only sends 1 node over
       {
         if(this.canvas.selectNode)
@@ -111,6 +637,39 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
                 o.nodes.push(this.canvas.nodes[i]);
           }
         }
+        if(this.clipboard)
+        {
+          var n1 = o.nodes, label = this.getName(n1[0]);
+          items.push({
+            icon: this.imgDir + 'copy.png',
+            text: n1.length > 1? 'Copy the Selected Node(s and Edges)' : 'Copy ' + label,
+            handler: func.createDelegate(this, [n1])
+          });
+          if(n1.length == 1)
+            items.push({
+              icon: this.imgDir + 'copy.png',
+              text: 'Copy the Style of ' + label,
+              handler: func1.createDelegate(this, [n1])
+            });
+          if(this.clipboard.type == 'nodestyle' && this.clipboard.obj && this.clipboard.obj.node)
+            items.push({
+              icon: this.imgDir + 'paste.png',
+              text: 'Apply the Copied Style (' + this.getName(this.clipboard.obj.node) + ') to ' + (n1.length > 1? 'Selected Nodes' : label),
+              scope: this,
+              handler: function() {
+                var ns = this.clipboard.obj.node, copy = {width:1,size:1,height:1,labelSize:1,imagePath:1,shape:1,color:1,hideLabel:1,rotate:1,outline:1,outlineWidth:1,pattern:1,eventless:1,hideTooltip:1,hidden:1,anchor:1,fixed:1};
+                for(var i = 0; i < o.nodes.length; i++)
+                {
+                  var nt = o.nodes[i];
+                  for(var j in copy)
+                    nt[j] = ns[j];
+                  this.addNode(nt);
+                }
+                this.canvas.draw();
+                this.canvas.addToNetworkStack();
+              }
+            });
+        }
         if(o.nodes.length > 1)
         {
           var n = o.nodes;
@@ -119,6 +678,180 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
             text: 'Edit the Selected Nodes',
             handler: this.editNode.createDelegate(this, [n], true)
           }, {
+            icon: this.imgDir + 'shape_group.png',
+            text: 'Group the Selected Nodes',
+            scope: this,
+            handler: function () {
+              // first find all the parents of the nodes
+              var conflict = false, childids = {}, allids = {}, setParent = [];
+              var seen = {}, found, found1, changed = [], f = function(nid) { // called when node added successfully
+                if(typeof(nid) == 'object') nid = nid.id;
+                for(var i = 0; i < n.length; i++)
+                  if(n[i].parentNode != nid && n[i].id != nid)
+                  {
+                    changed.push(n[i]);
+                    n[i].parentNode = nid;
+                  }
+                this.addNode(changed); // there might be a lot of nodes, saveMap makes the most sense
+                this.saveMap(null, {respectNoPost:true});
+              }.createDelegate(this);
+              for(var i = 0; i < n.length; i++)
+                allids[n[i].id] = 1;
+              for(var i = 0; i < n.length; i++)
+              {
+                var cn = n[i], bad = false;
+                if(childids[cn.id]) continue;
+                while(cn.parentNode && allids[cn.parentNode])
+                {
+                  bad = true;
+                  childids[cn.id] = 1;
+                  cn = cn.parentNode;
+                }
+                if(!bad) setParent.push(cn);
+              }
+              for(var i = 0; i < setParent.length; i++)
+              {
+                if(setParent[i].parentNode)
+                {
+                  if(found && !seen[setParent[i].parentNode])
+                  {
+                    found1 = setParent[i];
+                    conflict = true;
+                  }
+                  else if(found === undefined) found = setParent[i];
+                  seen[setParent[i].parentNode] = 1;
+                }
+              }
+              var f1 = function() {
+                if(!found || conflict) // gotta make a new node, tricky
+                {
+                  Ext.Msg.show({
+                    title:'Important',
+                    msg: 'You must either choose a group parent node or create one first. Click "Yes" then click on the node you want to choose it as group parent, "No" to create a new group parent node, and "Cancel" to abort grouping the nodes.".',
+                    buttons: Ext.Msg.YESNOCANCEL,
+                    scope: this,
+                    fn: function(btn) {
+                      if(btn == 'yes') this.selectNode(f);
+                      else if(btn == 'no')
+                      {
+                        this.editNode(null, null, null, function(node) { // node is the added node
+                          if(node.id) f(node.id);
+                          else
+                            Ext.Msg.alert('Error', 'Adding the new group node failed, so the grouping of the selected node was aborted. Please have the admin fix the add node issue before trying to group them again.');
+                        }.createDelegate(this));
+                      }
+                    },
+                    icon: Ext.MessageBox.QUESTION
+                  });
+                }
+                else f(found.parentNode);
+              }.createDelegate(this);
+              if(conflict)
+              {
+                Ext.Msg.confirm('Error', 'The nodes you selected belong to different immediate groups - e.g., '+this.getName(found1)+'\'s parent is '+this.getName(this.canvas.nodes[found1.parentNode])+', different than '+this.getName(found)+'\'s parent '+this.getName(this.canvas.nodes[found.parentNode])+'. If you press "Yes" button below, then you will be prompted to choose a new commond parent node from existing nodes or create a new node as group parent. Do you want to proceed?', function(btn) {
+                  if(btn == 'yes') f1();
+                });
+              }
+              else if(setParent.length == 1)
+              {
+                Ext.Msg.alert('Info', 'All nodes that you selected already belong to the same group (group parent is:'+this.getName(setParent[0])+')! No need for grouping again.');
+                return;
+              }
+              else f1();
+            }
+          }, {
+            icon: this.imgDir + 'shape_ungroup.png',
+            text: 'Ungroup the Selected Nodes',
+            scope: this,
+            handler: function () {
+              // first find all the parents of the nodes
+              var seen = {}, found, all = [], multi = false;
+              for(var i = 0; i < n.length; i++)
+                if(n[i].parentNode)
+                {
+                  if(found && !seen[n[i].parentNode]) multi = true;
+                  found = n[i];
+                  seen[n[i].parentNode] = 1;
+                  all.push(n[i]);
+                }
+              Ext.Msg.confirm(multi? 'Warning!!':'Confirm the operation', multi?'The nodes you selected belong to different groups. Ungrouping multiple groups at once is frequently a user mistake, are you sure you still want to proceed? This operation cannot be reverted!':'This operation cannot be reverted. Are you sure you would like to ungroup the whole group (group parent: '+this.getName(this.canvas.nodes[found.parentNode])+', '+all.length+' child node'+(all.length>1?'s':'')+')?', function(btn) {
+                if(btn == 'yes') {
+                  var changed = [];
+                  for(var i = 0; i < all.length; i++)
+                    if(all[i].parentNode)
+                    {
+                      delete all[i].parentNode;
+                      changed.push(all[i]);
+                    }
+                  this.addNode(changed); // there might be a lot of nodes, saveMap makes the most sense
+                  this.saveMap(null, {respectNoPost:true});
+                }
+              }, this);
+            }
+          }, {
+            icon: this.imgDir + 'datatable.png',
+            text: 'Show Data of the Selected Nodes',
+            scope: this,
+            handler: function() {
+              this.canvas.updateDataTable(o);
+            }
+          }, {
+            icon: this.imgDir + 'lightning.png',
+            text: 'Flash the Selected Nodes',
+            scope: this,
+            handler: function() {
+              var all = [];
+              for(var i = 0; i < n.length; i++)
+                all.push(n[i].id);
+              this.canvas.flashNode(all);
+            }
+          }, {
+            icon: this.imgDir + 'connect.png',
+            text: 'Show Nodes Connected to These Nodes',
+            handler: this.canvas.showHideSelectedDataPoint.createDelegate(this.canvas, [false, 36])
+          });
+          this.tagging(n, items, tagn);
+          items.push({
+            text: 'Align the Selected Nodes',
+            icon: this.imgDir + 'text_padding_left.png',
+            menu: [
+              {
+                icon: this.imgDir + 'text_padding_top.png',
+                text: 'Align to Top',
+                handler: this.alignNodes.createDelegate(this, [n, 84])
+              },
+              {
+                icon: this.imgDir + 'text_padding_bottom.png',
+                text: 'Align to Bottom',
+                handler: this.alignNodes.createDelegate(this, [n, 66])
+              },
+              {
+                icon: this.imgDir + 'text_padding_left.png',
+                text: 'Align to Left',
+                handler: this.alignNodes.createDelegate(this, [n, 76])
+              },
+              {
+                icon: this.imgDir + 'text_padding_right.png',
+                text: 'Align to Right',
+                handler: this.alignNodes.createDelegate(this, [n, 82])
+              },
+              {
+                icon: this.imgDir + 'text_distribute_h.png',
+                text: 'Distribute Horizontally',
+                handler: this.alignNodes.createDelegate(this, [n, 72])
+              },
+              {
+                icon: this.imgDir + 'text_distribute_v.png',
+                text: 'Distribute Vertically',
+                handler: this.alignNodes.createDelegate(this, [n, 86])
+              }
+            ]
+          }, '-', {
+            icon: this.imgDir + 'delete.png',
+            text: 'Script the Selected Nodes (Advanced)',
+            scope: this,
+            handler: this.scriptNodes.createDelegate(this, [n])
+          }, '-', {
             icon: this.imgDir + 'delete.png',
             text: 'Delete the Selected Nodes',
             scope: this,
@@ -127,12 +860,30 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
             icon: this.imgDir + 'cancel.png',
             text: 'Hide the Selected Nodes',
             handler: this.toggleNode.createDelegate(this, [n, true])
+          }, {
+            icon: this.imgDir + 'cancel.png',
+            text: 'Hide All Other Nodes',
+            handler: this.toggleNode.createDelegate(this, [n, true, true])
           });
+          if(o.nodes.length == 2)
+          {
+            var n1 = o.nodes[0], label1 = this.getName(n1),
+                n2 = o.nodes[1], label2 = this.getName(n2);
+            items.push({
+              icon: this.imgDir + 'add.png',
+              text: 'Add Edge from ' + label1 + ' to ' + label2,
+              handler: this.editEdge.createDelegate(this, [n1, 'from', n2], true)
+            }, {
+              icon: this.imgDir + 'add.png',
+              text: 'Add Edge from ' + label2 + ' to ' + label1,
+              handler: this.editEdge.createDelegate(this, [n1, 'to', n2], true)
+            });
+          }
           Ext.canvasXpress.utils.addMenu(items, n, this.nodeMenu, this);
         }
         else
         {
-          var n = o.nodes[0], label = n.label || n.name || n.id;
+          var n = o.nodes[0], label = this.getName(n);
           items.push({
             icon: this.imgDir + 'edit.png',
             text: 'Edit ' + label,
@@ -151,6 +902,111 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
             text: 'Hide ' + label,
             handler: this.toggleNode.createDelegate(this, [n, true])
           }, {
+            icon: this.imgDir + 'lightning.png',
+            text: 'Flash ' + label,
+            handler: this.canvas.flashNode.createDelegate(this.canvas, [n.id])
+          }, {
+            icon: this.imgDir + 'connect.png',
+            text: 'Show Nodes Connected to ' + label,
+            scope: this,
+            handler: function() {
+              this.canvas.selectNode = {};
+              this.canvas.isSelectedNodes = 0;
+              this.canvas.addRemoveToSelectedDataPoints([this.canvas.data.nodeIndices[n.id]]);
+              this.canvas.showHideSelectedDataPoint(false, 36);
+            }
+          });
+          this.tagging([n], items, tagn, label);
+          if(this.showAdvancedTest)
+          {
+            var nitem = [{
+              text: 'View/edit JSON for node only',
+              handler: this.editJSON.createDelegate(this, [n, 'node'])
+            }, {
+              text: 'View/edit JSON for data only',
+              handler: this.editJSON.createDelegate(this, [n, 'data'])
+            }];
+            if(this.hasListener('updatenode') && !this.viewInfo)
+              nitem.push({
+                text: 'Save this node to DB (if available)',
+                scope: this,
+                handler: function() {
+                  var nd = this.nodeDialog? this.nodeDialog(n, this) : null,
+                      p = Ext.canvasXpress.utils.clone(n);
+                  if(nd && nd.getParams) nd.getParams.call(this, n, p);
+                  this.fireEvent('updatenode', n, p, function(){}, true);
+                }
+              });
+            items.push({
+              text: 'JSON for ' + label,
+              menu: nitem
+            });
+          }
+          if(n.oldEventless)
+            items.push({
+              icon: this.imgDir + 'arrow_left.png',
+              text: 'Revert ' + label + ' To Eventless',
+              handler: this.eventlessNode.createDelegate(this, [[n], true])
+            });
+          if(n.parentNode)
+          {
+            var pn = this.canvas.nodes[n.parentNode], pl = this.getName(pn);
+            items.push({
+            text: 'Grouping',
+            menu: [
+              {
+                icon: this.imgDir + 'edit.png',
+                text: 'Edit the Group/Parent',
+                handler: this.editNode.createDelegate(this, [this.canvas.nodes[n.parentNode]], true)
+              },
+              {
+                icon: this.imgDir + 'shape_ungroup.png',
+                text: 'Ungroup ' + label,
+                scope: this,
+                handler: function() {
+                  Ext.Msg.confirm('Confirm the operation', 'This operation cannot be reverted. Are you sure you would like to ungroup this node from the group parent '+pl+'?', function(btn) {
+                    if(btn == 'yes') delete n.parentNode;
+                  }, this);
+                }
+              },
+              {
+                icon: this.imgDir + 'shape_ungroup.png',
+                text: 'Ungroup the Whole Group',
+                scope: this,
+                handler: function() {
+                  var p = n.parentNode, nodes = this.canvas.data.nodes, all = [];
+                  for(var i = 0; i < nodes.length; i++)
+                    if(nodes[i].parentNode == p)
+                      all.push(nodes[i]);
+                  Ext.Msg.confirm('Confirm the operation', 'This operation cannot be reverted. Are you sure you would like to ungroup the whole group (group parent: '+pl+', '+all.length+' child node'+(all.length>1?'s':'')+')?', function(btn) {
+                    if(btn == 'yes') {
+                      for(var i = 0; i < all.length; i++)
+                        delete all[i].parentNode;
+                    }
+                  }, this);
+                }
+              },
+              {
+                icon: this.imgDir + 'lightning.png',
+                text: 'Flash the Group/Parent',
+                handler:  this.canvas.flashNode.createDelegate(this.canvas, [n.parentNode])
+              },
+              {
+                icon: this.imgDir + 'lightning.png',
+                text: 'Flash the Whole Group',
+                scope: this,
+                handler: function() {
+                  var p = n.parentNode, nodes = this.canvas.data.nodes, all = [];
+                  for(var i = 0; i < nodes.length; i++)
+                    if(nodes[i].parentNode == p)
+                      all.push(nodes[i].id);
+                  this.canvas.flashNode(p, 'rgb(0,255,0)', 1);
+                  this.canvas.flashNode.defer(800, this.canvas, [all]);
+                }
+              }
+            ]});
+          }
+          items.push({
             text: 'Order of ' + label,
             menu: [
               {
@@ -194,7 +1050,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
               var e = es[i];
               if(e.id1 == id || e.id2 == id)
               {
-                var n1 = e.id1 == id? en[e.id2] : en[e.id1], label1 = n1.label || n1.name || n1.id;
+                var n1 = e.id1 == id? en[e.id2] : en[e.id1], label1 = this.getName(n1);
                 eMenu.push({
                   icon: this.imgDir + 'edit.png',
                   text: label1,
@@ -230,7 +1086,31 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
       else if(o && o.edges && o.edges[0])
       {
         var e = o.edges[0], n1 = this.canvas.nodes[e.id1], n2 = this.canvas.nodes[e.id2],
-            s = (n1.label || n1.name || n1.id) + ' - ' + (n2.label || n2.name || n2.id);
+            s = this.getName(n1) + ' - ' + this.getName(n2);
+        var f = function(node) {
+          var label = this.getName(node), item = {
+            icon: this.imgDir + 'edit.png',
+            text: 'Edit ' + label,
+            handler: this.editNode.createDelegate(this, [node], true)
+          }, menu = [item];
+          if(node.eventless)
+            menu.push({
+              icon: this.imgDir + 'arrows_4_way.png',
+              text: 'Make Node Draggable',
+              handler: this.eventlessNode.createDelegate(this, [[node]])
+            });
+          else if(node.oldEventless)
+            menu.push({
+              icon: this.imgDir + 'arrow_left.png',
+              text: 'Revert To Eventless',
+              handler: this.eventlessNode.createDelegate(this, [[node], true])
+            });
+          else return item;
+          return {
+            text: label + (node.eventless? ' *' : ''),
+            menu: menu
+          }
+        }.createDelegate(this);
         items.push({
           icon: this.imgDir + 'edit.png',
           text: 'Edit ' + s,
@@ -243,7 +1123,45 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
           icon: this.imgDir + 'delete.png',
           text: 'Delete ' + s,
           handler: this.deleteEdge.createDelegate(this, [e])
-        });
+        }, f(n1), f(n2));
+        if(this.showAdvancedTest)
+        {
+          var eitem = [{
+              text: 'View/edit JSON for edge only',
+              handler: this.editJSON.createDelegate(this, [e, 'edge'])
+            }, {
+              text: 'View/edit JSON for data only',
+              handler: this.editJSON.createDelegate(this, [e, 'data'])
+            }];
+          if(this.hasListener('updateedge') && !this.viewInfo)
+            eitem.push({
+              text: 'Save this edge to DB (if available)',
+              scope: this,
+              handler: function() {
+                var ed = this.edgeDialog? this.edgeDialog(e, this) : null,
+                    p = Ext.canvasXpress.utils.clone(e);
+                if(ed && ed.getParams) ed.getParams.call(this, e, p);
+                p.linetype = p.type;
+                this.fireEvent('updateedge', e, p, function(){}, true);
+              }
+            });
+          items.push({
+            text: 'JSON for this edge',
+            menu: eitem
+          });
+        }
+        if(n1.eventless && n2.eventless)
+          menu.push({
+            icon: this.imgDir + 'arrows_4_way.png',
+            text: 'Make Both Nodes Draggable',
+            handler: this.eventlessNode.createDelegate(this, [[n1, n2]])
+          });
+        if(n1.oldEventless && n2.oldEventless)
+          menu.push({
+            icon: this.imgDir + 'arrow_left.png',
+            text: 'Revert Both Nodes To Eventless',
+            handler: this.eventlessNode.createDelegate(this, [[n1, n2], true])
+          });
         Ext.canvasXpress.utils.addMenu(items, e, this.edgeMenu, this);
       }
       else
@@ -321,17 +1239,82 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
             text: 'Edit Legend',
             menu: el
           });
-        var hidden = this.canvas.getHiddenNodes(), hn = [];
-        for(var i = 0; i < hidden.length; i++)
+        if(this.clipboard)
         {
-          var sn = hidden[i];
-          hn.push({
-            icon: this.imgDir + 'eye.png',
-            text: sn.label || sn.name || sn.id,
-            handler: this.toggleNode.createDelegate(this, [sn, false])
+          items.push({
+            icon: this.imgDir + 'copy.png',
+            text: 'Copy All Nodes & Edges',
+            handler: func.createDelegate(this, [this.data.nodes])
           });
+          var f = function(clean) {
+            var s = this.clipboard.obj.bounds, n = this.clipboard.obj.nodes,
+                e = this.clipboard.obj.edges, newn = this.canvas.data.nodes,
+                newe = this.canvas.data.edges, maxX = this.canvas.maxX || s.maxX,
+                maxY = this.canvas.maxY || s.maxY, minX = this.canvas.minX || s.minX,
+                minY = this.canvas.minY || s.minY, rx = (s.maxX - s.minX)/(maxX - minX),
+                ry = (s.maxY - s.minY)/(maxY - minY), idmap = {}, bounds = {},
+                rs = rx > ry ? ry : rx;
+            // find paste nodes' boundary
+            for(var i = 0; i < n.length; i++)
+            {
+              if(bounds.minX === undefined || n[i].x < bounds.minX) bounds.minX = n[i].x;
+              if(bounds.minY === undefined || n[i].y < bounds.minY) bounds.minY = n[i].y;
+              if(bounds.maxX === undefined || n[i].x > bounds.maxX) bounds.maxX = n[i].x;
+              if(bounds.maxY === undefined || n[i].y > bounds.maxY) bounds.maxY = n[i].y;
+            }
+            if(isNaN(xy.x)) xy.x = (bounds.maxX + bounds.minX) / 2;
+            if(isNaN(xy.y)) xy.y = (bounds.maxY + bounds.minY) / 2;
+            var mx = xy.x - (bounds.maxX - bounds.minX) / (rx*2), my = xy.y - (bounds.maxY - bounds.minY) / (2*ry);
+            for(var i = 0; i < n.length; i++)
+            {
+              // convert coordinates
+              n[i].x = (n[i].x - bounds.minX) / rx + mx;
+              n[i].labelX = (n[i].labelX - bounds.minX) / rx + mx;
+              n[i].y = (n[i].y - bounds.minY) / ry + my;
+              n[i].labelY = (n[i].labelY - bounds.minY) / ry + my;
+              if(n[i].width) n[i].width /= rx;
+              if(n[i].height) n[i].height /= ry;
+              if(n[i].size) n[i].size /= rs;
+              if(n[i].labelSize) n[i].labelSize /= rs;
+              var id = n[i].id;
+              delete n[i].id;
+              if(this.cleanNode) this.cleanNode(n[i], clean);
+              else delete n[i].data;
+              this.canvas.addNode(n[i]);
+              idmap[id] = n[i].id;
+              this.addNode(n[i]);
+            }
+            for(var i = 0; i < n.length; i++)
+              if(n[i].parentNode !== undefined) // set parentNode as needed
+                n[i].parentNode = idmap[n[i].parentNode];
+            for(var i = 0; i < e.length; i++)
+            {
+              e[i].id1 = idmap[e[i].id1];
+              e[i].id2 = idmap[e[i].id2];
+              if(e[i].width) e[i].width /= rs;
+              if(this.cleanEdge) this.cleanEdge(e[i], clean);
+              else delete e[i].data;
+              this.canvas.addEdge(e[i]);
+              this.addEdge(e[i]);
+            }
+            if(this.pasteExtra) this.pasteExtra();
+            this.canvas.draw();
+            this.canvas.addToNetworkStack();
+          }.createDelegate(this);
+          if(this.clipboard.type == 'nodes' && this.clipboard.obj && this.clipboard.obj.bounds)
+            items.push({
+              icon: this.imgDir + 'paste.png',
+              text: 'Paste the Copied Node(s and Edges)',
+              scope: this,
+              handler: function() {
+                if((this.hasNote(this.clipboard.obj.nodes) || this.hasNote(this.clipboard.obj.edges)) && this.warnClean) 
+                  this.warnClean(f);
+                else f(true);
+              }
+            });
         }
-        if(hn.length)
+        var hn = Ext.canvasXpress.utils.getHiddenNodes(this);
+        if(hn.length > 1)
           items.push({
             text: 'Show Hidden Nodes',
             menu: hn
@@ -350,15 +1333,183 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
             scope: this.canvas,
             handler: this.canvas.redoNetworkOp
           });
+        if(!this.canvas.data.legend) this.canvas.data.legend = {};
+        if(!this.canvas.data.legend.nodes) this.canvas.data.legend.nodes = [];
+        if(!this.canvas.data.legend.edges) this.canvas.data.legend.edges = [];
+        if(!this.canvas.data.legend.text) this.canvas.data.legend.text = [];
+        items.push({
+          text: 'Make Anchor Nodes ' + (this.canvas.overrideAnchorNodes? 'Hidden':'Visible'),
+          scope: this,
+          handler: function() {
+            // for compatibility reasons, try converting user-hidden nodes to anchor nodes
+            var ns = this.canvas.data.nodes;
+            for(var i = 0; i < ns.length; i++)
+            {
+              var n = ns[i];
+              if(/rgba\(.*,\s*0\)/i.test(n.color) && /rgba\(.*,\s*0\)/i.test(n.outline) && n.eventless)
+              {
+                n.width = 10;
+                n.height = 10;
+                n.shape = 'square';
+                n.color = 'rgb(255,255,0)';
+                n.outline = 'rgb(255,0,0)';
+                n.anchor = true;
+                n.eventless = false;
+                n.fixed = false;
+                this.addNode(n);
+              }
+            }
+            this.canvas.overrideAnchorNodes = !this.canvas.overrideAnchorNodes;
+            this.canvas.draw();
+          }
+        }, {
+          text: 'Make Eventless Nodes ' + (this.canvas.overrideEventlessNodes? 'Unmovable':'Movable'),
+          scope: this.canvas,
+          handler: function() {
+            this.overrideEventlessNodes = !this.overrideEventlessNodes;
+            this.draw();
+          }
+        });
+        if(tags.length)
+        {
+          var showtag = function(hide) {
+            var ns = [];
+            for(var name in tagn)
+            {
+              var tag = tagn[name], n = tag.nodes;
+              tag.show = !hide;
+              for(var i in n) ns.push(i);
+            }
+            this.canvas.hideUnhideNodes(ns, hide);
+            this.canvas.draw();
+          }, shm = [{
+            text: 'Show All',
+            handler: showtag.createDelegate(this, [false])
+          }, {
+            text: 'Hide All',
+            handler: showtag.createDelegate(this, [true])
+          }], tnm = [], anm = [], fnm = [], tmenu = [];
+          for(var i = 0; i < tags.length; i++)
+          {
+            var j = tags[i];
+            shm.push({
+              xtype: 'menucheckitem',
+              text: j,
+              checked: !!tagn[j].show,
+              scope: this,
+              handler: function(b) {
+                var tag = tagn[b.text], n = tag.nodes, ns = [];
+                tag.show = !b.checked;
+                for(var i in n)
+                {
+                  var notshown = true;
+                  if(b.checked)
+                  {
+                    for(var j in tagn)
+                    {
+                      if(j == b.text) continue;
+                      if(tagn[j].nodes[i] && tagn[j].show) // check if this node belongs to other tags that are currently showing
+                      {
+                        notshown = false;
+                        break;
+                      }
+                    }
+                  }
+                  if(notshown)
+                    ns.push(i);
+                }
+                this.canvas.hideUnhideNodes(ns, b.checked);
+                this.canvas.draw();
+//                 this.tagChanged = true; // right now we always show all tagged nodes at network first load, so don't set tagChanged to true here for show/hide operations
+                b.setChecked(tag.show);
+                return false;
+              }
+            });
+            tnm.push({
+              xtype: 'menucheckitem',
+              text: j,
+              scope: this,
+              group: 'tnm',
+              handler: function(b) {
+                if(b.checked) return false;
+                var n = tagn[b.text].nodes, ns = [];
+                for(var i in n) ns.push(i);
+                this.canvas.setSelectNodes(ns);
+                this.canvas.draw();
+                b.setChecked(true);
+                return false;
+              }
+            });
+            anm.push({
+              xtype: 'menucheckitem',
+              text: j,
+              scope: this,
+              handler: function(b) {
+                if(b.checked) return false;
+                var n = tagn[b.text].nodes, ns = [];
+                for(var i in n) ns.push(i);
+                for(var i in this.canvas.selectNode) ns.push(i);
+                this.canvas.setSelectNodes(ns);
+                this.canvas.draw();
+                b.setChecked(true);
+                return false;
+              }
+            });
+            fnm.push({
+              xtype: 'menucheckitem',
+              text: j,
+              scope: this,
+              group: 'fnm',
+              handler: function(b) {
+                var n = tagn[b.text].nodes, ns = [];
+                for(var i in n) ns.push(i);
+                this.canvas.flashNode(ns);
+                b.setChecked(true);
+                return false;
+              }
+            });
+          }
+          tmenu.push({
+              text: 'Flash those tagged',
+              menu: fnm
+            }, {
+              text: 'Select those tagged',
+              menu: tnm
+            }, {
+              text: 'Add to selection those tagged',
+              menu: anm
+            }, {
+            text: 'Show/hide the nodes tagged',
+            scope: this,
+            menu: shm
+          });
+          if(this.hasListener('updatetag') && !this.viewInfo && this.tagChanged)
+            tmenu.push({
+              text: 'Save the tags to DB (if available)',
+              scope: this,
+              handler: this.updateTag
+            });
+          items.push({
+            text: 'Manage Tags',
+            icon: this.imgDir + 'tag_blue.png',
+            menu: tmenu
+          });
+        }
         if(this.showNetworkEditItems)
         {
           items.push('-', {
-            text: 'Edit Network',
-            icon: this.imgDir + 'edit.png',
-            scope: this,
-            handler: this.editNetwork
+            text: 'Save as A New Network',
+            icon: this.imgDir + 'add.png',
+            handler: this.editNetwork.createDelegate(this, [true])
           });
-          if(this.hasUnsavedChanges() && this.hasListener('saveallchanges'))
+          if(this.networkInfo.id && !this.viewInfo)
+            items.push({
+              text: 'Edit Network',
+              icon: this.imgDir + 'edit.png',
+              scope: this,
+              handler: this.editNetwork
+            });
+          if(!this.viewInfo && this.hasUnsavedChanges() && this.hasListener('saveallchanges'))
             items.push({
               text: 'Save the Network Now',
               icon: this.imgDir + 'save.png',
@@ -368,7 +1519,13 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
         }
         items.push('-',
           {
-            icon: this.imgDir + 'magnify.png',
+            text: 'Simple Search',
+            icon: this.imgDir + 'simple_find.png',
+            scope: this,
+            handler: this.simpleSearch
+          },
+          {
+            icon: this.imgDir + 'advanced_find.png',
             text: 'Search for',
             menu: [
               {
@@ -387,14 +1544,27 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
                 handler: this.showSearchAll
               }
             ]
-          }, '-',
-          {
-            icon: this.snapshotCtrl && !this.snapshotCtrl.hidden? this.imgDir + 'power_off.png' : this.imgDir + 'power_on.png',
-            text: this.snapshotCtrl && !this.snapshotCtrl.hidden? 'Hide Snapshot Control':'Show Snapshot Control',
-            scope: this,
-            handler: this.toggleSnapshotCtrl
-          }
+          }, '-'
         );
+        items.push({
+          icon: this.showToolbar? this.imgDir + 'power_off.png' : this.imgDir + 'power_on.png',
+          text: this.showToolbar? 'Hide Toolbar':'Show Toolbar',
+          scope: this,
+          handler: function() {
+            var t = this.getTopToolbar();
+            if(this.showToolbar) t.hide();
+            else t.show();
+            this.showToolbar = !this.showToolbar;
+          }
+        });
+        if(!this.showToolbar)
+          items.push(
+            {
+              icon: this.snapshotCtrl && !this.snapshotCtrl.hidden? this.imgDir + 'power_off.png' : this.imgDir + 'power_on.png',
+              text: this.snapshotCtrl && !this.snapshotCtrl.hidden? 'Hide Snapshot Control':'Show Snapshot Control',
+              scope: this,
+              handler: this.toggleSnapshotCtrl
+            });
         if(this.showAdvancedTest)
         {
           var ti = [
@@ -404,6 +1574,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
             }, {
               text: 'Export JSON Data',
               handler: this.exchangeData.createDelegate(this, ['Export'])
+            }, {
+              text: 'Export JSON for CXP Test',
+              handler: this.exchangeData.createDelegate(this, ['Export', true])
             }, {
               text: 'Import JSON Movie',
               handler: this.exchangeData.createDelegate(this, ['ImportMovie'])
@@ -419,10 +1592,37 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
               scope: this,
               handler: this.saveMap.createDelegate(this, [1], false)
             });
+          var eitem = [{
+            text: 'View/edit all legends',
+            handler: this.editJSON.createDelegate(this, [this.canvas.data.legend, 'legend'])
+          }, {
+            text: 'View/edit node legend',
+            handler: this.editJSON.createDelegate(this, [this.canvas.data.legend.nodes, 'nodelegend'])
+          }, {
+            text: 'View/edit edge legend',
+            handler: this.editJSON.createDelegate(this, [this.canvas.data.legend.nodes, 'edgelegend'])
+          }, {
+            text: 'View/edit edge legend',
+            handler: this.editJSON.createDelegate(this, [this.canvas.data.legend.text, 'textlegend'])
+          }, {
+            text: 'View/edit network config',
+            handler: this.editJSON.createDelegate(this, [this.canvas.getUserConfig(), 'config'])
+          }];
+          if(this.hasListener('updatelegend') && !this.viewInfo)
+            eitem.push({
+              text: 'Save the legends to DB (if available)',
+              scope: this,
+              handler: function() {
+                this.fireEvent('updatelegend', function(){}, true);
+              }
+            });
           items.push({
             text: 'Advanced Test',
             menu: ti
-          });
+          }, {
+          text: 'JSON for legend/config',
+          menu: eitem
+        });
         }
         Ext.canvasXpress.utils.addMenu(items, null, this.nullMenu, this);
       }
@@ -438,9 +1638,277 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
 //         }, '-');
     }
   },
+  tagging: function(nodes, items, tagn, label) {
+    var belong = [], notb = [], belongm = [], notbm = [];
+    if(tagn)
+    {
+      var bseen = {}, nseen = {};
+      for(var i in tagn)
+      {
+        for(var j = 0; j < nodes.length; j++)
+        {
+          var n = nodes[j];
+          if(bseen[i] && nseen[i]) break;
+          if(!bseen[i] && tagn[i].nodes[n.id])
+          {
+            belong.push(i);
+            bseen[i] = 1;
+          }
+          else if(!nseen[i] && !tagn[i].nodes[n.id])
+          {
+            notb.push(i);
+            nseen[i] = 1;
+          }
+        }
+      }
+      belong.sort(Ext.canvasXpress.utils.ciSort);
+      notb.sort(Ext.canvasXpress.utils.ciSort);
+    }
+    var setTag = function(txt) {
+      for(var j = 0; j < nodes.length; j++)
+      {
+        var n = nodes[j];
+        tagn[txt].nodes[n.id] = 1;
+      }
+      this.tagChanged = true;
+    }.createDelegate(this), tmenu = [
+      {
+        text: 'Add to a new tag',
+        scope: this,
+        handler: function() {
+          Ext.Msg.prompt('Create Tag', 'Please enter tag name:', function(btn, txt) {
+            if(btn == 'ok')
+            {
+              if(!tagn)
+              {
+                this.canvas.data.taggedNodes = {};
+                tagn = this.canvas.data.taggedNodes;
+              }
+              if(tagn[txt])
+              {
+                Ext.Msg.confirm('Tag exists', 'This tag "' + txt + '" already exists. Do you want to add the node to the existing tag?', function(btn) {
+                  if(btn == 'yes') setTag(txt);
+                });
+                return;
+              }
+              else
+              {
+                tagn[txt] = {show:true, nodes:{}};
+                setTag(txt);
+              }
+            }
+          }, this);
+        }
+      }
+    ];
+    if(notb.length)
+    {
+      for(var i = 0; i < notb.length; i++)
+        notbm.push({
+          text: notb[i],
+          scope: this,
+          handler: function(b) {
+            setTag(b.text);
+          }
+        });
+      tmenu.push({
+        text: 'Add to the tag',
+        scope: this,
+        menu: notbm
+      });
+    }
+    if(belong.length)
+    {
+      for(var i = 0; i < belong.length; i++)
+        belongm.push({
+          text: belong[i],
+          scope: this,
+          handler: function(b) {
+            for(var j = 0; j < nodes.length; j++)
+            {
+              var n = nodes[j];
+              delete tagn[b.text].nodes[n.id];
+            }
+            var found = false;
+            for(var i in tagn[b.text].nodes)
+            {
+              found = true;
+              break;
+            }
+            if(!found) delete tagn[b.text];
+            this.tagChanged = true;
+          }
+        });
+      tmenu.push({
+        text: 'Remove from the tag',
+        scope: this,
+        menu: belongm
+      });
+    }
+    items.push({
+      icon: this.imgDir + 'tag_blue.png',
+      text: 'Tagging ' + (nodes.length > 1? 'the Selected Nodes' : label),
+      scope: this,
+      menu: tmenu
+    });
+  },
+  editJSON: function(obj, type) {
+    var data;
+    if(type == 'data')
+    {
+      data = this.encode(obj.data || '');
+    }
+    else
+    {
+      var tmp = obj.data;
+      delete obj.data;
+      data = this.encode(obj);
+      obj.data = tmp;
+    }
+    var win = new Ext.Window({
+      title: 'JSON Data',
+      width: 500,
+      height: 300,
+      layout: 'fit',
+      items: {
+        xtype: 'form',
+        border: false,
+        width: 480,
+        style:'margin:5px',
+        items: [
+          {
+            xtype: 'textarea', hideLabel: true, width: 473, height: 230,
+            value: data
+          }
+        ]
+      },
+      bbar: {
+        items: [
+          '->',
+          {
+            text: 'Apply!',
+            scope: this,
+            handler: function(b, e) {
+              var json = b.ownerCt.ownerCt.get(0).get(0).getValue();
+              try
+              {
+                var tmp = Ext.decode(json);
+                switch(type) {
+                  case 'data':
+                    obj.data = tmp;
+                    break;
+                  case 'config':
+                    this.canvas.updateConfig(tmp);
+                    break;
+                  default:
+                    var td = obj.data;
+                    for(var i in obj)
+                      obj[i] = undefined;
+                    for(var i in tmp)
+                      obj[i] = tmp[i];
+                    if(td != undefined)
+                      obj.data = td;
+                }
+                this.canvas.draw();
+              }
+              catch(e)
+              {
+                Ext.Msg.alert('Error', e);
+              }
+            }
+          }
+        ]
+      }
+    });
+    win.show();
+  },
+  getName: function(n) {
+    return n? n.label || n.name || n.tooltip || n.id || '' : '';
+  },
+  alignNodes: function(nodes, o) {
+    this.canvas.alignDistributeSelectedNodes(false, o);
+    this.addNode(nodes);
+  },
+  scriptNodes: function(nodes) {
+    var win = new Ext.Window({
+      title: 'Modify selected nodes with Javascript',
+      width: 300,
+      height: 200,
+      layout: 'fit',
+      items: [
+        {
+          border: false,
+          html: 'Enter Javascript script below in the form of a loop that work on an array name "nodes", like "for(var i = 0; i < nodes.length; i++) { /* modify nodes[i] */ }"'
+        },
+        {
+          xtype: 'textarea',
+          width: 280,
+          labelWidth: 80,
+          emptyText: 'for(var i = 0; i < nodes.length; i++)\n{\n  var n = nodes[i];\n  n.label = "test label";\n  n.shape = "oval";\n  ...\n}'
+        }
+      ],
+      bbar: {
+        items: [
+          '->',
+          {
+            text: 'Run Script',
+            scope: this,
+            handler: function(b, e) {
+              var val = b.ownerCt.ownerCt.get(0).get(1).getValue();
+              try {
+                eval('function tmpJS4NodeMod(nodes) {' + val + '}');
+                tmpJS4NodeMod(nodes);
+                for(var i = 0; i < nodes.length; i++)
+                  this.addNode(nodes[i]);
+                this.canvas.draw();
+                this.canvas.addToNetworkStack();
+              }
+              catch(e) {
+                alert('Problem running your script - ' + e + '\nPlease correct it before trying again');
+                return;
+              }
+            }
+          }
+        ]
+      }
+    });
+    win.show();
+  },
+  eventlessNode: function(nodes, toEventless) {
+    if(nodes && nodes.length)
+    {
+      var process = function(node, o) {
+        node.width = o.width;
+        node.height = o.height;
+        node.size = o.size;
+        node.color = o.color;
+        node.shape = o.shape;
+      }
+      for(var i = 0; i < nodes.length; i++)
+      {
+        var node = nodes[i];
+        if(toEventless)
+        {
+          process(node, node.oldEventless);
+          node.eventless = true;
+          delete node.oldEventless;
+        }
+        else
+        {
+          node.oldEventless = {};
+          process(node.oldEventless, node);
+          process(node, {
+            size:1, width:10, height:10, shape: 'square', color: 'rgb(255,0,0)'
+          });
+          node.eventless = false;
+        }
+      }
+      this.canvas.draw();
+    }
+  },
   hasUnsavedChanges: function() {
     return this.changedNodes.length || this.changedEdges.length || this.removedNodes.length ||
-           this.removedEdges.length || this.legendChanged || this.orderChanged || this.networkChanged;
+           this.removedEdges.length || this.legendChanged || this.orderChanged || this.networkChanged || this.tagChanged;
   },
   createContextMenu: function (e) {
     var o = this.canvas.getEventAreaData(e.browserEvent), items = [];
@@ -1668,7 +3136,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     ];
   },
   fontName: function() {
-    return this.buildGroupMenu('fontName', this.canvas.fonts);
+    return this.buildGroupMenu('fontName', this.canvas.fonts || []);
   },
   fontSize: function() {
     return this.buildGroupMenu('maxTextSize', [8, 9, 10, 11, 12, 13, 14, 15, 16]);
@@ -2616,7 +4084,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     if(n && n.nodes && n.nodes.length)
     {
       this.addNode(n.nodes);
-      this.fireEvent('endnodedrag', n.nodes, function(s) {
+      if(!this.viewInfo) this.fireEvent('endnodedrag', n.nodes, function(s) {
         if(s) this.removeNode(n.nodes);
       }.createDelegate(this));
     }
@@ -2627,19 +4095,49 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     if(b.text.match(/expand/i)) n.hideChildren = false;
     else n.hideChildren = true;
     this.addNode(n);
-    this.fireEvent('expandgroup', n, this.removeNode.createDelegate(this, [n]));
+    if(!this.viewInfo) this.fireEvent('expandgroup', n, this.removeNode.createDelegate(this, [n]));
     this.canvas.draw();
   },
-  toggleNode: function(n, hide) {
+  toggleNode: function(n, hide, other) {
     var ns = [];
-    if(n.length && !n.id)
+    if(!n) // unhide all
+    {
+      n = [];
+      for(var i in this.canvas.nodes)
+      {
+        var node = this.canvas.nodes[i];
+        if(node.hide)
+        {
+          ns.push(node.id);
+          n.push(node);
+        }
+      }
+    }
+    else if(other) // hide all other
+    {
+      var tmp = {};
+      if(!Ext.isArray(n)) n = [n];
+      for(var i = 0; i < n.length; i++)
+        tmp[n[i].id] = n[i];
+      n = [];
+      for(var i in this.canvas.nodes)
+      {
+        var node = this.canvas.nodes[i];
+        if(!tmp[node.id])
+        {
+          ns.push(node.id);
+          n.push(node);
+        }
+      }
+    }
+    else if(n.length && !n.id)
       for(var i = 0; i < n.length; i++)
         ns.push(n[i].id);
     else ns.push(n.id);
     this.canvas.hideUnhideNodes(ns, hide);
-    this.canvas.selectNode = [];
+    this.canvas.selectNode = {};
     this.addNode(n);
-    this.fireEvent('togglenode', n, hide, this.removeNode.createDelegate(this, [n]));
+    if(!this.viewInfo) this.fireEvent('togglenode', n, hide, this.removeNode.createDelegate(this, [n]));
     this.canvas.draw();
   },
   changeNodeOrder: function(n, dir) {
@@ -2647,40 +4145,319 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     this.updateOrder();
     this.canvas.draw();
   },
+  hasNote: function(o) {
+    if(!o) return false;
+    if(o.length)
+    {
+      for(var i = 0; i < o.length; i++)
+      {
+        var o1 = o[i];
+        if(o1.data && o1.data.note)
+          return true;
+      }
+      return false;
+    }
+    return o.data && o.data.note;
+  },
   copyObj: function(b, e, type, o) {
-    var w;
     o = this.canvas.cloneObject(o);
-    delete o.data;
+    var hasNote = this.hasNote(o);
     if(type == 'node')
     {
       delete o.id;
-      w = new Ext.canvasXpress.nodeDialog(o, this);
+      var f = function(clean) {
+        if(this.cleanNode) this.cleanNode(o, clean);
+        else delete o.data;
+        var w = new Ext.canvasXpress.nodeDialog(o, this);
+        w.show();
+      }.createDelegate(this);
+      if(hasNote && this.warnClean) this.warnClean(f);
+      else f(true);
     }
     else if(type == 'edge')
     {
       delete o.id1;
       delete o.id2;
-      w = new Ext.canvasXpress.edgeDialog(o, null, this);
+      var f = function(clean) {
+        if(this.cleanEdge) this.cleanEdge(o, clean);
+        else delete o.data;
+        var w = new Ext.canvasXpress.edgeDialog(o, null, this);
+        w.show();
+      }.createDelegate(this);
+      if(hasNote && this.warnClean) this.warnClean(f);
+      else f(true);
     }
+  },
+  editNode: function(b, e, o, callback, needXY) {
+    if(needXY) this.clickXY = [e.x + 50, e.y + 50];
+    var w = new Ext.canvasXpress.nodeDialog(o, this, callback);
     w.show();
   },
-  editNode: function(b, e, o) {
-    var w = new Ext.canvasXpress.nodeDialog(o, this);
+  editEdge: function(b, e, o, dir, o1) {
+    var w = new Ext.canvasXpress.edgeDialog(o, dir, this, o1);
     w.show();
   },
-  editEdge: function(b, e, o, dir) {
-    var w = new Ext.canvasXpress.edgeDialog(o, dir, this);
-    w.show();
+  makeOENode: function(o) {
+    // confirm first
+    Ext.Msg.confirm('Warning', 'Once a node is turned into a Special Anchor Node, it loses its original styles (size, color, image ...) forever. Are you sure you would like to proceed?', function(btn) {
+      if(btn == 'yes')
+      {
+        o.width = 10;
+        o.height = 10;
+        o.color = 'rgba(0,0,0,0)';
+        o.outline = 'rgba(0,0,0,0)';
+        o.eventless = true;
+        this.addNode(o);
+        this.canvas.draw();
+//         this.canvas.addToNetworkStack(); // didn't seem to work?
+      }
+    }, this);
+  },
+  addOEEdge: function(b, e, o, dir, o1) {
+  },
+  toggleOEEdge: function(show) {
+  },
+  simpleSearch: function() {
+    var win = new Ext.Window({
+      title: 'Search for Nodes and Edges',
+      width: 550,
+      height: 300,
+      stateId: 'extcxp-simplesearch',
+      stateful: true,
+      stateEvents: ['move','resize'],
+      constrainHeader: true,
+      x: 50,
+      layout: 'anchor',
+      items: [{
+          xtype: 'form',
+          border: false,
+//           height: 35,
+          items: [{
+            xtype: 'compositefield',
+            fieldLabel: 'Search Value',
+            labelStyle: 'margin-left:5px;margin-top:5px',
+            style: 'margin:5px 5px 0px 5px;',
+            items: [{
+              xtype: 'textfield',
+              emptyText: 'RegEx is accepted',
+              enableKeyEvents: true,
+              width: 200,
+              listeners: {
+                scope: this,
+                keyup: function(f, e) {
+                  if(e.getKey() == 13)
+                  {
+                    var b = f.nextSibling();
+                    b.initialConfig.handler.call(this, b);
+                  }
+                }
+              }
+            }, {
+              xtype: 'button',
+              text: 'Search',
+              scope: this,
+              handler: function(b) {
+                if(!this.canvas.data) return;
+                var text = b.previousSibling().getValue(), once = b.nextSibling().getValue();
+                var re = new RegExp(text, 'i'), re1 = new RegExp('('+text+')', 'i');
+                // now do the search
+                var nodes = this.canvas.data.nodes || [], edges = this.canvas.data.edges || [],
+                    results = [];
+                var addRes = function(n, type, key, val) {
+                  results.push([n, type, key, val.replace(re1, '<span style="color:black;background-color:yellow;">$1</span>')]);
+                }, recurseSearch = function(obj, type, results, key, val) {
+                  switch(typeof(val))
+                  {
+                    case 'string':
+                      if(re.test(val))
+                      {
+                        addRes(obj, type, key, val);
+                        if(once) return true;
+                      }
+                      break;
+                    case 'object':
+                      if(Ext.isArray(val))
+                      {
+                        for(var i = 0; i < val.length; i++)
+                          if(val[i] && recurseSearch(obj, type, results, key, val[i]) && once)
+                            return true;
+                      }
+                      else
+                        for(var i in val)
+                          if(val[i] && recurseSearch(obj, type, results, i + ' < ' + key, val[i]) && once)
+                            return true;
+                      break;
+                    default: return;
+                  }
+                };
+                for(var i = 0; i < nodes.length; i++)
+                {
+                  var n = nodes[i], found = false;
+                  for(var j in {'name':1,'label':1})
+                    if(re.test(n[j]))
+                    {
+                      found = true;
+                      addRes(n, 'Node', j, n[j] || '');
+                      if(once) break;
+                    }
+                  if(found && once) continue;
+                  if(n.data) recurseSearch(n, 'Node', results, 'data', n.data);
+                }
+                for(var i = 0; i < edges.length; i++)
+                {
+                  var n = edges[i];
+                  if(n.data) recurseSearch(n, 'Edge', results, 'data', n.data);
+                }
+                var grid = win.items.items[1], store = grid.getStore();
+                store.loadData(results);
+              }
+            }, {
+              xtype: 'checkbox',
+              boxLabel: 'Advanced Search Options',
+              checked: false,
+              listeners: {
+                scope: this,
+                check: function(c, checked) {
+                  var com = win.items.items[0].items.items[1];
+                  if(checked)
+                  {
+                    com.show();
+                    com.hideLabel = !checked;
+                  }
+                  else
+                  {
+                    com.hide();
+                    com.hideLabel = !checked;
+                  }
+                }
+              }
+            }]
+          }, {
+            xtype: 'compositefield',
+            hidden: true,
+            hideLabel: true,
+            labelStyle: 'margin-left:5px;margin-top:5px',
+            style: 'margin:0px 5px 5px 5px;',
+            items: [{
+              xtype: 'label',
+              text: 'Search Key:',
+              width: 100
+            }, {
+              xtype: 'textfield',
+              emptyText: 'RegEx is accepted',
+              enableKeyEvents: true,
+              width: 200,
+              listeners: {
+                scope: this,
+                keyup: function(f, e) {
+                  if(e.getKey() == 13)
+                  {
+                    var b = f.nextSibling();
+                    b.initialConfig.handler.call(this, b);
+                  }
+                }
+              }
+            }, {
+              xtype: 'checkbox',
+              boxLabel: 'One row per object',
+              checked: true
+            }]
+          }]
+        }, {
+          xtype: 'grid',
+          anchor: '100% -40',
+          autoExpandColumn: 'detail',
+          store: new Ext.data.ArrayStore({
+            autoDestroy: true,
+            data: [],
+            fields: [ 'obj', 'type', 'name', 'detail' ]
+          }),
+          sm: new Ext.grid.RowSelectionModel({
+            singleSelect:true,
+            listeners: {
+              scope: this,
+              rowselect: function(sm, idx, r) {
+                var d = r.data;
+                if(d.type == 'Node')
+                {
+                  this.canvas.highlightNode = [d.obj.id];
+                  this.canvas.draw();
+                }
+              }
+            }
+          }),
+          cm: new Ext.grid.ColumnModel({
+              defaults: { sortable: true, width: 60 },
+              columns: [
+                { header: "Type", dataIndex:'type' },
+                { header: "Matched Field", dataIndex:'name', width: 120 },
+                { header: "Matched Value", dataIndex:'detail', id: 'detail' }
+            ]}),
+          listeners: {
+            scope: this,
+            rowdblclick: function(g, idx, e) {
+              rows = g.getSelectionModel().getSelections();
+              if(rows && rows.length)
+                this.canvas.flashNode(rows[0].data.obj.id);
+            }
+          }
+        }],
+      bbar: {
+        items: [
+          {
+            text: 'Clear Highlight',
+            scope: this,
+            handler : function(b) {
+              this.canvas.highlightNode = [];
+              this.canvas.draw();
+            }
+          },
+          '->',
+          {
+            text: 'Flash the Selected to Highlight',
+            scope: this,
+            handler : function(b) {
+              var grid = win.items.items[1], rows = grid.getSelectionModel().getSelections();
+              if(rows && rows.length)
+                this.canvas.flashNode(rows[0].data.obj.id);
+            }
+          },
+          {
+            text: 'Edit Selected Object',
+            scope: this,
+            handler : function(b) {
+              var grid = win.items.items[1], rows = grid.getSelectionModel().getSelections();
+              if(rows && rows.length)
+              {
+                var d = rows[0].data, o = d.obj, w;
+                switch(d.type)
+                {
+                  case 'Node':
+                    w = new Ext.canvasXpress.nodeDialog(o, this);
+                    break;
+                  case 'Edge':
+                    w = new Ext.canvasXpress.edgeDialog(o, null, this);
+                    break;
+                }
+                if(w) w.show();
+              }
+            }
+          }
+        ]
+      }
+    });
+    win.show();
+    this.simpleSearchWin = win;
   },
   showSearchWin: function(allLabels, allNames, sc, es, scall, supported, sf) {
     for(var i in this.canvas.nodes)
     {
-      var l = this.canvas.nodes[i], label = l.label || l.id;
+      var l = this.canvas.nodes[i], label = this.getName(l);
       allLabels.push([label, label]); // val, displayVal (if setting id as val, more changes is needed to ensure id instead of label is searched)
-      allNames.push(l.name);
+      allNames.push(l.tooltip || l.name);
     }
-    allLabels.sort(function(a,b){return a[1]>b[1]?1:a[1]<b[1]?-1:0});
-    allNames.sort();
+    allLabels.sort(Ext.canvasXpress.utils.ciSort);
+    allNames.sort(Ext.canvasXpress.utils.ciSort);
 
     var h = [];
     if(es.hide)
@@ -2723,6 +4500,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     var w = new Ext.ux.SearchWindow({
       listeners: ls,
       searchCriteria: sc,
+      stateful: true,
+      stateEvents: ['move', 'resize'],
+      stateId: 'extcxp-advancedsearch',
       notOpFn: function(res) {
         var type, res1 = [];
         for(var i in res)
@@ -2741,6 +4521,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
       }.createDelegate(this)
     });
     w.show();
+    this.searchWin = w;
   },
   nodeConnectEdge: function(inpset, set, direct) {
     var nodes = inpset? inpset : this.canvas.nodes, ids = {}, res = [];
@@ -2762,22 +4543,24 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     var allLabels = [], allNames = [], sc = [], es = this.allSearch || {};
     var scall = [
         ['Node Label','node.label','string',allLabels],
-        ['Node Name','node.name','string',allNames],
+        ['Node Tooltip','node.tooltip','string',allNames],
         ['Node Parent','node.parentNode','string',allLabels,{exactMatch:true}],
         ['Node Size','node.size','number'],
         ['Node Width','node.width','number'],
         ['Node Height','node.height','number'],
         ['Node Rotate','node.rotate','number'],
-        ['Node Shape','node.shape','string',this.canvas.shapes.sort(),{exactMatch:true}],
+        ['Node Shape','node.shape','string',this.canvas.shapes.sort(Ext.canvasXpress.utils.ciSort),{exactMatch:true}],
         ['Node Color','node.color','string'],
         ['Node Outline','node.outline','string'],
+        ['Node OutlineWidth','node.outlineWidth','number'],
+        ['Node ImagePath','node.imagePath','string'],
         ['Node Pattern','node.pattern','string'],
         ['Node From','node.from','custom',[this.nodeConnectEdge.createDelegate(this, 'from', true)]],
         ['Node To','node.to','custom',[this.nodeConnectEdge.createDelegate(this, 'to', true)]],
-        ['Edge From','edge.id1','string',allLabels,{takeInput:true}],
-        ['Edge To','edge.id2','string',allLabels,{takeInput:true}],
+        ['Edge From','edge.id1','id'],
+        ['Edge To','edge.id2','id'],
         ['Edge Width','edge.width','number'],
-        ['Edge Linetype','edge.type','string',this.canvas.lines.sort(),{exactMatch:true}],
+        ['Edge Linetype','edge.type','string',this.canvas.lines.sort(Ext.canvasXpress.utils.ciSort),{exactMatch:true}],
         ['Edge Color','edge.color','string']
       ], supported = {};
     var sf = function(attr, f, cb, inpset, set) {
@@ -2815,15 +4598,17 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     var allLabels = [], allNames = [], sc = [], es = this.nodeSearch || {};
     var scall = [
         ['Label','label','string',allLabels],
-        ['Name','name','string',allNames],
+        ['Tooltip','tooltip','string',allNames],
         ['Parent','parentNode','string',allLabels,{exactMatch:true}],
         ['Size','size','number'],
         ['Width','width','number'],
         ['Height','height','number'],
         ['Rotate','rotate','number'],
-        ['Shape','shape','string',this.canvas.shapes.sort(),{exactMatch:true}],
+        ['Shape','shape','string',this.canvas.shapes.sort(Ext.canvasXpress.utils.ciSort),{exactMatch:true}],
         ['Color','color','string'],
         ['Outline','outline','string'],
+        ['OutlineWidth','outlineWidth','string'],
+        ['ImagePath','imagePath','string'],
         ['Pattern','pattern','string']
       ], supported = {};
     var sf = function(attr, f, cb, inpset) {
@@ -2843,8 +4628,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     var scall = [
         ['From','id1','string',allLabels],
         ['To','id2','string',allLabels],
+        ['Tooltip','tooltip','string',allNames],
         ['Width','width','number'],
-        ['Linetype','type','string',this.canvas.lines.sort(),{exactMatch:true}],
+        ['Linetype','type','string',this.canvas.lines.sort(Ext.canvasXpress.utils.ciSort),{exactMatch:true}],
         ['Color','color','string']
       ], supported = {};
     var sf = function(attr, f, cb, inpset) {
@@ -2867,15 +4653,23 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   },
   updateLegend: function() {
     this.legendChanged = true;
-    this.fireEvent('updatelegend', function(s) {
+    if(!this.viewInfo) this.fireEvent('updatelegend', function(s) {
         if(s) this.legendChanged = false;
       }.createDelegate(this));
+    this.toggleSaveNetworkBtn();
+  },
+  updateTag: function() {
+    if(!this.viewInfo) this.fireEvent('updatetag', function(s) {
+        if(s) this.tagChanged = false;
+      }.createDelegate(this), true);
+    this.toggleSaveNetworkBtn();
   },
   updateOrder: function() {
     this.orderChanged = true;
-    this.fireEvent('updateorder', function(s) {
+    if(!this.viewInfo) this.fireEvent('updateorder', function(s) {
         if(s) this.orderChanged = false;
       }.createDelegate(this));
+    this.toggleSaveNetworkBtn();
   },
   deleteLegend: function(type, o) {
     if(type == 'node' || type == 'edge')
@@ -2900,12 +4694,16 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     Ext.Msg.confirm('Warning', 'Are you sure you want to delete '+str1+'? '+str2+' edges will be deleted!', function(b) {
       if(b == 'yes')
       {
-        this.fireEvent('removenode', n, function() {
+        var f = function() {
           for(var i = 0; i < n.length; i++)
             this.canvas.removeNode(n[i]);
           this.canvas.draw();
+          this.canvas.addToNetworkStack();
           this.updateOrder(); // change of # of node causes nodeIndices to change, it has to be consistent!!
-        }.createDelegate(this));
+        }.createDelegate(this);
+        if(this.viewInfo) f();
+        else
+          this.fireEvent('removenode', n, f);
       }
     }, this)
   },
@@ -2913,16 +4711,17 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     Ext.Msg.confirm('Warning', 'Are you sure you want to delete this edge?', function(b) {
       if(b == 'yes')
       {
-        this.fireEvent('removeedge', e, function() {
+        var f = function() {
           this.canvas.removeEdge(e);
           this.canvas.draw();
-        }.createDelegate(this));
+        }.createDelegate(this);
+        if(this.viewInfo) f();
+        else this.fireEvent('removeedge', e, f);
       }
     }, this)
   },
-  editNetwork: function(b, e) {
-    var config = {extCanvas:this};
-    var d = new Ext.canvasXpress.networkDialog(this.networkInfo, this);
+  editNetwork: function(isSaveAs) {
+    var d = new Ext.canvasXpress.networkDialog(this.networkInfo, this, isSaveAs === true);
     d.show();
   },
   removeNode: function(n) {
@@ -2936,6 +4735,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
         this.changedNodes.splice(i, 1);
         return;
       }
+    this.toggleSaveNetworkBtn();
   },
   addNode: function(n) {
     if(typeof(n) != 'object' || !n.length) n = [n];
@@ -2945,6 +4745,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     for(var i = 0; i < n.length; i++)
       if(!all[n[i].id])
         this.changedNodes.push(n[i]);
+    this.toggleSaveNetworkBtn();
   },
   removeEdge: function(id1, id2) {
     for(var i = 0; i < this.changedEdges.length; i++)
@@ -2956,6 +4757,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
         return;
       }
     }
+    this.toggleSaveNetworkBtn();
   },
   addEdge: function(ae) {
     for(var i = 0; i < this.changedEdges.length; i++)
@@ -2965,6 +4767,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
         return;
     }
     this.changedEdges.push(ae);
+    this.toggleSaveNetworkBtn();
   },
   resetChanges: function() {
     this.changedNodes = [];
@@ -2974,17 +4777,32 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     this.legendChanged = false;
     this.orderChanged = false;
     this.networkChanged = false;
+    this.tagChanged = false;
+    this.toggleSaveNetworkBtn();
   },
-  saveMap: function(force) {
+  saveNow: function(force, opts) {
     var d = this.canvas.data, obj = {nodes:force?d.nodes:this.changedNodes, edges:force?d.edges:this.changedEdges};
+    if(this.linksChanged || force) obj.links = d.links;
     if(this.legendChanged || force) obj.legend = d.legend;
+    if(this.tagChanged || force) obj.taggedNodes = d.taggedNodes;
     if(this.orderChanged || force) obj.nodeIndices = d.nodeIndices;
     if(this.networkChanged || force) obj.info = this.networkInfo;
     obj.force = force;
     // handler should redraw entire canvas if nodes and/or edges were added
-    this.fireEvent('saveallchanges', obj, this.resetChanges.createDelegate(this));
+    this.fireEvent('saveallchanges', obj, this.resetChanges.createDelegate(this), opts);
   },
-  exchangeData: function(type) {
+  saveMap: function(force, opts, warn) {
+    if(this.viewInfo) return;
+    if(warn) 
+      Ext.Msg.confirm('Warning', 'Saving network now could cause a reload of network, which MAY result in any data overlay or other external features get lost. Do you still want to proceed to save the network?', function(b) {
+        if(b == 'yes') this.saveNow(force, opts);
+      }, this);
+    else this.saveNow(force, opts);
+  },
+  encode: function(a) {
+    return JSON && JSON.stringify? JSON.stringify(a, null, 2) : Ext.encode(a)
+  },
+  exchangeData: function(type, cxptest) {
     var win, a;
     if(type == 'ExportMovie' && !this.canvas.snapshots.length)
     {
@@ -3005,8 +4823,10 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
           width: 480,
           style:'margin:5px',
           items: [
-            { xtype: 'textarea', hideLabel: true, width: 473, height: type == 'Import'? 230 : 258,
-              value: type.match(/Import/)? '' : JSON && JSON.stringify? JSON.stringify(a, null, 2) : Ext.encode(a) }
+            {
+              xtype: 'textarea', hideLabel: true, width: 473, height: type == 'Import'? 230 : 258,
+              value: cxptest? 'new CanvasXpress( \'canvas\', ' + this.encode(a[0]) + ', ' + this.encode(a[1]) + ');' : (type.match(/Import/)? '' : this.encode(a))
+            }
           ]
         }
       }
@@ -3024,7 +4844,6 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
               try
               {
                 var tmp = Ext.decode(json);
-                this.canvas.updateConfig(tmp[1]);
                 if(type.match(/Movie/))
                 {
                   this.canvas.snapshots = tmp[0].slides;
@@ -3035,13 +4854,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
                   if(!this.snapshotCtrl.isVisible())
                     this.snapshotCtrl.show(null, this.setCtrlMode, this);
                 }
-                else
-                {
-                  this.canvas.updateData(tmp[0]);
-                  this.fireEvent('importdata', tmp[0], tmp[1]); // data and userOptions
-                  this.canvas.draw();
-                  win.close();
-                }
+                else this.updateNetwork(tmp, win);
               }
               catch(e)
               {
@@ -3055,70 +4868,349 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     win = new Ext.Window(config);
     win.show();
   },
+  updateNetwork: function(tmp, win) { // tmp is [data, options]
+    this.canvas.updateConfig(tmp[1]);
+    this.canvas.updateData(tmp[0]);
+    this.fireEvent('importdata', tmp[0], tmp[1]); // data and userOptions
+    if(win) win.close();
+    Ext.Msg.show({
+      title:'Very Important!!',
+      msg: 'You <b>MUST</b> "force save the network" BEFORE anything else if you:<br><br>1. cannot see your imported network or only see a portion of it, OR,<br>2. need to add notes to any Pathway nodes/edges.',
+      buttons: Ext.Msg.OK,
+      icon: Ext.MessageBox.WARNING
+    });
+  },
+  showEditSnapshot: function(snap, opts) {
+    if(!opts) opts = {};
+    var win, p = { action: opts.action || 'saveMovie', name: snap.name, type:'movie',
+              id: snap && snap.id && (opts.action || opts.overwrite)? snap.id : null,
+              pid:this.networkInfo.id, desc: snap.desc, shared: snap.shared? '1':'0',
+              data: opts.action? null : Ext.encode(this.canvas.getSnapshotsData()) },
+        f1 = function() {
+          Ext.Ajax.request({
+            url: this.movieURL,
+            params: p,
+            scope: this,
+            callback: function(o, s, r) {
+              if(!s) Ext.Msg.alert('Error', 'Could not save movie to server!');
+              else
+              {
+                var res = Ext.decode(r.responseText);
+                if(res.error)
+                {
+                  Ext.Msg.alert('Error', res.error);
+                  return;
+                }
+                snap.id = res.id;
+                if(win) win.close();
+                if(opts.win) opts.win.close();
+                if(opts.xy) this.showSnapshotResultTip('Snapshots saved to DB', opts.xy);
+              }
+            }
+          });
+          this.snapshotsInfo = {name:p.name, desc:p.desc, shared:p.shared}; // this.snapshotsInfo
+        }.createDelegate(this);
+    if(opts.overwrite)
+    {
+      f1();
+      return;
+    }
+    win = new Ext.Window({
+      title: opts.title || 'Store Current Snapshots to Database',
+      width: 300,
+      height: 200,
+      layout: 'fit',
+      items: {
+        items: {
+          xtype: 'form',
+          border: false,
+          defaultType: 'textfield',
+          width: 280,
+          labelWidth: 80,
+          style:'margin:5px',
+          items: [
+            { fieldLabel: 'Name', value: snap? snap.name : '' },
+            { fieldLabel: 'Description', value: (snap? snap.desc : ''), width: 170 },
+            { xtype: 'checkbox', hideLabel: true, boxLabel: 'Shared with everyone?', checked: (snap? snap.shared : false) }
+          ]
+        }
+      },
+      bbar: {
+        items: [
+          '->',
+          {
+            text: opts.bText || 'Save to DB Now',
+            scope: this,
+            handler: function(b, e) {
+              var f = b.ownerCt.ownerCt.get(0).get(0), name = f.get(0).getValue(),
+                  desc = f.get(1).getValue(), shared = f.get(2).getValue();
+              if(!name)
+              {
+                Ext.Msg.alert('Error', 'Name must be filled out!');
+                return;
+              }
+              p.name = name;
+              p.desc = desc;
+              p.shared = shared? '1':'0';
+              f1();
+            }
+          }
+        ]
+      }
+    });
+    win.show();
+  },
   storeSnapshot: function(xy) {
     if(this.movieURL)
     {
       this.canvas.stopSnapshotPlay(true);
-      var win = new Ext.Window({
-        title: 'Store Current Snapshots to Database',
-        width: 300,
-        height: 200,
-        layout: 'fit',
-        items: {
-          items: {
-            xtype: 'form',
-            border: false,
-            defaultType: 'textfield',
-            width: 280,
-            labelWidth: 80,
-            style:'margin:5px',
-            items: [
-              { fieldLabel: 'Name', value: this.snapshotsInfo? this.snapshotsInfo.name : '' },
-              { fieldLabel: 'Description', value: (this.snapshotsInfo? this.snapshotsInfo.desc : ''), width: 170 },
-              { xtype: 'checkbox', hideLabel: true, boxLabel: 'Shared with everyone?', checked: (this.snapshotsInfo? this.snapshotsInfo.shared : false) }
-            ]
+      var f = function(o) {
+        this.showEditSnapshot(this.snapshotsInfo, {xy:xy,overwrite:o});
+      }.createDelegate(this);
+      if(this.snapshotsInfo.id)
+      {
+        Ext.Msg.show({
+          title:'Warning',
+          msg: 'Are you sure you want to save the movie now and overwrite the version stored on server? Press "No" to save as a new movie instead, or press "Cancel" to not save at this time.',
+          icon: Ext.MessageBox.QUESTION,
+          buttons: Ext.Msg.YESNOCANCEL,
+          scope: this,
+          fn: function(t) {
+            if(t == 'yes') f(true)
+            else if(t == 'no') f();
           }
-        },
-        bbar: {
-          items: [
-            '->',
-            {
-              text: 'Save to DB Now',
-              scope: this,
-              handler: function(b, e) {
-                var f = b.ownerCt.ownerCt.get(0).get(0), name = f.get(0).getValue(),
-                    desc = f.get(1).getValue(), shared = f.get(2).getValue();
-                if(!name)
-                {
-                  Ext.Msg.alert('Error', 'Name must be filled out!');
-                  return;
-                }
-                var id = (this.snapshotsInfo && this.snapshotsInfo.id)? this.snapshotsInfo.id : null;
-                Ext.Ajax.request({
-                  url: this.movieURL,
-                  params: { action:'saveMovie', name: name, id: id,
-                            pid:this.networkInfo.id,
-                            data:Ext.encode(this.canvas.getSnapshotsData()),
-                            desc: desc, shared: shared? '1':'0' },
-                  scope: this,
-                  callback: function(o, s, r) {
-                    if(!s) Ext.Msg.alert('Error', 'Could not save movie to server!');
-                    else
-                    {
-                      var res = Ext.decode(r.responseText);
-                      this.snapshotsInfo.id = res.id;
-                      win.close();
-                      this.showSnapshotResultTip('Snapshots saved to DB', xy);
-                    }
-                  }
-                });
-                this.snapshotsInfo = {name:name, desc:desc, shared:shared};
-              }
-            }
-          ]
+        });
+      }
+      else f();
+    }
+  },
+  warnViewSave: function() {
+    return 'Press "Yes" to <b>discard</b> the unsaved changes, OR press "No" below, then ' + (this.viewInfo? 'use the View Menu\'s "Save Current View" to save.' : 'either enter superuser mode or press save button to save.');
+  },
+  revertView: function(force) {
+    if(this.mainView)
+    {
+      var f = function() {
+        this.canvas.updateConfig(this.mainView.opts);
+        this.canvas.updateData(this.mainView.data);
+        delete this.viewInfo;
+        delete this.mainView;
+        var btn = this.getTopToolbar().getComponent('views');
+        btn.setIcon(this.imgDir + 'picture.png');
+        btn.setTooltip('View Menu (currently in original view)');
+        this.resetChanges();
+        this.viewStateChange();
+      }.createDelegate(this);
+      if(force !== 1 && this.hasUnsavedChanges() && this.hasListener('saveallchanges'))
+        Ext.Msg.confirm('Warning!', this.warnViewSave(), function(b) {
+          if(b == 'yes') f()
+        }, this);
+      else f();
+    }
+  },
+  viewStateChange: function(inView) {
+    var btns = this.getTopToolbar().getComponent('editmenu').menu.find('itemId', 'editnet'), btn = btns && btns.length? btns[0] : null;
+    if(btn)
+    {
+      if(inView) btn.disable();
+      else btn.enable();
+    }
+    if(this.viewStateItems)
+      for(var i = 0; i < this.viewStateItems.length; i++)
+      {
+        btn = this.getTopToolbar().getComponent(this.viewStateItems[i]);
+        if(btn)
+        {
+          if(inView) btn.disable();
+          else btn.enable();
+        }
+      }
+  },
+  loadView: function(view) {
+    var f = function() {
+      this.showMask("Loading view from server...");
+      Ext.Ajax.request({
+        url: this.movieURL,
+        params: {pid:this.networkInfo.id, id:view.id, action:'loadMovie', type:'view'},
+        scope: this,
+        callback: function(o, s, re) {
+          this.hideMask();
+          var res = (s && re && re.responseText)? Ext.decode(re.responseText) : null;
+          if(!res || res.error) Ext.Msg.alert('Error', res && res.error? res.error : 'Could not load from server!');
+          else
+          {
+            if(!this.viewInfo)
+              this.mainView = {data:this.canvas.data,opts:this.canvas.getUserConfig()};
+            var d = Ext.decode(res.data);
+            this.canvas.updateConfig(d.opts);
+            this.canvas.updateData(d.data);
+            this.viewInfo = view;
+            var btn = this.getTopToolbar().getComponent('views');
+            btn.setIcon(this.imgDir + 'picture_red.png');
+            btn.setTooltip('View Menu (currently in view "'+view.name+'")');
+            this.resetChanges();
+            this.viewStateChange(true);
+          }
         }
       });
-      win.show();
+    }.createDelegate(this);
+    if(this.hasUnsavedChanges() && this.hasListener('saveallchanges'))
+      Ext.Msg.confirm('Warning!', this.warnViewSave(), function(b) {
+        if(b == 'yes') f();
+      }, this);
+    else f();
+  },
+  deleteView: function(id) {
+    this.showMask("Removing view from server...");
+    Ext.Ajax.request({
+      url: this.movieURL,
+      params: {pid:this.networkInfo.id, id:id, action:'deleteMovie'},
+      scope: this,
+      callback: function(o, s, re) {
+        this.hideMask();
+        var res = (s && re && re.responseText)? Ext.decode(re.responseText) : null;
+        if(!res || res.error) Ext.Msg.alert('Error', res && res.error? res.error : 'Could not load from server!');
+        else
+        {
+          for(var i = 0; i < this.pViews.length; i++)
+            if(this.pViews[i].id == id)
+              this.pViews.splice(i, 1);
+          delete this.viewInfo;
+          this.revertView(1);
+        }
+      }
+    });
+  },
+  editView: function(view, win) {
+    if(this.networkInfo && this.networkInfo.user && this.networkInfo.user != view.user)
+    {
+      Ext.Msg.alert('Error', 'You are only allowed to edit your own views!');
+      return;
+    }
+    this.showEditView({id:view.id,name:view.name,shared:view.shared,desc:view.desc},
+      {action:'editMovie', title: 'Change View Info', bText: 'Save New Info to DB Now', win: win});
+  },
+  showEditView: function(view, opts) {
+    if(!opts) opts = {};
+    if(!view) view = {};
+    var win, p = { action: opts.action || 'saveMovie', name: view.name, type:'view',
+              id: view && view.id && (opts.action || opts.overwrite)? view.id : null,
+              pid:this.networkInfo.id, desc: view.desc, shared: view.shared? '1':'0',
+              data: opts.action? null : Ext.encode({data:this.canvas.data,opts:this.canvas.getUserConfig()}) },
+        f1 = function() {
+          Ext.Ajax.request({
+            url: this.movieURL,
+            params: p,
+            scope: this,
+            callback: function(o, s, r) {
+              if(!s) Ext.Msg.alert('Error', 'Could not save view to server!');
+              else
+              {
+                var res = Ext.decode(r.responseText);
+                if(res.error)
+                {
+                  Ext.Msg.alert('Error', res.error);
+                  return;
+                }
+                if(!this.viewInfo)
+                  this.mainView = {data:this.canvas.data,opts:this.canvas.getUserConfig()};
+                this.viewInfo = {name:p.name, desc:p.desc, shared:p.shared, id:res.id, user:this.networkInfo && this.networkInfo.user? this.networkInfo.user : null};
+                // now add the view to the list
+                if(!this.pViews) this.pViews = [];
+                var found = false;
+                for(var i = 0; i < this.pViews.length; i++)
+                  if(this.pViews[i].id == this.viewInfo.id)
+                  {
+                    this.pViews.splice(i, 1, this.viewInfo);
+                    found = true;
+                  }
+                if(!found) this.pViews.push(this.viewInfo);
+                if(win) win.close();
+                if(opts.win) opts.win.close();
+                var btn = this.getTopToolbar().getComponent('views');
+                btn.setIcon(this.imgDir + 'picture_red.png');
+                btn.setTooltip('View Menu (currently in view "'+p.name+'")');
+                if(opts.overwrite) Ext.Msg.alert('Done', 'View saved to server!');
+                else if(!p.id) Ext.Msg.alert('Done', 'View saved to server. Note that now you are viewing/editing the view you just saved.');
+                this.resetChanges();
+                this.viewStateChange(true);
+              }
+            }
+          });
+        }.createDelegate(this);
+    if(opts.overwrite)
+    {
+      f1();
+      return;
+    }
+    win = new Ext.Window({
+      title: opts.title || 'Store Current View to Database',
+      width: 300,
+      height: 200,
+      layout: 'fit',
+      items: {
+        items: {
+          xtype: 'form',
+          border: false,
+          defaultType: 'textfield',
+          width: 280,
+          labelWidth: 80,
+          style:'margin:5px',
+          items: [
+            { fieldLabel: 'Name', value: view? view.name : '' },
+            { fieldLabel: 'Description', value: (view? view.desc : ''), width: 170 },
+            { xtype: 'checkbox', hideLabel: true, boxLabel: 'Shared with everyone?', checked: (view? view.shared : false) }
+          ]
+        }
+      },
+      bbar: {
+        items: [
+          '->',
+          {
+            text: opts.bText || 'Save to DB Now',
+            scope: this,
+            handler: function(b, e) {
+              var f = b.ownerCt.ownerCt.get(0).get(0), name = f.get(0).getValue(),
+                  desc = f.get(1).getValue(), shared = f.get(2).getValue();
+              if(!name)
+              {
+                Ext.Msg.alert('Error', 'Name must be filled out!');
+                return;
+              }
+              p.name = name;
+              p.desc = desc;
+              p.shared = shared? '1':'0';
+              f1();
+            }
+          }
+        ]
+      }
+    });
+    win.show();
+  },
+  storeView: function(force) {
+    if(this.movieURL)
+    {
+      var f = function(o) {
+        this.showEditView(this.viewInfo, {overwrite:o});
+      }.createDelegate(this);
+//       if(this.viewInfo && force !== true)
+//       {
+//         Ext.Msg.show({
+//           title:'Warning',
+//           msg: 'Are you sure you want to save the view now and overwrite the version stored on server? Press "No" to save as a new view instead, or press "Cancel" to not save at this time.',
+//           icon: Ext.MessageBox.QUESTION,
+//           buttons: Ext.Msg.YESNOCANCEL,
+//           scope: this,
+//           fn: function(t) {
+//             if(t == 'yes') f(true)
+//             else if(t == 'no') f();
+//           }
+//         });
+//       }
+//       else
+      if(this.viewInfo && force === true) f(true);
+      else f();
     }
   },
   toggleSnapshotCtrl: function(b, e) {
@@ -3225,16 +5317,11 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
         icon: this.imgDir + 'help.png',
         itemId: 'help',
         handler: null
-      }, {
-        icon: this.imgDir + 'power_off.png',
-        itemId: 'hide',
-        tooltip: 'Hide This Toolbar',
-        handler: this.toggleSnapshotCtrl
       });
       var xy = e.xy? e.xy : e;
       this.snapshotCtrl = new Ext.Window({
         height: 16,
-        width: 315 + (this.movieURL? 42 : 0),
+        width: 297 + (this.movieURL? 42 : 0),
         x: xy[0],
         y: xy[1],
         border: false,
@@ -3344,7 +5431,21 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   },
   playSnapshot : function(b, e, time) {
     if(b.text && b.text.match(/Every \d+|Custom or Default/))
-      this.canvas.playSnapshot(time);
+    {
+      if(!time)
+      {
+        Ext.Msg.prompt('Please enter the speed', 'Please enter the speed at which you would like the animation played (in milliseconds!)', function(btn, txt) {
+          if(btn == 'ok')
+          {
+            if(!isNaN(txt) && txt > 0)
+              this.canvas.playSnapshot(txt - 0);
+            else
+              Ext.Msg.alert('Error', txt + ' is not a positive number!');
+          }
+        }, this, false, 20);
+      }
+      else this.canvas.playSnapshot(time);
+    }
     else
     {
       var msg;
@@ -3404,96 +5505,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
           {
             var list = Ext.decode(r.responseText);
             // array of username, name, description, movieid, shared
-            var win = new Ext.Window({
-              title: 'List of Available Snapshots',
-              width: 500,
-              height: 300,
-              layout: 'fit',
-              items: {
-                xtype: 'grid',
-                border: false,
-                autoExpandColumn: 'ssdesc',
-                store: new Ext.data.ArrayStore({
-                    autoDestroy: true,
-                    data: list,
-                    fields: [ 'username', 'name', 'desc', 'id', 'shared' ]
-                  }),
-                sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
-                cm: new Ext.grid.ColumnModel({
-                    defaults: { sortable: true, width: 60 },
-                    columns: [
-                      { header: "User", dataIndex:'username' },
-                      { header: "Name", dataIndex:'name', width: 90 },
-                      { header: "Shared", dataIndex:'shared' },
-                      { header: "Description", dataIndex:'desc', id: 'ssdesc' }
-                  ]})
-              },
-              bbar: {
-                items: [
-                  '->',
-                  {
-                    text: 'Delete Selected Snapshots',
-                    scope: this,
-                    handler: function(b, e) {
-                      Ext.Msg.confirm('Warning', 'Are you sure you want to delete this movie?', function(t) {
-                        if(t == 'yes')
-                        {
-                          var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected();
-                          if(r && r.data)
-                          {
-                            this.showMask('Deleting snapshots ...');
-                            Ext.Ajax.request({
-                              url: this.movieURL,
-                              params: { action:'deleteMovie', id: r.data.id },
-                              scope: this,
-                              callback: function(o, s, re) {
-                                this.hideMask();
-                                var res = (s && re && re.responseText)? Ext.decode(re.responseText) : null;
-                                if(!res || res.error) Ext.Msg.alert('Error', res && res.error? res.error : 'Could not delete snapshots from server!');
-                                else
-                                {
-                                  g.store.remove(r);
-                                  Ext.Msg.alert('Done!', 'Snapshots deleted from the server!');
-                                }
-                              }
-                            });
-                          }
-                        }
-                      }, this);
-                    }
-                  },
-                  {
-                    text: 'Load Selected Snapshots',
-                    scope: this,
-                    handler: function(b, e) {
-                      var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected();
-                      if(r && r.data && this.movieURL)
-                      {
-                        this.showMask('Loading snapshots ...');
-                        this.snapshotsInfo = r.data;
-                        Ext.Ajax.request({
-                          url: this.movieURL,
-                          params: { action:'loadMovie', id: r.data.id },
-                          scope: this,
-                          callback: function(o, s, r) {
-                            this.hideMask();
-                            if(!s) Ext.Msg.alert('Error', 'Could not load movie from server!');
-                            else
-                            {
-                              var res = Ext.decode(r.responseText);
-                              this.canvas.setSnapshotsData(Ext.decode(res.data));
-                              win.close();
-                              this.setCtrlMode();
-                              this.showSnapshotResultTip('Snapshots loaded from DB', xy);
-                            }
-                          }
-                        });
-                      }
-                    }
-                  }
-                ]
-              }
-            });
+            var win = new Ext.canvasXpress.SnapshotManager({list:list, xy:xy}, this);
             win.show();
           }
         }
@@ -3510,9 +5522,59 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   hideMask: function()
   {
     if(this.mask) this.mask.hide();
+  },
+  setComboMouse: function(c) {
+    var self = this;
+    if(!c.mouseoverAdded)
+    {
+      c.list.on('mouseover', function(e, item, value) {
+        var idstr = item.getAttribute('ext:qtip');
+        if(!idstr) return;
+        var s = idstr.split(':'), id = s[1] - 0, cv = self.canvas;
+        cv.highlightNodes([id]);
+      });
+      c.list.on('mouseout', function(e, item, value) {
+        var idstr = item.getAttribute('ext:qtip');
+        if(!idstr) return;
+        var s = idstr.split(':'), id = s[1] - 0, cv = self.canvas;
+        cv.unHighlightNodes([id]);
+      });
+      c.mouseoverAdded = true;
+    }
   }
 });
 Ext.canvasXpress.utils = {
+  ciSort: function(a,b) {
+    var aa = (a == null? '' : a+'').toLowerCase(), bb = (b == null? '' : b+'').toLowerCase();
+    return aa>bb?1:aa<bb?-1:0
+  },
+  clone: function(obj) { // from CXP's own cloneObj
+    if(obj == null || typeof (obj) != 'object') {
+      return obj;
+    }
+    var temp = new obj.constructor();
+    for(var key in obj) {
+      temp[key] = Ext.canvasXpress.utils.clone(obj[key]);
+    }
+    return temp;
+  },
+  getHiddenNodes: function(extCanvas) {
+    var hidden = extCanvas.canvas.getHiddenNodes(), hn = [{
+      icon: extCanvas.imgDir + 'eye.png',
+      text: 'All Hidden Nodes',
+      handler: extCanvas.toggleNode.createDelegate(extCanvas, [null, false])
+    }];
+    for(var i = 0; i < hidden.length; i++)
+    {
+      var sn = hidden[i];
+      hn.push({
+        icon: extCanvas.imgDir + 'eye.png',
+        text: extCanvas.getName(sn),
+        handler: extCanvas.toggleNode.createDelegate(extCanvas, [sn, false])
+      });
+    }
+    return hn;
+  },
   removeNode: function(all, id) {
     for(var i = 0; i < this.changedNodes.length; i++)
     {
@@ -3520,6 +5582,24 @@ Ext.canvasXpress.utils = {
       {
         this.changedNodes[i].splice(i, 1);
         return;
+      }
+    }
+    this.toggleSaveNetworkBtn();
+  },
+  selectLabel: function(extCanvas, key) {
+    return {
+      xtype: 'label',
+      text: 'Click to select',
+      style: 'text-decoration:underline;color:blue;cursor:hand;cursor:pointer;',
+      listeners: {
+        render: function(l) {
+          l.el.dom.title = 'First click here, then click the node you want. To change selection, repeat this process.';
+          l.el.on('click', function() {
+            extCanvas.selectNode(function(node) {
+              l.previousSibling().setValue(key && typeof(key) == 'function'? key(node) : node[key && typeof(key) == 'string'? key : 'id']);
+            });
+          });
+        }
       }
     }
   },
@@ -3594,7 +5674,8 @@ Ext.canvasXpress.utils = {
       l.push(t[i].data);
   },
   initLegend: function(type) {
-    var xy = this.extCanvas.canvas.adjustedCoordinates(this.extCanvas.clickXY);
+//     var xy = this.extCanvas.canvas.adjustedCoordinates(this.extCanvas.clickXY);
+    var xy = this.extCanvas.canvas.findXYCoordinates(this.extCanvas.clickXY);
     if(!this.extCanvas.canvas.data.legend)
       this.extCanvas.canvas.data.legend = {nodes:[],edges:[]};
     if(!this.extCanvas.canvas.data.legend[type])
@@ -3644,8 +5725,8 @@ Ext.canvasXpress.customShapeDialog = Ext.extend(Ext.Window, {
                   afterlayout: function(p) {
                     setTimeout(function() {
                       this.editorDoc = this.getIFrameDoc();
-                      this.editorDoc.designMode = "on";
-                    }.createDelegate(this), 100);
+                      this.editorDoc.designMode = "On"; // Google Chrome has a bug that disabled ALL image/obj pasting in designMode or contenteditable in Chrome  18 and 19 at least. They haven't fixed it in months. Hope they fix it soon as there's no easy workaround - even in Google mail they fake it by sending data to server to create URL instead of properly do a base64 encode! Unbelievable.
+                    }.createDelegate(this), 500);
                   }
                 }
               }
@@ -3687,12 +5768,45 @@ Ext.canvasXpress.customShapeDialog = Ext.extend(Ext.Window, {
                       Ext.Msg.alert('Error', 'Only one image can be saved at a time. Please remove the extra image(s) before proceeding again.');
                       return;
                     }
+                    // check name of the shape (needs to be unique)
+                    var alls = [], dup, shared = vals.shared == 'on'? '1':'0', n = vals.name, id = panel.dbid;
+                    if(config.myShapes)
+                      for(var i = 0; i < config.myShapes.length; i++)
+                        alls.push(config.myShapes[i]);
+                    if(config.sharedShapes)
+                      for(var i = 0; i < config.sharedShapes.length; i++)
+                        alls.push(config.sharedShapes[i]);
+                    if(alls)
+                      for(var i = 0; i < alls.length; i++)
+                      {
+                        var s = alls[i];
+                        if(s.name == n)
+                        {
+                          dup = s;
+                          break;
+                        }
+                      }
+                    if(dup)
+                    {
+                      Ext.Msg.alert('Error - Cannot Save Image!!', 'The name of your new image conflict with the name of this image:<br><img style="width:150px;height:100px;" src="'+dup.url+'">');
+                      return;
+                    }
+                    if(!text)
+                    {
+                      try {
+                        var tmp = images[0].src;
+                        if(/^(https?|ftp):/.test(tmp))
+                        {
+                          Ext.Msg.alert('Error - Cannot Save Image!!', 'You probably pasted an image you obtained from the Internet using "Copy Image" option in Firefox context menu. This is not supported.<br><br>Instead, you should use the "Copy Image", then paste into PowerPoint or any image editor like IrfanView, GIMP, Photoshop, then copy the image out again and paste into the shape area.  This one extra copy/paste will get around multiple technical issues.');
+                          return;
+                        }
+                      } catch(e) {}
+                    }
                     this.mask.show();
-                    var shared = vals.shared == 'on'? '1':'0', n = vals.name, id = panel.dbid;
                     Ext.Ajax.request({
                       url: this.extCanvas.customShapesURL,
                       params: { shared: shared, trans: vals.trans == 'on'? 1:0, name: n, id:id,
-                        image: images && images.length? images[0].src : '', url: text.match(/^(http:\/\/.+?)(?:[\n\r]|$)/)? RegExp.$1 : '',
+                        image: images && images.length? images[0].src : '', url: text.match(/^((?:https?|ftp):\/\/.+?)(?:[\n\r]|$)/)? RegExp.$1 : '',
                         action: 'createShape' },
                       scope: this,
                       callback: function(o, s, r) {
@@ -3919,19 +6033,36 @@ Ext.canvasXpress.customShapeDialog = Ext.extend(Ext.Window, {
   }
 });
 Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
-  constructor: function(config, extCanvas) {
+  constructor: function(config, extCanvas, callback) {
     if(!config) config = {};
-    this.nodeInfo = config;
-    var isMulti = !!config.length;
-    this.extCanvas = extCanvas;
-    var allNodes = [], data = config.data || {}, parent = null;
-    for(var i in extCanvas.canvas.nodes)
+    var isMulti = !!config.length, multiconf = {}, bad = {};
+    if(isMulti)
     {
-      var l = extCanvas.canvas.nodes[i], n = l.data, id = l.label || l.name || l.id;
-      if(config.id != i) allNodes.push([l.id, id]);
+      for(var i = 0; i < config.length; i++)
+      {
+        var n = config[i];
+        for(var j in n)
+        {
+          if(j == 'data' || bad[j]) continue;
+          if(multiconf[j] == undefined || multiconf[j] === n[j])
+            multiconf[j] = n[j];
+          else
+          {
+            delete multiconf[j];
+            bad[j] = 1;
+          }
+        }
+      }
+    }
+    this.extCanvas = extCanvas;
+    var allNodes = [], data = config.data || {}, parent = null, ns = extCanvas.canvas.data.nodes;
+    for(var i = 0; i < ns.length; i++)
+    {
+      var l = ns[i], n = l.data, label = extCanvas.getName(l);
+      if(config.id != l.id) allNodes.push([l.id, label]);
     }
     allNodes.sort(function(aa,bb){var a=(aa[1]+'').toLowerCase(),b=(bb[1]+'').toLowerCase();return a>b?1:a<b?-1:0});
-    var h = {}, nd = this.extCanvas.nodeDialog? this.extCanvas.nodeDialog(config) : {};
+    var h = {}, nd = this.extCanvas.nodeDialog? this.extCanvas.nodeDialog(config, this) : {};
     this.nd = nd;
     if(nd.hide)
       for(var i = 0; i < nd.hide.length; i++)
@@ -3942,57 +6073,89 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         xtype: 'compositefield',
         fieldLabel: 'Label',
         items: [
-          { xtype: 'textfield', value: isMulti? null : config.label || config.name || config.id || '',
+          { xtype: 'textfield', value: isMulti? multiconf.label : this.extCanvas.getName(config),
             allowBlank: isMulti, name:'label', width: 80 },
           { xtype: 'displayfield', value: 'Size:', width: 24, style:'margin-top:3px' },
-          { xtype: 'numberfield', value: isMulti? null : config.labelSize || 1,
+          { xtype: 'numberfield', value: isMulti? multiconf.labelSize : config.labelSize || 1,
             allowBlank: isMulti, name:'labelSize', width: 30 },
           {
             xtype: 'checkbox',
-            checked: isMulti? false : config.hideName,
+            checked: isMulti? multiconf.hideLabel : config.hideLabel || config.hideName,
             boxLabel: 'Hide label?',
-            name: 'hideName',
+            name: 'hideLabel',
             flex: 1
           }
         ]
       },
-      { fieldLabel: 'Name', value: isMulti? null : config.name || '',
-        hideLabel: h.name, hidden: h.name,
-        allowBlank: isMulti, name:'name' },
       {
-        xtype: 'combo',
+        xtype: 'compositefield',
+        fieldLabel: 'Tooltip',
+        items: [
+          { xtype: 'textfield', value: isMulti? multiconf.tooltip : config.tooltip || config.name || '',
+            hideLabel: h.tooltip, hidden: h.tooltip, name:'tooltip', width:80 },
+          {
+            xtype: 'checkbox',
+            checked: isMulti? multiconf.hideTooltip : config.hideTooltip,
+            boxLabel: 'Hide Tooltip?',
+            name: 'hideTooltip',
+            flex: 1
+          }
+        ]
+      },
+      {
+        xtype: 'compositefield',
         fieldLabel: 'Parent',
-        hideLabel: h.parent, hidden: h.parent,
-        emptyText: 'Selection NOT Required',
-        triggerAction: 'all',
-        name: 'parentLabel',
-        mode: 'local',
-        store: new Ext.data.ArrayStore({
-          fields: [ 'id', 'label' ],
-          data: allNodes }),
-        valueField: 'id',
-        displayField: 'label',
-        tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
-        value: isMulti? null : config.parentNode
+        itemId: 'parent',
+        items: [
+          {
+            xtype: 'combo',
+            fieldLabel: 'Parent',
+            hideLabel: h.parent, hidden: h.parent,
+            emptyText: 'Selection NOT Required',
+            triggerAction: 'all',
+            name: 'parentLabel',
+            mode: 'local',
+            store: new Ext.data.ArrayStore({
+              fields: [ 'id', 'label' ],
+              data: allNodes }),
+            valueField: 'id',
+            displayField: 'label',
+            tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
+            value: isMulti? multiconf.parentNode : config.parentNode,
+            listeners: { scope: extCanvas, expand: extCanvas.setComboMouse }
+          },
+          Ext.canvasXpress.utils.selectLabel(extCanvas)
+        ]
       }
     ];
+    if(isMulti && !nd.noMultiDesc)
+      this.getMultiDesc(item1, config, extCanvas);
     var item2 = [
       { xtype: 'colorfield', fieldLabel: 'Color', allowBlank: isMulti,
-        name:'color', value: isMulti? null : config.color || 'rgb(255,0,0)',
+        name:'color', value: isMulti? multiconf.color : config.color || 'rgb(255,0,0)',
         hideLabel: h.color, hidden: h.color },
-      { xtype: 'colorfield', fieldLabel: 'Outline', allowBlank: isMulti,
-        name:'outline', value: isMulti? null : config.outline || 'rgb(255,0,0)',
-        hideLabel: h.outline, hidden: h.outline },
+      {
+        xtype: 'compositefield',
+        fieldLabel: 'Outline',
+        items: [
+          { xtype: 'colorfield', allowBlank: isMulti,
+            name:'outline', value: isMulti? multiconf.outline : config.outline || 'rgb(255,0,0)',
+            hideLabel: h.outline, hidden: h.outline },
+          { xtype: 'displayfield', value: 'Width:', width: 34, style:'margin-top:3px' },
+          { xtype:'numberfield', name:'outlineWidth', hideLabel: h.outlineWidth, hidden: h.outlineWidth,
+            width: 30, value: isMulti? multiconf.outlineWidth : config.outlineWidth || '' }
+        ]
+      },
       {
         xtype: 'compositefield',
         fieldLabel: 'Pattern',
         items: [
           { xtype:'combo', name:'pattern', hideLabel: h.pattern, hidden: h.pattern,
             triggerAction: 'all', store: ['open', 'closed'],
-            width: 80, value: isMulti? null : config.pattern || 'closed' },
+            width: 80, value: isMulti? multiconf.pattern : config.pattern || 'closed' },
           { xtype: 'displayfield', value: 'Rotate:', width: 52, style:'margin-top:3px;margin-left:5px;' },
           { xtype:'numberfield', name:'rotate', hideLabel: h.rotate, hidden: h.rotate,
-            width: 30, value: isMulti? null : config.rotate || '' }
+            width: 30, value: isMulti? multiconf.rotate : config.rotate || '' }
         ]
       },
       {
@@ -4000,13 +6163,13 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         fieldLabel: 'Size',
         items: [
           { xtype:'numberfield', name:'size', hideLabel: h.size, hidden: h.size,
-            width: 30, value: isMulti? null : config.size || '1.0' },
+            width: 30, value: isMulti? multiconf.size : config.size || '1.0' },
           { xtype: 'displayfield', value: 'Width:', width: 35, style:'margin-top:3px' },
           { xtype:'numberfield', name:'width', hideLabel: h.width, hidden: h.width,
-            width: 30, value: isMulti? null : config.width || '' },
+            width: 30, value: isMulti? multiconf.width : config.width || '' },
           { xtype: 'displayfield', value: 'Height:', width: 40, style:'margin-top:3px' },
           { xtype:'numberfield', name:'height', hideLabel: h.height, hidden: h.height,
-            width: 30, value: isMulti? null : config.height || '' }
+            width: 30, value: isMulti? multiconf.height : config.height || '' }
         ]
       },
       {
@@ -4014,11 +6177,11 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         fieldLabel: 'Shape',
         allowBlank: isMulti,
         hideLabel: h.shape, hidden: h.shape,
-        emptyText: 'Selection Required',
+        emptyText: isMulti? 'Selection NOT Required' : 'Selection Required',
         triggerAction: 'all',
-        store: extCanvas.canvas.shapes.sort(),
+        store: extCanvas.canvas.shapes.sort(Ext.canvasXpress.utils.ciSort),
         name: 'shape',
-        value: isMulti? null : config.shape || 'square',
+        value: isMulti? multiconf.shape : config.shape || 'square',
         listeners: {
           scope: this,
           select: function(c, r, i) {
@@ -4064,9 +6227,39 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
           }
         }
       },
-      { fieldLabel: 'Image Path', value: isMulti? null : config.imagePath || '',
-        hideLabel: h.imagePath, hidden: h.imagePath, width: 200,
-        allowBlank: true, name:'imagePath', disabled: config.shape != 'image' }
+      { fieldLabel: 'Image Path', value: isMulti? multiconf.imagePath : config.imagePath || '',
+        hideLabel: h.imagePath, hidden: h.imagePath, width: 220,
+        allowBlank: true, name:'imagePath', disabled: config.shape != 'image' },
+      {
+        xtype: 'compositefield',
+        hideLabel: true,
+        items: [{
+          xtype: 'checkbox',
+          checked: isMulti? multiconf.anchor : config.anchor,
+          boxLabel: 'Anchor',
+          width: 65,
+          name: 'anchor'
+        }, {
+          xtype: 'checkbox',
+          checked: isMulti? multiconf.eventless : config.eventless,
+          boxLabel: 'Eventless',
+          width: 80,
+          name: 'eventless'
+        }, {
+          xtype: 'checkbox',
+          checked: isMulti? multiconf.fixed : config.fixed,
+          boxLabel: 'Fixed',
+          width: 55,
+          name: 'fixed'
+        }, {
+          xtype: 'checkbox',
+          checked: false,
+          boxLabel: 'Center Label',
+          name: 'center',
+          width: 100,
+          flex: 1
+        }]
+      }
     ];
     var ps = [{
       title: 'Properties',
@@ -4093,63 +6286,123 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         Ext.Msg.alert('Error', 'Required item not filled out or in wrong format!');
         return;
       }
-      var p = pf.getValues(), p1 = pf.getFieldValues(), g = gf? gf.getValues() : {};
+      var p = pf.getValues(), p1 = prop.getComponent('parent').items.items[0].getValue(), g = gf? gf.getValues() : {}, changed = {}, allchanged = [];
       for(var i in g)
         p[i] = g[i];
-      // assembl parameters
-      p.parent = p1.parentLabel;
-      if(config.id) p.id = config.id;
-      if(this.nd.getParams) this.nd.getParams.call(this, config, p, tab);
-      var dup = !config.id && (config.x || config.y);
-      if(dup)
+      if(isMulti)
       {
-        var dupMove = (config.x>config.y?config.y:config.x)/10;
-        config.x -= dupMove;
-        config.y -= dupMove;
-        config.labelX -= dupMove;
-        config.labelY -= dupMove;
-      }
-      var c = config.id || dup? {x:config.x,y:config.y} : this.extCanvas.canvas.adjustedCoordinates(this.extCanvas.clickXY); // make sure there's an X,Y that user can save to DB in callback
-      p.x = c.x; p.y = c.y;
-      if(config.labelX)
-      {
-        p.labelX = config.labelX;
-        p.labelY = config.labelY;
-      }
-
-      var f = function(n, p, res) {
-        n.label = p.label;
-        n.hideName = p.hideName == "on";
-        n.labelSize = p.labelSize-0;
-        // if user sets them hidden, delegate these properties to user callbacks
-        if(!h.name) n.name = p.name;
-        if(!h.color) n.color = p.color;
-        if(!h.shape) n.shape = p.shape;
-        if(!h.imagePath) n.imagePath = p.imagePath;
-        if(!h.size) n.size = p.size-0;
-        if(!h.width) n.width = p.width-0;
-        if(!h.height) n.height = p.height-0;
-        if(!h.rotate) n.rotate = p.rotate-0;
-        if(!h.outline) n.outline = p.outline;
-        if(!h.pattern) n.pattern = p.pattern;
-        if(!h.parent) n.parentNode = p.parent;
-        if(!n.id)
+        for(var i in p)
+          if(p[i] && !/selection not required|please select/i.test(p[i]))
+            changed[i] = p[i];
+        for(var i = 0; i < config.length; i++)
         {
-          if(res && res.id) n.id = res.id;
-          this.extCanvas.canvas.addNode(n, dup? null : this.extCanvas.clickXY); // use existing x,y when duplicating
-          this.extCanvas.updateOrder(); // change of # of node causes nodeIndices to change, it has to be consistent!!
+          var node = this.extCanvas.canvas.cloneObject(config[i]);
+          for(var j in changed)
+            node[j] = changed[j];
+          allchanged.push(node);
         }
-        this.extCanvas.canvas.draw();
-        if(!res) // not saved to server
-          this.extCanvas.addNode(n);
-        else
-          this.extCanvas.removeNode(n.id);
-        if(!noClose) this.close();
-      }.createDelegate(this);
+      }
+      else allchanged = [config];
+      var conf = config, oldNoClose = noClose;
+      // now process every node as needed
+      for(var i = 0; i < allchanged.length; i++)
+      {
+        p = isMulti? allchanged[i] : p;
+        if(isMulti)
+        {
+          config = p;
+          if(i < allchanged.length - 1) noClose = true;
+          else noClose = oldNoClose;
+        }
+        // assembl parameters
+        if(p1) p.parent = p1; // p1 is parent node id
+        if(config.id) p.id = config.id;
+        if(this.nd.getParams) this.nd.getParams.call(this, config, p, tab);
+        var dup = !isMulti && !config.id && (config.x || config.y);
+        if(dup)
+        {
+          var dupMove = (config.x>config.y?config.y:config.x)/10;
+          config.x -= dupMove;
+          config.y -= dupMove;
+          if(config.labelX)
+          {
+            config.labelX -= dupMove;
+            config.labelY -= dupMove;
+          }
+        }
+//         var c = config.id || dup? {x:config.x,y:config.y} : this.extCanvas.canvas.adjustedCoordinates(this.extCanvas.clickXY); // make sure there's an X,Y that user can save to DB in callback
+        var c = config.id || dup? {x:config.x,y:config.y} : this.extCanvas.canvas.findXYCoordinates(this.extCanvas.clickXY); // make sure there's an X,Y that user can save to DB in callback
+        p.x = c.x; p.y = c.y;
+        if(p.center)
+        {
+          p.labelX = config.x;
+          p.labelY = config.y;
+        }
+        else if(config.labelX)
+        {
+          p.labelX = config.labelX;
+          p.labelY = config.labelY;
+        }
 
-      if(this.extCanvas.hasListener('updatenode'))
-        this.extCanvas.fireEvent('updatenode', this.nodeInfo, p, f);
-      else f(this.nodeInfo, p);
+        var f = function(n, p, res) {
+          n.label = p.label;
+          n.hideLabel = p.hideLabel == "on";
+          n.hideTooltip = p.hideTooltip == "on";
+          n.eventless = p.eventless == "on";
+          n.anchor = p.anchor == "on";
+          n.fixed = p.fixed == "on";
+          n.labelSize = p.labelSize-0;
+          // if user sets them hidden, delegate these properties to user callbacks
+          if(!h.tooltip) n.tooltip = p.tooltip;
+          if(!h.color) n.color = p.color;
+          if(!h.shape) n.shape = p.shape;
+          if(!h.imagePath) n.imagePath = p.imagePath;
+          if(!h.size) n.size = p.size-0;
+          if(!h.width) n.width = p.width-0;
+          if(!h.height) n.height = p.height-0;
+          if(!h.rotate) n.rotate = p.rotate-0;
+          if(!h.outline) n.outline = p.outline;
+          if(!h.outlineWidth) n.outlineWidth = p.outlineWidth;
+          if(!h.pattern) n.pattern = p.pattern;
+          if(!h.parent) n.parentNode = p.parent;
+          if(!n.id)
+          {
+            if(res && res.id) n.id = res.id;
+            this.extCanvas.canvas.addNode(n, dup? null : this.extCanvas.clickXY); // use existing x,y when duplicating
+            this.extCanvas.updateOrder(); // change of # of node causes nodeIndices to change, it has to be consistent!!
+          }
+          if(p.center)
+          {
+            n.labelX = p.x;
+            n.labelY = p.y;
+          }
+
+          this.extCanvas.canvas.draw();
+          if(!res) // not saved to server
+            this.extCanvas.addNode(n);
+          else
+            this.extCanvas.removeNode(n.id);
+          if(!noClose) this.close();
+          if(callback) callback(n);
+        }.createDelegate(this);
+
+        if(isMulti && this.extCanvas.hasListener('saveallchanges'))
+        {
+          f(conf[i], p);
+          if(i == allchanged.length - 1)
+          {
+            this.extCanvas.addNode(allchanged);
+            this.extCanvas.saveMap(null, {respectNoPost:true});
+          }
+        }
+        else
+        {
+          if(this.extCanvas.hasListener('updatenode') && !this.viewInfo)
+            this.extCanvas.fireEvent('updatenode', isMulti? conf[i] : conf, p, f);
+          else f(isMulti? conf[i] : conf, p);
+        }
+      }
+      config = conf;
     }.createDelegate(this);
     var bitems = ['->'];
     if(config.id)
@@ -4169,8 +6422,8 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         handler: bf
       });
     Ext.apply(this, {
-      width: nd.width || 350,
-      height: nd.height || 330,
+      width: nd.width || 370,
+      height: nd.height || 350,
       title: 'Network Node Editor' + (config.id? ' (Node Id:' + config.id + ')':''),
       items: {
         xtype: 'tabpanel',
@@ -4182,25 +6435,45 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
       bbar: bitems
     });
     Ext.canvasXpress.nodeDialog.superclass.constructor.apply(this);
+  },
+  getMultiDesc: function(items, config) {
+    var str = '';
+    for(var i = 0; i < config.length; i++)
+    {
+      var name = this.extCanvas.getName(config[i]);
+      if(str.length + name.length > 45)
+      {
+        str += '...';
+        break;
+      }
+      else str += (str.length? ', ':'') + name;
+    }
+    items.push({xtype: 'label', text: 'Edit the ' + config.length + ' node' + (config.length>1?'s':'') + ' selected: ' + str, style:'color:red'});
   }
 });
 Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
   title: 'Network Edge Editor',
-  constructor: function(config, dir, extCanvas) {
+  constructor: function(config, dir, extCanvas, config1) {
     if(dir == 'to') config = {id2:config.id};
     else if(dir == 'from') config = {id1:config.id};
     else if(!config) config = {};
+    if(config1)
+    {
+      if(dir == 'to') config.id1 = config1.id;
+      else if(dir == 'from') config.id2 = config1.id;
+    }
     var isMulti = !!config.length;
     this.edgeInfo = config;
     this.extCanvas = extCanvas;
-    var allNodes = [], data = config.data || {};
-    for(var i in extCanvas.canvas.nodes)
+    var allNodes = [], data = config.data || {}, ns = extCanvas.canvas.data.nodes;
+    for(var i = 0; i < ns.length; i++)
     {
-      var l = extCanvas.canvas.nodes[i], n = l.data, id = l.label || l.name || l.id;
-      allNodes.push([l.id, id]);
+      var l = ns[i], n = l.data, label = extCanvas.getName(l);
+      allNodes.push([l.id, label]);
     }
     allNodes.sort(function(aa,bb){var a=(aa[1]+'').toLowerCase(),b=(bb[1]+'').toLowerCase();return a>b?1:a<b?-1:0});
-    var h = {}, ed = this.extCanvas.edgeDialog? this.extCanvas.edgeDialog(config) : {};
+    var h = {}, ed = this.extCanvas.edgeDialog? this.extCanvas.edgeDialog(config) : {},
+        isChange = config.id1 && config.id2 && !config1;
     this.ed = ed;
     if(ed.hide)
       for(var i = 0; i < ed.hide.length; i++)
@@ -4211,34 +6484,69 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
       title: 'Customize',
       items: [
         {
+          xtype: 'compositefield',
           fieldLabel: 'Start Node',
-          emptyText: 'Selection Required',
-          triggerAction: 'all',
-          allowBlank: false,
-          name: 'id1',
-          mode: 'local',
-          store: new Ext.data.ArrayStore({
-            fields: [ 'id', 'label' ],
-            data: allNodes }),
-          valueField: 'id',
-          displayField: 'label',
-          tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
-          value: v1? v1.id: null// v1? v1.label || v1.name || v1.id : null
+          itemId: 'startnode',
+          items: [
+            {
+              width: 140,
+              xtype: 'combo',
+              emptyText: 'Selection Required',
+              triggerAction: 'all',
+              allowBlank: false,
+              name: 'id1',
+              mode: 'local',
+              store: new Ext.data.ArrayStore({
+                fields: [ 'id', 'label' ],
+                data: allNodes }),
+              valueField: 'id',
+              displayField: 'label',
+              tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
+              value: v1? v1.id: null, // v1? extCanvas.getName(v1) : null
+              listeners: { scope: extCanvas, expand: extCanvas.setComboMouse }
+            },
+            Ext.canvasXpress.utils.selectLabel(extCanvas)
+          ]
         },
         {
+          xtype: 'compositefield',
           fieldLabel: 'End Node',
-          emptyText: 'Selection Required',
-          triggerAction: 'all',
-          store: new Ext.data.ArrayStore({
-            fields: [ 'id', 'label' ],
-            data: allNodes }),
-          valueField: 'id',
-          displayField: 'label',
-          allowBlank: false,
-          name: 'id2',
-          mode: 'local',
-          tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
-          value: v2? v2.id: null// v2? v2.label || v2.name || v2.id : null
+          itemId: 'endnode',
+          items: [
+            {
+              xtype: 'combo',
+              width: 140,
+              emptyText: 'Selection Required',
+              triggerAction: 'all',
+              store: new Ext.data.ArrayStore({
+                fields: [ 'id', 'label' ],
+                data: allNodes }),
+              valueField: 'id',
+              displayField: 'label',
+              allowBlank: false,
+              name: 'id2',
+              mode: 'local',
+              tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
+              value: v2? v2.id: null,// v2? extCanvas.getName(v2) : null
+              listeners: { scope: extCanvas, expand: extCanvas.setComboMouse }
+            },
+            Ext.canvasXpress.utils.selectLabel(extCanvas)
+          ]
+        },
+        {
+          xtype: 'compositefield',
+          fieldLabel: 'Tooltip',
+          items: [
+            { xtype: 'textfield', value: isMulti? null : config.tooltip || '',
+              hideLabel: h.tooltip, hidden: h.tooltip, name:'tooltip', width:80 },
+            {
+              xtype: 'checkbox',
+              checked: isMulti? false : config.hideTooltip,
+              boxLabel: 'Hide Tooltip?',
+              name: 'hideTooltip',
+              flex: 1
+            }
+          ]
         },
         { name: 'width', xtype: 'numberfield', fieldLabel: 'Width',
           hideLabel: h.width, hidden: h.width,
@@ -4248,7 +6556,7 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
           hideLabel: h.linetype, hidden: h.linetype,
           emptyText: 'Selection Required',
           triggerAction: 'all',
-          store: extCanvas.canvas.lines.sort(),
+          store: extCanvas.canvas.lines.sort(Ext.canvasXpress.utils.ciSort),
           allowBlank: false,
           name: 'linetype',
           value: config.type || 'arrowHeadLine'
@@ -4267,18 +6575,21 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
         Ext.Msg.alert('Error', 'Required item not filled out or in wrong format!');
         return;
       }
-      var p = bf.getValues(), p1 = bf.getFieldValues();
+      var p = bf.getValues(), p1 = fp.getComponent('startnode').items.items[0].getValue(),
+          p2 = fp.getComponent('endnode').items.items[0].getValue();
       // assembl parameters
-      p.id1 = p1.id1;
-      p.id2 = p1.id2;
+      p.id1 = p1;
+      p.id2 = p2;
       p.entryid1 = p.id1;
       p.entryid2 = p.id2;
       if(this.ed.getParams) this.ed.getParams.call(this, config, p, tab);
 
       var f = function(e, p, res) {
-        var add = !config.id1 || !config.id2;
+        var add = !isChange;
         // if user sets them hidden, delegate these properties to user callbacks
+        e.hideTooltip = p.hideTooltip == "on";
         if(!h.width) e.width = p.width;
+        if(!h.tooltip) e.tooltip = p.tooltip;
         if(!h.linetype) e.type = p.linetype;
         if(!h.color) e.color = p.color;
         e.id1 = p.entryid1;
@@ -4292,7 +6603,7 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
         if(!noClose) this.close();
       }.createDelegate(this);
 
-      if(this.extCanvas.hasListener('updateedge'))
+      if(this.extCanvas.hasListener('updateedge') && !this.viewInfo)
         this.extCanvas.fireEvent('updateedge', this.edgeInfo, p, f);
       else f(this.edgeInfo, p);
     }.createDelegate(this);
@@ -4310,12 +6621,12 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
       },
       '|',
       {
-        text: (config.id1 && config.id2? 'Change' : 'Add') + ' Edge',
+        text: (isChange? 'Change' : 'Add') + ' Edge',
         handler: bbf
       });
     Ext.apply(this, {
       width: ed.width || 350,
-      height: ed.height || 250,
+      height: ed.height || 300,
       items: {
         xtype: 'tabpanel',
         activeItem: 0,
@@ -4330,34 +6641,52 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
 });
 Ext.canvasXpress.networkDialog = Ext.extend(Ext.Window, {
   title: 'Network Editor',
-  constructor: function(config, extCanvas) { // config should be the network obj (with (optional) id,name,(optional) description), with a (optional) key extCanvas being the panel
+  constructor: function(config, extCanvas, isSaveAs) { // config should be the network obj (with (optional) id,name,(optional) description), with a (optional) key extCanvas being the panel
     if(!config) config = {};
+    if(isSaveAs)
+    {
+      config = { category: config.category, description: config.description,
+        options: Ext.canvasXpress.utils.clone(config.options) };
+    }
+    this.nd = config.networkDialog? config.networkDialog(config) : extCanvas && extCanvas.networkDialog? extCanvas.networkDialog(config) : {};
     var ps = [{
       title: 'Customize',
+      defaults: { width: 220 },
       items: [
         {
           fieldLabel: 'Name',
           allowBlank: false,
-          width: 220,
           name: 'name',
           value: config.name || ''
         },
         {
-          fieldLabel: 'Description',
+          xtype: 'combo',
+          fieldLabel: 'Category',
+          name: 'category',
+          allowBlank: false,
           width: 220,
+          triggerAction: 'all',
+          typeahead: true,
+          emptyText: 'Select one or type a new one',
+          mode: 'local',
+          store: (extCanvas? extCanvas.categories : config.categories) || [],
+          value: config.category || ''
+        },
+        {
+          fieldLabel: 'Description',
           name: 'description',
           value: config.description || ''
         },
         {
           fieldLabel: 'Display Options',
           xtype: 'textarea',
-          width: 220,
           height: 150,
           name: 'options',
           value: config.options? config.options.replace(/\\n/g, '\n').replace(/^"|"$/g, '') || '{}' : '{}'
         }
       ]
     }];
+    Ext.canvasXpress.utils.customPanel(ps, this.nd, false);
     var bitems = ['->'];
     if(config.id)
       bitems.push({
@@ -4377,9 +6706,16 @@ Ext.canvasXpress.networkDialog = Ext.extend(Ext.Window, {
             return;
           }
           // add in delete this legend.
-          var p = bf.getValues(), f = function() {
+          var p = bf.getValues(), f = function(pid) {
+            if(!this.toggleSaveNetworkBtn) return;
             this.networkChanged = false;
-          };
+            if(isSaveAs) // force save the network now
+            {
+              this.networkInfo.id = pid; // new id
+              this.saveMap(1);
+            }
+            this.toggleSaveNetworkBtn();
+          }.createDelegate(extCanvas);
           var opts;
           try {
             opts = Ext.decode(p.options);
@@ -4387,27 +6723,33 @@ Ext.canvasXpress.networkDialog = Ext.extend(Ext.Window, {
             Ext.Msg.alert('Error', 'Invalid JSON in Display Options:' + e);
             return;
           }
-          this.networkChanged = true; // unfinished. add in user panel might be needed, combine with code in tree.js
 
+          var namechanged = config.name != p.name;
           config.name = p.name;
+          config.category = p.category;
           config.description = p.description;
           if(extCanvas)
           {
+            extCanvas.networkChanged = true; // unfinished. add in user panel might be needed, combine with code in tree.js
+            extCanvas.toggleSaveNetworkBtn();
             for(var i in opts)
               extCanvas.canvas[i] = opts[i];
             extCanvas.canvas.draw();
+            if(namechanged) extCanvas.setTitle(config.name);
           }
           config.options = p.options;
 
           if(extCanvas)
-            extCanvas.fireEvent('updatenetwork', config, f);
+          {
+            if(!this.viewInfo) extCanvas.fireEvent('updatenetwork', config, f);
+          }
           else if(config.callback) config.callback(config, f);
           this.close();
         }
       });
     Ext.apply(this, {
       width: 350,
-      height: 300,
+      height: 350,
       items: {
         xtype: 'tabpanel',
         activeItem: 0,
@@ -4437,7 +6779,7 @@ Ext.canvasXpress.nodeLegendDialog = Ext.extend(Ext.Window, {
           editor: new Ext.form.ComboBox({ allowBlank: false,
               emptyText: 'Selection Required',
               triggerAction: 'all',
-              store: extCanvas.canvas.shapes.sort() })
+              store: extCanvas.canvas.shapes.sort(Ext.canvasXpress.utils.ciSort) })
         },
         {
           header: 'Node Size',
@@ -4567,7 +6909,7 @@ Ext.canvasXpress.edgeLegendDialog = Ext.extend(Ext.Window, {
           editor: new Ext.form.ComboBox({ allowBlank: false,
               emptyText: 'Selection Required',
               triggerAction: 'all',
-              store: extCanvas.canvas.lines.sort() })
+              store: extCanvas.canvas.lines.sort(Ext.canvasXpress.utils.ciSort) })
         },
         {
           header: 'Line Width',
@@ -4694,15 +7036,15 @@ Ext.canvasXpress.textLegendDialog = Ext.extend(Ext.Window, {
     this.confInfo = config;
     this.extCanvas = extCanvas;
 
+    var checkColumn = new Ext.grid.CheckColumn({
+      header: 'Has Border?',
+      dataIndex: 'boxed',
+      width: 55
+    });
     var cm = new Ext.grid.ColumnModel({
       defaults: { sortable: true },
       columns: [
-        {
-          header: 'Has Border?',
-          dataIndex: 'boxed',
-          width: 70,
-          editor: new Ext.form.Checkbox({ allowBlank: false })
-        },
+        checkColumn,
         {
           header: 'Font Size',
           dataIndex: 'font',
@@ -4750,7 +7092,7 @@ Ext.canvasXpress.textLegendDialog = Ext.extend(Ext.Window, {
       handler: function(){
         var Text = grid.getStore().recordType;
         grid.stopEditing();
-        store.insert(0, new Text({ font: 1, margin: 10, color: 'rgb(255,255,255)', boxed: true }));
+        store.insert(0, new Text({ font: 1, margin: 10, color: 'rgb(0,0,0)', boxed: true }));
         grid.startEditing(0, 0);
         Ext.canvasXpress.utils.gridToLegend(extCanvas, grid, 'text');
       }
@@ -4784,6 +7126,7 @@ Ext.canvasXpress.textLegendDialog = Ext.extend(Ext.Window, {
       autoExpandColumn: 4, // 5th column, 'text'
       frame: false,
       clicksToEdit: 1,
+      plugins: checkColumn,
       listeners: {
         scope: this,
         viewready: function() {
@@ -4818,6 +7161,377 @@ Ext.canvasXpress.textLegendDialog = Ext.extend(Ext.Window, {
       items: grid
     });
     Ext.canvasXpress.textLegendDialog.superclass.constructor.apply(this);
+  }
+});
+Ext.canvasXpress.SnapshotManager = Ext.extend(Ext.Window, {
+  constructor: function(config, extCanvas) {
+    if(!config || !extCanvas || !config.list)
+      Ext.Msg.alert('Error', 'SnapshotManager must be called with list and extcanvas parameters!');
+    Ext.apply(this, {
+      title: 'Manage the Available Snapshots',
+      width: 500,
+      height: 300,
+      layout: 'fit',
+      items: {
+        xtype: 'grid',
+        border: false,
+        autoExpandColumn: 'ssdesc',
+        store: new Ext.data.ArrayStore({
+          autoDestroy: true,
+          data: config.list,
+          fields: [ 'username', 'name', 'desc', 'id', 'shared' ]
+        }),
+        stripeRows: true,
+        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+        cm: new Ext.grid.ColumnModel({
+            defaults: { sortable: true, width: 60 },
+            columns: [
+              { header: "User", dataIndex:'username' },
+              { header: "Name", dataIndex:'name', width: 90 },
+              { header: "Shared", dataIndex:'shared' },
+              { header: "Description", dataIndex:'desc', id: 'ssdesc' }
+          ]})
+      },
+      bbar: {
+        items: [
+          '->',
+          {
+            text: 'Edit Selected',
+            scope: extCanvas,
+            handler: function(b, e) {
+              var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected();
+              if(r && r.data)
+              {
+                if(this.networkInfo && this.networkInfo.user && this.networkInfo.user != r.data.username)
+                {
+                  Ext.Msg.alert('Error', 'You are only allowed to edit your own snapshots!');
+                  return;
+                }
+                this.showEditSnapshot({id:r.data.id,name:r.data.name,shared:r.data.shared,desc:r.data.desc},
+                  {action:'editMovie', title: 'Change Snapshots Info', bText: 'Save New Info to DB Now',
+                  xy:config.xy, win: g.ownerCt});
+              }
+            }
+          },
+          {
+            text: 'Load Selected',
+            scope: extCanvas,
+            handler: function(b, e) {
+              var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected(),
+                  win = g.ownerCt;
+              if(r && r.data && this.movieURL)
+              {
+                this.showMask('Loading snapshots ...');
+                this.snapshotsInfo = r.data;
+                Ext.Ajax.request({
+                  url: this.movieURL,
+                  params: { action:'loadMovie', id: r.data.id },
+                  scope: this,
+                  callback: function(o, s, r) {
+                    this.hideMask();
+                    if(!s) Ext.Msg.alert('Error', 'Could not load movie from server!');
+                    else
+                    {
+                      var res = Ext.decode(r.responseText);
+                      this.canvas.setSnapshotsData(Ext.decode(res.data));
+                      win.close();
+                      this.setCtrlMode();
+                      if(config.xy) this.showSnapshotResultTip('Snapshots loaded from DB', config.xy);
+                    }
+                  }
+                });
+              }
+            }
+          },
+          {
+            text: 'Delete Selected',
+            scope: extCanvas,
+            handler: function(b, e) {
+              Ext.Msg.confirm('Warning', 'Are you sure you want to delete this movie?', function(t) {
+                if(t == 'yes')
+                {
+                  var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected();
+                  if(r && r.data)
+                  {
+                    if(extCanvas.networkInfo && extCanvas.networkInfo.user && extCanvas.networkInfo.user != r.data.username)
+                    {
+                      Ext.Msg.alert('Error', 'You are only allowed to delete your own snapshots!');
+                      return;
+                    }
+                    this.showMask('Deleting snapshots ...');
+                    Ext.Ajax.request({
+                      url: this.movieURL,
+                      params: { action:'deleteMovie', id: r.data.id },
+                      scope: this,
+                      callback: function(o, s, re) {
+                        this.hideMask();
+                        var res = (s && re && re.responseText)? Ext.decode(re.responseText) : null;
+                        if(!res || res.error) Ext.Msg.alert('Error', res && res.error? res.error : 'Could not delete snapshots from server!');
+                        else
+                        {
+                          g.store.remove(r);
+                          Ext.Msg.alert('Done!', 'Snapshots deleted from the server!');
+                        }
+                      }
+                    });
+                  }
+                }
+              }, this);
+            }
+          }
+        ]
+      }
+    });
+    Ext.canvasXpress.SnapshotManager.superclass.constructor.apply(this);
+  }
+});
+Ext.canvasXpress.ViewManager = Ext.extend(Ext.Window, {
+  constructor: function(config, extCanvas) {
+    if(!config || !extCanvas || !config.list)
+      Ext.Msg.alert('Error', 'ViewManager must be called with list and extcanvas parameters!');
+    Ext.apply(this, {
+      title: 'Manage the Available Views',
+      width: 500,
+      height: 300,
+      layout: 'fit',
+      items: {
+        xtype: 'grid',
+        border: false,
+        autoExpandColumn: 'vdesc',
+        store: new Ext.data.JsonStore({
+          autoDestroy: true,
+          data: {rows:config.list},
+          root: 'rows',
+          idProperty: 'id',
+          fields: [ 'name', 'user', 'desc', 'id', 'shared' ]
+        }),
+        stripeRows: true,
+        sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+        cm: new Ext.grid.ColumnModel({
+            defaults: { sortable: true, width: 60 },
+            columns: [
+              { header: "User", dataIndex:'user' },
+              { header: "Name", dataIndex:'name', width: 90 },
+              { header: "Shared", dataIndex:'shared' },
+              { header: "Description", dataIndex:'desc', id: 'vdesc' }
+          ]})
+      },
+      bbar: {
+        items: [
+          '->',
+          {
+            text: 'Edit Selected',
+            scope: extCanvas,
+            handler: function(b, e) {
+              var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected();
+              if(r && r.data)
+                this.editView(r.data, g.ownerCt);
+            }
+          },
+          {
+            text: 'Load Selected',
+            scope: extCanvas,
+            handler: function(b, e) {
+              var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected(),
+                  win = g.ownerCt;
+              if(r && r.data && this.movieURL)
+                this.loadView({id:r.data.id,name:r.data.name,shared:r.data.shared,desc:r.data.desc});
+            }
+          },
+          {
+            text: 'Delete Selected',
+            scope: extCanvas,
+            handler: function(b, e) {
+              Ext.Msg.confirm('Warning', 'Are you sure you want to delete this view?', function(t) {
+                if(t == 'yes')
+                {
+                  var g = b.ownerCt.ownerCt.get(0), r = g.getSelectionModel().getSelected();
+                  if(r && r.data)
+                  {
+                    if(extCanvas.networkInfo && extCanvas.networkInfo.user && extCanvas.networkInfo.user != r.data.user)
+                    {
+                      Ext.Msg.alert('Error', 'You are only allowed to delete your own view!');
+                      return;
+                    }
+                    this.showMask('Deleting view ...');
+                    Ext.Ajax.request({
+                      url: this.movieURL,
+                      params: { action:'deleteMovie', id: r.data.id },
+                      scope: this,
+                      callback: function(o, s, re) {
+                        this.hideMask();
+                        var res = (s && re && re.responseText)? Ext.decode(re.responseText) : null;
+                        if(!res || res.error) Ext.Msg.alert('Error', res && res.error? res.error : 'Could not delete view from server!');
+                        else
+                        {
+                          if(this.viewInfo && this.viewInfo.id == r.data.id)
+                            this.revertView(1);
+                          for(var i = 0; i < this.pViews.length; i++)
+                            if(this.pViews[i].id == r.data.id)
+                              this.pViews.splice(i, 1);
+                          g.store.remove(r);
+                          Ext.Msg.alert('Done!', 'View deleted from the server!');
+                        }
+                      }
+                    });
+                  }
+                }
+              }, this);
+            }
+          }
+        ]
+      }
+    });
+    Ext.canvasXpress.ViewManager.superclass.constructor.apply(this);
+  }
+});
+Ext.canvasXpress.ResultList = Ext.extend(Ext.Window, {
+  constructor: function(config, extCanvas) {
+    if(!config || !extCanvas || !config.list)
+      Ext.Msg.alert('Error', 'ResultList must be called with config.list and extcanvas parameters!');
+    // assemble the store
+    var results = [], en = extCanvas.canvas.nodes;
+    for(var i = 0; i < config.list.length; i++)
+    {
+      var o = config.list[i];
+      if(o.id && !(o.id1 && o.id2))
+        results.push([o, (o.anchor? 'Anchor ' : '') + 'Node', extCanvas.getName(o), o.tooltip]);
+      else
+        results.push([o, (o.anchor? 'Anchor ' : '') + 'Edge', extCanvas.getName(en[o.id1]) + ' - ' + extCanvas.getName(en[o.id2]), o.tooltip]);
+    }
+    var win = this;
+    Ext.apply(this, {
+      title: 'Search Result List',
+      width: 400,
+      height: 300,
+      stateId: 'extcxp-resultlist',
+      stateful: true,
+      stateEvents: ['move','resize'],
+      constrainHeader: true,
+      layout: 'anchor',
+      items: [{
+          xtype: 'grid',
+          anchor: '100% -2',
+          autoExpandColumn: 'tooltip',
+          store: new Ext.data.ArrayStore({
+            autoDestroy: true,
+            data: results,
+            fields: [ 'obj', 'type', 'label', 'tooltip' ]
+          }),
+          sm: new Ext.grid.RowSelectionModel({
+            listeners: {
+              scope: extCanvas,
+              rowselect: function(sm, idx, r) {
+                var d = r.data;
+                if(d.type == 'Node')
+                {
+                  this.canvas.highlightNode = [d.obj.id];
+                  this.canvas.draw();
+                }
+              }
+            }
+          }),
+          cm: new Ext.grid.ColumnModel({
+              defaults: { sortable: true, width: 100 },
+              columns: [
+                { header: "Type", dataIndex:'type' },
+                { header: "Label", dataIndex:'label', width: 160 },
+                { header: "Tooltip", dataIndex:'tooltip', id: 'tooltip' }
+            ]}),
+          listeners: {
+            scope: extCanvas,
+            rowdblclick: function(g, idx, e) {
+              rows = g.getSelectionModel().getSelections();
+              if(rows && rows.length)
+              {
+                var o = rows[0].data.obj, isNode = o.id && !(o.id1 && o.id2), w;
+                if(isNode)
+                {
+                  this.canvas.flashNode(o.id);
+                  w = new Ext.canvasXpress.nodeDialog(o, this);
+                }
+                else
+                  w = new Ext.canvasXpress.edgeDialog(o, null, this);
+                w.show();
+              }
+            }
+          }
+        }],
+      bbar: {
+        items: [
+          {
+            text: 'Clear Highlight',
+            scope: extCanvas,
+            handler : function(b) {
+              this.canvas.highlightNode = [];
+              this.canvas.draw();
+            }
+          },
+          '->',
+          {
+            text: 'Flash the Selected Node(s)',
+            scope: extCanvas,
+            handler : function(b) {
+              var grid = win.items.items[0], rows = grid.getSelectionModel().getSelections();
+              if(rows && rows.length)
+              {
+                var nids = [];
+                for(var i = 0; i < rows.length; i++)
+                {
+                  var o = rows[i].data.obj;
+                  if(o.id && !(o.id1 && o.id2))
+                    nids.push(o.id);
+                }
+                this.canvas.flashNode(nids);
+              }
+            }
+          },
+          {
+            text: 'Select the Selected Node(s) on the Pathway',
+            scope: extCanvas,
+            handler : function(b) {
+              var grid = win.items.items[0], rows = grid.getSelectionModel().getSelections();
+              if(rows && rows.length)
+              {
+                var nids = [];
+                for(var i = 0; i < rows.length; i++)
+                {
+                  var o = rows[i].data.obj;
+                  if(o.id && !(o.id1 && o.id2))
+                    nids.push(o.id);
+                }
+                this.canvas.setSelectNodes(nids);
+                this.canvas.draw();
+              }
+            }
+          },
+          {
+            text: 'Edit the Selected Nodes',
+            scope: extCanvas,
+            handler : function(b) {
+              var grid = win.items.items[0], rows = grid.getSelectionModel().getSelections();
+              if(rows && rows.length)
+              {
+                var ns = [];
+                for(var i = 0; i < rows.length; i++)
+                {
+                  var o = rows[0].data.obj;
+                  if(o.id && !(o.id1 && o.id2))
+                    ns.push(o);
+                }
+                if(ns.length)
+                {
+                  w = new Ext.canvasXpress.nodeDialog(o, this);
+                  w.show();
+                }
+                else Ext.Msg.alert('Warning', 'You have not selected any node!');
+              }
+            }
+          }
+        ]
+      }
+    });
+    Ext.canvasXpress.ResultList.superclass.constructor.apply(this);
   }
 });
 Ext.reg('canvasxpress', Ext.canvasXpress);

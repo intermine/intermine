@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
+
+<classes>
+<!-- add any <class> elements here -->
+
+  <class name="Coexpression" is_interface="false" extends="java.lang.Object">
+    <attribute name="correlation" type="java.lang.Float" />
+    <attribute name="significance" type="java.lang.Float" />
+    <reference name="gene" referenced-type="Gene" />
+    <reference name="coexpressedGene" referenced-type="Gene" />
+  </class>
+
+  <class name="CoexpressionJSON" is_interface="true">
+    <reference name="gene" referenced-type="Gene" />
+    <attribute name="lowRange" type="java.lang.Float" />
+    <attribute name="highRange" type="java.lang.Float" />
+    <attribute name="JSON" type="java.lang.String" />
+  </class>
+
+  <class name="Gene" is-interface="true">
+    <collection name="coexpressions" referenced-type="CoexpressionJSON" reverse-reference="gene" />
+  </class>
+
+</classes>

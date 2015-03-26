@@ -1,0 +1,209 @@
+<html>
+
+  <head>
+
+    <title>CanvasXpress - Download</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <script type="text/javascript" src="./js/app.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="page">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li class="current"><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="content">
+
+          <div id="download">
+
+
+            <table border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>
+                  <form id="DownloadForm" style="border-right:2px solid #f0f0f0;">
+                    <h2>Download</h2>
+                    <div id="d_status"></div>
+                    <br />
+                    <div class="desc">
+                      <p>
+                        Please register to obtain a link to the latest
+                        code of CanvasXpress. Check the updates button
+                        to be notified when a new version is available.<br />
+                      </p>
+                    </div>
+                    <table border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>Name:</td>
+                        <td><input name="name" value="" type="text" class="field" id="d_name"/></td>
+                      </tr>
+                      <tr>
+                        <td>Email:</td>
+                        <td><input name="mail" value="" type="text" class="field" id="d_mail"/></td>
+                      </tr>
+                      <tr>
+                        <td>Updates:</td>
+                        <td><input name="update" type="checkbox" class="field" id="d_update"/></td>
+                      </tr>
+                    </table>
+                    <br />
+                    <input id="downloadButton" type="button" onclick="downloadClick('DownloadForm','http://canvasxpress.org/cgi-bin/id.pl','d_status'); return false;" class="button okay" value="Register"></a>
+                    <div id="d_sendingForm" style="display:none;">Sending...</div>
+                  </form>
+                </td>
+                <td>
+                  <form id="ContactForm">
+                    <h2>Contact</h2>
+                    <div id="c_status"></div>
+                    <br />
+                    <table border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td>Name:</td>
+                        <td><input name="name" value="" type="text" class="field" id="c_name"/></td>
+                      </tr>
+                       <tr>
+                        <td>Email:</td>
+                        <td><input name="mail" value="" type="text" class="field" id="c_mail"/></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">
+                          Questions/Comments:<br />
+                          <textarea name="message" value="" class="textarea" id="c_message" style="height:80px; width:300px;"></textarea>
+                        </td>
+                      </tr>
+                    </table>
+                    <br />
+                    <input id="contactButton" type="button" onclick="contactClick('ContactForm','http://canvasxpress.org/cgi-bin/message.pl','c_status'); return false;" class="button okay" value="Send"></a>
+                    <div id="c_sendingForm" style="display:none;">Sending...</div>
+                  </form>
+
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <br />
+                  <h2>License</h2>
+                    <div>
+                      <p>
+                         CanvasXpress - JavaScript Canvas Library Copyright (c)
+                         2009-2015 Isaac&nbsp;Neuhaus <a
+                         href="mailto:imnphd@gmail.com">imnphd@gmail.com</a>
+                      </p>
+                      <p>
+                         Redistributions of the source code must retain this copyright
+                         notice and the following disclaimer.
+                      </p>
+                      <p>
+                         CanvasXpress is licensed under the terms of the Open Source
+                         GPL version 3.0 license.
+                      </p>
+                      <p>
+                         This program is distributed in the hope that it will be useful,
+                         but WITHOUT ANY WARRANTY; without even the implied warranty of
+                         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+                         GNU General Public License for more details.
+                      </p>
+                      <p>
+                         Please see a copy of the GNU General Public License at
+                         <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses</a>.
+                      </p>
+                      <p>
+                         Commercial use may be granted to the extent that this source code
+                         does NOT become part of any other Open Source or Commercially licensed
+                         development library or toolkit without explicit permission.
+                      </p>
+                    </div>
+                  <br />
+                  <br />
+                </td>
+              </tr>
+            </table>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

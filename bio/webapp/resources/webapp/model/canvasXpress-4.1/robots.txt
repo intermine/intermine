@@ -1,0 +1,12 @@
+#Below are URLs for System Level Files. Should never be indexed by bots.
+User-agent: *
+Disallow: /classes/
+Disallow: /includes/
+Disallow: /assets/
+Disallow: /modules/
+Disallow: /templates/
+Disallow: /dev/
+Disallow: /ajax/
+Disallow: /css/
+Disallow: /images/
+Disallow: /js/

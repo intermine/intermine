@@ -12,7 +12,7 @@ Ext.ux.SearchWindow = Ext.extend(Ext.Window, {
       this.searchCriteria = config.searchCriteria;
 
     // searchCriteria has fields: [ 'displayF', 'valueF', 'typeF', 'defaultVals', 'searchOpts' ]
-    //   'typeF' could be 'number', 'string', 'custom'
+    //   'typeF' could be 'number', 'string', 'custom', 'id' (id basically only takes a number as input set #)
     //   where 'defaultVals' could be either a simple array or array of arrays like
     //   [['val','displayVal'],...] used as store of comboBox
     //   if 'typeF' = 'custom' then 'defaultVals' should be an array containing
@@ -190,6 +190,26 @@ Ext.ux.SearchWindow = Ext.extend(Ext.Window, {
             });
           },
           change: this.matchString
+        }
+      });
+    }
+    else if(type == 'id')
+    {
+      items.push({
+        xtype: 'textfield',
+        width: 150,
+        style: 'margin-left: 5px;' + this.inputStyle,
+        emptyText: 'Mouse over for tips',
+        listeners: {
+          scope: this,
+          afterrender: function(f) {
+            new Ext.ToolTip({
+              target: f.id,
+              html: '(1 AND 2) OR NOT 3<p><b>Note:</b><ul><li>NOT,AND,OR are NOT case-sensitive.</li><li>Results from the logical operations on criteria #1,2,3 will become the input of this custom criteria</li></ul>',
+              title: 'Acceptable Search Terms'
+            });
+          },
+          change: this.matchId
         }
       });
     }
@@ -391,7 +411,7 @@ Ext.ux.SearchWindow = Ext.extend(Ext.Window, {
       df.setValue('0');
   },
   matchString: function(f, n, o, noUpdate) {
-    var res = [], exp, it = f.ownerCt.items.items, df = it[it.length - 1],
+    var exp, it = f.ownerCt.items.items, df = it[it.length - 1],
         attr = it[1].getValue(), input = it[0].getValue().trim(), inpset;
     if(!n) n = f.getValue();
     var callback = function(res) {
@@ -440,6 +460,24 @@ Ext.ux.SearchWindow = Ext.extend(Ext.Window, {
           catch(err) { return false }
         }, callback, inpset);
     }
+  },
+  matchId: function(f, n, o, noUpdate) {
+    var it = f.ownerCt.items.items, df = it[it.length - 1], set,
+        attr = it[1].getValue(), input = it[0].getValue().trim(), inpset;
+    if(!n) n = f.getValue().trim();
+    if(n.match(/\d/))
+      set = this.processSets([], n);
+    var callback = function(res) {
+      // update display
+      df.setValue(res.length? res.length : '0');
+      Ext.getCmp(f.cfId).currentResults = res;
+      if(!noUpdate) this.resetResults(f.searchItemIdx);
+    }.createDelegate(this);
+
+    if(input.match(/\d/))
+      inpset = this.processSets([], input);
+    if(set)
+      this.fireEvent('search', attr, null, callback, inpset, set);
   },
   matchCustom: function(f, n, o, noUpdate) {
     var p = f.ownerCt.items.items, df = p[p.length - 1],
@@ -580,6 +618,7 @@ Ext.ux.SearchWindow = Ext.extend(Ext.Window, {
           width: 150,
           store: store,
           triggerAction: 'all',
+          emptyText: 'Select a search field',
           mode: 'local',
           valueField: 'valueF',
           displayField: 'displayF',

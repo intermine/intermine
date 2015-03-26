@@ -77,13 +77,10 @@ public class HeatMapController extends TilesAction
     private static final List<String> EXPRESSION_CONDITION_LIST_GENE = null;
     private static final List<String> EXPRESSION_CONDITION_LIST_MRNA = null;
 
-    private static final String FPKM = "fpkm";
-    private static final String COUNT = "count";
-
-    private static Float fpkmCufflinksScoreMax = new Float(100.);
-    private static Float fpkmCufflinksScoreMin = new Float(0.);
-    private static Float countCufflinksScoreMax = new Float(100.);
-    private static Float countCufflinksScoreMin = new Float(0.);
+    // these will be the returned attributes
+    private String fpkmCufflinksJSON = null;
+    private Float fpkmCufflinksScoreMax = null;
+    private Float fpkmCufflinksScoreMin = null;
     private static HashSet<Integer> organisms = null;
     private static HashSet<String> experiments = null;
     /**
@@ -112,10 +109,8 @@ public class HeatMapController extends TilesAction
             LOG.warn("ObjectStoreException in HeatMapController.java");
             return null;
         }
-
         return null;
     }
-
 
     /**
      * @param request
@@ -135,18 +130,12 @@ public class HeatMapController extends TilesAction
 
         String expressionType = bag.getType().toLowerCase();
 
-        // get the JSON string
-        String CufflinksScoreJSONFpkm =
-            getJSONString(model, bag, executor, expressionType, FPKM);
-
-        //LOG.info("FPKM json string is "+CufflinksScoreJSONFpkm);
-        //LOG.info("FPKM min and max are "+fpkmCufflinksScoreMin + " and " +
-            //fpkmCufflinksScoreMax);
-       
+        // get the JSON strings
+        fpkmCufflinksJSON = getJSONString(model, bag, executor);
         
         // set the attributes
-        request.setAttribute("cufflinksScoreJSONFpkm",
-                CufflinksScoreJSONFpkm);
+        request.setAttribute("cufflinksScoreJSON",
+            fpkmCufflinksJSON);
         request.setAttribute("minFpkmCufflinksScore",
             df.format(fpkmCufflinksScoreMin));
         request.setAttribute("maxFpkmCufflinksScore",
@@ -165,21 +154,17 @@ public class HeatMapController extends TilesAction
 
 
     private String getJSONString (Model model,
-        InterMineBag bag, PathQueryExecutor executor,
-        String expressionType, String scoreType) throws ObjectStoreException {
+        InterMineBag bag, PathQueryExecutor executor) throws ObjectStoreException {
 
-      String CufflinksScoreJSON = null;
 
       // Key: gene symbol or PID - Value: list of CufflinksScore objs
       Map<String,HashMap<String,Float>> CufflinksScoreMap =
           new LinkedHashMap<String, HashMap<String,Float>>();
 
       PathQuery query = new PathQuery(model);
-      query = queryCufflinksScore(bag, scoreType, query);
-
+      query = queryCufflinksScore(bag, query);
        
       ExportResultsIterator result = executor.execute(query);
-      LOG.debug("GGS QUERY: -->" + query + "<--");
 
       while (result.hasNext()) {
         List<ResultElement> row = result.next();
@@ -197,55 +182,8 @@ public class HeatMapController extends TilesAction
         CufflinksScoreMap.get(id).put(experimentName,score);
       }
       
-      CufflinksScoreJSON = parseToJSON(scoreType,CufflinksScoreMap);
-
-      return CufflinksScoreJSON;
-
+      return parseToJSON(CufflinksScoreMap);
     }
-
-
-    /**
-     * To encode '(' and ')', which canvasExpress uses as separator in the cluster tree building
-     * also ':' that gives problem in the clustering
-     * @param symbol
-     * @return a fixed symbol
-     */
-    private String fixSymbol(String symbol) {
-        symbol = symbol.replace("(", "%28");
-        symbol = symbol.replace(")", "%29");
-        symbol = symbol.replace(":", "%3A");
-        return symbol;
-    }
-
-
-    private PathQuery queryCufflinksScore(InterMineBag bag, String scoreType,
-            PathQuery query) {
-
-        String bagType = bag.getType();
-        String type = bagType.toLowerCase();
-
-        // Add views
-        query.addViews(
-                bagType + ".cufflinksscores.bioentity.primaryIdentifier",
-                bagType + ".cufflinksscores." + scoreType,
-                bagType + ".cufflinksscores.experiment.name",
-                bagType + ".organism.taxonId"
-        );
-
-        // Add orderby
-        query.addOrderBy(bagType + ".cufflinksscores.bioentity.primaryIdentifier",
-            OrderDirection.ASC);
-        query.addOrderBy(bagType + ".cufflinksscores.experiment.name",
-            OrderDirection.ASC);
-
-        // Add constraints
-        query.addConstraint(Constraints.in(bagType + ".cufflinksscores.bioentity",
-                bag.getName()));
-
-        return query;
-    }
-
-
 
     /**
      * Parse CufflinksScoreMap to JSON string
@@ -254,8 +192,7 @@ public class HeatMapController extends TilesAction
      * @param geneCufflinksScoreMap
      * @return json string
      */
-    private String parseToJSON(String scoreType,
-            Map<String,HashMap<String,Float>> cufflinksScoreMap) {
+    private String parseToJSON(Map<String,HashMap<String,Float>> cufflinksScoreMap) {
 
         // if no scores returns an empty JSON string
         if (cufflinksScoreMap.size() == 0) {
@@ -283,30 +220,26 @@ public class HeatMapController extends TilesAction
         Map<String, Object> heatmapData = new LinkedHashMap<String, Object>();
         Map<String, Object> yInHeatmapData =  new LinkedHashMap<String, Object>();
         List<String> desc =  new ArrayList<String>();
-        desc.add("Intensity");
+        desc.add("Cufflinks FPKM");
 
         double[][] data = new double[smps.size()][vars.size()];
-        Float dataMax = null;
-        Float dataMin = null;
 
         int j=0;
         for (String primaryId : vars) {
-          LOG.info("scanning for id "+primaryId);
           int i=0;
           for (String experiment: smps) {
-            LOG.info("scanning for experiment "+experiment);
             if (cufflinksScoreMap.containsKey(primaryId) &&
                 cufflinksScoreMap.get(primaryId).containsKey(experiment)) {
               data[i][j] = cufflinksScoreMap.get(primaryId).get(experiment);
               if (data[i][j] > 0) {
                 data[i][j] = Math.log(data[i][j])/Math.log(2.);
               } else {
-                data[i][j] = 0.;
+                data[i][j] = -10.;
               }
-              dataMax = (dataMax == null || dataMax < data[i][j])?
-                      new Float(data[i][j]):dataMax;
-              dataMin = (dataMin == null ||dataMin > data[i][j])?
-                      new Float(data[i][j]):dataMin;
+              fpkmCufflinksScoreMax = (fpkmCufflinksScoreMax == null || fpkmCufflinksScoreMax < data[i][j])?
+                      new Float(data[i][j]):fpkmCufflinksScoreMax;
+              fpkmCufflinksScoreMin = (fpkmCufflinksScoreMin == null ||fpkmCufflinksScoreMin > data[i][j])?
+                      new Float(data[i][j]):fpkmCufflinksScoreMin;
             } else {
               data[i][j] = 0;
             }
@@ -314,15 +247,7 @@ public class HeatMapController extends TilesAction
           }
           j++;
         }
-        if (scoreType.equals(FPKM) ) {
-          fpkmCufflinksScoreMax = dataMax;
-          fpkmCufflinksScoreMin = dataMin;
-          //LOG.info("Setting fpkm min/max.");
-        } else {
-          countCufflinksScoreMax = dataMax;
-          countCufflinksScoreMin = dataMin;
-          //LOG.info("Setting count min/max.");
-        }
+        
         // Rotate data
         double[][] rotatedData = new double[vars.size()][smps.size()];
 
@@ -346,4 +271,42 @@ public class HeatMapController extends TilesAction
         return jo.toString();
     }
 
+    private PathQuery queryCufflinksScore(InterMineBag bag, PathQuery query) {
+
+        String bagType = bag.getType();
+        String type = bagType.toLowerCase();
+
+        // Add views
+        query.addViews(
+                bagType + ".cufflinksscores.bioentity.primaryIdentifier",
+                bagType + ".cufflinksscores.fpkm",
+                bagType + ".cufflinksscores.experiment.name",
+                bagType + ".organism.taxonId"
+        );
+
+        // Add orderby
+        query.addOrderBy(bagType + ".cufflinksscores.bioentity.primaryIdentifier",
+            OrderDirection.ASC);
+        query.addOrderBy(bagType + ".cufflinksscores.experiment.name",
+            OrderDirection.ASC);
+
+        // Add constraints
+        query.addConstraint(Constraints.in(bagType + ".cufflinksscores.bioentity",
+                bag.getName()));
+
+        return query;
+    }
+
+    /**
+     * To encode '(' and ')', which canvasExpress uses as separator in the cluster tree building
+     * also ':' that gives problem in the clustering
+     * @param symbol
+     * @return a fixed symbol
+     */
+    private String fixSymbol(String symbol) {
+        symbol = symbol.replace("(", "%28");
+        symbol = symbol.replace(")", "%29");
+        symbol = symbol.replace(":", "%3A");
+        return symbol;
+    }
 }

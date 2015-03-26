@@ -12,6 +12,10 @@
 
 <action path="/heatMap" forward="heatMap.page" />
 
+<action path="/initCorrelationMap"
+  type="org.intermine.bio.web.displayer.CorrelationMapController" />
+
+<action path="/correlationMap" forward="correlationMap.page" />
 
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>

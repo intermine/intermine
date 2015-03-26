@@ -1,0 +1,1533 @@
+<html>
+
+  <head>
+
+    <title>Network Graphs</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li class="current"><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./3d_attributes.html">3D Attributes</a></li>
+            <li><a href="./acknowledgment.html">Acknowledgment</a></li>
+            <li><a href="./animation.html">Animation</a></li>
+            <li><a href="./area_graphs.html">Area Graphs</a></li>
+            <li><a href="./aspect_ratio.html">Aspect Ratio</a></li>
+            <li><a href="./axis.html">Axis</a></li>
+            <li><a href="./axis_resizer.html">Axis Resizer</a></li>
+            <li><a href="./background.html">Background</a></li>
+            <li><a href="./bins.html">Bins</a></li>
+            <li><a href="./boxplot_graphs.html">Boxplot Graphs</a></li>
+            <li><a href="./candlestick_plots.html">Candlestick Plots</a></li>
+            <li><a href="./circular_graphs.html">Circular Graphs</a></li>
+            <li><a href="./citations_or_references.html">Citations or References</a></li>
+            <li><a href="./clustering.html">Clustering</a></li>
+            <li><a href="./colors.html">Colors</a></li>
+            <li><a href="./combination_plots.html">Combination Plots</a></li>
+            <li><a href="./correlation_graphs.html">Correlation Graphs</a></li>
+            <li><a href="./doe.html">DOE</a></li>
+            <li><a href="./data.html">Data</a></li>
+            <li><a href="./data_filters.html">Data Filters</a></li>
+            <li><a href="./data_point_attributes.html">Data Point Attributes</a></li>
+            <li><a href="./data_table.html">Data Table</a></li>
+            <li><a href="./data_table_filter.html">Data Table/Filter</a></li>
+            <li><a href="./debug.html">Debug</a></li>
+            <li><a href="./decorations.html">Decorations</a></li>
+            <li><a href="./dendrograms.html">Dendrograms</a></li>
+            <li><a href="./events.html">Events</a></li>
+            <li><a href="./foreground.html">Foreground</a></li>
+            <li><a href="./general.html">General</a></li>
+            <li><a href="./general_attributes.html">General Attributes</a></li>
+            <li><a href="./genome_browser.html">Genome Browser</a></li>
+            <li><a href="./gradients.html">Gradients</a></li>
+            <li><a href="./heatmap_graphs.html">Heatmap Graphs</a></li>
+            <li><a href="./histograms.html">Histograms</a></li>
+            <li><a href="./images.html">Images</a></li>
+            <li><a href="./indicators.html">Indicators</a></li>
+            <li><a href="./legends.html">Legends</a></li>
+            <li><a href="./line_graphs.html">Line Graphs</a></li>
+            <li><a href="./lines.html">Lines</a></li>
+            <li><a href="./margins.html">Margins</a></li>
+            <li><a href="./network_graphs.html">Network Graphs</a></li>
+            <li><a href="./overlays.html">Overlays</a></li>
+            <li><a href="./patterns.html">Patterns</a></li>
+            <li><a href="./pie_charts.html">Pie Charts</a></li>
+            <li><a href="./plot_area.html">Plot area</a></li>
+            <li><a href="./r_axis.html">R-Axis</a></li>
+            <li><a href="./random.html">Random</a></li>
+            <li><a href="./remote_procedures.html">Remote Procedures</a></li>
+            <li><a href="./samples.html">Samples</a></li>
+            <li><a href="./scatter_plot_matrix.html">Scatter Plot Matrix</a></li>
+            <li><a href="./scatter_plots.html">Scatter Plots</a></li>
+            <li><a href="./shadows.html">Shadows</a></li>
+            <li><a href="./skins.html">Skins</a></li>
+            <li><a href="./snapshots.html">Snapshots</a></li>
+            <li><a href="./space_and_width.html">Space and Width</a></li>
+            <li><a href="./tag_cloud.html">Tag Cloud</a></li>
+            <li><a href="./text.html">Text</a></li>
+            <li><a href="./titles_and_subtitles.html">Titles and Subtitles</a></li>
+            <li><a href="./variables.html">Variables</a></li>
+            <li><a href="./venn_diagrams.html">Venn Diagrams</a></li>
+            <li><a href="./videos.html">Videos</a></li>
+            <li><a href="./x_axis.html">X-Axis</a></li>
+            <li><a href="./x_axis2.html">X-Axis2</a></li>
+            <li><a href="./y_axis.html">Y-Axis</a></li>
+            <li><a href="./z_axis.html">Z-Axis</a></li>
+            <li><a href="./zooming_and_panning.html">Zooming and Panning</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="documentation">
+
+            <h1><a onclick="CanvasXpress.showAllExamples(event, 'Network Graphs')" href="#">Network Graphs</a></h1>
+
+            <div class='desc'>
+
+              <p>
+
+                General parameters used in networks
+
+              </p>
+
+            </div>
+
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'approximateNodePositions')" href="#" id="approximateNodePositions">approximateNodePositions</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to force approximate X, Y node positions.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'attractiveForceFunction')" href="#" id="attractiveForceFunction">attractiveForceFunction</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Type of function to apply when calculating attractive force in
+		    forceDirected network layouts
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">FruchtermanReingold</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    Eades,
+                    FruchtermanReingold
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="autoHideOnDecorationsCenter">autoHideOnDecorationsCenter</a></span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to hide node when decorations are positioned on the center
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'calculateLayout')" href="#" id="calculateLayout">calculateLayout</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to force or not to calculate the network layout.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'colorEdgeBy')" href="#" id="colorEdgeBy">colorEdgeBy</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to color the edges.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'colorNodeBy')" href="#" id="colorNodeBy">colorNodeBy</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to color the nodes.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="edgeConfigurableProperties">edgeConfigurableProperties</a></span>
+                  <span class="typeProperty">array</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Edge configurable properties
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">['width', 'cap', 'exact', 'type']</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'edgeWidth')" href="#" id="edgeWidth">edgeWidth</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Default width for the edges in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">1</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="filterEdgeBy">filterEdgeBy</a></span>
+                  <span class="typeProperty">filter</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Filter edges by their properties used in network graphs
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="filterNodeBy">filterNodeBy</a></span>
+                  <span class="typeProperty">filter</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Filter nodes by their properties used in network graphs
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'highlightNode')" href="#" id="highlightNode">highlightNode</a>
+                  </span>
+                  <span class="typeProperty">array</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of nodes in the 'data.nodes' object to highlight.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'initialTemperature')" href="#" id="initialTemperature">initialTemperature</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Initial temperature to limit displacement at later stages of forceDirected
+		    and organic layouts. A value based on the number of
+		    node and edges will be assigned if not specified
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'is3DNetwork')" href="#" id="is3DNetwork">is3DNetwork</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to create or not a 3D network
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="isSelectNodes">isSelectNodes</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of selected nodes (in the data object).
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'layoutTime')" href="#" id="layoutTime">layoutTime</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Time in milliseconds used to calculate the layout for the network
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">15</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'moveParentsWithChildren')" href="#" id="moveParentsWithChildren">moveParentsWithChildren</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to make parents move when a child is moved
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="network2DRotate">network2DRotate</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of degrees to rotate network arround the X axis
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="networkDepth">networkDepth</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Depth of the radial network.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="networkDivisions">networkDivisions</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of angular divisions in the radial network.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkForceConstant')" href="#" id="networkForceConstant">networkForceConstant</a>
+                  </span>
+                  <span class="typeProperty">float</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Constant used for calculating attractive and repulsive forces in
+		    forcedDirected and organic layouts. A value based on
+		    the average area per node will be assigned if not
+		    specified
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkFreeze')" href="#" id="networkFreeze">networkFreeze</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to prevent autoscaling for the network layout. Useful when images are
+		    part of the network.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkFreezeOnLoad')" href="#" id="networkFreezeOnLoad">networkFreezeOnLoad</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to prevent autoscaling for the network layout after loading. Useful
+		    when images are part of the network.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkLayoutType')" href="#" id="networkLayoutType">networkLayoutType</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Type of network layout.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">forceDirected</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    forceDirected,
+                    organic,
+                    radial
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkNodeMinDistance')" href="#" id="networkNodeMinDistance">networkNodeMinDistance</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Minimum distance between nodes in forceDirected and organic layouts
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">4</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkNodesOnTop')" href="#" id="networkNodesOnTop">networkNodesOnTop</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Order to use when drawing nodes and edges in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkRoot')" href="#" id="networkRoot">networkRoot</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Node Id of the network root.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="networkStack">networkStack</a></span>
+                  <span class="typeProperty">array</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Array to keep state of the network after a drag or move
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="networkStackIndex">networkStackIndex</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Index in the network stack for undo and redo operations
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'networkStackStates')" href="#" id="networkStackStates">networkStackStates</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of states to keep in the network stack after a drag or move
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">8</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="nodeConfigurableProperties">nodeConfigurableProperties</a></span>
+                  <span class="typeProperty">array</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Node configurable properties
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">['x', 'y', 'z', 'shape', 'color', 'outline', 'size', 'width', 'height', 'pattern', 'rotate', 'outlineWidth', 'imagePath', 'zIndex', 'eventless']</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="nodeFont">nodeFont</a></span>
+                  <span class="typeProperty">font</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Font for the text in networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'nodeFontColor')" href="#" id="nodeFontColor">nodeFontColor</a>
+                  </span>
+                  <span class="typeProperty">color</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Color for the network text
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">rgb(0,0,0)</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'nodeFontSize')" href="#" id="nodeFontSize">nodeFontSize</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Size in pixels for the font size of text in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">20</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'nodeFontStyle')" href="#" id="nodeFontStyle">nodeFontStyle</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Font style for the node label. @default
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    ,
+                    bold,
+                    italic,
+                    bold italic
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'nodeHighlightColor')" href="#" id="nodeHighlightColor">nodeHighlightColor</a>
+                  </span>
+                  <span class="typeProperty">color</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    The color for the highlighted nodes.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">rgb(255,0,0)</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'nodeScaleFontFactor')" href="#" id="nodeScaleFontFactor">nodeScaleFontFactor</a>
+                  </span>
+                  <span class="typeProperty">float</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Scaling factor used to increse or decrease network text font size in the
+		    canvas.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">1</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'nodeSize')" href="#" id="nodeSize">nodeSize</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Length in pixels for the size of the nodes in the network
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">20</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'overrideAnchorNodes')" href="#" id="overrideAnchorNodes">overrideAnchorNodes</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to override anchor nodes
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'overrideEventlessNodes')" href="#" id="overrideEventlessNodes">overrideEventlessNodes</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to override nodes that do not take events to be able to edit them
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'preScaleNetwork')" href="#" id="preScaleNetwork">preScaleNetwork</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to prescale or not the network. This is an aesthetic parameter to make
+		    the graph look nicer... Sometimes...
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'repulsiveForceFunction')" href="#" id="repulsiveForceFunction">repulsiveForceFunction</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Type of function to apply when calculating repulsive force in forceDirected
+		    network layouts
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">square</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    square,
+                    log,
+                    pow,
+                    sqrt
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="selectNode">selectNode</a></span>
+                  <span class="typeProperty">object</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of nodes (in the data object) to select.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">{}</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'shapeEdgeBy')" href="#" id="shapeEdgeBy">shapeEdgeBy</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to shape the nods.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'shapeNodeBy')" href="#" id="shapeNodeBy">shapeNodeBy</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to shape the nods.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showHiddenChildEdges')" href="#" id="showHiddenChildEdges">showHiddenChildEdges</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show or not children nodes when the parent node is hidden.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showNetworkDecorationsLegend')" href="#" id="showNetworkDecorationsLegend">showNetworkDecorationsLegend</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show node legends in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showNetworkEdgesLegend')" href="#" id="showNetworkEdgesLegend">showNetworkEdgesLegend</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show edge legends in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showNetworkNodesLegend')" href="#" id="showNetworkNodesLegend">showNetworkNodesLegend</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show node legends in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showNetworkRadialLayout')" href="#" id="showNetworkRadialLayout">showNetworkRadialLayout</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show or not a radial layout wire.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showNetworkTextLegend')" href="#" id="showNetworkTextLegend">showNetworkTextLegend</a>
+                  </span>
+                  <span class="typeProperty">boolean</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to show node legends in the networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">true</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'showNodeNameThreshold')" href="#" id="showNodeNameThreshold">showNodeNameThreshold</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Thereshold used to set the limit to hide or display the name of nodes in a
+		    network. If the number of nodes exceed this thereshold
+		    then the name will not be shown.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">50</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="sizeDecorationBy">sizeDecorationBy</a></span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to size the network decoration.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'sizeEdgeBy')" href="#" id="sizeEdgeBy">sizeEdgeBy</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to size the edges.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'sizeNodeBy')" href="#" id="sizeNodeBy">sizeNodeBy</a>
+                  </span>
+                  <span class="typeProperty">string</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Name of the attribute to size the nodes.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="skipClick">skipClick</a></span>
+                  <span class="typeProperty">boolean</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Flag to skip click events after a mouse down event in the networks when the
+		    eventModel is global
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="subNetworks">subNetworks</a></span>
+                  <span class="typeProperty">array</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Array to keep independent networks
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'temperature')" href="#" id="temperature">temperature</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Temperature to limit displacement at later stages of forceDirected and
+		    organic layouts. A value based on the number of node
+		    and edges will be assigned if not specified
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./network.html">Network</a>
+                  </span>
+                </div>
+              </div>
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

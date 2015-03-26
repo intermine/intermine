@@ -1,0 +1,326 @@
+<html>
+
+  <head>
+
+    <title>Candlestick</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            market : [
+              {
+                symbol : "BMY",
+                data : [
+                  [ 20100824, 26.26, 26.37, 25.95, 26.02, 11625900, 26.02 ],
+                  [ 20100823, 26.48, 26.76, 26.38, 26.48, 12146600, 26.48 ],
+                  [ 20100820, 26.31, 26.54, 26.08, 26.44, 18140100, 26.44 ],
+                  [ 20100819, 26.20, 26.29, 25.81, 26.06, 8218000,  26.06 ],
+                  [ 20100818, 26.53, 26.57, 26.23, 26.28, 12235800, 26.28 ],
+                  [ 20100817, 26.40, 26.79, 26.26, 26.59, 12325700, 26.59 ],
+                  [ 20100816, 26.24, 26.34, 26.04, 26.28, 10377700, 26.28 ],
+                  [ 20100813, 26.24, 26.46, 26.10, 26.32, 5760100,  26.32 ],
+                  [ 20100812, 26.01, 26.39, 26.00, 26.33, 7350500,  26.33 ],
+                  [ 20100811, 26.32, 26.50, 26.15, 26.25, 8808100,  26.25 ],
+                  [ 20100810, 26.32, 26.78, 26.30, 26.66, 7009500,  26.66 ],
+                  [ 20100809, 26.37, 26.54, 26.30, 26.51, 6825300,  26.51 ],
+                  [ 20100806, 26.29, 26.45, 26.05, 26.37, 8774900,  26.37 ],
+                  [ 20100805, 25.83, 26.38, 25.80, 26.38, 12264600, 26.38 ],
+                  [ 20100804, 25.70, 26.13, 25.61, 26.03, 10233700, 26.03 ],
+                  [ 20100803, 25.65, 25.85, 25.58, 25.68, 6842900,  25.68 ],
+                  [ 20100802, 25.33, 25.61, 25.29, 25.53, 9770900,  25.53 ],
+                  [ 20100730, 24.98, 25.13, 24.78, 24.92, 11435700, 24.92 ],
+                  [ 20100729, 25.37, 25.50, 24.85, 25.08, 9463800,  25.08 ],
+                  [ 20100728, 25.25, 25.36, 25.02, 25.12, 8072400,  25.12 ],
+                  [ 20100727, 25.09, 25.35, 24.84, 25.32, 14152600, 25.32 ],
+                  [ 20100726, 24.57, 25.03, 24.57, 24.97, 8817400,  24.97 ],
+                  [ 20100723, 24.94, 24.95, 24.26, 24.65, 13043700, 24.65 ],
+                  [ 20100722, 24.96, 25.22, 24.75, 24.93, 10385300, 24.93 ],
+                  [ 20100721, 24.92, 25.11, 24.59, 24.75, 9830000,  24.75 ],
+                  [ 20100720, 24.65, 25.09, 24.46, 25.02, 10655500, 25.02 ],
+                  [ 20100719, 25.27, 25.27, 24.78, 24.84, 11804800, 24.84 ],
+                  [ 20100716, 25.44, 25.47, 25.10, 25.17, 13136300, 25.17 ]
+                ]
+              }
+            ]
+          },
+          {"colors": ["rgb(0,183,217)"],
+           "graphOrientation": "vertical",
+           "graphType": "Candlestick",
+           "resizerPosition": "bottom",
+           "resizerType": "samples",
+           "showLegend": false,
+           "smpLabelRotate": 90
+          }
+        );
+
+        var cx2 = new CanvasXpress("canvas2",
+          {
+            market : [
+              {
+                symbol : "BMY",
+                data : [
+                  [ 20100824, 26.26, 26.37, 25.95, 26.02, 11625900, 26.02 ],
+                  [ 20100823, 26.48, 26.76, 26.38, 26.48, 12146600, 26.48 ],
+                  [ 20100820, 26.31, 26.54, 26.08, 26.44, 18140100, 26.44 ],
+                  [ 20100819, 26.20, 26.29, 25.81, 26.06, 8218000,  26.06 ],
+                  [ 20100818, 26.53, 26.57, 26.23, 26.28, 12235800, 26.28 ],
+                  [ 20100817, 26.40, 26.79, 26.26, 26.59, 12325700, 26.59 ],
+                  [ 20100816, 26.24, 26.34, 26.04, 26.28, 10377700, 26.28 ],
+                  [ 20100813, 26.24, 26.46, 26.10, 26.32, 5760100,  26.32 ],
+                  [ 20100812, 26.01, 26.39, 26.00, 26.33, 7350500,  26.33 ],
+                  [ 20100811, 26.32, 26.50, 26.15, 26.25, 8808100,  26.25 ],
+                  [ 20100810, 26.32, 26.78, 26.30, 26.66, 7009500,  26.66 ],
+                  [ 20100809, 26.37, 26.54, 26.30, 26.51, 6825300,  26.51 ],
+                  [ 20100806, 26.29, 26.45, 26.05, 26.37, 8774900,  26.37 ],
+                  [ 20100805, 25.83, 26.38, 25.80, 26.38, 12264600, 26.38 ],
+                  [ 20100804, 25.70, 26.13, 25.61, 26.03, 10233700, 26.03 ],
+                  [ 20100803, 25.65, 25.85, 25.58, 25.68, 6842900,  25.68 ],
+                  [ 20100802, 25.33, 25.61, 25.29, 25.53, 9770900,  25.53 ],
+                  [ 20100730, 24.98, 25.13, 24.78, 24.92, 11435700, 24.92 ],
+                  [ 20100729, 25.37, 25.50, 24.85, 25.08, 9463800,  25.08 ],
+                  [ 20100728, 25.25, 25.36, 25.02, 25.12, 8072400,  25.12 ],
+                  [ 20100727, 25.09, 25.35, 24.84, 25.32, 14152600, 25.32 ],
+                  [ 20100726, 24.57, 25.03, 24.57, 24.97, 8817400,  24.97 ],
+                  [ 20100723, 24.94, 24.95, 24.26, 24.65, 13043700, 24.65 ],
+                  [ 20100722, 24.96, 25.22, 24.75, 24.93, 10385300, 24.93 ],
+                  [ 20100721, 24.92, 25.11, 24.59, 24.75, 9830000,  24.75 ],
+                  [ 20100720, 24.65, 25.09, 24.46, 25.02, 10655500, 25.02 ],
+                  [ 20100719, 25.27, 25.27, 24.78, 24.84, 11804800, 24.84 ],
+                  [ 20100716, 25.44, 25.47, 25.10, 25.17, 13136300, 25.17 ]
+                ]
+              }
+            ]
+          },
+          {"colors": ["rgb(0,183,217)"],
+           "graphOrientation": "horizontal",
+           "graphType": "Candlestick",
+           "showVolume": false
+          }
+        );
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Candlestick">
+
+            <h1>Candlestick</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./colors.html#colors">colors</a>,
+                      <a href="./general.html#graphOrientation">graphOrientation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./axis_resizer.html#resizerPosition">resizerPosition</a>,
+                      <a href="./axis_resizer.html#resizerType">resizerType</a>,
+                      <a href="./legends.html#showLegend">showLegend</a>,
+                      <a href="./samples.html#smpLabelRotate">smpLabelRotate</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas2")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./colors.html#colors">colors</a>,
+                      <a href="./general.html#graphOrientation">graphOrientation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./candlestick_plots.html#showVolume">showVolume</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

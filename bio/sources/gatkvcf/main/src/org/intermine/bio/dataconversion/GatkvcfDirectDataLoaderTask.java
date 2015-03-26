@@ -1,0 +1,545 @@
+package org.intermine.bio.dataconversion;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Consequence;
+import org.intermine.model.bio.ConsequenceType;
+import org.intermine.model.bio.DataSet;
+import org.intermine.model.bio.DataSource;
+import org.intermine.model.bio.DiversitySample;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Location;
+import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.Ontology;
+import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.SNP;
+import org.intermine.model.bio.SNPDiversitySample;
+import org.intermine.model.bio.SOTerm;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.task.FileDirectDataLoaderTask;
+import org.intermine.util.FormattedTextParser;
+
+/**
+ * A DirectDataLoader for Phytozome diversity data. This skips the items step completely
+ * and creates/store InterMineObjects directly, providing significant speed increase and
+ * removing need for a separate post-processing step.
+ * 
+ * Skipping the items step means that queries for merging objects in the target database
+ * are run individually rather than in batches. This is slower but here the number of
+ * objects being merged (organism, genes, mRNAs, etc) is very small compared to the total
+ * data size. 
+ * 
+ * @author Richard Smith
+ *
+ */
+public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
+	// NOTE if DataSet and DataSource aren't important in the webapp could disable
+	// creating and setting references to save some disk writing.
+	private static final String DATASET_TITLE = "GATK VCF Data";
+	private static final String DATA_SOURCE_NAME = "Phytozome";
+	private static final Logger LOG = Logger.getLogger(GatkvcfConverter.class);
+
+	// the one organism we're working on. proteomeId is set by setter.
+	private Integer proteomeId;
+	
+	// if true create SNPDiversitySample objects
+	private boolean makeLinks = true;
+
+	// we'll get this from the header. When parsing, we need to keep these in order
+	final static String[] expectedHeaders = { "#CHROM", "POS", "ID", "REF",
+			"ALT", "QUAL", "FILTER", "INFO", "FORMAT" };
+	final static int formatPosition = 8;
+	private Pattern effPattern = Pattern.compile("(\\w+)\\((.+)\\)");
+	// we'll use this for printing log message when we go to a new chromosome
+	private String lastChromosome = null;
+	
+	// keep ids of created objects. ProxyReference is a wrapper for a stored object id and is
+	// sufficient to create a reference to that object, saves keeping full objects in memory.
+	private ProxyReference orgRef = null;
+	private DataSet dataSet = null;
+	private DataSource dataSource = null;
+	private ProxyReference ontologyRef;
+	private List<ProxyReference> samples = new ArrayList<ProxyReference>();
+	private Map<String, ProxyReference> consequenceTypes = new HashMap<String, ProxyReference>();
+	private Map<String, ProxyReference> genes = new HashMap<String, ProxyReference>();
+	private Map<String, ProxyReference> mrnas = new HashMap<String, ProxyReference>();
+	private Map<String, ProxyReference> chromosomes = new HashMap<String, ProxyReference>();
+	private Map<String, ProxyReference> soTerms = new HashMap<String, ProxyReference>();
+	
+	// consequences are added to a collection so need to keep actual objects not ProxyReference
+	private Map<String, Consequence> consequences = new HashMap<String, Consequence>();
+    
+	public void setProteomeId(String proteome) {
+		try {
+			proteomeId = Integer.valueOf(proteome);
+		} catch (NumberFormatException e) {
+			throw new RuntimeException(
+					"Cannot find numerical proteome id for: " + proteome);
+		}
+	}
+
+	public void setMakeLinks(String linksYesNo) {
+		if (linksYesNo == null || linksYesNo.isEmpty()
+				|| linksYesNo.equalsIgnoreCase("true")) {
+			makeLinks = true;
+		} else {
+			makeLinks = false;
+		}
+	}
+
+	/**
+	 * Called by parent process method for each file found
+	 *
+	 * {@inheritDoc}
+	 */
+	public void processFile(File theFile) {
+		String message = "Processing file: " + theFile.getName();
+		System.out.println(message);
+		LOG.info(message);
+
+		if (!theFile.getName().endsWith(".vcf")) {
+			LOG.info("Ignoring file " + theFile.getName()
+					+ ". Not a SnpEff-processed GATK vcf file.");
+		} else {
+			// we need to open and find the header line. Since this starts with
+			// a "#", the
+			// FormattedTextParser calls this a comment line and will not return
+			// it to us.
+			// TODO: replace FormattedTextParser.
+			try {
+				BufferedReader in = new BufferedReader(new FileReader(theFile));
+				String line;
+				while ((line = in.readLine()) != null) {
+					if (line.startsWith("##"))
+						continue;
+					if (line.startsWith("#")) {
+						String[] fields = line.split("\\t");
+						processHeader(fields);
+						break;
+					}
+				}
+				in.close();
+			} catch (IOException e) {
+				throw new BuildException("Failed to open file: " + theFile, e);
+			}
+			// make sure we processed the header at this point
+			if (samples.size() == 0) {
+				throw new BuildException(
+						"Cannot find sample names in vcf file.");
+			}
+			Iterator<?> tsvIter;
+			try {
+				FileReader reader = new FileReader(theFile);
+				tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
+			} catch (Exception e) {
+				throw new BuildException("Cannot parse file: "
+						+ theFile, e);
+			}
+			int ctr = 0;
+			while (tsvIter.hasNext()) {
+				ctr++;
+				String[] fields = (String[]) tsvIter.next();
+				try {
+					if (!processData(fields)) {
+						return;
+					}
+				} catch (ObjectStoreException e) {
+					throw new BuildException("Error procesing data:", e);
+				}
+				if ((ctr % 100000) == 0) {
+					LOG.info("Processed " + ctr + " lines...");
+				}
+			}
+			LOG.info("Processed " + ctr + " lines.");
+		}
+	}
+
+
+	private void processHeader(String[] header) throws BuildException {
+		// here is what we expect for the first few columns. Complain if this
+		// is not case;
+		if (header.length < expectedHeaders.length + 1) {
+			// there needs to be at least 1 sample. Or is it OK to have
+			// a VCF file w/o samples?
+			throw new BuildException("Unexpected length of header fields.");
+		} else {
+			for (int i = 0; i < expectedHeaders.length; i++) {
+				if (header[i] == null || !header[i].equals(expectedHeaders[i])) {
+					throw new BuildException(
+							"Unexpected item in header at position " + i + ": "
+									+ header[i]);
+				}
+			}
+			// we're going to be certain there are no duplicates.
+			HashSet<String> sampleNameSet = new HashSet<String>();
+			for (int i = expectedHeaders.length; i < header.length; i++) {
+				if (sampleNameSet.contains(header[i])) {
+					throw new BuildException(
+							"Duplicated sample in header name: " + header[i]);
+				}
+				try {
+					samples.add(getDiversitySample(header[i]));
+				} catch (ObjectStoreException e) {
+					throw new BuildException("Failed to store DiversitySample", e);
+				}
+			}
+		}
+	}
+
+	private boolean processData(String[] fields) throws ObjectStoreException {
+		if (fields.length < expectedHeaders.length + 1) {
+			throw new BuildException(
+					"Unexpected number of columns in VCF file.");
+		}
+		String chr = fields[0];
+		// TODO remove for production
+		// if (!chr.equals("Chr01")) return false;
+
+		if (lastChromosome == null || !chr.equals(lastChromosome)) {
+			lastChromosome = chr;
+			LOG.info("Processing " + chr);
+		}
+
+		Integer pos = new Integer(fields[1]);
+		// TODO remove for production
+		// if (pos > 100000) return false;
+
+		String name = fields[2];
+		String ref = fields[3];
+		String alt = fields[4];
+		String quality = fields[5];
+		String filter = fields[6];
+		String info = fields[7];
+
+		// create the chromosome if we haven't seen this before		
+		ProxyReference chrRef = getChromosome(chr);
+		
+		SNP snp = getDirectDataLoader().createObject(SNP.class);
+		snp.proxyOrganism(getOrganism());
+		snp.setReference(ref);
+		snp.setAlternate(alt);
+		try {
+			// only add if a number
+			snp.setQuality(Double.parseDouble(quality));
+		} catch (NumberFormatException e) {
+		}
+		snp.setName(name);
+		snp.setFilter(filter);
+		Integer nSamples = parseInfo(snp, info);
+		if (nSamples != null && nSamples > 0) {
+			snp.setSampleCount(nSamples);
+		}
+		
+		// create and store the location
+		// SNP isn't a SequenceFeature so we don't set chromosomeLocation
+		makeLocation(chrRef, snp, pos, pos + ref.length(), "1");
+		
+		try {
+			// and store the snp.
+			getDirectDataLoader().store(snp);
+		} catch (ObjectStoreException e) {
+			throw new BuildException("Problem storing SNP: " + e);
+		}
+
+		if (makeLinks) {
+			// process the genotype field. First we have
+			// attribute:attribute:attribute...
+			// and value:value:value... Convert these to
+			// attribute=value;attribute=value;...
+			String[] attBits = fields[formatPosition].split(":");
+
+			// look through the different genotype scores for column 9 onward.
+			for (int col = expectedHeaders.length; col < fields.length; col++) {
+				Boolean passField = null;
+				Boolean genoField = null;
+				String[] valBits = fields[col].split(":");
+				StringBuffer genotype = new StringBuffer();
+				StringBuffer format = new StringBuffer();
+				if ((valBits.length != attBits.length)
+						&& !fields[col].equals("./."))
+					LOG.warn("Genotype fields have unexpected length.");
+				for (int i = 0; i < attBits.length && i < valBits.length; i++) {
+					if (attBits[i].equals("GT")) {
+						genoField = (valBits[i].equals("./.")) ? false : true;
+						genotype = new StringBuffer(valBits[i]);
+					} else {
+						if (format.length() > 0)
+							format.append(":");
+						format.append(attBits[i] + "=" + valBits[i]);
+						if (attBits[i].equals("FT")) {
+							passField = (valBits[i].equals("PASS")) ? true
+									: false;
+						}
+					}
+				}
+				if ((passField != null && passField)
+						|| (passField == null && genoField != null && genoField)) {
+					
+					SNPDiversitySample snpSource = getDirectDataLoader().createSimpleObject(SNPDiversitySample.class);
+					if (!genotype.toString().isEmpty())
+						snpSource.setGenotype(genotype.toString());
+					if (!format.toString().isEmpty())
+						snpSource.setFormat(format.toString());
+					snpSource.proxyDiversitySample(samples.get(col - expectedHeaders.length));
+					snpSource.setSnp(snp);
+					
+					getDirectDataLoader().store(snpSource);
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * parseInfo We're taking the INFO field of the VCF record, extracting the
+	 * EFF tag and stuffing the remainder into the info attribute
+	 * 
+	 * @param snp
+	 *            The snp record being processed
+	 * @param info
+	 *            The info string
+	 */
+	private Integer parseInfo(SNP snp, String info) throws ObjectStoreException {
+		Integer nSamples = null;
+		if (info == null)
+			return null;
+		// initialize the new string buffer to be same length as old.
+		StringBuffer newInfo = new StringBuffer(info.length());
+		String[] bits = info.split(";");
+		for (String keyVal : bits) {
+			String[] kV = keyVal.split("=", 2);
+			if (kV[0].equals("EFF")) {
+				// deal with the SnpEff calls.
+				parseEff(snp, kV[1]);
+			} else if (kV[0].equals("set")) {
+				// we're going to drop the set= tags. But we will use it to
+				// determine
+				// the number of samples
+				nSamples = kV[1].split("-").length;
+			} else {
+				// if not EFF tag, append to newInfo
+				if (newInfo.length() > 0)
+					newInfo.append(';');
+				newInfo.append(keyVal);
+			}
+		}
+		snp.setInfo(newInfo.toString());
+		return nSamples;
+	}
+
+	private void parseEff(SNP snp, String eff) throws ObjectStoreException {
+		if (eff == null)
+			return;
+
+		for (String bit : eff.split(",")) {
+			Matcher match = effPattern.matcher(bit);
+			if (match.matches()) {
+				String cType = match.group(1);
+				String effect = match.group(2);
+				String[] fields = effect.split("\\|");
+				if (fields.length < 9)
+					return;
+
+				// has this consequence been seen before?
+				// first, construct the key to the map
+				StringBuffer conKey = new StringBuffer(cType);
+				conKey.append(":");
+				if (fields[3] != null)
+					conKey.append(fields[3]);
+				conKey.append(":");
+				if (fields[5] != null)
+					conKey.append(fields[5]);
+				conKey.append(":");
+				if (fields[8] != null)
+					conKey.append(fields[8]);
+
+				if (!consequences.containsKey(conKey.toString())) {
+					Consequence con = getDirectDataLoader().createObject(Consequence.class);
+					con.proxyType(getConsequenceType(cType));
+
+					if (fields[3] != null && fields[3].length() > 0) {
+						con.setSubstitution(fields[3]);
+					}
+					if (fields[5] != null && fields[5].length() > 0) {
+						con.proxyGene(getGene(fields[5]));
+					}
+					if (fields[8] != null && fields[8].length() > 0) {
+						con.proxyTranscript(getMRNA(fields[8]));
+					}
+
+					getDirectDataLoader().store(con);
+
+					consequences.put(conKey.toString(), con);
+				}
+				snp.addConsequences(consequences.get(conKey.toString()));
+			}
+		}
+	}
+
+	
+	// ------------------------------------------------------------------------------
+
+	// Create and store referenced objects, keeping ProxyRefererences in maps for
+	// reuse where needed.
+
+	
+	protected ProxyReference getOrganism() throws ObjectStoreException {
+        if (orgRef == null) {
+            Organism org = getDirectDataLoader().createObject(Organism.class);
+            org.setProteomeId(proteomeId);
+            getDirectDataLoader().store(org);
+            orgRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    org.getId(), Organism.class);
+        }
+        return orgRef;
+    }
+    
+    protected ProxyReference getConsequenceType(String type) throws ObjectStoreException {
+		ProxyReference conRef = consequenceTypes.get(type);
+    	if (conRef == null) {
+    		ConsequenceType con = getDirectDataLoader().createObject(ConsequenceType.class);
+    		con.setType(type);
+    		getDirectDataLoader().store(con);
+    		conRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+    				con.getId(), ConsequenceType.class);
+    		consequenceTypes.put(type, conRef);
+    	}
+    	return conRef;
+    }
+	
+    protected ProxyReference getDiversitySample(String name) throws ObjectStoreException {
+    	DiversitySample sam = getDirectDataLoader().createObject(DiversitySample.class);
+    	sam.setName(name);
+    	sam.proxyOrganism(getOrganism());
+    	getDirectDataLoader().store(sam);
+    	return new ProxyReference(getIntegrationWriter().getObjectStore(),
+    			sam.getId(), DiversitySample.class);
+    }
+    
+    private ProxyReference getGene(String identifier) throws ObjectStoreException {
+    	ProxyReference geneRef = genes.get(identifier);
+    	if (geneRef == null) {
+    		Gene gene = getDirectDataLoader().createObject(Gene.class);
+            gene.setPrimaryIdentifier(identifier);
+            gene.proxyOrganism(getOrganism());
+            gene.addDataSets(getDataSet());
+            gene.proxySequenceOntologyTerm(getSOTerm("gene"));
+            getDirectDataLoader().store(gene);
+            geneRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    gene.getId(), Gene.class);
+            genes.put(identifier, geneRef);
+    	}
+    	
+    	return geneRef;
+    }
+
+    private ProxyReference getMRNA(String identifier) throws ObjectStoreException {
+    	ProxyReference mrnaRef = mrnas.get(identifier);
+    	if (mrnaRef == null) {
+    		MRNA mrna = getDirectDataLoader().createObject(MRNA.class);
+            mrna.setPrimaryIdentifier(identifier);
+            mrna.proxyOrganism(getOrganism());
+            mrna.addDataSets(getDataSet());
+            mrna.proxySequenceOntologyTerm(getSOTerm("mRNA"));
+            getDirectDataLoader().store(mrna);
+            mrnaRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    mrna.getId(), MRNA.class);
+            mrnas.put(identifier, mrnaRef);
+    	}
+    	return mrnaRef;
+    }
+    
+    private ProxyReference getChromosome(String identifier) throws ObjectStoreException {
+    	ProxyReference chrRef = chromosomes.get(identifier);
+    	if (chrRef == null) {
+    		Chromosome chr = getDirectDataLoader().createObject(Chromosome.class);
+            chr.setPrimaryIdentifier(identifier);
+            chr.proxyOrganism(getOrganism());
+            chr.addDataSets(getDataSet());
+            chr.proxySequenceOntologyTerm(getSOTerm("chromosome"));
+            getDirectDataLoader().store(chr);
+            chrRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    chr.getId(), Chromosome.class);
+            chromosomes.put(identifier, chrRef);
+    	}
+    	return chrRef;
+    }
+    
+    private void makeLocation(ProxyReference locatedOn, SNP feature,
+    		int start, int end, String strand) throws ObjectStoreException {
+    	Location location = getDirectDataLoader().createObject(Location.class);
+    	location.proxyLocatedOn(locatedOn);
+    	location.setFeature(feature);
+    	location.setStart(start);
+    	location.setEnd(end);
+    	location.setStrand(strand);
+    	getDirectDataLoader().store(location);
+    }
+    
+    // ------------------------------------------------------------------------------
+    
+    // Methods to create sequence ontology & dataset related objects, usually handled
+    // automatically for items based converters (could go in a BioDirectDataloader superclass)
+    private ProxyReference getSequenceOntology() throws ObjectStoreException {
+    	if (ontologyRef == null) {
+    		Ontology ontology = getDirectDataLoader().createObject(Ontology.class);
+            ontology.setName("Sequence Ontology");
+            ontology.setUrl("http://www.sequenceontology.org");
+            getDirectDataLoader().store(ontology);
+            ontologyRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    ontology.getId(), Ontology.class);
+    	}
+    	return ontologyRef;
+    }
+    
+    private ProxyReference getSOTerm(String featureType) throws ObjectStoreException {
+    	ProxyReference soTermRef = soTerms.get(featureType);
+    	if (soTermRef == null) {
+    		SOTerm term = getDirectDataLoader().createObject(SOTerm.class);
+            term.proxyOntology(getSequenceOntology());
+            term.setName(featureType);
+            getDirectDataLoader().store(term);
+            soTermRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
+                    term.getId(), SOTerm.class);
+            soTerms.put(featureType, soTermRef);
+    	}
+    	return soTermRef;
+    }
+    
+    private DataSource getDataSource() throws ObjectStoreException {
+    	if (dataSource == null) {
+    		dataSource = getDirectDataLoader().createObject(DataSource.class);
+            dataSource.setName(DATA_SOURCE_NAME);
+            getDirectDataLoader().store(dataSource);
+    	}
+    	return dataSource;
+    }
+    
+    private DataSet getDataSet() throws ObjectStoreException {
+    	if (dataSet == null) {
+    		dataSet = getDirectDataLoader().createObject(DataSet.class);
+            dataSet.setName(DATASET_TITLE);
+            dataSet.setDataSource(getDataSource());
+            getDirectDataLoader().store(dataSet);
+    	}
+    	return dataSet;
+    }
+    
+}

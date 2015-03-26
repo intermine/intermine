@@ -1,0 +1,273 @@
+<html>
+
+  <head>
+
+    <title>Kaplan-Meyer</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            "y" : {
+              "vars" : ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20"],
+              "smps" : ["Time", "Censored-1", "Censored-2"],
+              "data" : [[1, 0, 1], [2, 0, 1], [3, 0, 1], [3, 0, 1], [1, 1, 1], [2, 1, 1], [2, 1, 2], [3, 1, 1], [3, 1, 1], [4, 0, 0], [5, 0, 0], [6, 0, 0], [6, 0, 0], [7, 1, 0], [8, 0, 1], [9, 0, 0], [9, 0], [9, 0], [10, 1], [11, 1]]
+            }
+          },
+          {"graphType": "Scatter2D",
+           "showDecorations": true,
+           "showLegend": false,
+           "title": "Kaplan-Meyer Plot"
+          }
+        );
+        cx1.addKaplanMeyerCurve('Time','Censored-1','Data 1 Population','rgb(0,0,255)');
+        cx1.addKaplanMeyerCurve('Time','Censored-2','Data 2 Population','rgb(255,0,0)');
+
+        var cx2 = new CanvasXpress("canvas2",
+          {
+            "y" : {
+              "vars" : ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20"],
+              "smps" : ["Time", "Censored-1", "Censored-2"],
+              "data" : [[1, 0, 1], [2, 0, 1], [3, 0, 1], [3, 0, 1], [1, 1, 1], [2, 1, 1], [2, 1, 2], [3, 1, 1], [3, 1, 1], [4, 0, 0], [5, 0, 0], [6, 0, 0], [6, 0, 0], [7, 1, 0], [8, 0, 1], [9, 0, 0], [9, 0], [9, 0], [10, 1], [11, 1]]
+            }
+          },
+          {"graphType": "Scatter2D",
+           "showDecorations": true,
+           "showDecorationsKaplanMeyerConfidence": true,
+           "showLegend": false,
+           "title": "Kaplan-Meier Plot"
+          }
+        );
+        cx2.addKaplanMeyerCurve('Time','Censored-1','Data 1 Population','rgb(0,0,255)');
+        cx2.addKaplanMeyerCurve('Time','Censored-2','Data 2 Population','rgb(255,0,0)');
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Kaplan-Meyer">
+
+            <h1>Kaplan-Meyer</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                Kaplan-Meyer plots can be created with the function
+		<i>addKaplanMeyerCurve</i>. This function takes four
+		parameters: (1) the sample name of the Time variable, (2)
+		the sample name of the censored polulation, (3) the label
+		to display in the legend for the censored population and
+		(4) the color for the label and the Kaplar-Meyer plot. Many
+		Kaplan-Meyer lines may be ploted in the same graph by
+		providng additional sample series.
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./decorations.html#showDecorations">showDecorations</a>,
+                      <a href="./legends.html#showLegend">showLegend</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas2")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./decorations.html#showDecorations">showDecorations</a>,
+                      <a href="./decorations.html#showDecorationsKaplanMeyerConfidence">showDecorationsKaplanMeyerConfidence</a>,
+                      <a href="./legends.html#showLegend">showLegend</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

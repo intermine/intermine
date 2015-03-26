@@ -18,6 +18,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.sql.Database;
 import org.intermine.xml.full.Item;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 /**
@@ -77,21 +79,11 @@ public class PacClustersConverter extends BioDBConverter
 
       int ctr = 0;
       while (res.next()) {
-        // uncompress and process msa
-        Blob zMSA = res.getBlob("zMSA");
-        StringBuffer msaString = null;
-        if ( zMSA != null) {
-          Inflater inf = new Inflater();
-          inf.setInput(zMSA.getBytes(1,(int) zMSA.length()));
-          int increment;
-          msaString = new StringBuffer();
-          byte[] msaBuffer = new byte[1000];
-          do {
-            increment = inf.inflate(msaBuffer,0,1000);
-            msaString.append(new String(msaBuffer,0,increment,"UTF-8"));
-          } while (inf.getRemaining() > 0);
-        }
-
+        // uncompress and process msa and hmm
+        String msaString = expandCompressedBlob(res.getBlob("zMSA"));
+        String hmmString = expandCompressedBlob(res.getBlob("zHMM"));
+        
+        
         Item proFamily = createItem("ProteinFamily");
         String clusterId = res.getString("clusterId");
         proFamily.setAttribute("clusterId", clusterId);
@@ -115,9 +107,11 @@ public class PacClustersConverter extends BioDBConverter
         
         if (msaString != null) {
           String newMSA = reformatMSA(msaString,idToName);
+          String newHMM = reformatHMM(hmmString);
           Item msa = createItem("MSA");
           msa.setAttribute("primaryIdentifier","Cluster "+clusterId+" alignment");
           msa.setAttribute("alignment", newMSA);
+          msa.setAttribute("HMM",newHMM);
           try {
             store(msa);
           } catch (ObjectStoreException e) {
@@ -156,9 +150,14 @@ public class PacClustersConverter extends BioDBConverter
       ResultSet res = getFamilyMembers(clusterId);
       HashMap<String,String> idToName = new HashMap<String,String>();
       Map<String,Integer>organismCount = new HashMap<String,Integer>();
+      // this is a list of family members we will store. Separated by proteomeId.
+      HashMap<String,ArrayList<Item>> thingsToStore = new HashMap<String, ArrayList<Item>>();
       while( res.next()) {
         String proteomeId = res.getString("proteomeid");
         idToName.put(res.getString("transcriptId"), res.getString("peptideName"));
+        if (!thingsToStore.containsKey(proteomeId)) {
+          thingsToStore.put(proteomeId,new ArrayList<Item>());
+        }
         if (!organismCount.containsKey(proteomeId)) {
           organismCount.put(proteomeId, new Integer(1));
         } else {
@@ -195,7 +194,7 @@ public class PacClustersConverter extends BioDBConverter
         pfm.setReference("organism", organismMap.get(proteomeId));
         pfm.setReference("protein", proteinMap.get(proteomeId).get(proteinName));
         pfm.setReference("proteinFamily",family.getIdentifier());
-        store(pfm);
+        thingsToStore.get(proteomeId).add(pfm);
         family.addToCollection("member",pfm.getIdentifier());
        
       }
@@ -203,13 +202,15 @@ public class PacClustersConverter extends BioDBConverter
       // register the organism counts
       Integer memberCount = new Integer(0);
       for( String proteomeId : organismCount.keySet()) {
-        memberCount += organismCount.get(proteomeId);/*
-        Item count = createItem("ProteinFamilyOrganism");
-        count.setAttribute("count", organismCount.get(proteomeId).toString());
-        count.setReference("proteinFamily",family.getIdentifier());
-        count.setReference("organism",organismMap.get(proteomeId));
-        family.addToCollection("proteinFamilyOrganism",count.getIdentifier());
-        store(count);*/
+        memberCount += organismCount.get(proteomeId);
+      }
+      for( String protId : thingsToStore.keySet() ) {
+        ArrayList<Item> pfmByOrganism = thingsToStore.get(protId);
+        String nMembers = (new Integer(pfmByOrganism.size())).toString();
+        for(Item pfm : pfmByOrganism ) {
+          pfm.setAttribute("count",nMembers);
+          store(pfm);
+        }
       }
       family.setAttribute("memberCount",memberCount.toString());
       return idToName;
@@ -293,13 +294,14 @@ public class PacClustersConverter extends BioDBConverter
       try {
         Statement stmt = connection.createStatement();
         // we're going to want clusterId as string. so cast it here
-        String query = "SELECT zMSA,sequence,clusterName,"
+        String query = "SELECT zMSA,zHMM,sequence,clusterName,"
             + " CAST(clusterDetail.id AS char) as clusterId,"
             + " CAST(methodId as char) AS methodId"
             + " FROM"
             + " clusterDetail LEFT OUTER JOIN"
             + " (msa LEFT OUTER JOIN centroid"
-            + " ON centroid.msaId=msa.id) "
+            + " ON centroid.msaId=msa.id"
+            + " LEFT OUTER JOIN hmm on hmm.msaId=msa.id) "
             + " ON msa.clusterId=clusterDetail.id"
             + " WHERE"
             + " clusterDetail.active=1 AND"
@@ -357,7 +359,7 @@ public class PacClustersConverter extends BioDBConverter
 
       return res;
     }
-    String reformatMSA(StringBuffer msa, HashMap<String,String>idToName) {
+    String reformatMSA(String msa, HashMap<String,String>idToName) {
       // idLength is the max length of the id string, nameLength is the
       // max length of the replacement id string. The difference is the
       // number of spaces we need to pad
@@ -372,7 +374,7 @@ public class PacClustersConverter extends BioDBConverter
         nameLength = (idToName.get(id).length() >nameLength)?
             idToName.get(id).length():nameLength;
       }
-      String[] lines = msa.toString().split("\\n");
+      String[] lines = msa.split("\\n");
       String[] processedLines = new String[lines.length];
       // precompile patterns
       HashMap<String,Pattern> idToPattern = new HashMap<String,Pattern>();
@@ -421,6 +423,48 @@ public class PacClustersConverter extends BioDBConverter
         returnMSA.append(line);
       }
       return returnMSA.toString();
+    }
+    String reformatHMM(String hmm) {
+
+      //do what we have to do to reformat a hmm into something suitable for intermine
+      // pretty much replacing the newline character with the 2 characters \ and n
+      
+      StringBuffer returnHMM = new StringBuffer();
+      for( String line: hmm.split("\\n") ) {
+        if (returnHMM.length() > 0) returnHMM.append("\\n");
+        returnHMM.append(line);
+      }
+      return returnHMM.toString();
+    }
+    String expandCompressedBlob(Blob z) { 
+      if ( z == null) {
+        return null;
+      }
+      Inflater inf = new Inflater();
+      try {
+        inf.setInput(z.getBytes(1,(int) z.length()));
+      } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        throw new BuildException("Problem getting bytes from compressed blob." + e.getMessage());
+      }
+      int increment;
+      StringBuffer uncompressedStringBuffer = new StringBuffer();
+      byte[] byteBuffer = new byte[1000];
+      do {
+        try {
+          increment = inf.inflate(byteBuffer,0,1000);
+        } catch (DataFormatException e) {
+          // TODO Auto-generated catch block
+          throw new BuildException("Problem inflating blob." + e.getMessage());
+        }
+        try {
+          uncompressedStringBuffer.append(new String(byteBuffer,0,increment,"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+          // TODO Auto-generated catch block
+          throw new BuildException("Problem encoding blob." + e.getMessage());
+        }
+      } while (inf.getRemaining() > 0);
+      return uncompressedStringBuffer.toString();
     }
     /*
      * set the list of method ids as a comma-delimited list.

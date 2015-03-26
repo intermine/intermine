@@ -1,9 +1,9 @@
-/* $Id: canvas.text.js,v 1.1 2011/01/19 16:21:21 lium15 Exp $ */ 
+/* $Id: canvas.text.js,v 1.2 2015/01/16 16:58:17 neuhausi Exp $ */ 
   
  /**  
   * @projectDescription An cross-browser implementation of the HTML5 <canvas> text methods 
   * @author Fabien Ménager 
-  * @version $Revision: 1.1 $ 
+  * @version $Revision: 1.2 $ 
   * @license MIT License <http://www.opensource.org/licenses/mit-license.php> 
   */ 
   
@@ -174,7 +174,7 @@
        return this.faces[family][weight][style]; 
      } 
      else throw 'Unable to load the font ['+family+' '+weight+' '+style+']'; 
-     return false; 
+     //return false; 
    }; 
     
    ctxt.loadFace = function(data){ 

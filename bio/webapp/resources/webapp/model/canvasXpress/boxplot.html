@@ -1,0 +1,466 @@
+<html>
+
+  <head>
+
+    <title>Boxplot</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            "x" : {
+              "Species" : ["setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "setosa", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "versicolor", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica", "virginica"]
+            },
+            "y" : {
+              "vars" : ["Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"],
+              "smps" : ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17", "s18", "s19", "s20", "s21", "s22", "s23", "s24", "s25", "s26", "s27", "s28", "s29", "s30", "s31", "s32", "s33", "s34", "s35", "s36", "s37", "s38", "s39", "s40", "s41", "s42", "s43", "s44", "s45", "s46", "s47", "s48", "s49", "s50", "s51", "s52", "s53", "s54", "s55", "s56", "s57", "s58", "s59", "s60", "s61", "s62", "s63", "s64", "s65", "s66", "s67", "s68", "s69", "s70", "s71", "s72", "s73", "s74", "s75", "s76", "s77", "s78", "s79", "s80", "s81", "s82", "s83", "s84", "s85", "s86", "s87", "s88", "s89", "s90", "s91", "s92", "s93", "s94", "s95", "s96", "s97", "s98", "s99", "s100", "s101", "s102", "s103", "s104", "s105", "s106", "s107", "s108", "s109", "s110", "s111", "s112", "s113", "s114", "s115", "s116", "s117", "s118", "s119", "s120", "s121", "s122", "s123", "s124", "s125", "s126", "s127", "s128", "s129", "s130", "s131", "s132", "s133", "s134", "s135", "s136", "s137", "s138", "s139", "s140", "s141", "s142", "s143", "s144", "s145", "s146", "s147", "s148", "s149", "s150"],
+              "data" : [[5.1, 4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, 5, 5.6, 5.7, 5.7, 6.2, 5.1, 5.7, 6.3, 5.8, 7.1, 6.3, 6.5, 7.6, 4.9, 7.3, 6.7, 7.2, 6.5, 6.4, 6.8, 5.7, 5.8, 6.4, 6.5, 7.7, 7.7, 6, 6.9, 5.6, 7.7, 6.3, 6.7, 7.2, 6.2, 6.1, 6.4, 7.2, 7.4, 7.9, 6.4, 6.3, 6.1, 7.7, 6.3, 6.4, 6, 6.9, 6.7, 6.9, 5.8, 6.8, 6.7, 6.7, 6.3, 6.5, 6.2, 5.9], [3.5, 3, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3, 3, 4, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3, 3.8, 3.2, 3.7, 3.3, 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2, 3, 2.2, 2.9, 2.9, 3.1, 3, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3, 2.8, 3, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3, 3.4, 3.1, 2.3, 3, 2.5, 2.6, 3, 2.6, 2.3, 2.7, 3, 2.9, 2.9, 2.5, 2.8, 3.3, 2.7, 3, 2.9, 3, 3, 2.5, 2.9, 2.5, 3.6, 3.2, 2.7, 3, 2.5, 2.8, 3.2, 3, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2, 2.8, 3, 2.8, 3, 2.8, 3.8, 2.8, 2.8, 2.6, 3, 3.4, 3.1, 3, 3.1, 3.1, 3.1, 2.7, 3.2, 3.3, 3, 2.5, 3, 3.4, 3], [1.4, 1.4, 1.3, 1.5, 1.4, 1.7, 1.4, 1.5, 1.4, 1.5, 1.5, 1.6, 1.4, 1.1, 1.2, 1.5, 1.3, 1.4, 1.7, 1.5, 1.7, 1.5, 1, 1.7, 1.9, 1.6, 1.6, 1.5, 1.4, 1.6, 1.6, 1.5, 1.5, 1.4, 1.5, 1.2, 1.3, 1.4, 1.3, 1.5, 1.3, 1.3, 1.3, 1.6, 1.9, 1.4, 1.6, 1.4, 1.5, 1.4, 4.7, 4.5, 4.9, 4, 4.6, 4.5, 4.7, 3.3, 4.6, 3.9, 3.5, 4.2, 4, 4.7, 3.6, 4.4, 4.5, 4.1, 4.5, 3.9, 4.8, 4, 4.9, 4.7, 4.3, 4.4, 4.8, 5, 4.5, 3.5, 3.8, 3.7, 3.9, 5.1, 4.5, 4.5, 4.7, 4.4, 4.1, 4, 4.4, 4.6, 4, 3.3, 4.2, 4.2, 4.2, 4.3, 3, 4.1, 6, 5.1, 5.9, 5.6, 5.8, 6.6, 4.5, 6.3, 5.8, 6.1, 5.1, 5.3, 5.5, 5, 5.1, 5.3, 5.5, 6.7, 6.9, 5, 5.7, 4.9, 6.7, 4.9, 5.7, 6, 4.8, 4.9, 5.6, 5.8, 6.1, 6.4, 5.6, 5.1, 5.6, 6.1, 5.6, 5.5, 4.8, 5.4, 5.6, 5.1, 5.1, 5.9, 5.7, 5.2, 5, 5.2, 5.4, 5.1], [0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2, 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1, 1.3, 1.4, 1, 1.5, 1, 1.4, 1.3, 1.4, 1.5, 1, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1, 1.1, 1, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3, 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5, 2, 1.9, 2.1, 2, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2, 2, 1.8, 2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2, 2.2, 1.5, 1.4, 2.3, 2.4, 1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2, 2.3, 1.8]],
+              "desc" : ["centimeters"]
+            },
+            "m" : {
+              "Name" : "Anderson's Iris data set",
+              "Description" : "The data set consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimetres.",
+              "Reference" : "R. A. Fisher (1936). The use of multiple measurements in taxonomic problems. Annals of Eugenics 7 (2): 179–188."
+            }
+          },
+          {"axisTickFontStyle": "bold",
+           "axisTickScaleFontFactor": 1.5,
+           "axisTitleFontStyle": "italic",
+           "axisTitleScaleFontFactor": 1.5,
+           "citation": "R. A. Fisher (1936). The use of multiple measurements in taxonomic problems. Annals of Eugenics 7 (2) => 179–188.",
+           "citationFontStyle": "italic",
+           "fontStyle": "italic",
+           "graphOrientation": "vertical",
+           "graphType": "Boxplot",
+           "legendBox": false,
+           "legendScaleFontFactor": 1.2,
+           "marginBottom": 30,
+           "showShadow": true,
+           "smpLabelFontStyle": "italic",
+           "smpLabelRotate": 90,
+           "smpLabelScaleFontFactor": 0.5,
+           "smpTitle": "Species",
+           "smpTitleScaleFontFactor": 1.5,
+           "title": "Iris flower data set",
+           "titleHeight": 60,
+           "xAxis2Show": false
+          }
+        );
+        cx1.groupSamples(["Species"]);
+
+        var cx2 = new CanvasXpress("canvas2",
+          {
+            "x" : {
+              "Factor1" : ["Lev1", "Lev1", "Lev1", "Lev1", "Lev1", "Lev1", "Lev2", "Lev2", "Lev2", "Lev2", "Lev2", "Lev2"]
+            },
+            "y" : {
+              "vars" : ["Variable1", "Variable2"],
+              "smps" : ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5", "Sample6", "Sample7", "Sample8", "Sample9", "Sample10", "Sample11", "Sample12"],
+              "data" : [[5, 8, 10, 6, 8, 20, 25, 27, 30, 27, 6, 29], [49, 18, 14, 16, 18, 15, 65, 67, 60, 72, 76, 9]],
+              "desc" : ["Magnitude1"]
+            }
+          },
+          {"axisTickScaleFontFactor": 1.3,
+           "axisTitleFontStyle": "italic",
+           "axisTitleScaleFontFactor": 1.3,
+           "graphType": "Boxplot",
+           "jitter": true,
+           "showBoxplotOriginalData": true,
+           "subtitle": "Boxplot Graph",
+           "title": "Random Data",
+           "titleHeight": 40
+          }
+        );
+        cx2.groupSamples(["Factor1"]);
+
+        var cx3 = new CanvasXpress("canvas3",
+          {
+            "x" : {
+              "Sex" : ["M", "F", "M", "M", "M", "F", "F", "F", "M", "F", "F", "F", "F", "M", "M", "M", "M", "M", "F", "F", "M"],
+              "Smoker" : ["N", "Y", "N", "N", "N", "Y", "N", "N", "N", "N", "Y", "Y", "Y", "Y", "N", "N", "Y", "N", "Y", "N", "N"],
+              "Opinion" : ["pos", "neg", "pos", "neg", "neg", "pos", "pos", "pos", "pos", "indiff", "pos", "indiff", "pos", "indiff", "indiff", "pos", "neg", "neg", "pos", "neg", "neg"],
+              "Age" : [23, 43, 43, 32, 15, 37, 26, 35, 26, 31, 35, 55, 25, 39, 25, 26, 33, 62, 54, 38, 65],
+              "Order" : ["1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1", "2", "1"]
+            },
+            "y" : {
+              "vars" : ["U-Trial 1", "U-Trial 2", "U-Trial 3", "S-Trial 1", "S-Trial 2", "S-Trial 3"],
+              "smps" : ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17", "s18", "s19", "s20", "s21"],
+              "data" : [[38.4, 46.2, 72.5, 38, 82.8, 33.9, 50.4, 35, 32.8, 60.1, 75.1, 57.6, 55.5, 49.5, 40.9, 44.3, 93.8, 47.9, 75.2, 46.2, 56.3], [27.7, 57.2, 57.9, 38, 57.9, 32, 40.6, 33.1, 26.8, 53.2, 63.1, 57.7, 63.3, 45.8, 35.7, 46.8, 91.9, 59.9, 54.1, 39.3, 45.8], [25.7, 41.9, 51.9, 32.2, 64.7, 31.4, 40.1, 43.2, 33.9, 40.4, 58, 61.5, 44.6, 35.3, 37.2, 39.4, 77.4, 52.8, 63.6, 56.6, 58.9], [53.1, 54.7, 74.2, 49.6, 53.6, 51.3, 44.1, 34, 34.5, 59.1, 67.3, 75.5, 41.1, 52.2, 28.3, 74.9, 77.5, 50.9, 70.1, 60.3, 59.9], [30.6, 43.3, 53.4, 37.4, 48.6, 35.5, 46.9, 26.4, 25.1, 87.1, 43.8, 126.6, 41.8, 53.8, 26, 45.3, 55.8, 58.6, 44, 47.8, 36.8], [30.2, 56.7, 42.4, 34.4, 44.8, 42.9, 42.7, 24.8, 25.1, 59.2, 42.2, 48.4, 32, 48.1, 33.7, 42.6, 54.9, 64.5, 43.1, 52.8, 44.3]],
+              "desc" : ["time in seconds"]
+            },
+            "m" : {
+              "Name" : "Scents",
+              "Description" : "Data on the time subjects required to complete a pencil and paper maze when they were smelling a floral scent and when they were not.",
+              "Reference" : "Hirsch, A. R., and Johnston, L. H. Odors and Learning, Smell & Taste Treatment and Research Foundation, Chicago."
+            }
+          },
+          {"axisTitleFontStyle": "italic",
+           "axisTitleScaleFontFactor": 2,
+           "citation": "Hirsch, A. R., and Johnston, L. H. Odors and Learning, Smell & Taste Treatment and Research Foundation, Chicago.",
+           "graphOrientation": "vertical",
+           "graphType": "Boxplot",
+           "jitter": true,
+           "legendBox": false,
+           "legendPosition": "bottom",
+           "plotByVariable": true,
+           "setMaxX": 150,
+           "setMinX": 0,
+           "showBoxplotOriginalData": true,
+           "smpLabelRotate": 90,
+           "smpLabelScaleFontFactor": 0.3,
+           "smpTitle": "Smoking Status",
+           "smpTitleFontStyle": "italic",
+           "smpTitleScaleFontFactor": 2,
+           "title": "Data on the time subjects required to complete a pencil and paper maze\nwhen they were smelling a floral scent and when they were not.",
+           "xAxisExact": true
+          }
+        );
+        cx3.groupSamples(["Smoker"]);
+
+        var cx4 = new CanvasXpress("canvas4",
+          {
+            "z" : {
+              "Description" : ["Survival time in days"]
+            },
+            "x" : {
+              "Organ" : ["Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Stomach", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Bronchus", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Colon", "Ovary", "Ovary", "Ovary", "Ovary", "Ovary", "Ovary", "Breast", "Breast", "Breast", "Breast", "Breast", "Breast", "Breast", "Breast", "Breast", "Breast", "Breast"]
+            },
+            "y" : {
+              "vars" : ["Survival"],
+              "smps" : ["s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17", "s18", "s19", "s20", "s21", "s22", "s23", "s24", "s25", "s26", "s27", "s28", "s29", "s30", "s31", "s32", "s33", "s34", "s35", "s36", "s37", "s38", "s39", "s40", "s41", "s42", "s43", "s44", "s45", "s46", "s47", "s48", "s49", "s50", "s51", "s52", "s53", "s54", "s55", "s56", "s57", "s58", "s59", "s60", "s61", "s62", "s63", "s64"],
+              "data" : [[124, 42, 25, 45, 412, 51, 1112, 46, 103, 876, 146, 340, 396, 81, 461, 20, 450, 246, 166, 63, 64, 155, 859, 151, 166, 37, 223, 138, 72, 245, 248, 377, 189, 1843, 180, 537, 519, 455, 406, 365, 942, 776, 372, 163, 101, 20, 283, 1234, 89, 201, 356, 2970, 456, 1235, 24, 1581, 1166, 40, 727, 3808, 791, 1804, 3460, 719]],
+              "desc" : ["days"]
+            },
+            "m" : {
+              "Name" : "Cancer Survival",
+              "Description" : "Patients with advanced cancers of the stomach, bronchus, colon, ovary or breast were treated with ascorbate. The purpose of the study was to determine if the survival times differ with respect to the organ affected by the cancer.",
+              "Reference" : "Cameron, E. and Pauling, L. (1978) Supplemental ascorbate in the supportive treatment of cancer: re-evaluation of prolongation of survival times in terminal human cancer. Proceedings of the National Academy of Science USA, 75. Also found in: Manly, B.F.J. (1986) Multivariate Statistical Methods: A Primer, New York: Chapman & Hall, 11. Also found in: Hand, D.J., et al. (1994) A Handbook of Small Data Sets, London: Chapman & Hall, 255."
+            }
+          },
+          {"axisTitleFontStyle": "italic",
+           "axisTitleScaleFontFactor": 1.2,
+           "citation": "Cameron, E. and Pauling, L. (1978). Proceedings of the National Academy of Science USA, 75.",
+           "graphType": "Boxplot",
+           "showLegend": false,
+           "showShadow": true,
+           "smpLabelScaleFontFactor": 0.8,
+           "title": "Patients with advanced cancers of the stomach,\nbronchus, colon, ovary or breast treated with ascorbate.",
+           "xAxisTitle": "Survival time (days)"
+          }
+        );
+        cx4.groupSamples(["Organ"]);
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Boxplot">
+
+            <h1>Boxplot</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./axis.html#axisTickFontStyle">axisTickFontStyle</a>,
+                      <a href="./axis.html#axisTickScaleFontFactor">axisTickScaleFontFactor</a>,
+                      <a href="./axis.html#axisTitleFontStyle">axisTitleFontStyle</a>,
+                      <a href="./axis.html#axisTitleScaleFontFactor">axisTitleScaleFontFactor</a>,
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./citations_or_references.html#citationFontStyle">citationFontStyle</a>,
+                      <a href="./text.html#fontStyle">fontStyle</a>,
+                      <a href="./general.html#graphOrientation">graphOrientation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./legends.html#legendBox">legendBox</a>,
+                      <a href="./legends.html#legendScaleFontFactor">legendScaleFontFactor</a>,
+                      <a href="./margins.html#marginBottom">marginBottom</a>,
+                      <a href="./shadows.html#showShadow">showShadow</a>,
+                      <a href="./samples.html#smpLabelFontStyle">smpLabelFontStyle</a>,
+                      <a href="./samples.html#smpLabelRotate">smpLabelRotate</a>,
+                      <a href="./samples.html#smpLabelScaleFontFactor">smpLabelScaleFontFactor</a>,
+                      <a href="./samples.html#smpTitle">smpTitle</a>,
+                      <a href="./samples.html#smpTitleScaleFontFactor">smpTitleScaleFontFactor</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./titles_and_subtitles.html#titleHeight">titleHeight</a>,
+                      <a href="./x_axis2.html#xAxis2Show">xAxis2Show</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas2")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./axis.html#axisTickScaleFontFactor">axisTickScaleFontFactor</a>,
+                      <a href="./axis.html#axisTitleFontStyle">axisTitleFontStyle</a>,
+                      <a href="./axis.html#axisTitleScaleFontFactor">axisTitleScaleFontFactor</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./plot_area.html#jitter">jitter</a>,
+                      <a href="./boxplot_graphs.html#showBoxplotOriginalData">showBoxplotOriginalData</a>,
+                      <a href="./titles_and_subtitles.html#subtitle">subtitle</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./titles_and_subtitles.html#titleHeight">titleHeight</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas3")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas3' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./axis.html#axisTitleFontStyle">axisTitleFontStyle</a>,
+                      <a href="./axis.html#axisTitleScaleFontFactor">axisTitleScaleFontFactor</a>,
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./general.html#graphOrientation">graphOrientation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./plot_area.html#jitter">jitter</a>,
+                      <a href="./legends.html#legendBox">legendBox</a>,
+                      <a href="./legends.html#legendPosition">legendPosition</a>,
+                      <a href="./plot_area.html#plotByVariable">plotByVariable</a>,
+                      <a href="./x_axis.html#setMaxX">setMaxX</a>,
+                      <a href="./x_axis.html#setMinX">setMinX</a>,
+                      <a href="./boxplot_graphs.html#showBoxplotOriginalData">showBoxplotOriginalData</a>,
+                      <a href="./samples.html#smpLabelRotate">smpLabelRotate</a>,
+                      <a href="./samples.html#smpLabelScaleFontFactor">smpLabelScaleFontFactor</a>,
+                      <a href="./samples.html#smpTitle">smpTitle</a>,
+                      <a href="./samples.html#smpTitleFontStyle">smpTitleFontStyle</a>,
+                      <a href="./samples.html#smpTitleScaleFontFactor">smpTitleScaleFontFactor</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./x_axis.html#xAxisExact">xAxisExact</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas4")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas4' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./axis.html#axisTitleFontStyle">axisTitleFontStyle</a>,
+                      <a href="./axis.html#axisTitleScaleFontFactor">axisTitleScaleFontFactor</a>,
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./legends.html#showLegend">showLegend</a>,
+                      <a href="./shadows.html#showShadow">showShadow</a>,
+                      <a href="./samples.html#smpLabelScaleFontFactor">smpLabelScaleFontFactor</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./x_axis.html#xAxisTitle">xAxisTitle</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

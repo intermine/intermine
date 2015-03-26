@@ -1,0 +1,1252 @@
+<html>
+
+  <head>
+
+    <title>CanvasXpress - Contact</title>
+
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+  </head>
+
+  <body>
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li class="current"><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="#browser">Browser Support</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="#arguments">Arguments</a></li>
+            <li><a href="#target">&nbsp;-&nbsp;target</a></li>
+            <li><a href="#data">&nbsp;-&nbsp;data</a></li>
+            <li><a href="#config">&nbsp;-&nbsp;config</a></li>
+            <li><a href="#events">&nbsp;-&nbsp;events</a></li>
+            <li><a href="#functionalities">Functionalities</a></li>
+            <li><a href="#additional_methods">Additional Methods</a></li>
+            <li><a href="#ext_js">Ext-JS</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="documentation">
+
+            <h1><a name='browser' id='browser'>Browser Support</a></h1>
+
+            <div class="desc">
+              <p>
+                CanvasXpress works in all major browsers, Firefox,
+                Safari, Chrome, Opera and IE. It even works in
+                substandard browsers like Internet Explorer&nbsp;6 if
+                an additional javascript library like <a
+                href="http://code.google.com/p/explorercanvas/"
+                target="_blank">ExplorerCanvas</a> or <a
+                href="http://flashcanvas.net/"
+                target="_blank">FlashCanvas</a> is included. Older
+                versions of many browsers like Firefox 1.5, Opera 9,
+                Safari 3.x, Chrome 1.0, IE 6 also require additional
+                javascript libraries, <a href=
+                "http://code.google.com/p/canvas-text/"
+                target="_blank">canvas-text</a> and <a href=
+                "http://typeface.neocracy.org/fonts.html"
+                target="_blank">typeface.js</a> to support printing of
+                text.  (Please see below).
+              </p>
+            </div>
+
+            <h1><a name='usage' id='usage'>Usage</a></h1>
+
+            <div class="h3">
+              <h3>Javascript Libraries</h3>
+            </div>
+
+            <div class="desc">
+              <p>
+                There are two or three JavaScript libraries that need
+                to be included pedending on how to handle
+                the fallback for older versions of IE.
+              </p>
+            </div>
+
+            <div class="desc">
+              <p>
+                Flash fallback for older versions of IE
+              </p>
+            </div>
+
+            <div class="code">
+              &lt;!--[if lt IE 9]&gt;&lt;script type="text/javascript" src="./js/flashcanvas.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;<br />
+              &lt;script type="text/javascript" src="./js/canvasXpress.min.js"&gt;&lt;/script&gt;<br />
+            </div>
+
+            <br />
+
+            <div class="desc">
+              <p>
+                or
+              </p>
+            </div>
+
+            <div class="desc">
+              <p>
+                VML fallback for older versions of  IE
+              </p>
+            </div>
+
+            <div class="code">
+              &lt;!--[if IE]&gt;&lt;script type="text/javascript" src="./js/excanvas.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;<br />
+              &lt;!--[if IE]&gt;&lt;script type="text/javascript" src="./js/extext.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;<br />
+              &lt;script type="text/javascript" src="./js/canvasXpress.min.js"&gt;&lt;/script&gt;<br />
+            </div>
+
+            <br />
+
+            <div class="desc">
+              <p>
+                Make sure to include the flash binaries in the same
+                directory where the JavaScript file is located when
+                using <a href="http://flashcanvas.net/"
+                target="_blank">FlashCanvas</a>.  Please see the <a
+                href="http://flashcanvas.net/docs/usage"
+                target="_blank">documentation for FlashCanvas</a>.
+              </p>
+            </div>
+
+            <br />
+
+            <div class="desc">
+              <p>
+                The file <a target="_blank"
+                href="http://www.canvasxpress.org/js/canvasXpress.min.js">canvasXpress.min.js</a>
+                also contains the additional javascript libraries, <a
+                href="http://code.google.com/p/sprintf/"
+                target="_blank">sprintf</a> to format numbers, <a
+                href="http://typeface.neocracy.org/fonts.html">canvas text
+                libraries</a> to support cross-browser displaying of text, <a
+                href="http://stevenlevithan.com/assets/misc/date.format.js"
+                >date.format</a> to nicely format dates and <a
+                href="http://paulbourke.net/papers/conrec/conrec.js"
+                >conrec.js</a> to support contour plots.
+              </p>
+            </div>
+
+            <div class="h3">
+              <h3>How to initialize canvasXpress</h3>
+            </div>
+
+            <div class="desc">
+              <p>
+                There are two ways to initialize CanvasXpress:
+              </p>
+            </div>
+
+            <div class="code">
+              var cX = new CanvasXpress(target, data, config, events);<br />
+            </div>
+
+            <br />
+
+            <div class="desc">
+              <p>
+                or
+              </p>
+            </div>
+
+            <div class="code">
+              var cX = new CanvasXpress(<br />
+              &nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;renderTo: target,<br />
+              &nbsp;&nbsp;&nbsp;data: data,<br />
+              &nbsp;&nbsp;&nbsp;config: config,<br />
+              &nbsp;&nbsp;&nbsp;events: events<br />
+              &nbsp;&nbsp;}<br />
+              );<br />
+            </div>
+
+            <br />
+
+            <div class="desc">
+              <p>
+                The function takes either one or four arguments which
+                are explained in detail below. Briefly, <a
+                href="#target"><b>target</b></a> is the id of the
+                element in the DOM tree with the tag name
+                &lt;canvas&gt; where the graph will be rendered to, <a
+                href="#data"><b>data</b></a> is a <i>json</i> object
+                with the data to plot, <a
+                href="#config"><b>config</b></a> refers to a
+                <i>json</i> object to customize the graph and <a href=
+                "#events"><b>events</b></a> is a <i>json</i> object
+                with user-defined mouse events. If the function is
+                called with a single argument then it must consist of
+                an object with the properties <a
+                href="#target"><b>renderTo</b></a>, <a
+                href="#data"><b>data</b></a>, <a
+                href="#config"><b>config</b></a> and <a href=
+                "#events"><b>events</b></a> which are in essence the
+                same four arguments described above.  So now, let me
+                ellaborate some more.
+              </p>
+            </div>
+
+            <h1><a name='arguments' id='arguments'>Arguments</a></h1>
+
+
+            <div class="h4">
+              <h4><a name="target" id="target"><strong>target</strong></a></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                The parameter target is the id of the element in the DOM with
+                the tag name &lt;canvas&gt;. If it is undefined, a new element
+                is inserted in the document body.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><a name="data" id="data"><strong>data</strong></a></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                A <i>json</i> object with the data to plot. There are
+                six different data formats. One for the genome browser, one for
+                the networks, one for the Venn diagramas, one for the
+                correlation plots, one for the stock market data and one for all
+                the other graphs.
+              </p>
+              <p>
+                I'll start first with the last one which is used for
+                the following graphs:
+                <a href="./area.html">Area</a>,
+                <a href="./arealine.html">AreaLine</a>,
+                <a href="./bar.html">Bar</a>,
+                <a href="./barline.html">BarLine</a>,
+                <a href="./boxplot.html">Boxplot</a>,
+                <a href="./candlestick.html">Candlestick</a>,
+                <a href="./circular.html">Circular</a>,
+                <a href="./dotplot.html">Dotplot</a>,
+                <a href="./dotline.html">DotLine</a>,
+                <a href="./heatmap.html">Heatmap</a>,
+                <a href="./line.html">Line</a>,
+                <a href="./pie.html">Pie</a>,
+                <a href="./scatter2d.html">Scatter2D</a>,
+                <a href="./scatter3d.html">Scatter3D</a>,
+                <a href="./scatterbubble2d.html">ScatterBubble2D</a>,
+                <a href="./stacked.html">Stacked</a>,
+                <a href="./stackedline.html">StackedLine</a>,
+                <a href="./stackedpercent.html">StackedPercent</a>,
+                <a href="./stackedpercentline.html">StackedPercentLine</a> and
+                <a href="./treemap.html">Treemap</a>.
+
+              </p>
+              <p>
+                The data structure can be graphically represented like this:
+              </p>
+            </div>
+
+            <center><img border="0" src='http://www.canvasXpress.org/images/data.gif'></center><br>
+
+            <div class="desc">
+              <p>
+                A data set is always a series of values organized in
+                rows and columns. In CanvasXpress, the rows are
+                refered to variables while the columns are refered to
+                samples. Very often we have additional discrete or
+                continuous data that help us annotating either the
+                samples or the variables which in statistical terms
+                are refered to as factors. Conceptually, the data in
+                CanvasXpress can be divided into three
+                compartments. The (y) compartment which contains the
+                actual numerical values, the (x) compartment which
+                contains characteristics of the samples and the (z)
+                compartment which contains annotations for the
+                variables.  It is not required however that all data
+                sets must have all these attributes except for the (y)
+                compartment.  Another issue is that the (y)
+                compartment could be multi-dimensional depending on
+                the granularity of the data. For example rather than
+                having the raw data, you may have the average and the
+                standard deviation for variables measured in a
+                particular set of samples, or for example, with stock
+                market data you may have the open, low, high, close
+                and volume for a stock (variable) on a given day
+                (sample). Or in the case of a genomics experiment you
+                may have transcrional profiling data, copy number data
+                and mutation status for each sample. CanvasXpress
+                supports all the complexity of any of these data sets.
+              </p>
+              <p>
+                In <i>json</i> format the data for a single series is like this:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'y' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'vars' : ['Variable1'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'smps' : ['Sample1', 'Sample2', 'Sample3', 'Sample4'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'data' : [[10, 20, 30, 40]]<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'x' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Tissue' : ['Kidney', 'Liver', 'Lung', 'Heart'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Donor' : ['D1', 'D1', 'D2', 'D2']<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'z' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Symbol' : ['AAA'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Pathway' : ['P1']<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                or for two series is like that:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'y' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'vars' : ['Variable1', 'Variable2', ],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'smps' : ['Sample1', 'Sample2', 'Sample3', 'Sample4'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'data' : [[10, 20, 30, 40], [20, 30, 40, 50]]<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'x' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Tissue' : ['Kidney', 'Liver', 'Lung', 'Heart'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Donor' : ['D1', 'D1', 'D2', 'D2']<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'z' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Symbol' : ['AAA', 'BBB'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Pathway' : ['P1', 'P2']<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                There are additional properties that can be added to <i>json</i>
+                object depending on the graph type. For example, you can add a
+                (t) property to specify a dendrogram in newick format for both 
+                samples and variables. In cases of a line combination graph
+                you must add an (a) property to specify  the axis for each
+                series.
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'y' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'vars' : ['Variable1', 'Variable2', ],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'smps' : ['Sample1', 'Sample2', 'Sample3', 'Sample4'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'data' : [[10, 20, 30, 40], [20, 30, 40, 50]]<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'x' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Tissue' : ['Kidney', 'Liver', 'Lung', 'Heart'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Donor' : ['D1', 'D1', 'D2', 'D2']<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'z' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Symbol' : ['AAA', 'BBB'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'Pathway' : ['P1', 'P2']<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'t' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'vars' : "('Variable1','Variable2')",<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'smps' : "((('Sample1','Sample2'),'Sample3'),'Sample4')"<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'a' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'xAxis' : ['Variable1'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp; 'xAxis2' : ['Variable2']<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                There are many more properties that can be included
+                in this data format that can be found in each of the
+                graph types examples.
+              </p>
+            </div>
+
+            <div class="desc">
+              <p>
+                The data format for the <a href="./correlation.html">Correlation</a> is as follows:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'y' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'smps' : ['Sample1', 'Sample2', 'Sample3', 'Sample4'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'cor' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1.0, 0.9, 0.8, 0.7],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0.9, 1.0, 0.8, 0.8],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0.8, 0.8, 1.0, 0.7],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0.7, 0.8, 0.7, 1.0]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                As you can see this is just an extension of the previous format
+                in which the correlation between samples (in this case) is
+                represented in a two dimensional array under the property
+                (cor). In fact if you try to plot a correlation plot and you
+                don't have the (cor) property, canvasXpress will do it for you
+                as long as you provide the raw data.
+              </p>
+              <p>
+                The format for the data for the <a href="./venn.html">Venn</a> with three groups
+                is as follows:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'venn' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'data' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A' : 340,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B' : 562,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'C' : 620,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'AB' : 639,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'AC' : 456,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'BC' : 915,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ABC' : 552<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'legend' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'A' : 'List1',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'B' : 'List2',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'C' : 'List3'<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                This format contains the property (venn) where the data is
+                organized. The (data) property contains the actual data and the
+                (legend) property the different lists in the Venn diagram. The
+                basic idea here is that in this case there are three lists, A, B
+                and C so you just have to assign a number to each one and
+                also to any combination of them but they must be in alphabetical
+                order; that is, they have to be 'AB' rather than 'BA'. If you
+                have four lists then you only have to assign numbers to A,
+                B, C  and D; if you have two list then you only have to assign
+                numbers to A nad B.
+              </p>
+              <p>
+                The data format for the <a href="./network.html">Network</a> is as follows:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'nodes' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'Node1',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'color' : 'rgb(255,0,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'shape' : 'circle',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'size' : 1<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'Node2',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'color' : 'rgb(0,255,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'shape' : 'square',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'size' : 1.5<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'Node3',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'color' : 'rgb(0,0,255)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'shape' : 'triangle',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'size' : 2<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;],<br />
+              &nbsp;&nbsp;'edges' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id1' : 'Node1',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id2' : 'Node2',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'color' : 'rgb(125,125,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'line'<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id1' : 'Node1',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id2' : 'Node3',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'color' : 'rgb(0,125,125)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'squareHeadLine'<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id1' : 'Node2',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id2' : 'Node3',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'color' : 'rgb(125,0,125)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'arrowHeadLine'<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;]<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                The (nodes) property contains as it name indicates the
+                nodes in the network.  Each node must have a unique
+                (id) property. Also, (color), (shape), (rotate),
+                (pattern), (outline), (outlineWidth) and either (size)
+                or (width) and (height) can be specified for each
+                node. The (color) property is specified in an rgb
+                format compatible with the &lt;canvas&gt; element. The
+                (shape) must be one of the shapes in this library (see
+                the options section). The rotation for the shape must
+                be expressed in degrees. The (pattern) is either
+                'closed' or 'open'. The (size) is a multiplier and not
+                the actual size of the node, for example, to make a
+                node twice as big, the size should be set to 2. If you
+                need more control over the shape then you need to
+                specify (width) and (height). The (edges) property as
+                you can imagine, contains the info for the edges in
+                the network. Each edge must contain an (id1) and an
+                (id2) properties which must match two nodes in the
+                network. Similarly, you can specify the (color), the
+                (width), which is the actual width of the line, the
+                (cap) which could be 'butt', 'round' or 'square' and
+                the line (type) which should be one of the types in
+                this library (see the options section). The property
+                (legend) is an object that contains the information
+                for the nodes and edges and additional text.
+              </p>
+              <p>
+                Each node may have one parent under the property 'parentNode' and
+                it has to match a valid node id. This feature is useful if you want
+                to group nodes together. You can assign a name  and / or a label to
+                each node. The order in which the text will be displayed is label or
+                name or id.
+              </p>
+              <p>
+                The data format for the <a href="./candlestick.html">Candlestick</a> (Market data) is as follows:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'market': [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'symbol': 'BMY',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data': [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100824, 26.26, 26.37, 25.95, 26.02, 11625900, 26.02],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100823, 26.48, 26.76, 26.38, 26.48, 12146600, 26.48],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100820, 26.31, 26.54, 26.08, 26.44, 18140100, 26.44],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100819, 26.20, 26.29, 25.81, 26.06, 8218000, 26.06],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100818, 26.53, 26.57, 26.23, 26.28, 12235800, 26.28],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100817, 26.40, 26.79, 26.26, 26.59, 12325700, 26.59],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100816, 26.24, 26.34, 26.04, 26.28, 10377700, 26.28],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100813, 26.24, 26.46, 26.10, 26.32, 5760100, 26.32],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100812, 26.01, 26.39, 26.00, 26.33, 7350500, 26.33],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100811, 26.32, 26.50, 26.15, 26.25, 8808100, 26.25],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100810, 26.32, 26.78, 26.30, 26.66, 7009500, 26.66],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100809, 26.37, 26.54, 26.30, 26.51, 6825300, 26.51],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100806, 26.29, 26.45, 26.05, 26.37, 8774900, 26.37],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100805, 25.83, 26.38, 25.80, 26.38, 12264600, 26.38],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100804, 25.70, 26.13, 25.61, 26.03, 10233700, 26.03],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100803, 25.65, 25.85, 25.58, 25.68, 6842900, 25.68],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100802, 25.33, 25.61, 25.29, 25.53, 9770900, 25.53],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100730, 24.98, 25.13, 24.78, 24.92, 11435700, 24.92],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100729, 25.37, 25.50, 24.85, 25.08, 9463800, 25.08],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100728, 25.25, 25.36, 25.02, 25.12, 8072400, 25.12],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100727, 25.09, 25.35, 24.84, 25.32, 14152600, 25.32],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100726, 24.57, 25.03, 24.57, 24.97, 8817400, 24.97],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100723, 24.94, 24.95, 24.26, 24.65, 13043700, 24.65],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100722, 24.96, 25.22, 24.75, 24.93, 10385300, 24.93],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100721, 24.92, 25.11, 24.59, 24.75, 9830000, 24.75],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100720, 24.65, 25.09, 24.46, 25.02, 10655500, 25.02],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100719, 25.27, 25.27, 24.78, 24.84, 11804800, 24.84],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[20100716, 25.44, 25.47, 25.10, 25.17, 13136300, 25.17]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;]<br />
+              }<br />
+            </div>
+
+            <div class="desc">
+              <p>
+                I guess this is self eveident, it is the same format you
+                download data from Yahoo except that the hyphens in the date are
+                stripped. Also, you can add many symbols too.
+              </p>
+              <p>
+                And finally the last data format used for the <a href="./genome.html">Genome</a> is
+                probably the most elaborated. This is the <i>json</i> data
+                structure:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'tracks' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name' : 'Affy Probes',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type': 'box',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'connect': true,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'fill' : 'rgb(255,255,51)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'line' : 'rgb(0,0,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '123456_at',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'dir' : 'right',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [[100,120], [123,132], [141,160]]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '234567_at',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'dir' : 'left',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data': [[181,200], [211,230], [251,270]]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '345678_at',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'dir' : 'right', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [[281,300], [311,330], [351,370]]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hide' : true,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'bar',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'height' : 20,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'fill' : ['rgb(255,0,0)', 'rgb(0,0,255)', 'rgb(255,255,0)'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'line' : ['rgb(255,0,0)', 'rgb(0,0,255)', 'rgb(255,255,0)'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id': '123456_at', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data': [100,25,35,46]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '234567_at', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [181,80,45,10]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '345678_at',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [281,65,46,29]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name': 'Tissue Distribution (Heart, Liver, Kidney)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hide': false,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type': 'heatmap',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'autowidth': true,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'height': 20,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'line': 'rgb(0,0,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'smps': ['Heart', 'Kidney', 'Liver'],<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data': [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id': '123456_at', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data': [100,25,35,46]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '234567_at', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [181,80,45,10]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : '345678_at',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [281,65,46,29]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name' : 'SNP',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'triangle',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'fill' : 'rgb(100,0,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'line' : 'rgb(0,0,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP123', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : 123<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP234', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : 145<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP789', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : 220<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name' : 'SNP',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'line',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'line' : 'rgb(0,255,0)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP123', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : 123<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP234', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : 145<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP789', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : 220<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'type' : 'sequence',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'subtype' : 'DNA',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'hide' : true,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'line' : 'rgb(255,255,255)',<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP123', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [119,'AGCT[TA]CGAG']<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id' : 'SNP234', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data' : [141,'ATCG[TG]AATA']<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},{<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id': 'SNP789', <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data': [216, 'GCCC[CT]AGGG']<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;]<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                If you are not in the biology field please skip this data format
+                since I will assume a general understanding of some terms. If
+                you are stubborn enough to continue reading or you do have the
+                biology background then look at the genome example so you can
+                figure out how to format the data. The property (tracks) is an
+                array with the tracks you want to represent in a region of the
+                genome. They can be of six different (type)s, box, bar, heatmap,
+                triangle, line and sequence. The sequence type can be of
+                (subtype) 'DNA' or 'Protein'. You may specify the color of the
+                shapes with the property (fill) for the inside of the shape and
+                (line) for the edge of the shape. Only in the track type 'bar',
+                the (fill) and the (line) properties are represented as an array
+                of colors so you can assign each bar different colors. The
+                (tracks) may have a (name) which will be used as the title for
+                the track but you can use the property (hide) to prevent
+                displaying it. This is useful in some cases to save landscape as
+                well as to make closer elements in adjacent tracks. You may also
+                specify the height of the track with the property (height) but
+                if you do not, it will take the default value (see the options
+                section). Finally you can add as many propertys as you please in
+                each track if you need to access them for a click or mouseover
+                event (see the event section).
+              </p>
+              <p>
+                First, the 'box' type can have many features specified in its
+                (data) property as an array and each one of them may have many
+                segments specified in its corresponding (data) property as a
+                nested array. The segments can be displayed connected or not
+                with the property (connect) which is boolean and is specified at
+                the track level. That is, if it is true all the segments in each
+                of the features in the track will be connected using a slanted
+                line with their apexes in the middle between the adjacent
+                segments. Also, each feature must have a unique (id) in the
+                track, that is, it is not necessary to have a unique id among
+                all the tracks, and it may have an orientation represented as an
+                arrow which can be specified with the property (dir) which could
+                be right or left. As I mentioned, the segments in each feature
+                are an array with the first element representing the coordinate
+                for the starting point and the second element with the
+                coordinates for the ending point in the genome. Similar you can
+                add many more propertys as you please if you need to make use of
+                them for mouse events (see the event section).
+              </p>
+              <p>
+                The 'bar' and the 'heatmap' types, similarily, may have many
+                features specified in its (data) property represented as an
+                array. Each feature identified with a unique (id) may have many
+                values identified in its corresponding (data) property also
+                represented as an array. The first element of the array is the
+                coordinates for the feature in the genome, the rest of the
+                elements will be y values for the bar graphs or for the
+                heatmap. In the case of the type 'bar', you may specify a
+                (width) for the 'bar' at the track level or you may specify
+                (autowidth) and in that case the width of the bar will be a unit
+                of the base pair in the genome. That is, if you have three bars
+                the width of each bar is going to be a third of a base pair. The
+                only difference for the 'heatmap' type is that the bars will be
+                stacked and the colors will be automatically assigned according
+                to the y alues.
+              </p>
+              <p>
+                The 'triangle' and the line types are also very similar except
+                that each feature will have a property data to identify the
+                coordinates for it in the genome.
+              </p>
+              <p>
+                Finally, the 'sequence' type may also have many features. The
+                only difference in the structure of the data is that in each
+                feature's data structure, the first element represent the
+                coordinates in the genome and the second element is the actual
+                sequence. If there are multiple alleles at a given position then
+                the sequence is represented in square brackets, for example,
+                [AG].
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><a name="config" id="config"><strong>config</strong></a></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                Pretty much everything in this library is
+                customazible. The configuration parameters are divided
+                in major sections. Each parameter in a section
+                contains a link to an example (in the name of the
+                parameter) followed by the type of the value (in
+                italic letters). There is also a description, a
+                default, the options if approprieate and links to
+                related parameters and graphs. Some of the parameters
+                are private to CanvasXpress and are denoted with the
+                work private in red. These are the major categories
+                for the parameters:
+                <ul>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./3d_attributes.html">3D Attributes</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./acknowledgment.html">Acknowledgment</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./animation.html">Animation</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./area_graphs.html">Area Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./aspect_ratio.html">Aspect Ratio</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./axis.html">Axis</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./axis_resizer.html">Axis Resizer</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./background.html">Background</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./bins.html">Bins</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./boxplot_graphs.html">Boxplot Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./candlestick_plots.html">Candlestick Plots</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./circular_graphs.html">Circular Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./citations_or_references.html">Citations or References</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./clustering.html">Clustering</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./colors.html">Colors</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./combination_plots.html">Combination Plots</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./correlation_graphs.html">Correlation Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./doe.html">DOE</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./data.html">Data</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./data_filters.html">Data Filters</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./data_point_attributes.html">Data Point Attributes</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./data_table.html">Data Table</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./data_table_filter.html">Data Table/Filter</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./debug.html">Debug</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./decorations.html">Decorations</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./dendrograms.html">Dendrograms</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./events.html">Events</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./foreground.html">Foreground</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./general.html">General</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./general_attributes.html">General Attributes</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./genome_browser.html">Genome Browser</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./gradients.html">Gradients</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./heatmap_graphs.html">Heatmap Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./histograms.html">Histograms</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./images.html">Images</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./indicators.html">Indicators</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./legends.html">Legends</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./line_graphs.html">Line Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./lines.html">Lines</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./margins.html">Margins</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./network_graphs.html">Network Graphs</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./overlays.html">Overlays</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./patterns.html">Patterns</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./pie_charts.html">Pie Charts</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./plot_area.html">Plot area</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./r_axis.html">R-Axis</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./random.html">Random</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./remote_procedures.html">Remote Procedures</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./samples.html">Samples</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./scatter_plot_matrix.html">Scatter Plot Matrix</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./scatter_plots.html">Scatter Plots</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./shadows.html">Shadows</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./skins.html">Skins</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./snapshots.html">Snapshots</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./space_and_width.html">Space and Width</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./tag_cloud.html">Tag Cloud</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./text.html">Text</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./titles_and_subtitles.html">Titles and Subtitles</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./variables.html">Variables</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./venn_diagrams.html">Venn Diagrams</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./videos.html">Videos</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./x_axis.html">X-Axis</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./x_axis2.html">X-Axis2</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./y_axis.html">Y-Axis</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./z_axis.html">Z-Axis</a></li>
+                  <li style="padding:2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="./zooming_and_panning.html">Zooming and Panning</a></li>
+                </ul>
+                <br />
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><a name="events" id="events"><strong>events</strong></a></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                The parameter events is a <i>json</i> object with the
+                user defined events. By default I assign the four
+                events that canvasXpress supports which are mousemove,
+                mouseout, click and dblclick. The events can also
+                handle scope as shown below. In <i>json</i> format the
+                events is like this: <br /> <br />
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'mousemove' : function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;// Do something ...<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'mouseout' : function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;// Do something more...<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'click' : function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;// Do something else ...<br />
+              &nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;'dblclick' : function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;// Do even more stuff<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                or
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'scope' : myScope,<br />
+              &nbsp;&nbsp;'handler' : {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'mousemove' : function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Do something ...<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'mouseout' : function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Do something ...<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;},<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;'click': function(o, e, t) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Do something else ...<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                I hope it is not too complicated. The parameter (o)
+                passed to the user defined callback has the same
+                format as that one you passed in the data
+                parameter. the (e) is the event that triggered the
+                action and (t) is the full CanvasXpress object. Just
+                go ahead and mouseover and/or click in any element in
+                the graphs and see what I mean. It is up to you to
+                include additional code to handle the events of
+                course.<br /> <br /> The default mouseover event in
+                canvasXpress is to show the data value for most of the
+                graphs or the feature/node/edge name for the Genome
+                and Network graphs.<br /> <br /> This is how the
+                events object should look like:
+              </p>
+            </div>
+
+            <div class="code">
+              {<br />
+              &nbsp;&nbsp;'click': function(o) {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;DumperAlert(o);<br />
+              &nbsp;&nbsp;}<br />
+              }<br />
+            </div>
+            <br />
+
+            <div class="desc">
+              <p>
+                Oh, I almost forgot the event names are normalized so don't
+                worry if you use IE or Firefox.
+              </p>
+            </div>
+
+
+            <h1><a name='functionalities' id='functionalities'>Functionalities</a></h1>
+
+            <div class="h4">
+              <h4><strong>Zooming and Panning</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                Zooming graphs can be done by dragging the mouse over
+                an area while pressing the left mouse button or by
+                clicking close to the axis after the axis resizer
+                appears. You can adjust the maximum and minimum value
+                and / or drag an interval across the range. You can
+                select samples by dragging the mouse over the samples
+                you want to see while you pressing the left mouse
+                button and the 'shift' key. Also, networks and
+                haetmaps can be zoom in and out with the help of the
+                mouse wheel or with the help.
+              </p>
+
+              <p>
+                Panning can be done also in networks and heatmaps by
+                either dragging the mouse or with the help of the the
+                arrow keys.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>Selecting data points or nodes</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                You can select data points in the scatter plots or in
+                the networks by simultanously pressing the 'shift' key
+                and dragging the mouse over the data points or
+                nodes. You can also select individual items by
+                simultaneously pressing the 'ctrl' key and clicking
+                with the left mouse button on the individual
+                item. Once selected, you can press simultaneously the
+                'ctrl' and the 'delete' keys to hide them or the
+                'ctrl' and the 'insert' keys to show them again. You
+                can reset the selecting by pressing the 'esc' key.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>Canvas Resizing</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                You can resize the canvas image using the handle that appears when you
+                mouse over the south and east sides of the canvas.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>Animations</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                You can use the arrow keys to rotate the 3D-Scatter
+                plot or cycle over the axes in the 2D-Scatter plots
+                (including the paging keys too). Of course you have
+                to simultaneously press any of those keys and the
+                'ctrl' key.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>Reseting the canvas</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                In order to reset the canvas just press the 'esc' key.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>Printing the canvas</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                To print the canvas you need to simultaneously click
+                the 'ctrl' and the 'p' keys.
+              </p>
+            </div>
+
+            <h1><a name='additional_methods' id='additional_methods'>Additional Methods</a></h1>
+
+            <div class="desc">
+              <p>
+                There are a few more methods to create lines, shapes
+                and text in any plot. In order, to use these methods
+                you just need to save the canvasXpress in a variable
+                and use the methods like this:
+              </p>
+            </div>
+
+            <div class="code">
+              var cX = new CanvasXpress(target, data, config, events);<br />
+              .....<br />
+              cx.drawLine('dashed', 18, 18, 613, 613, 'rgb(255,0,0)', 2, 'butt');<br />
+              .....<br />
+              cx.drawShape('roundrect', 36, 36, 10, 49, 'rgb(255,0,0)', 'rgb(0,0,0)', 'closed', 3.14 / 2, '1');<br />
+              .....<br />
+              cx.drawText('This is kewl', 50, 50, 'Verdana, sans-serif 12pt', 'rgb(0,0,0)', 'center', 'middle', 3.14 / 4);<br />
+              .....<br />
+            </div>
+             <br />
+
+            <div class="h4">
+              <h4><strong>drawLine</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                It takes the following parameters:
+                <b>type <i>(string)</i></b>, a valid type of line (see
+                the documentation above); <b>x0 <i>(int)</i></b>,
+                initial X coordinate; <b>y0 <i>(int)</i></b>, initial Y
+                coordinate; <b>x1 <i>(int)</i></b>, final X coordinate;
+                <b>y1 <i>(int)</i></b>, final Y coordinate;
+                <b>color <i>(color)</i></b>, an rgb string of a valid
+                color according to the HTML 5 canvas specification;
+                <b>width <i>(int)</i></b>, the line width for the line;
+                <b>cap <i>(string)</i></b>, the cap style for the line
+                which could be 'butt', 'round' or 'square'.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>drawShape</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                It takes the following parameters: <b>type
+                <i>(string)</i></b>, a valid type of shape (see the
+                documentation above); <b>x <i>(int)</i></b>, center X
+                coordinate; <b>y <i>(int)</i></b>, center Y
+                coordinate; <b>width <i>(int)</i></b>, width of the
+                shape; <b>height <i>(int)</i></b>, height of the
+                shape; <b>fill <i>(color)</i></b>, an rgb string of a
+                valid color according to the HTML 5 canvas
+                specification for the fill of the shape; <b>outline
+                <i>(color)</i></b>, an rgb string of a valid color
+                according to the HTML 5 canvas specification for the
+                outline of the shape; <b>pattern <i>(string)</i></b>,
+                a pattern for the shape which could be either 'closed'
+                or 'open'; <b>rotation <i>(int)</i></b>, a rotation in
+                degrees for the shape; <b>outline-width
+                <i>(int)</i></b>, the line width for the outline of
+                the shape. If the first parameter (shape) is either
+                'polygon' or 'path' then the second and third
+                parameter must be arrays with integers.
+              </p>
+            </div>
+
+            <div class="h4">
+              <h4><strong>drawText</strong></h4>
+            </div>
+
+            <div class="desc">
+              <p>
+                It takes the following parameters:
+                <b><i>string</i></b>, the text you want to print;
+                <b><i>int</i></b>, X coordinate; <b><i>int</i></b>, Y
+                coordinate; <b><i>color</i></b>, an rgb string of a
+                valid color according to the HTML 5 canvas
+                specification; <b><i>string</i></b>, a valid align
+                position according to the HTML 5 canvas specification;
+                <b><i>string</i></b>, a valid baseline position
+                according to the HTML 5 canvas specification;
+                <b><i>float</i></b>, a rotation in radians for the
+                text.
+              </p>
+            </div>
+
+
+            <h1><a name='ext_js' id='ext_js'>Ext-JS</a></h1>
+
+            <div class="desc">
+              <p>
+                This library can be used with <a
+                href="http://www.extjs.com/" target="_blank">EXT
+                JS</a>.  Actually, the Ext.canvasXpress component has
+                been extended tremendously thanks to Mingyi Liu. He
+                has added a large number of features for playing with
+                the networks. Please go to the example and right click
+                anywhere and you'll see what I mean.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

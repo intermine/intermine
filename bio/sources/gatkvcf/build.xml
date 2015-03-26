@@ -1,5 +1,34 @@
+<!--
+  a bit of an odd source as it writes straight to the production database
+  and deals with model objects (and therefore the "main" sub-project depends on
+  the production model).
+-->
 <project name="gatkvcf" default="default" basedir=".">
   <description>build, test, package gatkvcf</description>
-  
+
   <import file="../../../imbuild/source.xml"/>
+
+  <!-- no retrieve -->
+  <target name="retrieve"/>
+
+  <target name="-init-loader-classname" unless="gatkvcf.loaderClassName">
+    <!-- set the default -->
+    <property name="gatkvcf.loaderClassName"
+              value="org.intermine.bio.dataconversion.GatkvcfDirectDataLoaderTask"/>
+  </target>
+
+  <!-- NOTE: we can do this with dynamic properties -->
+  <target name="load" depends="-init-loader-classname, init, -init-deps">
+    <taskdef name="read-gatkvcf"
+      classname="${gatkvcf.loaderClassName}"
+      classpathref="task.class.path"/>
+    <read-gatkvcf integrationWriterAlias="integration.production"
+                proteomeId="${proteomeId}"
+                makeLinks="${makeLinks}"
+                sourceName="${source.name}"
+                sourceType="${source.type}">
+      <fileset dir="${src.data.dir}" includes="${src.data.dir.includes}"/>
+    </read-gatkvcf>
+  </target>
+
 </project>

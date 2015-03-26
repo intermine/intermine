@@ -1,0 +1,340 @@
+<html>
+
+  <head>
+
+    <title>Oncoprint</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            "y" : {
+              "smps"  : ["Variable1", "Variable2", "Variable3"],
+              "vars"  : ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5", "Sample6", "Sample7", "Sample8", "Sample9", "Sample10", "Sample11", "Sample12", "Sample13", "Sample14", "Sample15", "Sample16", "Sample17", "Sample18", "Sample19", "Sample20"],
+              "data"  : [[3.1,3.5,4.0],[3.0,3.4,4.1],[2.8,3.1,3.3],[2.3,2.4,2.1],[1.9,2.1,2.1],[1.9,2.1,2.1],[2.2,1.9,2.1],[1.7,2,1,1.8],[2.2,1.9,1.9],[2.1,2.0,2.1],[2.2,1.9,2.1],[1.9,2.1,2.1],[2.2,1.9,1.9],[1.7,2,1,1.8],[2.1,2.0,2.1],[2.1,1.8,2.0],[2.2,2.1,2.1],[1.1,1.1,1.8],[1.3,1.4,1.1],[0.9,1.1,1.1]],
+              "mutation" : [["Yes","Yes","No"],["No","No","Yes"],["Yes","No","Yes"],["Yes","Yes","No"],["No","No","No"],["No","No","No"],["No","No","Yes"],["No","No","No"],["No","Yes","No"],["No","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["Yes","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["Yes","No","Yes"],["No","No","No"]],
+              "expression" : [[10, 10, 12], [10, 9, 11], [8, 7, 8], [8, 8, 7], [7, 8, 9], [8, 6, 7],[7, 8, 8], [7, 6, 8], [7, 6, 7], [7, 8, 5], [6, 8, 7], [5, 7, 8],[7, 6, 5], [4, 3, 2], [8, 7, 6], [6, 8, 9], [7, 8, 9], [4, 5, 3], [3, 6, 2], [1, 6, 8]],
+              "data4" : [["A","A","A"],["A","A","A"],["A","A","A"],["A","A","A"],["C","A","A"],["C","A","A"],["A","B","A"],["A","A","A"],["A","C","A"],["A","A","A"],["A","B","A"],["A","A","A"],["A","A","A"],["B","C","A"],["A","A","A"],["A","A","A"],["A","A","A"],["B","A","A"],["A","A","A"],["A","B","A"]],
+              "data5" : [["A","A","A"],["A","A","A"],["A","A","A"],["A","A","A"],["A","B","A"],["C","A","A"],["C","A","A"],["A","B","A"],["A","A","A"],["A","A","A"],["B","C","A"],["A","A","A"],["A","A","A"],["A","A","A"],["B","A","A"],["A","A","A"],["A","C","A"],["A","A","A"],["A","B","A"],["A","A","A"]]
+            },
+            "z" : {
+              "Factor" : ["Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2","Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2"]
+            },
+            "x" : {
+              "Annt1" : ["Desc:1", "Desc:2", "Desc:1"],
+              "Annt2" : [23, 34, 52],
+              "Annt3" : [12, 14, 34],
+              "Annt4" : [8, 14, 14],
+              "Annt5" : [17, 9, 18]
+            }
+          },
+          {"graphType": "Heatmap",
+           "isOncoprint": "mutation"
+          }
+        );
+
+        var cx2 = new CanvasXpress("canvas2",
+          {
+            "y" : {
+              "smps"  : ["Variable1", "Variable2", "Variable3"],
+              "vars"  : ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5", "Sample6", "Sample7", "Sample8", "Sample9", "Sample10", "Sample11", "Sample12", "Sample13", "Sample14", "Sample15", "Sample16", "Sample17", "Sample18", "Sample19", "Sample20"],
+              "data"  : [[3.1,3.5,4.0],[3.0,3.4,4.1],[2.8,3.1,3.3],[2.3,2.4,2.1],[1.9,2.1,2.1],[1.9,2.1,2.1],[2.2,1.9,2.1],[1.7,2,1,1.8],[2.2,1.9,1.9],[2.1,2.0,2.1],[2.2,1.9,2.1],[1.9,2.1,2.1],[2.2,1.9,1.9],[1.7,2,1,1.8],[2.1,2.0,2.1],[2.1,1.8,2.0],[2.2,2.1,2.1],[1.1,1.1,1.8],[1.3,1.4,1.1],[0.9,1.1,1.1]],
+              "mutation" : [["Yes","Yes","No"],["No","No","Yes"],["Yes","No","Yes"],["Yes","Yes","No"],["No","No","No"],["No","No","No"],["No","No","Yes"],["No","No","No"],["No","Yes","No"],["No","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["Yes","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["Yes","No","Yes"],["No","No","No"]],
+              "expression" : [[10, 10, 12], [10, 9, 11], [8, 7, 8], [8, 8, 7], [7, 8, 9], [8, 6, 7],[7, 8, 8], [7, 6, 8], [7, 6, 7], [7, 8, 5], [6, 8, 7], [5, 7, 8],[7, 6, 5], [4, 3, 2], [8, 7, 6], [6, 8, 9], [7, 8, 9], [4, 5, 3], [3, 6, 2], [1, 6, 8]],
+              "data4" : [["A","A","A"],["A","A","A"],["A","A","A"],["A","A","A"],["C","A","A"],["C","A","A"],["A","B","A"],["A","A","A"],["A","C","A"],["A","A","A"],["A","B","A"],["A","A","A"],["A","A","A"],["B","C","A"],["A","A","A"],["A","A","A"],["A","A","A"],["B","A","A"],["A","A","A"],["A","B","A"]],
+              "data5" : [["A","A","A"],["A","A","A"],["A","A","A"],["A","A","A"],["A","B","A"],["C","A","A"],["C","A","A"],["A","B","A"],["A","A","A"],["A","A","A"],["B","C","A"],["A","A","A"],["A","A","A"],["A","A","A"],["B","A","A"],["A","A","A"],["A","C","A"],["A","A","A"],["A","B","A"],["A","A","A"]]
+            },
+            "z" : {
+              "Factor" : ["Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2","Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2"]
+            },
+            "x" : {
+              "Annt1" : ["Desc:1", "Desc:2", "Desc:1"],
+              "Annt2" : [23, 34, 52],
+              "Annt3" : [12, 14, 34],
+              "Annt4" : [8, 14, 14],
+              "Annt5" : [17, 9, 18]
+            }
+          },
+          {"graphType": "Heatmap",
+           "isOncoprint": "mutation",
+           "smpOverlayProperties": {"Annt4":{"type":"Stacked"},"Annt3":{"type":"Stacked"},"Annt2":{"position":"right","type":"Bar"},"Annt5":{"type":"Stacked"}},
+           "smpOverlays": ["Annt1", "-", "Annt2", "Annt3", "Annt4", "Annt5"]
+          }
+        );
+
+        var cx3 = new CanvasXpress("canvas3",
+          {
+            "y" : {
+              "smps"  : ["Variable1", "Variable2", "Variable3"],
+              "vars"  : ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5", "Sample6", "Sample7", "Sample8", "Sample9", "Sample10", "Sample11", "Sample12", "Sample13", "Sample14", "Sample15", "Sample16", "Sample17", "Sample18", "Sample19", "Sample20"],
+              "data"  : [[3.1,3.5,4.0],[3.0,3.4,4.1],[2.8,3.1,3.3],[2.3,2.4,2.1],[1.9,2.1,2.1],[1.9,2.1,2.1],[2.2,1.9,2.1],[1.7,2,1,1.8],[2.2,1.9,1.9],[2.1,2.0,2.1],[2.2,1.9,2.1],[1.9,2.1,2.1],[2.2,1.9,1.9],[1.7,2,1,1.8],[2.1,2.0,2.1],[2.1,1.8,2.0],[2.2,2.1,2.1],[1.1,1.1,1.8],[1.3,1.4,1.1],[0.9,1.1,1.1]],
+              "mutation" : [["Yes","Yes","No"],["No","No","Yes"],["Yes","No","Yes"],["Yes","Yes","No"],["No","No","No"],["No","No","No"],["No","No","Yes"],["No","No","No"],["No","Yes","No"],["No","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["Yes","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["No","No","No"],["Yes","No","Yes"],["No","No","No"]],
+              "expression" : [[10, 10, 12], [10, 9, 11], [8, 7, 8], [8, 8, 7], [7, 8, 9], [8, 6, 7],[7, 8, 8], [7, 6, 8], [7, 6, 7], [7, 8, 5], [6, 8, 7], [5, 7, 8],[7, 6, 5], [4, 3, 2], [8, 7, 6], [6, 8, 9], [7, 8, 9], [4, 5, 3], [3, 6, 2], [1, 6, 8]],
+              "data4" : [["A","A","A"],["A","A","A"],["A","A","A"],["A","A","A"],["C","A","A"],["C","A","A"],["A","B","A"],["A","A","A"],["A","C","A"],["A","A","A"],["A","B","A"],["A","A","A"],["A","A","A"],["B","C","A"],["A","A","A"],["A","A","A"],["A","A","A"],["B","A","A"],["A","A","A"],["A","B","A"]],
+              "data5" : [["A","A","A"],["A","A","A"],["A","A","A"],["A","A","A"],["A","B","A"],["C","A","A"],["C","A","A"],["A","B","A"],["A","A","A"],["A","A","A"],["B","C","A"],["A","A","A"],["A","A","A"],["A","A","A"],["B","A","A"],["A","A","A"],["A","C","A"],["A","A","A"],["A","B","A"],["A","A","A"]]
+            },
+            "z" : {
+              "Factor" : ["Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2","Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2", "Lev:1", "Lev:2"]
+            },
+            "x" : {
+              "Annt1" : ["Desc:1", "Desc:2", "Desc:1"],
+              "Annt2" : [23, 34, 52],
+              "Annt3" : [12, 14, 34],
+              "Annt4" : [8, 14, 14],
+              "Annt5" : [17, 9, 18]
+            }
+          },
+          {"graphType": "Heatmap",
+           "isOncoprint": "mutation",
+           "outlineBy": "Color",
+           "outlineByData": "expression",
+           "patternBy": "Pattern",
+           "patternByData": "data4",
+           "shapeBy": "Shape",
+           "shapeByData": "data5",
+           "smpOverlayProperties": {"Annt4":{"type":"Stacked"},"Annt3":{"type":"Stacked"},"Annt2":{"position":"right","type":"Bar"},"Annt5":{"type":"Stacked"}},
+           "smpOverlays": ["Annt1", "-", "Annt2", "Annt3", "Annt4", "Annt5"]
+          }
+        );
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Oncoprint">
+
+            <h1>Oncoprint</h1>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./heatmap_graphs.html#isOncoprint">isOncoprint</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas2")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./heatmap_graphs.html#isOncoprint">isOncoprint</a>,
+                      <a href="./overlays.html#smpOverlayProperties">smpOverlayProperties</a>,
+                      <a href="./overlays.html#smpOverlays">smpOverlays</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas3")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas3' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./heatmap_graphs.html#isOncoprint">isOncoprint</a>,
+                      <a href="./data_point_attributes.html#outlineBy">outlineBy</a>,
+                      <a href="./data_point_attributes.html#outlineByData">outlineByData</a>,
+                      <a href="./data_point_attributes.html#patternBy">patternBy</a>,
+                      <a href="./data_point_attributes.html#patternByData">patternByData</a>,
+                      <a href="./data_point_attributes.html#shapeBy">shapeBy</a>,
+                      <a href="./data_point_attributes.html#shapeByData">shapeByData</a>,
+                      <a href="./overlays.html#smpOverlayProperties">smpOverlayProperties</a>,
+                      <a href="./overlays.html#smpOverlays">smpOverlays</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

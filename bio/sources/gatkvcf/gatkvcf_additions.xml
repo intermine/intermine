@@ -2,7 +2,8 @@
 <!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
 
 <classes>
-   <class name="SNP" is-interface="true" extends="BioEntity" >
+   <class name="SNP" is-interface="true" >
+     <attribute name="name" type="java.lang.String" />
      <attribute name="reference" type="java.lang.String" />
      <attribute name="alternate" type="java.lang.String"/>
      <attribute name="quality" type="java.lang.Double"/>
@@ -10,7 +11,9 @@
      <attribute name="info" type="java.lang.String"/>
      <attribute name="sampleInfo" type="java.lang.String"/>
      <attribute name="sampleCount" type="java.lang.Integer" />
+     <reference name="organism" referenced-type="Organism"/>
      <collection name="consequences" referenced-type="Consequence" reverse-reference="snps" />
+     <collection name="locations" referenced-type="Location" />
    </class>
    <class name="Consequence" is-interface="true">
      <reference name="gene" referenced-type="Gene"/>
@@ -38,7 +41,7 @@
      <attribute name="genotype" type="java.lang.String"/>
      <attribute name="format" type="java.lang.String" />
    </class>
-   <class name="Genotype" is-interface="false" extends="java.lang.Object">
+   <class name="Genotype" is-interface="false">
      <reference name="snp" referenced-type="SNP" />
      <attribute name="sampleInfo" type="java.lang.String"/>
      <attribute name="genotype" type="java.lang.String"/>

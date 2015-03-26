@@ -1,0 +1,7 @@
+.x-form-field-wrap .x-form-color-trigger {
+	background-image: url(../images/color-trigger.png);
+}
+
+.ie6 .x-form-field-wrap .x-form-color-trigger {
+	background-image: url(../images/color-trigger.gif);
+}

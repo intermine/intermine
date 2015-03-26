@@ -1,0 +1,530 @@
+<html>
+
+  <head>
+
+    <title>Scatter Plots</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li ><a href="./bar.html">Examples</a></li>
+          <li class="current"><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./3d_attributes.html">3D Attributes</a></li>
+            <li><a href="./acknowledgment.html">Acknowledgment</a></li>
+            <li><a href="./animation.html">Animation</a></li>
+            <li><a href="./area_graphs.html">Area Graphs</a></li>
+            <li><a href="./aspect_ratio.html">Aspect Ratio</a></li>
+            <li><a href="./axis.html">Axis</a></li>
+            <li><a href="./axis_resizer.html">Axis Resizer</a></li>
+            <li><a href="./background.html">Background</a></li>
+            <li><a href="./bins.html">Bins</a></li>
+            <li><a href="./boxplot_graphs.html">Boxplot Graphs</a></li>
+            <li><a href="./candlestick_plots.html">Candlestick Plots</a></li>
+            <li><a href="./circular_graphs.html">Circular Graphs</a></li>
+            <li><a href="./citations_or_references.html">Citations or References</a></li>
+            <li><a href="./clustering.html">Clustering</a></li>
+            <li><a href="./colors.html">Colors</a></li>
+            <li><a href="./combination_plots.html">Combination Plots</a></li>
+            <li><a href="./correlation_graphs.html">Correlation Graphs</a></li>
+            <li><a href="./doe.html">DOE</a></li>
+            <li><a href="./data.html">Data</a></li>
+            <li><a href="./data_filters.html">Data Filters</a></li>
+            <li><a href="./data_point_attributes.html">Data Point Attributes</a></li>
+            <li><a href="./data_table.html">Data Table</a></li>
+            <li><a href="./data_table_filter.html">Data Table/Filter</a></li>
+            <li><a href="./debug.html">Debug</a></li>
+            <li><a href="./decorations.html">Decorations</a></li>
+            <li><a href="./dendrograms.html">Dendrograms</a></li>
+            <li><a href="./events.html">Events</a></li>
+            <li><a href="./foreground.html">Foreground</a></li>
+            <li><a href="./general.html">General</a></li>
+            <li><a href="./general_attributes.html">General Attributes</a></li>
+            <li><a href="./genome_browser.html">Genome Browser</a></li>
+            <li><a href="./gradients.html">Gradients</a></li>
+            <li><a href="./heatmap_graphs.html">Heatmap Graphs</a></li>
+            <li><a href="./histograms.html">Histograms</a></li>
+            <li><a href="./images.html">Images</a></li>
+            <li><a href="./indicators.html">Indicators</a></li>
+            <li><a href="./legends.html">Legends</a></li>
+            <li><a href="./line_graphs.html">Line Graphs</a></li>
+            <li><a href="./lines.html">Lines</a></li>
+            <li><a href="./margins.html">Margins</a></li>
+            <li><a href="./network_graphs.html">Network Graphs</a></li>
+            <li><a href="./overlays.html">Overlays</a></li>
+            <li><a href="./patterns.html">Patterns</a></li>
+            <li><a href="./pie_charts.html">Pie Charts</a></li>
+            <li><a href="./plot_area.html">Plot area</a></li>
+            <li><a href="./r_axis.html">R-Axis</a></li>
+            <li><a href="./random.html">Random</a></li>
+            <li><a href="./remote_procedures.html">Remote Procedures</a></li>
+            <li><a href="./samples.html">Samples</a></li>
+            <li><a href="./scatter_plot_matrix.html">Scatter Plot Matrix</a></li>
+            <li><a href="./scatter_plots.html">Scatter Plots</a></li>
+            <li><a href="./shadows.html">Shadows</a></li>
+            <li><a href="./skins.html">Skins</a></li>
+            <li><a href="./snapshots.html">Snapshots</a></li>
+            <li><a href="./space_and_width.html">Space and Width</a></li>
+            <li><a href="./tag_cloud.html">Tag Cloud</a></li>
+            <li><a href="./text.html">Text</a></li>
+            <li><a href="./titles_and_subtitles.html">Titles and Subtitles</a></li>
+            <li><a href="./variables.html">Variables</a></li>
+            <li><a href="./venn_diagrams.html">Venn Diagrams</a></li>
+            <li><a href="./videos.html">Videos</a></li>
+            <li><a href="./x_axis.html">X-Axis</a></li>
+            <li><a href="./x_axis2.html">X-Axis2</a></li>
+            <li><a href="./y_axis.html">Y-Axis</a></li>
+            <li><a href="./z_axis.html">Z-Axis</a></li>
+            <li><a href="./zooming_and_panning.html">Zooming and Panning</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="documentation">
+
+            <h1><a onclick="CanvasXpress.showAllExamples(event, 'Scatter Plots')" href="#">Scatter Plots</a></h1>
+
+            <div class='desc'>
+
+              <p>
+
+                General parameters in scatter plots
+
+              </p>
+
+            </div>
+
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'contourType')" href="#" id="contourType">contourType</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Type of contour plot
+                  </span>
+                </div>
+                <div class="alsoProperty">
+                  <span class="headerProperty">See also: </span>
+                  <span class="alsoProperty">                      <a href="./histograms.html#histogramBarWidth">histogramBarWidth</a>,
+                      <a href="./general_attributes.html#images">images</a>,
+                      <a href="./histograms.html#isHistogram">isHistogram</a></span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">overlay</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    overlay,
+                    color
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'contourXBinSize')" href="#" id="contourXBinSize">contourXBinSize</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Size of X bins in contour plots
+                  </span>
+                </div>
+                <div class="alsoProperty">
+                  <span class="headerProperty">See also: </span>
+                  <span class="alsoProperty">createContour</span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'contourYBinSize')" href="#" id="contourYBinSize">contourYBinSize</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Size of Y bins in contour plots
+                  </span>
+                </div>
+                <div class="alsoProperty">
+                  <span class="headerProperty">See also: </span>
+                  <span class="alsoProperty">createContour</span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'contourZBinSize')" href="#" id="contourZBinSize">contourZBinSize</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Size of Z bins in contour plots
+                  </span>
+                </div>
+                <div class="alsoProperty">
+                  <span class="headerProperty">See also: </span>
+                  <span class="alsoProperty">createContour</span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'functionIntervals')" href="#" id="functionIntervals">functionIntervals</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of intervals to use when drawing functions in the decorations. In
+		    Scatter 3D is more like a factor
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">25</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="isSelectDataPoints">isSelectDataPoints</a></span>
+                  <span class="typeProperty">integer</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Number of selected data points (in the data object).
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty"></span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'scatterOutlineThereshold')" href="#" id="scatterOutlineThereshold">scatterOutlineThereshold</a>
+                  </span>
+                  <span class="typeProperty">integer</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Maximum number of data points before skipping plotting their outline but
+		    only the fill color
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">4000</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'scatterType')" href="#" id="scatterType">scatterType</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Type of scatter plot
+                  </span>
+                </div>
+                <div class="alsoProperty">
+                  <span class="headerProperty">See also: </span>
+                  <span class="alsoProperty">                      <a href="./histograms.html#histogramBarWidth">histogramBarWidth</a>,
+                      <a href="./general_attributes.html#images">images</a>,
+                      <a href="./histograms.html#isHistogram">isHistogram</a></span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    false,
+                    line,
+                    bar,
+                    dot,
+                    image,
+                    lineImage,
+                    lineStep
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'selectDataMode')" href="#" id="selectDataMode">selectDataMode</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Type of mode to highlight selected data points with mouse events. (Shift +
+		    mouse drag) @see{selectDataModeDescription}
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">area</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    area,
+                    transparency,
+                    name
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="publicProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty">
+                    <a onclick="CanvasXpress.showExample(event, 'selectDataModeDescription')" href="#" id="selectDataModeDescription">selectDataModeDescription</a>
+                  </span>
+                  <span class="typeProperty">option</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Variable label to display when highlighting selected data points that must
+		    be in the 'data.z' object. (Shift + mouse drag)
+		    @see{selectDataMode}
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">false</span>
+                </div>
+                <div class="optionsProperty">
+                  <span class="headerProperty">Options: </span>
+                  <span class="optionsProperty">
+                    false
+                  </span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+              <div class="privateProperty">
+                <div class="titleProperty">
+                  <span class="nameProperty"><a id="selectDataPoint">selectDataPoint</a></span>
+                  <span class="typeProperty">array</span>
+                  <span class="privateProperty">Private</span>
+                </div>
+                <div class="descProperty">
+                  <span class="descProperty">
+                    Ids of data points (in the data object) to select.
+                  </span>
+                </div>
+                <div class="defaultProperty">
+                  <span class="headerProperty">Default: </span>
+                  <span class="defaultProperty">[]</span>
+                </div>
+                <div class="usedProperty">
+                  <span class="headerProperty">Used in: </span>
+                  <span class="usedProperty">
+                    <a href="./scatter2d.html">Scatter2D</a>,
+                    <a href="./scatter3d.html">Scatter3D</a>,
+                    <a href="./scatterbubble2d.html">ScatterBubble2D</a>
+                  </span>
+                </div>
+              </div>
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

@@ -1,0 +1,4 @@
+<project name="coexpression-tasks" default="default" basedir=".">
+  <description>build coexpression tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

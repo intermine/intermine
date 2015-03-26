@@ -19,7 +19,7 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
@@ -45,6 +45,9 @@ public class PhytozomeDbProcessor {
   // these keep track of the interproscan db's and hits in the db's.
   protected Map<String,String> dataSourceMap;
   protected Map<String,HashMap<String,Item>> dataHitMap;
+  // and we're also going to make an entry in the ontology term table.
+  protected Map<String,String> ontologyMap;
+  protected Map<String,HashMap<String,Item>> ontologyTermMap;
   
   PhytozomeDbConverter converter;  // the caller
   String orgId;       // the intermine object id
@@ -62,6 +65,8 @@ public class PhytozomeDbProcessor {
     annotationDbxrefId = annotation;
     dataSourceMap = new HashMap<String,String>();
     dataHitMap = new HashMap<String,HashMap<String,Item>>();
+    ontologyMap = new HashMap<String,String>();
+    ontologyTermMap = new HashMap<String,HashMap<String,Item>>();
     config = new PhytozomeDbConfig(converter);
   }
   
@@ -184,6 +189,12 @@ public class PhytozomeDbProcessor {
       converter.store(newItem);
       dataSourceMap.put(dbName,newItem.getIdentifier());
       dataHitMap.put(dbName, new HashMap<String,Item> ());
+      // this also means we need a ontology
+      Item newOntology = converter.createItem("Ontology");
+      newOntology.setAttribute("name",dbName);
+      converter.store(newOntology);
+      ontologyMap.put(dbName,newOntology.getIdentifier());
+      ontologyTermMap.put(dbName, new HashMap<String,Item> ());
     }
     String dataSourceIdentifier = dataSourceMap.get(dbName);
     feature.setReference("sourceDatabase",dataSourceIdentifier);
@@ -194,6 +205,12 @@ public class PhytozomeDbProcessor {
       newItem.setReference("source", dataSourceIdentifier);
       converter.store(newItem);
       dataHitMap.get(dbName).put(accession,newItem);
+      // and ontology term. If desired
+      Item newTerm = converter.createItem("OntologyTerm");
+      newTerm.setReference("ontology", ontologyMap.get(dbName));
+      newTerm.setAttribute("identifier", accession);
+      converter.store(newTerm);
+      ontologyTermMap.get(dbName).put(accession, newTerm);
     }
     Item dataHitItem = dataHitMap.get(dbName).get(accession);
     feature.setReference("crossReference",dataHitItem);
@@ -298,7 +315,7 @@ public class PhytozomeDbProcessor {
             "SELECT " +
             "s.type_id as subject_type_id, " +
             "o.type_id AS object_type_id, " +
-            "r1.subject_id, r2.object_id " +
+            "r1.object_id, r2.object_id " +
             "FROM feature_relationship r1, " +
             "feature_relationship r2, " +
             tempFeatureTableName + " s," +
@@ -313,7 +330,7 @@ public class PhytozomeDbProcessor {
             "SELECT " +
             "s.type_id as subject_type_id, " +
             "o.type_id AS object_type_id, " +
-            "r1.subject_id, r2.object_id " +
+            "r1.subject_id, r2.subject_id " +
             "FROM feature_relationship r1, " +
             "feature_relationship r2, " +
             tempFeatureTableName + " s," +
@@ -344,7 +361,7 @@ public class PhytozomeDbProcessor {
         String refName = PhytozomeDbConfig.referenceName(intermineSubjectType,intermineObjectType);
         Reference r = new Reference(refName,converter.objectIdentifier(objectId));
         converter.store(r,converter.objectId(subjectId));
-        LOG.info("Linked types "+objectType+" and "+subjectType+" ids "+objectId+","+subjectId +
+        LOG.debug("Linked types "+objectType+" and "+subjectType+" ids "+objectId+","+subjectId +
             " in aSubject-Object reference.");
         count++;
       }
@@ -353,7 +370,7 @@ public class PhytozomeDbProcessor {
         String refName = PhytozomeDbConfig.referenceName(intermineObjectType,intermineSubjectType);
         Reference r = new Reference(refName,converter.objectIdentifier(subjectId));
         converter.store(r,converter.objectId(objectId));
-        LOG.info("Linked types "+objectType+" and "+subjectType+" ids "+objectId+","+subjectId +
+        LOG.debug("Linked types "+objectType+" and "+subjectType+" ids "+objectId+","+subjectId +
             " in a Object-Subject reference.");
         count++;
       }
@@ -451,8 +468,8 @@ public class PhytozomeDbProcessor {
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));
         seq.setAttribute("md5checksum", checksum);
-        seqId = seq.getIdentifier();
-        converter.store(seq);
+        // TODO remove seqId = seq.getIdentifier();
+        // TODO remove converter.store(seq);
       }
       
       Item feat = converter.createItem(PhytozomeDbConfig.getIntermineType(chadoType));
@@ -572,8 +589,8 @@ public class PhytozomeDbProcessor {
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));
         seq.setAttribute("md5checksum", checksum);
-        seqId = seq.getIdentifier();
-        converter.store(seq);
+        //TODO remove seqId = seq.getIdentifier();
+        //TODO remove converter.store(seq);
       }
       Item chrom = converter.createItem("Chromosome");
       chrom.setAttribute("primaryIdentifier", name);

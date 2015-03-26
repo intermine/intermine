@@ -1,0 +1,477 @@
+<html>
+
+  <head>
+
+    <title>Scatter2D</title>
+
+    <meta http-equiv="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvasxpress, canvas, html5, graph, chart, plot, javascript, javascript library, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser, isaac neuhaus"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" href="./css/canvasXpress.css" type="text/css"/>
+
+    <!--[if lt IE 9]><script type="text/javascript" src="./js/flashcanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+
+    <script id='demoScript'>
+
+      var showDemo = function () {
+
+        var cx1 = new CanvasXpress("canvas1",
+          {
+            "y" : {
+              "smps" : [ "Alcohol", "Tobacco" ],
+              "vars" : [ "North",   "Yorkshire", "Northeast", "East Midlands", "West Midlands", "East Anglia", "Southeast", "Southwest", "Wales", "Scotland", "Northern Ireland" ],
+              "data" : [ [ 6.47, 4.03 ], [ 6.13, 3.76 ], [ 6.19, 3.77 ], [ 4.89, 3.34 ], [ 5.63, 3.47 ], [ 4.52, 2.92 ], [ 5.89, 3.2 ], [ 4.79, 2.71 ], [ 3.53, 3.53 ], [ 6.08, 4.51 ], [ 4.02, 4.56 ] ]
+            },
+            "m" : {
+              "Name"        : "Alcohol Tobacco",
+              "Description" : "Average weekly household spending, in British pounds, on tobacco products and alcoholic beverages for each of the 11 regions of Great Britain.",
+              "Reference"   : "Moore, David S., and George P. McCabe (1989). Introduction to the Practice of Statistics, p. 179. Original source : Family Expenditure Survey, Department of Employment, 1981 (British official statistics)"
+            },
+            "x" : {
+               "Description" : [ "Average weekly household spending on alcoholic beverages in pounds", "Average weekly household spending on tobacco products in pounds" ]
+            }
+          },
+          {"citation": "Moore, David S., and George P. McCabe (1989). Introduction to the Practice of Statistics, p. 179.",
+           "graphType": "Scatter2D",
+           "title": "Average weekly household spending, in British pounds, on tobacco products\nand alcoholic beverages for each of the 11 regions of Great Britain.",
+           "xAxis": ["Alcohol"],
+           "yAxis": ["Tobacco"]
+          }
+        );
+
+        var cx2 = new CanvasXpress("canvas2",
+          {
+            "y" : {
+              "vars" : [ "s1",        "s2",        "s3",        "s4",        "s5",        "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17", "s18", "s19", "s20", "s21" ],
+              "smps" : [ "U-Trial 1", "U-Trial 2", "U-Trial 3", "S-Trial 1", "S-Trial 2", "S-Trial 3" ],
+              "data" : [ [ 38.4, 27.7, 25.7, 53.1, 30.6, 30.2 ], [ 46.2, 57.2, 41.9, 54.7, 43.3, 56.7 ], [ 72.5, 57.9, 51.9, 74.2, 53.4, 42.4 ], [ 38, 38, 32.2, 49.6, 37.4, 34.4 ], [ 82.8, 57.9, 64.7, 53.6, 48.6, 44.8 ], [ 33.9, 32, 31.4, 51.3, 35.5, 42.9 ], [ 50.4, 40.6, 40.1, 44.1, 46.9, 42.7 ], [ 35, 33.1, 43.2, 34, 26.4, 24.8 ], [ 32.8, 26.8, 33.9, 34.5, 25.1, 25.1 ], [ 60.1, 53.2, 40.4, 59.1, 87.1, 59.2 ], [ 75.1, 63.1, 58, 67.3, 43.8, 42.2 ], [ 57.6, 57.7, 61.5, 75.5, 126.6, 48.4 ], [ 55.5, 63.3, 44.6, 41.1, 41.8, 32 ], [ 49.5, 45.8, 35.3, 52.2, 53.8, 48.1 ], [ 40.9, 35.7, 37.2, 28.3, 26, 33.7 ], [ 44.3, 46.8, 39.4, 74.9, 45.3, 42.6 ], [ 93.8, 91.9, 77.4, 77.5, 55.8, 54.9 ], [ 47.9, 59.9, 52.8, 50.9, 58.6, 64.5 ], [ 75.2, 54.1, 63.6, 70.1, 44, 43.1 ], [ 46.2, 39.3, 56.6, 60.3, 47.8, 52.8 ], [ 56.3, 45.8, 58.9, 59.9, 36.8, 44.3 ] ],
+              "desc" : ["time in seconds"]
+            },
+            "m" : {
+              "Name"        : "Scents",
+              "Description" : "Data on the time subjects required to complete a pencil and paper maze when they were smelling a floral scent and when they were not.",
+              "Reference"   : "Hirsch, A. R., and Johnston, L. H. Odors and Learning, Smell & Taste Treatment and Research Foundation, Chicago."
+            },
+            "z" : {
+              "Sex"     : [ "M",   "F",   "M",   "M",   "M",   "F",   "F",   "F",   "M",   "F",      "F",   "F",      "F",   "M",      "M",      "M",   "M",   "M",   "F",   "F",   "M" ],
+              "Smoker"  : [ "N",   "Y",   "N",   "N",   "N",   "Y",   "N",   "N",   "N",   "N",      "Y",   "Y",      "Y",   "Y",      "N",      "N",   "Y",   "N",   "Y",   "N",   "N" ],
+              "Opinion" : [ "pos", "neg", "pos", "neg", "neg", "pos", "pos", "pos", "pos", "indiff", "pos", "indiff", "pos", "indiff", "indiff", "pos", "neg", "neg", "pos", "neg", "neg" ],
+              "Age"     : [ 23,    43,    43,    32,    15,    37,    26,    35,    26,    31,       35,    55,       25,    39,       25,       26,    33,    62,    54,    38,    65 ],
+              "Order"   : [ "1",   "2",   "1",   "2",   "1",   "2",   "1",   "2",   "1",   "2",      "1",   "2",      "1",   "2",      "1",      "2",   "1",   "2",   "1",   "2",   "1" ]
+            }
+          },
+          {"citation": "Hirsch, A. R., and Johnston, L. H. Odors and Learning, Smell & Taste Treatment and Research Foundation, Chicago.",
+           "graphType": "Scatter2D",
+           "setMaxX": 100,
+           "setMaxY": 150,
+           "setMinX": 0,
+           "setMinY": 0,
+           "shapeBy": "Smoker",
+           "sizeBy": "Age",
+           "title": "Data on the time subjects required to complete a pencil and paper maze\nwhen they were smelling a floral scent and when they were not.",
+           "xAxis": ["U-Trial 1", "U-Trial 2", "U-Trial 3"],
+           "xAxisExact": true,
+           "yAxis": ["S-Trial 1", "S-Trial 2", "S-Trial 3"],
+           "yAxisExact": true
+          }
+        );
+
+        var cx3 = new CanvasXpress("canvas3",
+          {
+            "y" : {
+              "smps" : [ "Age", "Height" ],
+              "vars" : [ "s1",  "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12" ],
+              "data" : [
+                [ 18, 76.1 ],
+                [ 19, 77 ],
+                [ 20, 78.1 ],
+                [ 21, 78.2 ],
+                [ 22, 78.8 ],
+                [ 23, 79.7 ],
+                [ 24, 79.9 ],
+                [ 25, 81.1 ],
+                [ 26, 81.2 ],
+                [ 27, 81.8 ],
+                [ 28, 82.8 ],
+                [ 29, 83.5 ]
+              ]
+            },
+            "m" : {
+              "Name"        : "Age Height",
+              "Description" : "Mean heights of a group of children in Kalama, an Egyptian village that is the site of a study of nutrition in developing countries. The data were obtained by measuring the heights of all 161 children in the village each month over several years.",
+              "Reference"   : "Moore, David S., and George P. McCabe (1989). Introduction to the Practice of Statistics, p. 118"
+            },
+            "x" : { 
+              "Description" : [ "Age in months", "Mean height in centimeters for children at this age" ] 
+            }
+          },
+          {"citation": "Moore, David S., and George P. McCabe (1989)",
+           "graphType": "Scatter2D",
+           "title": "Mean heights of a group of children in Kalama",
+           "xAxis": ["Age"],
+           "yAxis": ["Height"]
+          }
+        );
+        cx3.addRegressionLine();
+
+        var cx4 = new CanvasXpress("canvas4",
+          {
+            "y" : {
+              "smps" : [ "Mortality", "Temperature" ],
+              "vars" : [ "s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "s12", "s13", "s14", "s15", "s16" ],
+              "data" : [ [ 102.5, 51.3 ], [ 104.5, 49.9 ], [ 100.4, 50 ], [ 95.9, 49.2 ], [ 87, 48.5 ], [ 95, 47.8 ], [ 88.6, 47.3 ], [ 89.2, 45.1 ], [ 78.9, 46.3 ], [ 84.6, 42.1 ], [ 81.7, 44.2 ], [ 72.2, 43.5 ], [ 65.1, 42.3 ], [ 68.1, 40.2 ], [ 67.3, 31.8 ], [ 52.5, 34 ] ]
+            },
+            "m" : {
+              "Name"        : "Breast Cancer",
+              "Description" : "Data contains the mean annual temperature (in degrees F) and Mortality Index for neoplasms of the female breast. Data were taken from certain regions of Great Britain, Norway, and Sweden.",
+              "Reference"   : "Velleman, P. F. and Hoaglin, D. C. (1981). Applications, Basics, and Computing of Exploratory Data Analysis. Belmont. CA: Wadsworth, Inc., pp. 127-134."
+            },
+            "x" : {
+              "Description" : [ "Mortality index for neoplasms of the female breast", "Mean annual temperature (in degrees F)" ]
+            }
+          },
+          {"citation": "Velleman, P. F. and Hoaglin, D. C. (1981).\nApplications, Basics, and Computing of Exploratory Data Analysis. Belmont. CA: Wadsworth, Inc., pp. 127-134.",
+           "graphType": "Scatter2D",
+           "title": "Mean annual temperature (in degrees F) and Mortality Index for neoplasms of the female breast.",
+           "xAxis": ["Mortality"],
+           "yAxis": ["Temperature"]
+          }
+        );
+        cx4.addRegressionLine();
+
+        var cx5 = new CanvasXpress("canvas5",
+          {
+            "y" : {
+              "vars" : ["Sample1", "Sample2", "Sample3", "Sample4", "Sample5", "Sample6", "Sample7", "Sample8", "Sample9", "Sample10", "Sample11", "Sample12"],
+              "smps" : ["Concentration", "Variable1"],
+              "data" : [[0.0009, 172], [0.0018, 177], [0.0037, 160], [0.0073, 166], [0.0146, 211], [0.0293, 248], [0.0586, 269], [0.117, 283], [0.234, 298], [0.469, 314], [0.938, 328], [1.88, 316]]
+            },
+            "d" : {
+              "nlfit" : [{
+                "param" : [164, 313, 0.031, -1.5, 1.2e-06, 1.9],
+                "label" : "Custom Fit",
+                "type" : "cst"
+              }, {
+                "param" : [164, 313, 0.031, 1.5, 1.2e-06, 1.9],
+                "label" : "Regular Fit",
+                "type" : "reg"
+              }]
+            }
+          },
+          {"graphType": "Scatter2D",
+           "setMaxY": 350,
+           "setMinY": 100,
+           "showDecorations": true,
+           "xAxis": ["Concentration"],
+           "xAxisTransform": "log10",
+           "xAxisTransformTicks": false,
+           "yAxis": ["Variable1"],
+           "yAxisExact": true
+          }
+        );
+
+      }
+
+      var showCode = function (e, id) {
+        var cx = CanvasXpress.getObject(id)
+        cx.stopEvent(e);
+        cx.cancelEvent(e);
+        cx.updateCodeDiv(10000);
+        return false;
+      }
+
+    </script>
+
+  </head>
+
+  <body onload="showDemo();">
+
+    <div class="page pageSP">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+
+        <div class="tweet">
+          <a href="https://twitter.com/CanvasXpress" class="twitter-follow-button" data-show-count="false">Follow @CanvasXpress</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./general.html">API Reference</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./about.html">About</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="sp">
+
+          <ul class="graphTypes">
+            <li><a href="./area.html">Area</a></li>
+            <li><a href="./arealine.html">AreaLine</a></li>
+            <li><a href="./bar.html">Bar</a></li>
+            <li><a href="./barline.html">BarLine</a></li>
+            <li><a href="./boxplot.html">Boxplot</a></li>
+            <li><a href="./candlestick.html">Candlestick</a></li>
+            <li><a href="./circular.html">Circular</a></li>
+            <li><a href="./correlation.html">Correlation</a></li>
+            <li><a href="./dotline.html">DotLine</a></li>
+            <li><a href="./dotplot.html">Dotplot</a></li>
+            <li><a href="./genome.html">Genome</a></li>
+            <li><a href="./heatmap.html">Heatmap</a></li>
+            <li><a href="./histogram.html">Histogram</a></li>
+            <li><a href="./kaplan-meyer.html">Kaplan-Meyer</a></li>
+            <li><a href="./layout.html">Layout</a></li>
+            <li><a href="./line.html">Line</a></li>
+            <li><a href="./network.html">Network</a></li>
+            <li><a href="./nonlinear-fit.html">NonLinear-Fit</a></li>
+            <li><a href="./oncoprint.html">Oncoprint</a></li>
+            <li><a href="./pie.html">Pie</a></li>
+            <li><a href="./scatter2d.html">Scatter2D</a></li>
+            <li><a href="./scatter3d.html">Scatter3D</a></li>
+            <li><a href="./scatterbubble2d.html">ScatterBubble2D</a></li>
+            <li><a href="./stacked.html">Stacked</a></li>
+            <li><a href="./stackedline.html">StackedLine</a></li>
+            <li><a href="./stackedpercent.html">StackedPercent</a></li>
+            <li><a href="./stackedpercentline.html">StackedPercentLine</a></li>
+            <li><a href="./tagcloud.html">TagCloud</a></li>
+            <li><a href="./treemap.html">Treemap</a></li>
+            <li><a href="./venn.html">Venn</a></li>
+            <li><a href="./video.html">Video</a></li>
+          </ul>
+
+          <br />
+
+        </div>
+
+        <div class="content">
+
+          <div id="Scatter2D">
+
+            <h1>Scatter2D</h1>
+
+            <div class='desc'>
+
+              <p>
+
+                
+
+              </p>
+
+            </div>
+
+            <center>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas1")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas1' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./x_axis.html#xAxis">xAxis</a>,
+                      <a href="./y_axis.html#yAxis">yAxis</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas2")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas2' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./x_axis.html#setMaxX">setMaxX</a>,
+                      <a href="./y_axis.html#setMaxY">setMaxY</a>,
+                      <a href="./x_axis.html#setMinX">setMinX</a>,
+                      <a href="./y_axis.html#setMinY">setMinY</a>,
+                      <a href="./data_point_attributes.html#shapeBy">shapeBy</a>,
+                      <a href="./data_point_attributes.html#sizeBy">sizeBy</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./x_axis.html#xAxis">xAxis</a>,
+                      <a href="./x_axis.html#xAxisExact">xAxisExact</a>,
+                      <a href="./y_axis.html#yAxis">yAxis</a>,
+                      <a href="./y_axis.html#yAxisExact">yAxisExact</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas3")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas3' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./x_axis.html#xAxis">xAxis</a>,
+                      <a href="./y_axis.html#yAxis">yAxis</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas4")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas4' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./citations_or_references.html#citation">citation</a>,
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./titles_and_subtitles.html#title">title</a>,
+                      <a href="./x_axis.html#xAxis">xAxis</a>,
+                      <a href="./y_axis.html#yAxis">yAxis</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+              <table class='example'>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    
+                    <br>
+                    <a href='' onclick='showCode(event, "canvas5")'>Show CanvasXpress Code</a> | 
+                    <a class='link' onclick='window.location="view-source:" + window.location.href'>Show Page Source Code</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td><canvas id='canvas5' width='540' height='540'></canvas></td>
+                </tr>
+                <tr>
+                  <td  style="font-size: 13px;">
+                    <b>Properties used:</b>
+                    <i>
+                      <a href="./general.html#graphType">graphType</a>,
+                      <a href="./y_axis.html#setMaxY">setMaxY</a>,
+                      <a href="./y_axis.html#setMinY">setMinY</a>,
+                      <a href="./decorations.html#showDecorations">showDecorations</a>,
+                      <a href="./x_axis.html#xAxis">xAxis</a>,
+                      <a href="./x_axis.html#xAxisTransform">xAxisTransform</a>,
+                      <a href="./x_axis.html#xAxisTransformTicks">xAxisTransformTicks</a>,
+                      <a href="./y_axis.html#yAxis">yAxis</a>,
+                      <a href="./y_axis.html#yAxisExact">yAxisExact</a>
+                    </i>
+                  </td>
+                </tr>
+              </table><br><br><br>
+
+            </center>
+
+          </div>
+
+        </div>
+
+        <div class="clear">&nbsp;</div>
+
+      </div>
+
+      <div class="footer">
+        Copyright &copy; 2009-2015 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

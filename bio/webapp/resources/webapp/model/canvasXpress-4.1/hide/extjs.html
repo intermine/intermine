@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+  <head>
+
+    <title>Ext-canvasXpress</title>
+
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="canvas, html5, graph, chart, plot, javascript, genomic, scientific, android, animation, bar graph, line graph, dotplot, boxplot, heatmap, newick, scatter, 3d, pie, correlation, venn, network, market, candlestick, genome browser"/>
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="Rating" content="general" />
+    <meta name="googlebot" content="index,follow" />
+    <meta name="robots" content="index,follow" />
+    <meta name="author" content="Isaac Neuhaus" />
+    <meta name="google-site-verification" content="UmQp3wIY7r9cDwr5LRdUDeDkpxAxg0Lv5tUc3tW9-90" />
+
+    <link rel="stylesheet" href="./css/global.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="./js/EXT/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="./css/color-field.css" />
+
+    <!--[if IE]><script type="text/javascript" src="./js/excanvas.js"></script><![endif]-->
+    <script type="text/javascript" src="./js/canvasXpress.min.js"></script>
+    <script type="text/javascript" src="./js/EXT/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="./js/EXT/ext-all-debug.js"></script>
+    <script type="text/javascript" src="./js/color-field.js"></script>
+    <script type="text/javascript" src="./js/ext-canvasXpress.js"></script>
+
+    <script>
+      Ext.onReady(function(){
+        Ext.QuickTips.init();
+        var panel = new Ext.canvasXpress({
+          renderTo: 'extCanvasXpress',
+          frame: false,
+          id: 'canvasXpress-panel',
+          width: 500,
+          height: 500,
+          showExampleData: true,
+          imgDir: './images/'
+        });
+      });
+    </script>
+
+    <script>
+      var jumpTo = function(url) {
+        parent.location=url
+      }
+    </script>
+
+  </head>
+
+  <body>
+
+    <div class="page">
+
+      <div class="header">
+
+        <a href="./" class="logo">canvasXpress | Javascript Canvas Graphing Library</a>
+
+        <div class="share">
+          <a class="addthis_button" href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4c58a3ba2ff9a164">
+            <img src="http://s7.addthis.com/static/btn/v2/lg-share-en.gif" width="125" height="16" alt="Bookmark and Share" style="border:0"/>
+          </a>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4c58a3ba2ff9a164"></script>
+        </div>
+
+        <div class="donate">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="EVP6CWVNJN7SY">
+            <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+          </form>
+        </div>
+
+        <ul class="nav">
+          <li ><a href="./">Home</a></li>
+          <li ><a href="./about.html">About</a></li>
+          <li ><a href="./documentation.html">Documentation</a></li>
+          <li class="current"><a href="./bar.html">Examples</a></li>
+          <li ><a href="./download.html">Download</a></li>
+          <li ><a href="./contact.html">Contact</a></li>
+        </ul>
+
+      </div>
+
+      <div class="wrap">
+
+        <div class="content">
+
+          <div id="examples">
+
+            <div class="chooseGraph">
+              <select onchange="jumpTo(this.value)">
+                <option selected="selected">Select a Graph...</option>
+                <option value="./bar.html">Bar graphs</option>
+                <option value="./line.html">Line graphs</option>
+                <option value="./barline.html">Bar-line combination</option>
+                <option value="./boxplot.html">Boxplots</option>
+                <option value="./dotplot.html">Dotplots</option>
+                <option value="./area.html">Area graphs</option>
+                <option value="./stacked.html">Stacked graphs</option>
+                <option value="./correlation.html">Correlation plots</option>
+                <option value="./venn.html">Venn diagrams</option>
+                <option value="./heatmap.html">Heatmaps</option>
+                <option value="./scatter2d.html">2D-scatter plots</option>
+                <option value="./scatter3d.html">3D-scatter plots</option>
+                <option value="./pie.html">Pie charts</option>
+                <option value="./candlestick.html">Stock Market charts</option>
+                <option value="./network.html">Networks (or pathways)</option>
+                <option value="./genome.html">Genome browser</option>
+                <option value="./layout.html">Complex plot layouts</option>
+                <option value="./extjs.html">Ext-JS Panel</option>
+              </select>
+            </div>
+            <br>
+
+          </div>
+
+          <h1>EXT-JS</h1>
+
+          <br />
+          <h2>Usage</h2>
+          <br />
+
+          <div class="desc">
+            <p>
+
+              Please see the javascripts libraries included this page which should look something like:
+
+            </p>
+          </div>
+
+          <div class="code">
+            <pre>
+
+              &lt;link type="text/css" src="./js/EXT/resources/css/ext-all.css"&gt;&lt;/script&gt;
+              &lt;link type="text/css" src="./css/color-field.css"&gt;&lt;/script&gt;
+              &lt;!--[if IE]&gt;&lt;script type="text/javascript" src="./js/excanvas.js"&gt;&lt;/script&gt;&lt;![endif]--&gt;
+              &lt;script type="text/javascript" src="./js/EXT/adapter/ext/ext-base.js"&gt;&lt;/script&gt;
+              &lt;script type="text/javascript" src="./js/EXT/ext-all-debug.js"&gt;&lt;/script&gt;
+              &lt;script type="text/javascript" src="./js/canvasXpress.min.js"&gt;&lt;/script&gt;
+              &lt;script type="text/javascript" src="./js/color-field.js"&gt;&lt;/script&gt;
+              &lt;script type="text/javascript" src="./js/ext-canvasXpress.js"&gt;&lt;/script&gt;
+
+            </pre>
+          </div>
+
+          <br />
+          <h3>Right click anywhere in the graph to modify parameters</h3>
+          <br />
+
+          <div id="extCanvasXpress"></div>
+
+        </div>
+
+        <div class="clear"></div>
+
+      </div>
+
+      <div class="footer">
+
+        Copyright &copy; 2010 canvasXpress.org |
+        <a href="mailto:imnphd@gmail.com">Isaac&nbsp;Neuhaus</a> |
+        Site Powered by <a href="http://www.artician.net">Artician</a>
+
+      </div>
+
+    </div>
+
+    <div style="text-indent:-9999px;">
+      &nbsp;
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-601687-37']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+  </body>
+
+</html>

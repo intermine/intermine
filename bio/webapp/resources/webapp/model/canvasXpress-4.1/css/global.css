@@ -1,0 +1,177 @@
+/*--Page & Body Elements--*/
+body {background:#1d222b; padding:0 4px; margin:0 auto 0 auto; text-align:center; font-family:Arial, Verdana, Century Gothic; color:#666; height:100%; font-size:12px; line-height:14px;}
+
+a {outline:none;}
+a:link {color:#00A1CF; text-decoration:none;}
+a:visited {color:#00A1CF; text-decoration:none}
+a:active {color:#00A1CF;text-decoration:none;}
+a:hover { color:#666; text-decoration:none;}
+a img  {border:0;}
+
+p {font-size:13px; line-height:1.5em; text-align:left; margin:0 0 20px 0; padding:0;}
+p.desc {color:#666;}
+em {color:#00A1CF; font-weight:bold; font-style:normal;}
+label {cursor:pointer;} 
+td {margin:0; padding:0; border-collapse:collapse; vertical-align:middle;}	
+ul, li, ol, dl, dd, h1, h2, h3, h4, h5, h6, form, fieldset, img {margin: 0; padding: 0; list-style: none; border: 0; font-weight: normal; font-size: 1em; }
+hr {background-color:#ddd; border:0; height:2px; margin:10px 0; width:100%;}
+.clear {clear:both; height:0; overflow: hidden; font-size:0; line-height:0; background:none; border:none; display:block;}
+.nodisp {display:none;}
+.infoTip {padding:10px 10px 10px 24px; background:url(/images/icons/information.gif) no-repeat 4px center; color:#999; font-size:14px;}
+.success {background:#f7f7f7; border:1px solid #ddd; font-size:12px; font-weight:bold; color:#8ABF17; padding:5px; margin:8px 0 8px 0; text-align:left;}
+.content ul.errors {font-size:11px; border:1px solid #ddd; background:#f7f7f7; padding:7px 7px 7px 20px; text-align:left; margin:6px 0 0 0;}
+.content ul.errors strong {display:block; color:#e54d2f;}
+.content ul.errors li {font-size:12px;}
+
+/*Rounded Corners*/
+/*5px - All*/ .rnd, .nav li a, .chooseGraph, pre  {-moz-border-radius:5px; -webkit-border-radius:5px;}
+/*5px - Top*/ .rndTop, #dialog-top {-moz-border-radius-topleft:5px; -moz-border-radius-topright:5px; -webkit-border-top-left-radius:5px; -webkit-border-top-right-radius:5px; -moz-border-radius-bottomleft:0; -moz-border-radius-bottomright:0; -webkit-border-bottom-left-radius:0; -webkit-border-bottom-right-radius:0;}
+/*5px - Bottom*/ .rndBot {-moz-border-radius-bottomleft:5px; -moz-border-radius-bottomright:5px; -webkit-border-bottom-left-radius:5px; -webkit-border-bottom-right-radius:5px; -moz-border-radius-topleft:0; -moz-border-radius-topright:0; -webkit-border-top-left-radius:0; -webkit-border-top-right-radius:0;}
+/*3px - All*/ .rnd3 {-moz-border-radius:3px; -webkit-border-radius:3px;}
+/*3px - Top*/ .rndTop3 {-moz-border-radius-topleft:5px; -moz-border-radius-topright:5px; -webkit-border-top-left-radius:5px; -webkit-border-top-right-radius:5px;}
+
+/*fbmap*/  input.button, input.button:active, input.button.bfg {background:url(../images/fb_map.gif); background-repeat:repeat-x;}
+
+/*Input*/
+input {font-family:Arial, Verdana, Century Gothic;}
+input.field {background:#fff url(../images/field_bg.gif) repeat-x top; border:1px solid #d0d0d0; margin:0 5px 8px 5px; font-size:13px; padding:0.3em 0.4em;}
+input.field:focus {border:1px solid #83AABF}
+
+input.button {outline:none; background-color:#e4e4e4; color:#4181BA; background-position:0 -176px; font-size:13px; font-weight:bold; cursor:pointer; border:1px solid #c0c0c0; padding:0.3em 0.4em; _padding:0.2em 0.4em 0.2em 0.4em;overflow:visible; margin:0;}
+input.button.strip {background-color:#none; background-image:none; border:0; padding:}
+input.button.med {padding:0.2em 0.4em;}
+input.button:active {border-top-color:#999; border-left-color:#999;}
+input.button:hover {border-top-color:#999; border-left-color:#999; background-position:0 -226px;}
+input.button:focus {outline:none;}
+input.button.okay {color:#70a400;}
+input.button.alert  {color:#e9442e;}
+input.button.neutral {color:#444;}
+input.button.action  {color:#ec9d05;}
+input.button.default {color:#666; font-size:11px; padding:0.1em 4px 0.1em 3px;}
+input.button.slim {padding:0.2em 0.3em 0.2em 0.3em; font-size:10px;} 
+input.button.med {padding:0.2em 0.3em 0.1em 0.3em; font-size:12px;} 
+input.button.inactive {background:#d9d9d9; cursor:not-allowed;}
+input.button.export {float:right; margin-top:12px; margin-left:10px; font-size:11px;}
+
+/*BFG Buttons*/
+input.button.bfg {background-color:#dedede; background-position:0 -118px; border:1px solid #c3c3c3;}
+input.button.bfg:hover {background:#dbdbdb; border-top:1px solid #b0b0b0; border-left:1px solid #b0b0b0;}
+input.button.bfg:active {background:#dbdbdb;}
+
+.textarea {font-family:Arial, Verdana, Century Gothic; background:#fff url(../images/field_bg.gif) repeat-x top; border:1px solid #d0d0d0; font-size:13px; margin:5px 15px 5px 0; padding:5px; width:99%;}
+.textarea:focus {border:1px solid #83AABF}	
+.textarea.formtextarea {color:#a4504b; margin-top:0;}
+
+/*Select*/
+select {padding:0.2em 0 0.3em 0.2em; margin:0; background:#fff url(../images/field_bg.gif) repeat-x top; border:1px solid #d0d0d0; color:#a4504b; font-size:13px;}
+select:focus {border:1px solid #83AABF}
+select.default {padding:0.1em 0em 0.2em 0.1em; border:1px solid #ddd; margin:0 6px 0 0; font-size:11px;}
+select.headselect {position:absolute; top:8px; left:200px;}
+optgroup {color:#888; text-transform:lowercase; font-style:normal;}
+
+.inactive , input.field.inactive, select.inactive, input.textarea.inactive {background:#e9e9e9;}
+
+/*Headers*/
+h1 {font-size:2em; font-weight:bold; line-height:normal; color:#00A1CF; padding:0 0 3px 0; margin:0 0 5px 0; text-align:left;}
+h2 {font-size:1.5em; font-weight:bold; line-height:normal; color:#00A1CF; padding:0 0 3px 0; margin:0 0 5px 0; text-align:left;}
+h3 {font-size:20px; font-weight:400; line-height:normal; color:#444; padding:0 0 3px 0; margin:0 0 5px 0; text-align:left;}
+h4 {font-size:20px; font-weight:400; line-height:normal; color:#444; padding:0 0 3px 0; margin:0 0 5px 0; text-align:left;}
+
+/*Page*/
+.page {width:928px; margin:0 auto; padding:0;}
+.wrap {background:url(../images/bg.gif) repeat-y;}
+.header {height:370px; background:url(../images/header.jpg) no-repeat 0 0; position:relative;}
+.header .share {position:absolute; top:75px; right:14px;}
+.header .donate {position:absolute; top:73px; right:154px;}
+.logo {disaply:block; position:absolute; top:32px; left:63px; background:url(../images/logo.gif) no-repeat 0 0; height:116px; width:229px; text-indent:-9999px;}
+.inner {}
+.content {padding:0 35px 25px 25px; text-align:left;}
+.content p {padding-right:20px;}
+.footer {height:41px; background-color:#ddd; text-align:left; line-height:3.7em; text-indent:17px; border-top:1px solid #ccc; font-size:11px;}
+.footer span {display:block; text-indent:12px;}
+
+/*SP adjustments*/
+.pageSP .wrap {background:url(../images/bg_sp.gif) repeat-y;}
+.pageSP .header {height:370px; background:url(../images/header_sp.jpg) no-repeat 0 0; position:relative;}
+.pageSP .content {width:576px; float:right; padding:0 25px 25px 0; text-align:left;}
+.pageSP .sp {display:block;}
+
+.mod {float:left; margin-right:40px; width:250px;}
+.mod.nm {margin-right:0;}
+
+/*Nav*/
+.nav {position:absolute; left:315px; top:14px;}
+.nav li {display:block; float:left; background-position:right -101px; padding-right:2px; height:39px; overflow:hidden;}
+.nav li a {display:block; float:left; color:#f0f0f0; font-size:13px; line-height:2.3em; padding:0 20px}
+.nav li a:hover { background-color:#ADDF00; color:#333;}
+.nav li.current a {background-color:#00A1CF; color:#fff;}
+
+/*SP*/
+.sp {width:250px; display:none; float:left; margin-left:54px; padding-bottom:50px; position:relative;}
+.sp h3 {padding-left:10px; font-size:16px;}
+.sp ul {width:250px;}
+.sp ul li {border-bottom:1px solid #ddd;}
+.sp ul li a {display:block; background:url(../images/arrow.gif) no-repeat 10px center; padding-left:20px; text-align:left; font-size:12px; line-height:2.0em; color:#666;}
+.sp ul li a:hover, .sp ul li a.current { background-color:#e0e0e0;}
+.sp .searchBox {position:absolute; left:10px; top:-40px;}
+.sp .share h3 {padding-left:0;} 
+.sp .share {margin:20px 0 0 0; border-top:2px solid #ccc; padding:20px 0 0 20px; text-align:left;}
+.sp .donate {margin:20px 0 0 0; border-top:2px solid #ccc; padding:20px 0 0 20px; text-align:left;}
+
+/*Select*/
+select {padding:0.2em 0 0.3em 0.2em; margin:0; background:#fff url(../images/field_bg.gif) repeat-x top; border:1px solid #d0d0d0; color:#4181BA; font-size:13px;}
+select:focus {background-color:#fff;}
+select.default {padding:0.1em 0em 0.2em 0.1em; border:1px solid #ddd; margin:0 6px 0 0; font-size:11px;}
+select.headselect {position:absolute; top:8px; left:200px;}
+optgroup {color:#888; text-transform:lowercase; font-style:normal;}
+
+/*FB Buttons*/
+a.fb, a.fg, a.fgr {padding:5px 10px; color:#333; display:block; font-size:13px; float:left; background-image:url(../images/fb_map.gif); background-repeat:repeat-x; background-position:0 0;}
+a.fb span, a.fg span, a.fgr span {color:#666; line-height:1.5em; font-weight:bold;}
+a.fb.rbL span, a.fg.rbL span, a.fgr.rbL span a.fb.fbL span, a.fgL span, a.fgr.fgrL span {font-size:14px;}
+a.fb.sm, a.fg.sm, a.fgr.sm {font-size:11px; padding:3px 5px;}
+
+/*FB*/
+a.fb {background-color:#d6e3f1; border:1px solid #bacfe7;}
+a.fb:hover {color:#00A1CF; border-top:1px solid #88b6da; border-left:1px solid #88b6da; border-bottom:1px solid #a0c2dc; border-right:1px solid #a0c2dc;}
+a.fb:active {background:#D6E3F1;}
+
+/*FG*/
+a.fg {background-color:#cae18d; background-position:0 -60px; border:1px solid #a5c955;}
+a.fg:hover {color:#00A1CF; border-top:1px solid #83aa2d; border-left:1px solid #83aa2d;}
+a.fg:active {background:#CAE18D;}
+
+/*FGR*/
+a.fgr {background-color:#dedede; background-position:0 -118px; border:1px solid #c3c3c3;}
+a.fgr:hover {color:#00A1CF; border-top:1px solid #b3b3b3; border-left:1px solid #b3b3b3;}
+a.fgr:active {background:#dbdbdb;}
+
+/* These are standard sIFR styles... do not modify */
+.sIFR-flash {visibility:visible !important; margin:0;}
+.sIFR-replaced {visibility:visible !important;}
+span.sIFR-alternate {position:absolute; left:0; top:0; width:0; height:0; display:block; overflow:hidden;}
+/* Hide Adblock Object tab:the text should show up just fine, not poorly with a tab laid over it. */
+.sIFR-flash + div[adblocktab=true] {display:none !important;}
+/* These "decoy" styles are used to hide the browser text before it is replaced... the negative-letter spacing in this case is used to make the browser text metrics match up with the sIFR text metrics since the sIFR text in this example is so much narrower... your own settings may vary... any weird sizing issues you may run into are usually fixed by tweaking these decoy styles */
+.sIFR-hasFlash h1 {visibility:hidden;}
+.sIFR-hasFlash h5#pullquote {letter-spacing:-4px; visibility:hidden; font-size:24px;}
+
+/*Examples Styling*/
+div.example {margin: 20px 0; padding: 20px;}
+.canvasBlock {float:left; margin-right:7px; padding-right:7px; border-right:2px solid #f0f0f0;}
+div br {clear: both;}
+pre {padding: 10px; border: 2px dashed #ccc; margin:0; text-indent:none;  margin-bottom:20px;background: #f0f0f0; overflow:auto; width:840px;} 
+.code {text-align:left; font-size:11px;}
+.subtitle {font-weight:bold; border-top:1px solid #f0f0f0; display:block; font-size:14px; padding:10px 0 0 0;}
+
+/*Examples Section*/
+#examples {position:relative;}
+.chooseGraph {position:absolute; top:-40px; left:0px; background-color:#e9e9e9; border:1px solid #ccc; padding:10px;}
+
+/*Contact*/
+#contact form {float:left; width:350px; margin-right:20px; padding-right:20px; border-right:2px solid #f0f0f0;}
+
+/*Download*/
+ul.downloadFiles {width:400px; margin-bottom:30px;}
+ul.downloadFiles li {font-size:17px; line-height:2.0em; border-bottom:1px solid #f0f0f0;}
+
