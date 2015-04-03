@@ -468,8 +468,8 @@ public class PhytozomeDbProcessor {
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));
         seq.setAttribute("md5checksum", checksum);
-        // TODO remove seqId = seq.getIdentifier();
-        // TODO remove converter.store(seq);
+        seqId = seq.getIdentifier();
+        converter.store(seq);
       }
       
       Item feat = converter.createItem(PhytozomeDbConfig.getIntermineType(chadoType));
@@ -589,8 +589,8 @@ public class PhytozomeDbProcessor {
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));
         seq.setAttribute("md5checksum", checksum);
-        //TODO remove seqId = seq.getIdentifier();
-        //TODO remove converter.store(seq);
+        seqId = seq.getIdentifier();
+        converter.store(seq);
       }
       Item chrom = converter.createItem("Chromosome");
       chrom.setAttribute("primaryIdentifier", name);
