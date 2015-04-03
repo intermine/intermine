@@ -716,9 +716,24 @@
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
       <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
     </source>
+    <source name="phytozome-homologs-smidgen" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    </source>
+    <source name="phytozome-homologs-smidgen2" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    </source>
+    <source name="phytozome-homologs-smidgen3" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    </source>
+    <source name="phytozome-homologs-smidgen4" type="inparanoid-homologs" >
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    </source>
     <source name="diversity-P.vulgaris" type="gatkvcf">
       <property name="proteomeId" value="218" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-P.vulgaris" />
@@ -726,7 +741,6 @@
     </source>
     <source name="diversity-P.trichocarpa" type="gatkvcf">
       <property name="proteomeId" value="210" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
@@ -734,7 +748,6 @@
     </source>
     <source name="diversity-B.distachyon" type="gatkvcf">
       <property name="proteomeId" value="283" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-B.distachyon" />
@@ -742,7 +755,6 @@
     </source>
     <source name="diversity-E.grandis" type="gatkvcf">
       <property name="proteomeId" value="201" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-E.grandis" />
@@ -750,7 +762,6 @@
     </source>
     <source name="diversity-M.esculenta" type="gatkvcf">
       <property name="proteomeId" value="147" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-M.esculenta" />

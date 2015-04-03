@@ -406,11 +406,13 @@ public class BatchWriterSimpleImpl implements BatchWriter
             if (doAnalyse) {
                 long start = System.currentTimeMillis();
                 doAnalyse(name, conn);
+                long endAnalyse = System.currentTimeMillis();
                 int tableSize = getTableSize(name, conn);
                 long end = System.currentTimeMillis();
                 stat.setTableSize(tableSize, end - start);
-                LOG.info("Analysing table " + name + " took " + (end - start) + "ms ("
-                        + tableSize + " rows)");
+                LOG.info("Analysing table " + name + " took " + (end - start)
+                        + "ms, of which row count took " + (end - endAnalyse)
+                        + "ms (" + tableSize + " rows)");
             }
         }
     }
@@ -470,14 +472,20 @@ public class BatchWriterSimpleImpl implements BatchWriter
         }
 
         // Return true (i.e. do analyse) if total number of rows written is greater than some
-        // threshold.  Currently if aprrox 50% of original table size.
+        // threshold.  Currently if table has doubled in size or if the table size has increased
+        // by 10% and haven't run an analyse recently.
         public boolean addActivity(int activity) {
             LOG.debug("Statistics: " + name + ", tableSize = " + tableSize + ", activity "
                     + this.totalActivity + " --> tableSize = " + tableSize + ", activity = "
                     + (this.totalActivity + activity) + "    - Activity of " + activity + " rows");
             this.totalActivity += activity;
-            return (this.totalActivity > (tableSize / 2) + 1000) || ((this.totalActivity > 100000)
-                && (System.currentTimeMillis() - lastResizeTime > 600000 + (analyseTime * 20)));
+
+            // minimum gap between incremental analyses is ten minutes plus a multiple of the
+            // last analyse time (to handle very slow analyses)
+            long timeTrigger = 600000 + (analyseTime * 20);
+            return (this.totalActivity > tableSize + 1000)
+                    || ((totalActivity > 100000) && (totalActivity > (tableSize / 10))
+                            && (System.currentTimeMillis() - lastResizeTime > timeTrigger));
         }
 
         public void setTableSize(int tableSize, long analyseTime) {

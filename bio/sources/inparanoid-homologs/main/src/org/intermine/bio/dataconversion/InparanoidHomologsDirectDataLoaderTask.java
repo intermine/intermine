@@ -188,7 +188,7 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
       try {
         Gene g = getDirectDataLoader().createObject(Gene.class);
         g.setSecondaryIdentifier(geneName);
-        g.proxyOrganism(organismMap.get(proteomeId));
+        g.proxyOrganism(organismMap.get(Integer.parseInt(proteomeId)));
         getDirectDataLoader().store(g);
         ProxyReference ref = new ProxyReference(getIntegrationWriter().getObjectStore(),g.getId(),Gene.class);
         geneMap.put(geneName,ref); 

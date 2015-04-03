@@ -31,7 +31,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -145,7 +145,7 @@ public class GatkvcfPostProcess extends PostProcessor {
             throw new BuildException("Cannot parse file: " + file + ": "+e.getMessage());
           }
           int ctr = 0;
-          while (tsvIter.hasNext() ) {
+          while (tsvIter.hasNext() && ctr < 1000000 ) {
             ctr++;
             String[] fields = (String[]) tsvIter.next();
             if (!processData(sdsOut,genoOut,fields)) {

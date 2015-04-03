@@ -1,17 +1,11 @@
 
 <definition name="heatMap.tile" path="/model/heatMap.jsp"
         controllerUrl="/initHeatMap.do"/>
-<definition name="heatMap.page" extends="layout.template">
+
+  <definition name="heatMap.page" extends="layout.template">
     <put name="body" value="heatMap.tile"/>
     <put name="pageName" value="heatMap"/>
-</definition>
-
-<definition name="correlationMap.tile" path="/model/correlationMap.jsp"
-        controllerUrl="/initCorrelationMap.do"/>
-<definition name="correlationMap.page" extends="layout.template">
-    <put name="body" value="correlationMap.tile"/>
-    <put name="pageName" value="correlationMap"/>
-</definition>
+  </definition>
 
 <definition name="geneMicroArrayDisplayer.tile" path="/model/geneMicroArrayDisplayer.jsp"
         controllerUrl="/initGeneMicroArrayDisplayer.do"/>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="bio/sources/biogrid/main/src"/>
+	<classpathentry kind="src" path="intermine/model/main/src"/>
 	<classpathentry kind="src" path="bio/postprocess/main/src"/>
 	<classpathentry kind="src" path="bio/sources/biopax/main/src"/>
 	<classpathentry kind="src" path="bio/sources/chado-db/main/src"/>
@@ -63,7 +64,7 @@
 	<classpathentry kind="src" path="intermine/webapp/main/src"/>
 	<classpathentry kind="src" path="bio/webapp/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/phytomine-load/dbmodel/build/classes"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/phytomine-load/dbmodel/build/classes" sourcepath="phytomine-load/dbmodel/build/gen/src"/>
 	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/bin/imbuild/im-ant-tasks/lib/ant-1.6.5.jar"/>
 	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/bin/intermine/model/main/lib/log4j.jar"/>
 	<classpathentry kind="output" path="bin"/>

@@ -14,13 +14,19 @@
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/deflines" />
       <property name="src.data.file" value="desc_and_defline_dev.tsv" />
     </source>
-
     <source name="pac-clusters-crown" type="pac-clusters">
       <property name="source.db.name" value="PAC" />
       <property name="dataSourceName" value="pac-clusters" />
       <property name="dataSetTitle" value="Phytozome Clusters" />
       <property name="createrelations" value="false" />
       <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4865" />
+    </source>
+    <source name="pac-clusters-extra-crown" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4850,4851,4907,4908,4909,4910" />
     </source>
     <source name="pac-clusters-rosid" type="pac-clusters">
       <property name="source.db.name" value="PAC" />
@@ -43,9 +49,15 @@
       <property name="createrelations" value="false" />
       <property name="methodIds" value="4959,4960,4961,4962,4963,4964,4965" />
     </source>
+    <source name="diversity-S.bicolor" type="gatkvcf">
+      <property name="proteomeId" value="255" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-S.bicolor" />
+      <property name="dataSetTitle" value="S.bicolor Natural Diversity" />
+    </source>
     <source name="diversity-P.vulgaris" type="gatkvcf">
       <property name="proteomeId" value="218" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-P.vulgaris" />
@@ -53,15 +65,27 @@
     </source>
     <source name="diversity-P.trichocarpa" type="gatkvcf">
       <property name="proteomeId" value="210" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.trichocarpa" />
+      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
+    </source>
+    <source name="diversity-P.trichocarpa-part2" type="gatkvcf">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" value="/scratch/phytomine/diversity/Ptrichocarpa/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.trichocarpa" />
+      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
+    </source>
+    <source name="diversity-P.trichocarpa-part3" type="gatkvcf">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" value="/scratch/phytomine/diversity/Ptrichocarpa/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
     </source>
     <source name="diversity-B.distachyon" type="gatkvcf">
       <property name="proteomeId" value="283" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-B.distachyon" />
@@ -69,7 +93,6 @@
     </source>
     <source name="diversity-B.distachyon-consequence" type="gatkvcf">
       <property name="proteomeId" value="283" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-B.distachyon" />
@@ -77,7 +100,6 @@
     </source>
     <source name="diversity-E.grandis" type="gatkvcf">
       <property name="proteomeId" value="201" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-E.grandis" />
@@ -85,87 +107,6 @@
     </source>
     <source name="diversity-M.esculenta" type="gatkvcf">
       <property name="proteomeId" value="147" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-M.esculenta" />
-      <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
-    </source>
-    <source name="diversity-P.vulgaris-json" type="gatkvcf">
-      <property name="proteomeId" value="218" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.vulgaris" />
-      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
-    </source>
-    <source name="diversity-P.trichocarpa-json" type="gatkvcf">
-      <property name="proteomeId" value="210" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.trichocarpa" />
-      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
-    </source>
-    <source name="diversity-B.distachyon-json" type="gatkvcf">
-      <property name="proteomeId" value="283" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-B.distachyon" />
-      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
-    </source>
-    <source name="diversity-E.grandis-json" type="gatkvcf">
-      <property name="proteomeId" value="201" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-E.grandis" />
-      <property name="dataSetTitle" value="E.grandis Natural Diversity" />
-    </source>
-    <source name="diversity-M.esculenta-json" type="gatkvcf">
-      <property name="proteomeId" value="147" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-M.esculenta" />
-      <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
-    </source>
-    <source name="diversity-P.vulgaris-json-corrected" type="gatkvcf">
-      <property name="proteomeId" value="218" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.vulgaris" />
-      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
-    </source>
-    <source name="diversity-P.trichocarpa-json-corrected" type="gatkvcf">
-      <property name="proteomeId" value="210" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.trichocarpa" />
-      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
-    </source>
-    <source name="diversity-B.distachyon-json-corrected" type="gatkvcf">
-      <property name="proteomeId" value="283" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-B.distachyon" />
-      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
-    </source>
-    <source name="diversity-E.grandis-json-corrected" type="gatkvcf">
-      <property name="proteomeId" value="201" />
-      <property name="makeLinks" value="false" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-E.grandis" />
-      <property name="dataSetTitle" value="E.grandis Natural Diversity" />
-    </source>
-    <source name="diversity-M.esculenta-json-corrected" type="gatkvcf">
-      <property name="proteomeId" value="147" />
-      <property name="makeLinks" value="false" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-M.esculenta" />
@@ -344,6 +285,7 @@
 
     <source name="phytozome-homologs" type="inparanoid-homologs" >
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
+      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml" />

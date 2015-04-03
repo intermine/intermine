@@ -292,11 +292,11 @@ public class PrecomputedTableManager
                     boolean needComma = false;
                     StringBuilder sb = new StringBuilder();
                     for (AbstractValue ob : orderBy) {
+                      while (ob instanceof OrderDescending) {
+                        ob = ((OrderDescending) ob).getValue();
+                      }
                       if (!inIndex.contains(pt.getValueMap().get(ob).getAlias())) {
                         inIndex.add(pt.getValueMap().get(ob).getAlias());
-                        while (ob instanceof OrderDescending) {
-                          ob = ((OrderDescending) ob).getValue();
-                        }
                         if (needComma) {
                           sb.append(", ");
                         }

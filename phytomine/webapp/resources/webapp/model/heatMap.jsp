@@ -59,7 +59,7 @@ jQuery(document).ready(function () {
         <p>
           <i>
             ${WEB_PROPERTIES['heatmap.expressionScoreSummary']}
-            The plotted values and are log2 of the actual value.
+            The plotted values and are log2 of the recorded FPKM. FPKM values exactly 0 are thresholded to -10 in this plot.
             <br>Heatmap visualization powered by
             <a href="http://www.canvasxpress.org">canvasXpress</a>, learn more about the <a href="http://www.canvasxpress.org/heatmap.html">display options</a>.
           </i>
@@ -81,27 +81,38 @@ jQuery(document).ready(function () {
         <br>
         </c:if>
 
-        <div id="heatmapContainer">
-            <table>
-              <tr>
-                <td>
-                    <div style="padding: 0px 0px 5px 30px;">
-                     <span>FPKM Expression Clustering - Hierarchical:</span>
-                     <select id="fpkmHierarchical">
-                         <option value="single" selected="selected">Single</option>
-                         <option value="complete">Complete</option>
-                         <option value="average">Average</option>
-                     </select>
-                     <span> and K-means:</span>
-                     <select id="fpkmKMeans">
-                         <option value="3" selected="selected">3</option>
-                     </select>
-                    </div>
-                    <canvas id="canvas_fp" width="825" height="550"></canvas>
-                </td>
-              </tr>
-            </table>
+        <div id="mapsContainer">
+        
+          <table>
+            <tr>
+              <td>
+                <div id="heatmapContainer">
+                  <div style="padding: 0px 0px 5px 30px;">
+                    <span>FPKM Expression Clustering - Hierarchical:</span>
+                    <select id="fpkmHierarchical">
+                      <option value="single" selected="selected">Single</option>
+                      <option value="complete">Complete</option>
+                      <option value="average">Average</option>
+                    </select>
+                    <span> and K-means:</span>
+                    <select id="fpkmKMeans">
+                      <option value="3" selected="selected">3</option>
+                    </select>
+                  </div>
+                  <canvas id="canvas_fp" width="600" height="400"></canvas>
+                </div>
+              </td>
+              <td>
+                <div id="correlationContainer">
+                  <div style="padding: 0px 0px 5px 30px;">
+                    <canvas id="canvas_corr" width="400" height="400"></canvas>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
         </div>
+
         <div id="description_div">
             <table border="0">
                 <tr>
@@ -114,15 +125,12 @@ jQuery(document).ready(function () {
             <i>
               <c:choose>
                 <c:when test="${ExpressionType == 'gene'}">
-                  Expression type is gene
                   ${WEB_PROPERTIES['heatmap.geneExpressionScoreDescription']}
                 </c:when>
                 <c:when test="${ExpressionType == 'mrna'}">
-                  Expression type is mrna
                   ${WEB_PROPERTIES['heatmap.mrnaExpressionScoreDescription']}
                 </c:when>
                 <c:otherwise>
-                  Expression type is not mrna or gene
                   ${ExpressionType}
                 </c:otherwise>
               </c:choose>
@@ -141,7 +149,7 @@ jQuery(document).ready(function () {
     var max_cluster = parseInt(${MAX_CLUSTER});
     var max_map = parseInt(${MAX_MAP});
 
-    if ('${fn:length(cufflinksScoreJSONFpkm)}' < 10) {
+    if ('${fn:length(cufflinksScoreJSON)}' < 10) {
         // if the JSON string is short, no data.
         jQuery('#heatmap_div').remove();
         jQuery('#expression_div').html('<i>Expression scores are not available</i>');
@@ -166,7 +174,7 @@ jQuery(document).ready(function () {
 
         // the FPKM heat map
         var fpkmHeatMap = new CanvasXpress('canvas_fp',
-                                     ${cufflinksScoreJSONFpkm},
+                                     ${cufflinksScoreJSON},
                                      {graphType: 'Heatmap',
                                       title: 'FPKM',
                                       // heatmapType: 'yellow-purple',
@@ -187,7 +195,6 @@ jQuery(document).ready(function () {
                                                               { return "<value>"+a+"</value>" }).join("");
                                                var conditionConstraint = condition.map(function(a)
                                                               { return "<value>"+a+"</value>" }).join("");
-
                                                if ("${ExpressionType}" == "gene") {
                                                    var query = '<query name="" model="genomic" view="Gene.primaryIdentifier Gene.organism.shortName Gene.cufflinksscores.experiment.name Gene.cufflinksscores.experiment.experimentGroup Gene.cufflinksscores.fpkm Gene.cufflinksscores.conflo Gene.cufflinksscores.confhi" sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B">'+
 '<constraint path="Gene.primaryIdentifier" code="A" op="ONE OF">' + featureConstraint+ '</constraint>'+
@@ -195,7 +202,6 @@ jQuery(document).ready(function () {
                                                    var encodedQuery = encodeURIComponent(query);
                                                    encodedQuery = encodedQuery.replace("%20", "+");
                                                    window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery  + "&trail=|query&method=xml");
-
                                                } else if ("${ExpressionType}" == "mrna") {
                                                    var query = '<query name="" model="genomic" view="MRNA.primaryIdentifier MRNA.organism.shortName MRNA.cufflinksscores.experiment.name MRNA.cufflinksscores.experiment.experimentGroup MRNA.cufflinksscores.fpkm MRNA.cufflinksscores.conflo MRNA.cufflinksscores.confhi" sortOrder="MRNA.primaryIdentifier asc" constraintLogic="A and B">'+
 '<constraint path="MRNA.primaryIdentifier" code="A" op="ONE OF">'+featureConstraint+'</constraint>'+
@@ -203,11 +209,18 @@ jQuery(document).ready(function () {
                                                    var encodedQuery = encodeURIComponent(query);
                                                    encodedQuery = encodedQuery.replace("%20", "+");
                                                    window.open("/${WEB_PROPERTIES['webapp.path']}/loadQuery.do?skipBuilder=true&query=" + encodedQuery + "&method=xml");
-
                                                } else {
                                                   alert("Unexpected expression type: ${ExpressionType}");
                                                }
                                               }});
+
+            // cluster on gene/mrnas
+            if (feature_count > max_cluster) {
+                jQuery("#fpkmHierarchical").attr('disabled', true);
+            }
+            if (organism_count > 1) {
+                jQuery("#fpkmHierarchical").attr('disabled', true);
+            }
             // cluster on gene/mrnas
             if (feature_count > max_cluster) {
                 jQuery("#fpkmHierarchical").attr('disabled', true);
@@ -252,6 +265,13 @@ jQuery(document).ready(function () {
                 fpkmHeatMap.draw();
            });
 
+        // the correlation map
+        var correlationHeatMap = new CanvasXpress('canvas_corr',
+                                     ${cufflinksScoreJSON},
+                                     {'graphType': 'Correlation',
+                                      'correlationAxis' : "variables",
+                                      'gradient': true}
+                                              );
      }
 
 </script>
