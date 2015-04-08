@@ -22,10 +22,10 @@ class LoginTestCase(Super):
         submit = self.browser.find_element_by_name('action')
         submit.click()
 
-        self.assertLoggedInAs('intermine-test-user')
+        self.assertLoggedInAs('The Great Tester')
 
-    def assertLoggedInAs(self, username):
+    def assertLoggedInAs(self, username, alias):
         sel = '#loginbar li:nth-child(2)'
         logged_in_as = self.wait().until(lambda d: d.find_element_by_css_selector(sel))
-        self.assertEqual('intermine-test-user', logged_in_as.text)
+        self.assertEqual(username, logged_in_as.text)
 

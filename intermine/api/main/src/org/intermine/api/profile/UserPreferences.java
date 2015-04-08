@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.util.PropertiesUtil;
 
@@ -90,7 +91,7 @@ public class UserPreferences extends AbstractMap<String, String>
          */
         bools.add("do_not_spam");
         bools.add("hidden");
-        uniques.add(ALIAS);
+        uniques.add(ALIAS); // Must be globally unique.
         all.addAll(bools);
         all.addAll(uniques);
         /* END OF HACK */
@@ -118,6 +119,11 @@ public class UserPreferences extends AbstractMap<String, String>
 
     @Override
     public String put(String key, String value) {
+        // note: when (if) InterMine moves to java 7+, this can be
+        // replaced with a call to java.util.Objects::equals(Object, Object)
+        if (ObjectUtils.equals(value, backingMap.get(key))) {
+            return value; // Nothing to do here...
+        }
         synchronized (manager) {
             try {
                 if (UNIQUE_KEYS.contains(key)) {

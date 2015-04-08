@@ -59,7 +59,7 @@
       </div>
     </div>
 
-    <c:if test="${!empty OPENID_PROVIDERS && WEB_PROPERTIES['openid.allowed'] != 'false' && isExternallyAccessible}">
+    <c:if test="${!empty OPENID_PROVIDERS && WEB_PROPERTIES['openid.allowed'] != 'false'}"> 
       <div class="column second">
         <im:debug message="${OPENID_PROVIDERS}"/>
         <h3 class="openid"><fmt:message key="login.openid"/></h3>
