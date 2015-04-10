@@ -24,7 +24,7 @@ class LoginTestCase(Super):
 
         self.assertLoggedInAs('The Great Tester')
 
-    def assertLoggedInAs(self, username, alias):
+    def assertLoggedInAs(self, username):
         sel = '#loginbar li:nth-child(2)'
         logged_in_as = self.wait().until(lambda d: d.find_element_by_css_selector(sel))
         self.assertEqual(username, logged_in_as.text)
