@@ -7,6 +7,9 @@
 <definition name="bedExportOptions.tile" path="/model/bedExportOptions.jsp"
   controllerUrl="/initSequenceFeatureExportOptions.do" />
 
+<definition name="esynDisplayer.tile" path="/model/esynDisplayer.jsp"
+  controllerUrl="/initEsynDisplayer.do" />
+
 <definition name="galaxyExportOptions.page" extends="layout.template">
     <put name="body" value="galaxyExportOptions.tile"/>
     <put name="pageName" value="galaxyExportOptions"/>

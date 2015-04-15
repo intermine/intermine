@@ -28,6 +28,9 @@
 <action path="/bedExportAction" name="bedExportForm"
         type="org.intermine.web.struts.TableExportAction" parameter="method"/>
 
+<action path="/initEsynDisplayer"
+        type="org.intermine.bio.web.displayer.EsynDisplayer"/>
+
 <action path="/galaxyExportAction" name="galaxyExportForm"
         type="org.intermine.bio.web.struts.GalaxyExportAction" parameter="method"/>
 
