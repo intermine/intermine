@@ -36,14 +36,14 @@ public class EnsemblIdResolverFactoryTest extends TestCase {
 
     public void testCreateFromFile() throws Exception {
 
-        File f = new File(getClass().getClassLoader().getResource(idresolverCache).toURI());
+        File f = new File(getClass().getClassLoader().getResource(ensemblDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
 
         factory.createIdResolver();
         // resolver cached
-        factory.restoreFromFile(f);
+        factory.populateFromFile(f);
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"9606"})), IdResolverFactory.resolver.getTaxons());
 //
 //        factory.createIdResolver(new HashSet<String>(Arrays.asList(new String[] {"7227", "4932"})));
@@ -61,15 +61,19 @@ public class EnsemblIdResolverFactoryTest extends TestCase {
 //        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"7955", "102", "4932", "101", "10116", "9606", "10090"})), IdResolverFactory.resolver.getTaxons());
 //
 //        // mouse
-        String mouseGene = IdResolverFactory.resolver.resolveId("10090", "gene", "Abca2").iterator().next();
-        assertEquals("MGI:99606", mouseGene);
-
-        // rat
-        String ratGene = IdResolverFactory.resolver.resolveId("10116", "gene", "Asip").iterator().next();
-        assertEquals("RGD:2003", ratGene);
+//        String mouseGene = IdResolverFactory.resolver.resolveId("10090", "gene", "Abca2").iterator().next();
+//        assertEquals("MGI:99606", mouseGene);
+//
+//        // rat
+//        String ratGene = IdResolverFactory.resolver.resolveId("10116", "gene", "Asip").iterator().next();
+//        assertEquals("RGD:2003", ratGene);
 
         // hgnc
-        String peopleGene = IdResolverFactory.resolver.resolveId("9606", "gene", "HGNC:5").iterator().next();
-        assertEquals("1", peopleGene);
+        String peopleGene = IdResolverFactory.resolver.resolveId("9606", "gene", "HGNC:6331").iterator().next();
+        assertEquals("ENSG00000275008", peopleGene);
+
+        // NCBI
+        peopleGene = IdResolverFactory.resolver.resolveId("9606", "gene", "100874343").iterator().next();
+        assertEquals("ENSG00000231948", peopleGene);
     }
 }

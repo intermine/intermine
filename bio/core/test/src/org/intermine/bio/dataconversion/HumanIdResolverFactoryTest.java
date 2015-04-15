@@ -43,8 +43,6 @@ public class HumanIdResolverFactoryTest extends TestCase {
         assertTrue(IdResolverFactory.resolver.getTaxons().contains("9606"));
         assertTrue(IdResolverFactory.resolver.isPrimaryIdentifier("9606", "CDKN1B"));
         assertEquals("NBN", IdResolverFactory.resolver.resolveId("9606", "ENSG00000104320").iterator().next());
-        assertEquals("LIX1", IdResolverFactory.resolver.resolveId("9606", "OMIM:610466").iterator().next());
-        assertEquals("ERC2", IdResolverFactory.resolver.resolveId("9606", "HGNC:31922").iterator().next());
         assertEquals(Collections.EMPTY_SET, IdResolverFactory.resolver.resolveId("9606", "pid1"));
     }
 }
