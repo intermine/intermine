@@ -329,6 +329,14 @@
 
 <!-- report page displayers -->
 <reportdisplayers>
+
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
+        jspName="model/esynDisplayer.jsp"
+        replacesFields=""
+        placement="Interactions"
+        types="Gene"/>
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
                      jspName="model/geneIdentifiersDisplayer.jsp"
                      replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
