@@ -1,0 +1,27 @@
+<project name="phytozome-clusters" default="default" basedir=".">
+  <description>build, test, package phytozome-clusters</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+
+  <target name="retrieve"/>
+
+  <target name="-init-loader-classname" unless="phytozome-clusters.loaderClassName">
+    <!-- set the default -->
+    <property name="phytozome-clusters.loaderClassName"
+              value="org.intermine.bio.dataconversion.PhytozomeClustersConverter"/>
+  </target>
+
+  <!-- NOTE: we can do this with dynamic properties -->
+  <target name="load" depends="-init-loader-classname, init, -init-deps">
+    <taskdef name="read-phytozome-clusters"
+      classname="${phytozome-clusters.loaderClassName}"
+      classpathref="task.class.path"/>
+    <read-phytozome-clusters integrationWriterAlias="integration.production"
+                sourceName="${source.name}"
+                sourceDbName="PAC"
+                methodIds="4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" 
+                sourceType="${source.type}">
+    </read-phytozome-clusters>
+  </target>
+
+</project>
