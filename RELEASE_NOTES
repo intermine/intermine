@@ -8,7 +8,6 @@
  *
  */
 
-
 InterMine 1.4.2
 
 #938 - Add HumanMine to list of mines in global properties.
@@ -32,14 +31,14 @@ InterMine 1.4 (Xmas 2014)
 #830 - Throw exception with helpful error message on finding ontology term without a name
 #829 - BioPAX file name change
 #827 - Hikari docs
-#811 - "No simple name for class" error 
+#811 - "No simple name for class" error
 #809 - BioGRID: append MGI prefix
 #800 - Angle bracket issue in column summary dialog
 #786 - Query with outer join does not validate
 #782 - Entrez gene resolver changed MGI ID format, ID resolver failing
 #781 - Publications: Process consortiums as authors correctly.
 #777 - List conversion - config ignored, all fields displayed
-#772 - Friendly mines repeating 
+#772 - Friendly mines repeating
 #765 - list upload: cannot create a list of authors, for example
 #752 - Change model to be SequenceFeature.homologue instead of Gene.homologue
 #742 - FlyMine: Panther human homologues didn't merge
