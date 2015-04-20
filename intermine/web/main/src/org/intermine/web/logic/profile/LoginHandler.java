@@ -23,12 +23,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
@@ -60,9 +62,9 @@ public abstract class LoginHandler extends InterMineAction
      * @param password The password
      * @return the map containing the renamed bags the user created before they were logged in
      */
-    public Map<String, String> doLogin(HttpServletRequest request,
+    public ProfileMergeIssues doLogin(HttpServletRequest request,
             String username, String password) {
-        Map<String, String> renamedBags = doStaticLogin(request, username, password);
+        ProfileMergeIssues issues = doStaticLogin(request, username, password);
         HttpSession session = request.getSession();
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
         Profile profile = pm.getProfile(username);
@@ -72,7 +74,7 @@ public abstract class LoginHandler extends InterMineAction
         } else if (im.getBagManager().isAnyBagToUpgrade(profile)) {
             recordError(new ActionMessage("login.upgradeListManually"), request);
         }
-        return renamedBags;
+        return issues;
     }
 
     /**
@@ -82,20 +84,44 @@ public abstract class LoginHandler extends InterMineAction
      * @param toProfile The profile to merge into.
      * @return A map of bags, from old name to new name.
      */
-    public static Map<String, String> mergeProfiles(Profile fromProfile, Profile toProfile) {
+    public static ProfileMergeIssues mergeProfiles(Profile fromProfile, Profile toProfile) {
         Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
         Map<String, InterMineBag> mergeBags = Collections.emptyMap();
+        Map<String, ApiTemplate> mergeTemplates = Collections.emptyMap();
+        ProfileMergeIssues issues = new ProfileMergeIssues();
+        if (!fromProfile.getPreferences().isEmpty()) {
+            toProfile.getPreferences().putAll(fromProfile.getPreferences());
+        }
         if (fromProfile != null) {
             mergeQueries = fromProfile.getHistory();
             mergeBags = fromProfile.getSavedBags();
+            mergeTemplates = fromProfile.getSavedTemplates();
         }
 
         // Merge in anonymous query history
         for (SavedQuery savedQuery : mergeQueries.values()) {
             toProfile.saveHistory(savedQuery);
         }
+        // Merge in saved templates.
+        for (ApiTemplate t: mergeTemplates.values()) {
+            try {
+                toProfile.saveTemplate(t.getName(), t);
+            } catch (BadTemplateException e) {
+                // Could be because the name is invalid - fix it.
+                String oldName = t.getName();
+                String newName = NameUtil.validateName(toProfile.getSavedBags().keySet(), oldName);
+                try {
+                    toProfile.saveTemplate(newName, t);
+                    issues.addFailedTemplate(oldName, newName);
+                } catch (BadTemplateException e1) {
+                    // Template is bad for some other reason - should not happen.
+                    // Currently the only reason we refuse to save templates is their name
+                    // when/if other reasons are added, then we should record them on the issues.
+                    LOG.error("Could not save template due to BadTemplateException", e1);
+                }
+            }
+        }
         // Merge anonymous bags
-        Map<String, String> renamedBags = new HashMap<String, String>();
         for (Map.Entry<String, InterMineBag> entry : mergeBags.entrySet()) {
             InterMineBag bag = entry.getValue();
             // Make sure the userId gets set to be the profile one
@@ -104,7 +130,7 @@ public abstract class LoginHandler extends InterMineAction
                 String name = NameUtil.validateName(toProfile.getSavedBags().keySet(),
                         entry.getKey());
                 if (!entry.getKey().equals(name)) {
-                    renamedBags.put(entry.getKey(), name);
+                    issues.addRenamedBag(entry.getKey(), name);
                 }
                 bag.setName(name);
                 toProfile.saveBag(name, bag);
@@ -112,7 +138,7 @@ public abstract class LoginHandler extends InterMineAction
                 throw new RuntimeException(iex.getMessage());
             }
         }
-        return renamedBags;
+        return issues;
     }
 
     /**
@@ -122,21 +148,21 @@ public abstract class LoginHandler extends InterMineAction
      * @param password The current user's password.
      * @return A map of renamed-bags from old to new name.
      */
-    public static Map<String, String> doStaticLogin(HttpServletRequest request,
+    public static ProfileMergeIssues doStaticLogin(HttpServletRequest request,
             String username, String password) {
         // Merge current history into loaded profile
 
         Profile currentProfile = SessionMethods.getProfile(request.getSession());
         HttpSession session = request.getSession();
         Profile profile = setUpProfile(session, username, password);
-        Map<String, String> renamedBags = new HashMap<String, String>();
+        ProfileMergeIssues issues = new ProfileMergeIssues();
 
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
-            renamedBags = mergeProfiles(currentProfile, profile);
+            issues = mergeProfiles(currentProfile, profile);
         }
 
-        return renamedBags;
+        return issues;
     }
 
     /**
