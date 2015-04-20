@@ -8,7 +8,7 @@
  *
  */
 
-1.4.2
+InterMine 1.4.2
 
 #938 - Add HumanMine to list of mines in global properties.
 #927 - Reactome - assigning too many pathways
@@ -18,21 +18,14 @@
 #706 - Transfer sequences shouldn't query for SNPs
 #187 - Format decimal places better
 
-1.4.1
+InterMine 1.4.1
 
 #922 - List upload: exception thrown when it can't find default organism
 
-1.4 (Xmas 2014)
+InterMine 1.4 (Xmas 2014)
 
-#878 - summarise-objectstore is taking a very long time
-#876 - Enrichment widgets: can't select NONE from error correction dropdown
-#870 - create-overlap-view fails
-#860 - InterMine leaks like a sieve
-#857 - Unable to get sub-ObjectStore for Translating ObjectStore
 #848 - Report page: templates expanded by default
 #841 - List upload fails in metabolicMine
-#839 - Missing icons in Results tables
-#838 - Remove filter icon not being displayed
 #837 - keyword search results: now limited to 100 items
 #832 - Build failing on wrong classes
 #830 - Throw exception with helpful error message on finding ontology term without a name
@@ -40,6 +33,8 @@
 #827 - Hikari docs
 #811 - "No simple name for class" error
 #809 - BioGRID: append MGI prefix
+#800 - Angle bracket issue in column summary dialog
+#786 - Query with outer join does not validate
 #782 - Entrez gene resolver changed MGI ID format, ID resolver failing
 #781 - Publications: Process consortiums as authors correctly.
 #777 - List conversion - config ignored, all fields displayed
@@ -83,6 +78,7 @@
 #538 - icons on results not working in firefox / IE 11
 #529 - Label decoration of faceItem.value in keywordSearchResults.jsp
 #516 - JMOL displayer not working
+#517 - Improve Lucene search
 #504 - results tables: Item check boxes not updated correctly
 #470 - OAuth2 authentication
 #465 - Use equals instead of LIKE when user has selected EQUALS
