@@ -72,6 +72,7 @@ public class Authenticator extends InterMineAction
         String providerName = request.getParameter("provider");
 
         String redirectUri = getRedirectUri(webProperties, providerName);
+        String realm = webProperties.getProperty("webapp.baseurl");
         String state = UUID.randomUUID().toString();
         request.getSession().setAttribute("oauth2.state", state);
 
@@ -96,10 +97,11 @@ public class Authenticator extends InterMineAction
                    .setScope(webProperties.getProperty("oauth2." + providerName + ".scopes"))
                    .setState(state)
                    .setParameter("response_type", "code")
+                   .setParameter("openid.realm", realm) // link open-id 2.0 accounts [1]
                    .buildQueryMessage();
             String goHere = authRequest.getLocationUri();
             // various providers require the response_type parameter.
-            LOG.debug("Redirecting to " + goHere);
+            LOG.info("[OAuth2]: Redirecting to " + goHere);
             response.sendRedirect(goHere);
             return null;
         } catch (OAuthSystemException e) {
@@ -109,6 +111,7 @@ public class Authenticator extends InterMineAction
             saveErrors(request, errors);
             return mapping.findForward("login");
         }
+        // [1]: see https://developers.google.com/identity/protocols/OpenID2Migration
     }
 
     private String getRedirectUri(Properties webProperties, String providerName) {

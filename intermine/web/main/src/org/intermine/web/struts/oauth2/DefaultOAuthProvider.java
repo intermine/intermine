@@ -49,12 +49,17 @@ public final class DefaultOAuthProvider implements OAuthProvider
 
     @Override
     public String getTokenUrl() {
+        if (OAuthProviderType.GOOGLE == provider) {
+            // Use the newer token endpoint.
+            return "https://www.googleapis.com/oauth2/v3/token";
+        }
         return provider.getTokenEndpoint();
     }
 
     @Override
     public MessageFormat getMessageFormat() {
-        if (OAuthProviderType.MICROSOFT == provider) {
+        if (OAuthProviderType.MICROSOFT == provider
+                || OAuthProviderType.GOOGLE == provider) {
             return MessageFormat.BODY;
         }
         return MessageFormat.QUERY;

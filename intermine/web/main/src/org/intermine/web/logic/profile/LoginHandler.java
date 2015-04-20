@@ -51,6 +51,10 @@ public abstract class LoginHandler extends InterMineAction
 
     /**
      * Log-in a user.
+     *
+     * After this method completes, SessionMethods::getProfile will return this
+     * user's profile.
+     *
      * @param request The HttpServletRequest
      * @param username The username
      * @param password The password
