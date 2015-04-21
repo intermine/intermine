@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
@@ -82,6 +83,7 @@ public class QueryResultService extends AbstractQueryService
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
+    private static final Logger LOG = Logger.getLogger(QueryResultService.class);
 
     private boolean wantsCount = false;
     private PathQueryExecutor executor;
@@ -103,7 +105,10 @@ public class QueryResultService extends AbstractQueryService
         PathQueryBuilder builder = getQueryBuilder(input.getXml());
         PathQuery query = builder.getQuery();
         setHeaderAttributes(query, input.getStart(), input.getLimit());
+        long startTime = System.currentTimeMillis();
         runPathQuery(query, input.getStart(), input.getLimit());
+        long endTime = System.currentTimeMillis();
+        LOG.info("Ran query "+query+" in "+(endTime-startTime)+" msec.");
     }
 
     @Override
