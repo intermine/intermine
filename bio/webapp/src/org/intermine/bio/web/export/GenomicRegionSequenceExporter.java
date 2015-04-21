@@ -25,6 +25,7 @@ import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.SymbolList;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.metadata.StringUtil;
 import org.intermine.model.bio.Chromosome;
@@ -67,9 +68,15 @@ public class GenomicRegionSequenceExporter
         GenomicRegion aRegion = grList.get(0);
         Organism org = (Organism) DynamicUtil.createObject(Collections
                 .singleton(Organism.class));
-        org.setShortName(aRegion.getOrganism());
-
-        org = os.getObjectByExample(org, Collections.singleton("shortName"));
+        
+        // phytomine tweak. An integer is a proteome id
+        try {
+          org.setProteomeId(Integer.parseInt(aRegion.getOrganism()));
+          org = os.getObjectByExample(org, Collections.singleton("proteomeId"));
+        } catch (NumberFormatException e) {
+          org.setShortName(aRegion.getOrganism());
+          org = os.getObjectByExample(org, Collections.singleton("shortName"));
+        }
 
 
         for (GenomicRegion gr : grList) {
@@ -106,12 +113,24 @@ public class GenomicRegionSequenceExporter
                 end = gr.getEnd();
             }
 
+            /* 
+             * if start > end, we'll interpret this as "gimme sequence 
+             * from end to start but rev-comp'ed"
+             */
+            boolean is_revcomp = false;
+            if (start > end) {
+              is_revcomp = true;
+              int save = start;
+              start = end;
+              end = save;
+            }
             end = Math.min(end, chrLength);
             start = Math.max(start, 1);
 
             List<String> headerBits = new ArrayList<String>();
             headerBits.add(gr.getChr() + ":" + start + ".." + end);
             headerBits.add(end - start + 1 + "bp");
+            if (is_revcomp) headerBits.add("(reverse complement)");
             headerBits.add(org.getShortName());
             String header = StringUtil.join(headerBits, " ");
 
@@ -119,9 +138,18 @@ public class GenomicRegionSequenceExporter
                     + start + "_" + end + "_"
                     + gr.getOrganism().replace("\\. ", "_");
 
-            Sequence chrSeg = DNATools.createDNASequence(
-                chrResidueString.substring(start - 1, end),
-                seqName);
+            Sequence chrSeg;
+            
+            if (is_revcomp) {
+              chrSeg = DNATools.createDNASequence(
+                  DNATools.reverseComplement(
+                      DNATools.createDNA(chrResidueString.substring(start - 1, end))).seqString(),
+                      seqName);
+            } else {
+              chrSeg = DNATools.createDNASequence(
+                  chrResidueString.substring(start - 1, end),
+                  seqName);
+            }
             chrSeg.getAnnotation().setProperty(
                     FastaFormat.PROPERTY_DESCRIPTIONLINE, header);
 
