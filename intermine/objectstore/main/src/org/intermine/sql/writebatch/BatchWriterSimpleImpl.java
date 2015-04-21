@@ -44,6 +44,7 @@ public class BatchWriterSimpleImpl implements BatchWriter
     protected Statement postDeleteBatch;
     protected List<FlushJob> addBatches;
     protected Statement lastBatch;
+    private Set<String> analyseTables = null;
 
     /**
      * This sets the threshold above which a temp table will be used for deletes.
@@ -52,6 +53,10 @@ public class BatchWriterSimpleImpl implements BatchWriter
      */
     public void setThreshold(int deleteTempTableSize) {
         this.deleteTempTableSize = deleteTempTableSize;
+    }
+
+    public void setTablesToAnalyse(Set<String> analyseTables) {
+        this.analyseTables = analyseTables;
     }
 
     /**
@@ -402,19 +407,28 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 stat = new Statistic(name, getTableSize(name, conn), amount);
                 stats.put(name, stat);
             }
-            boolean doAnalyse = stat.addActivity(amount);
-            if (doAnalyse) {
-                long start = System.currentTimeMillis();
-                doAnalyse(name, conn);
-                long endAnalyse = System.currentTimeMillis();
-                int tableSize = getTableSize(name, conn);
-                long end = System.currentTimeMillis();
-                stat.setTableSize(tableSize, end - start);
-                LOG.info("Analysing table " + name + " took " + (end - start)
-                        + "ms, of which row count took " + (end - endAnalyse)
-                        + "ms (" + tableSize + " rows)");
+            if (canAnalyseTable(name)) {
+                boolean doAnalyse = stat.addActivity(amount);
+                if (doAnalyse) {
+                    long start = System.currentTimeMillis();
+                    doAnalyse(name, conn);
+                    long endAnalyse = System.currentTimeMillis();
+                    int tableSize = getTableSize(name, conn);
+                    long end = System.currentTimeMillis();
+                    stat.setTableSize(tableSize, end - start);
+                    LOG.info("Analysing table " + name + " took " + (end - start)
+                            + "ms, of which row count took " + (end - endAnalyse)
+                            + "ms (" + tableSize + " rows)");
+                }
             }
         }
+    }
+
+    private boolean canAnalyseTable(String tableName) {
+        if (analyseTables != null) {
+            return analyseTables.contains(tableName);
+        }
+        return true;
     }
 
     /**

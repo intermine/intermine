@@ -12,6 +12,7 @@ package org.intermine.dataloader;
 
 import java.util.Collection;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
@@ -21,9 +22,11 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.fastcollections.ObjectStoreFastCollectionsForTranslatorImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
 
@@ -77,6 +80,22 @@ public class ObjectStoreDataLoader extends DataLoader
         int errorCount = 0;
         ObjectStore origOs = os;
         try {
+
+            if (IntegrationWriterAbstractImpl.class.isAssignableFrom(
+                    getIntegrationWriter().getClass())) {
+                IntegrationWriterAbstractImpl iab =
+                        (IntegrationWriterAbstractImpl) getIntegrationWriter();
+                if (iab.getObjectStoreWriter() instanceof ObjectStoreWriterInterMineImpl) {
+                    ObjectStoreWriterInterMineImpl targetOsw =
+                            (ObjectStoreWriterInterMineImpl) iab.getObjectStoreWriter();
+                    Set<String> tableNames =
+                            DataLoaderHelper.getPrimaryKeyTableNames(source, targetOsw);
+                    BatchWriterPostgresCopyImpl bw = new BatchWriterPostgresCopyImpl();
+                    LOG.info("Setting tables to analyse: " + tableNames);
+                    bw.setTablesToAnalyse(tableNames);
+                    targetOsw.setBatchWriter(bw);
+                }
+            }
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
             }
