@@ -50,15 +50,15 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 {
     private static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
 
-    private String sequenceType = "dna";
-    private String classAttribute = "primaryIdentifier";
-    private Organism org;
-    private String className;
-    private int storeCount = 0;
-    private String dataSourceName = null;
-    private DataSource dataSource = null;
-    private String fastaTaxonId = null;
-    private Map<String, Integer> taxonIds = new HashMap<String, Integer>();
+    protected String sequenceType = "dna";
+    protected String classAttribute = "primaryIdentifier";
+    protected Organism org;
+    protected String className;
+    protected int storeCount = 0;
+    protected String dataSourceName = null;
+    protected DataSource dataSource = null;
+    protected String fastaTaxonId = null;
+    protected Map<String, Integer> taxonIds = new HashMap<String, Integer>();
 
     /**
      * Append this suffix to the identifier of the BioEnitys that are stored.

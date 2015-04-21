@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="bio/sources/biogrid/main/src"/>
-	<classpathentry kind="src" path="intermine/model/main/src"/>
 	<classpathentry kind="src" path="bio/postprocess/main/src"/>
+	<classpathentry kind="src" path="imbuild/im-ant-tasks/src"/>
+	<classpathentry kind="src" path="bio/core/main/src"/>
+	<classpathentry kind="src" path="bio/sources/phytozome-clusters/main/src"/>
+	<classpathentry kind="src" path="bio/sources/biogrid/main/src"/>
 	<classpathentry kind="src" path="bio/sources/biopax/main/src"/>
 	<classpathentry kind="src" path="bio/sources/chado-db/main/src"/>
 	<classpathentry kind="src" path="bio/sources/coexpression/main/src"/>
+	<classpathentry kind="src" path="bio/sources/consequence-impact/main/src"/>
 	<classpathentry kind="src" path="bio/sources/cufflinks/main/src"/>
 	<classpathentry kind="src" path="bio/sources/ensembl/main/src"/>
 	<classpathentry kind="src" path="bio/sources/entrez-organism/main/src"/>
@@ -56,16 +59,21 @@
 	<classpathentry kind="src" path="bio/sources/update-data-sources/main/src"/>
 	<classpathentry kind="src" path="bio/sources/update-publications/main/src"/>
 	<classpathentry kind="src" path="bio/sources/vcfsampleinfo/main/src"/>
+	<classpathentry kind="src" path="bio/webapp/src"/>
 	<classpathentry kind="src" path="intermine/api/main/src"/>
 	<classpathentry kind="src" path="intermine/integrate/main/src"/>
+	<classpathentry kind="src" path="intermine/load/main/src"/>
+	<classpathentry kind="src" path="intermine/model/main/src"/>
 	<classpathentry kind="src" path="intermine/objectstore/main/src"/>
 	<classpathentry kind="src" path="intermine/pathquery/main/src"/>
 	<classpathentry kind="src" path="intermine/web/main/src"/>
 	<classpathentry kind="src" path="intermine/webapp/main/src"/>
-	<classpathentry kind="src" path="bio/webapp/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/phytomine-load/dbmodel/build/classes" sourcepath="phytomine-load/dbmodel/build/gen/src"/>
-	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/bin/imbuild/im-ant-tasks/lib/ant-1.6.5.jar"/>
-	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/bin/intermine/model/main/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/imbuild/lib/im-ant-tasks.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/model/main/lib/log4j.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/objectstore/main/lib/ant-1.6.5.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/bio/core/main/lib/biojava-1.7.1.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/model/main/lib/json20110106.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

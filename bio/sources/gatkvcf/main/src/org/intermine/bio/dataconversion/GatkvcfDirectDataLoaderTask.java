@@ -291,6 +291,8 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 
     // now construct the JSON string
     StringBuffer JSONString = new StringBuffer("{");
+
+    boolean storeGenotype = false;
     for( String genotype : genoHash.keySet()) {
       if (JSONString.length() > 1 ) {
         JSONString.append(",");
@@ -314,6 +316,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
       throw new BuildException("Problem storing SNP: " + e);
     }
     
+    if( storeGenotype ) {
 	  for( String genotype : genoHash.keySet()) {
 
 	    Genotype g = getDirectDataLoader().createObject(Genotype.class);
@@ -335,6 +338,7 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	      throw new BuildException("Problem storing Genotype info: " + e.getMessage());
 	    }
 	  }
+    }
 	  
 	  return true;
 	}
@@ -372,7 +376,12 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 				newInfo.append(keyVal);
 			}
 		}
-		snp.setInfo(newInfo.toString());
+    // here is where we decide if we're storing the stripped down
+    // info field, or the original stored newInfo.
+    //snp.setAttribute("info",newInfo.toString());
+    // but now were saving the original (without the set tag)
+    snp.setInfo(info);
+    
 		return nSamples;
 	}
 
