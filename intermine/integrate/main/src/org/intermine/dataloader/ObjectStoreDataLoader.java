@@ -81,6 +81,10 @@ public class ObjectStoreDataLoader extends DataLoader
         ObjectStore origOs = os;
         try {
 
+            // Find the tables that will be accessed by primary queries during integration and give
+            // the ObjectStore we're loading into a BatchWriter that will only ANALYSE those tables.
+            // This should improve performance of loading into large databases where ANALYSEs take
+            // a significant time to run.
             if (IntegrationWriterAbstractImpl.class.isAssignableFrom(
                     getIntegrationWriter().getClass())) {
                 IntegrationWriterAbstractImpl iab =
@@ -91,11 +95,12 @@ public class ObjectStoreDataLoader extends DataLoader
                     Set<String> tableNames =
                             DataLoaderHelper.getPrimaryKeyTableNames(source, targetOsw);
                     BatchWriterPostgresCopyImpl bw = new BatchWriterPostgresCopyImpl();
-                    LOG.info("Setting tables to analyse: " + tableNames);
+                    LOG.info("Setting tables to analyse during dataloading: " + tableNames);
                     bw.setTablesToAnalyse(tableNames);
                     targetOsw.setBatchWriter(bw);
                 }
             }
+
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
             }

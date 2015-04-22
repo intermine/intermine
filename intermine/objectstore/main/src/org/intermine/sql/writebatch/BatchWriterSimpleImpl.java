@@ -18,6 +18,7 @@ import java.sql.Statement;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,19 @@ public class BatchWriterSimpleImpl implements BatchWriter
         this.deleteTempTableSize = deleteTempTableSize;
     }
 
+    /**
+     * Optionally provide database table names that can be analysed during the load - typically
+     * these are tables that have primary keys used for data integration. If no table names are
+     * provided analyse will be run periodically on all tables during the build.
+     * @param analyseTables a set of database table names
+     */
     public void setTablesToAnalyse(Set<String> analyseTables) {
-        this.analyseTables = analyseTables;
+        if (analyseTables != null) {
+            this.analyseTables = new HashSet<String>();
+            for (String tableName : analyseTables) {
+                this.analyseTables.add(tableName.toLowerCase());
+            }
+        }
     }
 
     /**
@@ -407,26 +419,31 @@ public class BatchWriterSimpleImpl implements BatchWriter
                 stat = new Statistic(name, getTableSize(name, conn), amount);
                 stats.put(name, stat);
             }
-            if (canAnalyseTable(name)) {
-                boolean doAnalyse = stat.addActivity(amount);
-                if (doAnalyse) {
-                    long start = System.currentTimeMillis();
-                    doAnalyse(name, conn);
-                    long endAnalyse = System.currentTimeMillis();
-                    int tableSize = getTableSize(name, conn);
-                    long end = System.currentTimeMillis();
-                    stat.setTableSize(tableSize, end - start);
-                    LOG.info("Analysing table " + name + " took " + (end - start)
-                            + "ms, of which row count took " + (end - endAnalyse)
-                            + "ms (" + tableSize + " rows)");
-                }
+            boolean doAnalyse = stat.addActivity(amount);
+            if (doAnalyse && canAnalyseTable(name)) {
+                long start = System.currentTimeMillis();
+                doAnalyse(name, conn);
+                long endAnalyse = System.currentTimeMillis();
+                int tableSize = getTableSize(name, conn);
+                long end = System.currentTimeMillis();
+                stat.setTableSize(tableSize, end - start);
+                LOG.info("Analysing table " + name + " took " + (end - start)
+                        + "ms, of which row count took " + (end - endAnalyse)
+                        + "ms (" + tableSize + " rows)");
             }
         }
     }
 
+    /**
+     * Return true if we should ever run ANALYSE on the given table. If valid tables have been set
+     * check the table name in the set, if no tables have been set always returns true. Table names
+     * are matched regardless of text case.
+     * @param tableName the table that may be analysed
+     * @return true if ANALYSE should ever be run on this table
+     */
     private boolean canAnalyseTable(String tableName) {
         if (analyseTables != null) {
-            return analyseTables.contains(tableName);
+            return analyseTables.contains(tableName.toLowerCase());
         }
         return true;
     }

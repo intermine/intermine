@@ -241,16 +241,22 @@ public final class DataLoaderHelper
         }
     }
 
-    // quick implementation of method to fetch all tables that will be need to be queried to
-    // execute primary key queries for the given source.
+    /**
+     * Find all database table names corresponding to primary keys specified in the given source.
+     * This list represents all tables that will need to be queried when dataloading the source.
+     * Note that a reference can be part of a primary key but that key must also be defined for the
+     * source so will still be found.
+     * @param source the source to fetch primary keys for
+     * @param os the production ObjectStore to find table names in
+     * @return a set of tableNames as strings
+     */
     public static Set<String> getPrimaryKeyTableNames(Source source, ObjectStoreInterMineImpl os) {
         Set<String> tableNames = new HashSet<String>();
         Properties keys = getKeyProperties(source);
-        for (Map.Entry<Object, Object> entry : keys.entrySet()) {
-            String keyName = (String) entry.getKey();
-            String cldName = keyName;
-            if (keyName.contains(".")) {
-                cldName = keyName.substring(0, keyName.indexOf('.'));
+        for (Object key : keys.keySet()) {
+            String cldName = (String) key;
+            if (cldName.contains(".")) {
+                cldName = cldName.substring(0, cldName.indexOf('.'));
             }
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(cldName);
             String tableName = DatabaseUtil.getTableName(cld);
