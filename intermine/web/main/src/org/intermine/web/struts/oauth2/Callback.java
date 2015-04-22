@@ -51,6 +51,7 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -304,16 +305,16 @@ public class Callback extends LoginHandler
         setUpProfile(request.getSession(), profile);
         messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
                 "login.oauth2.successful", identity.getProvider(), profile.getName()));
-        Map<String, String> renamedBags = new HashMap<String, String>();
+        ProfileMergeIssues issues = new ProfileMergeIssues();
 
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
-            renamedBags = mergeProfiles(currentProfile, profile);
+            issues = mergeProfiles(currentProfile, profile);
         }
         if (mapping != null) {
             Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
             if (migratedFrom != null) {
-                renamedBags.putAll(mergeProfiles(migratedFrom, profile));
+                issues = issues.combineWith(mergeProfiles(migratedFrom, profile));
                 profile.setApiKey(migratedFrom.getApiKey());
                 Map<String, String> prefs =
                         new HashMap<String, String>(migratedFrom.getPreferences());
@@ -333,11 +334,13 @@ public class Callback extends LoginHandler
                 }
             }
         }
-        if (!renamedBags.isEmpty()) {
-            for (Entry<String, String> pair: renamedBags.entrySet()) {
-                messages.add(ActionMessages.GLOBAL_MESSAGE,
-                        new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
-            }
+        for (Entry<String, String> pair: issues.getRenamedBags().entrySet()) {
+            messages.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
+        }
+        for (Map.Entry<String, String> renamed: issues.getRenamedTemplates().entrySet()) {
+            messages.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("login.failedtemplate", renamed.getKey(), renamed.getValue()));
         }
 
         return messages;
