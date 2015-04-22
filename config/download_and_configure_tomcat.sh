@@ -28,7 +28,8 @@ else # use wget
   READURL='wget -O -'
 fi
 
-TOMCAT_VERSION=$($READURL http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/ | grep folder.gif | perl -ne 'm/v(7\.\d+\.\d+)/; print $1;')
+# Find the first matching tomcat version
+TOMCAT_VERSION=$($READURL http://mirror.ox.ac.uk/sites/rsync.apache.org/tomcat/tomcat-7/ | grep folder.gif | perl -ne 'm/v(7\.\d+\.\d+)/; print $1; exit if $1;')
 
 if test -z $TOMCAT_VERSION; then
   echo '#--- Error reading tomcat version'
