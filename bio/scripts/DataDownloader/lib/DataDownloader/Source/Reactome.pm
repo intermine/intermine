@@ -20,11 +20,11 @@ use constant {
     }],
 };
 use constant ORGANISMS => (
-    "Drosophila melanogaster", 
-    "Caenorhabditis elegans",
-    "Mus musculus",
-    "Homo sapiens",
-    "Arabidopsis thaliana",
+    "Drosophila_melanogaster", 
+    "Caenorhabditis_elegans",
+    "Mus_musculus",
+    "Homo_sapiens",
+    "Arabidopsis_thaliana",
 );
 
 override clean_up => sub {
