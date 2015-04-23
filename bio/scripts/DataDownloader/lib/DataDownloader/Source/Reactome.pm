@@ -24,7 +24,6 @@ use constant ORGANISMS => (
     "Caenorhabditis elegans",
     "Mus musculus",
     "Homo sapiens",
-    "Escherichia coli",
     "Arabidopsis thaliana",
 );
 
