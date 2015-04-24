@@ -18,10 +18,11 @@
       classpathref="task.class.path"/>
     <read-phytozome-clusters integrationWriterAlias="integration.production"
                 sourceName="${source.name}"
-                sourceDbName="PAC"
-                methodIds="4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" 
+                sourceDbName="${source.db.name}"
+                methodIds="${methodIds}"
                 sourceType="${source.type}">
     </read-phytozome-clusters>
   </target>
 
 </project>
+

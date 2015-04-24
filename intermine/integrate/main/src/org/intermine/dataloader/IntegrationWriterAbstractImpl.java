@@ -388,6 +388,17 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             }
         }
     }
+    
+    /**
+     * Indicates to the writer that we know the object with this id is in the
+     * database and no further operation needs to be done. The implementation of this
+     * only requires that we enter item id into the idMap. 
+     * @param objectId id of the object being marked.
+     * @throws ObjectStoreException
+     */
+    public void markAsStored(Integer objectId) throws ObjectStoreException {
+      assignMapping(objectId,objectId);
+    }
 
 
 

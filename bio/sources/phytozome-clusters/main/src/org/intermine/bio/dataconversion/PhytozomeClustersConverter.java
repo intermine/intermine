@@ -31,6 +31,7 @@ import java.util.zip.Inflater;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataloader.IntegrationWriterDataTrackingImpl;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -80,7 +81,6 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
   private static final Logger LOG = Logger.getLogger(PhytozomeClustersConverter.class);
   private Connection connection;
 
-
   protected Map<Integer,ArrayList<Integer>> methodToClusterList = new HashMap<Integer,ArrayList<Integer>>();
   protected Map<String,String> methodNames = new HashMap<String,String>();
   protected String methodIds = null;
@@ -98,17 +98,8 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
    * @throws SQLException 
    */
   public void process() {
-    // this is a little bit of a hack (for now). We're going to connect to the
-    // database, dump files and then work from those. It'll be OK for a while
-    // until we get a direct loader from a database;
-    Database pacDb;
-    try {
-      pacDb = DatabaseFactory.getDatabase("db.PAC");
-      connection = pacDb.getConnection();
-    } catch (ClassNotFoundException | SQLException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    }
+    
+    connection = getConnection();
 
     preFill(geneProxy,Gene.class);
     preFill(protProxy,Protein.class);
@@ -609,6 +600,7 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
         String name = (String)rr.get(0);
         Integer id = (Integer)rr.get(1);
         map.put(name,new ProxyReference(getIntegrationWriter().getObjectStore(),id,objectClass));
+        ((IntegrationWriterDataTrackingImpl)getIntegrationWriter()).markAsStored(id);
       }
     } catch (Exception e) {
       throw new BuildException("Problem in prefilling ProxyReferences: " + e.getMessage());
@@ -631,7 +623,4 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
     return orgRef;
   }
   
-  public void setSourceDbName(String name) {
-    System.out.println("Set source db name "+name);
-  }
 }
