@@ -69,6 +69,11 @@ public class KeywordSearchResult
             return config;
         }
 
+        @Override
+        public String toString() {
+            return String.format("ObjectField(field = %s, value = %s)", field, value);
+        }
+
     }
 
     private static final Logger LOG = Logger.getLogger(KeywordSearchResult.class);
@@ -261,7 +266,7 @@ public class KeywordSearchResult
         List<ObjectField> ret = new ArrayList<ObjectField>();
         for (String kf: fields) {
             FieldConfig fc = getFieldConfigs().get(kf);
-            Object value = getFieldValues().get(fc.getFieldExpr());
+            Object value = getFieldValues().get(kf);
             ObjectField field = new ObjectField(kf, fc, value);
             ret.add(field);
         }
@@ -297,4 +302,9 @@ public class KeywordSearchResult
         return ret;
     }
 
+    @Override
+    public String toString() {
+        return String.format("KeywordSearchResult(id = %s, score = %f, fields = %s)",
+                id, score, fieldValues);
+    }
 }

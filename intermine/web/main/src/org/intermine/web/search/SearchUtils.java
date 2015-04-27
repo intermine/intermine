@@ -10,12 +10,12 @@ package org.intermine.web.search;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -58,7 +58,7 @@ public final class SearchUtils
         long time = System.currentTimeMillis();
         Model model = im.getModel();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-        Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
+        List<KeywordSearchResult> searchResultsParsed = new ArrayList<KeywordSearchResult>();
         LinkRedirectManager redirector = im.getLinkRedirector();
         for (KeywordSearchHit keywordSearchHit : searchHits) {
             Set<ClassDescriptor> classes = new HashSet<ClassDescriptor>();
@@ -75,6 +75,11 @@ public final class SearchUtils
             searchResultsParsed.add(ksr);
         }
         LOG.debug("Parsing search hits took " + (System.currentTimeMillis() - time)  + " ms");
+        LOG.debug("Returning " + searchResultsParsed.size() + " results");
+        if (searchResultsParsed.size() > 0) {
+            KeywordSearchResult ksr = searchResultsParsed.get(0);
+            LOG.debug("result 0: " + ksr);
+        }
         return searchResultsParsed;
     }
 }
