@@ -13,7 +13,7 @@
         <c:out value="${imf:formatFieldChain(field.field, INTERMINE_API, WEBCONFIG)}"/>:
       </td>
       <td class="value">
-        <im:searchResultField field="${field}" nullValue="&nbsp;"/>
+        <im:searchResultField field="${field}" nullValue=""/>
       </td>
     </tr>
   </c:forEach>

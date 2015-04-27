@@ -18,7 +18,7 @@
   </c:when>
   <%-- Display fields for which a particular field expression is configured. --%>
   <c:when test="${!empty field.value}">
-    <span class="value">${field.value}</span>
+    <span class="value"><c:out value="${field.value}"/></span>
   </c:when>
   <c:otherwise>
     <c:out value="${nullValue}"/>
