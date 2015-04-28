@@ -1,4 +1,4 @@
-package DataDownloader::Source::FlyAnatomyOntology;
+package DataDownloader::Source::Reactome;
 
 use Moose;
 extends 'DataDownloader::Source::ABC';
