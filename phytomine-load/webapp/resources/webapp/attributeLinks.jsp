@@ -19,7 +19,6 @@
       <c:set var="enctype" value="${confMapEntry.value.enctype}" />
 
       <c:if test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
-
         <li class="external"><c:choose>
 
           <%-- GET form --%>

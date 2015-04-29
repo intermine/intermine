@@ -21,6 +21,9 @@ public class ExpasyTermsConverter extends OntologyTermsFileConverter {
     identifierKey = "^ID.*";
     nameKey = "^AN.*";
     descKey = "^DE.*";
+    identifierReplacement = "^ID\\s*";
+    nameReplacement = "^AN\\s*";
+    descReplacement = "^DE\\s*";
   }
   //@Override
   String cleanDescription(String desc) {

@@ -174,7 +174,7 @@ public class TransferGOAnnotations {
           lastGene = thisGene;
 
 
-          prepareHash(knownGO,thisProtein.getOrganism().getId(),thisProtein.getPrimaryIdentifier());
+          prepareHash(knownGO,thisGene.getOrganism().getId(),thisGene.getPrimaryIdentifier());
         
           // store the evidence if not known already and add to the gene's annotation list
           if (!knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).contains(thisGOTerm.getIdentifier()) ){
@@ -284,7 +284,7 @@ public class TransferGOAnnotations {
       q.setConstraint(cs);
 
       ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-      Iterator<?>  res = os.execute(q, 5000, true, true, true).iterator();
+      Iterator<?>  res = os.execute(q, 500000, true, true, true).iterator();
       while(res.hasNext()) {
         ResultsRow<?> rr = (ResultsRow<?>) res.next();
         Gene thisGene = (Gene) rr.get(0);

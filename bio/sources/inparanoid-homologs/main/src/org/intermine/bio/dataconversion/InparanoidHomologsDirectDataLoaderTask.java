@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.dataloader.IntegrationWriterDataTrackingImpl;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Homolog;
@@ -34,6 +35,11 @@ import org.intermine.model.bio.SNPDiversitySample;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.FormattedTextParser;
 
@@ -58,17 +64,20 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
       Logger.getLogger(InparanoidHomologsDirectDataLoaderTask.class);
 
   private HashMap<Integer,ProxyReference> organismMap = new HashMap<Integer,ProxyReference>();
-  private HashMap<String,ProxyReference> geneMap = new HashMap<String,ProxyReference>();
+  private HashMap<String,ProxyReference> geneMap = null;
   Pattern filePattern;
   int orthoRegistered;
   int paraRegistered;
-
+  
   /**
    * Called by parent process method for each file found
    *
    * {@inheritDoc}
    */
   public void processFile(File theFile) {
+    if (geneMap == null) {
+      prefillGeneMap();
+    }
     filePattern = Pattern.compile("table\\.(\\d+)\\.fa-(\\d+)\\.fa");
     orthoRegistered = 0;
     paraRegistered = 0;
@@ -197,6 +206,36 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
       }
     }
     return geneMap.get(geneName);
+  }
+  
+  private void prefillGeneMap() {
+    geneMap = new HashMap<String,ProxyReference>();
+    Query q = new Query();
+    QueryClass qC = new QueryClass(Gene.class);
+    q.addFrom(qC);
+    QueryField qFName = new QueryField(qC,"secondaryIdentifier");
+    QueryField qFId = new QueryField(qC,"id");
+    q.addToSelect(qFName);
+    q.addToSelect(qFId);
+
+    LOG.info("Prefilling Gene ProxyReferences. Query is "+q);
+    try {
+      Results res = getIntegrationWriter().getObjectStore().execute(q,100000,false,false,false);
+      Iterator<Object> resIter = res.iterator();
+      LOG.info("Iterating...");
+      while (resIter.hasNext()) {
+        @SuppressWarnings("unchecked")
+        ResultsRow<Object> rr = (ResultsRow<Object>) resIter.next();
+        String name = (String)rr.get(0);
+        Integer id = (Integer)rr.get(1);
+        geneMap.put(name,new ProxyReference(getIntegrationWriter().getObjectStore(),id,Gene.class));
+        ((IntegrationWriterDataTrackingImpl)getIntegrationWriter()).markAsStored(id);
+      }
+    } catch (Exception e) {
+      throw new BuildException("Problem in prefilling ProxyReferences: " + e.getMessage());
+    }
+    LOG.info("Retrieved "+geneMap.size()+" ProxyReferences.");
+
   }
 }
 

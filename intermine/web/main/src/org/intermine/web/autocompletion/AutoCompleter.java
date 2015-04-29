@@ -9,12 +9,15 @@ package org.intermine.web.autocompletion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import static org.intermine.objectstore.query.ResultsBatches.DEFAULT_BATCH_SIZE;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -207,62 +210,85 @@ public class AutoCompleter
     public void buildIndex(ObjectStore os)
         throws IOException, ObjectStoreException, ClassNotFoundException {
 
-        if (TEMP_DIR.exists()) {
-            if (!TEMP_DIR.isDirectory()) {
-                throw new RuntimeException(TEMP_DIR + " exists but isn't a directory - remove it");
-            }
-        } else {
-            TEMP_DIR.mkdirs();
+      if (TEMP_DIR.exists()) {
+        if (!TEMP_DIR.isDirectory()) {
+          throw new RuntimeException(TEMP_DIR + " exists but isn't a directory - remove it");
+        }
+      } else {
+        TEMP_DIR.mkdirs();
+      }
+
+      for (Map.Entry<Object, Object> entry: prob.entrySet()) {
+        String key = (String) entry.getKey();
+        String value = (String) entry.getValue();
+        if (!key.endsWith(".autocomplete")) {
+          continue;
+        }
+        String className = key.substring(0, key.lastIndexOf("."));
+        ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
+        if (cld == null) {
+          throw new RuntimeException("a class mentioned in ObjectStore summary properties "
+              + "file (" + className + ") is not in the model");
+        }
+        List<String> fieldNames = Arrays.asList(value.split(" "));
+        for (String fieldName : fieldNames) {
+          String classAndField = cld.getUnqualifiedName() + "." + fieldName;
+          System.out .println("Indexing " + classAndField);
+          fieldIndexMap.put(classAndField, classAndField);
         }
 
-        for (Map.Entry<Object, Object> entry: prob.entrySet()) {
-            String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
-            if (!key.endsWith(".autocomplete")) {
-                continue;
-            }
-            String className = key.substring(0, key.lastIndexOf("."));
-            ClassDescriptor cld = os.getModel().getClassDescriptorByName(className);
-            if (cld == null) {
-                throw new RuntimeException("a class mentioned in ObjectStore summary properties "
-                                           + "file (" + className + ") is not in the model");
-            }
-            List<String> fieldNames = Arrays.asList(value.split(" "));
-            for (Iterator<String> i = fieldNames.iterator(); i.hasNext();) {
 
-                String fieldName = i.next();
-                String classAndField = cld.getUnqualifiedName() + "." + fieldName;
-                System.out .println("Indexing " + classAndField);
-                fieldIndexMap.put(classAndField, classAndField);
-
-
-                Query q = new Query();
-                q.setDistinct(true);
-                QueryClass qc = new QueryClass(Class.forName(cld.getName()));
-                q.addToSelect(new QueryField(qc, fieldName));
-                q.addFrom(qc);
-                Results results = os.execute(q);
-
-                LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
-                objectClass.addField(fieldName);
-
-                for (Object resRow: results) {
-                    @SuppressWarnings("rawtypes")
-                    Object fieldValue = ((ResultsRow) resRow).get(0);
-                    if (fieldValue != null) {
-                        objectClass.addValueToField(objectClass.getFieldName(0), fieldValue
-                                .toString());
-                    }
-                }
-
-                String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
-                LuceneIndex indexer = new LuceneIndex(indexFileName);
-                indexer.addClass(objectClass);
-                indexer.rebuildClassIndexes();
-
-                createRAMIndex(classAndField);
-            }
+        Query q = new Query();
+        q.setDistinct(true);
+        QueryClass qc = new QueryClass(Class.forName(cld.getName()));
+        for (String fieldName : fieldNames) {
+          q.addToSelect(new QueryField(qc, fieldName));
         }
+        q.addFrom(qc);
+        //Results results = os.execute(q);
+        Results results = os.execute(q, 5000000, true, true, true);
+
+        ArrayList<LuceneObjectClass> objectClasses = new ArrayList<LuceneObjectClass>();
+
+        for (String fieldName : fieldNames) {
+          String classAndField = cld.getUnqualifiedName() + "." + fieldName;
+          LuceneObjectClass objectClass = new LuceneObjectClass(classAndField);
+          objectClass.addField(fieldName);
+          objectClasses.add(objectClass);
+        }
+
+        int ctr = 0;
+        int fieldCount = objectClasses.size();
+        for (Object resRow: results) {
+          for(int field=0;field < fieldCount; field++) {
+            @SuppressWarnings("rawtypes")
+            Object fieldValue = ((ResultsRow) resRow).get(field);
+            if (fieldValue != null) {
+              objectClasses.get(field).addValueToField(objectClasses.get(field).getFieldName(0), fieldValue
+                  .toString());
+            }
+            ctr++;
+            if ((ctr%10000) == 0 ) {
+              System.out .println("Retrieved "+ctr+" records...");;
+            }
+          }
+        }
+
+        System.out .println("Retrieved "+ctr+" records.");;
+
+        int field = 0;
+        for (String fieldName : fieldNames) {
+          String classAndField = cld.getUnqualifiedName() + "." + fieldName;
+          String indexFileName = TEMP_DIR.getPath() + File.separatorChar + classAndField;
+          LuceneIndex indexer = new LuceneIndex(indexFileName);
+          indexer.addClass(objectClasses.get(field));
+          indexer.rebuildClassIndexes();
+
+          createRAMIndex(classAndField);
+          field++;
+        }
+
+      }
     }
 
     /**

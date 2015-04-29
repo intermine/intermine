@@ -160,7 +160,7 @@ public class InterMineObjectFetcher extends Thread
 
                 LOG.info("QUERY: " + q.toString());
 
-                Results results = os.execute(q, 1000, true, false, true);
+                Results results = os.execute(q, 100000, true, false, true);
 
                 @SuppressWarnings("rawtypes")
                 ListIterator<ResultsRow<InterMineObject>> it = (ListIterator) results
@@ -178,6 +178,8 @@ public class InterMineObjectFetcher extends Thread
                     }
                 }
                 LOG.info("COMPLETED index with " + i + " records.  Fields: " + doneMessage);
+            } catch (Exception e) {
+              LOG.warn("There was an exception when creating lucene index.: "+e.getMessage());
             } finally {
                 for (InterMineResultsContainer resultsContainer : referenceResults.values()) {
                     ((ObjectStoreInterMineImpl) os).releaseGoFaster(resultsContainer.getResults()
@@ -251,7 +253,7 @@ public class InterMineObjectFetcher extends Thread
                 // do not count this towards objectParseTime
                 objectParseTime += (System.currentTimeMillis() - objectParseStart);
 
-                Results resultsc = os.execute(queryReference, 1000, true, false,
+                Results resultsc = os.execute(queryReference, 100000, true, false,
                         true);
                 ((ObjectStoreInterMineImpl) os).goFaster(queryReference);
                 referenceResults.put(reference, new InterMineResultsContainer(

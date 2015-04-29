@@ -7,6 +7,7 @@
   <class name="Coexpression" is_interface="false" extends="java.lang.Object">
     <attribute name="correlation" type="java.lang.Float" />
     <attribute name="significance" type="java.lang.Float" />
+    <attribute name="experimentGroup" type="java.lang.String" />
     <reference name="gene" referenced-type="Gene" />
     <reference name="coexpressedGene" referenced-type="Gene" />
   </class>

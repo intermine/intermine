@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
+import org.intermine.dataloader.IntegrationWriterDataTrackingImpl;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.CrossReference;
 import org.intermine.model.bio.DataSet;
@@ -21,6 +22,7 @@ import org.intermine.model.bio.GOEvidence;
 import org.intermine.model.bio.GOEvidenceCode;
 import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Ontology;
 import org.intermine.model.bio.OntologyAnnotation;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Organism;
@@ -59,6 +61,7 @@ public class TransferOntologyAnnotations {
     protected ObjectStoreWriter osw = null;
     private DataSet dataSet;
     private DataSource dataSource;
+    private Integer proteomeId = new Integer(233);
 
     /**
      * Create a new UpdateOrthologes object from an ObjectStoreWriter
@@ -76,13 +79,15 @@ public class TransferOntologyAnnotations {
      */
     public void execute() throws ObjectStoreException {
 
-        osw.beginTransaction();
+        HashSet<KnownPair> knownTerms = getKnownTerms(os);
 
+        
         Iterator<?> resIter = findOntologyTerms();
-
-        HashSet<KnownPair> knownTerms = getKnownTerms(os); 
+        
         int geneCount = 0;
         int protCount = 0;
+        int knownGCount = 0;
+        int knownPCount = 0;
         Gene lastGene = null;
         Protein lastProtein = null;
         HashSet<OntologyAnnotation> geneAnnotationSet = new HashSet<OntologyAnnotation>();
@@ -93,63 +98,71 @@ public class TransferOntologyAnnotations {
           Protein thisProtein = (Protein) rr.get(1);
           OntologyTerm thisTerm = (OntologyTerm) rr.get(2);
 
-          // first one
-          if (lastGene==null) {
-            lastGene = thisGene;
-            lastProtein = thisProtein;
-          }
-          LOG.debug("Processing gene " + thisGene.getPrimaryIdentifier() + ", protein " + thisProtein.getPrimaryIdentifier() +
-              " with term "+thisTerm.getId());
-          
-          if (!knownTerms.contains(new KnownPair(thisTerm.getId(),thisGene.getId()))) {
+          if (!thisTerm.getOntology().getName().equals("GO")) {
 
-            OntologyAnnotation gOA = (OntologyAnnotation)DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
-            gOA.setOntologyTerm(thisTerm);
-            gOA.setSubject(thisGene);
-            osw.store(gOA);
-            // look at the gene if not already processed for this term
-            if( lastGene.getId() != thisGene.getId() ) {
-              // we've moved to a new gene. Store the last.
-              if (geneAnnotationSet.size() > 0 ) {
-                lastGene.setOntologyAnnotations(geneAnnotationSet);
-                osw.store(lastGene);
-                geneAnnotationSet = new HashSet<OntologyAnnotation>();
-              }
+            // first one
+            if (lastGene==null) {
               lastGene = thisGene;
+              lastProtein = thisProtein;
             }
-            geneAnnotationSet.add(gOA);
-            geneCount++;
-          } else {
-            LOG.info("Already know about term "+thisTerm.getId()+" and gene "+thisGene.getId());
-          }
+            LOG.debug("Processing gene " + thisGene.getPrimaryIdentifier() + ", protein " + thisProtein.getPrimaryIdentifier() +
+                " with term "+thisTerm.getId());
 
-          // it's protein time
-          if (!knownTerms.contains(new KnownPair(thisTerm.getId(),thisProtein.getId()))) {
-          OntologyAnnotation pOA = (OntologyAnnotation)DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
-          pOA.setOntologyTerm(thisTerm);
-          pOA.setSubject(thisProtein);
-          osw.store(pOA);
-          // look at the gene if not already processed for this term
-          if ( lastProtein.getId() != thisProtein.getId() ) {
-            if (proteinAnnotationSet.size() > 0 ) {
-              lastProtein.setOntologyAnnotations(proteinAnnotationSet);
-              osw.store(lastProtein);
-              proteinAnnotationSet = new HashSet<OntologyAnnotation>();
+            if (!knownTerms.contains(new KnownPair(thisTerm.getId(),thisGene.getId()))) {
+              knownTerms.add(new KnownPair(thisTerm.getId(),thisGene.getId()));
+
+              OntologyAnnotation gOA = (OntologyAnnotation)DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
+              gOA.setOntologyTerm(thisTerm);
+              gOA.setSubject(thisGene);
+              osw.store(gOA);
+              // look at the gene if not already processed for this term
+              if( lastGene.getId() != thisGene.getId() ) {
+                // we've moved to a new gene. Store the last.
+                if (geneAnnotationSet.size() > 0 ) {
+                  // I'm no sure if this does anything
+                  lastGene.setOntologyAnnotations(geneAnnotationSet);
+                  // so I've commented out the store.
+                  //osw.store(lastGene);
+                  geneAnnotationSet = new HashSet<OntologyAnnotation>();
+                }
+                lastGene = thisGene;
+              }
+              geneAnnotationSet.add(gOA);
+              geneCount++;
+            } else {
+              knownGCount++;
+              LOG.debug("Already know about term "+thisTerm.getId()+" and gene "+thisGene.getId());
             }
-            lastProtein = thisProtein;
-          }
-          proteinAnnotationSet.add(pOA);
-          protCount++;
-          } else {
-            LOG.info("Already know about term "+thisTerm.getId()+" and protein "+thisProtein.getId());
-          }
 
-        if ( (geneCount + protCount > 0) && ((geneCount+protCount)%50000 == 0) ) {
-          LOG.info("Created "+geneCount+" gene records and "+protCount+" protein records...");
-         /* osw.abortTransaction();
-          osw.beginTransaction();*/
+            // it's protein time
+            if (!knownTerms.contains(new KnownPair(thisTerm.getId(),thisProtein.getId()))) {
+              knownTerms.add(new KnownPair(thisTerm.getId(),thisProtein.getId()));
+              OntologyAnnotation pOA = (OntologyAnnotation)DynamicUtil.createObject(Collections.singleton(OntologyAnnotation.class));
+              pOA.setOntologyTerm(thisTerm);
+              pOA.setSubject(thisProtein);
+              osw.store(pOA);
+              // look at the protein if not already processed for this term
+              if ( lastProtein.getId() != thisProtein.getId() ) {
+                if (proteinAnnotationSet.size() > 0 ) {
+                  lastProtein.setOntologyAnnotations(proteinAnnotationSet);
+                  // as above, commented out.
+                  //osw.store(lastProtein);
+                  proteinAnnotationSet = new HashSet<OntologyAnnotation>();
+                }
+                lastProtein = thisProtein;
+              }
+              proteinAnnotationSet.add(pOA);
+              protCount++;
+            } else {
+              knownPCount++;
+              LOG.debug("Already know about term "+thisTerm.getId()+" and protein "+thisProtein.getId());
+            }
+
+            if ( (geneCount + protCount > 0) && ((geneCount+protCount)%50000 == 0) ) {
+              LOG.info("Created "+geneCount+" gene records and "+protCount+" protein records...");
+            }
+          }
         }
-    }
 
     // clean up
     if (geneAnnotationSet.size() > 0) {
@@ -162,7 +175,7 @@ public class TransferOntologyAnnotations {
     }
 
     LOG.info("Created "+geneCount+" gene records and "+protCount+" protein records.");
-    osw.commitTransaction();
+    LOG.info("Knew about "+knownGCount+" genes and "+knownPCount+" proteins.");
 }
 
 
@@ -181,6 +194,7 @@ public class TransferOntologyAnnotations {
         q.addFrom(qcGene);
         q.addToSelect(qcGene);
         q.addToOrderBy(qcGene);
+   
         
         QueryClass qcProtein = new QueryClass(Protein.class);
         q.addFrom(qcProtein);
@@ -195,22 +209,11 @@ public class TransferOntologyAnnotations {
         QueryClass qcOntologyTerm = new QueryClass(OntologyTerm.class);
         q.addFrom(qcOntologyTerm);
         q.addToSelect(qcOntologyTerm);  
-        /*
-        QueryClass qcOrganism = new QueryClass(Organism.class);
-        QueryField qcOrgField = new QueryField(qcOrganism,"proteomeId");
-        QueryValue qcEuc = new QueryValue(201);
-        QueryValue qcPop = new QueryValue(210);
-
-        q.addFrom(qcOrganism);*/
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
         QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
         cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
 
-        /*cs.addConstraint(new SimpleConstraint(qcOrgField,ConstraintOp.EQUALS,qcEuc));
-        cs.addConstraint(new SimpleConstraint(qcOrgField,ConstraintOp.NOT_EQUALS,qcPop));
-        QueryObjectReference qcGeneOrgRef = new QueryObjectReference(qcGene, "organism");
-        cs.addConstraint(new ContainsConstraint(qcGeneOrgRef,ConstraintOp.CONTAINS,qcOrganism));*/
         QueryObjectReference protAnalysisRef = new QueryObjectReference(qcPAF, "protein");
         cs.addConstraint(new ContainsConstraint(protAnalysisRef, ConstraintOp.CONTAINS, qcProtein));
 
@@ -219,14 +222,28 @@ public class TransferOntologyAnnotations {
 
         QueryCollectionReference proteinDomainRef = new QueryCollectionReference(qcOntologyTerm,"xrefs");
         cs.addConstraint(new ContainsConstraint(proteinDomainRef, ConstraintOp.CONTAINS,qcCrossReference));
+        
+        if (proteomeId != null ) {
+          QueryClass qcOrg = new QueryClass(Organism.class);
+          QueryField qcOrgP = new QueryField(qcOrg,"proteomeId");
+          QueryValue qcOrgPV= new QueryValue(210);
+          q.addFrom(qcOrg);
+          QueryObjectReference orgRef = new QueryObjectReference(qcGene,"organism");
+          cs.addConstraint(new ContainsConstraint(orgRef, ConstraintOp.CONTAINS,qcOrg));
+          cs.addConstraint(new SimpleConstraint(qcOrgP,ConstraintOp.EQUALS,qcOrgPV));
+        }
 
         q.setConstraint(cs);
         q.addToOrderBy(qcGene);
         q.addToOrderBy(qcProtein);
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-        // TODO: figure out how not to need this number.
-        List<ResultsRow<Object>> res = os.execute(q, 0, 25000000, true, true,ObjectStore.SEQUENCE_IGNORE);
+        LOG.info("About to execute query: "+q.toString());
+        //((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+
+        LOG.info("Back from precomute.");
+        List<ResultsRow<Object>> res = os.execute(q,0,Integer.MAX_VALUE,true,true,ObjectStore.SEQUENCE_IGNORE);
+        
+        LOG.info("Back from execute.");
         return res.iterator();
     }
     
@@ -240,45 +257,62 @@ public class TransferOntologyAnnotations {
 
       QueryClass qcGene = new QueryClass(BioEntity.class);
       q.addFrom(qcGene);
-      q.addToSelect(qcGene);
+      QueryField qcGId = new QueryField(qcGene,"id");
+      q.addToSelect(qcGId);
 
       QueryClass qcOntologyAnnotation = new QueryClass(OntologyAnnotation.class);
       q.addFrom(qcOntologyAnnotation);
       QueryClass qcOntologyTerm = new QueryClass(OntologyTerm.class);
       q.addFrom(qcOntologyTerm);
-      q.addToSelect(qcOntologyTerm); /* 
-      QueryClass qcOrganism = new QueryClass(Organism.class);
-      QueryField qcOrgField = new QueryField(qcOrganism,"proteomeId");
-      QueryValue qcEuc = new QueryValue(201);
-      QueryValue qcPop = new QueryValue(210);
-
-      q.addFrom(qcOrganism);*/
+      QueryField qcOTId = new QueryField(qcOntologyTerm,"id");
+      q.addToSelect(qcOTId); 
+      QueryClass qcOntology = new QueryClass(Ontology.class);
+      q.addFrom(qcOntology);
+      QueryField qcGOName = new QueryField(qcOntology,"name");
+      QueryValue qcGO = new QueryValue("GO"); 
       ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
-
-      /*cs.addConstraint(new SimpleConstraint(qcOrgField,ConstraintOp.EQUALS,qcEuc));
-      QueryObjectReference qcGeneOrgRef = new QueryObjectReference(qcGene, "organism");
-      cs.addConstraint(new ContainsConstraint(qcGeneOrgRef,ConstraintOp.CONTAINS,qcOrganism));*/
 
       QueryObjectReference qcGeneRef = new QueryObjectReference(qcOntologyAnnotation, "subject");
       cs.addConstraint(new ContainsConstraint(qcGeneRef,ConstraintOp.CONTAINS,qcGene));
       QueryObjectReference qcTermRef = new QueryObjectReference(qcOntologyAnnotation, "ontologyTerm");
       cs.addConstraint(new ContainsConstraint(qcTermRef,ConstraintOp.CONTAINS,qcOntologyTerm));
+      QueryObjectReference qcOntRef = new QueryObjectReference(qcOntologyTerm,"ontology");
+      cs.addConstraint(new ContainsConstraint(qcOntRef,ConstraintOp.CONTAINS,qcOntology));
+      cs.addConstraint(new SimpleConstraint(qcGOName,ConstraintOp.NOT_EQUALS,qcGO));
+      
+      if (proteomeId != null ) {
+        QueryClass qcOrg = new QueryClass(Organism.class);
+        QueryField qcOrgP = new QueryField(qcOrg,"proteomeId");
+        QueryValue qcOrgPV= new QueryValue(210);
+        q.addFrom(qcOrg);
+        QueryObjectReference orgRef = new QueryObjectReference(qcGene,"organism");
+        cs.addConstraint(new ContainsConstraint(orgRef, ConstraintOp.CONTAINS,qcOrg));
+        cs.addConstraint(new SimpleConstraint(qcOrgP,ConstraintOp.EQUALS,qcOrgPV));
+      }
 
       q.setConstraint(cs);
 
-      ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-      Results res = os.execute(q, 50000, true, true,true);
+      List<ResultsRow<Object>> res = os.execute(q, 0,Integer.MAX_VALUE, true, true,ObjectStore.SEQUENCE_IGNORE);
 
-      Iterator<Object> iter = res.iterator();
+      Iterator<?> iter = res.iterator();
       while (iter.hasNext()) {
         ResultsRow<?> rr = (ResultsRow<?>) iter.next();
-        BioEntity thisGene = (BioEntity) rr.get(0);
-        OntologyTerm thisTerm = (OntologyTerm) rr.get(1);
-        ret.add(new KnownPair(thisTerm.getId(),thisGene.getId()));
-        LOG.debug("Know about "+thisGene.getPrimaryIdentifier()+" and "+thisTerm.getId());
+        Integer thisGeneId = (Integer) rr.get(0);
+        Integer thisTermId = (Integer) rr.get(1);
+        ret.add(new KnownPair(thisTermId,thisGeneId)); 
       }
       
+      LOG.info("Retrieved records for "+ret.size()+" known annotations.");
+      
       return ret;
+    }
+    
+    public void setProteomeId(String prot) {
+      try {
+        proteomeId = Integer.parseInt(prot);
+      } catch (NumberFormatException e) {
+        
+      }
     }
     
     class KnownPair {

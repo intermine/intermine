@@ -111,7 +111,7 @@
   <url-pattern>/service/regions/bed</url-pattern>
 </servlet-mapping -->
 
-<!-- servlet>
+<servlet>
   <servlet-name>genomic-region-sequence-export</servlet-name>
   <servlet-class>org.intermine.bio.webservice.GenomicRegionSequenceExportServlet</servlet-class>
   <init-param>
@@ -123,5 +123,5 @@
 <servlet-mapping>
   <servlet-name>genomic-region-sequence-export</servlet-name>
   <url-pattern>/service/regions/sequence</url-pattern>
-</servlet-mapping -->
+</servlet-mapping>
 

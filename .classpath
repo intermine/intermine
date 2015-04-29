@@ -75,5 +75,10 @@
 	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/objectstore/main/lib/ant-1.6.5.jar"/>
 	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/bio/core/main/lib/biojava-1.7.1.jar"/>
 	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/model/main/lib/json20110106.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/api/main/lib/lucene-core-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/api/main/lib/lucene-highlighter-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/api/main/lib/lucene-queries-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/api/main/lib/lucene-snowball-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/global/u1/j/jcarlson/src/intermine/intermine/model/main/lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -10,9 +10,21 @@
   <property name="source.location" location="../bio/sources/" />
   <sources>
     &chado;
+    <source name="missing-protein-seq" type="fasta">
+      <property name="proteomeId" value="296" />
+      <property name="fasta.className" value="org.intermine.model.bio.Protein" />
+      <property name="className" value="org.intermine.model.bio.Protein" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/fasta" />
+      <property name="src.data.file" value="missing_wheat_prot.fa" />
+      <property name="fasta.taxonId" value="4565" />
+      <property name="fasta.includes" value="missing_wheat_prot.fa" />
+      <property name="fasta.sequenceType" value="aa" />
+      <property name="fasta.loaderClassName" value="org.intermine.bio.dataconversion.PhytozomeFastaLoaderTask" />
+      <property name="converter.class" value="org.intermine.bio.dataconversion.PhytozomeFastaLoaderTask" />
+    </source>
     <source name="gene-deflines" type="gene-defline">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/deflines" />
-      <property name="src.data.file" value="desc_and_defline_dev.tsv" />
+      <property namee="src.data.file" value="desc_and_defline_dev.tsv" />
     </source>
     <source name="pac-clusters-crown" type="pac-clusters">
       <property name="source.db.name" value="PAC" />
@@ -35,6 +47,23 @@
       <property name="createrelations" value="false" />
       <property name="methodIds" value="4954" />
     </source>
+
+    <source name="pac-clusters-nodes" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" />
+    </source>
+
+    <source name="pac-clusters-newnodes" type="pac-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" />
+    </source>
+
     <source name="pac-clusters-eudicot-viridiplantae-embryophyte-pentapetalae" type="pac-clusters">
       <property name="source.db.name" value="PAC" />
       <property name="dataSourceName" value="pac-clusters" />
@@ -49,6 +78,7 @@
       <property name="createrelations" value="false" />
       <property name="methodIds" value="4959,4960,4961,4962,4963,4964,4965" />
     </source>
+
     <source name="diversity-S.bicolor" type="gatkvcf">
       <property name="proteomeId" value="255" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor/" />
@@ -91,13 +121,6 @@
       <property name="dataSourcename" value="diversity-B.distachyon" />
       <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
     </source>
-    <source name="diversity-B.distachyon-consequence" type="gatkvcf">
-      <property name="proteomeId" value="283" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-B.distachyon" />
-      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
-    </source>
     <source name="diversity-E.grandis" type="gatkvcf">
       <property name="proteomeId" value="201" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
@@ -106,6 +129,49 @@
       <property name="dataSetTitle" value="E.grandis Natural Diversity" />
     </source>
     <source name="diversity-M.esculenta" type="gatkvcf">
+      <property name="proteomeId" value="147" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-M.esculenta" />
+      <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
+    </source>
+
+    <source name="diversity-S.bicolor-corrected-info" type="gatkvcf">
+      <property name="proteomeId" value="255" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-S.bicolor" />
+      <property name="dataSetTitle" value="S.bicolor Natural Diversity" />
+    </source>
+    <source name="diversity-P.vulgaris-corrected-info" type="gatkvcf">
+      <property name="proteomeId" value="218" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.vulgaris" />
+      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
+    </source>
+    <source name="diversity-P.trichocarpa-corrected-info" type="gatkvcf">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-P.trichocarpa" />
+      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
+    </source>
+    <source name="diversity-B.distachyon-corrected-info" type="gatkvcf">
+      <property name="proteomeId" value="283" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-B.distachyon" />
+      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
+    </source>
+    <source name="diversity-E.grandis-corrected-info" type="gatkvcf">
+      <property name="proteomeId" value="201" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-E.grandis" />
+      <property name="dataSetTitle" value="E.grandis Natural Diversity" />
+    </source>
+    <source name="diversity-M.esculenta-corrected-info" type="gatkvcf">
       <property name="proteomeId" value="147" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
       <property name="src.data.dir.includes" value="*.vcf" />
@@ -454,6 +520,7 @@
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
     <post-process name="create-search-index" />
+    <post-process name="create-lucene-index" />
     <post-process name="add-uniprot-ids" />
     <post-process name="transfer-go-terms" />
     <post-process name="transfer-ontology-terms" />
