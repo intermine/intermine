@@ -112,7 +112,7 @@ public class Config extends JSONService
     /** A reference to the web-app configuration. **/
     WebConfig config;
 
-    private String refIdentPath; 
+    private String refIdentPath;
 
     /** One of the files we serve: seq/refSeqs.json **/
     private static final String REF_SEQS = "seq/refSeqs.json";
