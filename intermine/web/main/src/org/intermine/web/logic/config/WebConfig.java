@@ -763,6 +763,12 @@ public class WebConfig
                         thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
                     }
 
+                    if (thisClassType.getInlineListConfig() == null || thisClassType.getInlineListConfig().isEmpty()){
+                        for(InlineListConfig cfg: superClassType.getInlineListConfig()){
+                           thisClassType.addInlineList(cfg);
+                         }
+                    }
+
                     if (thisClassType.getWidgets().size() == 0
                             && superClassType.getWidgets() != null
                             && superClassType.getWidgets().size() > 0) {
