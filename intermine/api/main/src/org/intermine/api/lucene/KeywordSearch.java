@@ -12,10 +12,13 @@ package org.intermine.api.lucene;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -63,6 +66,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.data.Objects;
+import org.intermine.api.util.TextUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
@@ -103,6 +107,7 @@ import com.browseengine.bobo.facets.impl.SimpleFacetHandler;
 public final class KeywordSearch
 {
     private static final String LUCENE_INDEX_DIR = "keyword_search_index";
+    private static final String LUCENE_INDEX_SIGNATURE = "keyword_search_signature";
 
     /**
      * maximum number of hits returned
@@ -427,6 +432,8 @@ public final class KeywordSearch
             LOG.debug("Saving search index information to database...");
             writeObjectToDB(os, MetadataManager.SEARCH_INDEX, index);
             LOG.debug("Successfully saved search index information to database.");
+            LOG.debug("Saving signature to database...");
+            writeObjectToDB(os,MetadataManager.SEARCH_INDEX_SIGNATURE,TextUtil.generateRandomUniqueString());
 
             // if we have a FSDirectory we need to zip and save that separately
             if ("FSDirectory".equals(index.getDirectoryType())) {
@@ -899,26 +906,97 @@ public final class KeywordSearch
 
     private static Directory restoreSearchDirectory(String dirType, String path, Database db)
         throws SQLException, IOException, FileNotFoundException, ClassNotFoundException {
-        InputStream is;
+        InputStream is;             
+        String databaseSignature = null;
+        String diskSignature = null;
+        
+        if( "FSDirectory".equals(dirType) ) {
+          // see if we can shortcut restoring the search index files.
+          InputStream ss = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX_SIGNATURE);
+          if (ss != null) {
+            GZIPInputStream gzipInput = new GZIPInputStream(ss);
+            ObjectInputStream objectInput = new ObjectInputStream(gzipInput);
+
+            try {
+              Object object = objectInput.readObject();
+              if (object instanceof String) {
+                LOG.info("Search index signature is: **"+(String)object + "**");
+                databaseSignature = (String)object;
+              } else {
+                LOG.info("Search index signature has class "+object.getClass().getName());
+              }
+            } finally {
+              objectInput.close();
+              gzipInput.close();
+            }
+          }
+
+          if (databaseSignature != null) {
+            try {
+              FileReader signatureFile = new FileReader(path + File.separator + LUCENE_INDEX_SIGNATURE);
+              LOG.info("Looking for signature in "+path + File.separator + LUCENE_INDEX_SIGNATURE);
+              BufferedReader br = new BufferedReader(signatureFile);
+              try {
+                StringBuilder sb = new StringBuilder();
+                String line = br.readLine();
+                if(line != null) {
+                  sb.append(line);
+                }
+                diskSignature= sb.toString();
+              } finally {
+                br.close();
+              }
+              LOG.info("Read signature on disk: **" + diskSignature+"**");
+            } catch (IOException e) {
+              LOG.warn("Cannot read signature from the file system. Restoring...");
+            }
+          }
+          if (databaseSignature != null && diskSignature != null && diskSignature.equals(databaseSignature)){
+            LOG.info("No need to restore search index. file system is up to data.");
+            File directoryPath = new File(path + File.separator + LUCENE_INDEX_DIR);
+            FSDirectory directory = FSDirectory.open(directoryPath);
+            // the directory will be set by the caller.
+            //index.setDirectory(directory);
+            return directory;
+          }
+        }
+
         LOG.debug("Attempting to restore search directory from database...");
         is = MetadataManager.readLargeBinary(db, MetadataManager.SEARCH_INDEX_DIRECTORY);
 
 
         if (is != null) {
-            try {
-                if ("FSDirectory".equals(dirType)) {
-                    return readFSDirectory(path, is);
-                } else if ("RAMDirectory".equals(dirType)) {
-                    return readRAMDirectory(is);
-                } else {
-                    LOG.warn("Unknown directory type specified: " + dirType);
+          try {
+            if ("FSDirectory".equals(dirType)) {
+              // now save the signature.
+              if (databaseSignature != null) {
+                try {
+                  File file = new File(path + File.separator + LUCENE_INDEX_SIGNATURE);
+                  // creates the file
+                  file.createNewFile();
+                  // creates a FileWriter Object
+                  FileWriter writer = new FileWriter(file); 
+                  // Writes the content to the file
+                  writer.write(databaseSignature+"\n"); 
+                  writer.flush();
+                  writer.close();
+                  LOG.info("Wrote signature file "+path + File.separator + LUCENE_INDEX_SIGNATURE);
+                } catch (IOException e) {
+                  LOG.warn("Cannot write signature to the file system. continuing...");
                 }
-            } finally {
-                is.close();
+              }
+              return readFSDirectory(path, is);
+            } else if ("RAMDirectory".equals(dirType)) {
+              return readRAMDirectory(is);
+            } else {
+              LOG.warn("Unknown directory type specified: " + dirType);
             }
+          } finally {
+            is.close();
+          }
 
         } else {
-            LOG.warn("Could not find search directory!");
+          LOG.warn("Could not find search directory!");
         }
         return null;
     }

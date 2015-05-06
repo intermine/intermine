@@ -82,7 +82,7 @@ public final class MetadataManager
     public static final String SEARCH_INDEX_DIRECTORY = "search_directory";
 
     /**
-     * The name of the key to use to store the search Directory.
+     * The name of the key to use to store the search unique string id.
      */
     public static final String SEARCH_INDEX_SIGNATURE = "search_signature";
     /**
