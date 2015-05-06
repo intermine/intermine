@@ -44,6 +44,10 @@ public abstract class DBDirectDataLoaderTask extends DirectDataLoaderTask {
    */
   
   public void setSourceDbName(String dbName) {
-    this.dbName = dbName;
+    if (dbName.startsWith("db.")) {
+      this.dbName = dbName;
+    } else {
+      this.dbName = "db."+dbName;
+    }
   }
 }

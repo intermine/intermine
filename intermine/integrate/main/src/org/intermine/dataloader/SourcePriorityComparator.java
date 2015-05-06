@@ -250,13 +250,18 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
                 source1 = dataTracker.getSource(o1.getId(), fieldName);
             }
         }
+        if(source1 == null) throw new IllegalArgumentException("Cannot find source for field "+fieldName+" of object id "+o1.getId());
+        
         if (source2 == null) {
             if (o2 == defObj) {
                 source2 = def;
             } else {
                 source2 = dataTracker.getSource(o2.getId(), fieldName);
+
             }
         }
+        if(source2 == null) throw new IllegalArgumentException("Cannot find source for field "+fieldName+" of object id "+o2.getId());
+        
         if (source1.equals(source2)) {
             throw new IllegalArgumentException("Merging two distinct objects from the same"
                     + " data source (" + source1.getName() + "): "

@@ -11,6 +11,8 @@
   <attribute name="tree" type="java.lang.String" />
   <attribute name="bootscore" type="java.lang.Double" />
   <attribute name="groupName" type="java.lang.String" />
+  <attribute name="fromJGI" type="java.lang.Boolean" />
+  <attribute name="fromInParanoid" type="java.lang.Boolean" />
   <reference name="gene1" referenced-type="Gene" />
   <reference name="organism1" referenced-type="Organism" />
   <reference name="gene2" referenced-type="Gene" />

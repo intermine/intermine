@@ -8,6 +8,7 @@
      <attribute name="quality" type="java.lang.Double"/>
      <attribute name="filter" type="java.lang.String"/>
      <attribute name="info" type="java.lang.String"/>
+     <attribute name="sampleGroup" type="java.lang.String" />
      <attribute name="sampleInfo" type="java.lang.String"/>
      <attribute name="sampleCount" type="java.lang.Integer" />
      <collection name="consequences" referenced-type="Consequence" reverse-reference="snps" />

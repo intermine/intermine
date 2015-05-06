@@ -95,6 +95,35 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	
 	// consequences are added to a collection so need to keep actual objects not ProxyReference
 	private Map<String, Consequence> consequences = new HashMap<String, Consequence>();
+
+	// so that we can add the effect impact to the consequence type as needed.
+	private static HashMap<String,String> effectMap = new HashMap<String,String>();
+	{
+	  effectMap.put("EXON_DELETED","HIGH");	                         effectMap.put("FRAME_SHIFT","HIGH");
+	  effectMap.put("SPLICE_SITE_ACCEPTOR","HIGH");	                 effectMap.put("SPLICE_SITE_DONOR","HIGH");
+	  effectMap.put("START_LOST","HIGH");	                           effectMap.put("STOP_GAINED","HIGH");
+	  effectMap.put("STOP_LOST","HIGH");	                           effectMap.put("RARE_AMINO_ACID","HIGH");
+	  effectMap.put("CHROMOSOME_LARGE_DELETION","HIGH");	           effectMap.put("CODON_CHANGE_PLUS_CODON_DELETION","MODERATE");
+	  effectMap.put("CODON_CHANGE_PLUS_CODON_INSERTION","MODERATE"); effectMap.put("CODON_DELETION","MODERATE");
+	  effectMap.put("CODON_INSERTION","MODERATE");	                 effectMap.put("NON_SYNONYMOUS_CODING","MODERATE");
+	  effectMap.put("SPLICE_SITE_BRANCH_U12","MODERATE");	           effectMap.put("UTR_3_DELETED","MODERATE");
+	  effectMap.put("UTR_5_DELETED","MODERATE");	                   effectMap.put("SPLICE_SITE_REGION","LOW");
+	  effectMap.put("SPLICE_SITE_BRANCH","LOW");	                   effectMap.put("NON_SYNONYMOUS_START","LOW");
+	  effectMap.put("NON_SYNONYMOUS_STOP","LOW");	                   effectMap.put("START_GAINED","LOW");
+	  effectMap.put("SYNONYMOUS_CODING","LOW");	                     effectMap.put("SYNONYMOUS_START","LOW");
+	  effectMap.put("SYNONYMOUS_STOP","LOW");	                       effectMap.put("CODON_CHANGE","LOW");
+	  effectMap.put("CDS","MODIFIER");                               effectMap.put("CHROMOSOME","MODIFIER");
+	  effectMap.put("CUSTOM","MODIFIER");	                           effectMap.put("DOWNSTREAM","MODIFIER");
+	  effectMap.put("EXON","MODIFIER");	                             effectMap.put("GENE","MODIFIER");
+	  effectMap.put("GENOME","MODIFIER");                            effectMap.put("INTRAGENIC","MODIFIER");
+	  effectMap.put("INTERGENIC","MODIFIER");	                       effectMap.put("INTERGENIC_CONSERVED","MODIFIER");
+	  effectMap.put("INTRON","MODIFIER");	                           effectMap.put("INTRON_CONSERVED","MODIFIER");
+	  effectMap.put("MICRO_RNA","MODIFIER");	                       effectMap.put("NONE","MODIFIER");
+	  effectMap.put("REGULATION","MODIFIER");	                       effectMap.put("TRANSCRIPT","MODIFIER");
+	  effectMap.put("UPSTREAM","MODIFIER");	                         effectMap.put("UTR_3_PRIME","MODIFIER");
+	  effectMap.put("UTR_5_PRIME","MODIFIER");                       effectMap.put("MOTIF","LOW");
+	  effectMap.put("NEXT_PROT","MODIFIER");
+	}
     
 	public void setProteomeId(String proteome) {
 		try {
@@ -292,7 +321,6 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
     // now construct the JSON string
     StringBuffer JSONString = new StringBuffer("{");
 
-    boolean storeGenotype = false;
     for( String genotype : genoHash.keySet()) {
       if (JSONString.length() > 1 ) {
         JSONString.append(",");
@@ -316,7 +344,6 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
       throw new BuildException("Problem storing SNP: " + e);
     }
     
-    if( storeGenotype ) {
 	  for( String genotype : genoHash.keySet()) {
 
 	    Genotype g = getDirectDataLoader().createObject(Genotype.class);
@@ -337,7 +364,6 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
 	    } catch (ObjectStoreException e) {
 	      throw new BuildException("Problem storing Genotype info: " + e.getMessage());
 	    }
-	  }
     }
 	  
 	  return true;
@@ -494,6 +520,9 @@ public class GatkvcfDirectDataLoaderTask extends FileDirectDataLoaderTask {
     	if (conRef == null) {
     		ConsequenceType con = getDirectDataLoader().createObject(ConsequenceType.class);
     		con.setType(type);
+        if (effectMap.containsKey(type) ) {
+          con.setEffectImpact(effectMap.get(type));
+        }
     		getDirectDataLoader().store(con);
     		conRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
     				con.getId(), ConsequenceType.class);

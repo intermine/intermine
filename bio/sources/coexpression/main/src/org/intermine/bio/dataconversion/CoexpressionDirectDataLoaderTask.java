@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.dataconversion.CoexpressionConverter.Pair;
+import org.intermine.dataloader.IntegrationWriterDataTrackingImpl;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Coexpression;
@@ -30,6 +33,16 @@ import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.task.FileDirectDataLoaderTask;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
@@ -59,7 +72,7 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
   private Integer proteomeId = null;
   private ProxyReference organism = null;
   // bioentities we record data about
-  private HashMap<String,ProxyReference> geneProxyMap = new HashMap<String, ProxyReference>();
+  private HashMap<String,ProxyReference> geneProxyMap = null;
   private HashMap<String,ReferenceList> collections = new HashMap<String,ReferenceList>();
   private Double bucketSize = new Double(.05);
   private Integer bucketNumber = 3;
@@ -80,6 +93,7 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
    *
    * {@inheritDoc}
    */
+  @SuppressWarnings("unchecked")
   public void processFile(File theFile) {
     String message = "Processing file: " + theFile.getName();
     System.out.println(message);
@@ -89,25 +103,8 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
       return;
     }
 
-    if (organism==null) {
-      // we need to register the organism
-      if (proteomeId != null ) {
-        Organism org;
-        try {
-          org = getDirectDataLoader().createObject(Organism.class);
-          org.setProteomeId(proteomeId);
-          // and store the organism.
-          getDirectDataLoader().store(org);  
-          organism = new ProxyReference(getIntegrationWriter().getObjectStore(),
-              org.getId(), Organism.class);
-        } catch (ObjectStoreException e) {
-          throw new BuildException("Problem storing Organism: " + e.getMessage());
-        }  
-      } else {
-        throw new BuildException("No proteomeId specified.");
-      }
-  
-    }
+    if (organism == null) getOrganism();
+    if (geneProxyMap == null) prefillGeneProxy();
 
     Iterator<?> tsvIter;
     try {
@@ -124,7 +121,7 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
       if ( (lineNumber%1000000) == 0 ) {
         LOG.info("Processed "+lineNumber+" lines...");
       }
-      if (fields.length==3 && !fields[0].equals(fields[1]) && 
+      if (fields.length>=3 && !fields[0].equals(fields[1]) && 
           (Double.parseDouble(fields[2]) >= 1. - bucketSize*bucketNumber) ) {
         if (!geneProxyMap.containsKey(fields[0]) ) {
           try {
@@ -137,7 +134,6 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
           } catch (ObjectStoreException e) {
             throw new BuildException("Problem storing Gene: " + e.getMessage());
           }
-          jsonBuckets.put(fields[0], new ArrayList<Pair>());
         }
         if (!geneProxyMap.containsKey(fields[1]) ) {
           try {
@@ -150,26 +146,28 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
           } catch (ObjectStoreException e) {
             throw new BuildException("Problem storing Gene: " + e.getMessage());
           }
-          jsonBuckets.put(fields[1], new ArrayList<Pair>());
         }
-
-        jsonBuckets.get(fields[1]).add(new Pair(fields[0], Double.parseDouble(fields[2])));
+        
+        if (!jsonBuckets.containsKey(fields[0])) jsonBuckets.put(fields[0],new ArrayList<Pair>());
         jsonBuckets.get(fields[0]).add(new Pair(fields[1], Double.parseDouble(fields[2])));
+        
+        if (!jsonBuckets.containsKey(fields[1])) jsonBuckets.put(fields[1],new ArrayList<Pair>());
+        jsonBuckets.get(fields[1]).add(new Pair(fields[0], Double.parseDouble(fields[2])));
 
         try {
           Coexpression i = getDirectDataLoader().createSimpleObject(Coexpression.class);
           i.proxyGene(geneProxyMap.get(fields[0]));
           i.proxyCoexpressedGene(geneProxyMap.get(fields[1]));
           i.setCorrelation(Float.parseFloat(fields[2]));
+          if (fields.length > 3) {
+            // optional group argument
+            i.setExperimentGroup(fields[3]);
+          }
           getDirectDataLoader().store(i);
         } catch (ObjectStoreException e) {
           throw new BuildException("Problem storing Coexpression: " + e.getMessage());
         }
 
-        /* Reference r1 = new Reference("coexpressions",i.getIdentifier());
-	          if (!collections.containsKey(fields[0]) ) collections.put(fields[0], new ReferenceList("coexpressions"));
-	          collections.get(fields[0]).addRefId(r1.getRefId());
-         */
         try {
           Coexpression j = getDirectDataLoader().createSimpleObject(Coexpression.class);
           j.proxyGene(geneProxyMap.get(fields[1]));
@@ -179,14 +177,7 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
         } catch (ObjectStoreException e) {
           throw new BuildException("Problem storing Coexpression: " + e.getMessage());
         }
-        /*
-	          Reference r2 = new Reference("coexpressions",j.getIdentifier());
-	          if (!collections.containsKey(fields[1]) ) collections.put(fields[1], new ReferenceList("coexpressions"));
-	          collections.get(fields[1]).addRefId(r2.getRefId());*/
       }
-      
-  
- 
     }
     
     // load the json
@@ -239,54 +230,88 @@ public class CoexpressionDirectDataLoaderTask extends FileDirectDataLoaderTask {
     }
     LOG.info("Processed " + lineNumber + " lines.");
   }
-/*
-  // Methods to create sequence ontology & dataset related objects, usually handled
-  // automatically for items based converters (could go in a BioDirectDataloader superclass)
-  private ProxyReference getSequenceOntology() throws ObjectStoreException {
-    if (ontologyRef == null) {
-      Ontology ontology = getDirectDataLoader().createObject(Ontology.class);
-      ontology.setName("Sequence Ontology");
-      ontology.setUrl("http://www.sequenceontology.org");
-      getDirectDataLoader().store(ontology);
-      ontologyRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
-          ontology.getId(), Ontology.class);
+ 
+  private void prefillGeneProxy() {
+    geneProxyMap = new HashMap<String, ProxyReference>();
+    Query q = new Query();
+    QueryClass qC = new QueryClass(Gene.class);
+    q.addFrom(qC);
+    QueryClass qO = new QueryClass(Organism.class);
+    q.addFrom(qO);
+    QueryField qP = new QueryField(qO,"proteomeId");
+    QueryValue qV = new QueryValue(proteomeId);
+    QueryObjectReference qRef = new QueryObjectReference(qC,"organism");
+
+    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+    cs.addConstraint(new ContainsConstraint(qRef, ConstraintOp.CONTAINS, qO));
+    cs.addConstraint(new SimpleConstraint(qP,ConstraintOp.EQUALS,qV));
+    q.setConstraint(cs);
+
+    QueryField qFName = new QueryField(qC,"secondaryIdentifier");
+    QueryField qFId = new QueryField(qC,"id");
+    q.addToSelect(qFName);
+    q.addToSelect(qFId);
+
+    LOG.info("Prefilling ProxyReferences. Query is "+q);
+    try {
+      Results res = getIntegrationWriter().getObjectStore().execute(q,100000,false,false,false);
+      Iterator<Object> resIter = res.iterator();
+      LOG.info("Iterating...");
+      while (resIter.hasNext()) {
+        @SuppressWarnings("unchecked")
+        ResultsRow<Object> rr = (ResultsRow<Object>) resIter.next();
+        String name = (String)rr.get(0);
+        Integer id = (Integer)rr.get(1);
+        geneProxyMap.put(name,new ProxyReference(getIntegrationWriter().getObjectStore(),id,Gene.class));
+        ((IntegrationWriterDataTrackingImpl)getIntegrationWriter()).markAsStored(id);
+      }
+    } catch (Exception e) {
+      throw new BuildException("Problem in prefilling ProxyReferences: " + e.getMessage());
     }
-    return ontologyRef;
+    LOG.info("Retrieved "+geneProxyMap.size()+" ProxyReferences.");
+
+  }
+  
+  private void getOrganism() {
+    if (proteomeId == null ) {
+      throw new BuildException("ProteomeId must be set.");
+    }
+    Query q = new Query();
+    QueryClass qO = new QueryClass(Organism.class);
+    q.addFrom(qO);
+    q.addToSelect(qO);
+    QueryField qP = new QueryField(qO,"proteomeId");
+    QueryValue qV = new QueryValue(proteomeId);
+    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+    cs.addConstraint(new SimpleConstraint(qP,ConstraintOp.EQUALS,qV));
+    q.setConstraint(cs);
+    try {
+      Results res = getIntegrationWriter().getObjectStore().execute(q,10,false,false,false);
+      Iterator<Object> resIter = res.iterator();
+      LOG.info("Iterating...");
+      while (resIter.hasNext()) {
+        @SuppressWarnings("unchecked")
+        ResultsRow<Object> rr = (ResultsRow<Object>) resIter.next();
+        if (organism != null) {
+          throw new BuildException("Multiple organisms retrieved.");
+        }
+        Organism o = (Organism)rr.get(0);
+        organism = new ProxyReference(getIntegrationWriter().getObjectStore(),o.getId(),Organism.class);
+        ((IntegrationWriterDataTrackingImpl)getIntegrationWriter()).markAsStored(o.getId());
+      }
+    } catch (Exception e) {
+      throw new BuildException("Problem in retrieving organism: " + e.getMessage());
+    }
+    
+    if (organism==null) {
+      throw new BuildException("Cannot find organism for proteome id "+proteomeId);
+    }
+
   }
 
-  private ProxyReference getSOTerm(String featureType) throws ObjectStoreException {
-    ProxyReference soTermRef = soTerms.get(featureType);
-    if (soTermRef == null) {
-      SOTerm term = getDirectDataLoader().createObject(SOTerm.class);
-      term.proxyOntology(getSequenceOntology());
-      term.setName(featureType);
-      getDirectDataLoader().store(term);
-      soTermRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
-          term.getId(), SOTerm.class);
-      soTerms.put(featureType, soTermRef);
-    }
-    return soTermRef;
-  }
-
-  private DataSource getDataSource() throws ObjectStoreException {
-    if (dataSource == null) {
-      dataSource = getDirectDataLoader().createObject(DataSource.class);
-      dataSource.setName(DATA_SOURCE_NAME);
-      getDirectDataLoader().store(dataSource);
-    }
-    return dataSource;
-  }
-
-  private DataSet getDataSet() throws ObjectStoreException {
-    if (dataSet == null) {
-      dataSet = getDirectDataLoader().createObject(DataSet.class);
-      dataSet.setName(DATASET_TITLE);
-      dataSet.setDataSource(getDataSource());
-      getDirectDataLoader().store(dataSet);
-    }
-    return dataSet;
-  }*/
-
+  @SuppressWarnings("rawtypes")
   public class Pair implements Comparable {
     private String left;
     private Double right;
