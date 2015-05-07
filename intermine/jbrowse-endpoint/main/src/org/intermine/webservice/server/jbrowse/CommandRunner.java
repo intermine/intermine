@@ -10,8 +10,6 @@ package org.intermine.webservice.server.jbrowse;
  *
  */
 
-import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
