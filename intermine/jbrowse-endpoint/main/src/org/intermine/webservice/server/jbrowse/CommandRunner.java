@@ -14,11 +14,9 @@ import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +37,8 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
+
+import static org.intermine.webservice.server.jbrowse.Queries.pathQueryToOSQ;
 
 /**
  *
@@ -100,8 +100,8 @@ public abstract class CommandRunner
             new CacheMap<Command, Map<String, Object>>("jbrowse.commandrunner.STATS_CACHE");
 
     /**
-     * Calculate the statistics for the given command.
-     * @param command The command to produce statistics for.
+     * Serve the statistics for a given command.
+     * @param command The command to serve statistics for.
      */
     public void stats(Command command) {
         Map<String, Object> stats;
@@ -113,7 +113,8 @@ public abstract class CommandRunner
                 stats = new HashMap<String, Object>();
                 try {
                     List<?> results = getAPI().getObjectStore()
-                                      .execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                                              .execute(q, 0, 1, false, false,
+                                                      ObjectStore.SEQUENCE_IGNORE);
                     List<?> row = (List<?>) results.get(0);
                     stats.put("featureDensity", row.get(0));
                     stats.put("featureCount",   row.get(1));
@@ -129,8 +130,8 @@ public abstract class CommandRunner
     private static Map<MultiKey, Integer> maxima = new ConcurrentHashMap<MultiKey, Integer>();
 
     /**
-     * Produce densities information for the given command.
-     * @param command The command to produce density information for.
+     * Serve the densities for a given command.
+     * @param command The command to serve densities for.
      */
     public void densities(Command command) {
         final int nSlices = getNumberOfSlices(command);
@@ -161,9 +162,8 @@ public abstract class CommandRunner
         if (command.getSegment() != Segment.NEGATIVE_SEGMENT) {
             Integer bpb = command.getSegment().getWidth() / nSlices;
             binStats.put("basesPerBin", bpb);
-            // Key by domain, type, ref-seq and band size
             MultiKey maxKey = new MultiKey(
-                    command.getDomain(),
+                    command.getDomain(), // Key by domain, type, ref-seq and band size
                     command.getType("SequenceFeature"),
                     command.getSegment().getSection(),
                     bpb);
@@ -208,19 +208,21 @@ public abstract class CommandRunner
     }
 
     /**
-     * Get a query for the features for a given command.
-     * @param command The command to get features for.
-     * @return A query for features.
+     *  Get a path query for this feature command
+     *
+     * @param command The current command
+     * @return A path query for features within the segment of this command.
      */
     protected Query getFeatureQuery(Command command) {
         return pathQueryToOSQ(getFeaturePathQuery(command, command.getSegment()));
     }
 
     /**
-     * Produce a path query for features.
-     * @param command The command
-     * @param s The segment
-     * @return A path query.
+     * Get a path query for this feature command
+     *
+     * @param command The current command
+     * @param s The current segment
+     * @return A path query for features within this segment.
      */
     protected abstract PathQuery getFeaturePathQuery(Command command, Segment s);
 
@@ -274,14 +276,14 @@ public abstract class CommandRunner
 
     /**
      * A Query that produces a single row: (featureDensity :: double, featureCount :: integer)
-     * @param command The command to produce statistics for.
+     * @param command The current command
      * @return A query for the count and density.
      */
     protected abstract Query getStatsQuery(Command command);
 
     /**
-     * Produce out out as defined in a map.
-     * @param map The map to send as JSON.
+     * Send a map of data to the client.
+     * @param map The data.
      */
     protected void sendMap(Map<String, Object> map) {
         Iterator<Entry<String, Object>> it = map.entrySet().iterator();
@@ -292,8 +294,9 @@ public abstract class CommandRunner
     }
 
     /**
-     * @param command command
-     * @return action
+     * Get the leading string for the result.
+     * @param command The current command
+     * @return An intro.
      */
     public String getIntro(Command command) {
         switch (command.getAction()) {
@@ -310,7 +313,7 @@ public abstract class CommandRunner
 
     /**
      * @param command command
-     * @return action
+     * @return An outro.
      */
     public String getOutro(Command command) {
         switch (command.getAction()) {

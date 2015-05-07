@@ -9,6 +9,8 @@
 
 set -e # Errors are fatal.
 
+set -e
+
 USERPROFILEDB=userprofile-demo
 PRODDB=objectstore-demo
 MINENAME=demomine
@@ -80,6 +82,27 @@ if test ! -f $PROP_FILE; then
     sed -i=bak -e "s/USER/$USER/g" $PROP_FILE
 fi
 
+echo "------> Checking properties file"
+if test ! -d .intermine; then
+    mkdir .intermine
+    cp $DIR/testmodel.properties .
+    sed -i "s/USER/$USER/g" testmodel.properties
+fi
+
+echo "------> Checking databases..."
+for db in $PRODDB $USERPROFILEDB; do
+    if psql --list | egrep -q '\s'$db'\s'; then
+        echo $db exists
+    else
+        echo Creating $db
+        createdb $db
+    fi
+done
+
+echo "------> Processing books..."
+cd $DIR/dbmodel/extra/books
+make 
+
 echo "------> Checking databases..."
 for db in $USERPROFILEDB $PRODDB; do
     if psql --list | egrep -q '\s'$db'\s'; then
@@ -100,7 +123,6 @@ echo "------> Processing data sources."
 cd $DIR/dbmodel/extra/books
 make 
 
-cd $DIR/dbmodel
 echo "------> Loading demo data set - this should take about 3-4 minutes."
 TASKS="clean load-workers-and-books"
 if test ! -z $EXTRA_DATA; then
@@ -114,12 +136,12 @@ if test ! -z $EXTRA_DATA; then
     fi
     TASKS="$TASKS enormocorp megacorp"
 fi
-ant -v $TASKS >> $LOG
+ant -Ddont.minify=true -Drelease=demo -v $TASKS >> $LOG
 
 cd $DIR/webapp/main
 
-echo "------> Building and releasing web-application - about 1min left."
-ant -Ddont.minify=true \
+echo "------> Building and releasing web-app..., nearly done"
+ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     retrieve-objectstore-summary \
@@ -127,4 +149,3 @@ ant -Ddont.minify=true \
     release-webapp | tee -a $LOG | grep tomcat-deploy
 
 echo "------> All done. Build log is available in $LOG"
-

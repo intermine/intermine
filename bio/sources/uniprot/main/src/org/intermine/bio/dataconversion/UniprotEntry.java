@@ -811,13 +811,14 @@ public class UniprotEntry
      * @param dbrefName name of database, eg Ensembl
      * @return gene designation for a certain dbref.type, eg Ensembl
      */
-    public String getGeneDesignation(String dbrefName) {
+    public Set<String> getGeneDesignation(String dbrefName) {
+        Set<String> identifiers = new HashSet<String>();
         for (Map.Entry<String, Dbref> entry : geneDesignationToDbref.entrySet()) {
             if (entry.getValue().getType().equals(dbrefName)) {
-                return entry.getKey();
+                identifiers.add(entry.getKey());
             }
         }
-        return null;
+        return identifiers;
     }
 
     /**

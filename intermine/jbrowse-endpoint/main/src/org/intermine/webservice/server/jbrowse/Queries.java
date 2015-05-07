@@ -10,13 +10,16 @@ package org.intermine.webservice.server.jbrowse;
  *
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.query.MainHelper;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.exceptions.ServiceException;
 
@@ -64,19 +67,37 @@ public final class Queries
      * @return object
      */
     public static Object resolveValue(FastPathObject fpo, String path) {
+        return resolveValue(fpo, Arrays.asList(path.split("\\.")));
+    }
+
+    /**
+    *
+    * @param fpo fastpath object
+    * @param path path
+    * @return object
+    */
+    public static Object resolveValue(FastPathObject fpo, Path path) {
+        return resolveValue(fpo, path.getElements());
+    }
+
+   /**
+    * @param fpo fastpath object
+    * @param parts The path to a value.
+    * @return object
+    */
+    public static Object resolveValue(FastPathObject fpo, List<String> parts) {
         FastPathObject o = fpo;
-        String[] parts = path.split("\\.");
         Object res = null;
-        for (int i = 0; i < parts.length; i++) {
+        for (String part: parts) {
             if (o == null) {
                 return res;
             }
             try {
-                res = o.getFieldValue(parts[i]);
+                res = o.getFieldValue(part);
             } catch (IllegalAccessException e) {
                 throw new ServiceException("Could not read object value.", e);
             }
-            if (i + 1 < parts.length && res instanceof FastPathObject) {
+            if (res instanceof FastPathObject) {
                 o = (FastPathObject) res;
             }
         }

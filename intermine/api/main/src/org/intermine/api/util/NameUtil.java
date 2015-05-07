@@ -118,7 +118,7 @@ public final class NameUtil
      * @param name Name of query/template
      * @return rebuiltName Name of query/template with the special characters removed
      */
-    private static String replaceSpecialChars(String name) {
+    public static String replaceSpecialChars(String name) {
         String tmp = name;
         StringBuffer rebuiltName = new StringBuffer();
         for (int i = 0; i < tmp.length(); i++) {

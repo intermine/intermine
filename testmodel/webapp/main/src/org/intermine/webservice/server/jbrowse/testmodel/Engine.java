@@ -41,6 +41,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.CacheMap;
 import org.intermine.webservice.server.jbrowse.Command;
 import org.intermine.webservice.server.jbrowse.CommandRunner;
 import org.intermine.webservice.server.jbrowse.Segment;
@@ -49,6 +50,8 @@ import org.intermine.webservice.server.jbrowse.Segment;
 public class Engine extends CommandRunner {
 
     private static final Logger LOG = Logger.getLogger(Engine.class);
+    private static final Map<Command, Map<String, Object>> STATS_CACHE =
+            new CacheMap<Command, Map<String, Object>>("jbrowse.testmodel.engine.STATS_CACHE");
 
     public Engine(InterMineAPI api) {
         super(api);

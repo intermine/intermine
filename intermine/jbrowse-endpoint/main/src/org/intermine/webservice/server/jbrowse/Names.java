@@ -274,7 +274,7 @@ public class Names extends JSONService
         };
     }
 
-    private static String getTrackName(ClassDescriptor cd) {
+    private String getTrackName(ClassDescriptor cd) {
         return cd.getUnqualifiedName();
     }
 
@@ -286,12 +286,11 @@ public class Names extends JSONService
 
     private PathQuery getQuery(String domain, ConstraintOp op, String searchTerm) {
         PathQuery pq = new PathQuery(im.getModel());
-        String propertyPrefix = getPropertyPrefix();
         List<Path> paths = getNamePaths();
 
-        String type = webProperties.getProperty(propertyPrefix + "featureClass");
-        String domainPath = webProperties.getProperty(propertyPrefix + "domain");
-        String locationPath = webProperties.getProperty(propertyPrefix + "location");
+        String type = webProperties.getProperty(prefix + "featureClass");
+        String domainPath = webProperties.getProperty(prefix + "domain");
+        String locationPath = webProperties.getProperty(prefix + "location");
         pq.addView(type + ".id");
 
         StringBuffer logic = new StringBuffer();
@@ -305,8 +304,8 @@ public class Names extends JSONService
         logic.append(" (");
         for (int i = 0; i < paths.size(); i++) {
             Path p = paths.get(i);
-            String pathString = p.toStringNoConstraints();
-            PathConstraint c = new PathConstraintAttribute(pathString, op, searchTerm);
+            PathConstraint c =
+                    new PathConstraintAttribute(p.toStringNoConstraints(), op, searchTerm);
             logic.append(pq.addConstraint(c));
             if (i + 1 < paths.size()) {
                 logic.append(" OR ");

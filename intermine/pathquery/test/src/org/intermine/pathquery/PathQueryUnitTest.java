@@ -1054,7 +1054,29 @@ public class PathQueryUnitTest extends TestCase
         q.sortConstraints(makeConstraintOrder(b));
         expected = makeConstraintOrder(a, c, b);
         assertEquals(expected, readActualConstraintOrder(q));
-}
+    }
+
+    public void testRangeConstraints() {
+
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+        q.addViews("Employee.name");
+        q.addViews("Employee.age");
+        q.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN,
+                Collections.singleton("10..30")));
+
+        String expected = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.age\" longDescription=\"\"><constraint path=\"Employee.age\" op=\"WITHIN\"><value>10..30</value></constraint></query>";
+        assertEquals(expected, q.toXml());
+        assertTrue(q.isValid());
+
+        q = new PathQuery(model);
+        q.addViews("Employee.name");
+        q.addViews("Employee.age");
+        q.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.OUTSIDE,
+                Collections.singleton("10..30")));
+        assertTrue(q.isValid());
+
+    }
 
     private List<PathConstraint> makeConstraintOrder(PathConstraint... cons) {
         ArrayList<PathConstraint> expected = new ArrayList<PathConstraint>();

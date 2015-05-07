@@ -923,7 +923,7 @@ public class UniprotConverter extends BioDirectoryConverter
             String taxId = uniprotEntry.getTaxonId();
             String uniqueIdentifierField = getUniqueField(taxId);
             Set<String> geneIdentifiers = getGeneIdentifiers(uniprotEntry, uniqueIdentifierField);
-            if (geneIdentifiers == null) {
+            if (geneIdentifiers == null || geneIdentifiers.isEmpty()) {
                 LOG.error("no valid gene identifiers found for "
                         + uniprotEntry.getPrimaryAccession());
                 return;
@@ -1017,14 +1017,12 @@ public class UniprotConverter extends BioDirectoryConverter
             if ("name".equals(method)) {
                 geneIdentifiers = getByName(uniprotEntry, taxId, value);
             } else if ("gene-designation".equals(method)) {
-                String identifierValue = uniprotEntry.getGeneDesignation(value);
-                geneIdentifiers.add(identifierValue);
+                geneIdentifiers.addAll(uniprotEntry.getGeneDesignation(value));
             } else if ("dbref".equals(method)) {
                 geneIdentifiers = getByDbref(uniprotEntry, value);
             } else {
                 LOG.error("error processing config for organism " + taxId);
             }
-
 
             return geneIdentifiers;
         }
@@ -1070,8 +1068,7 @@ public class UniprotConverter extends BioDirectoryConverter
             Set<String> geneIdentifiers = new HashSet<String>();
             if ("Ensembl".equals(value)) {
                 // See #2122
-                String geneDesignation = uniprotEntry.getGeneDesignation(value);
-                geneIdentifiers.add(geneDesignation);
+                geneIdentifiers.addAll(uniprotEntry.getGeneDesignation(value));
             } else {
                 Map<String, Set<String>> dbrefs = uniprotEntry.getDbrefs();
                 final String msg = "no " + value
