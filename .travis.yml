@@ -27,9 +27,4 @@ before_install:
 script:
     - ./config/travis/run.sh
 notifications:
-  irc:
-      channels:
-          - "chat.freenode.net#intermine-ci"
-      on_success: change
-      on_error: change
-
+  slack: intermine:HKfV7qLH4VgpMGLRWa7qcNhP
