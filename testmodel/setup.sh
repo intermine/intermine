@@ -124,6 +124,7 @@ cd $DIR/dbmodel/extra/books
 make 
 
 echo "------> Loading demo data set - this should take about 3-4 minutes."
+cd $DIR/dbmodel
 TASKS="clean load-workers-and-books"
 if test ! -z $EXTRA_DATA; then
     MEGACORP_XML="resources/testmodel_mega_data.xml"
