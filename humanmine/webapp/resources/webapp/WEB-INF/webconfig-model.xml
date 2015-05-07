@@ -128,7 +128,7 @@
     <bagdisplayers>
       <!-- attribute links can now be configured for gene list analysis pages -->
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
-      <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="true" />
+      <displayer src="esynListDisplayer.tile" showOnLeft="true" />
     </bagdisplayers>
   </class>
 
