@@ -9,29 +9,34 @@
 
 <div id="protein_analysis_displayer" class="collection-table">
 
-<h3>InterPro Analysis Data</h3>
+<h3>Protein Analysis Results</h3>
 
 <c:choose>
   <c:when test="${!empty list}">
     <div>
-    There are ${fn:length(list)} InterPro results.
+    There are ${fn:length(list)} analysis results.
     <table>
       <thead>
-       <tr>
-         <th> Program Name </th>
-         <th> Subject  </th>
-         <th> Start </th>
-         <th> End </th>
-         <th> Score </th>
-         <th> Significance </th>
-       </tr>
-    </thead>
-    <tbody>
-	  <c:forEach var="row" items="${list}">
-	     <tr>
-	       <c:forEach var="column" items="${row}" varStatus="columnStatus">
-	            <td>${column}</td>
-	        </c:forEach>
+        <tr>
+          <th> Database </th>
+          <th> Subject  </th>
+          <th> Domain </th>
+          <th> Start </th>
+          <th> End </th>
+          <th> Score </th>
+          <th> Significance </th>
+        </tr>
+      </thead>
+      <tbody>
+	    <c:forEach var="row" items="${list}">
+	      <tr>
+            <td> ${row.database} </td>
+            <td> ${row.subject} </td>
+            <td> <a href="report.do?id=${row.domainId}"> ${row.domain} </a></td>
+            <td> ${row.start} </td>
+            <td> ${row.end} </td>
+            <td> ${row.score} </td>
+            <td> ${row.significance} </td>
 	      </tr>
 	    </c:forEach>
       </tbody>

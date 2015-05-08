@@ -265,6 +265,8 @@
       </titles>
     </headerconfig>
     <fields>
+      <!--fieldconfig fieldExpr="member.protein.primaryIdentifier" label="Protein Name" />
+      <fieldconfig fieldExpr="member.membershipDetail" label="Membership Detail" /-->
       <fieldconfig fieldExpr="methodId" label="Method ID" />
       <fieldconfig fieldExpr="methodName" label="Method Name" />
       <fieldconfig fieldExpr="consensus" label="Centroid Sequence"
@@ -292,15 +294,28 @@
     </fields>
   </class>
 
+  <!-- class className="org.intermine.model.bio.OntologyAnnotation">
+    <fields>
+      <fieldconfig fieldExpr="ontologyTerm.ontology.name" label="Ontology" />
+      <fieldconfig fieldExpr="ontologyTerm.identifier" label="Term" />
+      <fieldconfig fieldExpr="ontologyTerm.name" label="Name" />
+      <fieldconfig fieldExpr="ontologyTerm.namespace" label="Namespace" />
+      <fieldconfig fieldExpr="ontologyTerm.description" label="Description" />
+    </fields>
+  </class -->
+
   <class className="org.intermine.model.bio.MSA">
     <headerconfig>
       <titles>
-        <title mainTitles="primaryIdentifier" numberOfMainTitlesToShow="1" />
+         <title mainTitles="primaryIdentifier" numberOfMainTitlesToShow="1" />
       </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="alignment" label="MSA"
             showInResults="false" showInInlineCollection="false" showInSummary="false"
+                     displayer="model/alignmentDisplayer.jsp" />
+      <fieldconfig fieldExpr="HMM" 
+            showInResults="false" showInInlineCollection="false" showInSummary="false" 
                      displayer="model/alignmentDisplayer.jsp" />
     </fields>
   </class>
@@ -369,7 +384,7 @@
 
     <!--reportdisplayer javaClass="org.intermine.bio.web.displayer.FamilyAlignmentDisplayer"
                      jspName="model/nullFormatter.jsp"
-                     replacesmethodNamesFields="msa"
+                     replacemethodNamesFields="msa"
                      placement="summary"
                      types="ProteinFamily"/ -->
 

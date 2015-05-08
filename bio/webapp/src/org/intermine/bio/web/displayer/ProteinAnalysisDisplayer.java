@@ -52,7 +52,7 @@ public class ProteinAnalysisDisplayer extends ReportDisplayer {
 
       Protein proteinObj = (Protein)reportObject.getObject();
       
-      LOG.info("Entering GeneSNPDisplayer.display for "+proteinObj.getPrimaryIdentifier());
+      LOG.info("Entering ProteinAnalysisDisplayer.display for "+proteinObj.getPrimaryIdentifier());
 
       // query the consequences, snps and location
       PathQuery query = getAnalysisTable(proteinObj.getPrimaryIdentifier());

@@ -49,7 +49,7 @@ public class AlignmentDisplayer extends ReportDisplayer {
       MSA msaObj = (MSA)reportObject.getObject();
 
       // check for family cluster id and display it.
-      String[] stringFields = {"primaryIdentifier","alignment"};
+      String[] stringFields = {"primaryIdentifier","alignment","HMM"};
       for( String field : stringFields ) {
         try {
             String value = (String) msaObj.getFieldValue(field);
