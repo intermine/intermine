@@ -43,11 +43,6 @@ public class GenomicRegionSequenceExporter
     private ObjectStore os;
     private OutputStream out;
     
-   
-
-    // Map to hold DNA sequence of a whole chromosome in memory
-    private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
-
     /**
      * Instructor
      *
@@ -88,18 +83,7 @@ public class GenomicRegionSequenceExporter
             chr = os.getObjectByExample(chr,
                         new HashSet<String>(Arrays.asList("primaryIdentifier", "organism")));
 
-            String chrResidueString;
-            if (chromosomeSequenceMap.get(new MultiKey(gr.getChr(), gr
-                    .getOrganism())) == null) {
-                chrResidueString = chr.getSequence().getResidues()
-                        .toString();
-                chromosomeSequenceMap.put(
-                        new MultiKey(gr.getChr(), gr.getOrganism()), chr
-                                .getSequence().getResidues().toString());
-            } else {
-                chrResidueString = chromosomeSequenceMap.get(new MultiKey(
-                        gr.getChr(), gr.getOrganism()));
-            }
+            String chrResidueString = chr.getSequence().getResidues().toString();
 
             int chrLength = chr.getLength();
             int start;

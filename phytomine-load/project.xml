@@ -18,12 +18,89 @@
       <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4613,4614,4759,4865,4850,4851,4907,4908,4909,4910" />
     </source>
 
-    <source name="pac-clusters-nodes" type="phytozome-clusters">
+    <source name="pac-cluster-nodes-4954" type="phytozome-clusters">
       <property name="source.db.name" value="PAC" />
       <property name="dataSourceName" value="pac-clusters" />
       <property name="dataSetTitle" value="Phytozome Clusters" />
       <property name="createrelations" value="false" />
-      <property name="methodIds" value="4954,4955,4956,4957,4958,4959,4960,4961,4962,4963,4964,4965" />
+      <property name="methodIds" value="4954" />
+    </source>
+    <source name="pac-cluster-nodes-4955" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4955" />
+    </source>
+    <source name="pac-cluster-nodes-4956" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4956" />
+    </source>
+    <source name="pac-cluster-nodes-4957" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4957" />
+    </source>
+    <source name="pac-cluster-nodes-4958" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4958" />
+    </source>
+    <source name="pac-cluster-nodes-4959" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4959" />
+    </source>
+    <source name="pac-cluster-nodes-4960" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4960" />
+    </source>
+    <source name="pac-cluster-nodes-4961" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4961" />
+    </source>
+    <source name="pac-cluster-nodes-4962" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4962" />
+    </source>
+    <source name="pac-cluster-nodes-4963" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4963" />
+    </source>
+    <source name="pac-cluster-nodes-4964" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4964" />
+    </source>
+    <source name="pac-cluster-nodes-4965" type="phytozome-clusters">
+      <property name="source.db.name" value="PAC" />
+      <property name="dataSourceName" value="pac-clusters" />
+      <property name="dataSetTitle" value="Phytozome Clusters" />
+      <property name="createrelations" value="false" />
+      <property name="methodIds" value="4965" />
     </source>
 
     <source name="diversity-S.bicolor" type="gatkvcf">
@@ -49,14 +126,7 @@
     </source>
     <source name="diversity-P.trichocarpa-part2" type="gatkvcf">
       <property name="proteomeId" value="210" />
-      <property name="src.data.dir" value="/scratch/phytomine/diversity/Ptrichocarpa/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.trichocarpa" />
-      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
-    </source>
-    <source name="diversity-P.trichocarpa-part3" type="gatkvcf">
-      <property name="proteomeId" value="210" />
-      <property name="src.data.dir" value="/scratch/phytomine/diversity/Ptrichocarpa/" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
@@ -82,7 +152,6 @@
       <property name="dataSourcename" value="diversity-M.esculenta" />
       <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
     </source>
-
     <source name="diversity-S.bicolor-corrected-info" type="gatkvcf">
       <property name="proteomeId" value="255" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor/" />
@@ -117,13 +186,6 @@
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-E.grandis" />
       <property name="dataSetTitle" value="E.grandis Natural Diversity" />
-    </source>
-    <source name="diversity-M.esculenta-corrected-info" type="gatkvcf">
-      <property name="proteomeId" value="147" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Mesculenta/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-M.esculenta" />
-      <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
     </source>
     <source name="diversity-P.trichocarpa-samples" type="vcfsampleinfo">
       <property name="proteomeId" value="210"/>

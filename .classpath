@@ -8,7 +8,6 @@
 	<classpathentry kind="src" path="bio/sources/biopax/main/src"/>
 	<classpathentry kind="src" path="bio/sources/chado-db/main/src"/>
 	<classpathentry kind="src" path="bio/sources/coexpression/main/src"/>
-	<classpathentry kind="src" path="bio/sources/consequence-impact/main/src"/>
 	<classpathentry kind="src" path="bio/sources/cufflinks/main/src"/>
 	<classpathentry kind="src" path="bio/sources/ensembl/main/src"/>
 	<classpathentry kind="src" path="bio/sources/entrez-organism/main/src"/>
