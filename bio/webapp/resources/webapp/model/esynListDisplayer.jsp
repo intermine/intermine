@@ -5,8 +5,6 @@
 
 <!-- esynListDisplayer.jsp -->
 
-<c:if test="${!empty reportObject.object.symbol && !empty reportObject.object.organism.taxonId && !empty reportObject.object.interactions}">
-
 <div id="cwhead">
     <h3 class="goog">esyN Network Diagram</h3>
 </div>
@@ -16,8 +14,5 @@ src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${identifiers}&o
 width="500" height="500"></iframe>
 
     <p>These are physical (yellow lines) and genetic (green lines) interactions from BioGRID. See <a href="http://esyn.org/">esyn</a> for details.
-
-
-</c:if>
 
 <!-- /esynListDisplayer.jsp -->
