@@ -60,6 +60,7 @@ public class TreefamConverter extends BioFileConverter
     protected IdResolver rslv;
     @SuppressWarnings("unchecked")
     private Map<MultiKey, String> resolvedIds = new MultiKeyMap();
+    private Set<MultiKey> homologuePairs = new HashSet<MultiKey>();
 
     /**
      * Constructor
@@ -170,6 +171,10 @@ public class TreefamConverter extends BioFileConverter
             GeneHolder holder1 = idsToGenes.get(gene1id);
             GeneHolder holder2 = idsToGenes.get(gene2id);
 
+            if (homologuePairs.contains(new MultiKey(gene1id, gene2id))) {
+                continue;
+            }
+
             // at least one of the genes has to be from an organism of interest
             if (isValidPair(holder1, holder2)) {
                 processHomologues(holder1, holder2, bootstrap);
@@ -199,8 +204,8 @@ public class TreefamConverter extends BioFileConverter
             type = "paralogue";
         }
         homologue.setAttribute("type", type);
-
         store(homologue);
+        homologuePairs.add(new MultiKey(gene1, gene2));
     }
 
     private String getGene(GeneHolder holder)
