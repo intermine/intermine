@@ -10,7 +10,7 @@
 </div>
 
 <iframe name="esyn" class="seamless" scrolling="no" id="iframe"
-src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${identifiers}&organism=${taxon}&interactionType=any&includeInteractors=true&source=intermine"
+src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${identifiers}&organism=${taxon}&interactionType=any&includeInteractors=false&source=intermine"
 width="500" height="500"></iframe>
 
     <p>These are physical (yellow lines) and genetic (green lines) interactions from BioGRID. See <a href="http://esyn.org/">esyn</a> for details.
