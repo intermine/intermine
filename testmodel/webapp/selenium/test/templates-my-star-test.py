@@ -39,6 +39,7 @@ class TemplatesMyStarTest(Super):
         browser.get(self.base_url + "/templates.do")
 
         # Confirm that we have two visible non favorite templates
+        self.wait_for_elem('#favourite_ManagerLookup')
         self.assert_visible_id("all_templates_template_item_line_Underwater_People")
         self.assert_visible_id("all_templates_template_item_line_CEO_Rivals")
 
