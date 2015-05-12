@@ -171,10 +171,6 @@ public class TreefamConverter extends BioFileConverter
             GeneHolder holder1 = idsToGenes.get(gene1id);
             GeneHolder holder2 = idsToGenes.get(gene2id);
 
-            if (homologuePairs.contains(new MultiKey(gene1id, gene2id))) {
-                continue;
-            }
-
             // at least one of the genes has to be from an organism of interest
             if (isValidPair(holder1, holder2)) {
                 processHomologues(holder1, holder2, bootstrap);
@@ -189,8 +185,11 @@ public class TreefamConverter extends BioFileConverter
         String gene1 = getGene(holder1);
         String gene2 = getGene(holder2);
 
-        // resolver didn't resolve
-        if (gene1 == null || gene2 == null) {
+        // resolver didn't resolve OR a duplicate
+        // AND genes can be paralogues with themselves so don't duplicate
+        if (gene1 == null || gene2 == null
+                || homologuePairs.contains(new MultiKey(gene1, gene2))
+                || gene1.equals(gene2)) {
             return;
         }
 
