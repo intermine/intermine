@@ -411,7 +411,6 @@
                      jspName="model/homologueDisplayer.jsp"
                      replacesFields="homologues"
                      placement="Homology"
-                     parameters="{'dataSets': ['Ensembl Compara data set']}"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAtlasDisplayer"
