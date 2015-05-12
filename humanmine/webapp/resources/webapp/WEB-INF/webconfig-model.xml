@@ -409,7 +409,7 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
                      jspName="model/homologueDisplayer.jsp"
-                     replacesFields="homologues"
+                     replacesFields=""
                      placement="Homology"
                      parameters="{'dataSets': ['Panther data set']}"
                      types="Gene"/>
