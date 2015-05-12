@@ -21,6 +21,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.types.Producer;
 
 /**
  * Manager of public lists used by web service.

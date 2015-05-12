@@ -126,8 +126,8 @@ public class GenomicRegionSearchService extends ListMakerService
     @Override
     protected ListInput getInput() {
         try {
-            return new GenomicRegionSearchListInput(request, bagManager,
-                    getPermission().getProfile(), im);
+            return new GenomicRegionSearchListInput(
+                    request, bagManager, getPermission().getProfile(), im);
         } catch (JSONException e) {
             String msg = e.getMessage();
             if (msg == null) {

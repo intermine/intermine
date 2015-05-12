@@ -27,11 +27,11 @@ import org.intermine.api.idresolution.Job;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -211,21 +211,24 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter
         WebConfig webConfig = InterMineContext.getWebConfig();
         Model m = im.getModel();
         Map<String, Object> objectDetails = new HashMap<String, Object>();
-        String className = DynamicUtil.getSimpleClassName(imo.getClass());
-        ClassDescriptor cd = m.getClassDescriptorByName(className);
-        objectDetails.put("class", cd.getUnqualifiedName());
-        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
-            try {
-                Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
-                if (p.endIsAttribute() && fc.getShowInSummary()) {
-                    objectDetails.put(
-                            p.getNoConstraintsString().replaceAll("^[^.]*\\.", ""),
-                            PathUtil.resolvePath(p, imo));
+        String className = Util.getFriendlyName(imo.getClass());
+        objectDetails.put("class", className);
+        for (String cldName: className.split(",")) {
+            ClassDescriptor cd = m.getClassDescriptorByName(cldName);
+            for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
+                try {
+                    Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
+                    if (p.endIsAttribute() && fc.getShowInSummary()) {
+                        objectDetails.put(
+                                p.getNoConstraintsString().replaceAll("^[^.]*\\.", ""),
+                                PathUtil.resolvePath(p, imo));
+                    }
+                } catch (PathException e) {
+                    LOG.error("Configuration error", e);
                 }
-            } catch (PathException e) {
-                LOG.error("Configuration error", e);
             }
         }
+
         return objectDetails;
     }
 

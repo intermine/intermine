@@ -18,13 +18,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.types.Producer;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathLengthComparator;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.webservice.server.core.Producer;
 
 /**
  * @author Alexis Kalderimis

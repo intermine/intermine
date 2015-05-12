@@ -145,6 +145,27 @@ public final class MainHelper
         }
     }
 
+    /** You can use this method if your query meets the following conditions:
+     *  - No LOOKUP constraint.
+     *  - No bag constraints.
+     *  You must not care about the path to query node mapping.
+     *  @param pathQuery The query to transform.
+     *  @return The query compiled to an object store query.
+     */
+    public static Query makeSimpleQuery(PathQuery pathQuery) {
+        // Potentially we could check the contract here...
+        try {
+            return makeQuery(pathQuery,
+                    new HashMap<String, InterMineBag>(),
+                    new HashMap<String, QuerySelectable>(),
+                    null,
+                    new HashMap<String, BagQueryResult>());
+        } catch (ObjectStoreException e) {
+            // This should only be caused by the use of LOOKUP constraints and BAG constraints.
+            throw new RuntimeException("An impossible error has occurred.", e);
+        }
+    }
+
     /**
      * Converts a PathQuery object into an ObjectStore Query object, and optionally populates a Map
      * from String path in the PathQuery to the object in the Query that represents it. This is the
@@ -1599,8 +1620,7 @@ public final class MainHelper
                 try {
                     helperType = (Class<RangeHelper>) Class.forName(helperName);
                 } catch (ClassNotFoundException e) {
-                    throw new RuntimeException("Cannot find class named in congfig: '" + helperName
-                            + "'");
+                    throw new RuntimeException("Cannot find class named in config: " + helperName);
                 }
                 RangeHelper helper;
                 try {
@@ -1613,8 +1633,8 @@ public final class MainHelper
                             + "'", e);
                 }
                 rangeHelpers.put(targetType, helper);
-                LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName()
-                        + ")");
+                LOG.info("ADDED RANGE HELPER FOR "
+                        + targetType + " (" + helperType.getName() + ")");
             }
         }
 

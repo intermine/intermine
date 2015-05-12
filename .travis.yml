@@ -14,6 +14,7 @@ env:
         - TEST_SUITE=all
         - TEST_SUITE=webtasks
         - TEST_SUITE=checkstyle
+        - TEST_SUITE=checkstyle-bio
 sudo: false # use container based infrastructure
 jdk:
     - openjdk7

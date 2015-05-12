@@ -16,6 +16,7 @@ DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
 LOG=$DIR/build.log
 PROP_FILE=$IMDIR/testmodel.properties.demo
+alias ant="ant -Drelease=demo"
 
 # Inherit SERVER, PORT, PSQL_USER, PSQL_PWD, TOMCAT_USER and TOMCAT_PWD if in env.
 if test -z $SERVER; then
@@ -57,6 +58,7 @@ fi
 
 cd $HOME
 
+echo "------> Checking configuration..."
 if test ! -d $IMDIR; then
     echo Making .intermine configuration directory.
     mkdir $IMDIR
@@ -90,17 +92,22 @@ done
 
 echo "------> Removing current webapp"
 cd $DIR/webapp/main
-ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
+ant -Ddont.minify=true remove-webapp >> $DIR/setup.log
+
+echo "------> Beginning build - logging to $LOG"
+
+echo "------> Processing data sources."
+cd $DIR/dbmodel/extra/books
+make 
 
 cd $DIR/dbmodel
-
-echo "------> Loading demo data set..."
-ant -Drelease=demo loadsadata >> $LOG
+echo "------> Loading demo data set - this should take about 3-4 minutes."
+ant -v clean load-workers-and-books >> $LOG
 
 cd $DIR/webapp/main
 
-echo "------> Building and releasing web-app..."
-ant -Drelease=demo -Ddont.minify=true \
+echo "------> Building and releasing web-application - about 1min left."
+ant -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
     retrieve-objectstore-summary \

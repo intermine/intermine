@@ -19,9 +19,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.types.Producer;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.webservice.server.core.Producer;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 

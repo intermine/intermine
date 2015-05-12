@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.core;
+package org.intermine.api.types;
 
 /*
  * Copyright (C) 2002-2015 FlyMine
@@ -11,16 +11,21 @@ package org.intermine.webservice.server.core;
  */
 
 /**
- * The type of functions that take no input and produce a value.
+ * An interface for defining a thing that can take something and return
+ * something else.
+ *
  * @author Alex Kalderimis
  *
- * @param <T> The type of thing this will produce.
+ * @param <A> The input type.
+ * @param <B> The output type.
  */
-public interface Producer<T>
+public interface Function<A, B>
 {
 
     /**
-     * @return A T of some kind.
+     * Take an A and return a B.
+     * @param a The input.
+     * @return a B of some kind.
      */
-    T produce();
+    B call(A a);
 }

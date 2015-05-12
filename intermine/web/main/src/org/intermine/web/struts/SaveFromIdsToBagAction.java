@@ -26,7 +26,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.lucene.KeywordSearch;
+import org.intermine.api.lucene.Browser;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
@@ -56,6 +56,7 @@ public class SaveFromIdsToBagAction extends InterMineAction
 
         HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
+        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
         // where the request comes from, e.g. /experiment.do?...
         String source = (String) request.getParameter("source");
@@ -73,14 +74,15 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 Map<String, String> facetMap = jsonToJava(jsonRequest);
                 int offset = 0;
                 boolean pagination = false;
-                BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetMap,
+                Browser browser = im.getResource(Browser.class);
+                BrowseResult result = browser.runBrowseSearch(searchTerm, offset, facetMap,
                         new ArrayList<Integer>(), pagination, listSize);
 
                 if (result != null) {
                     LOG.error("processing result! " + result.getNumHits());
                     BrowseHit[] browseHits = result.getHits();
                     LOG.error("browseHits " + browseHits.length);
-                    idSet = KeywordSearch.getObjectIds(browseHits);
+                    idSet = Browser.getObjectIds(browseHits);
                     LOG.error("number of IDs " + idSet.size());
 
                 } else {
@@ -98,7 +100,6 @@ public class SaveFromIdsToBagAction extends InterMineAction
                 bagName = "new_list";
             }
             bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
-            InterMineAPI im = SessionMethods.getInterMineAPI(session);
             InterMineBag bag = profile.createBag(bagName, type, "", im.getClassKeys());
             bag.addIdsToBag(idSet, type);
             profile.saveBag(bag.getName(), bag);

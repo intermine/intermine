@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
+import org.intermine.api.types.Function;
 import org.junit.Test;
 
 public class ListFunctionsTest {

@@ -13,6 +13,7 @@ package org.intermine.webservice.server.output;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -141,16 +142,39 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         if (a == null && b == null) {
             return true;
         }
-        ClassDescriptor aCls = model.getClassDescriptorByName(a);
-        ClassDescriptor bCls = model.getClassDescriptorByName(b);
-        if (aCls == null || bCls == null) {
-            throw new IllegalArgumentException(
-                    "These names are not valid classes: a=" + a + ",b=" + b);
-        }
-        if (aCls.equals(bCls)) {
+        if (a != null && b != null && a.equals(b)) {
             return true;
         }
-        return aDescendsFromB(aCls.getName(), bCls.getName());
+        Set<ClassDescriptor> aClasses = new HashSet<ClassDescriptor>();
+        String[] classNames = a.split(",");
+        for (String className: classNames) {
+            ClassDescriptor aCls = model.getClassDescriptorByName(className);
+            if (aCls == null) {
+                throw new IllegalArgumentException(className + " is not a valid class name");
+            }
+            aClasses.add(aCls);
+        }
+        boolean isSatisfied = true;
+        for (String className: b.split(",")) {
+            ClassDescriptor bCls = model.getClassDescriptorByName(className);
+            if (bCls == null) {
+                throw new IllegalArgumentException(className + " is not a valid class name");
+            }
+            isSatisfied = isSatisfied && (satisfies(aClasses, bCls));
+        }
+        return isSatisfied;
+    }
+
+    private boolean satisfies(Set<ClassDescriptor> classes, ClassDescriptor target) {
+        for (ClassDescriptor aCls: classes) {
+            if (aCls.equals(target)) {
+                return true;
+            }
+            if (aDescendsFromB(aCls.getName(), target.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
