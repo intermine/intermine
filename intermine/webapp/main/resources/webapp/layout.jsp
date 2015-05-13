@@ -120,6 +120,9 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     var notification = new FailureNotification({message: $SERVICE.root + " is incorrect"});
 
     $SERVICE.fetchVersion().then(reportVersion, notification.render);
+    if (typeof imtables !== 'undefined') {
+        console.debug('Using imtables: ' + (imtables.version || 'UNKNOWN'));
+    }
   
     // Load list widgets.  
     (function() {
@@ -165,11 +168,11 @@ $MODEL_TRANSLATION_TABLE = {
 };
 
 <c:if test="${! empty WEB_PROPERTIES['constraint.default.value']}">
-if (typeof intermine != 'undefined') {
-    intermine.scope('intermine.conbuilder.messages', {
-        "ValuePlaceholder": "${WEB_PROPERTIES['constraint.default.value']}",
-        "ExtraPlaceholder": "${WEB_PROPERTIES['constraint.default.extra-value']}"
-    }, true);
+if (typeof imtables != 'undefined' && imtables.setMessages) {
+    imtables.setMessages({
+        "conbuilder.ValuePlaceholder": "${WEB_PROPERTIES['constraint.default.value']}",
+        "conbuilder.ExtraPlaceholder": "${WEB_PROPERTIES['constraint.default.extra-value']}"
+    });
 }
 </c:if>
 

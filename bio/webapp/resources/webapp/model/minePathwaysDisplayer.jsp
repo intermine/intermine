@@ -27,9 +27,7 @@
   </div>
 </div>
 
-
-
-<script>
+<script type="text/javascript">
 
 (function(){
 
@@ -40,36 +38,17 @@
   <c:set var="section" value="pathways-displayer"/>
 
   <c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">
-    
       paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
   </c:forEach>
-
-
 
   var imload = function(){
     intermine.load({
       'js': {
-          'Q': {
-            'path': paths.js.Q
-          },
-          'jQuery': {
-            'path': paths.js.jQuery,
-            'test': function(){
-              if (+($.fn.jquery.split(".")[0]) < 2) {
-                throw "Version error.";
-              }
-            }
-          },
-          'Backbone': {
-            'path': paths.js.Backbone,
-            'depends': ['_', 'jQuery']
-          },
-          '_': {
-            'path': paths.js._
-          },
+          // Q, jQuery@2.x, Backbone and Underscore are part of
+          // the default set of dependencies guaranteed to us.
+          // If that ever changes, the following might fail.
           'PathwaysDisplayer': {
-            'path': paths.js.PathwaysDisplayer,
-            'depends': ['Q', 'Backbone']
+            'path': paths.js.PathwaysDisplayer
           }
       },
       'css': {
@@ -107,6 +86,7 @@
     imload();
 
   } catch (error) {
+
     $('#pathwaysappcontainer').html(
       $('<div/>', {'text': 'This app requires jQuery 2.x.x', 'style': 'padding-left: 14px; font-weight: bold'})
     );

@@ -18,6 +18,7 @@
 <tiles:importAttribute name="consumerContainer" ignore="true"/>
 <tiles:importAttribute name="consumerBtnClass" ignore="true"/>
 <tiles:importAttribute name="successCallBack" ignore="true"/>
+<tiles:importAttribute name="tableIsOpen" ignore="true"/>
 
 <c:if test="${empty query}">
     <c:set var="query" value="${QUERY}"/>
@@ -26,7 +27,10 @@
 <c:if test="${empty pageSize}">
     <c:set var="pageSize" value="25"/>
 </c:if>
-  
+
+<c:if test="${empty tableIsOpen}">
+    <c:set var="tableIsOpen" value="true"/>
+</c:if>
 
 <c:set var="initValue" value="0"/>
 
@@ -60,30 +64,49 @@
     </c:otherwise>
 </c:choose>
 
-<div id="${tableContainerId}" class="${cssClass}"></div>
+<div id="${tableContainerId}" class="${cssClass}">
+    <c:if test="${!tableIsOpen}">
+        <button class="open-table btn btn-default ${cssClass}">
+            <fmt:message key="results.show.details"/>
+        </button>
+    </c:if>
+</div>
 
 <script type="text/javascript">
 jQuery(function() {
     var customGalaxy = "${GALAXY_URL}";
     var url = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
-    if (customGalaxy) {
+    if (customGalaxy !== "") {
         imtables.configure('Download.Galaxy.Current', customGalaxy);
     }
-    var consumers, consumerBtnClass;
+    var consumers = null, consumerBtnClass = null;
     <c:if test="${!empty consumerContainer}">
     consumers = document.querySelector('${consumerContainer}');
     </c:if>
     <c:if test="${!empty consumerBtnClass}">
     consumerBtnClass = '${consumerBtnClass}';
     </c:if>
-    imtables.loadDash(
-        '#${tableContainerId}',
-        {size: ${pageSize}, consumerContainer: consumers, consumerBtnClass: consumerBtnClass},
-        {service: {root: $SERVICE.root, token: $SERVICE.token}, query: ${queryJson}}
-    ).then(
-        withTable,
-        FailureNotification.notify
-    );
+
+    <c:if test="${tableIsOpen}">
+    openTable();
+    </c:if>
+    <c:if test="${!tableIsOpen}">
+    jQuery('#${tableContainerId} > .open-table').click(function () {
+        jQuery(this).remove();
+        openTable();
+    });
+    </c:if>
+
+    function openTable () {
+        imtables.loadDash(
+            '#${tableContainerId}',
+            {size: ${pageSize}, consumerContainer: consumers, consumerBtnClass: consumerBtnClass},
+            {service: $SERVICE, query: ${queryJson}}
+        ).then(
+            withTable,
+            FailureNotification.notify
+        );
+    }
 
     function withTable (table) {
         table.history.on('changed:current', updateTrail);

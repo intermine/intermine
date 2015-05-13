@@ -78,7 +78,7 @@
                 },
                 disableTemplate
             );
-            $('#${elemId} h3').click(function(e) {
+            $('#${elemId} h3').on('click', function(e) {
                 loadTable('#${tableContainerId}', query, 10);
                 if(typeof(Storage) !=="undefined"){
                   localStorage.${elemId} = "show";
@@ -112,6 +112,7 @@
             }
 
             function loadTable(elem, query, pageSize) {
+                console.debug("Loading table", query);
                 var customGalaxy = "${GALAXY_URL}";
                 if (customGalaxy) {
                     imtables.configure('Download.Galaxy.Current', customGalaxy);
