@@ -17,7 +17,7 @@
 
 <div class="results collection-table nowrap nomargin">
   <tiles:insert name="resultsTable.tile">
-    <tiles:put name="tableIsOpen" value="false"/>
+    <tiles:put name="tableIsOpen" value="true"/>
     <tiles:put name="query" beanName="collectionQuery"/>
   </tiles:insert>
 </div>

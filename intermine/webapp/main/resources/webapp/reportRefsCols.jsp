@@ -56,7 +56,7 @@
         <c:choose>
          <c:when test="${collection.size > 0}">
           <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}">
-          <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner" style="overflow-x:hidden;">
+          <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner" style="overflow: visible;">
           <c:set var="innerDivName" value="coll_${fn:replace(aspectPlacement, ':', '_')}${fieldName}" /> 
           <c:set var="inlineResultsTable" value="${collection.table}"/>
           <c:set var="useTableWidget" value="${WEB_PROPERTIES['inline.collections.in.tables']=='true'}" />
