@@ -150,6 +150,7 @@
     </fields>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
+      <displayer src="esynListDisplayer.tile" showOnLeft="true" />
    </bagdisplayers>
   </class>
 
