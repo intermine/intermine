@@ -18,7 +18,7 @@
 src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${symbol}&organism=${taxon}&interactionType=any&includeInteractors=true&source=intermine"
 width="500" height="500"></iframe>
 
-    <p>These are physical (yellow lines) and genetic (green lines) interactions from BioGRID. See <a href="http://esyn.org/">esyn</a> for details.
+    <p>Physical (Orange) and Genetic (Green) interactions. Visit <a href="http://esyn.org/">esyN</a> for more details or click the Edit in esyN button if you wish to extend or modify the network.</p>
 
 
 </c:if>
