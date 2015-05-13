@@ -514,7 +514,7 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
-    <source name="reactome" type="biopax">
+    <source name="reactome" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/current"/>
       <property name="biopax.organisms" value="7227"/>
       <property name="biopax.datasourcename" value="Reactome"/>
@@ -522,7 +522,7 @@
       <property name="biopax.curated" value="false"/>
     </source>
 
-    <source name="reactome-curated" type="biopax">
+    <source name="reactome-curated" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
       <property name="biopax.organisms" value="7227"/>
       <property name="biopax.datasourcename" value="Reactome"/>
