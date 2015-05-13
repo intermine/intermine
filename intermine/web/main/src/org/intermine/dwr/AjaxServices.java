@@ -898,6 +898,8 @@ public class AjaxServices
                 String defaultName = properties.getProperty("lists.input.example");
                 if (bagName.equalsIgnoreCase(defaultName)) {
                     return "New list name is required";
+                } else if ("".equals(bagName)) {
+                    return "Please enter a name for your new list";
                 } else if (!NameUtil.isValidName(bagName)) {
                     return NameUtil.INVALID_NAME_MSG;
                 }
