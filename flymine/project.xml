@@ -516,18 +516,18 @@
     </source>
     <source name="reactome" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/current"/>
-      <property name="biopax.organisms" value="7227"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="false"/>
+      <property name="reactome.organisms" value="7227"/>
+      <property name="reactome.datasourcename" value="Reactome"/>
+      <property name="reactome.datasetname" value="Reactome data set"/>
+      <property name="reactome.curated" value="false"/>
     </source>
 
     <source name="reactome-curated" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
-      <property name="biopax.organisms" value="7227"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="FlyReactome data set"/>
-      <property name="biopax.curated" value="true"/>
+      <property name="reactome.organisms" value="7227"/>
+      <property name="reactome.datasourcename" value="Reactome"/>
+      <property name="reactome.datasetname" value="FlyReactome data set"/>
+      <property name="reactome.curated" value="true"/>
     </source>
 
     <source name="bdgp-insitu" type="bdgp-insitu">
