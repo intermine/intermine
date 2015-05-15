@@ -1,6 +1,6 @@
 (function($, Backbone) {
     'use strict';
-	
+    
     if (typeof this.console === 'undefined') {
         this.console = {log: function() {}};
     }
@@ -15,7 +15,7 @@
     return;
   });
 
-	var Notification = Backbone.View.extend( {
+    var Notification = Backbone.View.extend( {
         tagName: 'div',
         className: 'im-event-notification topBar messages',
         title: 'Success:',
@@ -46,11 +46,11 @@
             return this;
         },
         appendContent: function() {
-        	 this.$el.append(this.options.message);
+             this.$el.append(this.options.message);
         }
     } );
-	
-	var FailureNotification = Notification.extend( {
+    
+    var FailureNotification = Notification.extend( {
         className: "im-event-notification topBar errors",
         title: 'Oops!'
     } );
@@ -85,7 +85,7 @@
         new FailureNotification({message: error, autoRemove: true}).render();
     };
 
-	this.Notification = Notification;
-	this.FailureNotification = FailureNotification;
-	
+    this.Notification = Notification;
+    this.FailureNotification = FailureNotification;
+    
 }).call(window, jQuery, Backbone);
