@@ -389,12 +389,6 @@
                      placement="Genomics"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
-                     jspName="model/jbrowseDisplayer.jsp"
-                     replacesFields=""
-                     placement="Genomics"
-                     types="SequenceFeature"/>
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
                      replacesFields="interactions"
