@@ -32,6 +32,50 @@ import org.intermine.web.logic.config.WebConfig;
  */
 public class KeywordSearchResult
 {
+    /**
+     * A container for things related to fields.
+     *
+     * This class enables us to massively clean up JSPs.
+     * @author Alex Kalderimis
+     *
+     */
+    public final class ObjectField
+    {
+
+        private String field;
+        private Object value;
+        private FieldConfig config;
+
+        private ObjectField(String field, FieldConfig config, Object value) {
+            this.field = field;
+            this.value = value;
+            this.config = config;
+        }
+
+        /**
+         * @return The field.
+         */
+        public String getField() {
+            return field;
+        }
+
+        /** @return the value of the field **/
+        public Object getValue() {
+            return value;
+        }
+
+        /** @return the config that describes the field **/
+        public FieldConfig getConfig() {
+            return config;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("ObjectField(field = %s, value = %s)", field, value);
+        }
+
+    }
+
     private static final Logger LOG = Logger.getLogger(KeywordSearchResult.class);
 
     final WebConfig webconfig;
@@ -86,10 +130,8 @@ public class KeywordSearchResult
                     }
 
                     if (fieldConfig.getDisplayer() == null) {
-                        Object value = getValueForField(object, fieldConfig.getFieldExpr());
-                        if (value != null) {
-                            fieldValues.put(path, value);
-                        }
+                        fieldValues.put(path,
+                                getValueForField(object, fieldConfig.getFieldExpr()));
                     }
                 }
             }
@@ -207,6 +249,29 @@ public class KeywordSearchResult
     }
 
     /**
+     * @return the fields of this result.
+     */
+    public final Collection<ObjectField> getKeyFieldValues() {
+        return getFieldValues(getKeyFields());
+    }
+
+    /** @return the non-key fields of this result **/
+    public final Collection<ObjectField> getAdditionalFieldValues() {
+        return getFieldValues(getAdditionalFields());
+    }
+
+    private Collection<ObjectField> getFieldValues(Collection<String> fields) {
+        List<ObjectField> ret = new ArrayList<ObjectField>();
+        for (String kf: fields) {
+            FieldConfig fc = getFieldConfigs().get(kf);
+            Object value = getFieldValues().get(kf);
+            ObjectField field = new ObjectField(kf, fc, value);
+            ret.add(field);
+        }
+        return ret;
+    }
+
+    /**
      * additional display paths
      * @return additionalFields
      */
@@ -235,4 +300,9 @@ public class KeywordSearchResult
         return ret;
     }
 
+    @Override
+    public String toString() {
+        return String.format("KeywordSearchResult(id = %s, score = %f, fields = %s)",
+                id, score, fieldValues);
+    }
 }

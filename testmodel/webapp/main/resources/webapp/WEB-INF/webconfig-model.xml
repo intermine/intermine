@@ -29,7 +29,8 @@
       <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
       <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true" showInQB="false"/>
       <fieldconfig fieldExpr="fullTime" showInSummary="false" showInResults="true" showInInlineCollection="true"/>
-      <fieldconfig fieldExpr="address" showInQB="false"/>
+      <!-- Test hiding a field from the query builder -->
+      <fieldconfig fieldExpr="address" showInSummary="false" showInQB="false"/> 
       <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
       <fieldconfig fieldExpr="seniority" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <!-- the doNotTruncate flag, when set to true, stops the object details
