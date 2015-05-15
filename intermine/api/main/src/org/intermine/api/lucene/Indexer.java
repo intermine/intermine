@@ -91,7 +91,7 @@ public final class Indexer
 
         ObjectPipe<Document> indexingQueue = new ObjectPipe<Document>();
 
-        LOG.debug("Starting fetcher thread...");
+        LOG.debug("Starting fetcher thread with config: " + config);
         InterMineObjectFetcher fetchThread = new InterMineObjectFetcher(
                 os, classKeys, indexingQueue, config);
         fetchThread.start(); // Start fetching in the background.

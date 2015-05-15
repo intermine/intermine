@@ -46,20 +46,35 @@ public class Configuration
 
     private Map<ClassDescriptor, String[]> specialReferences
         = new HashMap<ClassDescriptor, String[]>();
-    private HashSet<Class<? extends InterMineObject>> ignoredClasses
+    private Set<Class<? extends InterMineObject>> ignoredClasses
         = new HashSet<Class<? extends InterMineObject>>();
-    private HashMap<ClassDescriptor, Float> classBoost
+    private Map<ClassDescriptor, Float> classBoost
         = new HashMap<ClassDescriptor, Float>();
-    private HashMap<Class<? extends InterMineObject>, Set<String>> ignoredFields
+    private Map<Class<? extends InterMineObject>, Set<String>> ignoredFields
         = new HashMap<Class<? extends InterMineObject>, Set<String>>();
     private Vector<KeywordSearchFacetData> facets
         = new Vector<KeywordSearchFacetData>();
-    private HashMap<String, String> attributePrefixes = new HashMap<String, String>();
+    private Map<String, String> attributePrefixes = new HashMap<String, String>();
     private boolean debugOutput = true;
     private String tempDirectory;
     private Model model;
 
     private boolean shouldDelete;
+
+    @Override
+    public String toString() {
+        return String.format(
+            "%s.%s(specialReferences = %s, classBoost = %s, ignoredClasses = %s, "
+            + "ignoredFields = %s, facets = %s)",
+            "org.intermine.api.lucene",
+            "Configuration",
+            specialReferences,
+            classBoost,
+            ignoredClasses,
+            ignoredFields,
+            facets
+        );
+    }
 
     /**
      * Construct a new set of configuration.
@@ -79,17 +94,17 @@ public class Configuration
     }
 
     /** @return the ignored classes **/
-    public HashSet<Class<? extends InterMineObject>> getIgnoredClasses() {
+    public Set<Class<? extends InterMineObject>> getIgnoredClasses() {
         return ignoredClasses;
     }
 
     /** @return the class boosts */
-    public HashMap<ClassDescriptor, Float> getClassBoost() {
+    public Map<ClassDescriptor, Float> getClassBoost() {
         return classBoost;
     }
 
     /** @return the ignored fields **/
-    public HashMap<Class<? extends InterMineObject>, Set<String>> getIgnoredFields() {
+    public Map<Class<? extends InterMineObject>, Set<String>> getIgnoredFields() {
         return ignoredFields;
     }
 
@@ -99,7 +114,7 @@ public class Configuration
     }
 
     /** @return the attribute prefixes **/
-    public HashMap<String, String> getAttributePrefixes() {
+    public Map<String, String> getAttributePrefixes() {
         return attributePrefixes;
     }
 

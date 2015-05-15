@@ -553,13 +553,21 @@ public class InterMineObjectFetcher extends Thread
         }
     }
 
+    private Map<Class<? extends FastPathObject>, Set<String>> ignoredFieldsCache =
+            new HashMap<Class<? extends FastPathObject>, Set<String>>();
+
     private Set<String> getIgnorableFields(FastPathObject obj) {
+        Class<? extends FastPathObject> objCls = obj.getClass();
+        if (ignoredFieldsCache.containsKey(objCls)) {
+            return ignoredFieldsCache.get(objCls);
+        }
         Set<String> ret = new HashSet<String>();
-        for (Class<?> clazz: Util.decomposeClass(obj.getClass())) {
+        for (Class<?> clazz: Util.decomposeClass(objCls)) {
             if (ignoredFields.containsKey(clazz)) {
                 ret.addAll(ignoredFields.get(clazz));
             }
         }
+        ignoredFieldsCache.put(objCls, ret);
         return ret;
     }
 
@@ -570,12 +578,15 @@ public class InterMineObjectFetcher extends Thread
                 getClassAttributes(model, obj.getClass());
 
         Set<String> fieldsToIgnore = getIgnorableFields(obj);
+        if (fieldsToIgnore == null) {
+            throw new IllegalStateException("fieldsToIgnore cannot be null!");
+        }
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
                     // some fields are configured to ignore
                     final String attrName = att.getName();
-                    if (fieldsToIgnore != null && fieldsToIgnore.contains(attrName)) {
+                    if (fieldsToIgnore.contains(attrName)) {
                         continue;
                     }
 
