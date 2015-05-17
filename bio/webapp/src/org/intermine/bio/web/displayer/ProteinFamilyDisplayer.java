@@ -76,7 +76,7 @@ public class ProteinFamilyDisplayer extends ReportDisplayer {
         "ProteinFamily.memberCount","ProteinFamily.methodId","ProteinFamily.methodName",
         "ProteinFamily.member.membershipDetail","ProteinFamily.msa.id");
     query.addOrderBy("ProteinFamily.clusterId", OrderDirection.ASC);
-    query.addConstraint(Constraints.eq("ProteinFamily.member.protein.name",b.getPrimaryIdentifier()));
+    query.addConstraint(Constraints.eq("ProteinFamily.member.protein.secondaryIdentifier",b.getSecondaryIdentifier()));
     query.setOuterJoinStatus("ProteinFamily.msa",OuterJoinStatus.OUTER);
     return query;
   }
