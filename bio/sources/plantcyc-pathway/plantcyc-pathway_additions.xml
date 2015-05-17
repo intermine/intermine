@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- same as kegg-pathway -->
+<classes>
+<class name="Pathway" is-interface="true" >
+  <attribute name="identifier" type="java.lang.String"/>
+  <attribute name="name" type="java.lang.String"/>
+  <attribute name="description" type="java.lang.String"/>
+  <collection name="genes" referenced-type="Gene" reverse-reference="pathways"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
+</class>
+<class name="Gene" is-interface="true">
+  <collection name="pathways" referenced-type="Pathway" reverse-reference="genes"/>
+</class>
+</classes>

@@ -32,8 +32,7 @@
            </c:forTokens>
         </ul>
 
-        In addition, we have also included proteomes from collaborators and the
-        model organism community:
+        As well as the proteomes of other JGI and model organism genomes
         <ul>
 
            <c:forTokens items="${others}" delims="," var="other">

@@ -22,8 +22,10 @@ import java.sql.Statement;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -90,7 +92,52 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
   private Map<Integer,ProxyReference> organismProxy = new HashMap<Integer,ProxyReference>();
   private Map<String,ProxyReference> crossRefProxy = new HashMap<String,ProxyReference>();
   private Map<String,ProxyReference> dataSourceProxy = new HashMap<String,ProxyReference>();
+  private Set<Integer> alreadyGot = new HashSet<Integer>();
 
+  
+  private void preFillExisting() {
+    
+    if (methodIds == null ) {
+      return;
+    }
+    for(String method : methodIds.split(",")) {
+      Query q = new Query();
+      QueryClass qC = new QueryClass(ProteinFamily.class);
+      q.addFrom(qC);
+      QueryField qFId = new QueryField(qC,"clusterId");
+      q.addToSelect(qFId);
+
+      ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+      QueryField qMethodRef = new QueryField(qC, "methodId");
+      Integer methodId;
+      try {
+        methodId = Integer.parseInt(method);
+      } catch (NumberFormatException e) {
+        throw new BuildException("method is not a simple integer");
+
+      }
+      QueryValue qMethodValue = new QueryValue(methodId);
+      cs.addConstraint(new SimpleConstraint(qMethodRef,ConstraintOp.EQUALS,qMethodValue));
+      q.setConstraint(cs);
+
+      LOG.info("Prefilling Known families. Query is "+q);
+      try {
+        Results res = getIntegrationWriter().getObjectStore().execute(q,1000,false,false,false);
+        Iterator<Object> resIter = res.iterator();
+        LOG.info("Iterating...");
+        while (resIter.hasNext()) {
+          @SuppressWarnings("unchecked")
+          ResultsRow<Object> rr = (ResultsRow<Object>) resIter.next();
+          Integer clusterId = (Integer)rr.get(0);
+          alreadyGot.add(clusterId);
+        }
+      } catch (Exception e) {
+        throw new BuildException("Problem in prefilling clusterid ProxyReferences: " + e.getMessage());
+      }
+    }
+    LOG.info("Retrieved "+alreadyGot.size()+" ClusterIds.");
+  }
   /**
    * 
    *
@@ -105,12 +152,16 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
     preFill(protProxy,Protein.class);
     preFillOrganism();
     preFillMethodMap();
+    preFillExisting();
     
     ResultSet res = getProteinFamilies();
 
     int ctr = 0;
     try {
       while (res.next()) {
+
+        Integer clusterId = res.getInt("clusterId");
+        if (clusterId != null && !alreadyGot.contains(clusterId) ) {
         // uncompress and process msa and hmm
         String msaString = expandCompressedBlob(res.getBlob("zMSA"));
         String hmmString = expandCompressedBlob(res.getBlob("zHMM"));
@@ -124,11 +175,14 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
           throw new BuildException("Trouble creating protein family: "+e1.getMessage());
         }
         String clusterName = res.getString("clusterName");
-        if (clusterName != null && !clusterName.trim().isEmpty() ) proFamily.setClusterName(clusterName.trim());
-        Integer clusterId = res.getInt("clusterId");
+        if (clusterName != null && !clusterName.trim().isEmpty() )
+                                proFamily.setClusterName(clusterName.trim());
+        //Integer clusterId = res.getInt("clusterId");
         if (clusterId != null ) proFamily.setClusterId(clusterId);
         Integer methodId = res.getInt("methodId");
         if (methodId != null ) proFamily.setMethodId(methodId);
+        if (methodId != null && methodNames.containsKey(methodId) )
+                             proFamily.setMethodName(methodNames.get(methodId));
         String consensusSequence = res.getString("sequence");
 
 
@@ -210,6 +264,7 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
           throw new BuildException("Problem storing protein family." + e.getMessage());
         }
       }
+      }
     } catch (SQLException e) {
       throw new BuildException("There was an SQL exception: "+e.getMessage());
     }
@@ -258,6 +313,7 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
       family.addGene(g);
       ProteinFamilyMember pfm = getDirectDataLoader().createObject(ProteinFamilyMember.class);
       pfm.setMembershipDetail(res.getString("name"));
+      LOG.info("Adding member "+pacID+" with proteome id "+proteomeId);
       pfm.proxyOrganism(getOrganism(proteomeId));
       pfm.proxyProtein(protProxy.get(pacID));
  

@@ -71,7 +71,7 @@ public class GeneDeflineConverter extends BioFileConverter
       while (tsvIter.hasNext()) {
         String[] fields = (String[]) tsvIter.next();
         String geneId = fields[0];
-        String organismId = fields[1];
+        String proteomeId = fields[1];
         String defLine = null;
         String description = null;
         if (fields.length >= 3) {
@@ -80,22 +80,22 @@ public class GeneDeflineConverter extends BioFileConverter
             description = fields[3];
           }
         }
-        if (!organismMap.containsKey(organismId)) {
+        if (!organismMap.containsKey(proteomeId)) {
           Item o = createItem("Organism");
-          o.setAttribute("taxonId", organismId);
+          o.setAttribute("proteomeId", proteomeId);
           try {
             store(o);
           } catch (ObjectStoreException e) {
             throw new BuildException("Trouble storing organism: "+e.getMessage());
           }
-          organismMap.put(organismId, o.getIdentifier());
+          organismMap.put(proteomeId, o.getIdentifier());
         }
         if (StringUtils.isEmpty(geneId)) {
           break;
         }
         Item i = createItem("Gene");
         i.setAttribute("primaryIdentifier", geneId);
-        i.setReference("organism", organismMap.get(organismId));
+        i.setReference("organism", organismMap.get(proteomeId));
         if(defLine != null && !defLine.isEmpty()) {
           i.setAttribute("briefDescription",defLine);
         }

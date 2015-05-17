@@ -5,7 +5,11 @@
 <!-- add any <class> elements here -->
   <class name="Protein" is-interface="true">
     <attribute name="genbankIdentifier" type="java.lang.String"/>
+    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins" />
     <collection name="proteinAnalysisFeatures" referenced-type="ProteinAnalysisFeature" reverse-reference="protein" />
+  </class>
+  <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+    <collection name="proteins" referenced-type="Protein" reverse-reference="proteinDomains"/>
   </class>
   <class name="ProteinAnalysisFeature" extends="BioEntity" is-interface="true">
     <reference name="crossReference" referenced-type="CrossReference" />

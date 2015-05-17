@@ -53,7 +53,7 @@
       <table path="transcripts.primaryIdentifier" showLinksToObjects="true" showInHeader="true" />
     </inlinelist>
     <fields>
-      <fieldconfig fieldExpr="primaryIdentifier" label="Primary Identifier" />
+      <fieldconfig fieldExpr="primaryIdentifier" label="Primary Identifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="organism.shortName" label="Organism Name"/>
       <fieldconfig fieldExpr="symbol"/>
@@ -94,6 +94,16 @@
       <fieldconfig fieldExpr="name" label="Experiment Name" />
       <fieldconfig fieldExpr="experimentGroup" label="Experiment Group" />
       <fieldconfig fieldExpr="description" label="Description" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Pathway">
+    <inlinelist>
+      <table path="dataSets.name" showLinksToObjects="false" />
+    </inlinelist>
+    <fields>
+      <fieldconfig fieldExpr="identifier" label="Identitiier" />
+      <fieldconfig fieldExpr="name" label="Name" />
     </fields>
   </class>
 
@@ -175,7 +185,7 @@
     <headerconfig>
       <titles>
         <title mainTitles="title" />
-      </titles>
+    </titles>
     </headerconfig>
     <inlinelist>
       <table path="authors.name" showLinksToObjects="true" />
@@ -277,13 +287,12 @@
   </class>
 
   <class className="org.intermine.model.bio.ProteinFamilyMember">
-
     <headerconfig>
       <titles>
         <title mainTitles="proteinFamily.clusterName|proteinFamily.clusterId" numberOfMainTitlesToShow="1" />
       </titles>
     </headerconfig>
-    <fields>
+     <fields>
       <fieldconfig fieldExpr="protein.primaryIdentifier" label="Protein Name" />
       <fieldconfig fieldExpr="protein.organism.shortName" label="Organism Name" />
       <fieldconfig fieldExpr="proteinFamily.clusterId" label="Cluster ID" />
@@ -293,16 +302,6 @@
       <fieldconfig fieldExpr="proteinFamily.methodName" label="Method Name"/>
     </fields>
   </class>
-
-  <!-- class className="org.intermine.model.bio.OntologyAnnotation">
-    <fields>
-      <fieldconfig fieldExpr="ontologyTerm.ontology.name" label="Ontology" />
-      <fieldconfig fieldExpr="ontologyTerm.identifier" label="Term" />
-      <fieldconfig fieldExpr="ontologyTerm.name" label="Name" />
-      <fieldconfig fieldExpr="ontologyTerm.namespace" label="Namespace" />
-      <fieldconfig fieldExpr="ontologyTerm.description" label="Description" />
-    </fields>
-  </class -->
 
   <class className="org.intermine.model.bio.MSA">
     <headerconfig>
@@ -327,6 +326,7 @@
   <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
 
   <reportdisplayers>
+
 
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
@@ -376,6 +376,7 @@
                      placement="summary"
                      types="Gene,Protein"/>
 
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneHomologDisplayer"
                      jspName="model/geneHomologDisplayer.jsp"
                      replacesFields=""
@@ -384,9 +385,9 @@
 
     <!--reportdisplayer javaClass="org.intermine.bio.web.displayer.FamilyAlignmentDisplayer"
                      jspName="model/nullFormatter.jsp"
-                     replacemethodNamesFields="msa"
+                     replacesFields="msa"
                      placement="summary"
-                     types="ProteinFamily"/ -->
+                     types="ProteinFamily"/!-->
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.AlignmentDisplayer"
                      jspName="model/alignmentDisplayer.jsp"
@@ -437,7 +438,7 @@
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
-                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLengthCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="go_enrichment_for_protein"
                                  title="Gene Ontology Enrichment"
@@ -460,24 +461,8 @@
                                        genes.goAnnotation.ontologyTerm.parents.identifier,genes.goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
 
-      <graphdisplayer id="chromosome_distribution_for_gene"
-                      title="Chromosome Distribution"
-                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
-                      graphType="ColumnChart"
-                      rangeLabel="Count"
-                      domainLabel="Chromosome"
-                      filterLabel="Organism"
-                      filters="organism.name=[list]"
-                      startClass="Gene"
-                      typeClass="Gene"
-                      categoryPath="chromosome.primaryIdentifier"
-                      seriesLabels="Actual,Expected"
-                      seriesPath="ActualExpectedCriteria"
-                      constraints="organism.name=[Organism]"
-                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
-                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
-      <!-- enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
                                  label="Protein Domain"
@@ -487,7 +472,7 @@
                                  enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="Gene"
-                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+                                 views="primaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
@@ -505,18 +490,47 @@
                                        proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
+      <bagtabledisplayer id="orthologs" title="Orthologs" pathStrings="Gene.homolog.gene2.organism"
+                         description="Counts of genes in list with orthologs."
+                         displayFields="name"
+                         exportField="primaryIdentifier"
+                         typeClass="Gene"
+                         columnTitle="Genes"
+                         views="primaryIdentifier, symbol, organism.shortName,
+                                homolog.gene2.primaryIdentifier,
+                                homolog.gene2.symbol,
+                                homolog.gene2.organism.shortName,
+                                homolog.relationship" />
+
       <enrichmentwidgetdisplayer id="pathway_enrichment"
-                                 title="Pathway Enrichment"
-                                 description="Pathways enriched for genes in this list - data from KEGG and Reactome"
-                                 label="Pathways"
-                                 filterLabel="DataSet"
-                                 filters="All,KEGG pathways data set,Reactome data set"
-                                 startClass="Gene"
-                                 startClassDisplay="primaryIdentifier"
-                                 enrich="pathways.name"
-                                 enrichIdentifier="pathways.identifier"
-                                 constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
-                                 typeClass="Gene"
-                                 views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/ -->
+					 title="Pathway Enrichment"
+					 description="Pathways enriched for genes in this list - data from KEGG and PlantCyc"
+					 label="Pathways"
+					 filterLabel="DataSet"
+					 filters="All,KEGG,PlantCyc"
+					 startClass="Gene"
+					 startClassDisplay="primaryIdentifier"
+					 enrich="pathways.name"
+					 enrichIdentifier="pathways.identifier"
+					 constraints="pathways.dataSets.name=[DataSet],organism.proteomeId=[list], primaryIdentifier != null"
+					 typeClass="Gene"
+		 views="secondaryIdentifier,symbol,organism.name,pathways.identifier,pathways.name,pathways.dataSets.name"/>
+
+      <graphdisplayer id="chromosome_distribution_for_gene"
+                      title="Chromosome Distribution"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="ColumnChart"
+                      rangeLabel="Count"
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath="ActualExpectedCriteria"
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
+                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 </widgets>
 </webconfig>

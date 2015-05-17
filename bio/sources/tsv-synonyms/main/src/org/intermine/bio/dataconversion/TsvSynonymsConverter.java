@@ -72,8 +72,8 @@ public class TsvSynonymsConverter extends BioFileConverter
         int lineNumber = 0;
         
         // format: 
-        // <proteome id> (ignored)
-        // <taxon id>
+        // <proteome id> 
+        // <taxon id> (ignored)
         // <gene name>
         // <which> (symbol or synonym>
         // <synonym> or <symbol>

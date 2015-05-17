@@ -11,6 +11,7 @@
 <style>
   .seq-label { font-style: italic; font-weight: bold; text-align: center}
   .seq-piece { font-family: monospace; font-weight: normal; text-align: left; word-wrap:break-word;}
+  .hmm-piece { font-family: monospace; font-weight: normal; text-align: left; word-wrap:break-word;}
 </style>
 
 <h1 class="seq-label"> ${primaryIdentifier} </h1>
@@ -21,6 +22,12 @@
       <td class="seq-piece" >
       <div style="background:rgb(235,235,235); line-height: 1em">
                  ${fn:replace(fn:replace(alignment," ","&nbsp"),"\\n","<br>")} </pre>
+      </td>
+      </tr>
+      <tr>
+      <td class="hmm-piece" >
+      <div style="background:rgb(235,235,235); line-height: 1em">
+                 ${fn:replace(fn:replace(HMM," ","&nbsp"),"\\n","<br>")} </pre>
       </td>
       </tr>
     </tbody>

@@ -134,22 +134,24 @@ public class HeatMapController extends TilesAction
         fpkmCufflinksJSON = getJSONString(model, bag, executor);
         
         // set the attributes
-        request.setAttribute("cufflinksScoreJSON",
-            fpkmCufflinksJSON);
-        request.setAttribute("minFpkmCufflinksScore",
-            df.format(fpkmCufflinksScoreMin));
-        request.setAttribute("maxFpkmCufflinksScore",
-            df.format(fpkmCufflinksScoreMax));
-        request.setAttribute("maxFpkmCufflinksScoreCeiling",
-            df.format(Math.ceil(fpkmCufflinksScoreMax)));
-        // Gene or MRNA
-        request.setAttribute("ExpressionType", expressionType);
-        // number of genes or mrnas
-        request.setAttribute("FeatureCount", bag.getSize());
-        // organism count. We'll only display if == 1
-        request.setAttribute("OrganismCount", organisms.size());
-        // we need this when setting controllers.
-        request.setAttribute("ExperimentCount",experiments.size());
+        if (fpkmCufflinksScoreMin != null && fpkmCufflinksScoreMax != null ) {
+          request.setAttribute("cufflinksScoreJSON",
+              fpkmCufflinksJSON);
+          request.setAttribute("minFpkmCufflinksScore",
+              df.format(fpkmCufflinksScoreMin));
+          request.setAttribute("maxFpkmCufflinksScore",
+              df.format(fpkmCufflinksScoreMax));
+          request.setAttribute("maxFpkmCufflinksScoreCeiling",
+              df.format(Math.ceil(fpkmCufflinksScoreMax)));
+          // Gene or MRNA
+          request.setAttribute("ExpressionType", expressionType);
+          // number of genes or mrnas
+          request.setAttribute("FeatureCount", bag.getSize());
+          // organism count. We'll only display if == 1
+          request.setAttribute("OrganismCount", organisms.size());
+          // we need this when setting controllers.
+          request.setAttribute("ExperimentCount",experiments.size());
+        }
     }
 
 
@@ -230,16 +232,24 @@ public class HeatMapController extends TilesAction
           for (String experiment: smps) {
             if (cufflinksScoreMap.containsKey(primaryId) &&
                 cufflinksScoreMap.get(primaryId).containsKey(experiment)) {
-              data[i][j] = cufflinksScoreMap.get(primaryId).get(experiment);
-              if (data[i][j] > 0) {
-                data[i][j] = Math.log(data[i][j])/Math.log(2.);
-              } else {
-                data[i][j] = -10.;
+              try {
+                data[i][j] = cufflinksScoreMap.get(primaryId).get(experiment);
+                if (data[i][j] > 0) {
+                  data[i][j] = Math.log(data[i][j])/Math.log(2.);
+                } else {
+                  data[i][j] = -10.;
+                }
+
+                Float trial = new Float(data[i][j]);
+                fpkmCufflinksScoreMax =
+                    (fpkmCufflinksScoreMax == null || fpkmCufflinksScoreMax < trial)?
+                        trial:fpkmCufflinksScoreMax;
+                fpkmCufflinksScoreMin =
+                    (fpkmCufflinksScoreMin == null || fpkmCufflinksScoreMin > trial)?
+                        trial:fpkmCufflinksScoreMin;
+              } catch (Exception e) {
+                return "{}";
               }
-              fpkmCufflinksScoreMax = (fpkmCufflinksScoreMax == null || fpkmCufflinksScoreMax < data[i][j])?
-                      new Float(data[i][j]):fpkmCufflinksScoreMax;
-              fpkmCufflinksScoreMin = (fpkmCufflinksScoreMin == null ||fpkmCufflinksScoreMin > data[i][j])?
-                      new Float(data[i][j]):fpkmCufflinksScoreMin;
             } else {
               data[i][j] = 0;
             }

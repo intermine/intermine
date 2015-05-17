@@ -4,6 +4,10 @@
 <classes>
 <!-- add any <class> elements here -->
 
+<class name="Gene" is-interface="true">
+  <collection name="homolog" referenced-type="Homolog" />
+</class>
+
 <class name="Homolog" is-interface="true">
   <attribute name="relationship" type="java.lang.String" />
   <attribute name="type" type="java.lang.String" />

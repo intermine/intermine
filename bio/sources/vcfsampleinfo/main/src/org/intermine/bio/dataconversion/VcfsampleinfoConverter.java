@@ -23,7 +23,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 
 /**
@@ -113,6 +113,12 @@ public class VcfsampleinfoConverter extends BioFileConverter
     }
     void setIfNotNull(Item s,String field,String value) {
       if (value != null && value.trim().length() > 0) {
+        // remove begining and ending quotes if needed
+        if (value.startsWith("\"") && value.endsWith("\"") ) {
+          value = value.substring(1,value.length()-1).trim();
+          // should we allow a string of spaces - "  " - as a legitimate value?
+          if ( value.length() == 0 ) return;
+        }
         s.setAttribute(field,value);
       }
     }

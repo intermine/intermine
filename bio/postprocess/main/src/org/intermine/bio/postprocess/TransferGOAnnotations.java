@@ -10,6 +10,7 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,89 +62,110 @@ import org.intermine.util.DynamicUtil;
  * @author J Carlson 
  */
 public class TransferGOAnnotations {
-    private static final Logger LOG = Logger.getLogger(TransferGOAnnotations.class);
-    protected ObjectStore os;
-    protected ObjectStoreWriter osw = null;
-    private DataSet dataSet;
-    private DataSource dataSource;
-    private GOEvidenceCode gEC = null;
-    private HashMap<Integer,HashMap<String,HashSet<String>>> knownGO;
-    private HashMap<Integer,HashMap<String,HashSet<String>>> knownOntology;
-    private HashMap<String,Integer> goTerms;
+  private static final Logger LOG = Logger.getLogger(TransferGOAnnotations.class);
+  protected ObjectStore os;
+  protected ObjectStoreWriter osw = null;
+  private DataSet dataSet;
+  private DataSource dataSource;
+  private GOEvidenceCode gEC = null;
+  private HashMap<Integer,HashMap<String,HashSet<String>>> knownGO;
+  private HashMap<Integer,HashMap<String,HashSet<String>>> knownOntology;
+  private HashMap<String,Integer> goTerms;
 
-    /**
-     * Create a new UpdateOrthologes object from an ObjectStoreWriter
-     * @param osw writer on genomic ObjectStore
-     */
-    public  TransferGOAnnotations(ObjectStoreWriter osw) {    
-      this.osw = osw;
-      this.os = osw.getObjectStore();
-      dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-      dataSource.setName("UniProtKB");
-      try {
-        dataSource = (DataSource) os.getObjectByExample(dataSource,
-            Collections.singleton("name"));
-      } catch (ObjectStoreException e) {
-        throw new RuntimeException(
-            "unable to fetch PhytoMine DataSource object", e);
-      }
-      try {
-        gEC = findOrCreateCode("ISS");
-        knownGO = new HashMap<Integer,HashMap<String,HashSet<String>>>();
-        fillGOHash();
-        knownOntology = new HashMap<Integer,HashMap<String,HashSet<String>>>();
-        fillOntologyHash();
-        goTerms = new HashMap<String,Integer>();
-      } catch (ObjectStoreException e) {
-        throw new RuntimeException(
-            "unable to store GO code/retrieve existing GO terms.", e);
-      }
+  /**
+   * Create a new UpdateOrthologes object from an ObjectStoreWriter
+   * @param osw writer on genomic ObjectStore
+   */
+  public  TransferGOAnnotations(ObjectStoreWriter osw) {    
+    this.osw = osw;
+    this.os = osw.getObjectStore();
+    dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+    dataSource.setName("UniProtKB");
+    try {
+      dataSource = (DataSource) os.getObjectByExample(dataSource,
+          Collections.singleton("name"));
+    } catch (ObjectStoreException e) {
+      throw new RuntimeException(
+          "unable to fetch PhytoMine DataSource object", e);
     }
-    
-    private GOEvidenceCode findOrCreateCode(String code) throws ObjectStoreException {
-        
-      Query q = new Query();
-        q.setDistinct(true);
+    try {
+      gEC = findOrCreateCode("ISS");
+      knownGO = new HashMap<Integer,HashMap<String,HashSet<String>>>();
+      fillGOHash();
+      knownOntology = new HashMap<Integer,HashMap<String,HashSet<String>>>();
+      fillOntologyHash();
+      goTerms = new HashMap<String,Integer>();
+    } catch (ObjectStoreException e) {
+      throw new RuntimeException(
+          "unable to store GO code/retrieve existing GO terms.", e);
+    }
+  }
 
-        QueryClass qcGEC = new QueryClass(GOEvidenceCode.class);
-        q.addFrom(qcGEC);
-        q.addToSelect(qcGEC);
-        
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-        Iterator<?> res = (Iterator<?>)os.execute(q, 5000, true, true, true).iterator();
-        while(res.hasNext()) {
-          ResultsRow<?> rr = (ResultsRow<?>) res.next();
-          GOEvidenceCode gec = (GOEvidenceCode)rr.get(0);
-          if (gec.getCode().equals(code)) {
-            return gec;
-          }
-        }
-        GOEvidenceCode gec = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
-        gec.setCode(code);
-        osw.store(gec);
+  private GOEvidenceCode findOrCreateCode(String code) throws ObjectStoreException {
+
+    Query q = new Query();
+    q.setDistinct(true);
+
+    QueryClass qcGEC = new QueryClass(GOEvidenceCode.class);
+    q.addFrom(qcGEC);
+    q.addToSelect(qcGEC);
+
+    ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+    Iterator<?> res = (Iterator<?>)os.execute(q, 5000, true, true, true).iterator();
+    while(res.hasNext()) {
+      ResultsRow<?> rr = (ResultsRow<?>) res.next();
+      GOEvidenceCode gec = (GOEvidenceCode)rr.get(0);
+      if (gec.getCode().equals(code)) {
         return gec;
+      }
     }
+    GOEvidenceCode gec = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
+    gec.setCode(code);
+    osw.store(gec);
+    return gec;
+  }
 
-    /**
-     * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
-     * @throws ObjectStoreException if anything goes wrong
-     */
-    public void execute() throws ObjectStoreException {
+  /**
+   * Copy all GO annotations from the Protein objects to the corresponding Gene(s)
+   * @throws ObjectStoreException if anything goes wrong
+   */
+  public void execute() throws ObjectStoreException {
 
-      long startTime = System.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
+
+
+    Gene lastGene = null;
+    Protein lastProtein = null;
+    GOTerm lastGOTerm = null;
+    HashSet<GOAnnotation> geneAnnotationSet = new HashSet<GOAnnotation>();
+    HashSet<OntologyAnnotation> proteinAnnotationSet = new HashSet<OntologyAnnotation>();
+
+    int count = 0;
+
+    ArrayList<Integer> proteomes = new ArrayList<Integer>();;
+
+    Query q = new Query();
+    QueryClass qOrg = new QueryClass(Organism.class);
+    q.addFrom(qOrg);
+    QueryField qF = new QueryField(qOrg,"proteomeId");
+    q.addToSelect(qF);
+    ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+    Iterator<?>  res = os.execute(q, 100, true, true, true).iterator();
+    while(res.hasNext()) {
+      ResultsRow<?> rr = (ResultsRow<?>) res.next();
+      proteomes.add((Integer)rr.get(0));
+    }
+    LOG.info("Going to query "+proteomes.size()+" different proteoms.");
+
+    for(Integer proteomeId : proteomes ) {
 
       osw.beginTransaction();
 
 
-      Gene lastGene = null;
-      Protein lastProtein = null;
-      GOTerm lastGOTerm = null;
-      HashSet<GOAnnotation> geneAnnotationSet = new HashSet<GOAnnotation>();
-      HashSet<OntologyAnnotation> proteinAnnotationSet = new HashSet<OntologyAnnotation>();
+      LOG.info("Making query for "+proteomeId);
 
-      int count = 0;
 
-      Iterator<?> resIter = findProteinDomains();
+      Iterator<?> resIter = findProteinDomains(proteomeId);
       while (resIter.hasNext()  ) {
         ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
         Gene thisGene = (Gene) rr.get(0);
@@ -175,7 +197,7 @@ public class TransferGOAnnotations {
 
 
           prepareHash(knownGO,thisGene.getOrganism().getId(),thisGene.getPrimaryIdentifier());
-        
+
           // store the evidence if not known already and add to the gene's annotation list
           if (!knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).contains(thisGOTerm.getIdentifier()) ){
 
@@ -199,7 +221,7 @@ public class TransferGOAnnotations {
         }
 
         // now process the protein. These are OntologyAnnotations
-        
+
         if ((lastProtein == null) || (lastGOTerm == null) ||
             (lastProtein.getId() != thisProtein.getId()) ||
             (lastGOTerm.getId() != thisGOTerm.getId()) ) {
@@ -249,173 +271,187 @@ public class TransferGOAnnotations {
         osw.store(lastProtein);
       }
 
-      LOG.info("Created " + count + " new GOAnnotation objects for Genes/Proteins"
-          + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
       osw.commitTransaction();
-
     }
 
-    private void fillGOHash() throws ObjectStoreException {
-      
-      Query q = new Query();
+    LOG.info("Created " + count + " new GOAnnotation objects for Genes/Proteins"
+        + " - took " + (System.currentTimeMillis() - startTime) + " ms.");
 
-      q.setDistinct(true);
+  }
 
-      QueryClass qcGene = new QueryClass(Gene.class);
-      q.addFrom(qcGene);
-      q.addToSelect(qcGene);
-      q.addToOrderBy(qcGene);
+  private void fillGOHash() throws ObjectStoreException {
 
-      QueryClass qcGOAnnotation = new QueryClass(GOAnnotation.class);
-      q.addFrom(qcGOAnnotation);
+    Query q = new Query();
 
-      QueryClass qcGoTerm = new QueryClass(GOTerm.class);
-      q.addFrom(qcGoTerm);
-      q.addToSelect(qcGoTerm);
+    q.setDistinct(true);
 
-      ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+    QueryClass qcGene = new QueryClass(Gene.class);
+    q.addFrom(qcGene);
+    q.addToSelect(qcGene);
+    q.addToOrderBy(qcGene);
 
-      QueryObjectReference goAnnotRef = new QueryObjectReference(qcGOAnnotation, "subject");
-      cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcGene));
+    QueryClass qcGOAnnotation = new QueryClass(GOAnnotation.class);
+    q.addFrom(qcGOAnnotation);
 
-      QueryObjectReference goTermRef = new QueryObjectReference(qcGOAnnotation, "ontologyTerm");
-      cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcGoTerm));
+    QueryClass qcGoTerm = new QueryClass(GOTerm.class);
+    q.addFrom(qcGoTerm);
+    q.addToSelect(qcGoTerm);
 
-      q.setConstraint(cs);
+    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-      ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-      Iterator<?>  res = os.execute(q, 500000, true, true, true).iterator();
-      while(res.hasNext()) {
-        ResultsRow<?> rr = (ResultsRow<?>) res.next();
-        Gene thisGene = (Gene) rr.get(0);
-        GOTerm thisTerm = (GOTerm) rr.get(1);
-        if (thisGene.getOrganism() != null ) {
-          LOG.debug("There is a known annotation for "+thisGene.getPrimaryIdentifier() + 
-              " organism "+thisGene.getOrganism() + " to " + thisTerm.getIdentifier());
-          prepareHash(knownGO,thisGene.getOrganism().getId(),thisGene.getPrimaryIdentifier());
-          knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).add(thisTerm.getIdentifier());
-        }
+    QueryObjectReference goAnnotRef = new QueryObjectReference(qcGOAnnotation, "subject");
+    cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcGene));
+
+    QueryObjectReference goTermRef = new QueryObjectReference(qcGOAnnotation, "ontologyTerm");
+    cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcGoTerm));
+
+    q.setConstraint(cs);
+
+    ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+    Iterator<?>  res = os.execute(q, 500000, true, true, true).iterator();
+    while(res.hasNext()) {
+      ResultsRow<?> rr = (ResultsRow<?>) res.next();
+      Gene thisGene = (Gene) rr.get(0);
+      GOTerm thisTerm = (GOTerm) rr.get(1);
+      if (thisGene.getOrganism() != null ) {
+        LOG.debug("There is a known annotation for "+thisGene.getPrimaryIdentifier() + 
+            " organism "+thisGene.getOrganism() + " to " + thisTerm.getIdentifier());
+        prepareHash(knownGO,thisGene.getOrganism().getId(),thisGene.getPrimaryIdentifier());
+        knownGO.get(thisGene.getOrganism().getId()).get(thisGene.getPrimaryIdentifier()).add(thisTerm.getIdentifier());
       }
-      return;
-      
     }
-    
-   
-    private void fillOntologyHash() throws ObjectStoreException {
+    return;
 
-      Query q = new Query();
+  }
 
-      q.setDistinct(true);
 
-      QueryClass qcBio = new QueryClass(Protein.class);
-      q.addFrom(qcBio);
-      q.addToSelect(qcBio);
-      q.addToOrderBy(qcBio);
+  private void fillOntologyHash() throws ObjectStoreException {
 
-      QueryClass qcOAnnotation = new QueryClass(OntologyAnnotation.class);
-      q.addFrom(qcOAnnotation);
+    Query q = new Query();
 
-      QueryClass qcOTerm = new QueryClass(OntologyTerm.class);
-      q.addFrom(qcOTerm);
-      q.addToSelect(qcOTerm);
+    q.setDistinct(true);
 
-      ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+    QueryClass qcBio = new QueryClass(Protein.class);
+    q.addFrom(qcBio);
+    q.addToSelect(qcBio);
+    q.addToOrderBy(qcBio);
 
-      QueryObjectReference goAnnotRef = new QueryObjectReference(qcOAnnotation, "subject");
-      cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcBio));
+    QueryClass qcOAnnotation = new QueryClass(OntologyAnnotation.class);
+    q.addFrom(qcOAnnotation);
 
-      QueryObjectReference goTermRef = new QueryObjectReference(qcOAnnotation, "ontologyTerm");
-      cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcOTerm));
+    QueryClass qcOTerm = new QueryClass(OntologyTerm.class);
+    q.addFrom(qcOTerm);
+    q.addToSelect(qcOTerm);
 
-      q.setConstraint(cs);
+    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-      ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-      Iterator<?>  res = os.execute(q, 5000, true, true, true).iterator();
-      while(res.hasNext()) {
-        ResultsRow<?> rr = (ResultsRow<?>) res.next();
-        Protein thisBio = (Protein) rr.get(0);
-        OntologyTerm thisTerm = (OntologyTerm) rr.get(1);
-        if (thisBio.getOrganism() != null ) {
-          LOG.debug("There is a known annotation for "+thisBio.getPrimaryIdentifier() + 
-              " organism "+thisBio.getOrganism() + " to " + thisTerm.getIdentifier());
-          prepareHash(knownGO,thisBio.getOrganism().getId(),thisBio.getPrimaryIdentifier());
-          knownOntology.get(thisBio.getOrganism().getId()).get(thisBio.getPrimaryIdentifier()).add(thisTerm.getIdentifier());
-        }
+    QueryObjectReference goAnnotRef = new QueryObjectReference(qcOAnnotation, "subject");
+    cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcBio));
+
+    QueryObjectReference goTermRef = new QueryObjectReference(qcOAnnotation, "ontologyTerm");
+    cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcOTerm));
+
+    q.setConstraint(cs);
+
+    ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+    Iterator<?>  res = os.execute(q, 5000, true, true, true).iterator();
+    while(res.hasNext()) {
+      ResultsRow<?> rr = (ResultsRow<?>) res.next();
+      Protein thisBio = (Protein) rr.get(0);
+      OntologyTerm thisTerm = (OntologyTerm) rr.get(1);
+      if (thisBio.getOrganism() != null ) {
+        LOG.debug("There is a known annotation for "+thisBio.getPrimaryIdentifier() + 
+            " organism "+thisBio.getOrganism() + " to " + thisTerm.getIdentifier());
+        prepareHash(knownOntology,thisBio.getOrganism().getId(),thisBio.getPrimaryIdentifier());
+        knownOntology.get(thisBio.getOrganism().getId()).get(thisBio.getPrimaryIdentifier()).add(thisTerm.getIdentifier());
       }
-      return;
     }
-    /**
-     * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene
-     *  and GOTerm.
-     *
-     */
-    private Iterator<?> findProteinDomains()
-        throws ObjectStoreException {
-        Query q = new Query();
+    return;
+  }
+  /**
+   * Query Gene->Protein->Annotation->GOTerm and return an iterator over the Gene
+   *  and GOTerm.
+   *
+   */
+  private Iterator<?> findProteinDomains(Integer proteomeId)
+      throws ObjectStoreException {
+    Query q = new Query();
 
-        q.setDistinct(true);
+    q.setDistinct(true);
 
-        QueryClass qcGene = new QueryClass(Gene.class);
-        q.addFrom(qcGene);
-        q.addToSelect(qcGene);
-        q.addToOrderBy(qcGene);
-        
-        QueryClass qcProtein = new QueryClass(Protein.class);
-        q.addFrom(qcProtein);
-        q.addToSelect(qcProtein);
-        q.addToOrderBy(qcProtein);
-        
-        QueryClass qcPAF = new QueryClass(ProteinAnalysisFeature.class);
-        q.addFrom(qcPAF);
+    QueryClass qcGene = new QueryClass(Gene.class);
+    q.addFrom(qcGene);
+    q.addToSelect(qcGene);
+    q.addToOrderBy(qcGene);
 
-        QueryClass qcCrossReference= new QueryClass(CrossReference.class);
-        q.addFrom(qcCrossReference);
+    QueryClass qcProtein = new QueryClass(Protein.class);
+    q.addFrom(qcProtein);
+    q.addToSelect(qcProtein);
+    q.addToOrderBy(qcProtein);
 
-        QueryClass qcProteinDomain = new QueryClass(ProteinDomain.class);
-        q.addFrom(qcProteinDomain);
-        q.addToSelect(qcProteinDomain);
-            
-        QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
-        q.addFrom(qcAnnotation);
-        
-        QueryClass qcGoTerm = new QueryClass(GOTerm.class);
-        q.addFrom(qcGoTerm);
-        q.addToSelect(qcGoTerm);
-        q.addToOrderBy(qcGoTerm);
+    QueryClass qcPAF = new QueryClass(ProteinAnalysisFeature.class);
+    q.addFrom(qcPAF);
 
-        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+    QueryClass qcCrossReference= new QueryClass(CrossReference.class);
+    q.addFrom(qcCrossReference);
 
-        QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
-        cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
+    QueryClass qcProteinDomain = new QueryClass(ProteinDomain.class);
+    q.addFrom(qcProteinDomain);
+    q.addToSelect(qcProteinDomain);
 
-        QueryObjectReference protAnalysisRef = new QueryObjectReference(qcPAF, "protein");
-        cs.addConstraint(new ContainsConstraint(protAnalysisRef, ConstraintOp.CONTAINS, qcProtein));
+    QueryClass qcAnnotation = new QueryClass(GOAnnotation.class);
+    q.addFrom(qcAnnotation);
 
-        QueryObjectReference crossRefRef = new QueryObjectReference(qcPAF, "crossReference");
-        cs.addConstraint(new ContainsConstraint(crossRefRef, ConstraintOp.CONTAINS, qcCrossReference));
+    QueryClass qcGoTerm = new QueryClass(GOTerm.class);
+    q.addFrom(qcGoTerm);
+    q.addToSelect(qcGoTerm);
+    q.addToOrderBy(qcGoTerm);
 
-        QueryObjectReference proteinDomainRef = new QueryObjectReference(qcCrossReference, "subject");
-        cs.addConstraint(new ContainsConstraint(proteinDomainRef, ConstraintOp.CONTAINS, qcProteinDomain));
+    ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        QueryCollectionReference goAnnotRef = new QueryCollectionReference(qcProteinDomain, "goAnnotation");
-        cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcAnnotation));
+    QueryCollectionReference geneProtRef = new QueryCollectionReference(qcProtein, "genes");
+    cs.addConstraint(new ContainsConstraint(geneProtRef, ConstraintOp.CONTAINS, qcGene));
 
-        QueryObjectReference goTermRef = new QueryObjectReference(qcAnnotation, "ontologyTerm");
-        cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcGoTerm));
+    QueryObjectReference protAnalysisRef = new QueryObjectReference(qcPAF, "protein");
+    cs.addConstraint(new ContainsConstraint(protAnalysisRef, ConstraintOp.CONTAINS, qcProtein));
 
-        q.setConstraint(cs);
+    QueryObjectReference crossRefRef = new QueryObjectReference(qcPAF, "crossReference");
+    cs.addConstraint(new ContainsConstraint(crossRefRef, ConstraintOp.CONTAINS, qcCrossReference));
 
-        ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-        Results res = os.execute(q, 5000, true, true, true);
-        return res.iterator();
+    QueryObjectReference proteinDomainRef = new QueryObjectReference(qcCrossReference, "subject");
+    cs.addConstraint(new ContainsConstraint(proteinDomainRef, ConstraintOp.CONTAINS, qcProteinDomain));
+
+    QueryCollectionReference goAnnotRef = new QueryCollectionReference(qcProteinDomain, "goAnnotation");
+    cs.addConstraint(new ContainsConstraint(goAnnotRef, ConstraintOp.CONTAINS, qcAnnotation));
+
+    QueryObjectReference goTermRef = new QueryObjectReference(qcAnnotation, "ontologyTerm");
+    cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcGoTerm));
+
+    if (proteomeId != null ) {
+      QueryClass qcOrganism = new QueryClass(Organism.class);
+      QueryField qcProt = new QueryField(qcOrganism,"proteomeId");
+      QueryValue qcProtV = new QueryValue(proteomeId);
+      QueryObjectReference qcGeneOrgRef = new QueryObjectReference(qcGene,"organism");
+      q.addFrom(qcOrganism);
+      cs.addConstraint(new ContainsConstraint(qcGeneOrgRef,ConstraintOp.CONTAINS,qcOrganism));
+      cs.addConstraint(new SimpleConstraint(qcProt,ConstraintOp.EQUALS,qcProtV));
     }
-    private void prepareHash(HashMap<Integer,HashMap<String,HashSet<String>>> hash, Integer orgId,String featureName) {
-      if( ! hash.containsKey(orgId)) {
-        hash.put(orgId,new HashMap<String,HashSet<String>>());
-      }
-      if ( ! hash.get(orgId).containsKey(featureName)) {
-        hash.get(orgId).put(featureName,new HashSet<String>());
-      }
-      return;
+
+
+    LOG.info("About to query: "+q);
+    q.setConstraint(cs);
+
+    ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
+    Results res = os.execute(q, 5000, true, true, true);
+    return res.iterator();
+  }
+  private void prepareHash(HashMap<Integer,HashMap<String,HashSet<String>>> hash, Integer orgId,String featureName) {
+    if( ! hash.containsKey(orgId)) {
+      hash.put(orgId,new HashMap<String,HashSet<String>>());
     }
+    if ( ! hash.get(orgId).containsKey(featureName)) {
+      hash.get(orgId).put(featureName,new HashSet<String>());
+    }
+    return;
+  }
 }
