@@ -219,7 +219,7 @@
       </c:when>
       <c:when test="${! empty bag.description}">
       <div id="bagDescriptionDiv">
-          <b>Description:</b> ${bag.description}
+          <b>Description:</b> <c:out value="${bag.description}" />
       </div>
       </c:when>
 </c:choose>
