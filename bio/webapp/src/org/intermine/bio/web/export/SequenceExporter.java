@@ -249,15 +249,16 @@ public class SequenceExporter implements Exporter
         int start = feature.getChromosomeLocation().getStart();
         int end = feature.getChromosomeLocation().getEnd();
         String org = feature.getOrganism().getShortName();
+        String strand = feature.getChromosomeLocation().getStrand();
 
         String chrResidueString;
         if (chromosomeSequenceMap.get(new MultiKey(chrName, org)) == null) {
             chrResidueString = chr.getSequence().getResidues()
                     .toString();
             chromosomeSequenceMap.put(
-                    new MultiKey(chrName, org), chr.getSequence().getResidues().toString());
+                    new MultiKey(chrName, strand, org), chr.getSequence().getResidues().toString());
         } else {
-            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, org));
+            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, strand, org));
         }
 
         if (extension > 0) {
