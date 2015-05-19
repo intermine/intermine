@@ -8,6 +8,37 @@
  *
  */
 
+InterMine 1.5.1
+
+#978 - template with lookup failing if selecting the organism
+#950 - Escape list description
+#943 - results table no longer supports removing a filter
+#935 - Query results - popups don't work after paging
+#800 - Angle bracket issue in column summary dialog
+#799 - Allow editing logic expression
+#796 - Support one/none of operator
+#795 - Support option lists in 'add filter' dialog
+#794 - Allow subtype constraints in results table dialogs
+#779 - Export correct strand on FASTA output with extension
+#778 - Manage Columns needs to allow addition of multiple columns 
+#753 - Query results - onhover the cell embiggens
+#744 - expand/collapse-all sub-tables does not work in 1.6.x
+#679 - Tomcat reports a memory leak on stopping a webapp
+#641 - Results table - Boolean column not filterable if it contains NULLs
+#628 - Results tables - column summary disappears on second click
+#521 - results tables default code option
+#436 - Query results - add link to query builder
+#420 - Save XML button gives "Bad URL" in Safari
+#374 - Result table download modifications
+#311 - Filter dialogue - list of fields overlaps cancel button
+#200 - Safari bug - mouseovers on results tables not working correctly
+#167 - Need a 'Creating list..' warning when creating large lists from results tables.
+#141 - Column headers for download
+
+InterMine 1.5
+
+#854 - Google is shutting down OpenID 
+
 InterMine 1.4.2
 
 #938 - Add HumanMine to list of mines in global properties.
