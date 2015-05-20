@@ -297,12 +297,15 @@ public final class DataLoaderHelper
                     String keyName = propName.substring(posOfDot + 1);
                     ClassDescriptor cld = model.getClassDescriptorByName(cldName);
                     if (cld == null) {
-                        throw new RuntimeException("Failed to find class " + cldName + " in model"
-                                + " specified in key: " + propName + " for source: " + source);
-                    }
-                    PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
-                    if (!keySet.contains(pk)) {
-                        keySet.add(pk);
+                        // this is only a warning because some source keys can be used with
+                        // different model additions.
+                        LOG.warn("Failed to find class " + cldName + " in model specified in key: "
+                                + propName + " for source: " + source.getName());
+                    } else {
+                        PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
+                        if (!keySet.contains(pk)) {
+                            keySet.add(pk);
+                        }
                     }
                 }
             }
