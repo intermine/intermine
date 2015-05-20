@@ -89,7 +89,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String TEMPLATE_PARAMS_EXPL
         = "Edit the template parameter values to get different results";
 
-    private static final String MULTI_VALUE_FMT = "Constraints.%s(\"%s\", %s);";
+    private static final String MULTI_VALUE_FMT = "Constraints.%s(\"%s\", %s)";
 
     private static final String STR_FMT = "s";
     private static final String GET_ITERATOR = "Iterator<List<Object>> rows "
@@ -148,6 +148,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             put(ConstraintOp.GREATER_THAN_EQUALS, "greaterThanEqualTo");
             put(ConstraintOp.IN, "in");
             put(ConstraintOp.NOT_IN, "notIn");
+            put(ConstraintOp.CONTAINS, "contains");
+            put(ConstraintOp.DOES_NOT_CONTAIN, "doesNotContain");
         }
     };
 
