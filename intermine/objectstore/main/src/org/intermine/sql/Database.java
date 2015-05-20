@@ -168,6 +168,8 @@ public class Database implements Shutdownable
             retval = datasource.getConnection();
         } catch (PSQLException e) {
             throw new RuntimeException("can't open datasource for " + this, e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to open database connection: " + this, e);
         }
         /*
         Exception e = new Exception();
