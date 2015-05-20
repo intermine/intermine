@@ -574,7 +574,7 @@
 
    <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
-      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 4932"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
