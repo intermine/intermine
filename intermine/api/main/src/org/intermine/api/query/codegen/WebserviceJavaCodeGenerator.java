@@ -89,7 +89,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String TEMPLATE_PARAMS_EXPL
         = "Edit the template parameter values to get different results";
 
-    private static final String MULTI_VALUE_FMT = "Constraints.%s(\"%s\", %s)";
+    private static final String MULTI_VALUE_FMT = "Constraints.%s(\"%s\", %s);";
 
     private static final String STR_FMT = "s";
     private static final String GET_ITERATOR = "Iterator<List<Object>> rows "
