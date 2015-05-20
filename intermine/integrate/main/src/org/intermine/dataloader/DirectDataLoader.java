@@ -150,9 +150,10 @@ public class DirectDataLoader extends DataLoader
                     }
                 }
             }
+            LOG.info("Found " + keyClassRefs.size() + " keys that contain references: "
+                    + keyClassRefs);
         }
 
-        LOG.info("Found " + keyClassRefs.size() + " keys that contain references: " + keyClassRefs);
         return keyClassRefs;
     }
 
