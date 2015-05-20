@@ -150,6 +150,7 @@
     </fields>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
+      <displayer src="esynListDisplayer.tile" showOnLeft="true" />
    </bagdisplayers>
   </class>
 
@@ -210,7 +211,7 @@
       <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
-  
+
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -695,6 +696,12 @@
                      placement="summary"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
+                     jspName="model/esynDisplayer.jsp"
+                     replacesFields=""
+                     placement="Interactions"
+                     types="Gene"/>
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinStructureATMDisplayer"
                      jspName="model/proteinStructureATMDisplayer.jsp"
                      replacesFields="atm"
@@ -789,7 +796,7 @@
                       constraints="mRNAExpressionResults.dataSet.name=fly-Fish data set"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name,
                              mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
-                             
+
 <!--       <graphdisplayer id="mouse_human_orthologue_pair"
                       title="Mouse-human orthologue pair"
                       description="dots would be where there is a mouse-human orthologue pair "
@@ -803,7 +810,7 @@
                       seriesValues=""
                       seriesLabels=""
                       constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
-                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>        -->                      
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>        -->
 
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
