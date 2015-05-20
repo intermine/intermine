@@ -20,6 +20,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.oltu.oauth2.client.OAuthClient;
@@ -43,10 +44,14 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.DuplicateMappingException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.UserPreferences;
+import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,13 +97,12 @@ public class Callback extends LoginHandler
             OAuthAuthzResponse oar = getAuthResponse(mapping, request);
             checkOauthState(mapping, request, oar);
 
-            // Step one - get token
-            String accessToken = getAccessToken(redirectUri, oar, provider);
-            // Step two - exchange token for identity
-            DelegatedIdentity identity = getDelegatedIdentity(providerName, accessToken);
-
-            // Step three - huzzah! Inform user of who they are.
-            ActionMessages messages = loginUser(request, identity);
+            ActionMessages messages = null;
+            if ("GOOGLE".equals(providerName)) {
+                messages = googleProviderFlow(request, providerName, redirectUri, provider, oar);
+            } else {
+                messages = standardProviderFlow(request, providerName, redirectUri, provider, oar);
+            }
             saveMessages(request, messages);
             return mapping.findForward("mymine");
         } catch (ForseenProblem e) {
@@ -114,6 +118,59 @@ public class Callback extends LoginHandler
             saveErrors(request, errors);
             return mapping.findForward("login");
         }
+    }
+
+    /**
+     * Google's OpenID2.0 -> OpenIDConnect (ie. Open Auth 2.0) migration makes this
+     * special branch necessary.
+     */
+    private ActionMessages googleProviderFlow(HttpServletRequest request,
+            String providerName, String redirectUri, OAuthProvider provider,
+            OAuthAuthzResponse oar)
+        throws ForseenProblem, OAuthSystemException, OAuthProblemException, JSONException {
+        // Special flow just for Google, because Google is special (not in a good way).
+        OAuthAccessTokenResponse resp = getTokenResponse(redirectUri, oar, provider);
+        LOG.debug("GOOGLE RESPONSE: " + resp.getBody());
+
+        MigrationMapping migrationMapping = null;
+        Base64 decoder = new Base64();
+        String accessToken = resp.getAccessToken();
+        JSONObject respData;
+        try {
+            respData = new JSONObject(resp.getBody());
+        } catch (JSONException e) {
+            throw new ForseenProblem("oauth2.error.bad-json");
+        }
+        String jwt = respData.optString("id_token");
+        if (jwt != null) {
+            String[] pieces = jwt.split("\\.");
+            if (pieces.length == 3) {
+                JSONObject claims = new JSONObject(new String(decoder.decode(pieces[1])));
+                String openidID = claims.optString("openid_id");
+                String sub = claims.optString("sub");
+                migrationMapping = new MigrationMapping(openidID, sub);
+            } else {
+                LOG.error("id_token is not a valid JWT - has Google changed their API?");
+            }
+        } else {
+            LOG.debug("No id_token (and thus migration info) provided by Google");
+        }
+        DelegatedIdentity identity = getDelegatedIdentity(providerName, accessToken);
+        return loginUser(request, identity, migrationMapping);
+    }
+
+    private ActionMessages standardProviderFlow(HttpServletRequest request,
+            String providerName, String redirectUri, OAuthProvider provider,
+            OAuthAuthzResponse oar) throws OAuthSystemException,
+            OAuthProblemException, JSONException {
+        ActionMessages messages;
+        // Step one - get token
+        String accessToken = getAccessToken(redirectUri, oar, provider);
+        // Step two - exchange token for identity
+        DelegatedIdentity identity = getDelegatedIdentity(providerName, accessToken);
+        // Step three - huzzah! Inform user of who they are.
+        messages = loginUser(request, identity);
+        return messages;
     }
 
     private String getRedirectUri(Properties webProperties,
@@ -158,10 +215,10 @@ public class Callback extends LoginHandler
         return provider;
     }
 
-    private String getAccessToken(String redirect, OAuthAuthzResponse oar, OAuthProvider provider)
+    private OAuthAccessTokenResponse
+    getTokenResponse(String redirect, OAuthAuthzResponse oar, OAuthProvider provider)
         throws OAuthSystemException, OAuthProblemException {
         OAuthClient oauthClient = new OAuthClient(new URLConnectionClient());
-        OAuthAccessTokenResponse oauthResponse;
         OAuthClientRequest clientReq;
         TokenRequestBuilder requestBuilder = OAuthClientRequest
                 .tokenLocation(provider.getTokenUrl())
@@ -170,6 +227,7 @@ public class Callback extends LoginHandler
                 .setClientSecret(provider.getClientSecret())
                 .setRedirectURI(redirect)
                 .setCode(oar.getCode());
+
         switch (provider.getMessageFormat()) {
             case BODY:
                 clientReq = requestBuilder.buildBodyMessage();
@@ -180,18 +238,22 @@ public class Callback extends LoginHandler
             default:
                 throw new RuntimeException("Unknown message format");
         }
-        LOG.debug("Sending token request: " + clientReq.getLocationUri());
+        LOG.info("Requesting access token: URI = " + clientReq.getLocationUri()
+                + " BODY = " + clientReq.getBody());
 
         switch (provider.getResponseType()) {
             case FORM:
-                oauthResponse = oauthClient.accessToken(clientReq, GitHubTokenResponse.class);
-                break;
+                return oauthClient.accessToken(clientReq, GitHubTokenResponse.class);
             case JSON:
-                oauthResponse = oauthClient.accessToken(clientReq);
-                break;
+                return oauthClient.accessToken(clientReq);
             default:
                 throw new RuntimeException("Unknown response type");
         }
+    }
+
+    private String getAccessToken(String redirect, OAuthAuthzResponse oar, OAuthProvider provider)
+        throws OAuthSystemException, OAuthProblemException {
+        OAuthAccessTokenResponse oauthResponse = getTokenResponse(redirect, oar, provider);
         String accessToken = oauthResponse.getAccessToken();
         return accessToken;
     }
@@ -205,31 +267,80 @@ public class Callback extends LoginHandler
         }
     }
 
-    private ActionMessages loginUser(HttpServletRequest request, DelegatedIdentity identity) {
-        LOG.debug("Logging in " + identity);
+    private ActionMessages loginUser(
+            HttpServletRequest request,
+            DelegatedIdentity identity) {
+        return loginUser(request, identity, null);
+    }
+
+    private ActionMessages loginUser(
+            HttpServletRequest request,
+            DelegatedIdentity identity,
+            MigrationMapping mapping) {
+        LOG.debug("Logging in " + identity + " with migration mapping " + mapping);
         Profile currentProfile = SessionMethods.getProfile(request.getSession());
         InterMineAPI api = SessionMethods.getInterMineAPI(request.getSession());
         Profile profile = api.getProfileManager()
                  .grantPermission(identity.getProvider(), identity.getId(), api.getClassKeys())
                  .getProfile();
-        profile.getPreferences().put(UserPreferences.EMAIL, identity.getEmail());
-        profile.getPreferences().put(UserPreferences.AKA, identity.getName());
-
+        Map<String, String> preferences = profile.getPreferences();
+        if (!preferences.containsKey(UserPreferences.EMAIL)) {
+            preferences.put(UserPreferences.EMAIL, identity.getEmail());
+        }
+        if (!preferences.containsKey(UserPreferences.AKA)) {
+            preferences.put(UserPreferences.AKA, identity.getName());
+        }
+        if (!preferences.containsKey(UserPreferences.ALIAS)) {
+            int c = 0;
+            String alias = identity.getName();
+            while (!preferences.containsKey(UserPreferences.ALIAS)) {
+                try {
+                    preferences.put(UserPreferences.ALIAS, alias);
+                } catch (DuplicateMappingException e) {
+                    alias = identity.getName() + " " + ++c;
+                }
+            }
+        }
         ActionMessages messages = new ActionMessages();
         setUpProfile(request.getSession(), profile);
         messages.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
                 "login.oauth2.successful", identity.getProvider(), profile.getName()));
-        Map<String, String> renamedBags = new HashMap<String, String>();
+        ProfileMergeIssues issues = new ProfileMergeIssues();
 
         if (currentProfile != null && StringUtils.isEmpty(currentProfile.getUsername())) {
             // The current profile was for an anonymous guest.
-            renamedBags = mergeProfiles(currentProfile, profile);
+            issues = mergeProfiles(currentProfile, profile);
         }
-        if (!renamedBags.isEmpty()) {
-            for (Entry<String, String> pair: renamedBags.entrySet()) {
-                messages.add(ActionMessages.GLOBAL_MESSAGE,
-                        new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
+        if (mapping != null) {
+            Profile migratedFrom = api.getProfileManager().getProfile(mapping.getOldId());
+            if (migratedFrom != null) {
+                issues = issues.combineWith(mergeProfiles(migratedFrom, profile));
+                profile.setApiKey(migratedFrom.getApiKey());
+                Map<String, String> prefs =
+                        new HashMap<String, String>(migratedFrom.getPreferences());
+                migratedFrom.getPreferences().clear();
+                profile.getPreferences().putAll(prefs);
+                UserProfile oldUser = api.getProfileManager()
+                                         .getUserProfile(migratedFrom.getUserId());
+                if (oldUser != null) { // mark old profile as migrated.
+                    oldUser.setUsername("__migrated__" + oldUser.getUsername());
+                    try {
+                        api.getUserProfile().store(oldUser);
+                    } catch (ObjectStoreException e) {
+                        messages.add(ActionMessages.GLOBAL_MESSAGE,
+                                new ActionMessage("login.migration.error",
+                                        mapping.getOldId(), e.getMessage()));
+                    }
+                }
             }
+        }
+        for (Entry<String, String> pair: issues.getRenamedBags().entrySet()) {
+            messages.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("login.renamed.bag", pair.getKey(), pair.getValue()));
+        }
+        for (Map.Entry<String, String> renamed: issues.getRenamedTemplates().entrySet()) {
+            messages.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("login.failedtemplate", renamed.getKey(), renamed.getValue()));
         }
 
         return messages;
@@ -240,7 +351,8 @@ public class Callback extends LoginHandler
         if (providerIsSane(providerName)) {
             return getSaneProviderUserInfo(providerName, accessToken);
         }
-        throw new RuntimeException("I don't know how to get this information.");
+        throw new RuntimeException("Missing config: "
+                + "oauth2." + providerName + ".identity-resource");
     }
 
     private boolean providerIsSane(String providerName) {
@@ -284,6 +396,10 @@ public class Callback extends LoginHandler
         } else {
             throw new OAuthSystemException("Unknown authorisation mechanism: " + authMechanism);
         }
+        LOG.debug("Requesting identity information:"
+                + " URI = " + bearerClientRequest.getLocationUri()
+                + " HEADERS = " + bearerClientRequest.getHeaders()
+                + " BODY = " + bearerClientRequest.getBody());
 
         bearerClientRequest.setHeader("Accept", "application/json");
         OAuthClient oauthClient = new OAuthClient(new URLConnectionClient());

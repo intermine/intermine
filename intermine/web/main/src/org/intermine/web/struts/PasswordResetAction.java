@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -61,14 +62,18 @@ public class PasswordResetAction extends LoginHandler
         session.removeAttribute("passwordResetToken");
         try {
             String username = pm.changePasswordWithToken(token, password);
-            Map<String, String> renamedBags = doLogin(request, username, password);
+            ProfileMergeIssues issues = doLogin(request, username, password);
             recordMessage(new ActionMessage("password.changed", username), request);
             recordMessage(new ActionMessage("login.loggedin", username), request);
-            if (renamedBags.size() > 0) {
-                for (String initName : renamedBags.keySet()) {
-                    recordMessage(new ActionMessage("login.renamedbags", initName,
-                        renamedBags.get(initName)), request);
-                }
+            Map<String, String> renamedBags = issues.getRenamedBags();
+            for (String initName : renamedBags.keySet()) {
+                recordMessage(new ActionMessage("login.renamedbags", initName,
+                    renamedBags.get(initName)), request);
+            }
+            for (Map.Entry<String, String> renamed: issues.getRenamedTemplates().entrySet()) {
+                recordMessage(
+                    new ActionMessage("login.failedtemplate", renamed.getKey(), renamed.getValue()),
+                    request);
             }
         } catch (Exception e) {
             RequestPasswordAction.LOG.warn(e);
