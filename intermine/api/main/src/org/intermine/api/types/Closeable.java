@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.core;
+package org.intermine.api.types;
 
 /*
  * Copyright (C) 2002-2015 FlyMine
@@ -11,21 +11,14 @@ package org.intermine.webservice.server.core;
  */
 
 /**
- * An interface for defining a thing that can take something and return
- * something else.
- *
+ * Things that have a close method.
  * @author Alex Kalderimis
  *
- * @param <A> The input type.
- * @param <B> The output type.
  */
-public interface Function<A, B>
+public interface Closeable
 {
-
     /**
-     * Take an A and return a B.
-     * @param a The input.
-     * @return a B of some kind.
+     * Call this to dispose of this object.
      */
-    B call(A a);
+    void close();
 }

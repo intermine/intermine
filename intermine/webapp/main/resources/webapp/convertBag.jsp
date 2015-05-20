@@ -10,6 +10,7 @@
 <tiles:importAttribute />
 
 <div id="convert-and-orthologues">
+<c:set var="haveSomething" value="false"/>
 
 <!-- convert e.g. Transcript, Protein etc. -->
 <c:if test="${!empty conversionTypes}">
@@ -23,6 +24,8 @@
      <c:set var="nameForURL"/>
      <str:encodeUrl var="nameForURL">${bag.name}</str:encodeUrl>
      <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${nameForURL}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount_${idname}">&nbsp;</span><br>
+
+     <c:set var="haveSomething" value="true"/>
    </c:forEach>
 
 </c:if>
@@ -32,6 +35,7 @@
 
   <div class="orthologues">
   <c:forEach items="${customConverters}" var="converter">
+    <c:set var="haveSomething" value="true"/>
     <h3 class="goog">${converter.title}</h3>
 
     <input type="text" name="extraFieldValue" style="display:none;" />
@@ -87,7 +91,10 @@
 
 </c:if>
 <!-- /custom converters -->
-
 </div>
+
+<c:if test="${!haveSomething}">
+  <fmt:message key="convert.noresults"/>
+</c:if>
 
 <!-- /convertBag.jsp -->

@@ -9,6 +9,8 @@
 
 set -e # Errors are fatal.
 
+set -e
+
 USERPROFILEDB=userprofile-demo
 PRODDB=objectstore-demo
 MINENAME=demomine
@@ -16,6 +18,7 @@ DIR="$(cd $(dirname "$0"); pwd)"
 IMDIR=$HOME/.intermine
 LOG=$DIR/build.log
 PROP_FILE=$IMDIR/testmodel.properties.demo
+alias ant="ant -Drelease=demo"
 
 # Inherit SERVER, PORT, PSQL_USER, PSQL_PWD, TOMCAT_USER and TOMCAT_PWD if in env.
 if test -z $SERVER; then
@@ -57,6 +60,7 @@ fi
 
 cd $HOME
 
+echo "------> Checking configuration..."
 if test ! -d $IMDIR; then
     echo Making .intermine configuration directory.
     mkdir $IMDIR
@@ -78,6 +82,27 @@ if test ! -f $PROP_FILE; then
     sed -i=bak -e "s/USER/$USER/g" $PROP_FILE
 fi
 
+echo "------> Checking properties file"
+if test ! -d .intermine; then
+    mkdir .intermine
+    cp $DIR/testmodel.properties .
+    sed -i "s/USER/$USER/g" testmodel.properties
+fi
+
+echo "------> Checking databases..."
+for db in $PRODDB $USERPROFILEDB; do
+    if psql --list | egrep -q '\s'$db'\s'; then
+        echo $db exists
+    else
+        echo Creating $db
+        createdb $db
+    fi
+done
+
+echo "------> Processing books..."
+cd $DIR/dbmodel/extra/books
+make 
+
 echo "------> Checking databases..."
 for db in $USERPROFILEDB $PRODDB; do
     if psql --list | egrep -q '\s'$db'\s'; then
@@ -90,16 +115,33 @@ done
 
 echo "------> Removing current webapp"
 cd $DIR/webapp/main
-ant -Drelease=demo -Ddont.minify=true remove-webapp >> $DIR/setup.log
+ant -Ddont.minify=true remove-webapp >> $DIR/setup.log
 
+echo "------> Beginning build - logging to $LOG"
+
+echo "------> Processing data sources."
+cd $DIR/dbmodel/extra/books
+make 
+
+echo "------> Loading demo data set - this should take about 3-4 minutes."
 cd $DIR/dbmodel
-
-echo "------> Loading demo data set..."
-ant -Drelease=demo loadsadata >> $LOG
+TASKS="clean load-workers-and-books"
+if test ! -z $EXTRA_DATA; then
+    MEGACORP_XML="resources/testmodel_mega_data.xml"
+    if test ! -f $MEGACORP_XML; then
+        echo "-----> Generating mega-corp"
+        COMPANY=Mega perl \
+            "$DIR/../intermine/objectstore/test/scripts/create_enormo_corp.pl" \
+            "$DIR/../intermine/objectstore/model/testmodel/testmodel_model.xml" \
+            $MEGACORP_XML
+    fi
+    TASKS="$TASKS enormocorp megacorp"
+fi
+ant -Ddont.minify=true -Drelease=demo -v $TASKS >> $LOG
 
 cd $DIR/webapp/main
 
-echo "------> Building and releasing web-app..."
+echo "------> Building and releasing web-app..., nearly done"
 ant -Drelease=demo -Ddont.minify=true \
     build-test-userprofile-withuser \
     create-quicksearch-index \
@@ -108,4 +150,3 @@ ant -Drelease=demo -Ddont.minify=true \
     release-webapp | tee -a $LOG | grep tomcat-deploy
 
 echo "------> All done. Build log is available in $LOG"
-

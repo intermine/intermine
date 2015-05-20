@@ -32,33 +32,31 @@ public class ClassKeyHelperTest extends TestCase {
         props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
 
         Map<String, List<FieldDescriptor>> expected = new HashMap<String, List<FieldDescriptor>>();
-        ClassDescriptor cldEmp = model.getClassDescriptorByName(pkg + "Employee");
-        ClassDescriptor cldMan = model.getClassDescriptorByName(pkg + "Manager");
-        ClassDescriptor cldCEO = model.getClassDescriptorByName(pkg + "CEO");
-        ClassDescriptor cldCom = model.getClassDescriptorByName(pkg + "Company");
-        ClassDescriptor cldAdd = model.getClassDescriptorByName(pkg + "Address");
-        ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
-        ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
-        ClassDescriptor cldDep = model.getClassDescriptorByName(pkg + "Department");
-        ClassDescriptor cldSec = model.getClassDescriptorByName(pkg + "Secretary");
-        ClassDescriptor cldSO = model.getClassDescriptorByName(pkg + "SimpleObject");
-        ClassDescriptor cldBank = model.getClassDescriptorByName(pkg + "Bank");
 
-        ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Manager", cldMan.getFieldDescriptorByName("title"));
-        ClassKeyHelper.addKey(expected, "Contractor", cldCon.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "CEO", cldCEO.getFieldDescriptorByName("title"));
-        ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("vatNumber"));
-        ClassKeyHelper.addKey(expected, "Address", cldAdd.getFieldDescriptorByName("address"));
-        ClassKeyHelper.addKey(expected, "Department", cldDep.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Secretary", cldSec.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "SimpleObject", cldSO.getFieldDescriptorByName("name"));
-        ClassKeyHelper.addKey(expected, "Bank", cldBank.getFieldDescriptorByName("name"));
+        addClassKey(expected, "Manager", "name", "title");
+        addClassKey(expected, "CEO", "name", "title");
+        addClassKey(expected, "Company", "name", "vatNumber");
+        addClassKey(expected, "Address", "address");
+        
+        String[] knownByName = new String[]{
+            "Employee", "Employable", "Contractor", "Secretary", "Bibliophile",
+            "SimpleObject", "Bank", "Department",
+            "Story", "Paragraph", "Book", "Stanza", "Chorus",
+            "Composition", "Section", "Author", "Poem", "Chapter", "Line"
+        };
+
+        for (String cls: knownByName) {
+            addClassKey(expected, cls, "name");
+        }
+        assertEquals(expected.keySet(), ClassKeyHelper.readKeys(model, props).keySet());
         assertEquals(expected, ClassKeyHelper.readKeys(model, props));
+    }
+
+    private void addClassKey(Map<String, List<FieldDescriptor>> expected, String className, String... names) {
+        ClassDescriptor cld = model.getClassDescriptorByName(pkg + className);
+        for (String name: names) {
+            ClassKeyHelper.addKey(expected, className, cld.getFieldDescriptorByName(name));
+        }
     }
 
     public void testIsKeyField() throws Exception {
@@ -106,3 +104,4 @@ public class ClassKeyHelperTest extends TestCase {
     }
 
 }
+

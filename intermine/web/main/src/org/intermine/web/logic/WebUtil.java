@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -190,17 +191,39 @@ public abstract class WebUtil
     }
 
     /**
+     * The type of things that can be used as resources in the head section
+     * of an HTML page.
+     * @author Alex Kalderimis
+     *
+     */
+    public interface HeadResource
+    {
+
+        /** @return the key **/
+        String getKey();
+
+        /** @return the type **/
+        String getType();
+
+        /** @return the url **/
+        String getUrl();
+
+        /** @return whether this resource is relative **/
+        boolean getIsRelative();
+    }
+
+    /**
      * A bean encapsulating a resource (js or css).
      * @author Alex Kalderimis
      *
      */
-    public static final class HeadResource
+    public static final class SimpleResource implements HeadResource
     {
         private final String type;
         private final String url;
         private final String key;
 
-        private HeadResource(String key, String type, String url) {
+        private SimpleResource(String key, String type, String url) {
             this.key = key;
             this.type = type;
             this.url = url;
@@ -233,6 +256,73 @@ public abstract class WebUtil
     }
 
     /**
+     * A bean encapsulating a resource (js or css).
+     * @author Alex Kalderimis
+     *
+     */
+    public static final class ConcatCDNResource implements HeadResource
+    {
+        private final String type;
+        private final String base;
+        private final String key;
+        private final Collection<String> paths = new LinkedHashSet<String>();
+        private final boolean isDev;
+
+        private ConcatCDNResource(String key, String type, String url, boolean isDev) {
+            this.key = key;
+            this.type = type;
+            this.base = url;
+            this.isDev = isDev;
+        }
+
+        /** @return the key **/
+        public String getKey() {
+            return key;
+        }
+
+        /** @return the type **/
+        public String getType() {
+            return type;
+        }
+
+        /** @return the url **/
+        public String getUrl() {
+            StringBuilder sb = new StringBuilder(base).append("/cgi/concat.rb?");
+            boolean needsComma = false;
+            if (isDev) {
+                sb.append("dev=1");
+                needsComma = true;
+            }
+            for (String path: paths) {
+                if (needsComma) {
+                    sb.append("&");
+                }
+                sb.append(type).append("=").append(path);
+                needsComma = true;
+            }
+            return sb.toString();
+        }
+
+        private void addResource(String path) {
+            paths.add(path);
+        }
+
+        private boolean hasResources() {
+            return !paths.isEmpty();
+        }
+
+        /** @return whether this resource is relative **/
+        public boolean getIsRelative() {
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("HeadResouce [type = %s, url = %s]", type, base);
+        }
+    }
+
+    /**
      * Returns the resources for a particular section of the head element.
      *
      * @param section The section this resource belongs in.
@@ -244,17 +334,21 @@ public abstract class WebUtil
                                            Map<String, String> userPreferences) {
         Properties webProperties = InterMineContext.getWebProperties();
         String cdnLocation = webProperties.getProperty("head.cdn.location");
-        boolean allowUserOverrides =
-            "true".equals(webProperties.getProperty("head.allow.user.overrides"));
+        boolean cgiEnabled = "true".equals(webProperties.getProperty("head.cdn.cgi-enabled"));
+        boolean isDev = "true".equals(webProperties.getProperty("i.am.a.dev"));
         List<HeadResource> ret = new ArrayList<HeadResource>();
+        ConcatCDNResource concatJsResource, concatCSSResource;
+        concatJsResource = new ConcatCDNResource(section, "js", cdnLocation, isDev);
+        concatCSSResource = new ConcatCDNResource(section, "css", cdnLocation, isDev);
+
+        if (cgiEnabled) {
+            ret.add(concatJsResource);
+            ret.add(concatCSSResource);
+        }
+
         for (String type: new String[] {"css", "js" }) {
             String key = String.format("head.%s.%s.", type, section);
-            Properties userProps = new Properties();
-            userProps.putAll(webProperties);
-            if (allowUserOverrides && userPreferences != null) {
-                userProps.putAll(userPreferences);
-            }
-            Properties matches = PropertiesUtil.getPropertiesStartingWith(key, userProps);
+            Properties matches = PropertiesUtil.getPropertiesStartingWith(key, webProperties);
             Set<Object> keys = new TreeSet<Object>(matches.keySet());
             for (Object o: keys) {
                 String propName = String.valueOf(o);
@@ -263,13 +357,31 @@ public abstract class WebUtil
                     LOG.warn("Head resource configured with blank value: skipping " + propName);
                 } else {
                     if (value.startsWith("CDN")) {
-                        value = value.replace("CDN", cdnLocation);
+                        if (cgiEnabled) {
+                            String path = value.replace("CDN/", "");
+                            if ("js".equals(type)) {
+                                concatJsResource.addResource(path);
+                            } else {
+                                concatCSSResource.addResource(path);
+                            }
+                            continue;
+                        } else {
+                            value = value.replace("CDN", cdnLocation);
+                        }
                     } else if (!(value.startsWith("/") || value.startsWith("http"))) {
                         value = String.format("/%s/%s", type, value);
                     }
-                    HeadResource resource = new HeadResource(propName, type, value);
+                    HeadResource resource = new SimpleResource(propName, type, value);
                     ret.add(resource);
                 }
+            }
+        }
+        if (cgiEnabled) {
+            if (!concatJsResource.hasResources()) {
+                ret.remove(concatJsResource);
+            }
+            if (!concatCSSResource.hasResources()) {
+                ret.remove(concatCSSResource);
             }
         }
         return ret;

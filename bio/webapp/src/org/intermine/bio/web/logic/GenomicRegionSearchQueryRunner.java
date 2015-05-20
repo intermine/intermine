@@ -220,6 +220,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * results is stored in a Map. The result data will be used to validate users' span data.
      * For each span, its chromosome must match the chrPID and range must not go beyond the length.
      *
+     * This method will cache its return value.
+     *
      * @param im - the InterMineAPI
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */

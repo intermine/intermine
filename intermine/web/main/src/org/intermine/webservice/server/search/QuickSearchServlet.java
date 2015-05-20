@@ -10,8 +10,6 @@ package org.intermine.webservice.server.search;
  *
  */
 
-import javax.servlet.ServletContext;
-
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
@@ -23,12 +21,11 @@ public class QuickSearchServlet extends WebServiceServlet
 
     @Override
     protected WebService getService(Method method) throws NoServiceException {
-        ServletContext ctx = this.getServletContext();
         switch (method) {
             case GET:
-                return new QuickSearch(api, ctx);
+                return new QuickSearch(api);
             case POST:
-                return new QuickSearch(api, ctx);
+                return new QuickSearch(api);
             default:
                 throw new NoServiceException();
         }

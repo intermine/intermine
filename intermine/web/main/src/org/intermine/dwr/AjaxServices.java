@@ -407,27 +407,21 @@ public class AjaxServices
     }
 
     /**
-     * This method gets a map of ids of elements that were in the past (during session) toggled and
-     * returns them in JSON
-     * @return JSON serialized to a String
-     * @throws JSONException
+     * This method gets a collection of elements that were in the past (during session) toggled.
+     * @return The toggled elements as records of the form {id :: Any, open :: bool}
      */
-    public static String getToggledElements() {
+    public static Collection<Map<String, Object>> getToggledElements() {
         HttpSession session = WebContextFactory.get().getSession();
         WebState webState = SessionMethods.getWebState(session);
-        Collection<JSONObject> lists = new HashSet<JSONObject>();
-        try {
-            for (Map.Entry<String, Boolean> entry : webState.getToggledElements().entrySet()) {
-                JSONObject list = new JSONObject();
-                list.put("id", entry.getKey());
-                list.put("opened", entry.getValue().toString());
-                lists.add(list);
-            }
-        } catch (JSONException jse) {
-            LOG.error("Errors generating json objects", jse);
+        Collection<Map<String, Object>> toggledElements = new ArrayList<Map<String, Object>>();
+        for (Map.Entry<String, Boolean> entry : webState.getToggledElements().entrySet()) {
+            Map<String, Object> toggledElement = new HashMap<String, Object>();
+            toggledElement.put("id", entry.getKey());
+            toggledElement.put("open", entry.getValue());
+            toggledElements.add(toggledElement);
         }
 
-        return lists.toString();
+        return toggledElements;
     }
 
     /**
@@ -1487,5 +1481,31 @@ public class AjaxServices
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         return bagManager.getUsersSharingBag(bagName, profile.getUsername());
+    }
+
+    /**
+     * Remove a number of objects identified by id from a bag, and return the number removed.
+     * @param bagName The name of the bag.
+     * @param ids The ids of the objects to remove.
+     * @return The number of objects removed (may be 0).
+     */
+    public int removeIdsFromBag(String bagName, Collection<Integer> ids) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        BagManager bagManager = im.getBagManager();
+        InterMineBag bag = bagManager.getUserBag(profile, bagName);
+        if (bag == null) {
+            throw new RuntimeException("That bag does not belong to this user.");
+        }
+        int priorSize = 0, postSize = 0;
+        try {
+            priorSize = bag.getSize();
+            bag.removeIdsFromBag(ids, true);
+            postSize = bag.getSize();
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
+        return priorSize - postSize;
     }
 }

@@ -3,6 +3,18 @@
    
   <description>perform actions on the testmodel database</description>
   <import file="../../imbuild/objectstore.xml"/>
+
+  <target name="-define-task-classpath">
+    <!-- Override to alter the classpath created -->
+    <path id="task.class.path">
+      <pathelement location="${build.task.dir}"/>
+      <pathelement location="${build.dir}"/>
+      <pathelement location="${build.classes.dir}"/>
+      <pathelement location="${resources.dir}"/>
+      <pathelement location="${resources.dir}/../extra/books/build"/>
+      <path refid="project.execute.path"/>
+    </path>
+  </target>
   
   <target name="insert-data-unittest" depends="build-db">
     <!-- Invalidate (delete) summary properties -->
@@ -22,12 +34,60 @@
                      sourceType="testsource"/>
   </target>
 
+  <target name="load-books" depends="build-db">
+    <!-- Invalidate (delete) summary properties -->
+    <delete file="${objectstoresummary.properties}"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="verwandlung.xml"
+            sourceName="books"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="alice-in-wonderland.xml"
+            sourceName="alice"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="sherlock.xml"
+            sourceName="sherlock"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="horace-C-I.xml"
+            sourceName="horaceci"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="horace-C-II.xml"
+            sourceName="horacecii"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="horace-C-III.xml"
+            sourceName="horaceciii"
+            sourceType="testsource"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+            xmlResource="bibliophiles.xml"
+            sourceName="bibliophiles"
+            sourceType="testsource"/>
+    <postprocessor
+        osName="osw.unittest" 
+        clsName="org.intermine.testmodel.postprocess.TransferText"
+        />
+  </target>
+
+  <target name="load-workers-and-books" depends="load-books,loadsadata"/>
+
   <target name="enormocorp" depends="loadsadata">
     <!-- Invalidate (delete) summary properties -->
     <delete file="${objectstoresummary.properties}"/>
     <insert-xml-data integrationWriter="integration.unittestmulti"
                      xmlResource="testmodel_enormo_data.xml"
                      sourceName="enormocorp"
+                     sourceType="testsource"/>
+  </target>
+
+  <target name="megacorp" depends="loadsadata">
+    <!-- Invalidate (delete) summary properties -->
+    <delete file="${objectstoresummary.properties}"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+                     xmlResource="testmodel_mega_data.xml"
+                     sourceName="megacorp"
                      sourceType="testsource"/>
   </target>
   <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->

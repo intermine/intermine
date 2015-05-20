@@ -10,10 +10,11 @@ package org.intermine.web.search;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
@@ -24,7 +25,6 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.jfree.util.Log;
 
 /**
  * Container for a single result row from the keyword search
@@ -32,21 +32,65 @@ import org.jfree.util.Log;
  */
 public class KeywordSearchResult
 {
+    /**
+     * A container for things related to fields.
+     *
+     * This class enables us to massively clean up JSPs.
+     * @author Alex Kalderimis
+     *
+     */
+    public final class ObjectField
+    {
+
+        private String field;
+        private Object value;
+        private FieldConfig config;
+
+        private ObjectField(String field, FieldConfig config, Object value) {
+            this.field = field;
+            this.value = value;
+            this.config = config;
+        }
+
+        /**
+         * @return The field.
+         */
+        public String getField() {
+            return field;
+        }
+
+        /** @return the value of the field **/
+        public Object getValue() {
+            return value;
+        }
+
+        /** @return the config that describes the field **/
+        public FieldConfig getConfig() {
+            return config;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("ObjectField(field = %s, value = %s)", field, value);
+        }
+
+    }
+
     private static final Logger LOG = Logger.getLogger(KeywordSearchResult.class);
 
     final WebConfig webconfig;
     final InterMineObject object;
 
     final int id;
-    final String type;
+    final List<String> types = new ArrayList<String>();
     final float score;
     final Map<String, TemplateQuery> templates;
 
     final int points;
-    final HashMap<String, FieldConfig> fieldConfigs;
-    final Vector<String> keyFields;
-    final Vector<String> additionalFields;
-    final HashMap<String, Object> fieldValues;
+    final Map<String, FieldConfig> fieldConfigs;
+    final List<String> keyFields;
+    final List<String> additionalFields;
+    final Map<String, Object> fieldValues;
     String linkRedirect = null;
 
     /**
@@ -54,37 +98,40 @@ public class KeywordSearchResult
      * @param webconfig webconfig
      * @param object the object this result should contain
      * @param classKeys keys associated with this class
-     * @param classDescriptor descriptor for this class
+     * @param classDescriptors descriptors for this class
      * @param score score for this hit
      * @param templates templatequeries for this class
      * @param linkRedirect URL that search result will link to, if not report page
      */
     public KeywordSearchResult(WebConfig webconfig, InterMineObject object,
-            Map<String, List<FieldDescriptor>> classKeys, ClassDescriptor classDescriptor,
+            Map<String, List<FieldDescriptor>> classKeys,
+            Collection<ClassDescriptor> classDescriptors,
             float score, Map<String, TemplateQuery> templates, String linkRedirect) {
 
-        List<FieldConfig> fieldConfigList = FieldConfigHelper.getClassFieldConfigs(webconfig,
-                classDescriptor);
         this.fieldConfigs = new HashMap<String, FieldConfig>();
-        this.keyFields = new Vector<String>();
-        this.additionalFields = new Vector<String>();
+        this.keyFields = new ArrayList<String>();
+        this.additionalFields = new ArrayList<String>();
         this.fieldValues = new HashMap<String, Object>();
 
-        for (FieldConfig fieldConfig : fieldConfigList) {
-            if (fieldConfig.getShowInSummary()) {
-                fieldConfigs.put(fieldConfig.getFieldExpr(), fieldConfig);
+        for (ClassDescriptor cld: classDescriptors) {
+            types.add(cld.getUnqualifiedName());
+            List<FieldConfig> fieldConfigList =
+                    FieldConfigHelper.getClassFieldConfigs(webconfig, cld);
+            for (FieldConfig fieldConfig : fieldConfigList) {
+                if (fieldConfig.getShowInSummary()) {
+                    String path = cld.getUnqualifiedName() + "." + fieldConfig.getFieldExpr();
+                    fieldConfigs.put(path, fieldConfig);
 
-                if (ClassKeyHelper.isKeyField(classKeys, classDescriptor.getName(), fieldConfig
-                        .getFieldExpr())) {
-                    this.keyFields.add(fieldConfig.getFieldExpr());
-                } else {
-                    this.additionalFields.add(fieldConfig.getFieldExpr());
-                }
+                    if (ClassKeyHelper.isKeyField(classKeys, cld.getName(),
+                            fieldConfig.getFieldExpr())) {
+                        this.keyFields.add(path);
+                    } else {
+                        this.additionalFields.add(path);
+                    }
 
-                if (fieldConfig.getDisplayer() == null) {
-                    Object value = getValueForField(object, fieldConfig.getFieldExpr());
-                    if (value != null) {
-                        fieldValues.put(fieldConfig.getFieldExpr(), value);
+                    if (fieldConfig.getDisplayer() == null) {
+                        fieldValues.put(path,
+                                getValueForField(object, fieldConfig.getFieldExpr()));
                     }
                 }
             }
@@ -93,7 +140,6 @@ public class KeywordSearchResult
         this.webconfig = webconfig;
         this.object = object;
         this.id = object.getId();
-        this.type = classDescriptor.getUnqualifiedName();
         this.score = score;
         this.templates = templates;
         this.points = Math.round(Math.max(0.1F, Math.min(1, getScore())) * 10); // range 1..10
@@ -124,7 +170,7 @@ public class KeywordSearchResult
                 value = object.getFieldValue(expression);
             }
         } catch (Exception e) {
-            Log.error("Value/reference not found", e);
+            LOG.error("Value/reference not found", e);
         }
         return value;
     }
@@ -149,8 +195,8 @@ public class KeywordSearchResult
      * returns the name of the class for this object (category)
      * @return type
      */
-    public String getType() {
-        return type;
+    public Collection<String> getTypes() {
+        return types;
     }
 
     /**
@@ -190,32 +236,73 @@ public class KeywordSearchResult
      * fieldConfigs
      * @return map from field expression to fieldConfigs
      */
-    public HashMap<String, FieldConfig> getFieldConfigs() {
+    public Map<String, FieldConfig> getFieldConfigs() {
         return fieldConfigs;
     }
 
     /**
-     * key field expressions
+     * key paths
      * @return keyFields
      */
-    public final Vector<String> getKeyFields() {
+    public final Collection<String> getKeyFields() {
         return keyFields;
     }
 
     /**
-     * additional display field expressions
+     * @return the fields of this result.
+     */
+    public final Collection<ObjectField> getKeyFieldValues() {
+        return getFieldValues(getKeyFields());
+    }
+
+    /** @return the non-key fields of this result **/
+    public final Collection<ObjectField> getAdditionalFieldValues() {
+        return getFieldValues(getAdditionalFields());
+    }
+
+    private Collection<ObjectField> getFieldValues(Collection<String> fields) {
+        List<ObjectField> ret = new ArrayList<ObjectField>();
+        for (String kf: fields) {
+            FieldConfig fc = getFieldConfigs().get(kf);
+            Object value = getFieldValues().get(kf);
+            ObjectField field = new ObjectField(kf, fc, value);
+            ret.add(field);
+        }
+        return ret;
+    }
+
+    /**
+     * additional display paths
      * @return additionalFields
      */
-    public final Vector<String> getAdditionalFields() {
+    public final Collection<String> getAdditionalFields() {
         return additionalFields;
     }
 
     /**
      * values of all fields
-     * @return map from field expression to value
+     * @return map from path to value
      */
-    public HashMap<String, Object> getFieldValues() {
+    public Map<String, Object> getFieldValues() {
         return fieldValues;
     }
 
+    /**
+     * Return the field values, with the class names removed.
+     * @return A map from fieldExpression to value.
+     */
+    public Map<String, Object> getHeadlessFieldValues() {
+        Map<String, Object> ret = new HashMap<String, Object>();
+        for (String path: fieldValues.keySet()) {
+            String headless = path.replaceAll("^\\w+.", "");
+            ret.put(headless, fieldValues.get(path));
+        }
+        return ret;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("KeywordSearchResult(id = %s, score = %f, fields = %s)",
+                id, score, fieldValues);
+    }
 }

@@ -256,7 +256,7 @@
   </target>
 
   <!-- Create the Lucene Index -->
-  <target name="create-quicksearch-index" depends="-init-build-db, -init-properties">
+  <target name="create-quicksearch-index" depends="-init-properties, -init-build-db">
   	<create-quicksearch-index oSAlias="${objectstore.name}"/>
   </target>
 

@@ -18,15 +18,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-
-import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.lucene.KeywordSearch;
+import org.intermine.api.lucene.Browser;
 import org.intermine.api.lucene.KeywordSearchFacet;
 import org.intermine.api.lucene.KeywordSearchFacetData;
 import org.intermine.api.lucene.ResultsWithFacets;
@@ -64,28 +61,23 @@ public class QuickSearch extends JSONService
     private Map<String, Map<String, Object>> headerObjs
         = new HashMap<String, Map<String, Object>>();
 
-    private final ServletContext servletContext;
-
     /**
      * @param im The InterMine state object
-     * @param ctx The servlet context so that the index can be located.
      */
-    public QuickSearch(InterMineAPI im, ServletContext ctx) {
+    public QuickSearch(InterMineAPI im) {
         super(im);
-        this.servletContext = ctx;
     }
 
     @Override
     protected void execute() throws Exception {
-        String contextPath = servletContext.getRealPath("/");
-        KeywordSearch.initKeywordSearch(im, contextPath);
+        Browser browser = im.getResource(Browser.class);
         WebConfig wc = InterMineContext.getWebConfig();
 
         QuickSearchRequest input = new QuickSearchRequest();
-        Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
+        Collection<KeywordSearchFacetData> facets = browser.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
 
-        ResultsWithFacets results = KeywordSearch.runBrowseWithFacets(
+        ResultsWithFacets results = browser.runBrowseWithFacets(
                 im, input.searchTerm, input.offset, facetValues, input.getListIds());
 
         Collection<KeywordSearchResult> searchResultsParsed =
@@ -124,7 +116,7 @@ public class QuickSearch extends JSONService
         return attributes;
     }
 
-    private Map<String, String> getFacetValues(Vector<KeywordSearchFacetData> facets) {
+    private Map<String, String> getFacetValues(Collection<KeywordSearchFacetData> facets) {
         HashMap<String, String> facetValues = new HashMap<String, String>();
     PARAM_LOOP:
         for (@SuppressWarnings("unchecked")

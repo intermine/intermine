@@ -138,9 +138,6 @@ html ul.tabs li.active, html ul.tabs li.active a:hover { /*--Makes sure that the
     width: 230px;
 }
 
-#actions .plainbox.api {;
-}
-
 #actions .plainbox.api h1 {
     background-image: url('../themes/metabolic/icons/perl-java-ico.gif');
 }
@@ -198,15 +195,11 @@ div#navtrail {
     width: 1002px !important;
 }
 
-html, body {
-    font-family: 'Lucida Grande', Geneva, Lucida, Helvetica, Arial, sans-serif;
-}
-
 /* Verdana is too wide! */
 /* newer FlyMine */
 /*body { background:#dfdfdf url('../themes/purple/homepage/page-bg-gradient.png') repeat-x top !important; }*/
 #content-wrap {
-    padding: 25px 16px 16px 16px;
+    padding: 0px 16px 16px 16px;
 }
 
 #content-wrap p {
@@ -214,24 +207,44 @@ html, body {
     font-size: 13px;
 }
 
-#search-bochs, #lists-bochs, #welcome-bochs {
-    width: 280px;
-    float: left;
-    margin-right: 46px;
+.bochs {
     position: relative;
     background: url('../themes/purple/homepage/main-bochs-transparent-gradient.png') no-repeat top;
     padding: 0 6px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-flex: 1 0 100%;
+    -webkit-flex: 1 0 100%;
+    -ms-flex: 1 0 100%;
+    flex: 1 0 100%;
 }
 
-#welcome-bochs {
+/*
+.bochs:last-child {
     margin-right: 0;
 }
+*/
 
-#boxes div.inner {
+#boxes .grid-cell {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+#boxes .inner {
     background: #FFF;
     min-height: 210px;
     border-bottom: 1px solid #dfdfdf;
     padding-bottom: 60px;
+    -webkit-box-flex: 1 0 100%;
+    -webkit-flex: 1 0 100%;
+    -ms-flex: 1 0 100%;
+    flex: 1 0 100%;
 }
 
 #boxes div.inner div.bottom {
@@ -243,21 +256,26 @@ html, body {
 
 #boxes div.inner h3 {
     color: #FFF;
-    font-family: "Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
     padding: 4px 0 4px 80px;
     font-size: 24px;
     font-weight: normal;
 }
 
-#search-bochs div.inner h3 {
+#search-bochs .inner h3 {
     background: #5c0075;
+}
+.bochs .inner .help {
+    display: inline-block;
+    margin-top: 32px;
+    font-size: 14px;
 }
 
 #lists-bochs div.inner h3 {
     background: #9f67ad;
 }
 
-#welcome-bochs div.inner h3 {
+/* Default inner title style */
+.bochs div.inner h3 {
     background: #c3c3c3;
     color: #535353;
     padding-left: 10px;
@@ -268,21 +286,16 @@ html, body {
     line-height: 20px;
 }
 
-#search-bochs img.title {
+.bochs img.title {
     position: absolute;
-    top: 6px;
+    top: 28px;
     left: 18px;
 }
 
-#lists-bochs img.title {
-    position: absolute;
-    top: 6px;
-    left: 18px;
-}
-
-#search-bochs div.inner span.ugly-hack {
+.bochs .inner .ugly-hack {
     float: left;
     width: 82px;
+    height: 2em;
 }
 
 #search-bochs div.inner p {
@@ -293,19 +306,18 @@ html, body {
     margin: 10px 0 0 70px;
 }
 
-#welcome-bochs div.inner p {
-    margin: 10px 0 0 0px;
-    line-height: 21px;
-}
-
 #welcome-bochs div.inner p a {
     color: inherit;
     text-decoration: underline;
 }
 
+.api.bochs .inner h3 {
+    background: #949494;
+}
+
 #lists-bochs div.inner select {
     margin: 10px 0 0 12px;
-    width: 256px;
+    width: 90%;
 }
 
 #lists-bochs div.inner .textarea {
@@ -315,7 +327,7 @@ html, body {
 #lists-bochs div.inner textarea {
     padding: 6px 8px 4px 8px;
     height: 50px;
-    width: 240px !important;
+    width: 90%;
     border: none;
     -moz-box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
@@ -350,11 +362,10 @@ html, body {
     padding: 2px 36px;
 }
 
-#search-bochs input[type =
-"text"].input {
+#search-bochs input[type="text"].input {
     border: none;
     padding: 10px;
-    width: 236px;
+    width: 80%;
     font-size: 12px;
     -moz-box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
     -webkit-box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
@@ -364,9 +375,17 @@ html, body {
     border-radius: 15px;
 }
 
-#search-bochs input[type =
-"text"].input.eg {
+.bochs .eg {
     color: #888;
+}
+.bochs .input.eg:focus {
+    outline: none;
+}
+
+.bochs .inner p {
+    position: relative;
+    top: 48px;
+    line-height: 21px;
 }
 
 #boxes input[type =
@@ -374,20 +393,6 @@ html, body {
     background: url("../themes/purple/homepage/button-plush.png") no-repeat scroll center bottom transparent;
     color: #FFFFFF;
     padding: 2px 34px; /*float:right; margin-right:30%; margin-bottom:8px;*/
-}
-
-#lists-bochs div.inner span {
-    color: #7a7a7a;
-    font-weight: bold;
-    font-size: 12px;
-    letter-spacing: 0px;
-    text-transform: uppercase;
-    line-height: 30px;
-    margin: 0 4px 0 8px;
-}
-
-#lists-bochs textarea.eg {
-    color: #888;
 }
 
 #lists-bochs div.inner a {
@@ -403,7 +408,7 @@ html, body {
     display: inline-block;
 }
 
-#welcome-bochs a.button {
+a.button {
     font-size: 13px;
     text-transform: uppercase;
     font-family: "Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
@@ -434,13 +439,13 @@ html, body {
     cursor: pointer;
 }
 
-#welcome-bochs a.button.gray {
+a.button.gray {
     color: #505050; /*margin-right:30%; float:right; line-height:29px;*/
     display: -moz-inline-stack /* FF2 inline-block */;
     display: inline-block;
 }
 
-#welcome-bochs a.button.gray div {
+a.button.gray div {
     background-image: url("../themes/metabolic/buttons/btn-gray-left.png");
     margin-top: 12px;
     height: 30px;
@@ -448,7 +453,7 @@ html, body {
     background-repeat: no-repeat;
 }
 
-#welcome-bochs a.button.gray span {
+a.button.gray span {
     background-image: url("../themes/metabolic/buttons/btn-gray-right.png");
     height: 30px;
     padding: 8px 18px 0 0;
@@ -458,7 +463,7 @@ html, body {
     cursor: pointer;
 }
 
-#welcome-bochs a.button.gray span, x:-moz-any-link {
+a.button.gray span, x:-moz-any-link {
     height: 22px;
 }
 
@@ -659,35 +664,6 @@ html, body {
     letter-spacing: -1px;
 }
 
-#low #api {
-    width: 300px;
-    padding: 14px;
-    float: left;
-}
-
-#low #api img {
-    float: left;
-    padding: 0 10px 50px 0;
-}
-
-#low #api ul {
-    color: #535353;
-    font-size: 12px;
-    list-style-type: none;
-    margin-top: 5px;
-}
-
-#low #api ul a {
-    color: #535353;
-    font-size: 13px;
-    text-decoration: underline;
-    font-size: 12px;
-}
-
-#low #api ul a:hover {
-    color: #000;
-}
-
 #low #rss {
     width: 560px;
     padding: 14px;
@@ -755,6 +731,12 @@ html, body {
     margin-top: 10px !important;
 }
 
+@media (max-width: 560px) {
+    #bottom-wrap {
+        display: none;
+    }
+}
+
 /* im:frontpage tagged lists */
 #lists {
 	border-top: 1px solid #EFEFEF;
@@ -812,6 +794,3 @@ html, body {
 	color: #000;
 }
 
-#api-langs li {
-    float: left;
-}

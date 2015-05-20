@@ -10,6 +10,8 @@ package org.intermine.webservice.server.core;
  *
  */
 
+import org.intermine.api.types.Function;
+
 /**
  * A mapping function capable of accessing a disjoint sum-type (an Either A B).
  * @param <T> The return type.

@@ -308,7 +308,7 @@ public class EntrezPublicationsRetriever
         for (Map.Entry<String, Map<String, Object>> entry: fromServerMap.entrySet()) {
             String pubMedId = entry.getKey();
             DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
-            Map dataMap = entry.getValue();
+            Map<String, Object> dataMap = entry.getValue();
             ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
             ObjectOutputStream serializer = new ObjectOutputStream(arrayOutputStream);
             serializer.writeObject(dataMap);

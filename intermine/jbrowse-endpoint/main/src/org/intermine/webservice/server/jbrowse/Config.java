@@ -112,6 +112,8 @@ public class Config extends JSONService
     /** A reference to the web-app configuration. **/
     WebConfig config;
 
+    private String refIdentPath;
+
     /** One of the files we serve: seq/refSeqs.json **/
     private static final String REF_SEQS = "seq/refSeqs.json";
     /** One of the files we serve: trackList.json **/
@@ -141,6 +143,7 @@ public class Config extends JSONService
         featType       = namespaced.getProperty("featureClass");
         domainPath     = namespaced.getProperty("domain");
         identPath      = namespaced.getProperty("paths.ident");
+        refIdentPath   = namespaced.getProperty("paths.refident", identPath);
         lengthPath     = namespaced.getProperty("paths.length", "length");
         referenceLabel = namespaced.getProperty("reference.label");
         referenceCat   = namespaced.getProperty("reference.category");
@@ -325,7 +328,7 @@ public class Config extends JSONService
      */
     private Map<String, Object> makeRefSeq(FastPathObject referenceSequence) {
         Map<String, Object> ret = new HashMap<String, Object>();
-        ret.put("name", resolveValue(referenceSequence, identPath));
+        ret.put("name", resolveValue(referenceSequence, refIdentPath));
         ret.put("start", 0);
         ret.put("end", resolveValue(referenceSequence, lengthPath));
         return ret;

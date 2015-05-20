@@ -13,6 +13,8 @@ package org.intermine.webservice.server.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.intermine.api.types.F;
+
 /**
  * A list that can have either a simple element of type <code>T</code> in it,
  * or lists of elements of that type.

@@ -114,6 +114,37 @@ public final class GenomicRegionSearchUtil
     }
 
     /**
+     * Class that closes over the chromosome info and the interbase state.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class RegionParser
+    {
+        private Map<String, ChromosomeInfo> chromosomes;
+        private boolean isInterbase;
+
+        /**
+         * Construct a region parser.
+         * @param chromosomes The information about the chromosomes.
+         * @param isInterbase Whether we are operating in interbase mode.
+         */
+        public RegionParser(Map<String, ChromosomeInfo> chromosomes, boolean isInterbase) {
+            this.chromosomes = chromosomes;
+            this.isInterbase = isInterbase;
+        }
+
+        /**
+         * Turn a string into a GenomicRegion.
+         * @param span The string to parse.
+         * @return The region as a uniform object.
+         * @throws RegionParseException If we can't parse this region.
+         */
+        public GenomicRegion parse(String span) throws RegionParseException {
+            return parseRegion(span, isInterbase, chromosomes);
+        }
+    }
+
+    /**
      * Parse region from string to GenomicRegion object
      *
      * @param span a region string
@@ -603,6 +634,18 @@ public final class GenomicRegionSearchUtil
         } else {
             throw new Exception("Not Dot-Dot format: " + interval);
         }
+    }
+
+    /**
+     * Get a region parser.
+     * @param chromsForOrg The chromosome information.
+     * @param interbase Whether we are operating in interbaser mode.
+     * @return A region parser.
+     */
+    public static RegionParser getParser(
+            Map<String, ChromosomeInfo> chromsForOrg,
+            boolean interbase) {
+        return new RegionParser(chromsForOrg, interbase);
     }
 
 }

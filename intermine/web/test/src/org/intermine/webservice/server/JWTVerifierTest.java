@@ -36,35 +36,35 @@ import org.junit.Test;
 public class JWTVerifierTest
 {
 
-	private static PrivateKey testingKey;
-	private static PrivateKey wso2Key;
+    private static PrivateKey testingKey;
+    private static PrivateKey wso2Key;
     private static PublicKeySource ks;
 
     private Properties options = null;
     private static Properties defaultOptions = new Properties();
     private String token, wso2Token, expired, wrongSig, unknown;
-	private JWTVerifier verifier;
+    private JWTVerifier verifier;
 
     @BeforeClass
     public static void createKeySource() throws Exception {
-    	KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    	keyGen.initialize(512);
-    	Map<String, PublicKey> keys = new HashMap<String, PublicKey>();
-    	
-    	KeyPair testingKeyPair = keyGen.generateKeyPair();
-    	testingKey = testingKeyPair.getPrivate();
-    	keys.put("testing", testingKeyPair.getPublic());
-    	defaultOptions.setProperty("security.keystore.alias.testing issuer", "testing");
-    	
-    	KeyPair wso2KeyPair = keyGen.generateKeyPair();
-    	wso2Key = wso2KeyPair.getPrivate();
-    	keys.put("wso2", wso2KeyPair.getPublic());
-    	defaultOptions.setProperty("security.keystore.alias.wso2 issuer", "wso2");
-    	
-    	ks = new MapPublicKeySource(keys);
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(512);
+        Map<String, PublicKey> keys = new HashMap<String, PublicKey>();
+
+        KeyPair testingKeyPair = keyGen.generateKeyPair();
+        testingKey = testingKeyPair.getPrivate();
+        keys.put("testing", testingKeyPair.getPublic());
+        defaultOptions.setProperty("security.keystore.alias.testing issuer", "testing");
+
+        KeyPair wso2KeyPair = keyGen.generateKeyPair();
+        wso2Key = wso2KeyPair.getPrivate();
+        keys.put("wso2", wso2KeyPair.getPublic());
+        defaultOptions.setProperty("security.keystore.alias.wso2 issuer", "wso2");
+
+        ks = new MapPublicKeySource(keys);
     }
 
-	@Before
+    @Before
     public void setup() throws Exception {
         options = new Properties(defaultOptions);
         // Normally "wso2.org/products/am" => "http://wso2.org/claims/emailaddress"

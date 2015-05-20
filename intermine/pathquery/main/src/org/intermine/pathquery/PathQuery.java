@@ -2261,6 +2261,14 @@ public class PathQuery implements Cloneable
     }
 
     /**
+     * Bean style accessor.
+     * @return The XML for this query.
+     * **/
+    public String getXml() {
+        return this.toXml();
+    }
+
+    /**
      * Add a JSON property when serialising
      * @param sb The buffer we are serialing to.
      * @param key the property name.
@@ -2315,6 +2323,7 @@ public class PathQuery implements Cloneable
     protected Map<String, Object> getHeadAttributes() {
         Map<String, Object> ret = new LinkedHashMap<String, Object>();
         ret.put("title", getTitle());
+        ret.put("name", getTitle());
         ret.put("description", getDescription());
         ret.put("select", getView());
 

@@ -11,30 +11,49 @@
 <html:xhtml/>
 
 <div id="content-wrap">
-        <div id="boxes">
-                <div id="search-bochs">
+        <div id="boxes" class="grid small-grid-1of2 large-grid-1of4">
+              <div class="grid-cell">
+                <div id="search-bochs" class="bochs">
                         <img class="title" src="themes/purple/homepage/search-ico-right.png" title="search"/>
                         <div class="inner">
                                 <h3><c:out value="${WEB_PROPERTIES['begin.searchBox.title']}" /></h3>
-                                <span class="ugly-hack">&nbsp;</span>
-                                <p><c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" /></p>
+                                <span class="help">
+                                    <c:out value="${WEB_PROPERTIES['begin.searchBox.description']}" escapeXml="false" />
+                                </span>
 
                                 <form action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
-                                        <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
+                                        <center>
+                                            <div class="input">
+                                                <input id="actionsInput"
+                                                    name="searchTerm"
+                                                    class="input"
+                                                    type="text"
+                                                    value="${WEB_PROPERTIES['begin.searchBox.example']}">
+                                            </div>
+                                        </center>
                                         <div class="bottom">
-                                                <center>
-                                                        <input id="mainSearchButton" name="searchSubmit" class="button dark" type="submit" value="search"/>
-                                                </center>
+                                            <center>
+                                                <input id="mainSearchButton"
+                                                       name="searchSubmit"
+                                                       class="button dark"
+                                                       type="submit"
+                                                       value="search">
+                                            </center>
                                         </div>
                                 </form>
                                 <div style="clear:both;"></div>
                         </div>
+                    </div>
                 </div>
-                <div id="lists-bochs">
+
+                <div class="grid-cell">
+                    <div id="lists-bochs" class="bochs">
                         <img class="title" src="images/icons/lists-64.png" title="lists"/>
                         <div class="inner">
                                 <h3><c:out value="${WEB_PROPERTIES['begin.listBox.title']}" /></h3>
-                                <p><c:out value="${WEB_PROPERTIES['begin.listBox.description']}" escapeXml="false" /></p>
+                                <span class="help">
+                                    <c:out value="${WEB_PROPERTIES['begin.listBox.description']}" escapeXml="false" />
+                                </span>
 
                                 <form name="buildBagForm" method="post" action="<c:url value="/buildBag.do" />">
                                         <select name="type">
@@ -81,8 +100,11 @@
                                         </div>
                                 </form>
                         </div>
+                    </div>
                 </div>
-                <div id="welcome-bochs">
+
+                <div class="grid-cell">
+                   <div id="welcome-bochs" class="bochs">
                         <div class="inner">
                             <c:choose>
                                 <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
@@ -92,7 +114,6 @@
                                     <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
                                 </c:otherwise>
                             </c:choose>
-                                <br />
                                 <c:choose>
                                     <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedDescription'])}">
                                         <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedDescription']}" escapeXml="false" /></p>
@@ -131,7 +152,30 @@
                                     </div>
                                 </c:if>
                         </div>
+                    </div>
                 </div>
+
+                <div class="grid-cell">
+                    <div class="api bochs">
+                        <img class="title" src="images/begin/java-perl-python-ruby-2.png" alt="perl java python ruby" />
+                        <div class="inner">
+                            <h3><fmt:message key="api.box.title"/></h3>
+                            <p>
+                                <fmt:message key="api.box.blurb">
+                                <fmt:param>${WEB_PROPERTIES['project.title']}</fmt:param>
+                                </fmt:message>
+                            </p>
+                            <div class="bottom">
+                                <center>
+                                    <a class="button gray" href="${WEB_PROPERTIES['apidocs']}">
+                                        <div><span><fmt:message key="api.box.link"/></span></div>
+                                    </a>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
         </div>
 
         <div style="clear:both"></div>
@@ -212,33 +256,15 @@
         </div>
     </c:if>
 
-                <div id="low">
-                        <div id="rss" style="display:none;">
-                                <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
-                                <table id="articles"></table>
-                                <c:if test="${!empty WEB_PROPERTIES['links.blog']}">
-                                    <p class="more"><a target="new" href="${WEB_PROPERTIES['links.blog']}">More news</a></p>
-                                </c:if>
-                        </div>
-
-                        <div id="api">
-                                <h4>Perl, Python, Ruby and <span>&nbsp;&amp;&nbsp;</span> Java API</h4>
-                                <img src="images/begin/java-perl-python-ruby-2.png" alt="perl java python ruby" />
-                                <p>
-                                        Access our <c:out value="${WEB_PROPERTIES['project.title']}"/> data via
-                                        our Application Programming Interface (API) too!
-                                        We provide client libraries in the following languages:
-                                </p>
-                                <ul id="api-langs">
-                                        <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=perl">Perl</a>
-                                        <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=python">Python</a>
-                                        <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=ruby">Ruby</a>
-                                        <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
-                                </ul>
-                        </div>
-
-                        <div style="clear:both;"></div>
-                </div>
+            <div id="low" class="grid">
+                    <div id="rss" class="grid-cell" style="display:none;">
+                            <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
+                            <table id="articles"></table>
+                            <c:if test="${!empty WEB_PROPERTIES['links.blog']}">
+                                <p class="more"><a target="new" href="${WEB_PROPERTIES['links.blog']}">More news</a></p>
+                            </c:if>
+                    </div>
+            </div>
         </div>
 </div>
 
