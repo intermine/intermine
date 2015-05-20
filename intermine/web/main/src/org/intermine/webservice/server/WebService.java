@@ -727,7 +727,9 @@ public abstract class WebService
      * @return An Output that produces good XML.
      */
     protected Output makeXMLOutput(PrintWriter out, String separator) {
-        ResponseUtil.setXMLHeader(response, "result.xml");
+        String filename = getRequestFileName();
+        filename += ".xml";
+        ResponseUtil.setXMLHeader(response, filename);
         return new StreamedOutput(out, new XMLFormatter(), separator);
     }
 
@@ -808,7 +810,7 @@ public abstract class WebService
             throw new ServiceException(e);
         }
         // TODO: retrieve the content types from the formats.
-        String filename = getDefaultFileName();
+        String filename = getRequestFileName();
         switch (getFormat()) {
             case HTML:
                 output = new StreamedOutput(out, new HTMLTableFormatter(),
@@ -822,23 +824,20 @@ public abstract class WebService
                 output = new StreamedOutput(out, new TabFormatter(
                         StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
                         separator);
-                filename = "result.tsv";
+                filename += ".tsv";
                 if (isUncompressed()) {
                     ResponseUtil.setTabHeader(response, filename);
                 }
                 break;
             case CSV:
                 output = new StreamedOutput(out, new CSVFormatter(), separator);
-                filename = "result.csv";
+                filename += ".csv";
                 if (isUncompressed()) {
                     ResponseUtil.setCSVHeader(response, filename);
                 }
                 break;
             case TEXT:
                 output = new StreamedOutput(out, new PlainFormatter(), separator);
-                if (filename == null) {
-                    filename = "result.txt";
-                }
                 filename += getExtension();
                 if (isUncompressed()) {
                     ResponseUtil.setPlainTextHeader(response, filename);
@@ -846,7 +845,7 @@ public abstract class WebService
                 break;
             case JSON:
                 output = makeJSONOutput(out, separator);
-                filename = "result.json";
+                filename += ".json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
                 }
@@ -854,7 +853,7 @@ public abstract class WebService
             case OBJECTS:
                 output = new StreamedOutput(out, new JSONObjectFormatter(),
                         separator);
-                filename = "result.json";
+                filename += ".json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
                 }
@@ -907,6 +906,21 @@ public abstract class WebService
      */
     protected String getDefaultFileName() {
         return "result";
+    }
+
+    /**
+     * If the request has a <code>filename</code> parameter then use that
+     * for the fileName, otherwise use the default fileName
+     * @return the fileName to use for the exported file
+     */
+    protected String getRequestFileName() {
+        String param = WebServiceRequestParser.FILENAME_PARAMETER;
+        String fileName = request.getParameter(param);
+        if (StringUtils.isBlank(fileName)) {
+            return getDefaultFileName();
+        } else {
+            return fileName.trim();
+        }
     }
 
     /**

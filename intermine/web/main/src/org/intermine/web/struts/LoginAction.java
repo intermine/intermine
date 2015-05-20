@@ -22,7 +22,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -55,15 +57,21 @@ public class LoginAction extends LoginHandler
             return mapping.findForward("login");
         }
 
-        Map<String, String> renamedBags = doLogin(request, lf.getUsername(), lf.getPassword());
-        recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
+        ProfileMergeIssues issues = doLogin(request, lf.getUsername(), lf.getPassword());
+        Profile user = SessionMethods.getProfile(session);
+        recordMessage(new ActionMessage("login.loggedin", user.getName()), request);
         //track the user login
         im.getTrackerDelegate().trackLogin(lf.getUsername());
 
-        if (renamedBags.size() > 0) {
-            for (String initName : renamedBags.keySet()) {
-                recordMessage(new ActionMessage("login.renamedbags", initName,
-                            renamedBags.get(initName)), request);
+        if (issues.hasIssues()) {
+            for (Map.Entry<String, String> renamed: issues.getRenamedBags().entrySet()) {
+                recordMessage(new ActionMessage("login.renamedbags", renamed.getKey(),
+                            renamed.getValue()), request);
+            }
+            for (Map.Entry<String, String> renamed: issues.getRenamedTemplates().entrySet()) {
+                recordMessage(
+                    new ActionMessage("login.failedtemplate", renamed.getKey(), renamed.getValue()),
+                    request);
             }
             return mapping.findForward("mymine");
         }

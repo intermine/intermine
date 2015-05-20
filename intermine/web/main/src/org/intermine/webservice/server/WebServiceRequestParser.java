@@ -147,6 +147,9 @@ public class WebServiceRequestParser
     /** The parameter for accepting any format **/
     public static final String FORMAT_PARAMETER_ANY = "*/*";
 
+    /** The parameter for setting the filename **/
+    public static final String FILENAME_PARAMETER = "filename";
+
     /**
      * Parses common parameters for all web services. Must be called from parseRequest
      * method in subclass else the parameters won't be set.

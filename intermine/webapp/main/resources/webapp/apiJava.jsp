@@ -36,7 +36,7 @@
       <div onclick="javascript:showText('prerequisite')"><h3 style="font-weight: bold;">Prerequisites</h3></div>
       <div id="prerequisite" style="padding: 5px">
         <p>All you need to is java 1.5+ and our package
-    (<a href="javascript: jQuery('#apiJavaForm').submit();">download</a>)
+    (<a href="https://github.com/intermine/intermine/raw/dev/intermine/webservice/client/download/dist/java-intermine-webservice-client.zip">download</a>)
         which contains the client library and all dependencies.
       </p>
       </div>

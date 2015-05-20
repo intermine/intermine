@@ -164,6 +164,7 @@
     </fields>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
+      <displayer src="esynListDisplayer.tile" showOnLeft="true" />
    </bagdisplayers>
   </class>
 
@@ -716,6 +717,12 @@
                      jspName="model/diseaseDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
+                     jspName="model/esynDisplayer.jsp"
+                     replacesFields=""
+                     placement="Interactions"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinStructureATMDisplayer"

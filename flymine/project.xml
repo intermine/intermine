@@ -94,11 +94,6 @@
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
-    <source name="ensembl-core" type="ensembl-core">
-     <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
-     <property name="src.data.dir.includes" value="7165.xml"/>
-    </source>
-
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
@@ -514,20 +509,20 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
-    <source name="reactome" type="biopax">
+    <source name="reactome" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/current"/>
-      <property name="biopax.organisms" value="7227"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="false"/>
+      <property name="reactome.organisms" value="7227"/>
+      <property name="reactome.datasourcename" value="Reactome"/>
+      <property name="reactome.datasetname" value="Reactome data set"/>
+      <property name="reactome.curated" value="false"/>
     </source>
 
-    <source name="reactome-curated" type="biopax">
+    <source name="reactome-curated" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
-      <property name="biopax.organisms" value="7227"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="FlyReactome data set"/>
-      <property name="biopax.curated" value="true"/>
+      <property name="reactome.organisms" value="7227"/>
+      <property name="reactome.datasourcename" value="Reactome"/>
+      <property name="reactome.datasetname" value="FlyReactome data set"/>
+      <property name="reactome.curated" value="true"/>
     </source>
 
     <source name="bdgp-insitu" type="bdgp-insitu">
@@ -585,7 +580,7 @@
 
    <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
-      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 4932"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>

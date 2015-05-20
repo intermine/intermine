@@ -101,12 +101,6 @@ var FriendlyMines = (function ($, AjaxServices) {
             value: request.origin
           }
         ];
-        if (group.domain !== request.domain) {
-          data.push({
-            name: FriendlyMines.DOMAIN_PARAMETER,
-            value: group.domain
-          });
-        }
         im.log('Making portal request with:', data);
 
         makePostRequest(mine.url + '/portal.do', data);
