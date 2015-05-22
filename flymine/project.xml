@@ -94,11 +94,6 @@
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
-    <source name="ensembl-core" type="ensembl-core">
-     <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
-     <property name="src.data.dir.includes" value="7165.xml"/>
-    </source>
-
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
