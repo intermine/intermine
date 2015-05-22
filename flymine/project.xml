@@ -535,6 +535,7 @@
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fbbt.obo"/>
+      <property name="prefix" value="FBbt"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
