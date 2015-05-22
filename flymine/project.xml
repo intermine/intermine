@@ -517,19 +517,12 @@
       <property name="reactome.curated" value="false"/>
     </source>
 
-    <source name="reactome-curated" type="reactome">
-      <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
-      <property name="reactome.organisms" value="7227"/>
-      <property name="reactome.datasourcename" value="Reactome"/>
-      <property name="reactome.datasetname" value="FlyReactome data set"/>
-      <property name="reactome.curated" value="true"/>
-    </source>
-
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/micklem/data/flymine/bdgp-insitu/current"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fbbt.obo"/>
+      <property name="prefix" value="FBbt"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>

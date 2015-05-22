@@ -12,7 +12,8 @@
         addLinkToList: function() {
             var a = $('<a>');
             a.text(this.options.list.name);
-            a.attr('href', this.options.list.service.root.replace('service/', 'bagDetails.do?bagName=' + this.options.list.name));
+            var encoded = encodeURIComponent(this.options.list.name);
+            a.attr('href', this.options.list.service.root.replace('service/', 'bagDetails.do?bagName=' + encoded));
             this.$('p').append(a);
         },
         notifyOfCreation: function() {

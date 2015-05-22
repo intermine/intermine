@@ -11,9 +11,14 @@
 
 <tiles:importAttribute name="invalid" ignore="true"/>
 <tiles:importAttribute name="bag" ignore="true"/>
+<tiles:importAttribute name="bagName" ignore="true"/>
 <tiles:importAttribute name="cssClass" ignore="true"/>
 <tiles:importAttribute name="pageSize" ignore="true"/>
 <tiles:importAttribute name="query" ignore="true"/>
+<tiles:importAttribute name="consumerContainer" ignore="true"/>
+<tiles:importAttribute name="consumerBtnClass" ignore="true"/>
+<tiles:importAttribute name="successCallBack" ignore="true"/>
+<tiles:importAttribute name="tableIsOpen" ignore="true"/>
 
 <c:if test="${empty query}">
     <c:set var="query" value="${QUERY}"/>
@@ -22,7 +27,10 @@
 <c:if test="${empty pageSize}">
     <c:set var="pageSize" value="25"/>
 </c:if>
-  
+
+<c:if test="${empty tableIsOpen}">
+    <c:set var="tableIsOpen" value="true"/>
+</c:if>
 
 <c:set var="initValue" value="0"/>
 
@@ -34,11 +42,17 @@
 
 <c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
 
-<c:if test="${! empty query.title}">
+<c:if test="${! empty query.title }">
+  <%-- We want to ignore path-queries. This is horrific. I know that --%>
+  <c:catch var="exception">
+    <c:set var="templateName" value="${ query.name }"/>
+  </c:catch>
+  <c:if test="${empty exception}">
     <tiles:insert template="templateTitle.jsp">
         <tiles:put name="templateQuery" beanName="query"/>
         <tiles:put name="clickable" value="true"/>
     </tiles:insert>
+  </c:if>
 </c:if>
 
 <c:choose>
@@ -50,29 +64,78 @@
     </c:otherwise>
 </c:choose>
 
-<div id="${tableContainerId}" class="${cssClass}"></div>
+<div id="${tableContainerId}" class="${cssClass}">
+    <c:if test="${!tableIsOpen}">
+        <button class="open-table btn btn-default ${cssClass}">
+            <fmt:message key="results.show.details"/>
+        </button>
+    </c:if>
+</div>
 
 <script type="text/javascript">
 jQuery(function() {
-    intermine.css.headerIcon = "fm-header-icon";
     var customGalaxy = "${GALAXY_URL}";
-    if (customGalaxy) intermine.options.GalaxyCurrent = customGalaxy;
-    var opts = {
-        type: 'table',
-        service: $SERVICE,
-        error: FailureNotification.notify,
-        query: ${queryJson},
-        events: LIST_EVENTS,
-        properties: { pageSize: ${pageSize} }
-    };
-    var widget = jQuery('#${tableContainerId}').imWidget(opts);
-    var url = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
-    widget.states.on('revert add', function () {
-        var query = widget.states.currentQuery;
-        var xml = query.toXML();
-        var $trail = jQuery('.objectTrailLinkResults');
-        $trail.attr({href: url + '?method=xml&query=' + escape(xml)});
+    var url = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}/loadQuery.do";
+    if (customGalaxy !== "") {
+        imtables.configure('Download.Galaxy.Current', customGalaxy);
+    }
+    imtables.configure("CustomEvents.List.Create", window.LIST_EVENTS["list-creation:success"]);
+    var consumers = null, consumerBtnClass = null;
+    <c:if test="${!empty consumerContainer}">
+    consumers = document.querySelector('${consumerContainer}');
+    </c:if>
+    <c:if test="${!empty consumerBtnClass}">
+    consumerBtnClass = '${consumerBtnClass}';
+    </c:if>
+
+    <c:if test="${tableIsOpen}">
+    openTable();
+    </c:if>
+    <c:if test="${!tableIsOpen}">
+    jQuery('#${tableContainerId} > .open-table').click(function () {
+        jQuery(this).remove();
+        openTable();
     });
+    </c:if>
+
+    function openTable () {
+        imtables.loadDash(
+            '#${tableContainerId}',
+            {size: ${pageSize}, consumerContainer: consumers, consumerBtnClass: consumerBtnClass},
+            {service: $SERVICE, query: ${queryJson}}
+        ).then(
+            withTable,
+            FailureNotification.notify
+        );
+    }
+
+    function withTable (table) {
+        table.history.on('changed:current', updateTrail);
+        table.bus.on('list-action:failure', LIST_EVENTS['failure']);
+        table.bus.on('list-action:success', function(evt, args) {
+            if ("create" == evt) {
+                LIST_EVENTS["list-creation:success"](args);
+            }
+            if ("append" == evt) {
+                // Third argument is the old query.
+                var oldList = args[0]
+                var newList = args[1]
+                var difference = newList.size - oldList.size
+
+                LIST_EVENTS["list-update:success"](newList, difference);
+            }
+        });
+        <c:if test="${!empty successCallBack}">
+        ${successCallBack}(table);
+        </c:if>
+        
+        function updateTrail () {
+            var query = table.history.getCurrentQuery()
+            var xml = query.toXML();
+            var $trail = jQuery('.objectTrailLinkResults');
+            $trail.attr({href: url + '?method=xml&query=' + escape(xml)});
+        }
+    }
 });
 </script>
 

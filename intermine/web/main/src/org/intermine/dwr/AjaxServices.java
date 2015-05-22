@@ -37,6 +37,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
@@ -78,6 +79,9 @@ import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -91,9 +95,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.Emailer;
-import org.intermine.metadata.StringUtil;
-import org.intermine.metadata.TypeUtil;
-import org.intermine.model.InterMineObject;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.context.MailAction;
@@ -111,7 +112,6 @@ import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 /**
  * This class contains the methods called through DWR Ajax
@@ -354,7 +354,7 @@ public class AjaxServices
             if (bag == null) {
                 throw new InterMineException("List \"" + bagName + "\" not found.");
             }
-            bag.setDescription(description);
+            bag.setDescription(StringEscapeUtils.escapeHtml(description));
             return description;
         } catch (RuntimeException e) {
             processException(e);
