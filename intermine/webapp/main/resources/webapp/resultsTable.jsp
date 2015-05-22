@@ -79,6 +79,7 @@ jQuery(function() {
     if (customGalaxy !== "") {
         imtables.configure('Download.Galaxy.Current', customGalaxy);
     }
+    imtables.configure("CustomEvents.List.Create", window.LIST_EVENTS["list-creation:success"]);
     var consumers = null, consumerBtnClass = null;
     <c:if test="${!empty consumerContainer}">
     consumers = document.querySelector('${consumerContainer}');
@@ -111,7 +112,19 @@ jQuery(function() {
     function withTable (table) {
         table.history.on('changed:current', updateTrail);
         table.bus.on('list-action:failure', LIST_EVENTS['failure']);
-        table.bus.on('list-action:success', LIST_EVENTS['success']);
+        table.bus.on('list-action:success', function(evt, args) {
+            if ("create" == evt) {
+                LIST_EVENTS["list-creation:success"](args);
+            }
+            if ("append" == evt) {
+                // Third argument is the old query.
+                var oldList = args[0]
+                var newList = args[1]
+                var difference = newList.size - oldList.size
+
+                LIST_EVENTS["list-update:success"](newList, difference);
+            }
+        });
         <c:if test="${!empty successCallBack}">
         ${successCallBack}(table);
         </c:if>
