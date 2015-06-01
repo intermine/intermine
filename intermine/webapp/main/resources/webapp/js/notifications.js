@@ -42,7 +42,7 @@
             this.$el.prependTo('#pagecontentcontainer');
             
             if (this.options.autoRemove) {
-              _.delay(this.close, (remAfter === true) ? 3000 : remAfter);
+              // _.delay(this.close, (remAfter === true) ? 3000 : remAfter);
             }
             return this;
         },

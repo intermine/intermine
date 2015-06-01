@@ -230,8 +230,9 @@ public class PantherConverter extends BioFileConverter
             String gene1 = getGene(gene1IdentifierString[1], taxonId1);
             String gene2 = getGene(gene2IdentifierString[1], taxonId2);
 
-            // file contains duplicates
-            if (homologuePairs.contains(new MultiKey(gene1, gene2))) {
+            // file contains duplicates OR gene not resolved
+            if (homologuePairs.contains(new MultiKey(gene1, gene2)) || StringUtils.isEmpty(gene1)
+                     || StringUtils.isEmpty(gene2)) {
                 continue;
             }
 
