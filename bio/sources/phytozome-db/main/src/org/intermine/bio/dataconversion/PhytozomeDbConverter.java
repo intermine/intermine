@@ -148,6 +148,7 @@ public class PhytozomeDbConverter extends BioDBConverter
         PhytozomeDbProcessor p = new PhytozomeDbProcessor(this,organismIdentifier,organismId,assemblyDbxrefId,annotationDbxrefId);
         // release the hounds
         p.process();
+        connection.close();
     }
     
    

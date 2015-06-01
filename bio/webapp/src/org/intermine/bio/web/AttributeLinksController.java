@@ -115,11 +115,11 @@ public class AttributeLinksController extends TilesAction
                 // no organism field
             }
 
-            if (organismReference == null || organismReference.getTaxonId() == null) {
+            if (organismReference == null || organismReference.getProteomeId() == null) {
                 geneOrgKey += "(\\.(\\*))?";
             } else {
                 // we need to check against * as well in case we want it to work for all taxonIds
-                geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))?";
+                geneOrgKey += "(\\.(" + organismReference.getProteomeId() + "|\\*))?";
             }
         } else { // bag
             geneOrgKey += "(\\.(\\*|[\\d]+))?";

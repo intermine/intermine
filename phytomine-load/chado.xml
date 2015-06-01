@@ -440,6 +440,7 @@
     <property name="assemblyVersion" value="v4" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
+
   <source name="phytozome-chado-M.esculenta-early-release" type="phytozome-db">
     <property name="source.db.name" value="phytozome" />
     <property name="commonName" value="cassava" />
@@ -457,6 +458,25 @@
     <property name="assemblyVersion" value="v6" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
+
+  <source name="phytozome-chado-M.esculenta-redo" type="phytozome-db">
+    <property name="source.db.name" value="phytozome" />
+    <property name="commonName" value="cassava" />
+    <property name="genus" value="Manihot" />
+    <property name="name" value="Manihot esculenta" />
+    <property name="species" value="esculenta" />
+    <property name="assemblyDbxrefId" value="9098937" />
+    <property name="proteomeId" value="305" />
+    <property name="taxonId" value="3983" />
+    <property name="annotationVersion" value="v6.1" />
+    <property name="dataSourceName" value="phytozome-M.esculenta" />
+    <property name="shortName" value="M. esculenta early-release" />
+    <property name="version" value="early-release" />
+    <property name="annotationDbxrefId" value="9098939" />
+    <property name="assemblyVersion" value="v6" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+  </source>
+
   <source name="phytozome-chado-M.guttatus" type="phytozome-db">
     <property name="source.db.name" value="phytozome" />
     <property name="commonName" value="monkey flower" />

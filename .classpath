@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="bio/postprocess/main/src"/>
+	<classpathentry kind="src" path="bio/sources/plantcyc-pathway/main/src"/>
 	<classpathentry kind="src" path="imbuild/im-ant-tasks/src"/>
 	<classpathentry kind="src" path="bio/core/main/src"/>
 	<classpathentry kind="src" path="bio/sources/phytozome-clusters/main/src"/>

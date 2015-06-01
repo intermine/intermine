@@ -33,6 +33,7 @@ import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.ProteinFamily;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.PendingClob;
 import org.intermine.task.FileDirectDataLoaderTask;
@@ -220,7 +221,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
             while (iter.hasNext()) {
                 Sequence bioJavaSequence = iter.nextSequence();
-                processSequence(getOrganism(bioJavaSequence), bioJavaSequence);
+                processSequence(null, bioJavaSequence);
             }
 
             reader.close();
@@ -264,9 +265,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         throws ObjectStoreException {
         // some fasta files are not filtered - they contain sequences from organisms not
         // specified in project.xml
-        if (organism == null) {
+      /*  if (organism == null) {
             return;
-        }
+        }*/
         org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Sequence.class);
 
@@ -289,24 +290,24 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new RuntimeException("unknown class: " + className
                                        + " while creating new Sequence object");
         }
-        BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
-
+        //BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
+        ProteinFamily imo = (ProteinFamily) getDirectDataLoader().createObject(imClass);
         String attributeValue = getIdentifier(bioJavaSequence);
 
         try {
-            imo.setFieldValue(classAttribute, attributeValue);
+            imo.setFieldValue(classAttribute, new Integer(attributeValue));
         } catch (Exception e) {
             throw new IllegalArgumentException("Error setting: " + className + "."
                                                + classAttribute + " to: " + attributeValue
                                                + ". Does the attribute exist?");
         }
         try {
-            imo.setFieldValue("sequence", flymineSequence);
+            imo.setFieldValue("consensus", flymineSequence);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error setting: " + className + ".sequence to: "
                     + attributeValue + ". Does the attribute exist?");
         }
-        imo.setOrganism(organism);
+        /*imo.setOrganism(organism);
         try {
             imo.setFieldValue("length", new Integer(flymineSequence.getLength()));
         } catch (Exception e) {
@@ -328,7 +329,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
 
         DataSet dataSet = getDataSet();
         imo.addDataSets(dataSet);
-
+*/
         try {
             getDirectDataLoader().store(flymineSequence);
             getDirectDataLoader().store(imo);

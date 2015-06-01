@@ -580,11 +580,11 @@ public class PhytozomeDbProcessor {
       String residues = res.getString("residues");
       String checksum = res.getString("md5checksum");
       int seqlen = 0;
-      if (res.getObject("seqlen") != null) {
-        seqlen = res.getInt("seqlen");
+      if (residues != null) {
+        seqlen = residues.length();
       }
       String seqId = null;
-      if(seqlen > 0) {
+      if(seqlen > 0 && residues != null ) {
         Item seq = converter.createItem("Sequence");
         seq.setAttribute("residues", residues);
         seq.setAttribute("length",Integer.toString(seqlen));

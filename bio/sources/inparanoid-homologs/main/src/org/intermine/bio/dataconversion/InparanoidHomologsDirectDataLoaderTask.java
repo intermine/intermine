@@ -127,17 +127,26 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
         String id = fields[0];
         String genes1 = fields[2];
         String genes2 = fields[3];
-
-        int field1Ctr = genes1.split(" ").length;
-        int field2Ctr = genes2.split(" ").length;
-        String class1 = (field1Ctr>3)?"many":"one";
-        String class2 = (field2Ctr>3)?"many":"one";
+        
+        // sometimes things are duplicated!
+        HashSet<String> uniquedGenes1 = new HashSet<String>();
+        HashSet<String> uniquedGenes2 = new HashSet<String>();
+        String[] fields1 = genes1.split(" ");
+        String[] fields2 = genes2.split(" ");
+        for( int i1=0; i1 < fields1.length; i1+=2) {
+          uniquedGenes1.add(fields1[i1]);
+        }
+        for( int i2=0; i2 < fields2.length; i2+=2) {
+          uniquedGenes2.add(fields2[i2]);
+        }
+        String class1 = (uniquedGenes1.size()>1)?"many":"one";
+        String class2 = (uniquedGenes2.size()>1)?"many":"one";
         String groupName = proteomeId[0].toString()+"_"+proteomeId[1].toString()+"_"+id;
 
-        orthoRegistered += registerPairs(groupName,genes1,proteomeId[0],genes2,proteomeId[1],class1+"-to-"+class2);
-        orthoRegistered += registerPairs(groupName,genes2,proteomeId[1],genes1,proteomeId[0],class2+"-to-"+class1);
-        paraRegistered += registerPairs(groupName,genes1,proteomeId[0],genes1,proteomeId[0],class1+"-to-"+class2);
-        paraRegistered += registerPairs(groupName,genes2,proteomeId[1],genes2,proteomeId[1],class2+"-to-"+class1);
+        orthoRegistered += registerPairs(groupName,uniquedGenes1,proteomeId[0],uniquedGenes2,proteomeId[1],class1+"-to-"+class2);
+        orthoRegistered += registerPairs(groupName,uniquedGenes2,proteomeId[1],uniquedGenes1,proteomeId[0],class2+"-to-"+class1);
+        paraRegistered += registerPairs(groupName,uniquedGenes1,proteomeId[0],uniquedGenes1,proteomeId[0],class1+"-to-"+class2);
+        paraRegistered += registerPairs(groupName,uniquedGenes2,proteomeId[1],uniquedGenes2,proteomeId[1],class2+"-to-"+class1);
         lineNumber++;
 
         if ( (lineNumber%5000)==0 ) {
@@ -150,33 +159,32 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
     }
 
   }
-  private int registerPairs(String groupName,String g1,Integer p1,String g2,Integer p2,String relationship) {
+  private int registerPairs(String groupName,HashSet<String> g1,Integer p1,HashSet<String> g2,Integer p2,String relationship) {
     return registerPairs(groupName,g1,p1.toString(),g2,p2.toString(),relationship);
   }
-  private int registerPairs(String groupName,String g1,String p1,String g2,String p2,String relationship) {
-    String[] fields1 = g1.split(" ");
-    String[] fields2 = g2.split(" ");
+  private int registerPairs(String groupName,HashSet<String> g1,String p1,HashSet<String> g2,String p2,String relationship) {
+   
     int registered = 0;
 
-    for( int i1=0; i1 < fields1.length; i1+=2) {
-      for( int i2=0; i2 < fields2.length; i2+=2 ) {
+    for( String gene1 : g1 ) {
+      for(String gene2 : g2 ) {
         // register all pairs with genes1 and genes2
         // everything should be an integer. Skip this record if not
         try {
-          Integer.parseInt(fields1[i1]);
-          Integer.parseInt(fields2[i2]);
+          Integer.parseInt(gene1);
+          Integer.parseInt(gene2);
 
-          if (p1.equals(p2) && i1==i2) {
+          if (p1.equals(p2) && gene1.equals(gene2)) {
             continue;
           } else {
             try {
               Homolog o = getDirectDataLoader().createSimpleObject(Homolog.class);
               o.proxyOrganism1(organismMap.get(Integer.parseInt(p1)));
               o.proxyOrganism2(organismMap.get(Integer.parseInt(p2)));
-              String gene1 = "PAC:"+fields1[i1];
-              String gene2 = "PAC:"+fields2[i2];
-              o.proxyGene1(getGene(gene1,p1));
-              o.proxyGene2(getGene(gene2,p2));
+              String pacGene1 = "PAC:"+gene1;
+              String pacGene2 = "PAC:"+gene2;
+              o.proxyGene1(getGene(pacGene1,p1));
+              o.proxyGene2(getGene(pacGene2,p2));
               o.setGroupName(groupName);
               o.setMethod("inParanoid");
               o.setRelationship(relationship);

@@ -5,6 +5,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Organism;
+import org.intermine.model.bio.ProteinFamily;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.PendingClob;
 import org.apache.tools.ant.BuildException;
@@ -63,9 +64,9 @@ public class PhytozomeFastaLoaderTask extends FastaLoaderTask {
       throws ObjectStoreException {
     // some fasta files are not filtered - they contain sequences from organisms not
     // specified in project.xml
-    if (organism == null) {
+    /*if (organism == null) {
       throw new BuildException("Organism was not set.");
-    }
+    }*/
     org.intermine.model.bio.Sequence seqObject = getDirectDataLoader().createObject(
         org.intermine.model.bio.Sequence.class);
 
@@ -88,7 +89,7 @@ public class PhytozomeFastaLoaderTask extends FastaLoaderTask {
       throw new RuntimeException("unknown class: " + className
           + " while creating new Sequence object");
     }
-    BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
+    ProteinFamily imo = (ProteinFamily) getDirectDataLoader().createObject(imClass);
 
     String attributeValue = getIdentifier(bioJavaSequence);
 
@@ -100,17 +101,17 @@ public class PhytozomeFastaLoaderTask extends FastaLoaderTask {
           + ". Does the attribute exist?");
     }
     try {
-      imo.setFieldValue("sequence", seqObject);
+      imo.setFieldValue("consensus", seqObject);
     } catch (Exception e) {
       throw new IllegalArgumentException("Error setting: " + className + ".sequence to: "
           + attributeValue + ". Does the attribute exist?");
     }
-    imo.setOrganism(organism);
+    //imo.setOrganism(organism);
     try {
       imo.setFieldValue("length", new Integer(seqObject.getLength()));
     } catch (Exception e) {
-      throw new IllegalArgumentException("Error setting: " + className + ".length to: "
-          + seqObject.getLength() + ". Does the attribute exist?");
+      //throw new IllegalArgumentException("Error setting: " + className + ".length to: "
+      //    + seqObject.getLength() + ". Does the attribute exist?");
     }
 
     try {

@@ -442,3 +442,33 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .intermine .im-column-th .dropdown-menu:after {
   border-bottom-color: #1F7492;
 }
+
+.im-result-field {
+  max-width: 250pt;
+  overflow: hidden;
+}
+
+.im-displayed-value {
+  max-width: 250pt;
+  overflow: hidden;
+}
+
+.im-cell-link {
+  max-width: 250pt;
+  overflow: hidden;
+}
+
+.im-result-field:hover {
+  overflow: visible;
+  white-space: normal;
+}
+.im-displayed-value:hover {
+  overflow: visible;
+  white-space: normal;
+}
+.im-cell-link:hover {
+  overflow: visible;
+  white-space: normal;
+}
+
+

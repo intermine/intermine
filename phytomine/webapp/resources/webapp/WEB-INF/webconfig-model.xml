@@ -54,7 +54,7 @@
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" label="Primary Identifier"/>
-      <fieldconfig fieldExpr="secondaryIdentifier"/>
+      <fieldconfig fieldExpr="briefDescription" label="Defline" showLinksToObjects="false" />
       <fieldconfig fieldExpr="organism.shortName" label="Organism Name"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
@@ -102,7 +102,7 @@
       <table path="dataSets.name" showLinksToObjects="false" />
     </inlinelist>
     <fields>
-      <fieldconfig fieldExpr="identifier" label="Identitiier" />
+      <fieldconfig fieldExpr="identifier" label="Identifier" />
       <fieldconfig fieldExpr="name" label="Name" />
     </fields>
   </class>
@@ -271,7 +271,7 @@
   <class className="org.intermine.model.bio.ProteinFamily">
     <headerconfig>
       <titles>
-        <title mainTitles="clusterId" />
+        <title mainTitles="clusterName|clusterId" numberOfMailTitlesToShow="1" />
       </titles>
     </headerconfig>
     <fields>
@@ -434,7 +434,7 @@
                                               goAnnotation.ontologyTerm.parents.identifier != go:0003674,
                                               goAnnotation.ontologyTerm.parents.identifier != go:0005575"
                                  typeClass="Gene"
-                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+                                 views="primaryIdentifier,secondaryIdentifier,organism.name,
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
@@ -456,7 +456,7 @@
                                               genes.goAnnotation.ontologyTerm.parents.identifier != go:0003674,
                                               genes.goAnnotation.ontologyTerm.parents.identifier != go:0005575"
                                  typeClass="Protein"
-                                 views="primaryAccession, name,organism.name,
+                                 views="primaryIdentifier,secondaryIdentifier,organism.name,
                                        genes.goAnnotation.ontologyTerm.identifier, genes.goAnnotation.ontologyTerm.name,
                                        genes.goAnnotation.ontologyTerm.parents.identifier,genes.goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
