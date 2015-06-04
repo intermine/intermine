@@ -371,12 +371,6 @@
                      placement="summary"
                      types="Gene,Protein"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SnpToGeneDisplayer"
-                     jspName="model/snpToGeneDisplayer.jsp"
-                     replacesFields=""
-                     placement="summary"
-                     types="SNP"/>
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
                      jspName="model/overlappingFeaturesDisplayer.jsp"
                      replacesFields="overlappingFeatures"
