@@ -57,10 +57,10 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
     /**
      * Sets the taxon ID for features in this file.
      *
-     * @param taxonId a single taxon Id
+     * @param vcfTaxonId a single taxon Id
      */
-    public void setVcfOrganism(String taxonId) {
-        this.taxonId = taxonId;
+    public void setVcfTaxonId(String vcfTaxonId) {
+        taxonId = vcfTaxonId;
     }
 
     /**
@@ -68,7 +68,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
      *
      * @param dataSourceName Name of data source (organisation)
      */
-    public void setVcfDataSourceName(String dataSourceName) {
+    public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
     }
 
@@ -77,7 +77,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
      *
      * @param dataSetName name of data set being loaded
      */
-    public void setVcfDataSetName(String dataSetName) {
+    public void setDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
     }
 
@@ -96,9 +96,6 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
         }
     }
 
-    /**
-     * @throws BuildException if an ObjectStore method fails
-     */
     @Override
     public void execute() {
         if (files != null) {
@@ -197,10 +194,10 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
             snp.setReferenceSequence(referenceSeq);
         }
 
-        snp.setLength(variantSeq.length());
+        snp.setLength(1);
 
         snp.proxyChromosome(chromosome);
-        setLocation(snp, start, variantSeq.length(), chromosome);
+        setLocation(snp, start, chromosome);
         snp.setOrganism(getOrganism());
         getDirectDataLoader().store(snp);
 
@@ -222,9 +219,10 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
         return chromosomeRef;
     }
 
-    private Location setLocation(SequenceAlteration snp, String pos, int length,
-            ProxyReference chromosomeRef)
+    private Location setLocation(SequenceAlteration snp, String pos, ProxyReference chromosomeRef)
         throws ObjectStoreException {
+        // SNPs are always size = 1
+        final int length = 1;
         Location location = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Location.class);
         int start = new Integer(pos);
@@ -252,6 +250,10 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
     protected Organism getOrganism() throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
+            if (taxonId == null) {
+                throw new RuntimeException("Taxon ID not found. Please set a valid taxon Id"
+                        + " in your project XML file");
+            }
             org.setTaxonId(new Integer(taxonId));
             getDirectDataLoader().store(org);
         }
