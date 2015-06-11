@@ -1,0 +1,40 @@
+##fileformat=VCFv4.1
+##fileDate=20150302
+##source=ensembl;version=79;url=http://e79.ensembl.org/Homo_sapiens
+##reference=ftp://ftp.ensembl.org/pub/release-79/fasta/Homo_sapiens/dna/
+##INFO=<ID=HumanCoreExome-12_1,Number=0,Type=Flag,Description="Variants from the Illumina HumanCoreExome-12 v1 genotyping chip.">
+##INFO=<ID=ClinVar_201410,Number=0,Type=Flag,Description="Variants of clinical significance imported from ClinVar">
+##INFO=<ID=PhenCode_20140430,Number=0,Type=Flag,Description="PhenCode is a collaborative project to better understand the relationship between genotype and phenotype in humans">
+##INFO=<ID=COSMIC_71,Number=0,Type=Flag,Description="Somatic mutations found in human cancers from the COSMIC project">
+##INFO=<ID=HGMD-PUBLIC_20142,Number=0,Type=Flag,Description="Variants from HGMD-PUBLIC dataset June 2014 (mapped to GRCh38)">
+##INFO=<ID=ESP_20140509,Number=0,Type=Flag,Description="Data from NHLBI ESP version v.0.0.28. The goal of the NHLBI GO Exome Sequencing Project is to discover novel genes and mechanisms contributing to heart, lung and blood disorders by sequencing the protein coding regions of the human genome">
+##INFO=<ID=dbSNP_138,Number=0,Type=Flag,Description="Variants (including SNPs and indels) imported from dbSNP (mapped to GRCh38)">
+##INFO=<ID=TSA,Number=1,Type=String,Description="Type of sequence alteration. Child of term sequence_alteration as defined by the sequence ontology project.">
+##INFO=<ID=E_Cited,Number=0,Type=Flag,Description="Cited.http://www.ensembl.org/info/docs/variation/data_description.html#evidence_status">
+##INFO=<ID=E_ESP,Number=0,Type=Flag,Description="ESP.http://www.ensembl.org/info/docs/variation/data_description.html#evidence_status">
+##INFO=<ID=E_1000G,Number=0,Type=Flag,Description="1000Genomes.http://www.ensembl.org/info/docs/variation/data_description.html#evidence_status">
+##INFO=<ID=E_Multiple_observations,Number=0,Type=Flag,Description="Multiple_observations.http://www.ensembl.org/info/docs/variation/data_description.html#evidence_status">
+##INFO=<ID=E_Freq,Number=0,Type=Flag,Description="Frequency.http://www.ensembl.org/info/docs/variation/data_description.html#evidence_status">
+##INFO=<ID=E_Hapmap,Number=0,Type=Flag,Description="HapMap.http://www.ensembl.org/info/docs/variation/data_description.html#evidence_status">
+##INFO=<ID=CLIN_risk_factor,Number=0,Type=Flag,Description="risk factor.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_protective,Number=0,Type=Flag,Description="protective.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_confers_sensitivity,Number=0,Type=Flag,Description="confers sensitivity.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_other,Number=0,Type=Flag,Description="other.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_drug_response,Number=0,Type=Flag,Description="drug response.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_uncertain_significance,Number=0,Type=Flag,Description="uncertain significance.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_benign,Number=0,Type=Flag,Description="benign.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_likely_pathogenic,Number=0,Type=Flag,Description="likely pathogenic.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_pathogenic,Number=0,Type=Flag,Description="pathogenic.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_likely_benign,Number=0,Type=Flag,Description="likely benign.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_histocompatibility,Number=0,Type=Flag,Description="histocompatibility.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_not_provided,Number=0,Type=Flag,Description="not provided.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=CLIN_association,Number=0,Type=Flag,Description="association.http://www.ensembl.org/info/genome/variation/data_description.html#clin_significance">
+##INFO=<ID=MA,Number=1,Type=String,Description="Minor Allele">
+##INFO=<ID=MAF,Number=1,Type=Float,Description="Minor Allele Frequency">
+##INFO=<ID=MAC,Number=1,Type=Integer,Description="Minor Alelele Count">
+##INFO=<ID=AA,Number=1,Type=String,Description="Ancestral Allele">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	10019	rs376643643	TA	T	.	.	dbSNP_138;TSA=deletion
+1	10054	rs373328635	C	CA	.	.	dbSNP_138;TSA=insertion
+1	10109	rs376007522	A	T	.	.	dbSNP_138;TSA=SNV
+1	10139	rs368469931	A	T	.	.	dbSNP_138;TSA=SNV
