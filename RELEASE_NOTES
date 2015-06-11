@@ -8,6 +8,22 @@
  *
  */
 
+
+InterMine 1.5.3
+
+#1022 - Widget download fix
+
+InterMine 1.5.2
+
+#996 - Inheritance in webconfig-model.xml is inconsistant
+#976 - Portal doesn't correctly process homologues
+#963 - Download link for Java client is broken
+#958 - improve error message when creating list from set operation
+#957 - Homologues need to merge
+#955 - UniProt fails to parse multiple Ensembl genes 
+#937 - Travis isn't checking bio packages.
+#851 - Adding numerical constraint in results filter does not accept minus values
+
 InterMine 1.5.1
 
 #978 - template with lookup failing if selecting the organism

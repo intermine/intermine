@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
         },
         listCb: function(pq) {
             var service = new intermine.Service({'root': window.service, 'token': "<tiles:getAsString name="token"/>"});
-            service.query(pq, function(query) {
+            service.query(pq).then(function(query) {
                 var dialogue = new intermine.query.actions.ListCreator(query);
                 dialogue.render().$el.appendTo('#<tiles:getAsString name="widgetId"/>-widget');
                 dialogue.openDialogue();
@@ -28,7 +28,7 @@ jQuery(document).ready(function() {
             });
         },
         resultsCb: function(pq) {
-            (new intermine.Service({'root': service})).query(pq, function(query) {
+            (new intermine.Service({'root': service})).query(pq).then(function(query) {
                 var target, uri, form, w;
 
                 // Generate the target name.
