@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,13 +38,13 @@ public abstract class ListMakerService extends AuthenticatedListService
     public ListMakerService(final InterMineAPI api) {
         super(api);
     }
-    
+
     @Override
     protected void validateState() {
         super.validateState();
         if (!getPermission().isRW()) {
-            throw new ServiceForbiddenException("This request has not been authenticated with " +
-                    "RW permission");
+            throw new ServiceForbiddenException(
+                    "This request has not been authenticated with RW permission");
         }
     }
 

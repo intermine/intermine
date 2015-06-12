@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * Tests for the IntergenicRegionUtil class.

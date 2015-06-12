@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export.string;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,12 +42,10 @@ public class StringTableExporter
      * Perform export.
      * @param rows rows to be exported
      */
-    @SuppressWarnings("unchecked")
     public void export(List<List<String>> rows) {
         try {
             for (List<String> row : rows) {
-                // upcasting because rowFormatter expect List<Object>
-                writer.println(rowFormatter.format((List) row));
+                writer.println(rowFormatter.format(row));
             }
             writer.flush();
         } catch (RuntimeException e) {

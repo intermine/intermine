@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -30,12 +29,10 @@ import org.intermine.bio.web.logic.CytoscapeNetworkService;
  */
 public class CytoscapeNetworkAjaxAction extends Action
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(CytoscapeNetworkAjaxAction.class);
-
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,

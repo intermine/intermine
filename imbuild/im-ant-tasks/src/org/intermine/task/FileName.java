@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,10 +25,16 @@ public class FileName extends Task
     private String propName;
     private File file;
 
+    /**
+     * @param file filename
+     */
     public void setFile(File file) {
         this.file = file;
     }
 
+    /**
+     * @throws BuildException if can't build
+     */
     public void execute() throws BuildException {
         if (file == null) {
             throw new BuildException("file attribute required");
@@ -36,6 +42,9 @@ public class FileName extends Task
         this.getProject().setProperty(propName, file.getName());
     }
 
+    /**
+     * @param propName property name
+     */
     public void setProperty(String propName) {
         this.propName = propName;
     }

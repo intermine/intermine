@@ -1,7 +1,7 @@
 package org.intermine.web.tags.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,9 +24,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
  **/
 public class TreatStringTag extends SimpleTagSupport
 {
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         StringWriter buffer = new StringWriter();

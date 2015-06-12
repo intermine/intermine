@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -285,8 +285,7 @@ public class EnrichmentWidgetForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
     }
 

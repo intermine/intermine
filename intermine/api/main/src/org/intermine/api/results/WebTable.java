@@ -1,7 +1,7 @@
 package org.intermine.api.results;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 
 /**
@@ -87,5 +88,16 @@ public interface WebTable extends List<MultiRow<ResultsRow<MultiRowValue<ResultE
      * @throws ObjectStoreException exception
      */
     ResultsInfo getInfo() throws ObjectStoreException;
+
+    /**
+     * @return The paths for the displayed columns.
+     */
+    List<Path> getColumnsPath();
+
+    /**
+     * Adds columns that should be displayed to the table.
+     * @param columnPaths columns correspond to paths and columns for these paths should be added
+     */
+    void addColumns(List<Path> columnPaths);
 
 }

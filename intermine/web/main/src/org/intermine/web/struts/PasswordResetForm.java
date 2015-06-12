@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -85,8 +85,8 @@ public class PasswordResetForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") HttpServletRequest request) {
+    public ActionErrors validate(ActionMapping mapping,
+                                 HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
         if ((newpassword == null || newpassword.length() == 0)
                 || (newpassword2 == null || newpassword2.length() == 0)) {
@@ -101,8 +101,8 @@ public class PasswordResetForm extends ActionForm
      * {@inheritDoc}
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping,
+                      HttpServletRequest request) {
         newpassword = null;
         newpassword2 = null;
     }

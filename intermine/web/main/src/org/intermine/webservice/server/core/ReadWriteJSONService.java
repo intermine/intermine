@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,23 +16,28 @@ import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 /**
  * Convenience for services that need to combine JSON service behaviour
  * with strict RW authorisation.
- * 
+ *
  * @author Alex Kalderimis
  *
- */ 
-public abstract class ReadWriteJSONService extends JSONService {
+ */
+public abstract class ReadWriteJSONService extends JSONService
+{
 
-	private static final String DENIAL_MSG = "Access denied.";
+    private static final String DENIAL_MSG = "Access denied.";
 
-	public ReadWriteJSONService(InterMineAPI im) {
-		super(im);
-	}
+    /**
+     * Construct a read/write service.
+     * @param im The InterMine state object.
+     */
+    public ReadWriteJSONService(InterMineAPI im) {
+        super(im);
+    }
 
-	@Override
-	protected void validateState() {
-	    if (!isAuthenticated() || getPermission().isRO()) {
-	        throw new ServiceForbiddenException(DENIAL_MSG);
-	    }
-	}
+    @Override
+    protected void validateState() {
+        if (!isAuthenticated() || getPermission().isRO()) {
+            throw new ServiceForbiddenException(DENIAL_MSG);
+        }
+    }
 
 }

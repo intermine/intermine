@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,12 +13,10 @@ package org.intermine.web.logic.widget;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.intermine.web.logic.SortableMap;
-
 
 
 /**
@@ -33,11 +31,35 @@ import org.intermine.web.logic.SortableMap;
  */
 public final class ErrorCorrection
 {
+
+    public static enum Strategy {
+
+        /** The Bonferroni error correction strategy **/
+        BONFERRONI("Bonferroni"),
+        /** The Benjamini Hochberg error correction strategy **/
+        BENJAMINI_HOCHBERG("Benjamini Hochberg"),
+        /** The Holm-Bonferroni error correction strategy **/
+        HOLM_BONFERRONI("Holm-Bonferroni"),
+        /** Do not perform error correction **/
+        NONE("None");
+
+        private final String algorithm;
+
+        private Strategy(String name) {
+            this.algorithm = name;
+        }
+
+        /** @return the algorithm name. **/
+        public String getAlgorithm() {
+            return algorithm;
+        }
+    }
+
     protected static final BigDecimal ZERO = new BigDecimal(0);
     protected static final BigDecimal ONE = new BigDecimal(1);
 
     private ErrorCorrection() {
-        // don't instatianiate
+        // hidden constructor.
     }
 
     /**
@@ -47,27 +69,35 @@ public final class ErrorCorrection
      * @param errorCorrection which error correction to use
      * @return map containing adjusted p-values
      */
-    public static Map<String, BigDecimal> adjustPValues(String errorCorrection,
+    public static Map<String, BigDecimal> adjustPValues(
+            Strategy errorCorrection,
             Map<String, BigDecimal> results, Double max, int testCount) {
-        Map<String, BigDecimal> adjustedResults;
-
-        if ("Bonferroni".equals(errorCorrection)) {
-            adjustedResults = calculateBonferroni(results, testCount, max);
-        } else if ("Benjamini Hochberg".equals(errorCorrection)) {
-            adjustedResults = calculateBenjaminiHochberg(results, testCount, max);
-        } else if ("Holm-Bonferroni".equals(errorCorrection)) {
-            adjustedResults = calculateBonferroniHolm(results, testCount, max);
-        } else {
-            adjustedResults = calculate(results, max);
+        switch (errorCorrection) {
+            case NONE:
+                return calculate(results, max);
+            case BONFERRONI:
+                return calculateBonferroni(results, testCount, max);
+            case BENJAMINI_HOCHBERG:
+                return calculateBenjaminiHochberg(results, testCount, max);
+            case HOLM_BONFERRONI:
+                return calculateBonferroniHolm(results, testCount, max);
+            default:
+                throw new IllegalArgumentException("Unsupported strategy: " + errorCorrection);
         }
-        return adjustedResults;
     }
 
+    /**
+     * Sort the map by values.
+     *
+     * @param originalMap The map to sort.
+     * @return A similar map, but sorted.
+     */
     public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
-        SortableMap sortedMap = new SortableMap(originalMap);
+        SortableMap<String, BigDecimal> sortedMap =
+                new SortableMap<String, BigDecimal>(originalMap);
         // sort ascending, smallest values first
         sortedMap.sortValues(false, true);
-        return new LinkedHashMap(sortedMap);
+        return sortedMap;
     }
 
     /**

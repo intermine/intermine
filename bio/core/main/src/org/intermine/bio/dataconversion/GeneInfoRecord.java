@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -84,7 +84,7 @@ public class GeneInfoRecord
         return ids;
     }
 
-    private String filter(String s) {
+    private static String filter(String s) {
         if (!StringUtils.isBlank(s)) {
             if (!"-".equals(s)) {
                 return s;

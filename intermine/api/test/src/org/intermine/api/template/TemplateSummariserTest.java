@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import junit.framework.Test;
 
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -32,7 +33,6 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.StoreDataTestCase;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;

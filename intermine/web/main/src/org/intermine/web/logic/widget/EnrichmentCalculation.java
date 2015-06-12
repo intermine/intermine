@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
 
 /**
@@ -31,6 +32,8 @@ import org.apache.commons.math3.distribution.HypergeometricDistribution;
  */
 public final class EnrichmentCalculation
 {
+    private static final String UNKNOWN_STRATEGY = "Unknown error correction strategy: ";
+
     private EnrichmentCalculation() {
     }
 
@@ -57,6 +60,29 @@ public final class EnrichmentCalculation
         Map<String, PopulationInfo> annotatedPopulationInfo =
             input.getAnnotatedCountsInPopulation();
 
+        Map<String, BigDecimal> rawResults =
+                getRawResults(sampleSize, populationSize, sampleCounts, annotatedPopulationInfo);
+        ErrorCorrection.Strategy strategy = getStrategy(errorCorrection);
+
+        Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(strategy,
+                rawResults, maxValue, input.getTestCount());
+        if (extraCorrectionCoefficient && correctionCoefficient.isApplicable()) {
+            correctionCoefficient.apply(
+                    correctedResults, population, annotatedPopulationInfo, maxValue);
+        }
+        Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
+        // record the number of items in the sample that had any values for the attribute
+        int widgetTotal = rawResults.isEmpty() ? 0 : sampleSize;
+
+        EnrichmentResults results = new EnrichmentResults(sortedCorrectedResults,
+                input.getAnnotatedCountsInSample(), input.getLabels(), widgetTotal);
+
+        return results;
+    }
+
+    private static Map<String, BigDecimal> getRawResults(int sampleSize,
+            int populationSize, Map<String, Integer> sampleCounts,
+            Map<String, PopulationInfo> annotatedPopulationInfo) {
         Map<String, BigDecimal> rawResults = new HashMap<String, BigDecimal>();
         for (Map.Entry<String, Integer> entry : sampleCounts.entrySet()) {
             String attribute = entry.getKey();
@@ -70,21 +96,23 @@ public final class EnrichmentCalculation
             Double pValue = h.upperCumulativeProbability(sampleCount);
             rawResults.put(attribute, new BigDecimal(pValue));
         }
+        return rawResults;
+    }
 
-        Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
-                rawResults, maxValue, input.getTestCount());
-        if (extraCorrectionCoefficient && correctionCoefficient.isApplicable()) {
-            correctionCoefficient.apply(correctedResults, population, annotatedPopulationInfo, 
-                    maxValue);
+    private static ErrorCorrection.Strategy getStrategy(String errorCorrection) {
+        ErrorCorrection.Strategy strategy = null;
+        StringUtils.defaultIfBlank(errorCorrection, "None");
+        for (ErrorCorrection.Strategy s: ErrorCorrection.Strategy.values()) {
+            if (s.getAlgorithm().equalsIgnoreCase(errorCorrection)) {
+                strategy = s;
+                break;
+            }
         }
-        Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
-        // record the number of items in the sample that had any values for the attribute
-        int widgetTotal = rawResults.isEmpty() ? 0 : sampleSize;
 
-        EnrichmentResults results = new EnrichmentResults(sortedCorrectedResults,
-                input.getAnnotatedCountsInSample(), input.getLabels(), widgetTotal);
-
-        return results;
+        if (strategy == null) {
+            throw new IllegalArgumentException(UNKNOWN_STRATEGY + errorCorrection);
+        }
+        return strategy;
     }
 }
 

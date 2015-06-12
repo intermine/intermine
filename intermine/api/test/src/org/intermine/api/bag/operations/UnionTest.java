@@ -7,7 +7,7 @@ import org.intermine.api.bag.operations.IncompatibleTypes;
 import org.intermine.api.bag.operations.Union;
 import org.intermine.api.profile.InterMineBag;
 
-public class UnionTest extends BagOperationTest {
+public class UnionTest extends AbstractBagOperationTestCase {
 
     public UnionTest(String arg) {
         super(arg);

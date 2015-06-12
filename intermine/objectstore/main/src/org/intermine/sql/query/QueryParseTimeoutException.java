@@ -1,7 +1,11 @@
 package org.intermine.sql.query;
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2002-2014 FlyMine
+=======
+ * Copyright (C) 2002-2015 FlyMine
+>>>>>>> 4f54cd927d2ad9956a23c2b576da4b8cf41a3699
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +19,7 @@ package org.intermine.sql.query;
  * @author Richard Smith
  *
  */
-public class QueryParseTimeoutException extends RuntimeException {
+public class QueryParseTimeoutException extends RuntimeException
+{
 
 }

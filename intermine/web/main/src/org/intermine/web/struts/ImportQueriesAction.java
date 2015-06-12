@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,7 @@ import org.apache.struts.action.ActionMessages;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -71,7 +71,6 @@ public class ImportQueriesAction extends InterMineAction
         }
         try {
             profile.disableSaving();
-            StringBuffer sb = new StringBuffer();
             int imported = 0;
             boolean validNameQuery = true;
             for (String queryName : queries.keySet()) {

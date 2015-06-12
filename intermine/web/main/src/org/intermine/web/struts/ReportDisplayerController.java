@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,11 +31,11 @@ public class ReportDisplayerController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+                                 HttpServletResponse response) {
 
         ReportDisplayer displayer = (ReportDisplayer) context.getAttribute("displayer");
         ReportObject reportObject = (ReportObject) context.getAttribute("reportObject");

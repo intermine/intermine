@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,7 +41,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.http.TableExporterFactory;
@@ -56,6 +56,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Kim Rutherford
  * @author Jakub Kulaviak
  */
+@SuppressWarnings("deprecation")
 public class TableExportAction extends InterMineAction
 {
     protected static final Logger LOG = Logger.getLogger(TableExportAction.class);

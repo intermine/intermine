@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,8 +24,8 @@ public interface RowFormatter
 
     /**
      * Format row to string.
-     * @param row formatted objects
-     * @return returned formatted string
+     * @param row The objects to format (covariant).
+     * @return a string with everything nicely formatted.
      */
-    String format(List<Object> row);
+    String format(List<? extends Object> row);
 }

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForward;
@@ -33,7 +34,7 @@ public class ForwardParameters
     /** Original ActionForward. */
     protected ActionForward af;
     /** Map from parameter name to parameter value. */
-    protected Map params = new LinkedHashMap();
+    protected Map<String, String> params = new LinkedHashMap<String, String>();
     /** Anchor name. */
     protected String anchor;
 
@@ -87,15 +88,16 @@ public class ForwardParameters
      */
     public ActionForward forward() {
         String path = "";
-        Iterator iter = params.entrySet().iterator();
+        Iterator<Entry<String, String>> iter = params.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
+            Map.Entry<String, String> entry = iter.next();
             if (path.length() > 0) {
                 path += "&";
             }
             try {
-                path += entry.getKey() + "="
-                    + URLEncoder.encode((String) entry.getValue(), "UTF-8");
+                path += entry.getKey()
+                        + "="
+                        + URLEncoder.encode((String) entry.getValue(), "UTF-8");
             } catch (UnsupportedEncodingException err) {
                 LOG.error("Shouldn't ever happen", err);
                 throw new RuntimeException("Shouldn't ever happen", err);

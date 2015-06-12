@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -26,8 +27,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-
-import org.apache.log4j.Logger;
 
 /**
  * An object that represents the mapping of a Model onto a relational database. This handles the
@@ -46,7 +45,8 @@ public class DatabaseSchema
     private Set<String> missingTables;
     private boolean fetchFromInterMineObject;
     private int version;
-    private boolean hasBioSeg;
+    protected boolean hasBioSeg;
+    protected boolean useRangeTypes;
 
     private Set<ClassDescriptor> truncatedSet;
     private Map<ClassDescriptor, Fields> tableMasterToFieldDescriptors
@@ -64,10 +64,11 @@ public class DatabaseSchema
      * @param missingTables a Set of lowercase table names which are missing
      * @param version the version number in the database
      * @param hasBioSeg true if the database has the bioseg type installed
+     * @param useRangeTypes true if we can use Postgres built-in range types
      * @throws IllegalArgumentException if the truncated class list does not make sense
      */
     public DatabaseSchema(Model model, List<ClassDescriptor> truncated, boolean noNotXml,
-            Set<String> missingTables, int version, boolean hasBioSeg) {
+            Set<String> missingTables, int version, boolean hasBioSeg, boolean useRangeTypes) {
         this.model = model;
         this.truncated = truncated;
         this.missingTables = missingTables;
@@ -76,6 +77,7 @@ public class DatabaseSchema
         this.fetchFromInterMineObject = !missingTables.contains("intermineobject");
         this.version = version;
         this.hasBioSeg = hasBioSeg;
+        this.useRangeTypes = useRangeTypes;
         for (int i = 0; i < truncated.size(); i++) {
             Class<?> cA = truncated.get(i).getType();
             for (int o = 0; o < i; o++) {
@@ -191,6 +193,17 @@ public class DatabaseSchema
     public boolean hasBioSeg() {
         return hasBioSeg;
     }
+
+    /**
+     * Returns true if we can use Postgres built-in range types on this database. Will return false
+     * if this isn't a Postgres database or is earlier than 9.2.
+     * @return true if we can use built in range types
+     */
+    public boolean useRangeTypes() {
+        return useRangeTypes;
+    }
+
+
 
     /**
      * Returns a Fields object of FieldDescriptors in the given table-mastering ClassDescriptor. It

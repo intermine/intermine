@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -56,7 +56,6 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(ReferenceList refList, Integer itemId) {
-        refList.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
         refList.setItem(item);
         item.addCollections(refList);
@@ -66,7 +65,6 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(Reference ref, Integer itemId) {
-        ref.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
         ref.setItem(item);
         item.addReferences(ref);
@@ -76,7 +74,6 @@ public class MockItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public void store(Attribute att, Integer itemId) {
-        att.setId(idCounter++);
         Item item = storedItemIds.get(itemId);
         att.setItem(item);
         item.addAttributes(att);

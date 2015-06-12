@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,12 @@ import java.util.Date;
 public class QueryValue implements QueryEvaluable
 {
     private Object value;
+
+    /* Constant instances of Query Value */
+    /** The true value **/
+    public static final QueryValue TRUE = new QueryValue(Boolean.TRUE);
+    /** The false value **/
+    public static final QueryValue FALSE = new QueryValue(Boolean.FALSE);
 
     /**
      * Construct a QueryValue

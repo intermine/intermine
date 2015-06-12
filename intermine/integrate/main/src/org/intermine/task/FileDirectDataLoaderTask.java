@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,6 +38,7 @@ public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
     /**
      * @see DirectDataLoaderTask#process()
      */
+    @Override
     public void process() {
         int fileCount = 0;
         for (FileSet fileSet : fileSets) {
@@ -51,6 +52,7 @@ public abstract class FileDirectDataLoaderTask extends DirectDataLoaderTask
             }
         }
         if (fileCount == 0) {
+            System .out.println(fileCount);
             StringBuffer sb = new StringBuffer();
             String lookedIn = null;
             for (FileSet fileSet : fileSets) {

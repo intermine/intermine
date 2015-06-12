@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,8 @@ public interface Tracker
 {
     /**
      * Create the table where the tracker saves data
+     *
+     * @param con database connection
      * @throws Exception when a database error access is verified
      */
     void createTrackerTable(Connection con) throws Exception;

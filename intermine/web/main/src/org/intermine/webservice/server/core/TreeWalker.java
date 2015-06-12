@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,9 +15,10 @@ package org.intermine.webservice.server.core;
  * @author Alex Kalderimis
  *
  * @param <L> The type of an individual leaf.
- * @param <R> The return type.
  */
-public abstract class TreeWalker<L> extends EitherVisitor<L, DisjointRecursiveList<L>, Void> {
+public abstract class TreeWalker<L>
+    extends EitherVisitor<L, DisjointRecursiveList<L>, Void>
+{
 
     @Override
     public Void visitLeft(L a) {

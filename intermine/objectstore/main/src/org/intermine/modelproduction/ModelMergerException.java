@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,11 +18,11 @@ package org.intermine.modelproduction;
 public class ModelMergerException extends Exception
 {
     /**
-	 * Serial ID demanded by His Highness Lord Eclipse
-	 */
-	private static final long serialVersionUID = 7068567716197037627L;
+     * Serial ID demanded by His Highness Lord Eclipse
+     */
+    private static final long serialVersionUID = 7068567716197037627L;
 
-	/**
+    /**
      * Constructs a ModelMergerException
      */
     public ModelMergerException() {

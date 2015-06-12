@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,7 +31,6 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.idresolution.IDResolver;
 import org.intermine.api.idresolution.Job;

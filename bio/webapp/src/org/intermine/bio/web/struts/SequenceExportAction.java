@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,7 +42,7 @@ import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;

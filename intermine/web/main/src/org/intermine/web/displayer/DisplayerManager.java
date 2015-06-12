@@ -1,7 +1,7 @@
 package org.intermine.web.displayer;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.config.WebConfig;
 

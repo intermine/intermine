@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -157,22 +157,22 @@ public class CollectionUtilTest extends TestCase
         c.add(new Float(3.5F));
         c.add("hello");
 
-        Map expected = new HashMap();
-        List lInts = new ArrayList();
+        List<Object> lInts = new ArrayList<Object>();
         lInts.add(new Integer(5));
         lInts.add(new Integer(6));
         lInts.add(new Integer(7));
-        List lFloat = new ArrayList();
+        List<Object> lFloat = new ArrayList<Object>();
         lFloat.add(new Float(3.5F));
-        List lString = new ArrayList();
+        List<Object> lString = new ArrayList<Object>();
         lString.add("hello");
-        List lNumbers = new ArrayList();
+        List<Object> lNumbers = new ArrayList<Object>();
         lNumbers.addAll(lInts);
         lNumbers.addAll(lFloat);
-        List lSerialisables = new ArrayList();
+        List<Object> lSerialisables = new ArrayList<Object>();
         lSerialisables.addAll(lNumbers);
         lSerialisables.addAll(lString);
 
+        Map<Class<?>, List<Object>> expected = new HashMap<Class<?>, List<Object>>();
         expected.put(Integer.class, lInts);
         expected.put(Float.class, lFloat);
         expected.put(String.class, lString);
@@ -188,7 +188,7 @@ public class CollectionUtilTest extends TestCase
     }
 
     public void testFindCommonSuperclasses() throws Exception {
-        Set<Class<?>> input = new HashSet();
+        Set<Class<?>> input = new HashSet<Class<?>>();
         input.add(Employee.class);
         input.add(Contractor.class);
         input.add(Manager.class);

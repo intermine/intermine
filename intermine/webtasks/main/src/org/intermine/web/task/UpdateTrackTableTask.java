@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,7 +28,8 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.sql.DatabaseUtil;
 
 /**
- * Task to modify the type of the column 'timestamp' in the templatetrack table in the userprofile database.
+ * Task to modify the type of the column 'timestamp' in the templatetrack table
+ * in the userprofile database.
  * (from bigint to timestamp)
  * @author dbutano
  */
@@ -95,7 +96,8 @@ public class UpdateTrackTableTask extends Task
                 TrackerUtil.SEARCH_TRACKER_TABLE};
 
             for (String tableToVerify : tablesToVerify) {
-                if (!DatabaseUtil.verifyColumnType(connection, tableToVerify, "timestamp", Types.TIMESTAMP)) {
+                if (!DatabaseUtil.verifyColumnType(
+                        connection, tableToVerify, "timestamp", Types.TIMESTAMP)) {
                     String sql = "DROP TABLE " + tableToVerify;
                     if (stm == null) {
                         stm = connection.createStatement();

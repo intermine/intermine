@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,11 +10,12 @@ package org.intermine.objectstore.query;
  *
  */
 
-import org.apache.log4j.Logger;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStoreException;
 
 /**

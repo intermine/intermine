@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,7 +15,7 @@ import java.util.List;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -30,7 +30,7 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -151,7 +151,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         QueryField qfCorrection = null;
         if (extraCorrectionCoefficient
             && correctionCoefficient.isApplicable()) {
-            qfCorrection = correctionCoefficient.updateQueryWithCorrectionCoefficient(subQ, startClass);
+            qfCorrection =
+                    correctionCoefficient.updateQueryWithCorrectionCoefficient(subQ, startClass);
         }
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {

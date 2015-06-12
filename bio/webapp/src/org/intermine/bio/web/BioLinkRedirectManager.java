@@ -1,7 +1,7 @@
 package org.intermine.bio.web;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Contructs an alternate object details link pointing to an external URL for use in results table.
@@ -105,7 +105,7 @@ public class BioLinkRedirectManager extends LinkRedirectManager
                 String dataSourceUrl = null;
                 try {
                     dataSourceName = (String) ds.getFieldValue("name");
-                     dataSourceUrl = (String) ds.getFieldValue("url");
+                    dataSourceUrl = (String) ds.getFieldValue("url");
                 } catch (IllegalAccessException e) {
                     // Do nothing
                 }

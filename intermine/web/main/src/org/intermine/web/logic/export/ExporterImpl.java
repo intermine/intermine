@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -98,7 +98,7 @@ public class ExporterImpl implements Exporter
 
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
-        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        export(resultIt, new HashSet<Path>(), new HashSet<Path>());
     }
 
     /**

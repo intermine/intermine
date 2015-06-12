@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,14 +26,13 @@ public class JSONDataTableRowResultProcessor extends JSONResultProcessor
 {
     /**
      * Constructor.
-     * @param im The API settings bundle
      */
     public JSONDataTableRowResultProcessor() {
     }
 
     @Override
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
-        Iterator<? extends Object> jsonIter 
+        Iterator<? extends Object> jsonIter
             = new JSONDataTableRowIterator((ExportResultsIterator) it);
         return jsonIter;
     }

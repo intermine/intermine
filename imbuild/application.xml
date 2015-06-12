@@ -23,7 +23,7 @@
   <target name="retrieve-objectstore-summary" depends="-init-summarise-objectstore"
           unless="temporary.webapp.project">
     <!-- Summarise objectstore -->
-    <echo message="Retrieving object store summary from ${objectstore.name}..."/>
+    <echo level="debug" message="Retrieving object store summary from ${objectstore.name}..."/>
     <summarise-objectstore alias="${objectstore.name}"
                            configFileName="objectstoresummary.config.properties"
                            outputFile="${build.dir}/webapp/WEB-INF/objectstoresummary.properties"/>
@@ -37,10 +37,34 @@
     <property name="source.intermine.webapp.war" location="${application.xml.basedir}/../${base.webapp.path}"/>
   </target>
 
-
   <!-- WAR INSTEAD OF JAR -->
 
-  <target name="-final-app-pre-jar" depends="-init-properties"
+  <target name="-check-keystore">
+    <script language="javascript">
+      // home, suffix and fileName are all java.lang.String
+      var home = project.getProperty('user.home');
+      var suffix = project.getProperty('release-suffix');
+      var fileName = project.getProperty('intermine.properties.file');
+      if (fileName) {
+        fileName = fileName.replaceAll('\\.properties', '-keystore.jks');
+        project.setProperty('keystore', home + '/.intermine/' + fileName + suffix);
+      }
+    </script>
+    <available file="${keystore}" property="keystore.available"/>
+    <echo level="debug">
+        ${keystore} is available? ${keystore.available}
+    </echo>
+  </target>
+  <target name="-inject-keystore" depends="-check-keystore" if="keystore.available">
+    <echo level="debug">
+        Copying ${keystore} to ${build.dir}/webapp/WEB-INF/keystore.jks
+    </echo>
+    <copy file="${keystore}"
+          tofile="${build.dir}/webapp/WEB-INF/keystore.jks"
+          overwrite="true"/>
+  </target>
+
+  <target name="-final-app-pre-jar" depends="-init-properties, -inject-keystore"
           unless="temporary.webapp.project">
     <!-- Concatenate local build.properties with web.properties -->
     <!-- TODO we only want to copy some properties over -->
@@ -48,6 +72,7 @@
       <fileset file="resources/web.properties"/>
       <fileset file="${build.task.dir}/intermine.properties"/>
     </concat>
+    <!-- Copy intermine.properties onto the classpath -->
     <copy file="${build.task.dir}/intermine.properties"
           tofile="${build.dir}/webapp/WEB-INF/classes/intermine.properties"
           overwrite="true"/>
@@ -58,14 +83,14 @@
 
   <target name="-pre-jar" 
           depends="-final-app-pre-jar, webapp.-pre-jar">
-    <echo message="Running appl  pre-jar"/>
+    <echo level="debug" message="Running appl -pre-jar"/>
     <!-- Start with base intermine webapp war -->
     <copy file="${source.intermine.webapp.war}" tofile="${dist.war}"/>
   </target>
 
   <target name="do-jar" depends="-init-presetdef-war, retrieve-objectstore-summary">
-      <echo message="Running appl  do-jar"/>
-    <appl:war/>
+      <echo level="debug" message="Running appl do-jar"/>
+      <appl:war/>
   </target>
 
   <!-- USER PROFILE -->
@@ -229,13 +254,58 @@
       </sequential>
     </macrodef>
   </target>
-	
+
+  <!-- Create the Lucene Index -->
   <target name="create-quicksearch-index" depends="-init-build-db, -init-properties">
   	<create-quicksearch-index oSAlias="${objectstore.name}"/>
   </target>
-	
+
+  <!-- Garbage collect unconnected business objects in the UserProfile -->
   <target name="evict-orphans" depends="-init-properties, -init-build-db">
   	<evict-orphans objectStoreAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
+
+  <!-- Verify a JWT token -->
+  <target name="-jwt-check-keystore">
+    <condition property="keystore.missing">
+      <or>
+        <not><isset property="keystore"/></not>
+        <not><resourceexists><file file="${keystore}"/></resourceexists></not>
+      </or>
+    </condition>
+  </target>
+  <target name="verify-jwt"
+    depends="-init-properties, -jwt-check-keystore, compile, -init-task-xml">
+    <fail if="keystore.missing" message="Keystore not found"/>
+    <fail unless="jwt" message="Please provide a token to verify"/>
+    <verify-jwt options="${build.task.dir}/intermine.properties"
+                keystoreFile="${keystore}"
+                token="${jwt}"/>
+  </target>
+  
+  <!-- Issue a JWT token, and save it in the build.dir -->
+  <target name="issue-jwt"
+    depends="-init-properties, -jwt-check-keystore, compile, -init-task-xml">
+    <fail if="keystore.missing" message="Keystore not found"/>
+    <condition property="bad.usage">
+      <or>
+        <not><isset property="sub"/></not>
+        <not><isset property="exp"/></not>
+        <not><isset property="email"/></not>
+      </or>
+    </condition>
+    <fail if="bad.usage">
+Usage: issue-jwt -Dkeystore=$PATH_TO_KEYSTORE
+                 -Dsub=$USERNAME
+                 -Dexp=$TOKEN_LIFETIME_IN_SECS
+                 -Demail=$USER_EMAIL
+</fail>
+    <issue-jwt options="${build.task.dir}/intermine.properties"
+               keystoreFile="${keystore}"
+               buildDir="${build.dir}"
+               subject="${sub}"
+               email="${email}"
+               expiry="${exp}"/>
   </target>
 
 </project>

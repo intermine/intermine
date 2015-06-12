@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,8 +12,19 @@ package org.intermine.webservice.server.user;
 
 import org.intermine.api.InterMineAPI;
 
-public class DeletionTokenCancellationService extends DeletionTokenInfoService {
+/**
+ * A service that cancels the profile deletion process by deleting the
+ * token that could be used to complete it.
+ * @author Alex Kalderimis
+ *
+ */
+public class DeletionTokenCancellationService extends DeletionTokenInfoService
+{
 
+    /**
+     * @param im The InterMine state object
+     * @param uuid The identifier of the token
+     */
     public DeletionTokenCancellationService(InterMineAPI im, String uuid) {
         super(im, uuid);
     }

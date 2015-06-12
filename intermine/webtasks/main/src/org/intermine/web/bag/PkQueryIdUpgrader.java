@@ -1,7 +1,7 @@
 package org.intermine.web.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -98,12 +98,12 @@ public class PkQueryIdUpgrader implements IdUpgrader
         } catch (IllegalArgumentException e) {
             LOG.error("createPKQuery() failed for old object: " + oldObject.getId()
                       + " with error message: " + e.getMessage());
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         if (query == null) {
             LOG.error("No usable primary key query found for object: " + oldObject);
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         SingletonResults results = os.executeSingleton(query, 1000, false, false, false);
@@ -125,7 +125,7 @@ public class PkQueryIdUpgrader implements IdUpgrader
 
             Set<Integer> returnSet = new HashSet<Integer>();
 
-            Iterator iter = results.iterator();
+            Iterator<?> iter = results.iterator();
             while (iter.hasNext()) {
                 InterMineObject newObject = (InterMineObject) iter.next();
 

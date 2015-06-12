@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,13 +19,11 @@ import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.web.search.KeywordSearch;
 
 /**
  * Create a the Lucene keyword search index for a mine.
@@ -61,13 +59,13 @@ public class CreateSearchIndexTask extends Task
     public void execute() {
         System .out.println("Creating lucene index for keyword search...");
 
-        ObjectStore os;
+        ObjectStore objectStore;
         try {
-            os = getObjectStore();
+            objectStore = getObjectStore();
         } catch (Exception e) {
             throw new BuildException(e);
         }
-        if (!(os instanceof ObjectStoreInterMineImpl)) {
+        if (!(objectStore instanceof ObjectStoreInterMineImpl)) {
             // Yes, yes, this is horrific...
             throw new RuntimeException("Got invalid ObjectStore - must be an "
                     + "instance of ObjectStoreInterMineImpl!");
@@ -95,10 +93,10 @@ public class CreateSearchIndexTask extends Task
             throw new BuildException("Could not read the class keys", e);
         }
         Map<String, List<FieldDescriptor>> classKeys =
-            ClassKeyHelper.readKeys(os.getModel(), classKeyProperties);
+            ClassKeyHelper.readKeys(objectStore.getModel(), classKeyProperties);
 
         //index and save
-        KeywordSearch.saveIndexToDatabase(os, classKeys);
+        KeywordSearch.saveIndexToDatabase(objectStore, classKeys);
         KeywordSearch.deleteIndexDirectory();
     }
 

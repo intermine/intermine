@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,12 @@ import org.intermine.api.tracker.track.QueryTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
 
-public class QueryTracker extends TrackerAbstract
+/**
+ *
+ * @author Daniela
+ *
+ */
+public class QueryTracker extends AbstractTracker
 {
     private static final Logger LOG = Logger.getLogger(QueryTracker.class);
     private static QueryTracker queryTracker = null;
@@ -66,10 +71,16 @@ public class QueryTracker extends TrackerAbstract
      */
     @Override
     public String getStatementCreatingTable() {
-        return "CREATE TABLE " + trackTableName + "(type text, username text, sessionidentifier text, "
-               + "timestamp timestamp)";
+        return "CREATE TABLE " + trackTableName
+                + "(type text, username text, sessionidentifier text, "
+                + "timestamp timestamp)";
     }
 
+    /**
+     * @param type type of query
+     * @param profile userprofile
+     * @param sessionIdentifier session
+     */
     protected void trackQuery(String type, Profile profile, String sessionIdentifier) {
         String userName = (profile.getUsername() != null)
                           ? profile.getUsername()

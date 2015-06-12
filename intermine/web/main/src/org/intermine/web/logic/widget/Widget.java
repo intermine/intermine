@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,12 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 /**
+ * A representation of a query using a list tool. It combines the description of the
+ * calculation/query to be performed (the config), the list over which to perform it (the bag),
+ * the database to query within (the os) and the results of the query.
+ *
+ * TODO: split into <code>Request</code> and <code>Result</code> classes.
+ *
  * @author "Xavier Watkins"
  * @author Daniela Butano
  */
@@ -97,8 +103,8 @@ public abstract class Widget
     /**
      * Return the result that represents the data from this widget.
      * Each row is represented as a list of Object
-     * @return a list representing the rows conatining a list of objects
-     * @throws Exception
+     * @return a list representing the rows containing a list of objects
+     * @throws Exception if something goes wrong.
      */
     public abstract List<List<Object>> getResults() throws Exception;
 

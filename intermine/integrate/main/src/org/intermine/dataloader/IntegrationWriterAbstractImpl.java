@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -715,12 +715,17 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
         return osw.getModel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public InterMineObject getObjectByExample(InterMineObject o,
-            Set<String> fieldNames) throws ObjectStoreException {
+    @Override
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames)
+        throws ObjectStoreException {
         return osw.getObjectByExample(o, fieldNames);
+    }
+
+    @Override
+    public <T extends InterMineObject>
+    Collection<T> getObjectsByExample(T o, Set<String> fieldNames)
+        throws ObjectStoreException {
+        return osw.getObjectsByExample(o, fieldNames);
     }
 
     /**

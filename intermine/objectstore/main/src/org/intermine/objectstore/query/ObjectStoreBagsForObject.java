@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,7 +11,8 @@ package org.intermine.objectstore.query;
  */
 
 import java.util.Collection;
-import org.intermine.util.Util;
+
+import org.intermine.metadata.Util;
 
 /**
  * Object representing a query to fetch ObjectStoreBag IDs for ObjectStoreBags that contain a

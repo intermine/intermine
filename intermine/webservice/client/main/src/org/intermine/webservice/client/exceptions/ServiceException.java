@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.exceptions;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,7 +27,6 @@ public class ServiceException extends RuntimeException
     private final int httpErrorCode;
     protected static final int ERROR_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
-    private static final long serialVersionUID = 1L;
 
     /**
      * @param message message

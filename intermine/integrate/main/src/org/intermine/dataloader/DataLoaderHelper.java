@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,8 +40,8 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.IntToIntMap;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Class providing utility methods to help with primary key and data source priority configuration

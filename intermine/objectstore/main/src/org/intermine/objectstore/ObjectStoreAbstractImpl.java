@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.objectstore;
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -361,10 +362,8 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         return model;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public InterMineObject getObjectByExample(InterMineObject o, Set<String> fieldNames)
+    @Override
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames)
         throws ObjectStoreException {
         Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
         List<ResultsRow<Object>> results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
@@ -374,10 +373,27 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
                     + "this primary key (" + results.size() + "): " + query.toString());
         }
         if (results.size() == 1) {
-            InterMineObject j = (InterMineObject) results.get(0).get(0);
+            @SuppressWarnings("unchecked")
+            T j = (T) results.get(0).get(0);
             return j;
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(
+            T o,
+            Set<String> fieldNames)
+        throws ObjectStoreException {
+        Query query = QueryCreator.createQueryForExampleObject(model, o, fieldNames);
+        List<ResultsRow<Object>> results = execute(query, 0, 2, false, false, SEQUENCE_IGNORE);
+        List<T> ret = new ArrayList<T>();
+
+        for (ResultsRow<Object> row: results) {
+            ret.add((T) row.get(0));
+        }
+        return ret;
     }
 
     /**

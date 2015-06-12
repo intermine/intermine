@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -39,6 +39,7 @@ public class PathLengthComparator implements Comparator<Path>
      * elements is the same sort by text length of paths.
      * {@inheritDoc}
      */
+    @Override
     public int compare(Path arg0, Path arg1) {
         if (arg0 == null || arg1 == null) {
             throw new RuntimeException("Paths must not be null");

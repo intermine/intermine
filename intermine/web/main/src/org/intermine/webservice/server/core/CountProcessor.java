@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,12 +14,23 @@ import java.util.Arrays;
 
 import org.intermine.webservice.server.output.Output;
 
+/**
+ * A class that processes counts.
+ * @author Alex Kalderimis
+ *
+ */
 public class CountProcessor
 {
+    /** Constructor **/
     public CountProcessor() {
         // Empty constructor
     }
 
+    /**
+     * Write the count to the output.
+     * @param count The count
+     * @param output The output.
+     */
     public void writeCount(int count, Output output) {
         output.addResultItem(Arrays.asList(String.valueOf(count)));
     }

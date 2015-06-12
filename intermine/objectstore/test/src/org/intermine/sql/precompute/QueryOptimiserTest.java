@@ -1,7 +1,7 @@
 package org.intermine.sql.precompute;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,7 +30,7 @@ import java.util.SortedMap;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.query.*;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.util.ConsistentSet;
 
 public class QueryOptimiserTest extends TestCase

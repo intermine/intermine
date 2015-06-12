@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -103,6 +103,7 @@ public class LoadDefaultTemplatesTask extends Task
      * Load templates from an xml file into a userprofile account.
      * {@inheritDoc}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void execute() {
         log("Loading default templates and tags into profile " + username);

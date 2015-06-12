@@ -1,7 +1,7 @@
 package org.intermine.xml.full;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.custommonkey.xmlunit.XMLTestCase;
@@ -122,7 +123,7 @@ public class FullRendererTest extends XMLTestCase
         Company c = (Company) o;
         c.setId(new Integer(1234));
         c.setName("BrokeCompany1");
-        c.setDepartments(new HashSet(Arrays.asList(new Object[] {d1, d2})));
+        c.setDepartments(new LinkedHashSet(Arrays.asList(new Object[] {d1, d2})));
 
         Broke b = (Broke) o;
         b.setDebt(10);
@@ -137,8 +138,7 @@ public class FullRendererTest extends XMLTestCase
         exp1.setAttribute("interestRate", "0.0");
         List<String> refIds = new ArrayList<String>(Arrays.asList(new String[] {"5678", "6789"}));
         exp1.setCollection("departments", refIds);
-
-        assertEquals(exp1, new ItemFactory(model).makeItem(b));
+        assertEquals(exp1.toString(), (new ItemFactory(model).makeItem(b)).toString());
     }
 
     public void testToItems() throws Exception {
@@ -208,7 +208,7 @@ public class FullRendererTest extends XMLTestCase
         Company c = (Company) o;
         c.setId(new Integer(1234));
         c.setName("BrokeCompany1");
-        c.setDepartments(new HashSet(Arrays.asList(new Object[] {d1, d2})));
+        c.setDepartments(new LinkedHashSet(Arrays.asList(new Object[] {d1, d2})));
 
         Broke b = (Broke) o;
         b.setDebt(10);

@@ -1,7 +1,7 @@
 package org.intermine.sql.writebatch;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,8 +16,8 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.intermine.model.StringConstructor;
 import org.intermine.util.SensibleByteArrayOutputStream;
-import org.intermine.util.StringConstructor;
 
 /**
  * A subclass of DataOutputStream that has extra methods useful for reducing the memory

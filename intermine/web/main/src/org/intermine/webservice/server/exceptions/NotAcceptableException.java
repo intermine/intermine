@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.exceptions;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,16 +10,14 @@ package org.intermine.webservice.server.exceptions;
  *
  */
 
-public class NotAcceptableException extends ServiceException {
+/** @author Alex Kalderimis **/
+public class NotAcceptableException extends ServiceException
+{
 
     private static final long serialVersionUID = 6348869247603849879L;
 
+    /** Construct a NotAcceptableException **/
     public NotAcceptableException() {
-        super("Cannot serve any format that is acceptable to you");
-    }
-
-    @Override
-    public int getHttpErrorCode() {
-        return 406;
+        super("Cannot serve any format that is acceptable to you", 406);
     }
 }

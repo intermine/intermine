@@ -1,0 +1,4 @@
+<project name="hgnc-tasks" default="default" basedir=".">
+  <description>build hgnc tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

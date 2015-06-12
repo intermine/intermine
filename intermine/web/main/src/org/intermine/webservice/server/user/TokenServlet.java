@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
 
+/** @author Alex Kalderimis **/
 public class TokenServlet extends HttpServlet
 {
     private static final long serialVersionUID = -9048566938927177723L;

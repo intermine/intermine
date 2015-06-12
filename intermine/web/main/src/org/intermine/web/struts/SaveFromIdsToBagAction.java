@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,12 +26,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
-import org.intermine.objectstore.query.Results;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.search.KeywordSearch;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,17 +66,19 @@ public class SaveFromIdsToBagAction extends InterMineAction
 
             if ("true".equals(allChecked)) {
                 // TODO do something more clever than running the search again
+                String totalHits = (String) request.getParameter("totalHits");
+                int listSize = Integer.parseInt(totalHits);
                 String searchTerm = (String) request.getParameter("searchTerm");
-                JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));                
+                JSONObject jsonRequest = new JSONObject(request.getParameter("jsonFacets"));
                 Map<String, String> facetMap = jsonToJava(jsonRequest);
                 int offset = 0;
                 boolean pagination = false;
-                BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetMap, 
-                        new ArrayList<Integer>(), pagination);
-                
+                BrowseResult result = KeywordSearch.runBrowseSearch(searchTerm, offset, facetMap,
+                        new ArrayList<Integer>(), pagination, listSize);
+
                 if (result != null) {
                     LOG.error("processing result! " + result.getNumHits());
-                    BrowseHit[] browseHits = result.getHits();    
+                    BrowseHit[] browseHits = result.getHits();
                     LOG.error("browseHits " + browseHits.length);
                     idSet = KeywordSearch.getObjectIds(browseHits);
                     LOG.error("number of IDs " + idSet.size());
@@ -87,7 +87,8 @@ public class SaveFromIdsToBagAction extends InterMineAction
                     LOG.error("NO RESULT");
                 }
             } else {
-                String[] idArray = request.getParameter("ids").split(","); // ids are comma delimited
+                // ids are comma delimited
+                String[] idArray = request.getParameter("ids").split(",");
                 for (String id : idArray) {
                     idSet.add(Integer.valueOf(id.trim()));
                 }
@@ -127,7 +128,7 @@ public class SaveFromIdsToBagAction extends InterMineAction
             }
         }
     }
-    
+
     private Map<String, String> jsonToJava(JSONObject json) throws JSONException {
         JSONArray ja = json.getJSONArray("facets");
         Map<String, String> facets = new HashMap<String, String>();

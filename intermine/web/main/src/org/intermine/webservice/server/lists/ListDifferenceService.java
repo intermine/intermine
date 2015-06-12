@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,8 @@ public class ListDifferenceService extends ListOperationService
 
     @Override
     protected SymmetricDifference getOperation(ListInput input) {
-        return new SymmetricDifference(im.getModel(), getPermission().getProfile(), input.getLists());
+        return new SymmetricDifference(
+                im.getModel(), getPermission().getProfile(), input.getLists());
     }
 
 }

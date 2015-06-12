@@ -1,6 +1,7 @@
 package org.intermine.web.logic.template;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.MockHttpRequest;
 import org.intermine.api.template.TemplateHelper;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
@@ -39,7 +40,7 @@ public class TemplateHelperTest {
         parametersWithLotsOfConstraints,
         incompleteParameters;
 
-    private final Map<String, String[]> emptyHeaders = Collections.EMPTY_MAP;
+    private final Map<String, String[]> emptyHeaders = new HashMap<String, String[]>();
 
     @Before
     public void setup() {

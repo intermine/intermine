@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,8 +101,8 @@ public class TemplateSettingsForm extends ActionForm
      * attribute.
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      HttpServletRequest request) {
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(request.getSession());
         setName(template.getName());
         setTitle(template.getTitle());
@@ -110,11 +110,8 @@ public class TemplateSettingsForm extends ActionForm
         setComment(template.getComment());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public ActionErrors validate(@SuppressWarnings("unused")  ActionMapping mapping,
-                                 @SuppressWarnings("unused") HttpServletRequest request) {
+    @Override
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
         if (!NameUtil.isValidName(name)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.badChars"));
@@ -122,10 +119,12 @@ public class TemplateSettingsForm extends ActionForm
         return errors;
     }
 
+    /** @return the type of action **/
     public String getActionType() {
         return actionType;
     }
 
+    /** @param actionType the type of action **/
     public void setActionType(String actionType) {
         this.actionType = actionType;
     }

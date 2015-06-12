@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,7 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
@@ -144,9 +144,12 @@ public class BioGridConverter extends BioFileConverter
             return false;
         }
         OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
-
-        if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
-            return true;
+        if (od != null) {
+            if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
+                return true;
+            }
+        } else {
+            LOG.error("Could not find Taxon ID for organism " + bits[0] + " " + bits[1]);
         }
         return false;
     }
@@ -535,7 +538,8 @@ public class BioGridConverter extends BioFileConverter
 
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
-                    if (SPOKE_MODEL.equalsIgnoreCase(role1) && SPOKE_MODEL.equalsIgnoreCase(role2)) {
+                    if (SPOKE_MODEL.equalsIgnoreCase(role1)
+                            && SPOKE_MODEL.equalsIgnoreCase(role2)) {
                         // spoke!  not storing bait - bait, only bait - prey
                         continue;
                     }
@@ -751,7 +755,7 @@ public class BioGridConverter extends BioFileConverter
                 if (eh.description != null && !eh.description.equals("")) {
                     exp.setAttribute("description", eh.description);
                 }
-                if (name != null && !name.equals("")) {
+                if (StringUtils.isNotEmpty(name)) {
                     exp.setAttribute("name", name);
                 } else {
                     exp.setAttribute("name", BLANK_EXPERIMENT_NAME);

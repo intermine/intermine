@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +50,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -88,10 +89,11 @@ public class BagBuildController extends TilesAction
 
         Collection<String> qualifiedTypes = model.getClassNames();
 
-        ArrayList<String> typeList = new ArrayList();
-        ArrayList<String> preferedTypeList = new ArrayList();
+        ArrayList<String> typeList = new ArrayList<String>();
+        ArrayList<String> preferedTypeList = new ArrayList<String>();
 
         TagManager tagManager = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class",
                                                             im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
@@ -116,13 +118,14 @@ public class BagBuildController extends TilesAction
         if (extraClassName != null) {
             request.setAttribute("extraBagQueryClass", TypeUtil.unqualifiedName(extraClassName));
 
-            List extraClassFieldValues =
-                getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField());
-            request.setAttribute("extraClassFieldValues", extraClassFieldValues);
+            request.setAttribute(
+                "extraClassFieldValues",
+                getFieldValues(os, oss, extraClassName, bagQueryConfig.getConstrainField()));
 
             // find the types in typeList that contain a field with the name given by
             // bagQueryConfig.getConnectField()
             List<String> typesWithConnectingField = new ArrayList<String>();
+            @SuppressWarnings("unchecked") // commons collections is not generic
             Iterator<String> allTypesIterator =
                 new IteratorChain(typeList.iterator(), preferedTypeList.iterator());
             while (allTypesIterator.hasNext()) {
@@ -192,8 +195,8 @@ public class BagBuildController extends TilesAction
             q.addFrom(qc);
             Results results = os.execute(q);
             fieldValues = new ArrayList<Object>();
-            for (Iterator j = results.iterator(); j.hasNext();) {
-                Object fieldValue = ((ResultsRow) j.next()).get(0);
+            for (Iterator<?> j = results.iterator(); j.hasNext();) {
+                Object fieldValue = ((ResultsRow<?>) j.next()).get(0);
                 fieldValues.add(fieldValue == null ? null : fieldValue.toString());
             }
         }

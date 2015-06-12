@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.factory;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,8 +29,9 @@ public final class TrackerFactory
      * Return the tracker instantiated with the reflection
      * @param className name of the class to instantiate
      * @param con connection to the database
+     * @param trackQueue tracks to be parsed
      * @return the tracker instantiated
-     * @throws Exception
+     * @throws Exception if something goes wrong
      */
     public static Tracker getTracker(String className, Connection con, Queue<Track> trackQueue)
         throws Exception {

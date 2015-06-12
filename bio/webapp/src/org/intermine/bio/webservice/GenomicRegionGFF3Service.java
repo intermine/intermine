@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,7 +35,11 @@ public class GenomicRegionGFF3Service extends AbstractRegionExportService
     public GenomicRegionGFF3Service(InterMineAPI im) {
         super(im);
     }
-    
+
+    /**
+     * @param pq pathquery
+     * @return the exporter
+     */
     protected GFF3Exporter getExporter(PathQuery pq) {
         String sourceName = webProperties.getProperty("project.title");
         Set<Integer> organisms = null;

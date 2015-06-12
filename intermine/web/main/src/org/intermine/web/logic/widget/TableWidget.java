@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,6 +25,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 
 /**
+ * A table widget gets the values for a given path for all the items in a list.
  * @author "Xavier Watkins"
  * @author Daniela Butano
  *
@@ -45,7 +46,6 @@ public class TableWidget extends Widget
         this.bag = interMineBag;
         this.os = os;
         createBagContent();
-        process();
     }
 
 
@@ -98,6 +98,7 @@ public class TableWidget extends Widget
      * {@inheritDoc}
      */
     public void process() {
+        checkNotProcessed();
         try {
             bagWidgLdr = new TableWidgetLdr(config, bag, os);
             notAnalysed = bag.getSize() - bagWidgLdr.getWidgetTotal();
@@ -114,8 +115,9 @@ public class TableWidget extends Widget
      * Get the flattened results
      * @return the List of flattened results
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("rawtypes")
     public List getFlattenedResults() {
+        checkProcessed();
         return bagWidgLdr.getFlattenedResults();
     }
 
@@ -123,6 +125,7 @@ public class TableWidget extends Widget
      * {@inheritDoc}
      */
     public List<List<String>> getExportResults(String[] selected) throws Exception {
+        checkProcessed();
         return bagWidgLdr.getExportResults(selected);
     }
 
@@ -130,6 +133,7 @@ public class TableWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
+        checkProcessed();
         return (bagWidgLdr.getFlattenedResults().size() > 0);
     }
 
@@ -137,17 +141,33 @@ public class TableWidget extends Widget
      * Get the columns
      * @return the columns
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings("rawtypes")
     public List getColumns() {
+        checkProcessed();
         return bagWidgLdr.getColumns();
+    }
+
+    private void checkProcessed() {
+        if (bagWidgLdr == null) {
+            throw new IllegalStateException("This widget has not been processed yet.");
+        }
+    }
+
+    private void checkNotProcessed() {
+        if (bagWidgLdr != null) {
+            throw new IllegalStateException("This widget has already bveen processed.");
+        }
     }
 
     @Override
     public List<List<Object>> getResults() {
+        checkProcessed();
         return bagWidgLdr.getFlattenedResults();
     }
 
+    @Override
     public PathQuery getPathQuery() {
+        checkProcessed();
         return bagWidgLdr.createPathQuery();
     }
 

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.idresolution;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,11 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
 
+/**
+ * Route requests for ID resolution.
+ * @author Alex Kalderimis
+ *
+ */
 public class IdResolutionServlet extends WebServiceServlet
 {
     private static final Logger LOG = Logger.getLogger(IdResolutionServlet.class);
@@ -31,7 +36,7 @@ public class IdResolutionServlet extends WebServiceServlet
     private Thread janitorThread = null;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         try {
             janitor = new JobJanitor();
             janitorThread = new Thread(janitor);
@@ -54,8 +59,10 @@ public class IdResolutionServlet extends WebServiceServlet
     }
 
     @Override
-    protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void respond(
+            Method method,
+            HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         if (Method.GET == method) {
             String[] uidAndCommand = getUidAndCommand(request);
             if (uidAndCommand != null) {
@@ -93,9 +100,12 @@ public class IdResolutionServlet extends WebServiceServlet
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case POST: return new IdResolutionService(api);
-            case DELETE: return new JobRemovalService(api);
-            default: throw new NoServiceException();
+            case POST:
+                return new IdResolutionService(api);
+            case DELETE:
+                return new JobRemovalService(api);
+            default:
+                throw new NoServiceException();
         }
     }
 }

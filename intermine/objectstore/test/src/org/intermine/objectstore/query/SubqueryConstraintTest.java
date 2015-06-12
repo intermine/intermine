@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,7 +11,9 @@ package org.intermine.objectstore.query;
  */
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.*;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Manager;
 
 public class SubqueryConstraintTest extends TestCase {
     private SubqueryConstraint constraint;

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,7 +30,7 @@ import org.intermine.xml.full.Item;
  */
 public class EntrezPublicationRetrieverTest extends ItemsTestCase
 {
-    String fullRecord = "true";
+    String fullRecord = "false";
 
     public EntrezPublicationRetrieverTest(String arg) {
         super(arg);
@@ -49,7 +49,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
 
         eor.setOsAlias("os.bio-test");
         eor.setOutputFile(temp.getPath());
-        // eor.setOutputFile("entrez-pub-tgt-items.xml");
+        //eor.setOutputFile("entrez-pub-tgt-items.xml");
         eor.setCacheDirName("build/");
         eor.execute();
         Collection<Item> actual = FullParser.parse(new FileInputStream(temp));

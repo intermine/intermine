@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,10 +18,20 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.user.DeletionTokens.TokenExpired;
 
-public class DeletionTokenInfoService extends NewDeletionTokenService {
+/**
+ * A service that retrieves information about a deletion token.
+ * @author Alex Kalderimis
+ *
+ */
+public class DeletionTokenInfoService extends NewDeletionTokenService
+{
 
     private String uuid;
 
+    /**
+     * @param im The InterMine state object.
+     * @param uid The identifier of the token.
+     */
     public DeletionTokenInfoService(InterMineAPI im, String uid) {
         super(im);
         this.uuid = uid;
@@ -33,6 +43,9 @@ public class DeletionTokenInfoService extends NewDeletionTokenService {
         serveToken(token);
     }
 
+    /**
+     * @return The token that this request refers to.
+     */
     protected DeletionToken getToken() {
         DeletionToken token;
         Profile profile = getPermission().getProfile();

@@ -1,0 +1,8 @@
+#mine-rat-disease .disease-item {
+    float: left;
+    display: inline-block;
+    min-width: 30em;
+    padding-bottom: 0.5em;
+}
+#mine-rat-disease .less { display: none; }
+

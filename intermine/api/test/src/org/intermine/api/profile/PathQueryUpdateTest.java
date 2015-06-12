@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,7 +15,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraintAttribute;

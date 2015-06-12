@@ -1,8 +1,6 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 
 import junit.framework.TestCase;
 
@@ -15,7 +13,7 @@ import junit.framework.TestCase;
 public class RgdIdentifiersResolverFactoryTest extends TestCase {
 
     RgdIdentifiersResolverFactory factory;
-    String rgdDataFile = "resources/rgd.data.sample";
+    String rgdDataFile = "rgd.data.sample";
 
     public RgdIdentifiersResolverFactoryTest() {
     }
@@ -34,15 +32,13 @@ public class RgdIdentifiersResolverFactoryTest extends TestCase {
     }
 
     public void testCreateFromFile() throws Exception {
-        File f = new File(rgdDataFile);
+        File f = new File(getClass().getClassLoader().getResource(rgdDataFile).toURI());
         if (!f.exists()) {
             fail("data file not found");
         }
-
         factory.createFromFile(f);
         // IdResolverFactory.resolver.writeToFile(new File("build/rgd"));
-        assertTrue(IdResolverFactory.resolver.getTaxons().size() == 1);
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"10116"})), IdResolverFactory.resolver.getTaxons());
+        assertTrue(IdResolverFactory.resolver.getTaxons().contains("10116"));
         assertEquals("RGD:1307273", IdResolverFactory.resolver.resolveId("10116", "Abcd4").iterator().next());
         assertTrue(IdResolverFactory.resolver.resolveId("10116", "gene", "ENSRNOG00000011964").iterator().next().startsWith("RGD"));
     }

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -169,31 +169,7 @@ public class Dependencies extends Task
 
         projectProperties = loadProjectProperties(getProject().getBaseDir());
 
-        extraProjectDependencies = projectProperties.getProperty(EXTRA_DEPS);
-
-        List<String> extraProjectDepsList = new ArrayList<String>();
-
-        if (getProject().getProperty(EXTRA_DEPS) != null) {
-            // add the extra project dependencies from the project that is calling/executing this
-            // project
-            if (extraProjectDependencies == null) {
-                extraProjectDependencies = getProject().getProperty(EXTRA_DEPS);
-            } else {
-                extraProjectDependencies += ", " + getProject().getProperty(EXTRA_DEPS);
-            }
-        }
-
-        if (extraProjectDependencies != null) {
-            Vector bits = StringUtils.split(extraProjectDependencies, ',');
-
-            for (Object bit: bits) {
-                String dep = ((String) bit).trim();
-
-                if (!extraProjectDepsList.contains(dep)) {
-                    extraProjectDepsList.add(dep);
-                }
-            }
-        }
+        extraProjectDependencies = getExtraDeps();
 
         compilePath = new Path(getProject());
         dependPath = new Path(getProject());
@@ -376,6 +352,35 @@ public class Dependencies extends Task
         getProject().addReference(artifactPathId + ".fileset", artifactFileSet);
         getProject().addReference(artifactPathId + ".fileset.text", artifactIncludes);
     }
+
+    private void getExtraDeps() {
+        extraProjectDependencies = projectProperties.getProperty(EXTRA_DEPS);
+
+        List<String> extraProjectDepsList = new ArrayList<String>();
+
+        if (getProject().getProperty(EXTRA_DEPS) != null) {
+            // add the extra project dependencies from the project that is calling/executing this
+            // project
+            if (extraProjectDependencies == null) {
+                extraProjectDependencies = getProject().getProperty(EXTRA_DEPS);
+            } else {
+                extraProjectDependencies += ", " + getProject().getProperty(EXTRA_DEPS);
+            }
+        }
+
+        if (extraProjectDependencies != null) {
+            Vector bits = StringUtils.split(extraProjectDependencies, ',');
+
+            for (Object bit: bits) {
+                String dep = ((String) bit).trim();
+
+                if (!extraProjectDepsList.contains(dep)) {
+                    extraProjectDepsList.add(dep);
+                }
+            }
+        }
+    }
+
 
     /**
      * Return the project name calculated from the path of this project.
