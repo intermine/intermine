@@ -1,0 +1,1 @@
+convert -size 10x8 xc:#E3E3DD -fill #609C42 -stroke #609C42 -draw "polyline 0,8 5,0 10,8" submenu_indent.png

@@ -1,0 +1,1 @@
+convert -size 30x35 gradient:#71716E-#E3E2DD pale_green_grad.png

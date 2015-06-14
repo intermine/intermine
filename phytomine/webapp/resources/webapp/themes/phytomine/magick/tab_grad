@@ -1,0 +1,2 @@
+convert -size 50x30 gradient:#F0F0F0-#E3E2DD tab_grad.png
+
