@@ -1,1 +1,1 @@
-convert -size 100x250 gradient:#B5E5BC-#FFFFFF green_grad.png
+convert -size 100x250 gradient:#ACAD94-#FFFFFF green_grad.png

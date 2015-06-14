@@ -40,7 +40,7 @@
     <p id="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span>
     <p><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
     <a style="float:right;" href="http://jgi.doe.gov/" title="DOE Joint Genome Institute" target="_blank">
-        <img height="35px" src="model/images/JGI-logo.png" alt="DOE Joint Genome Institute logo">
+        <img height="70px" src="model/images/JGI-logo.png" alt="DOE Joint Genome Institute logo">
      </a>
   </div>
 

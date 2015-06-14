@@ -1,1 +1,1 @@
-convert -size 155x156 xc:transparent -gravity Center -fill #6E9E75 -stroke #6E9E75 -strokewidth 30 -draw 'line 0,200 200,0' -stroke white -strokewidth 1 -pointsize 16 -fill white -draw "translate 20,25 rotate -45 text 5,0 'popular templates'" ribbon.png
+convert -size 155x156 xc:transparent -gravity Center -fill #609C42 -stroke #609C42 -strokewidth 30 -draw 'line 0,200 200,0' -stroke #E3E2DD -strokewidth 1 -pointsize 16 -fill #E3E2DD -draw "translate 20,25 rotate -45 text 5,0 'popular templates'" ribbon.png

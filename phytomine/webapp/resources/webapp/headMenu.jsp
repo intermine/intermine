@@ -12,7 +12,7 @@
 <tiles:importAttribute name="fixedLayout" ignore="true" />
 
 <!-- Header container -->
-<div align="center" id="headercontainer">
+<div align="left" id="headercontainer">
 
   <!-- Header -->
   <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
@@ -35,13 +35,48 @@
     </div>
   </c:if>
   <div id="header">
-    <a href="${WEB_PROPERTIES['project.homeLink']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" height="35px" width="190px" alt="Logo" /></a>
-    <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
-    <p id="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span>
-    <p><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
-    <a style="float:right;" href="http://jgi.doe.gov/" title="DOE Joint Genome Institute" target="_blank">
-        <img height="35px" src="model/images/JGI-logo.png" alt="DOE Joint Genome Institute logo">
-     </a>
+
+  <!-- Logged in section -->
+  <c:set var="loggedin" value="${PROFILE.loggedIn}"/>
+
+    <a href="${WEB_PROPERTIES['project.homeLink']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="/pz/site/images/logo-JGI-Phytozome.png" height="70px" width="480px" alt="Logo" /></a>
+    <span style="position:relative;top:25px;left:50px;">
+    <ul style="list-style-type:none">
+    <li style="float:left;font-size:14px"><html:link href="http://jgi.doe.gov"> JGI Home </html:link></li>
+    <li style="float:left;font-size:14px"><im:login/></li>
+    <!-- display username up high. -->
+        <c:if test="${PROFILE.loggedIn}">
+            <li style="float:left;font-size:14px" >
+              <!-- display (optionally trimmed) username -->
+              <c:choose>
+                <c:when test="${! empty PROVIDER}">
+                  <c:choose>
+                    <c:when test="${empty USERNAME || USERNAME == 'nullnull'}">
+                      <c:set var="displayUserName" value="logged in with OpenID"/>
+                    </c:when>
+            <c:otherwise>
+              <c:set var="displayUserName" value="${USERNAME}"/>
+            </c:otherwise>
+                  </c:choose>
+        </c:when>
+        <c:otherwise>
+          <c:set var="displayUserName" value="${PROFILE.username}"/>
+        </c:otherwise>
+        </c:choose>
+        <c:choose>
+                <c:when test="${fn:length(displayUserName) > 25}">
+                  <c:out value="${fn:substring(displayUserName,0,25)}"/>&hellip;
+                </c:when>
+                <c:otherwise>
+                  Hi, <c:out value="${displayUserName}"/>
+                </c:otherwise>
+              </c:choose>
+            </li>
+        </c:if>
+    </ul>
+    </span>
+
+
   </div>
 
     <!-- Tab Menu -->
@@ -93,40 +128,12 @@
     </ul>
   <ul id="loginbar">
         <li><a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a></li>
-        <c:if test="${PROFILE.loggedIn}">
-            <li>
-              <!-- display (optionally trimmed) username -->
-              <c:choose>
-                <c:when test="${! empty PROVIDER}">
-                  <c:choose>
-                    <c:when test="${empty USERNAME || USERNAME == 'nullnull'}">
-                      <c:set var="displayUserName" value="logged in with OpenID"/>
-                    </c:when>
-            <c:otherwise>
-              <c:set var="displayUserName" value="${USERNAME}"/>
-            </c:otherwise>
-                  </c:choose>
-        </c:when>
-        <c:otherwise>
-          <c:set var="displayUserName" value="${PROFILE.username}"/>
-        </c:otherwise>
-        </c:choose>
-        <c:choose>
-                <c:when test="${fn:length(displayUserName) > 25}">
-                  <c:out value="${fn:substring(displayUserName,0,25)}"/>&hellip;
-                </c:when>
-                <c:otherwise>
-                  <c:out value="${displayUserName}"/>
-                </c:otherwise>
-              </c:choose>
-            </li>
-        </c:if>
-        <li class="last"><im:login/></li>
+
+        <li class="last"> <a id="helplink" onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">Help</a> </li>
+        <!--li class="last"><im:login/></li-->
     </ul>
   </div>
 
-  <!-- Logged in section -->
-  <c:set var="loggedin" value="${PROFILE.loggedIn}"/>
 
   <!-- Submenu section -->
   <c:set var="itemList" value="bag:lists.upload.tab.title:upload:0 bag:lists.view.tab.title:view:0 api:api.perl.tab.title:perl:0 api:api.python.tab.title:python:0 api:api.ruby.tab.title:ruby:0 api:api.java.tab.title:java:0 mymine:mymine.bags.tab.title:lists:0 mymine:mymine.history.tab.title:history:0 mymine:mymine.savedqueries.tab.title:saved:1 mymine:mymine.savedtemplates.tab.title:templates:1" />
@@ -156,6 +163,9 @@
         <tiles:insert name="quickSearch.tile">
           <tiles:put name="menuItem" value="true"/>
         </tiles:insert>
+      </div>
+      <div id="submenuinfo">
+        <p><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
       </div>
         <ul id="submenulist">
         <c:set var="count" value="0"/>

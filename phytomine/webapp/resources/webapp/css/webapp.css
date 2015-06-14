@@ -107,8 +107,8 @@ li {
 #header {
     width: 1000px;
     padding: 0;
-    margin: 0;
-    height: 50px;
+    margin: 0px 0px 20px 0px;
+    height: 75px;
     font-size: 12px;
 }
 
@@ -305,29 +305,7 @@ ul#submenulist li span {
     clear: both;
 }
 
-#pagecontentcontainer {
-    /*background: url('../theme/blue_grad.png') repeat-x bottom #F5F0FF;*/
-    margin: 0;
-    clear: both;
-}
 
-#pagecontent {
-    clear: both;
-    background-color: #FFF;
-    text-align: left;
-    width: 1000px;
-    margin: 0;
-    padding: 10px 0 0 0;
-}
-
-#pagecontentmax {
-    clear: both;
-    background-color: #FFF;
-    text-align: left;
-    width: 100%;
-    margin: 0;
-    padding: 10px 0 0 0;
-}
 
 .clear-both {
     clear: both;
