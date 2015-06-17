@@ -148,7 +148,7 @@
 
 <TD valign="top" class="tableleftcol">
 
-<div class="results collection-table nowrap nomargin">
+<div class="results collection-table nomargin">
 
 <style type="text/css">
     .bag-detail-table { max-width: 1000px; }
