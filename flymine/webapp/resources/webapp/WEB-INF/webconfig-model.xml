@@ -706,13 +706,13 @@
                      replacesFields="publications"
                      placement="Genes"
                      types="BioEntity"/>
-
+<!--
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
                      jspName="model/minePathwaysDisplayer.jsp"
                      replacesFields="pathways"
                      placement="summary"
                      types="Gene"/>
-
+-->
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.DiseaseDisplayer"
                      jspName="model/diseaseDisplayer.jsp"
                      replacesFields=""
@@ -909,7 +909,7 @@
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
-                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLengthCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"

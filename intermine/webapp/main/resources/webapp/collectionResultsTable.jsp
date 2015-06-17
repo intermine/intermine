@@ -15,8 +15,9 @@
 <link rel="stylesheet" href="css/table.css" type="text/css" />
 <tiles:get name="objectTrail.tile"/> <%--<im:vspacer height="1"/>--%>
 
-<div class="results collection-table nowrap nomargin">
+<div class="results collection-table nomargin">
   <tiles:insert name="resultsTable.tile">
+    <tiles:put name="tableIsOpen" value="true"/>
     <tiles:put name="query" beanName="collectionQuery"/>
   </tiles:insert>
 </div>

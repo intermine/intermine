@@ -36,7 +36,7 @@ public class OboConverterTest extends ItemsTestCase {
     public void test1() throws Exception {
         OboConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
                                                   "OntologyTerm");
-        converter.setPrefix("SO");
+        converter.setOntologyPrefix("SO");
         OboTerm a = new OboTerm("SO:42", "parent");
         OboTerm b = new OboTerm("SO:43", "child");
         OboTerm c = new OboTerm("SO:44", "partof");
@@ -61,7 +61,7 @@ public class OboConverterTest extends ItemsTestCase {
     public void testPrefix() throws Exception {
         OboConverter converter = new OboConverter(itemWriter, model, "", "SO", "http://www.flymine.org",
                                                   "OntologyTerm");
-        converter.setPrefix("MONKEY");
+        converter.setOntologyPrefix("MONKEY");
         OboTerm a = new OboTerm("SO:42", "parent");
         OboTerm b = new OboTerm("SO:43", "child");
         OboTerm c = new OboTerm("SO:44", "partof");
