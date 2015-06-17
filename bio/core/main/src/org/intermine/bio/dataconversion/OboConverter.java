@@ -97,7 +97,7 @@ public class OboConverter extends DataConverter
      *
      * @param prefix prefix of the identifier for the terms of interest, eg. GO or SO or ZFA
      */
-    public void setPrefix(String prefix) {
+    public void setOntologyPrefix(String prefix) {
         this.prefix = prefix;
     }
 
