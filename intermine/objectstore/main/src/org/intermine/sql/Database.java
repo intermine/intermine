@@ -168,9 +168,11 @@ public class Database implements Shutdownable
         try {
             retval = datasource.getConnection();
         } catch (PSQLException e) {
-            throw new DatabaseConnectionException("Unable to open database connection: " + this, e);
+            throw new DatabaseConnectionException("Unable to open database connection (there"
+                    + " may not be enough available connections): " + this, e);
         } catch (SQLException e) {
-            throw new DatabaseConnectionException("Unable to open database connection: " + this, e);
+            throw new DatabaseConnectionException("Unable to open database connection (there"
+                    + " may not be enough available connections): " + this, e);
         }
         /*
         Exception e = new Exception();
