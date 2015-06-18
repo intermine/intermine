@@ -11,14 +11,12 @@ package org.intermine.webservice.server.complexes;
  */
 
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.MainHelper;
-import org.intermine.model.bio.Interactor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
@@ -35,10 +33,10 @@ import psidev.psi.mi.jami.factory.InteractionWriterFactory;
 import psidev.psi.mi.jami.json.InteractionViewerJson;
 import psidev.psi.mi.jami.json.MIJsonOptionFactory;
 import psidev.psi.mi.jami.json.MIJsonType;
-import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.InteractionCategory;
-import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.model.impl.DefaultComplex;
+import psidev.psi.mi.jami.model.impl.DefaultCvTerm;
+import psidev.psi.mi.jami.model.impl.DefaultModelledParticipant;
 
 /**
  * Web service that produces JSON required by the complex viewer.
@@ -120,31 +118,38 @@ public class ExportService extends JSONService
         Results results = im.getObjectStore().execute(q);
 
         DefaultComplex complex = new DefaultComplex(identifier);
-        setComplexIdentifier(complex, identifier);
 
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
-            Interactor protein = (Interactor) row.get(0);
-            String stoichiometry = (String) row.get(1);
+
+            String name = (String) row.get(0);
+            String systematicName = (String) row.get(1);
+            String properties = (String) row.get(2);
+            String function = (String) row.get(3);
+            String proteinAccession = (String) row.get(4);
+            String stoichiometry = (String) row.get(5);
+
+            complex.setFullName(name);
+            complex.setSystematicName(systematicName);
+            complex.setPhysicalProperties(properties);
+
+            DefaultCvTerm stoichTerm = new DefaultCvTerm(stoichiometry);
+            DefaultModelledParticipant participant
+                = new DefaultModelledParticipant(complex, stoichTerm);
+            complex.addParticipant(participant);
         }
         return complex;
     }
 
     private Query getQuery(String identifier) throws ObjectStoreException {
         PathQuery query = new PathQuery(model);
-        query.addViews("Complex.allInteractors.participant.primaryIdentifier",
+        query.addViews("Complex.name",
+                "Complex.systematicName",
+                "Complex.properties",
+                "Complex.function",
+                "Complex.synComplex.allInteractors.participant.primaryIdentifier",
                 "Complex.allInteractors.stoichiometry");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         return MainHelper.makeQuery(query, new HashMap(), new HashMap(), null, new HashMap());
-    }
-
-    private void setComplexIdentifier(DefaultComplex complex, String identifier) {
-        Collection<Xref> xrefs = complex.getIdentifiers();
-        for (Xref xref : xrefs) {
-            CvTerm cvTerm = xref.getDatabase();
-            if (EBI.equalsIgnoreCase(cvTerm.getShortName())) {
-
-            }
-        }
     }
 }
