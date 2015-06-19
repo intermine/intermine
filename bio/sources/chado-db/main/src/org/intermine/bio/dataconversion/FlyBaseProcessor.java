@@ -922,9 +922,10 @@ public class FlyBaseProcessor extends SequenceProcessor
         Item item = interactions.get(key);
         if (item == null) {
             item = getChadoDBConverter().createItem("Interaction");
-            item.setReference("gene1", refId);
-            item.setReference("gene2", gene2RefId);
+            item.setReference("participant1", refId);
+            item.setReference("participant2", gene2RefId);
             interactions.put(key, item);
+
         }
         return item;
     }
@@ -936,7 +937,6 @@ public class FlyBaseProcessor extends SequenceProcessor
         throws SQLException, ObjectStoreException {
         Map<MultiKey, Item> seenInteractions = new HashMap<MultiKey, Item>();
         ResultSet res = getInteractionResultSet(connection);
-        String typeId = getRelationshipType();
 
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -954,28 +954,21 @@ public class FlyBaseProcessor extends SequenceProcessor
 
             Item interaction = getInteraction(seenInteractions, featureData.getItemIdentifier(),
                     otherFeatureData.getItemIdentifier());
-            createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name, typeId);
+            createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name);
 
             name = "FlyBase:" + otherFeatureData.getChadoFeatureUniqueName() + "_"
                     + featureData.getChadoFeatureUniqueName();
             interaction = getInteraction(seenInteractions, otherFeatureData.getItemIdentifier(),
                     featureData.getItemIdentifier());
-            createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name, typeId);
+            createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name);
         }
         for (Item item : seenInteractions.values()) {
             getChadoDBConverter().store(item);
         }
     }
 
-    private String getRelationshipType() throws ObjectStoreException {
-        Item item = getChadoDBConverter().createItem("InteractionTerm");
-        item.setAttribute("identifier", RELATIONSHIP_TYPE);
-        getChadoDBConverter().store(item);
-        return item.getIdentifier();
-    }
-
     private void createDetail(Item dataSetItem, String pubTitle,
-            String publicationItemId, Item interaction, String name, String typeId)
+            String publicationItemId, Item interaction, String name)
         throws ObjectStoreException {
         Item detail = getChadoDBConverter().createItem("InteractionDetail");
         detail.setAttribute("name", name);
@@ -986,7 +979,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             makeInteractionExperiment(pubTitle, publicationItemId);
         detail.setReference("experiment", experimentItemIdentifier);
         detail.setReference("interaction", interaction);
-        detail.setReference("relationshipType", typeId);
+        detail.setAttribute("relationshipType", RELATIONSHIP_TYPE);
         detail.addToCollection("dataSets", dataSetItem);
         getChadoDBConverter().store(detail);
     }
