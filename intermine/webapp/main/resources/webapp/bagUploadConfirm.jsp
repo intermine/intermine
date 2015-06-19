@@ -62,199 +62,23 @@
 iframe { border:0; width: 100%; }
 </style>
 
+<script type="text/javascript" src="js/bagUploadConfirm.js"></script>
 <script type="text/javascript">
-(function($) {
-    // Are we upgrading a list?
-    var upgrading = false;
+jQuery(function () {
+    // js-ify java-land data.
+    var upgrading = false, paths = {js: [], css: []}, jobId, elem;
     <c:if test="${empty buildNewBag}">upgrading = true;</c:if>
-
-    // Show loading sign.
-    var notify = $('#error_msg');
-    notify.addClass('loading').show().append($('<div/>', { 'html': 'Please wait &hellip;' }));
-
-    // if we do not have a name of the list generate one from user's time
-    if ($('input#newBagName').val().length == 0) {
-      var extraFilter = "${bagExtraFilter}";
-      if (extraFilter == null || extraFilter == "") {
-        extraFilter = "all organisms".toLowerCase();
-      }
-      var bagType = "${bagType}";
-      if (bagType == null || bagType == "") {
-        bagType = "Any item".toLowerCase();
-      }
-            
-      var  t = new Date(),
-        m = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      $('input#newBagName').val(bagType + " list for " + extraFilter + " " + t.getDate() + " " + m[t.getMonth()] + " " + t.getFullYear() + " " + t.getHours() + "." + t.getMinutes());
-    }
-
-    // Get the paths to libraries.
-    var paths = { js: {}, css: {} };
     <c:set var="section" value="component-400"/>
     <c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">      
-        paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
+    paths["${res.type}"].push("${res.url}");
     </c:forEach>
-
-    // Apple lives here.
-    var Pomme = require('pomme'),
-      pomme = new Pomme({
-        'scope': 'apps-c',
-        'target': '#iframe',
-        template: function() {
-          return [
-            "<!doctype html>",
-            "<html>",
-            "<head>",
-              "<link  href='" + paths.css.all + "' medial='all' rel='stylesheet' type='text/css'/>",
-              "<script src='" + paths.js.app + "'><\/script>",
-              "<script src='" + paths.js.pomme + "'><\/script>",
-            "</head>",
-            "<body>",
-              "<div id='target'></div>",
-              "<script>",
-                "var Pomme = require('pomme'),",
-                "channel = new Pomme({ 'scope': 'apps-c' }),",
-                "component = require('component-400');",
-                "channel.on('load', function(opts, ready) {",
-                  // Add our target.
-                  "opts.target = '#target';",
-                  // Do not send our element, leads to circular references.
-                  "var orig = opts.portal;",
-                  "opts.portal = function(object) { orig(object) };",
-                  // Launch the app keeping the handle for getting the currently selected items.
-                  "var selected = component(opts);",
-                  "channel.on('select', function(cb) {",
-                    // Call back with currently selected items.
-                    "cb(selected());",
-                  "});",
-                  // Say we are ready.
-                  "ready();",
-                "});",
-              "<\/script>",
-            "</body>",
-            "</html>"
-          ].join("\n");
-        }
-      });
-
-    var job, cleanup, cleaned = false;
-    // Cleanup a job on success or error.
-    cleanup = function() {
-      if (cleaned) return;
-      try {
-        if (typeof job !== "undefined" && job !== null) {
-          if (typeof job.del === "function") {
-            job.del();
-          }
-        }
-      } catch (e) {};
-      cleaned = true;
-    };
-
-    var onError = function(err) {
-      // Try to cleanup.
-      cleanup();
-      // Show error message.
-      notify.removeClass('loading').show().text('Fatal error, cannot continue, sorry');
-      // Hide the title.
-      $('h1.title').remove();
-      // Stop execution.
-      throw err;
-    };
-
-    // Listen to thrown errors from iframe.
-    pomme.on('error', onError);
-
+    jobId = "${jobUid}";
+    elem = "#iframe";
+    var extraFilter = "${bagExtraFilter}";
+    var bagType = "${bagType}";
     // Point here.
     var root = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}";
-
-    // Poll & retrieve the results of the job.
-    job = new intermine.IDResolutionJob("${jobUid}", new intermine.Service({
-      "root": root,
-      "token": "${PROFILE.dayToken}",
-      "help": "${WEB_PROPERTIES['feedback.destination']}",
-      "errorHandler": onError
-    }));
-    job.poll().then(function(results) {
-      // Clean the mess up.
-      cleanup();
-
-      // No results?
-      if (!results.stats.objects.all) {
-        // Hide loader msg.
-        notify.removeClass('loading').hide();
-        // Show the title.
-        $('h1.title').text('There are no matches');
-        // Strike through the last step.
-        $('#list-progress div:last-child span').css('text-decoration', 'line-through');
-        return;
-      }
-
-      // console.log(JSON.stringify(results, null, 4));
-
-      // Show the title.
-      $('h1.title').text('Before we show you the results ...');
-
-      // When we or the iframe calls.
-      var onSubmit = function(selected) {
-        // Inject.
-        $('#matchIDs').val(selected.join(' '));
-        // Confirm.
-        if (upgrading) { // do not check list name
-          $('#bagUploadConfirmForm').submit();
-        } else {
-          validateBagName('bagUploadConfirmForm');
-        }
-      };
-
-      // Opts for the component-400.
-      var opts = {
-        'data': results,
-        // When the user asked to save this list.
-        cb: onSubmit,
-        // Visit the portal in our mine (need to not be passing the second param!).
-        portal: function(object) {
-          // Point straight to the db identifier.
-          var path = root + '/report.do?id=' + object.id;
-          var popup = window.open(path, '');
-          // Was it not blocked?
-          if (popup) {
-            popup.focus();
-          }
-        }
-      };
-
-      // Done/selected callback.
-      pomme.trigger('load', opts, function() {
-        // Hide loader msg.
-        notify.removeClass('loading').hide();
-
-        // Show the blocks.
-        if (upgrading) { // do not show new list name
-          $('#additionalMatches').show();
-        } else {
-          $('#chooseName, #additionalMatches').show();
-        }
-
-        // Focus on the input field and listen for Enter presses.
-        $('#newBagName').focus().keypress(function(evt) {
-          if (evt.which == 13) {
-            // Call iframe submitting on callback.
-            pomme.trigger('select', onSubmit);
-            // Just to make sure...
-            evt.preventDefault();
-            return false;
-          }
-        });
-
-        // Keep readjusting the iframe based on its content height.
-        var body = pomme.iframe.el.document.body;
-        setInterval(function() {
-          pomme.iframe.node.style.height = body.scrollHeight + 'px';
-        }, 1e2);
-      });
-    });
-
-})(jQuery);
+    BagUpload.confirm(elem, jobId, root, upgrading, paths, extraFilter, bagType);
+});
 </script>
 <!-- /bagUploadConfirm.jsp -->
