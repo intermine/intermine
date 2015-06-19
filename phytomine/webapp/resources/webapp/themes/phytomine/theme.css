@@ -25,8 +25,7 @@ h1 a:hover,h1 a:visited:hover {
     margin: 0px;
 }
 
-/* =HEADER
---------------------------*/
+/* =HEADER --------------------------*/
 div#header h1,
 div#header h1 a,
 div#header h1 a:link,
@@ -38,6 +37,17 @@ div#header l1 a:visited,
 div#header p {
     color:#000;
 }
+
+/* =MENU --------------------------*/
+div#menucontainer {
+    clear: both;
+    padding-left: 5%;
+    width: 90%;
+}
+
+.browserline {
+    text-align: left; }
+
 
 #footer {
   padding: 15px;
@@ -58,9 +68,7 @@ div#header p {
   height: 100px;
   vertical-align: center;
   display: inline-block;
-  *display: inline;
   text-align: center;
-  zoom: 1;
 }
 
 .stretch {
@@ -140,8 +148,7 @@ a.footerlink:hover {
 #loginbar  a:link, #loginbar a:visited, #loginbar{
   color:#000;}
 
-/* =BODY
---------------------------*/
+/* =BODY --------------------------*/
 
 .plainbox {
     border:1px solid #000;
@@ -154,22 +161,27 @@ a.footerlink:hover {
   background: url('green_grad.png') repeat-x;}
 
 
-/* =NAVIGATION
---------------------------*/
+/* =NAVIGATION --------------------------*/
 
 ul#nav a{ text-decoration:none; color: #333; font-weight:bold; }
 ul#nav a:hover { text-decoration:underline; color:#000;}
 ul#nav li.activelink a{ color:#609C42;}
 ul#nav li.activelink { background:#E3E2DD;}
 
-#submenu{
+#submenu {
+  color:#000;
+  height: 40px;
   background:#E3E2DD;
-  width: 1000px;
+  width: 90%;
+  margin: 10px 5% 0px;
   border-radius: 5px;
   border-top:1px solid #000;
   border-bottom:1px solid #000;
   border-left:1px solid #000;
   border-right:1px solid #000;}
+
+#submenudiv {
+  width: 100%; }
 
 #submenu_mymine{
   background:#ACAD94;}
@@ -184,7 +196,7 @@ ul#submenulist li.myminebagstabtitle a, ul#submenulist li.myminehistorytabtitle 
 ul#submenulist li.myminesavedtemplatestabtitle a, ul#submenulist li.myminepasswordtabtitle a, ul#submenulist li.myminetrackstabtitle a,
 ul#submenulist li.mymineapikeytabtitle a { color:#000; }
 
-ul#submenulist li#subactive_bag {height:40px; 
+ul#submenulist li#subactive_bag {height:40px;
   font-weight:bold;color:#609C42;background:url('submenu_indent.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine { height:40px;
@@ -196,8 +208,7 @@ ul#nav li{
   text-align: center;background:#E3E2DD; border:1px solid #000;}
 
 
-/* =MEGATILE SEARCH
---------------------------*/
+/* =MEGATILE SEARCH --------------------------*/
 
 div.filterBar {
     background:#000;color:white;}
@@ -214,8 +225,7 @@ div#filter_tool_bar {
     font-size:0.8em; background:#000; color:white;}
 
 
-/* =TOOLBOX RESULTS
---------------------------*/
+/* =TOOLBOX RESULTS --------------------------*/
 
 .listtoolbox {
   background-image: url('green_grad.png');
@@ -243,8 +253,7 @@ div#filter_tool_bar {
 }
 
 
-/* =WIDGET
---------------------------*/
+/* =WIDGET --------------------------*/
 
 .widget {
     max-height:400px;width: 450px;padding:15px;
@@ -315,10 +324,6 @@ div.keywordSearch div.examples h4 { color:#333; }
 div.resultTableContainer td.relevance div.full { color:#ff0000; }
 div.resultTableContainer td.relevance div.empty { color:#999999; }
 
-/* submenu */
-#submenu { color:#000;
-           height: 40px;
-           margin: 7.5px; }
 
 /* lists analysis (bagDetails.do) */
 div.heading.results { border:1px solid #888; background:url("green_grad.png") repeat-x scroll center top #FFFFFF; margin-left:0; }
@@ -342,8 +347,8 @@ div#quicksearch {
 div#submenuinfo {
     margin-top: 12px;
     margin-right: 20px;
-    margin-left: 20px;
-    float: right;
+    margin-left: 100px;
+    float: left;
     font-weight: bold;
     font-size: 14px;
     color: #020202;
@@ -370,17 +375,23 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 #low h4 { color:#000; }
 
 #search-bochs, #lists-bochs, #welcome-bochs {
-    width: 35%;
-    float: left;
+    width: 38%;
     margin-right: 5%;
     margin-left: 5%;
+    vertical-align: center;
     position: relative;
     border: 1px solid #000;
     border-radius: 10px;
     overflow: hidden;
     padding: 0 0px;
+    display: inline-block;
+    text-align: center;
 }
 
+#boxes div.inner h3 {
+    padding: 10px 0px;}
+
+ 
 #boxes div.inner p {
     padding: 0 0px;
     line-height: 20px;
@@ -405,6 +416,8 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 
 #search-bochs div.inner p {
     margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 #lists-bochs div.inner p {
@@ -441,6 +454,11 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 #boxes {
   text-align: justify;
   text-justify: distribute-all-lines;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: center;
 }
 
 
@@ -507,7 +525,7 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
     letter-spacing: 0.5px;
 }
 
-#lists-bochs div.inner a.advanced { 
+#lists-bochs div.inner a.advanced {
     font-size: 12px;
     color: #000;
     margin-bottom: 8px;
@@ -527,16 +545,6 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
     text-align: center;
 }
 
-/*
- #welcome-bochs a.button.gray { background:url("button.png") no-repeat top center; }
- #welcome-bochs a.button, #welcome-bochs a.button div, #welcome-bochs a.button div span { font-size:13px; text-transform:uppercase;
- font-family:"Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif; text-decoration:none; font-weight:bold;
- background-repeat:no-repeat; }
- #welcome-bochs a.button { line-height:20px; }
- #welcome-bochs a.button:hover { text-decoration:underline; }
- #welcome-bochs a.button div { background-position:top left; padding-left:18px; height:30px; position:relative; cursor:pointer; }
- #welcome-bochs a.button div span { background-position:top right; display:block; height:30px; padding:6px 14px 0 0; cursor:pointer;
- width:90px; }*/
 #welcome-bochs input.button {
     font-family: "Myriad Pro", Arial, Garuda, Helvetica, Tahoma, sans-serif;
     font-size: 13px;
@@ -584,8 +592,7 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
   color:#FFF; padding:2px 36px; }
 #boxes input.light[type="submit"] { background:url("button.png") no-repeat scroll center bottom transparent;
   color:#FFF; padding:2px 36px; }
-#low #rss p.more a { background: url("button.png") no-repeat scroll
-  left center transparent; }
+#low #rss p.more a { background: url("button.png") no-repeat scroll left center transparent; }
 
 #templates #tab-content #ribbon { background: url("ribbon.png") no-repeat scroll right top transparent; }
 #templates #tab-content {
@@ -669,6 +676,7 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
 
 #templates a:hover {
     color: #000;
+    text-decoraton: underline;
 }
 
 #templates div.content {
@@ -684,7 +692,9 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
     line-height: 28px;
     position: absolute;
     bottom: 0;
-    width:906px;
+    width:80%;
+    margin-left:10%;
+    margin-right:10%;
 }
 
 #templates div.content p.more a {
@@ -693,40 +703,14 @@ ul#submenulist li div { border-left-color:#7A7A7A; }
     padding-left: 16px;
 }
 
-/*
-#templates #tab-content #ribbon {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 155px;
-    height: 153px;
-    display: block;
-    background: url("../themes/purple/homepage/ribbon-forest.png") no-repeat top right;
-    z-index:2;
-}
-
-#templates #tab-content #try {
-    position: absolute;
-    right: 130px;
-    top: 100px;
-    width: 266px;
-    height: 36px;
-    display: block;
-    background: url("../themes/purple/homepage/try-these.png") no-repeat top right;
-    display: none;
-}
-*/
-
 #templates ul {
     font-size: 13px;
     color: #292727;
     line-height: 20px;
     margin-top: 10px;
     padding-bottom: 60px;
-}
-
-#templates ul a {
-    text-decoration: none;
+    text-align: left;
+    padding-left: 200px;
 }
 
 #templates ul img {
@@ -948,5 +932,8 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
   overflow: visible;
   white-space: normal;
 }
+
+.attributeField {
+  text-align: left; }
 
 
