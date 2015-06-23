@@ -270,4 +270,15 @@ public final class Constraints
     public static PathConstraintAttribute contains(String path, String contained) {
         return new PathConstraintAttribute(path, ConstraintOp.CONTAINS, contained);
     }
+
+    /**
+     * Creates a constraint for a path to not contain a value.
+     *
+     * @param path the path that the constraint is attached to
+     * @param contained the value this path's field should not contain.
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute doesNotContain(String path, String contained) {
+        return new PathConstraintAttribute(path, ConstraintOp.DOES_NOT_CONTAIN, contained);
+    }
 }
