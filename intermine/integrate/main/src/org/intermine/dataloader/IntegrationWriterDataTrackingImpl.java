@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
@@ -534,7 +535,14 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 }
                 // if the field has a non-null value or it there is a priority configured
                 // add details to the data tracker
-                if (o.getFieldValue(fieldName) != null) {
+                Object value = null;
+                if (field instanceof ReferenceDescriptor) {
+                    value = o.getFieldProxy(fieldName);
+                } else {
+                    value = o.getFieldValue(fieldName);
+                }
+
+                if (value != null) {
                     trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
                 } else {
                     // check if a priority is configured for the field
@@ -591,14 +599,20 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 if (!(field instanceof CollectionDescriptor)) {
                     // if the field has a non-null value or it there is a priority configured
                     // add details to the data tracker
-                    if (o.getFieldValue(fieldName) != null) {
+                    Object value = null;
+                    if (field instanceof ReferenceDescriptor) {
+                        value = o.getFieldProxy(fieldName);
+                    } else {
+                        value = o.getFieldValue(fieldName);
+                    }
+
+                    if (value != null) {
                         trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
                     } else {
 
                         // is there a priority defined for this field?
                         List<String> priorities = priorityConfig.getPriorities(o.getClass(),
                                 fieldName);
-                        LOG.info("priorities: " + priorities);
                         if (priorities != null && priorities.size() > 0) {
                             trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
                         }
