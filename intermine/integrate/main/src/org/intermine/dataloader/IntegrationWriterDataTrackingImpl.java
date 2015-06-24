@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -249,25 +250,26 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
         try {
             if (!(nimo instanceof InterMineObject)) {
+                // simple objects don't appear in data tracker so can just be stored
                 storeNonInterMineObject(nimo, source, skelSource, type);
                 return null;
             }
             InterMineObject o = (InterMineObject) nimo;
-
-            // fetch equivalent objects from cache or database according to source primary keys
             long time1 = System.currentTimeMillis();
             Set<InterMineObject> equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
-
-            // TODO what does this check mean?
+            // 1. we're storing an object and didn't find any equivalents
+            // 2. there is one equivalent object but we've already seen that before and know it
+            //    didn't merge with anything.
             if ((type != FROM_DB) && ((equivObjects.size() == 0) || ((equivObjects.size() == 1)
                     && (o.getId() != null) && (pureObjects.contains(o.getId()))
                     && (type == SOURCE)))) {
-                // TODO explain what shortcut does
                 return shortcut(o, equivObjects, type, time2, source, skelSource);
             }
             if ((equivObjects.size() == 1) && (type == SKELETON)) {
+                // we were storing a skeleton so only primary key fields will be populated. Can't
+                // be merged properly until the real object is stored.
                 InterMineObject onlyEquivalent = equivObjects.iterator().next();
                 assignMapping(o.getId(), onlyEquivalent.getId());
                 return onlyEquivalent;
@@ -530,7 +532,18 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     throw new NullPointerException("Error: lastSource is null for"
                             + " object " + o.getId() + " and fieldName " + fieldName);
                 }
-                trackingMap.put(fieldName, lastSource);
+                // if the field has a non-null value or it there is a priority configured
+                // add details to the data tracker
+                if (o.getFieldValue(fieldName) != null) {
+                    trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                } else {
+                    // check if a priority is configured for the field
+                    List<String> priorities = priorityConfig.getPriorities(o.getClass(),
+                            fieldName);
+                    if (priorities != null && priorities.size() > 0) {
+                        trackingMap.put(fieldName, lastSource);
+                    }
+                }
             }
         }
     }
@@ -540,8 +553,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             IllegalAccessException {
         // Take a shortcut!
         InterMineObject newObj = DynamicUtil.createObject(o.getClass());
-
-        // create an id for new object or use id of first equivalent object
         Integer newId;
         if (equivObjects.size() == 0) {
             newId = getSerial();
@@ -550,7 +561,6 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             newId = equivObjects.iterator().next().getId();
         }
         newObj.setId(newId);
-
         if (type == SOURCE) {
             if (writtenObjects.contains(newId)) {
                 // There are duplicate objects
@@ -577,8 +587,27 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             String fieldName = entry.getKey();
             FieldDescriptor field = entry.getValue();
             copyField(o, newObj, source, skelSource, field, type);
-            if (!(field instanceof CollectionDescriptor)) {
-                trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+            try {
+                if (!(field instanceof CollectionDescriptor)) {
+                    // if the field has a non-null value or it there is a priority configured
+                    // add details to the data tracker
+                    if (o.getFieldValue(fieldName) != null) {
+                        trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                    } else {
+
+                        // is there a priority defined for this field?
+                        List<String> priorities = priorityConfig.getPriorities(o.getClass(),
+                                fieldName);
+                        LOG.info("priorities: " + priorities);
+                        if (priorities != null && priorities.size() > 0) {
+                            trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                        }
+                    }
+                }
+            } catch (NullPointerException e) {
+                LOG.error("Failed to do something with tracking: " + o.getClass() + " - "
+                        + fieldName);
+                throw(e);
             }
         }
         time2 = System.currentTimeMillis();
