@@ -14,7 +14,6 @@ package org.intermine.webservice.server.complexes;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -48,8 +47,6 @@ public class ExportService extends JSONService
 {
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
-    private static final String EBI = "intact";
-    private static final Logger LOG = Logger.getLogger(ExportService.class);
 
     /**
      * Default constructor.
@@ -122,12 +119,17 @@ public class ExportService extends JSONService
      */
     protected DefaultComplex getComplex(String identifier) throws ObjectStoreException {
 
+        // construct query
         PathQuery q = getQuery(identifier);
 
+        // execute query
         ExportResultsIterator results = im.getPathQueryExecutor().execute(q);
 
+        // create the complex
         DefaultComplex complex = new DefaultComplex(identifier);
 
+        // loop through query results
+        // each row will be a different protein
         while (results.hasNext()) {
             List<ResultElement> row = results.next();
 
@@ -140,21 +142,31 @@ public class ExportService extends JSONService
             Integer taxonId = (Integer) row.get(6).getField();
             String biologicalRole = (String) row.get(7).getField();
 
+            // set complex attributes
             complex.setFullName(name);
             complex.setSystematicName(systematicName);
             complex.setPhysicalProperties(properties);
 
+            // interactor type
             CvTerm type = new DefaultCvTerm("protein");
+
+            // organism
             DefaultOrganism organism = new DefaultOrganism(taxonId);
 
+            // interactor
             DefaultInteractor interactor = new DefaultInteractor(primaryIdentifier, type, organism);
 
+            // stoichiometry
             DefaultCvTerm stoichTerm = new DefaultCvTerm(stoichiometry.toString());
+
+            // participant
             DefaultModelledParticipant participant
                 = new DefaultModelledParticipant(interactor, stoichTerm);
 
+            // biological role
             participant.setBiologicalRole(new DefaultCvTerm(biologicalRole));
 
+            // set relationship to complex
             complex.addParticipant(participant);
         }
         return complex;
