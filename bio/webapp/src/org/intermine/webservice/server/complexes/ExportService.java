@@ -11,27 +11,14 @@ package org.intermine.webservice.server.complexes;
  */
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
@@ -160,7 +147,6 @@ public class ExportService extends JSONService
             CvTerm type = new DefaultCvTerm("protein");
             DefaultOrganism organism = new DefaultOrganism(taxonId);
 
-            // java.lang.String name, CvTerm type, Organism organism, Xref uniqueId
             DefaultInteractor interactor = new DefaultInteractor(primaryIdentifier, type, organism);
 
             DefaultCvTerm stoichTerm = new DefaultCvTerm(stoichiometry.toString());
