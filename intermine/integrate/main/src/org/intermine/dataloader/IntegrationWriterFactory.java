@@ -72,8 +72,12 @@ public final class IntegrationWriterFactory
                                            + "IntegrationWriter: " + integrationWriterClassName
                                            + " - check properties file", e);
         } catch (Exception e) {
-            throw new ObjectStoreException("Failed to instantiate IntegrationWriter "
-                                           + "class: " + integrationWriterClassName, e);
+            if (e.getCause() instanceof ObjectStoreException) {
+                throw (ObjectStoreException) e.getCause();
+            } else {
+                throw new ObjectStoreException("Failed to instantiate IntegrationWriter "
+                        + "class: " + integrationWriterClassName, e);
+            }
         }
         return iw;
     }

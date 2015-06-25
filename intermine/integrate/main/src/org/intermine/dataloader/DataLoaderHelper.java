@@ -241,6 +241,78 @@ public final class DataLoaderHelper
         }
     }
 
+
+    /**
+     * Fetch all primary keys for the given source. Parses source keys properties file, can handle
+     * both 'old style' key definitions (key name used in source, details found in keyDefs file)
+     * and 'new style' where whole key is defined in the source properties file.
+     * @param source name of source to fetch keys for
+     * @param model the data model
+     * @return a set of primary key objects
+     */
+    public static Set<PrimaryKey> getSourcePrimaryKeys(Source source, Model model) {
+        Properties keyProps = getKeyProperties(source);
+
+        Set<PrimaryKey> keySet = new HashSet<PrimaryKey>();
+
+        for (Map.Entry<Object, Object> entry : keyProps.entrySet()) {
+
+            // this is the old style key definition where we refer to a named key in a
+            // separate file, e.g. Gene = key_primaryIdentifier
+            if (!((String) entry.getKey()).contains(".")) {
+                String cldName = (String) entry.getKey();
+                ClassDescriptor cld = model.getClassDescriptorByName(cldName);
+                String keyList = (String) entry.getValue();
+
+                // fetch from keyDefs
+                if  (cld != null) {
+                    Map<String, PrimaryKey> keysForCls = PrimaryKeyUtil
+                            .getPrimaryKeys(cld);
+                    if (keyList != null) {
+                        String[] tokens = keyList.split(",");
+                        for (int i = 0; i < tokens.length; i++) {
+                            String token = tokens[i].trim();
+                            if (keysForCls.get(token) == null) {
+                                throw new IllegalArgumentException("Primary key " + token
+                                        + " for class " + cld.getName()
+                                        + " required by data source " + source.getName() + " in "
+                                        + source.getName() + "_keys.properties is not defined in "
+                                        + cld.getModel().getName() + "_keyDefs.properties");
+                            } else {
+                                keySet.add(keysForCls.get(token));
+                            }
+                        }
+                    }
+                }
+            } else {
+                // this a new style key which is a class name followed by a list of fields
+                // Gene = symbol, organism
+                // Gene = primaryIdentifier
+                String propName = (String) entry.getKey();
+                String fieldList = (String) entry.getValue();
+
+                int posOfDot = propName.indexOf('.');
+                if (posOfDot > 0) {
+                    String cldName = propName.substring(0, posOfDot);
+                    String keyName = propName.substring(posOfDot + 1);
+                    ClassDescriptor cld = model.getClassDescriptorByName(cldName);
+                    if (cld == null) {
+                        // this is only a warning because some source keys can be used with
+                        // different model additions.
+                        LOG.warn("Failed to find class " + cldName + " in model specified in key: "
+                                + propName + " for source: " + source.getName());
+                    } else {
+                        PrimaryKey pk = new PrimaryKey(keyName, fieldList, cld);
+                        if (!keySet.contains(pk)) {
+                            keySet.add(pk);
+                        }
+                    }
+                }
+            }
+        }
+        return keySet;
+    }
+
     /**
      * Return the Properties that enumerate the keys for this Source
      *
@@ -271,6 +343,7 @@ public final class DataLoaderHelper
         }
         return keys;
     }
+
 
     /**
      * Look a the values of the given primary key in the object and return true if and only if some
