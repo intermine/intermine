@@ -11,15 +11,25 @@ package org.intermine.webservice.server.complexes;
  */
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagQueryRunner;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
+import org.intermine.api.results.ExportResultsIterator;
+import org.intermine.api.results.ResultElement;
+import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
@@ -74,15 +84,11 @@ public class ExportService extends JSONService
         // EBI complex identifier
         String identifier = getComplexIdentifier();
 
-        LOG.error("parsing Complex " + identifier);
-
         // get complex from InterMine database, transform to JAMI complex
         DefaultComplex complex = getComplex(identifier);
 
         // initialise all existing json writers
         InteractionViewerJson.initialiseAllMIJsonWriters();
-
-        LOG.error("InteractionViewerJson.initialiseAllMIJsonWriters(); ");
 
         // get jsob option factory
         MIJsonOptionFactory optionFactory = MIJsonOptionFactory.getInstance();
@@ -122,33 +128,30 @@ public class ExportService extends JSONService
         return identifier;
     }
 
-    private DefaultComplex getComplex(String identifier) throws ObjectStoreException {
+    /**
+     * @param identifier complex identifier, e.g. EBI-123
+     * @return complex of interest
+     * @throws ObjectStoreException if something goes wrong
+     */
+    protected DefaultComplex getComplex(String identifier) throws ObjectStoreException {
 
-        LOG.error("QUERYING");
+        PathQuery q = getQuery(identifier);
 
-        Query q = getQuery(identifier);
-
-        LOG.error("QUERYING " + q);
-
-        Results results = im.getObjectStore().execute(q);
+        ExportResultsIterator results = im.getPathQueryExecutor().execute(q);
 
         DefaultComplex complex = new DefaultComplex(identifier);
 
-        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+        while (results.hasNext()) {
+            List<ResultElement> row = results.next();
 
-            LOG.error(" *** loopdy");
-
-            String name = (String) row.get(0);
-
-            LOG.error(" *** " + name);
-            String systematicName = (String) row.get(1);
-            String properties = (String) row.get(2);
-            String function = (String) row.get(3);
-            String primaryIdentifier = (String) row.get(4);
-            String stoichiometry = (String) row.get(5);
-            Integer taxonId = (Integer) row.get(6);
-            String biologicalRole = (String) row.get(7);
+            String name = (String) row.get(0).getField();
+            String systematicName = (String) row.get(1).getField();
+            String properties = (String) row.get(2).getField();
+            String function = (String) row.get(3).getField();
+            String primaryIdentifier = (String) row.get(4).getField();
+            Integer stoichiometry = (Integer) row.get(5).getField();
+            Integer taxonId = (Integer) row.get(6).getField();
+            String biologicalRole = (String) row.get(7).getField();
 
             complex.setFullName(name);
             complex.setSystematicName(systematicName);
@@ -160,7 +163,7 @@ public class ExportService extends JSONService
             // java.lang.String name, CvTerm type, Organism organism, Xref uniqueId
             DefaultInteractor interactor = new DefaultInteractor(primaryIdentifier, type, organism);
 
-            DefaultCvTerm stoichTerm = new DefaultCvTerm(stoichiometry);
+            DefaultCvTerm stoichTerm = new DefaultCvTerm(stoichiometry.toString());
             DefaultModelledParticipant participant
                 = new DefaultModelledParticipant(interactor, stoichTerm);
 
@@ -171,7 +174,7 @@ public class ExportService extends JSONService
         return complex;
     }
 
-    private Query getQuery(String identifier) throws ObjectStoreException {
+    private PathQuery getQuery(String identifier) throws ObjectStoreException {
         PathQuery query = new PathQuery(model);
         query.addViews("Complex.name",
                 "Complex.systematicName",
@@ -182,6 +185,6 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.participant.organism.taxonId",
                 "Complex.allInteractors.biologicalRole");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
-        return MainHelper.makeQuery(query, new HashMap(), new HashMap(), null, new HashMap());
+        return query;
     }
 }
