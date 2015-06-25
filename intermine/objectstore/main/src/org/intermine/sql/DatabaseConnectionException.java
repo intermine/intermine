@@ -18,7 +18,9 @@ import java.sql.SQLException;
  * @author rns
  *
  */
-public class DatabaseConnectionException extends SQLException {
+public class DatabaseConnectionException extends SQLException
+{
+
     /**
      * Constructs an DatabaseConnectionException
      */
