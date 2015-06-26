@@ -20,7 +20,6 @@
   <class className="org.intermine.model.bio.Consequence">
     <fields>
       <fieldconfig fieldExpr="description"/>
-      <fieldconfig fieldExpr="transcript.primaryIdentifier"/>
     </fields>
   </class>
   <class className="org.intermine.model.bio.ValidationState">
