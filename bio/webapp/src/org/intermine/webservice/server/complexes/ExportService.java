@@ -32,11 +32,15 @@ import psidev.psi.mi.jami.json.MIJsonOptionFactory;
 import psidev.psi.mi.jami.json.MIJsonType;
 import psidev.psi.mi.jami.model.CvTerm;
 import psidev.psi.mi.jami.model.InteractionCategory;
+import psidev.psi.mi.jami.model.Stoichiometry;
+import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.model.impl.DefaultComplex;
 import psidev.psi.mi.jami.model.impl.DefaultCvTerm;
 import psidev.psi.mi.jami.model.impl.DefaultInteractor;
 import psidev.psi.mi.jami.model.impl.DefaultModelledParticipant;
 import psidev.psi.mi.jami.model.impl.DefaultOrganism;
+import psidev.psi.mi.jami.model.impl.DefaultStoichiometry;
+import psidev.psi.mi.jami.model.impl.DefaultXref;
 
 /**
  * Web service that produces JSON required by the complex viewer.
@@ -47,6 +51,7 @@ public class ExportService extends JSONService
 {
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
+    private static final String EBI = "intact";
 
     /**
      * Default constructor.
@@ -125,8 +130,11 @@ public class ExportService extends JSONService
         // execute query
         ExportResultsIterator results = im.getPathQueryExecutor().execute(q);
 
+        // identifier
+        Xref complexXref = new DefaultXref(new DefaultCvTerm(EBI), identifier);
+
         // create the complex
-        DefaultComplex complex = new DefaultComplex(identifier);
+        DefaultComplex complex = new DefaultComplex(identifier, complexXref);
 
         // loop through query results
         // each row will be a different protein
@@ -153,18 +161,25 @@ public class ExportService extends JSONService
             // organism
             DefaultOrganism organism = new DefaultOrganism(taxonId);
 
+            // cv term
+            CvTerm db = new DefaultCvTerm("intermine");
+
+            // identifier
+            Xref xref = new DefaultXref(db, primaryIdentifier);
+
             // interactor
-            DefaultInteractor interactor = new DefaultInteractor(primaryIdentifier, type, organism);
+            DefaultInteractor interactor = new DefaultInteractor(primaryIdentifier, type, organism,
+                    xref);
 
             // stoichiometry
-            DefaultCvTerm stoichTerm = new DefaultCvTerm(stoichiometry.toString());
+            Stoichiometry stoichTerm = new DefaultStoichiometry(stoichiometry.intValue());
+
+            // role
+            DefaultCvTerm bioRole = new DefaultCvTerm(biologicalRole);
 
             // participant
             DefaultModelledParticipant participant
-                = new DefaultModelledParticipant(interactor, stoichTerm);
-
-            // biological role
-            participant.setBiologicalRole(new DefaultCvTerm(biologicalRole));
+                = new DefaultModelledParticipant(interactor, bioRole, stoichTerm);
 
             // set relationship to complex
             complex.addParticipant(participant);
