@@ -213,7 +213,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      *
      * @return dataTracker
      */
-    protected DataTracker getDataTracker() {
+    public DataTracker getDataTracker() {
         return dataTracker;
     }
 

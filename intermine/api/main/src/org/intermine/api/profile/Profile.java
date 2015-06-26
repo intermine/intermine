@@ -233,9 +233,15 @@ public class Profile
      * @return String
      */
     public String getName() {
+        // AKA is my name for myself (not public).
         if (prefers(UserPreferences.AKA)) {
             return getPreferences().get(UserPreferences.AKA);
         }
+        // ALIAS is public (and globally unique) name
+        if (prefers(UserPreferences.ALIAS)) {
+            return getPreferences().get(UserPreferences.ALIAS);
+        }
+        // Else try and work out something reasonable.
         int atPos = username.indexOf("@");
         if (atPos > 0) {
             return username.substring(0, atPos);

@@ -62,29 +62,24 @@
 
     (function($) {
         var EXPAND_ON_LOAD = ${expandOnLoad};
-        intermine.css.headerIcon = "fm-header-icon";
         var query = ${tquery.json};
         var disableTemplate = function() {
             $('#${elemId} h3').addClass('no-results').unbind('click');
             $('#${tableContainerId}').remove();
         };
         $(function() {
-            $SERVICE.query(query).pipe($SERVICE.count).fail(disableTemplate).done(function(c) {
-                var cstr = intermine.utils.numToString(c, ",", 3);
-                $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
-                if (c < 1) {
-                    disableTemplate();
-                }
-            });
-            $('#${elemId} h3').click(function(e) {
-                var options = {
-                    type: 'table',
-                    service: $SERVICE,
-                    query: query,
-                    events: LIST_EVENTS,
-                    properties: {pageSize: 10}
-                };
-                jQuery('#${tableContainerId}').imWidget(options);
+            $SERVICE.count(query).then(
+                function(c) {
+                    var cstr = intermine.utils.numToString(c, ",", 3);
+                    $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
+                    if (c < 1) {
+                        disableTemplate();
+                    }
+                },
+                disableTemplate
+            );
+            $('#${elemId} h3').on('click', function(e) {
+                loadTable('#${tableContainerId}', query, 10);
                 if(typeof(Storage) !=="undefined"){
                   localStorage.${elemId} = "show";
                 }
@@ -113,6 +108,27 @@
             } else {
                 if (EXPAND_ON_LOAD) {
                     $('#${elemId} h3').click();
+                }
+            }
+
+            function loadTable(elem, query, pageSize) {
+                console.debug("Loading table", query);
+                var customGalaxy = "${GALAXY_URL}";
+                if (customGalaxy) {
+                    imtables.configure('Download.Galaxy.Current', customGalaxy);
+                }
+                imtables.loadDash(
+                    elem,
+                    {size: pageSize},
+                    {service: {root: $SERVICE.root, token: $SERVICE.token}, query: query}
+                ).then(
+                    withTable,
+                    FailureNotification.notify
+                );
+
+                function withTable (table) {
+                    table.bus.on('list-action:failure', LIST_EVENTS['failure']);
+                    table.bus.on('list-action:success', LIST_EVENTS['success']);
                 }
             }
         });

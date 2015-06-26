@@ -109,10 +109,8 @@ setOption(['CDN'], 'server', "${WEB_PROPERTIES['head.cdn.location']}");
 
 if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     // Set up the service, if required.
-    var root = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}";
-    if (!intermine.funcutils && window.imjs && window.imjs.utils) {
-      intermine.funcutils = window.imjs.utils;
-    }
+    var root = window.location.origin + "/${WEB_PROPERTIES['webapp.path']}";
+
     $SERVICE = new intermine.Service({
         "root": root,
         "token": "${PROFILE.dayToken}",
@@ -122,6 +120,9 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     var notification = new FailureNotification({message: $SERVICE.root + " is incorrect"});
 
     $SERVICE.fetchVersion().then(reportVersion, notification.render);
+    if (typeof imtables !== 'undefined') {
+        console.debug('Using imtables: ' + (imtables.version || 'UNKNOWN'));
+    }
   
     // Load list widgets.  
     (function() {
@@ -167,11 +168,11 @@ $MODEL_TRANSLATION_TABLE = {
 };
 
 <c:if test="${! empty WEB_PROPERTIES['constraint.default.value']}">
-if (typeof intermine != 'undefined') {
-    intermine.scope('intermine.conbuilder.messages', {
-        "ValuePlaceholder": "${WEB_PROPERTIES['constraint.default.value']}",
-        "ExtraPlaceholder": "${WEB_PROPERTIES['constraint.default.extra-value']}"
-    }, true);
+if (typeof imtables != 'undefined' && imtables.setMessages) {
+    imtables.setMessages({
+        "conbuilder.ValuePlaceholder": "${WEB_PROPERTIES['constraint.default.value']}",
+        "conbuilder.ExtraPlaceholder": "${WEB_PROPERTIES['constraint.default.extra-value']}"
+    });
 }
 </c:if>
 

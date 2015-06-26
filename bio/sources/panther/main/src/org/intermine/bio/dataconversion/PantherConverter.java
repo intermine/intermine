@@ -55,6 +55,7 @@ public class PantherConverter extends BioFileConverter
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private IdResolver rslv;
+    private Set<MultiKey> homologuePairs = new HashSet<MultiKey>();
 
     /**
      * Constructor
@@ -229,8 +230,17 @@ public class PantherConverter extends BioFileConverter
             String gene1 = getGene(gene1IdentifierString[1], taxonId1);
             String gene2 = getGene(gene2IdentifierString[1], taxonId2);
 
+            // file contains duplicates OR gene not resolved
+            if (homologuePairs.contains(new MultiKey(gene1, gene2)) || StringUtils.isEmpty(gene1)
+                     || StringUtils.isEmpty(gene2)) {
+                continue;
+            }
+
             processHomologues(gene1, gene2, type, pantherId);
-            processHomologues(gene2, gene1, type, pantherId);
+            // genes can be paralogues with themselves so don't duplicate
+            if (!gene1.equals(gene2)) {
+                processHomologues(gene2, gene1, type, pantherId);
+            }
         }
     }
 
@@ -252,6 +262,7 @@ public class PantherConverter extends BioFileConverter
                 createCrossReference(homologue.getIdentifier(), pantherId,
                         DATA_SOURCE_NAME, true));
         store(homologue);
+        homologuePairs.add(new MultiKey(gene1, gene2));
     }
 
     // genes (in taxonIDs) are always processed

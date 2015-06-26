@@ -17,10 +17,7 @@ use constant ORGANISMS => (
     "Caenorhabditis_elegans", 
     "Mus_musculus",
     "Homo_sapiens",
-    "Saccharomyces_cerevisiae",
-    "Bacillus_subtilis_168",
-    "Escherichia_coli",
-    "Arabidopsis_thaliana",
+    "Saccharomyces_cerevisiae_S288c"
 );
 
 sub BUILD {
