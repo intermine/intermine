@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,7 @@ package org.intermine.objectstore;
  *
  */
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
@@ -58,6 +59,14 @@ public final class ObjectStoreFactory
         }
         Class<?>[] parameterTypes = new Class[] {String.class, Properties.class};
         Method m = cls.getDeclaredMethod("getInstance", parameterTypes);
-        return (ObjectStore) m.invoke(null, new Object[] {alias, props});
+        try {
+            return (ObjectStore) m.invoke(null, new Object[] {alias, props});
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof ObjectStoreException) {
+                throw (ObjectStoreException) e.getCause();
+            } else {
+                throw e;
+            }
+        }
     }
 }

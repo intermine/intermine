@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -269,5 +269,16 @@ public final class Constraints
      */
     public static PathConstraintAttribute contains(String path, String contained) {
         return new PathConstraintAttribute(path, ConstraintOp.CONTAINS, contained);
+    }
+
+    /**
+     * Creates a constraint for a path to not contain a value.
+     *
+     * @param path the path that the constraint is attached to
+     * @param contained the value this path's field should not contain.
+     * @return a new PathConstraint object
+     */
+    public static PathConstraintAttribute doesNotContain(String path, String contained) {
+        return new PathConstraintAttribute(path, ConstraintOp.DOES_NOT_CONTAIN, contained);
     }
 }

@@ -6,7 +6,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="src" path="/bio-tools-main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

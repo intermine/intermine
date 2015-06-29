@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -130,6 +130,12 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
                 getDirectDataLoader().store(o);
             } catch (ObjectStoreException e) {
                 throw new BuildException("exception while storing: " + o, e);
+            } finally {
+                try {
+                    getDirectDataLoader().close();
+                } catch (ObjectStoreException e) {
+                    throw new IllegalArgumentException(e);
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,7 +13,6 @@ package org.intermine.web.logic.widget;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -42,7 +41,7 @@ public final class ErrorCorrection
         /** The Holm-Bonferroni error correction strategy **/
         HOLM_BONFERRONI("Holm-Bonferroni"),
         /** Do not perform error correction **/
-        NONE("");
+        NONE("None");
 
         private final String algorithm;
 
@@ -94,10 +93,11 @@ public final class ErrorCorrection
      * @return A similar map, but sorted.
      */
     public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
-        SortableMap sortedMap = new SortableMap(originalMap);
+        SortableMap<String, BigDecimal> sortedMap =
+                new SortableMap<String, BigDecimal>(originalMap);
         // sort ascending, smallest values first
         sortedMap.sortValues(false, true);
-        return new LinkedHashMap(sortedMap);
+        return sortedMap;
     }
 
     /**

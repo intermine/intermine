@@ -50,7 +50,7 @@
           <include name="imbuild/im-ant-tasks/src/**/*.java"/>
           <include name="intermine/objectstore/main/src/**/*.java"/>
           <include name="intermine/objectstore/model/logmodel/src/**/*.java"/>
-	  <include name="intermine/api/main/src/**/*.java"/>
+          <include name="intermine/api/main/src/**/*.java"/>
           <include name="intermine/pathquery/main/src/**/*.java"/>
           <include name="intermine/integrate/main/src/**/*.java"/>
           <include name="intermine/web/main/src/**/*.java"/>

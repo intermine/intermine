@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -205,6 +205,10 @@ public class BagQuery
                         ConstraintSet replacement = new ConstraintSet(ConstraintOp.OR);
                         nodes.put((QueryEvaluable) ((BagConstraint) c).getQueryNode(), replacement);
                         cs.addConstraint(replacement);
+                    }
+                } else if (c instanceof MultipleInBagConstraint) {
+                    for (QueryEvaluable qe : ((MultipleInBagConstraint) c).getEvaluables()) {
+                        nodes.put(qe, cs);
                     }
                 } else if (c instanceof ConstraintSet) {
                     traverseConstraint(c, nodes);

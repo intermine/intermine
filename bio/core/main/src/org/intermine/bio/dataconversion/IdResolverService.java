@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -61,11 +61,11 @@ public final class IdResolverService
         // HACK - for worm in ncbi
         IdResolverService.getWormIdResolver();
         // HACK - resolve human ids to HGNC symbols
-        IdResolverService.getHumanIdResolver();
+        // IdResolverService.getHumanIdResolver();
 
         Set<String> validTaxonIds = new HashSet<String>(taxonIds);
         validTaxonIds.remove("6239");
-        validTaxonIds.remove("9606");
+        //validTaxonIds.remove("9606");
         return new EntrezGeneIdResolverFactory().getIdResolver(validTaxonIds);
     }
 

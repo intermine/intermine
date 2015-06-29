@@ -87,7 +87,13 @@
       <function-class>org.intermine.web.logic.WebUtil</function-class>
       <function-signature>boolean containsKey(java.util.Map, java.lang.Object)</function-signature>
   </function>
-  
 
+  <function>
+    <name>hasValidPath</name>
+    <function-class>org.intermine.web.logic.WebUtil</function-class>
+    <function-signature>
+      boolean hasValidPath(java.lang.Object, java.lang.String, org.intermine.api.InterMineAPI)
+    </function-signature>
+  </function>
 
 </taglib>

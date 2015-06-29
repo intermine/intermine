@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="test/src"/>
+	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry kind="lib" path="test/resources"/>
+	<classpathentry kind="lib" path="main/lib/icu4j_3_4.jar"/>
+	<classpathentry kind="lib" path="main/lib/iri.jar"/>
+	<classpathentry kind="lib" path="main/lib/collections-generic-4.01.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
+	<classpathentry kind="lib" path="main/resources"/>
+	<classpathentry kind="lib" path="main/lib/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="main/lib/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="main/lib/paxtools-4.1.6.jar"/>
+	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+</classpath>

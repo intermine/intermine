@@ -1,7 +1,7 @@
 package org.intermine.sql;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -107,6 +107,10 @@ public class DatabaseTest extends TestCase
         assertTrue(db.isVersionAtLeast("9.2.1.0"));
         assertFalse(db.isVersionAtLeast("9.2.1.1"));
         assertFalse(db.isVersionAtLeast("9.2.2"));
+        db.version = "9.4beta3";
+        assertTrue(db.isVersionAtLeast("9.2"));
+        assertTrue(db.isVersionAtLeast("9.4.0"));
+        assertFalse(db.isVersionAtLeast("9.5"));
     }
 
 /*

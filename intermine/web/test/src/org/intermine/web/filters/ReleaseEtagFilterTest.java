@@ -1,6 +1,8 @@
 package org.intermine.web.filters;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.ClassResourceOpener;
 import org.intermine.web.logic.config.WebConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,10 +33,11 @@ public class ReleaseEtagFilterTest {
         webProperties = new Properties();
         webProperties.setProperty("project.releaseVersion", "testing");
         release = "testing-" + String.valueOf(org.intermine.web.logic.Constants.WEB_SERVICE_VERSION);
-        InterMineContext.initilise(
+        InterMineContext.initialise(
                 createMock(InterMineAPI.class),
                 webProperties,
-                createMock(WebConfig.class));
+                createMock(WebConfig.class),
+                new ClassResourceOpener(ReleaseEtagFilter.class));
         req = createMock(HttpServletRequest.class);
         resp = createMock(HttpServletResponse.class);
         chain = createMock(FilterChain.class);

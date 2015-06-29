@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -148,6 +148,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             put(ConstraintOp.GREATER_THAN_EQUALS, "greaterThanEqualTo");
             put(ConstraintOp.IN, "in");
             put(ConstraintOp.NOT_IN, "notIn");
+            put(ConstraintOp.CONTAINS, "contains");
+            put(ConstraintOp.DOES_NOT_CONTAIN, "doesNotContain");
         }
     };
 

@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1334,7 +1334,8 @@ public class ProfileManager
             profile = createNewProfile(username, null);
         }
 
-        if (!profile.prefers(UserPreferences.EMAIL)) {
+        if (!profile.prefers(UserPreferences.EMAIL)
+                && identity.contains("@")) {
             profile.getPreferences().put(UserPreferences.EMAIL, identity);
         }
 

@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -102,6 +102,15 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
      */
     public void setEof(HintingFetcher eof) {
         this.eof = eof;
+    }
+
+    /**
+     * Get the equivalent object fetcher.
+     *
+     * @return the equivalent object fetcher
+     */
+    public HintingFetcher getEof() {
+        return this.eof;
     }
 
     /**

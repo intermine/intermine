@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -214,7 +214,7 @@ public final class TypeConverter
                                 && (tq.getEditableConstraints().size() == 1)) {
                             // Editable constraint is okay.
                             Class typeB = tq.makePath(view.get(1)).getLastClassDescriptor()
-                            .getType();
+                                    .getType();
                             TemplateQuery prevTq = retval.get(typeB);
                             if (prevTq != null) {
                                 Class prevTypeA = prevTq.makePath(prevTq.getView().get(0))

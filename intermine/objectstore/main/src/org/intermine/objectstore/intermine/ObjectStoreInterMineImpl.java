@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -76,6 +76,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.sql.Database;
+import org.intermine.sql.DatabaseConnectionException;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.precompute.BestQuery;
@@ -362,6 +363,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 try {
                     versionString = MetadataManager.retrieve(database,
                             MetadataManager.OS_FORMAT_VERSION);
+                } catch (DatabaseConnectionException e) {
+                    throw new ObjectStoreException("Failed to get connection to database while "
+                            + "instantiating ObjectStore", e);
                 } catch (SQLException e) {
                     LOG.warn("Error retrieving database format version number", e);
                     throw new ObjectStoreException(
@@ -439,7 +443,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     }
                 }
 
+                // if we're above Postgres version 9.2 we can use the built-in range types
+                boolean useRangeTypes = database.isVersionAtLeast("9.2");
+
                 // Check if there is a bioseg index in the database for faster range queries
+                // - if we can use range types we don't really need to check this but useful to know
                 boolean hasBioSeg = false;
                 Connection c = null;
                 try {
@@ -447,9 +455,15 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                     Statement s = c.createStatement();
                     s.execute("SELECT bioseg_create(1, 2)");
                     hasBioSeg = true;
+                } catch (DatabaseConnectionException e) {
+                    throw new ObjectStoreException("Failed to get database connection when checking"
+                            + " for bioseg during ObjectStore creation", e);
                 } catch (SQLException e) {
                     // We don't have bioseg
-                    LOG.warn("Database " + osAlias + " doesn't have bioseg", e);
+                    if (!useRangeTypes) {
+                        // only log a warning if we can't use range types, otherwise no problem
+                        LOG.warn("Database " + osAlias + " doesn't have bioseg", e);
+                    }
                 } finally {
                     if (c != null) {
                         try {
@@ -459,9 +473,6 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                         }
                     }
                 }
-
-                // if we're above Postgres version 9.2 we can use the built-in range types
-                boolean useRangeTypes = database.isVersionAtLeast("9.2");
 
                 DatabaseSchema schema = new DatabaseSchema(osModel, truncatedClasses, noNotXml,
                         missingTables, formatVersion, hasBioSeg, useRangeTypes);
@@ -1053,10 +1064,12 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 + statsEstTime + ", Execute: " + statsExeTime + ", Results Convert: "
                 + statsConTime);
 
-        try {
-            logTableBatch.close(logTableConnection);
-        } catch (SQLException e1) {
-            LOG.error("Couldn't close OS log table.");
+        if (logTableBatch != null) {
+            try {
+                logTableBatch.close(logTableConnection);
+            } catch (SQLException e1) {
+                LOG.error("Couldn't close OS log table.");
+            }
         }
 
         Connection c = null;
@@ -1707,6 +1720,9 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             try {
                 PrecomputedTableManager ptm = PrecomputedTableManager.getInstance(db);
                 ptm.dropAffected(tableNames);
+            } catch (DatabaseConnectionException e) {
+                throw new Error("Failed to get database connection when initiating "
+                        + "PrecomputedTableManager", e);
             } catch (SQLException e) {
                 throw new Error("Problem with precomputed tables", e);
             }

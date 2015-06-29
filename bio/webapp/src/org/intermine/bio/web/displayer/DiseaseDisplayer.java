@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.model.bio.Gene;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
@@ -55,29 +54,29 @@ public class DiseaseDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
-        Gene gene = (Gene) reportObject.getObject();
-        Set<String> orthologues = getLocalHomologues(gene);
+        Integer geneId = reportObject.getObject().getId();
+        Set<String> orthologues = getLocalHomologues(geneId);
         if (orthologues != null && !orthologues.isEmpty()) {
             request.setAttribute("ratGenes", StringUtil.join(orthologues, ","));
         }
     }
 
-    private PathQuery getQuery(Gene gene) {
+    private PathQuery getQuery(Integer geneId) {
         PathQuery q = new PathQuery(im.getModel());
         q.addViews("Gene.homologues.homologue.primaryIdentifier",
                 "Gene.homologues.homologue.secondaryIdentifier");
-        q.addConstraint(Constraints.eq("Gene.primaryIdentifier", gene.getPrimaryIdentifier()));
+        q.addConstraint(Constraints.inIds("Gene", Collections.singleton(geneId)));
         q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName", RAT));
         return q;
     }
 
-    private Set<String> getLocalHomologues(Gene gene) {
+    private Set<String> getLocalHomologues(Integer geneId) {
         Set<String> orthologues = new HashSet<String>();
         ProfileManager profileManager = im.getProfileManager();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
         PathQuery q = null;
         try {
-            q = getQuery(gene);
+            q = getQuery(geneId);
         } catch (Exception e) {
             return Collections.emptySet();
         }

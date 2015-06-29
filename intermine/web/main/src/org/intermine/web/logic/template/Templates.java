@@ -1,7 +1,7 @@
 package org.intermine.web.logic.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -172,9 +172,8 @@ public final class Templates
         // Use the id parameters (eg. constraint1, constraint2, ...) as a proxy
         // for the whole constraint.
         Set<String> allIdParameters = new HashSet<String>();
-        for (@SuppressWarnings("unchecked")
-        Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
-            String next = e.nextElement();
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements();) {
+            String next = (String) e.nextElement();
             if (next.startsWith("constraint")) {
                 allIdParameters.add(next);
             }

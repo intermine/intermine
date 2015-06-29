@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -72,8 +72,12 @@ public final class IntegrationWriterFactory
                                            + "IntegrationWriter: " + integrationWriterClassName
                                            + " - check properties file", e);
         } catch (Exception e) {
-            throw new ObjectStoreException("Failed to instantiate IntegrationWriter "
-                                           + "class: " + integrationWriterClassName, e);
+            if (e.getCause() instanceof ObjectStoreException) {
+                throw (ObjectStoreException) e.getCause();
+            } else {
+                throw new ObjectStoreException("Failed to instantiate IntegrationWriter "
+                        + "class: " + integrationWriterClassName, e);
+            }
         }
         return iw;
     }

@@ -1,28 +1,18 @@
 #!/bin/bash
 
-touch failures.list
+PROJECT=intermine/all
 
-ant -f intermine/all/build.xml \
-    clean fulltest checkstyle  \
-    | tee >(grep FAILED >> failures.list)
+ant -f ${PROJECT}/build.xml clean fulltest checkstyle
 
-cat failures.list
+TESTMODEL_URL='http://localhost:8080/intermine-demo' ./config/run-selenium-tests.sh
+SELENIUM_STATUS=$?
+./config/lib/parse_test_report.py "${PROJECT}/build/test/results"
+ANT_STATUS=$?
+./config/lib/parse_checkstyle_report.py "${PROJECT}/build/checkstyle/checkstyle_report.xml"
+CHECKSTYLE_STATUS=$?
 
-PSQL_USER=$PG_USER PSQL_PWD=$PG_PASSWORD sh testmodel/setup.sh
-sleep 10
-
-sh config/run-selenium-tests.sh
-
-if [ -z $S3_LOCATION ]; then
-    echo no s3 location provided.
-else
-    echo uploading results to s3
-    # Requires AWS config. See codeship docs.
-    pip install awscli
-    NOW=$(date --iso-8601=seconds | sed 's/:/-/g')
-    ARCHIVE="test-results-${NOW}.tar.gz"
-    tar -acf "$ARCHIVE" intermine/all/build/
-    aws s3 cp "$ARCHIVE" s3://${S3_LOCATION}/"$ARCHIVE"
+if [[ $SELENIUM_STATUS > 0 ]] || [[ $ANT_STATUS > 0 ]] || [[ $CHECKSTYLE_STATUS > 0 ]]; then
+    echo "BUILD FAILED"
+    exit 1
 fi
 
-test ! -s failures.list

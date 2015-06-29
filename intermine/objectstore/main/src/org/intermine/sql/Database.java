@@ -1,7 +1,7 @@
 package org.intermine.sql;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,6 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.StringUtil;
 import org.intermine.util.PropertiesUtil;
@@ -156,9 +157,10 @@ public class Database implements Shutdownable
      * Gets a Connection to this Database
      *
      * @return a Connection to this Database
-     * @throws SQLException if there is a problem in the underlying database
+     * @throws DatabaseConnectionException if it wasn't possible to get a connection to the
+     * underlying database.
      */
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() throws DatabaseConnectionException {
         Connection retval;
         if (datasource == null) {
             throw new NullPointerException("Datasource is null. Properties are: " + settings);
@@ -166,7 +168,11 @@ public class Database implements Shutdownable
         try {
             retval = datasource.getConnection();
         } catch (PSQLException e) {
-            throw new RuntimeException("can't open datasource for " + this, e);
+            throw new DatabaseConnectionException("Unable to open database connection (there"
+                    + " may not be enough available connections): " + this, e);
+        } catch (SQLException e) {
+            throw new DatabaseConnectionException("Unable to open database connection (there"
+                    + " may not be enough available connections): " + this, e);
         }
         /*
         Exception e = new Exception();
@@ -331,16 +337,25 @@ public class Database implements Shutdownable
         }
         if (version == null) {
             try {
-                Connection c = getConnection();
-                Statement s = c.createStatement();
-                String versionQuery = "SELECT current_setting('server_version')";
-                ResultSet rs = s.executeQuery(versionQuery);
-                if (rs.next()) {
-                    version = rs.getString(1);
+                Connection c = null;
+                try {
+                    c = getConnection();
+                    Statement s = c.createStatement();
+                    String versionQuery = "SELECT current_setting('server_version')";
+                    ResultSet rs = s.executeQuery(versionQuery);
+                    if (rs.next()) {
+                        version = rs.getString(1);
+                    }
+                } catch (SQLException e) {
+                    throw new IllegalArgumentException("Error fetching version number from"
+                            + " database: " + e.getMessage());
+                } finally {
+                    if (c != null) {
+                        c.close();
+                    }
                 }
             } catch (SQLException e) {
-                throw new IllegalArgumentException("Error fetching version number from database: "
-                        + e.getMessage());
+                LOG.warn("Error closing database connection used to find Postgres version.");
             }
         }
         return version;
@@ -374,11 +389,27 @@ public class Database implements Shutdownable
         return true;
     }
 
+    // parse the postgres version, e.g. 9.2.1
     private List<Integer> versionStringToInts(String versionStr) {
         List<Integer> versionInts = new ArrayList<Integer>();
         String[] parts = versionStr.split("\\.");
         for (int i = 0; i < parts.length; i++) {
-            versionInts.add(new Integer(parts[i]));
+            String partToParse = parts[i];
+            if (StringUtils.isNumeric(partToParse)) {
+                versionInts.add(new Integer(partToParse));
+            } else {
+                // beta version, e.g. 9.4beta3
+                if (partToParse.contains("beta")) {
+                    String[] betaBits = partToParse.split("beta");
+                    if (betaBits != null) {
+                        String betaDigit = betaBits[0];
+                        if (StringUtils.isNumeric(betaDigit)
+                                && StringUtils.isNotEmpty(betaDigit)) {
+                            versionInts.add(new Integer(betaDigit));
+                        }
+                    }
+                }
+            }
         }
         return versionInts;
     }

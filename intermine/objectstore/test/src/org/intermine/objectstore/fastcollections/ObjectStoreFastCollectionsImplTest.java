@@ -1,7 +1,7 @@
 package org.intermine.objectstore.fastcollections;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,7 +23,6 @@ import org.intermine.model.testmodel.Contractor;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

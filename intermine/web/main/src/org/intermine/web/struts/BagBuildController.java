@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -93,6 +93,7 @@ public class BagBuildController extends TilesAction
         ArrayList<String> preferedTypeList = new ArrayList<String>();
 
         TagManager tagManager = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> preferredBagTypeTags = tagManager.getTags("im:preferredBagType", null, "class",
                                                             im.getProfileManager().getSuperuser());
         for (Tag tag : preferredBagTypeTags) {
