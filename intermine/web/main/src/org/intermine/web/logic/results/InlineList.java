@@ -51,6 +51,7 @@ public class InlineList
         listOfObjects = new HashSet<InlineListObject>();
 
         for (Object listObject : listOfListObjects) {
+          if(listObject != null){
             InterMineObject interMineListObject = (InterMineObject) listObject;
 
             Object value = null;
@@ -68,6 +69,10 @@ public class InlineList
                 new InlineListObject(interMineListObject, value, id);
 
             listOfObjects.add(inlineListObject);
+          }else{
+              System.out.println("Not adding null inlineListObject with column "+columnToDisplayBy);
+          }
+
         }
     }
 
