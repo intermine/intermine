@@ -51,7 +51,7 @@
       <!--<property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>-->
       <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238 559292"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
-      <property name="createinterpro" value="true"/>
+      <property name="createinterpro" value="false"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
@@ -98,10 +98,10 @@
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
 
+<!-- has to be after UniProt because only loads protein domains for loaded proteins -->
     <source name="protein2ipr" type="protein2ipr">
      <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
-     <property name="organisms" value="7227"/>
     </source>
 
     <source name="omim" type="omim">
