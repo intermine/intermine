@@ -228,7 +228,7 @@ public class OmimConverter extends BioDirectoryConverter
             // String symbolFromFile = symbols[0].trim();
 
             String mimId = bits[2];
-            String geneSymbol = resolveGene(OMIM_PREFIX + mimId);
+            String geneSymbol = resolveGene(mimId);
             if (geneSymbol != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);
