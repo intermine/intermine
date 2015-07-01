@@ -118,11 +118,12 @@ public final class BagHelper
      * @param os  the object store
      * @param dbName the database to link to
      * @param attrName the attribute name (identifier, omimId, etc)
+     * @param delimiter the delimiter to use for the attributes
      * @return the string of comma separated identifiers
      *    */
 
     public static String getAttributesFromBag(InterMineBag bag, ObjectStore os, String dbName,
-            String attrName) {
+            String attrName, String delimiter) {
         Results results;
 
         Query q = new Query();
@@ -152,6 +153,23 @@ public final class BagHelper
 
         results = os.executeSingleton(q, 10000, true, true, true);
 
-        return StringUtil.join(results, ",");
+        return StringUtil.join(results, delimiter);
+    }
+
+    /**
+     * Used by esyn tool
+     *
+     * @param bag the bag
+     * @param os  the object store
+     * @param dbName the database to link to
+     * @param attrName the attribute name (identifier, omimId, etc)
+
+     * @return the string of separated identifiers, using the delimiter supplied
+     *
+     */
+    public static String getAttributesFromBag(InterMineBag bag, ObjectStore os, String dbName,
+            String attrName) {
+        final String defaultDelim = ",";
+        return getAttributesFromBag(bag, os, dbName, attrName, defaultDelim);
     }
 }
