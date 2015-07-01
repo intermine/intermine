@@ -164,7 +164,7 @@ def create_message_body(results):
         body += "".ljust(100, "-") + "\n"
 
         fmt = "%-" + str(longest_template_name) + "s | %6d | %6d | %s\n" 
-        for name, results_by_rel in template_results.items():
+        for name, results_by_rel in sorted(template_results.items()):
             diff = abs(reduce(lambda x, y: x - y, results_by_rel.values()))
             max_c = max(results_by_rel.values())
 
@@ -185,7 +185,7 @@ def create_message_body(results):
     fmt = "%-" + str(longest_template_name) + "s | %6d\n"
     for rel, successes in successes_from.items():
         body += "\n" + (rel + "\n").ljust(80, "=")  + "\n"
-        for name, count in successes.items():
+        for name, count in sorted(successes.items()):
             body += fmt % (name, count)
 
     return body
