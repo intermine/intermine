@@ -120,10 +120,12 @@
       <property name="source.db.name" value="anoest"/>
     </source>
 -->
+<!-- See #83
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
     </source>
+-->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>
