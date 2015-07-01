@@ -64,12 +64,13 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
     protected Location getLocationFromHeader(String header, SequenceFeature lsf,
                                              Organism organism)
         throws ObjectStoreException {
-        final String regexp = ".*loc=(\\S+):(\\S+).*";
+        final String regexp = ".*loc=(\\S+):([^;]+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
         if (m.matches()) {
             String chromosomeId = m.group(1);
             String locationString = m.group(2);
+
             int min = getMin(locationString);
             int max = getMax(locationString);
             Location loc = getDirectDataLoader().createObject(Location.class);
