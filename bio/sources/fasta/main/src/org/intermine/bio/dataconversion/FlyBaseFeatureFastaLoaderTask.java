@@ -64,19 +64,12 @@ public class FlyBaseFeatureFastaLoaderTask extends FastaLoaderTask
     protected Location getLocationFromHeader(String header, SequenceFeature lsf,
                                              Organism organism)
         throws ObjectStoreException {
-        final String regexp = ".*loc=(\\S+):(\\S+).*";
+        final String regexp = ".*loc=(\\S+):([^;]+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
         if (m.matches()) {
             String chromosomeId = m.group(1);
             String locationString = m.group(2);
-
-            // sometimes there's not whitespace between the next attribute
-            // so chop off that bit. Might be better to fix the regular expression!
-            if (locationString.contains(";")) {
-                String[] bits = locationString.split(";");
-                locationString = bits[0];
-            }
 
             int min = getMin(locationString);
             int max = getMax(locationString);
