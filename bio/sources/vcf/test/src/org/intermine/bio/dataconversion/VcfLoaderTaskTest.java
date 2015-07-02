@@ -1,14 +1,14 @@
 package org.intermine.bio.dataconversion;
 
 /*
-* Copyright (C) 2002-2015 FlyMine
-*
-* This code may be freely distributed and modified under the
-* terms of the GNU Lesser General Public Licence. This should
-* be distributed with the code. See the LICENSE file for more
-* information or http://www.gnu.org/copyleft/lesser.html.
-*
-*/
+ * Copyright (C) 2002-2015 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -91,7 +91,7 @@ public class VcfLoaderTaskTest extends TestCase
         fw.close();
         file.deleteOnExit();
         converter.setSourceName("vcf-test");
-        converter.setVcfOrganism(taxonId);
+        converter.setVcfTaxonId(taxonId);
         converter.setVcfDataSetName(dataSetName);
         converter.setVcfDataSourceName(dataSourceName);
         converter.setIntegrationWriterAlias("integration.bio-test");
@@ -100,6 +100,7 @@ public class VcfLoaderTaskTest extends TestCase
         files[0] = file;
         converter.setFileArray(files);
         converter.execute();
+
 
         //Check the results to see if we have some data...
         ObjectStore os = osw.getObjectStore();
@@ -116,7 +117,7 @@ public class VcfLoaderTaskTest extends TestCase
 
         Results r = os.execute(q);
 
-        assertEquals(2, r.size());
+        assertEquals("there should be two SNVs", 2, r.size());
 
         // --------------------------------------------------------- //
 

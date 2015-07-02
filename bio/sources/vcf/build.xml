@@ -1,6 +1,6 @@
 <project name="vcf" default="default" basedir=".">
   <description>build, test, package vcf</description>
-  
+
   <import file="../../../imbuild/source.xml"/>
 
 
@@ -19,10 +19,10 @@
       classname="${vcf.loaderClassName}"
       classpathref="task.class.path"/>
     <read-vcf integrationWriterAlias="integration.production"
-    	        dataSetName="${vcf.dataSetName}"
-                dataSourceName="${vcf.dataSourceName}"
-                vcfTaxonId="${vcf.taxonId}" 
-				sourceName="${source.name}" 
+                vcfDataSetName="${vcf.vcfDataSetName}"
+                vcfDataSourceName="${vcf.vcfDataSourceName}"
+                vcfTaxonId="${vcf.vcfTaxonId}"
+                sourceName="${source.name}"
                 sourceType="${source.type}">
       <fileset dir="${src.data.dir}" includes="${vcf.includes}"/>
     </read-vcf>
