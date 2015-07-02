@@ -331,6 +331,10 @@ public final class DataLoaderHelper
                 cldName = cldName.substring(0, cldName.indexOf('.'));
             }
             ClassDescriptor cld = os.getModel().getClassDescriptorByName(cldName);
+            if (cld == null) {
+                throw new IllegalArgumentException("Failed to find class '" + cldName + "' in model"
+                        + " while reading keys for source '" + source.getName() + "'.");
+            }
             String tableName = DatabaseUtil.getTableName(cld);
             tableNames.add(tableName);
         }
