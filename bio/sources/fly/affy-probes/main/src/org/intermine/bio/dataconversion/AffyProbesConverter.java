@@ -127,8 +127,8 @@ public class AffyProbesConverter extends BioFileConverter
         probeSet.setCollection("dataSets", holder.datasets);
         probeSet.setCollection("transcripts", holder.transcripts);
         probeSet.setCollection("genes", holder.genes);
-        probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier(),
-                holder.datasets));
+//        probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier(),
+//                holder.datasets));
         store(probeSet);
     }
 
