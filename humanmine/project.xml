@@ -105,6 +105,13 @@
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606 10090" />
     </source>
+
+    <source name="psi-complexes" type="psi-complexes">
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/human"/>
+      <property name="complexes.source" value="uniprotkb"/>
+    </source>
+
+
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current" />
       <property name="src.data.dir.includes" value="*psi25.xml" />

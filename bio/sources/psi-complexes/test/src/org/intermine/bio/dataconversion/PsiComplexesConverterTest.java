@@ -32,13 +32,14 @@ public class PsiComplexesConverterTest extends ItemsTestCase
     public void testProcess() throws Exception {
         MockItemWriter itemWriter = new MockItemWriter(new HashMap());
         PsiComplexesConverter converter = new PsiComplexesConverter(itemWriter, Model.getInstanceByName("genomic"));
+        converter.setComplexesSource("sgd");
         //Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("PsiComplexesConverterTest_src.xml"));
         Reader reader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("swr1_yeast-1.xml"));
         converter.process(reader);
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "psi-complexes-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "psi-complexes-tgt-items.xml");
 
         Set expected = readItemSet("PsiComplexesConverterTest_tgt.xml");
 

@@ -149,6 +149,8 @@ public class ExportService extends JSONService
             Integer stoichiometry = (Integer) row.get(5).getField();
             Integer taxonId = (Integer) row.get(6).getField();
             String biologicalRole = (String) row.get(7).getField();
+            // e.g. protein, SmallMolecule
+            String moleculeType = (String) row.get(8).getField();
 
             // set complex attributes
             complex.setFullName(name);
@@ -156,7 +158,7 @@ public class ExportService extends JSONService
             complex.setPhysicalProperties(properties);
 
             // interactor type
-            CvTerm type = new DefaultCvTerm("protein");
+            CvTerm type = new DefaultCvTerm(moleculeType);
 
             // organism
             DefaultOrganism organism = new DefaultOrganism(taxonId);
@@ -172,7 +174,10 @@ public class ExportService extends JSONService
                     xref);
 
             // stoichiometry
-            Stoichiometry stoichTerm = new DefaultStoichiometry(stoichiometry.intValue());
+            Stoichiometry stoichTerm = null;
+            if (stoichiometry != null) {
+                stoichTerm = new DefaultStoichiometry(stoichiometry.intValue());
+            }
 
             // role
             DefaultCvTerm bioRole = new DefaultCvTerm(biologicalRole);
@@ -187,6 +192,12 @@ public class ExportService extends JSONService
         return complex;
     }
 
+/**
+ * <query name="" model="genomic" view="Complex.identifier Complex.allInteractors.interactions.details.interactingRegions.location.start Complex.allInteractors.interactions.details.interactingRegions.location.end" longDescription="" sortOrder="Complex.identifier asc">
+
+  <constraint path="Complex.allInteractors.interactions.complex" op="=" loopPath="Complex"/>
+</query>
+ */
     private PathQuery getQuery(String identifier) throws ObjectStoreException {
         PathQuery query = new PathQuery(model);
         query.addViews("Complex.name",
@@ -196,7 +207,8 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.participant.primaryIdentifier",
                 "Complex.allInteractors.stoichiometry",
                 "Complex.allInteractors.participant.organism.taxonId",
-                "Complex.allInteractors.biologicalRole");
+                "Complex.allInteractors.biologicalRole",
+                "Complex.allInteractors.type");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         return query;
     }
