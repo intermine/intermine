@@ -30,4 +30,14 @@
   <class name="Transcript" is-interface="true">
     <attribute name="primaryTranscript" type="java.lang.Boolean" />
   </class>
+  <class name="Gene" is-interface="true">
+    <attribute name="genomicOrder" type="java.lang.Integer" />
+  </class>
+
+  <class name="GeneticMarker" extends="SequenceFeature" is-interface="true">
+    <attribute name="forwardPrimer" type="java.lang.String" />
+    <attribute name="reversePrimer" type="java.lang.String" />
+    <attribute name="type" type="java.lang.String" />
+  </class>
+
 </classes>

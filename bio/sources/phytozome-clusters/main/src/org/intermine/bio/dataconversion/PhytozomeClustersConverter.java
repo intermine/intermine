@@ -171,13 +171,11 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
           proFamily = getDirectDataLoader().createObject(ProteinFamily.class);
 
         } catch (ObjectStoreException e1) {
-          // TODO Auto-generated catch block
           throw new BuildException("Trouble creating protein family: "+e1.getMessage());
         }
         String clusterName = res.getString("clusterName");
         if (clusterName != null && !clusterName.trim().isEmpty() )
                                 proFamily.setClusterName(clusterName.trim());
-        //Integer clusterId = res.getInt("clusterId");
         if (clusterId != null ) proFamily.setClusterId(clusterId);
         Integer methodId = res.getInt("methodId");
         if (methodId != null ) proFamily.setMethodId(methodId);
@@ -195,21 +193,19 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
         try {
           idToName = registerProteins(clusterId,proFamily,thingsToStore);
         } catch (Exception e1) {
-          // TODO Auto-generated catch block
           throw new BuildException("Problem trying to register proteins: "+e1.getMessage());
         }
 
         // for singletons, there will (never?) be a consensus sequence
         // it is the protein sequence.
- /*       if ((idToName.keySet().size()==1) && (consensusSequence==null) ) {
+        if ((idToName.keySet().size()==1) && (consensusSequence==null) ) {
           consensusSequence = getPeptideSequence((String)idToName.keySet().toArray()[0]);
-        }*/
+        }
         if (consensusSequence != null && !consensusSequence.isEmpty()) {
           ProxyReference sequenceRef;
           try {
             sequenceRef = storeSequence(consensusSequence);
           } catch (ObjectStoreException e) {
-            // TODO Auto-generated catch block
             throw new BuildException("Problem trying to register proteins: "+e.getMessage());
           }
           proFamily.proxyConsensus(sequenceRef);
@@ -256,7 +252,7 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
           for( Integer protId : thingsToStore.keySet() ) {
             ArrayList<ProteinFamilyMember> pfmByOrganism = thingsToStore.get(protId);
             for(ProteinFamilyMember pfm : pfmByOrganism ) {
-              pfm.proxyProteinFamily(pFRef);
+              //pfm.proxyProteinFamily(pFRef);
               getDirectDataLoader().store(pfm);
             }
           }
@@ -316,6 +312,7 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
       LOG.info("Adding member "+pacID+" with proteome id "+proteomeId);
       pfm.proxyOrganism(getOrganism(proteomeId));
       pfm.proxyProtein(protProxy.get(pacID));
+      pfm.setProteinFamily(family);
  
       family.addMember(pfm);
       if (!thingsToStore.containsKey(proteomeId)) {
@@ -397,13 +394,13 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
       String query = "select peptideName,"
           + " locusName, "
           + " t.id as transcriptId, "
-          + " p.id as proteomeid, "
+          + " t.proteomeId as proteomeid, "
           + " m.name from"
-          + " clusterJoin c, proteome p, transcript t, membershipDetail m"
+          + " clusterJoin c, transcript t, membershipDetail m"
           + " where clusterId="+clusterId 
           + " and memberId=t.id and c.active=1"
           + " and m.id=memShipDetailId"
-          + " and t.active=1 and p.id=c.proteomeId";
+          + " and t.active=1 and t.proteomeId=c.proteomeId";
       res = stmt.executeQuery(query);
     } catch (SQLException e) {
       throw new BuildException("Trouble getting family members names: " + e.getMessage());
@@ -567,7 +564,6 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
     try {
       inf.setInput(z.getBytes(1,(int) z.length()));
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       throw new BuildException("Problem getting bytes from compressed blob." + e.getMessage());
     }
     int increment;
@@ -577,13 +573,11 @@ public class PhytozomeClustersConverter extends DBDirectDataLoaderTask
       try {
         increment = inf.inflate(byteBuffer,0,1000);
       } catch (DataFormatException e) {
-        // TODO Auto-generated catch block
         throw new BuildException("Problem inflating blob." + e.getMessage());
       }
       try {
         uncompressedStringBuffer.append(new String(byteBuffer,0,increment,"UTF-8"));
       } catch (UnsupportedEncodingException e) {
-        // TODO Auto-generated catch block
         throw new BuildException("Problem encoding blob." + e.getMessage());
       }
     } while (inf.getRemaining() > 0);

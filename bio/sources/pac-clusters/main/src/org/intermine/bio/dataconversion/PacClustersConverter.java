@@ -444,7 +444,6 @@ public class PacClustersConverter extends BioDBConverter
       try {
         inf.setInput(z.getBytes(1,(int) z.length()));
       } catch (SQLException e) {
-        // TODO Auto-generated catch block
         throw new BuildException("Problem getting bytes from compressed blob." + e.getMessage());
       }
       int increment;
@@ -454,13 +453,11 @@ public class PacClustersConverter extends BioDBConverter
         try {
           increment = inf.inflate(byteBuffer,0,1000);
         } catch (DataFormatException e) {
-          // TODO Auto-generated catch block
           throw new BuildException("Problem inflating blob." + e.getMessage());
         }
         try {
           uncompressedStringBuffer.append(new String(byteBuffer,0,increment,"UTF-8"));
         } catch (UnsupportedEncodingException e) {
-          // TODO Auto-generated catch block
           throw new BuildException("Problem encoding blob." + e.getMessage());
         }
       } while (inf.getRemaining() > 0);

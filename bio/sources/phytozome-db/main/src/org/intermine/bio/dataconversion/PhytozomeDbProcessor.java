@@ -417,6 +417,7 @@ public class PhytozomeDbProcessor {
             config.listString("sequence",converter.getFeatureTypes()) +
             ") " +
             "AND NOT f.is_obsolete " +
+            "AND f.dbxref_id = " + annotationDbxrefId +
             "AND is_analysis = 'f' " +
             "AND l.srcfeature_id = g.feature_id " +
             "AND f.feature_id = l.feature_id " +

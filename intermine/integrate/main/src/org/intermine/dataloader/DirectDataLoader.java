@@ -11,6 +11,7 @@ package org.intermine.dataloader;
  */
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -106,7 +107,7 @@ public class DirectDataLoader extends DataLoader
     public <C extends InterMineObject> C createObject(Class<C> c) {
         C o = DynamicUtil.simpleCreateObject(c);
         o.setId(new Integer(idCounter));
-        idCounter++;
+        idCounter--;
         return o;
     }
 

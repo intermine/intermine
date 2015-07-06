@@ -18,7 +18,11 @@
             The data available is:
             <UL>
               <LI><em>Populus trichocarpa</em> (549 individuals)</LI>
-              <LI><em>Manihot cassava</em> (61 individuals)</LI>
+              <LI><em>Manihot esculenta</em> (61 individuals including
+                  <em>M. esc.</em> ssp. <em>esculenta</em>,
+                  <em>M. esc.</em> ssp. <em>flabellifolia</em> and
+                  <em>M. glaziovii</em>) </LI>
+              <LI><em>Sorghum bicolor</em> (23 samples from Andy Paterson's lab at UGA)</LI>
               <LI><em>Eucalyptus grandis</em> (8 individuals)</LI>
               <LI><em>Brachipodium distachyon</em> (7 individuals)</LI>
               <LI><em>Phaseolus vulgaris</em> (8 individuals)</LI>
