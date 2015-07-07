@@ -85,21 +85,25 @@ public class ObjectStoreDataLoader extends DataLoader
             // the ObjectStore we're loading into a BatchWriter that will only ANALYSE those tables.
             // This should improve performance of loading into large databases where ANALYSEs take
             // a significant time to run.
-            if (IntegrationWriterAbstractImpl.class.isAssignableFrom(
-                    getIntegrationWriter().getClass())) {
-                IntegrationWriterAbstractImpl iab =
-                        (IntegrationWriterAbstractImpl) getIntegrationWriter();
-                if (iab.getObjectStoreWriter() instanceof ObjectStoreWriterInterMineImpl) {
-                    ObjectStoreWriterInterMineImpl targetOsw =
-                            (ObjectStoreWriterInterMineImpl) iab.getObjectStoreWriter();
-                    Set<String> tableNames =
-                            DataLoaderHelper.getPrimaryKeyTableNames(source, targetOsw);
-                    BatchWriterPostgresCopyImpl bw = new BatchWriterPostgresCopyImpl();
-                    LOG.info("Setting tables to analyse during dataloading: " + tableNames);
-                    bw.setTablesToAnalyse(tableNames);
-                    targetOsw.setBatchWriter(bw);
-                }
-            }
+
+            // This change needs more testing. These are the only tables that require selects during
+            // the load but there are DELETEs from other tables as well. It may be that not
+            // ANALYSEing those tables will cause a slowdown.
+//            if (IntegrationWriterAbstractImpl.class.isAssignableFrom(
+//                    getIntegrationWriter().getClass())) {
+//                IntegrationWriterAbstractImpl iab =
+//                        (IntegrationWriterAbstractImpl) getIntegrationWriter();
+//                if (iab.getObjectStoreWriter() instanceof ObjectStoreWriterInterMineImpl) {
+//                    ObjectStoreWriterInterMineImpl targetOsw =
+//                            (ObjectStoreWriterInterMineImpl) iab.getObjectStoreWriter();
+//                    Set<String> tableNames =
+//                            DataLoaderHelper.getPrimaryKeyTableNames(source, targetOsw);
+//                    BatchWriterPostgresCopyImpl bw = new BatchWriterPostgresCopyImpl();
+//                    LOG.info("Setting tables to analyse during dataloading: " + tableNames);
+//                    bw.setTablesToAnalyse(tableNames);
+//                    targetOsw.setBatchWriter(bw);
+//                }
+//            }
 
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
