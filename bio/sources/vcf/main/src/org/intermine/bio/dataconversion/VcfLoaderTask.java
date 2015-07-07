@@ -68,7 +68,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
      *
      * @param dataSourceName Name of data source (organisation)
      */
-    public void setDataSourceName(String dataSourceName) {
+    public void setVcfDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
     }
 
@@ -77,7 +77,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
      *
      * @param dataSetName name of data set being loaded
      */
-    public void setDataSetName(String dataSetName) {
+    public void setVcfDataSetName(String dataSetName) {
         this.dataSetName = dataSetName;
     }
 
@@ -87,9 +87,9 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
     @Override
     public void process() {
         try {
+            getIntegrationWriter().beginTransaction();
             super.process();
             getIntegrationWriter().commitTransaction();
-            getIntegrationWriter().beginTransaction();
             getDirectDataLoader().close();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
@@ -102,6 +102,11 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
             // setFiles() is used only for testing
             for (int i = 0; i < files.length; i++) {
                 processFile(files[i]);
+            }
+            try {
+                getDirectDataLoader().close();
+            } catch (ObjectStoreException e) {
+                throw new BuildException("Failed closing DirectDataLoader", e);
             }
         } else {
             // this will call processFile() for each file
@@ -137,6 +142,7 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
 
     private void processRecord(String[] line)
         throws ObjectStoreException {
+
         String chromosomeIdentifier = line[0];
         ProxyReference chromosome = getChromosome(chromosomeIdentifier);
         String start = line[1];
@@ -162,7 +168,6 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
         }
 
         String className =  TypeUtil.generateClassName(NAMESPACE, type);
-
         Class<? extends InterMineObject> imClass;
         Class<?> c;
         try {
@@ -180,8 +185,6 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
         SequenceAlteration snp
             = (SequenceAlteration) getDirectDataLoader().createObject(imClass);
 
-        snp.setType(type);
-
         if (identifier != null) {
             snp.setPrimaryIdentifier(identifier);
         }
@@ -194,13 +197,12 @@ public class VcfLoaderTask extends FileDirectDataLoaderTask
             snp.setReferenceSequence(referenceSeq);
         }
 
+        snp.setType(type);
         snp.setLength(1);
-
         snp.proxyChromosome(chromosome);
         setLocation(snp, start, chromosome);
         snp.setOrganism(getOrganism());
         getDirectDataLoader().store(snp);
-
     }
 
     private ProxyReference getChromosome(String identifier) throws ObjectStoreException {
