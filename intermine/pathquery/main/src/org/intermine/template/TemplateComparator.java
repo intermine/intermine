@@ -1,7 +1,7 @@
 package org.intermine.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ public class TemplateComparator implements Comparator<TemplateQuery>
      * identical.
      * {@inheritDoc}
      */
+    @Override
     public int compare(TemplateQuery t0, TemplateQuery t1) {
 
         if (t0.getTitle().equals(t1.getTitle())) {

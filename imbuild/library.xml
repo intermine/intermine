@@ -201,7 +201,7 @@
       <attribute name="srcdir" default="${src.dir}"/>
       <element name="customize" optional="true"/>
       <sequential>
-        <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-all-5.1.jar"/>
+        <taskdef resource="checkstyletask.properties" classpath="${library.xml.basedir}/lib/checkstyle-5.6-all.jar"/>
         <checkstyle config="${library.xml.basedir}/checkstyle/checkstyle-config.xml"
                 failureProperty="checkstyle.failure"
                 failOnViolation="false">

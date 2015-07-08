@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,12 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.profile.ModelUpdate;
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.ModelParserException;
-import org.intermine.modelproduction.xml.InterMineModelParser;
+import org.intermine.metadata.ModelParserException;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;

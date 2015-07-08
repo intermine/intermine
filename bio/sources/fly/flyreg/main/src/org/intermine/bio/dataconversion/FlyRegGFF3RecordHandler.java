@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,11 +19,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
@@ -94,12 +92,12 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
                         Arrays.asList(StringUtil.split(dbxref, ",")));
                 for (String ref : refList) {
                     ref = ref.trim();
-                    
+
                     int colonIndex = ref.indexOf(":");
                     if (colonIndex == -1) {
                         throw new RuntimeException("external reference not understood: " + ref);
                     }
-  
+
                     if (ref.startsWith("PMID:")) {
                         pmid = ref.substring(colonIndex + 1);
                     } else {

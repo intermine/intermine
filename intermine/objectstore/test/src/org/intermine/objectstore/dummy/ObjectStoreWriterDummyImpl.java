@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -190,7 +190,13 @@ public class ObjectStoreWriterDummyImpl implements ObjectStoreWriter
         return os.getModel();
     }
 
-    public InterMineObject getObjectByExample(InterMineObject o, Set fieldNames) {
+    @Override
+    public <T extends InterMineObject> T getObjectByExample(T o, Set<String> fieldNames) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends InterMineObject> Collection<T> getObjectsByExample(T o, Set<String> fs) {
         throw new UnsupportedOperationException();
     }
 

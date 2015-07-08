@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,6 +53,9 @@ public class ObjectStoreBagCombination implements QuerySelectable
         bags.add(bag);
     }
 
+    /**
+     * @param combo a combination of ObjectStoreBags.
+     */
     public void addBagCombination(ObjectStoreBagCombination combo) {
         bags.add(combo);
     }
@@ -78,6 +81,7 @@ public class ObjectStoreBagCombination implements QuerySelectable
     /**
      * {@inheritDoc}
      */
+    @Override
     public Class<?> getType() {
         return Integer.class;
     }

@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,8 +19,11 @@ import org.intermine.objectstore.ObjectStore;
  *
  * @author Daniela Butano
  */
-public class TrackManagerBinding
+public final class TrackManagerBinding
 {
+    private TrackManagerBinding() {
+        // don't
+    }
 
     /**
      * Convert all tracks to XML and write XML to given writer.

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,7 +12,6 @@ package org.intermine.task;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;

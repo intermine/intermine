@@ -1,7 +1,7 @@
 package org.intermine.sql.logging;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,10 +10,11 @@ package org.intermine.sql.logging;
  *
  */
 
-import org.intermine.sql.query.Query;
-import java.io.Writer;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
+
+import org.intermine.sql.query.Query;
 
 /**
  * Provides a logging facility for a Query

@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -127,7 +127,7 @@ public class UpdateListTablesTask extends Task
         stm.executeUpdate(sql1);
         String sql2 = "SELECT id, intermine_current FROM savedbag";
         ResultSet rs = stm.executeQuery(sql2);
-        Map<Integer, Boolean> intermineCurrentMap = new HashMap();
+        Map<Integer, Boolean> intermineCurrentMap = new HashMap<Integer, Boolean>();
         while (rs.next()) {
             intermineCurrentMap.put(rs.getInt(1), rs.getBoolean(2));
         }
@@ -162,7 +162,8 @@ public class UpdateListTablesTask extends Task
         } catch (ObjectStoreException ose) {
             throw new BuildException("Problems retrieving the new writer", ose);
         }
-        for (Iterator i = bags.iterator(); i.hasNext();) {
+        for (Iterator<?> i = bags.iterator(); i.hasNext();) {
+            @SuppressWarnings("rawtypes")
             ResultsRow row = (ResultsRow) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             if (StringUtils.isBlank(savedBag.getName())) {

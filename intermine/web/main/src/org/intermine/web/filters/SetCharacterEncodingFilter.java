@@ -1,7 +1,7 @@
 package org.intermine.web.filters;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -152,16 +152,9 @@ public class SetCharacterEncodingFilter implements Filter
         this.filterConfig = filterConfig;
         this.encoding = filterConfig.getInitParameter("encoding");
         String value = filterConfig.getInitParameter("ignore");
-        if (value == null) {
-            this.ignore = true;
-        } else if (value.equalsIgnoreCase("true")) {
-            this.ignore = true;
-        } else if (value.equalsIgnoreCase("yes")) {
-            this.ignore = true;
-        } else {
-            this.ignore = false;
-        }
-
+        this.ignore = (value == null
+                || "true".equalsIgnoreCase(value)
+                || "yes".equalsIgnoreCase(value));
     }
 
     // ------------------------------------------------------ Protected Methods

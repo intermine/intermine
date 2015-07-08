@@ -1,7 +1,7 @@
 package org.intermine.sql.precompute;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,7 +23,7 @@ import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.sql.query.*;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 public class PrecomputedTableManagerTest extends TestCase
 {

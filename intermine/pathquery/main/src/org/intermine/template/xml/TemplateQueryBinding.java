@@ -1,7 +1,7 @@
 package org.intermine.template.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,12 +19,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.metadata.SAXParser;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;
 
 /**

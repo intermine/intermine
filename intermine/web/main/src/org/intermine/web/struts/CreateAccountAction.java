@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
 import org.intermine.web.logic.profile.LoginHandler;

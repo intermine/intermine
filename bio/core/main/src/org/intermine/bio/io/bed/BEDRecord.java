@@ -1,7 +1,7 @@
 package org.intermine.bio.io.bed;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -124,7 +124,7 @@ public class BEDRecord
     }
 
     /**
-    * @return the chrom
+    * @return the chromosome identifier with the prefix "chr", e.g. chr4
     */
     public String getChrom() {
         return chrom;
@@ -160,7 +160,7 @@ public class BEDRecord
         this.chromEnd = chromEnd;
     }
     /**
-     * @return the name
+     * @return the name - identifier or symbol or UNKNOWN
      */
     public String getName() {
         return name;
@@ -172,7 +172,7 @@ public class BEDRecord
         this.name = name;
     }
     /**
-     * @return the score
+     * @return the score - always zero
      */
     public int getScore() {
         return score;

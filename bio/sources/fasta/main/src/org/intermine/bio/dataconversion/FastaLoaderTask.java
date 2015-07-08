@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,7 +36,7 @@ import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.PendingClob;
 import org.intermine.task.FileDirectDataLoaderTask;
-import org.intermine.util.Util;
+import org.intermine.metadata.Util;
 
 /**
  * A task that can read a set of FASTA files and create the corresponding Sequence objects in an
@@ -163,6 +163,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             super.process();
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().beginTransaction();
+            getDirectDataLoader().close();
         } catch (ObjectStoreException e) {
             throw new BuildException("failed to store object", e);
         }

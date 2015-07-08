@@ -1,7 +1,7 @@
 package org.intermine.web.logic.querybuilder;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,7 +21,6 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
-import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
 
 

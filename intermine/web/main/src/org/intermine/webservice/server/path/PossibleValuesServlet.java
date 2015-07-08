@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.path;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,9 +10,6 @@ package org.intermine.webservice.server.path;
  *
  */
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +19,7 @@ import org.intermine.web.context.InterMineContext;
 
 /**
  * A servlet for routing requests to the possible values service.
- * @author ajk59
+ * @author Alex Kalderimis
  *
  */
 public class PossibleValuesServlet extends HttpServlet
@@ -44,8 +41,7 @@ public class PossibleValuesServlet extends HttpServlet
     * {@inheritDoc}}
     */
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         runService(request, response);
     }
 
@@ -53,17 +49,12 @@ public class PossibleValuesServlet extends HttpServlet
     * {@inheritDoc}}
     */
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) {
         runService(req, resp);
     }
 
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
-        // To avoid servlet caching always new service is created -->
-        // Service has always new data and fields in executor are initialized
-        // according new data
-        // and not remember fields initialized according previous request data
         final InterMineAPI im = InterMineContext.getInterMineAPI();
         new PossibleValuesService(im).service(request, response);
     }

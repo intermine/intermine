@@ -1,7 +1,7 @@
 package org.intermine.sql.precompute;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,6 +28,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.StringUtil;
 import org.intermine.sql.Database;
 import org.intermine.sql.query.AbstractConstraint;
 import org.intermine.sql.query.AbstractTable;
@@ -49,7 +50,6 @@ import org.intermine.sql.query.Table;
 import org.intermine.util.ConsistentSet;
 import org.intermine.util.IdentityMap;
 import org.intermine.util.MappingUtil;
-import org.intermine.util.StringUtil;
 
 /**
  * A static class providing the code to optimise a query, given a database (presumably with a table
@@ -170,7 +170,7 @@ public final class QueryOptimiser
      * @param query the query String to optimise
      * @param originalQuery the Query object to optimise - or optionally null
      * @param database a Database
-     * @param explainConnection the database connection to use, or null if database is a Database
+     * @param connection the database connection to use, or null if database is a Database
      * @param context a QueryOptimiserContext, to alter settings
      * @param precomputedTables a Set of PrecomputedTables
      * @param cache an OptimiserCache
@@ -178,8 +178,10 @@ public final class QueryOptimiser
      * @throws SQLException if a database error occurs
      */
     public static BestQuery optimiseWith(String query, Query originalQuery, Database database,
-            Connection explainConnection, QueryOptimiserContext context,
+            Connection connection, QueryOptimiserContext context,
             Set<PrecomputedTable> precomputedTables, OptimiserCache cache) throws SQLException {
+        Connection explainConnection = connection;
+        Query optimiseQuery = originalQuery;
         callCount++;
         if (callCount % REPORT_INTERVAL == 0) {
             LOG.info("Optimiser called " + callCount + " times");
@@ -246,6 +248,9 @@ public final class QueryOptimiser
                                     + " bailing out early (time limit: "
                                     + context.getMaxQueryParseTime() + ")");
                 }
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Optimiser failed to parse query - the query will still be executed but "
+                        + "precomputed tables won't be used. Query: " + query);
             } finally {
                 if (context.isVerbose()) {
                     System.out .println("Optimised SQL: " + bestQuery.getBestQueryString());
@@ -388,6 +393,7 @@ public final class QueryOptimiser
         // Do precomputed tables is decreasing order of number of constituent tables
         PrecomputedTable[] sorted = precomputedTables.toArray(new PrecomputedTable[] {});
         Arrays.sort(sorted, new Comparator<PrecomputedTable>() {
+            @Override
             public int compare(PrecomputedTable a, PrecomputedTable b) {
                 return b.getQuery().getFrom().size() - a.getQuery().getFrom().size();
             }
@@ -566,115 +572,13 @@ public final class QueryOptimiser
                         reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
                                 valueMap, precompQuery.getFrom(), false, newQuery.getOrderBy());
                     } else {
-                        List<AbstractValue> tempOrderBy = new ArrayList<AbstractValue>();
-                        reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
-                                valueMap, precompQuery.getFrom(), false, tempOrderBy);
-                        List<AbstractValue> newOrderBy = newQuery.getOrderBy();
-
-                        // Now, we have a chance to improve the performance of the query by
-                        // substituting the orderby_field instead of certain elements of the order
-                        // by list. The only useful way to do this is if the order by clause of
-                        // the precomputed table exactly matches the start of the order by clause
-                        // of the original query.
-
-                        Iterator<AbstractValue> orderByIter = tempOrderBy.iterator();
-                        if (orderByIter.hasNext()) {
-                            boolean matches = true;
-                            boolean matchesDesc = true;
-                            int i;
-                            for (i = 0; (i < precompOrderBy.size()) && (matches || matchesDesc)
-                                    && orderByIter.hasNext(); i++) {
-                                AbstractValue precompOrderByField = precompOrderBy.get(i);
-                                AbstractValue nextPrecompOrderBy;
-                                if (precompOrderByField instanceof OrderDescending) {
-                                    nextPrecompOrderBy = new OrderDescending(new Field(
-                                                valueMap.get(((OrderDescending)
-                                                        precompOrderByField).getValue())
-                                                .getAlias(), precomputedSqlTable));
-                                } else {
-                                    nextPrecompOrderBy = new Field(valueMap
-                                            .get(precompOrderByField).getAlias(),
-                                        precomputedSqlTable);
-                                }
-                                AbstractValue origValue = orderByIter.next();
-                                matches = matches && origValue.equals(nextPrecompOrderBy);
-                                if (origValue instanceof OrderDescending) {
-                                    matchesDesc = matchesDesc && ((OrderDescending) origValue)
-                                        .getValue().equals(nextPrecompOrderBy);
-                                } else if (nextPrecompOrderBy instanceof OrderDescending) {
-                                    matchesDesc = matchesDesc && ((OrderDescending)
-                                            nextPrecompOrderBy).getValue().equals(origValue);
-                                } else {
-                                    matchesDesc = false;
-                                }
-                            }
-                            if ((matches || matchesDesc) && currentQuery.isDistinct()) {
-                                Set<AbstractValue> newS = new LinkedHashSet<AbstractValue>();
-                                for (SelectValue newSelectSV : newQuery.getSelect()) {
-                                    newS.add(newSelectSV.getValue());
-                                }
-                                for (; (i < precompOrderBy.size())
-                                        && (matches || matchesDesc); i++) {
-                                    AbstractValue precompOrderByField = precompOrderBy.get(i);
-                                    Field nextPrecompOrderBy;
-                                    if (precompOrderByField instanceof OrderDescending) {
-                                        nextPrecompOrderBy = new Field(valueMap.get(
-                                                        ((OrderDescending) precompOrderByField)
-                                                        .getValue()).getAlias(),
-                                                precomputedSqlTable);
-                                    } else {
-                                        nextPrecompOrderBy = new Field(valueMap
-                                                .get(precompOrderByField).getAlias(),
-                                            precomputedSqlTable);
-                                    }
-                                    matches = matches && newS.contains(nextPrecompOrderBy);
-                                    matchesDesc = matchesDesc && newS.contains(nextPrecompOrderBy);
-                                }
-                            }
-
-                            if (matches) {
-                                orderByField = new Field(precomputedTable.getOrderByField(),
-                                        precomputedSqlTable);
-                                newOrderBy.add(orderByField);
-                            } else if (matchesDesc) {
-                                orderByField = new Field(precomputedTable.getOrderByField(),
-                                        precomputedSqlTable);
-                                newOrderBy.add(new OrderDescending(orderByField));
-                            } else {
-                                orderByIter = tempOrderBy.iterator();
-                            }
-                        }
-                        while (orderByIter.hasNext()) {
-                            newOrderBy.add(orderByIter.next());
-                        }
-                        // Surely this messes up the distinct - increases the number of rows?
-                        if ((orderByField != null) && currentQuery.isDistinct()) {
-                            newQuery.addSelect(new SelectValue(orderByField,
-                                                               "orderby_field_from_pt"));
-                        }
+                        orderByField = optimiseOrderBy(precomputedTable, precompQuery, valueMap,
+                                currentQuery, precomputedSqlTable, newQuery, precompOrderBy);
                     }
 
-                    // Populate the WHERE clause of newQuery with the contents of the WHERE clause
-                    // of currentQuery, leaving out those constraints in whereConstraintEqualsSet.
-                    if ((orderByField == null) || (!query.getGroupBy().isEmpty())) {
-                        reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
-                                valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
-                                whereConstraintEqualsSet, null, 0, null, false, false);
-                    } else {
-                        AbstractValue maybeDesc = precompOrderBy.get(0);
-                        boolean reverse = false;
-                        if (maybeDesc instanceof OrderDescending) {
-                            maybeDesc = ((OrderDescending) maybeDesc).getValue();
-                            reverse = true;
-                        }
-                        Field firstPrecompOrderBy = new Field(valueMap.get(
-                                        maybeDesc).getAlias(), precomputedSqlTable);
-                        reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
-                                valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
-                                whereConstraintEqualsSet, firstPrecompOrderBy,
-                                precompOrderBy.size(), orderByField,
-                                precomputedTable.getFirstOrderByHasNoNulls(), reverse);
-                    }
+                    populateWhereClause(precomputedTable, query, precompQuery, valueMap,
+                            currentQuery, whereConstraintEqualsSet, precomputedSqlTable, newQuery,
+                            orderByField, precompOrderBy);
 
                     // Now populate the GROUP BY clause of newQuery from the contents of the GROUP
                     // BY clause of currentQuery.
@@ -697,6 +601,125 @@ public final class QueryOptimiser
         }
 
         return retval;
+    }
+
+    // Now, we have a chance to improve the performance of the query by
+    // substituting the orderby_field instead of certain elements of the order
+    // by list. The only useful way to do this is if the order by clause of
+    // the precomputed table exactly matches the start of the order by clause
+    // of the original query.
+    private static Field optimiseOrderBy(PrecomputedTable precomputedTable, Query precompQuery,
+            Map<AbstractValue, SelectValue> valueMap, Query currentQuery,
+            Table precomputedSqlTable, Query newQuery, List<AbstractValue> precompOrderBy)
+        throws QueryOptimiserException {
+        Field orderByField = null;
+        List<AbstractValue> tempOrderBy = new ArrayList<AbstractValue>();
+        reconstructAbstractValues(currentQuery.getOrderBy(), precomputedSqlTable,
+                valueMap, precompQuery.getFrom(), false, tempOrderBy);
+        List<AbstractValue> newOrderBy = newQuery.getOrderBy();
+        Iterator<AbstractValue> orderByIter = tempOrderBy.iterator();
+        if (orderByIter.hasNext()) {
+            boolean matches = true;
+            boolean matchesDesc = true;
+            int i;
+            for (i = 0; (i < precompOrderBy.size()) && (matches || matchesDesc)
+                    && orderByIter.hasNext(); i++) {
+                AbstractValue precompOrderByField = precompOrderBy.get(i);
+                AbstractValue nextPrecompOrderBy;
+                if (precompOrderByField instanceof OrderDescending) {
+                    nextPrecompOrderBy = new OrderDescending(new Field(
+                            valueMap.get(((OrderDescending) precompOrderByField).getValue())
+                                .getAlias(), precomputedSqlTable));
+                } else {
+                    nextPrecompOrderBy = new Field(valueMap .get(precompOrderByField).getAlias(),
+                        precomputedSqlTable);
+                }
+                AbstractValue origValue = orderByIter.next();
+                matches = matches && origValue.equals(nextPrecompOrderBy);
+                if (origValue instanceof OrderDescending) {
+                    matchesDesc = matchesDesc && ((OrderDescending) origValue)
+                        .getValue().equals(nextPrecompOrderBy);
+                } else if (nextPrecompOrderBy instanceof OrderDescending) {
+                    matchesDesc = matchesDesc && ((OrderDescending)
+                            nextPrecompOrderBy).getValue().equals(origValue);
+                } else {
+                    matchesDesc = false;
+                }
+            }
+            if ((matches || matchesDesc) && currentQuery.isDistinct()) {
+                Set<AbstractValue> newS = new LinkedHashSet<AbstractValue>();
+                for (SelectValue newSelectSV : newQuery.getSelect()) {
+                    newS.add(newSelectSV.getValue());
+                }
+                for (; (i < precompOrderBy.size())
+                        && (matches || matchesDesc); i++) {
+                    AbstractValue precompOrderByField = precompOrderBy.get(i);
+                    Field nextPrecompOrderBy;
+                    if (precompOrderByField instanceof OrderDescending) {
+                        nextPrecompOrderBy = new Field(valueMap.get(
+                                        ((OrderDescending) precompOrderByField)
+                                        .getValue()).getAlias(),
+                                precomputedSqlTable);
+                    } else {
+                        nextPrecompOrderBy = new Field(valueMap
+                                .get(precompOrderByField).getAlias(),
+                            precomputedSqlTable);
+                    }
+                    matches = matches && newS.contains(nextPrecompOrderBy);
+                    matchesDesc = matchesDesc && newS.contains(nextPrecompOrderBy);
+                }
+            }
+
+            if (matches) {
+                orderByField = new Field(precomputedTable.getOrderByField(),
+                        precomputedSqlTable);
+                newOrderBy.add(orderByField);
+            } else if (matchesDesc) {
+                orderByField = new Field(precomputedTable.getOrderByField(),
+                        precomputedSqlTable);
+                newOrderBy.add(new OrderDescending(orderByField));
+            } else {
+                orderByIter = tempOrderBy.iterator();
+            }
+        }
+        while (orderByIter.hasNext()) {
+            newOrderBy.add(orderByIter.next());
+        }
+        // Surely this messes up the distinct - increases the number of rows?
+        if ((orderByField != null) && currentQuery.isDistinct()) {
+            newQuery.addSelect(new SelectValue(orderByField,
+                                               "orderby_field_from_pt"));
+        }
+        return orderByField;
+    }
+
+    // Populate the WHERE clause of newQuery with the contents of the WHERE clause
+    // of currentQuery, leaving out those constraints in whereConstraintEqualsSet.
+    private static void populateWhereClause(PrecomputedTable precomputedTable,
+            Query query, Query precompQuery, Map<AbstractValue, SelectValue> valueMap,
+            Query currentQuery, Set<AbstractConstraint> whereConstraintEqualsSet,
+            Table precomputedSqlTable, Query newQuery, Field orderByField,
+            List<AbstractValue> precompOrderBy) throws QueryOptimiserException {
+
+        if ((orderByField == null) || (!query.getGroupBy().isEmpty())) {
+            reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
+                    valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
+                    whereConstraintEqualsSet, null, 0, null, false, false);
+        } else {
+            AbstractValue maybeDesc = precompOrderBy.get(0);
+            boolean reverse = false;
+            if (maybeDesc instanceof OrderDescending) {
+                maybeDesc = ((OrderDescending) maybeDesc).getValue();
+                reverse = true;
+            }
+            Field firstPrecompOrderBy = new Field(valueMap.get(
+                            maybeDesc).getAlias(), precomputedSqlTable);
+            reconstructAbstractConstraints(currentQuery.getWhere(), precomputedSqlTable,
+                    valueMap, precompQuery.getFrom(), false, newQuery.getWhere(),
+                    whereConstraintEqualsSet, firstPrecompOrderBy,
+                    precompOrderBy.size(), orderByField,
+                    precomputedTable.getFirstOrderByHasNoNulls(), reverse);
+        }
     }
 
     /**
@@ -966,6 +989,7 @@ public final class QueryOptimiser
          * @param b the second AbstractTable
          * @return zero if the two AbstractTables are equal
          */
+        @Override
         public int compare(AbstractTable a, AbstractTable b) {
             return (a.equalsIgnoreAlias(b) ? 0 : -1);
         }

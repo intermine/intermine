@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -39,7 +39,7 @@ import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.Constants;
@@ -251,7 +251,7 @@ public class ReportObject
                                 attributes.get(attName),
                                 null,
                                 false,
-				false
+                                false
                         );
                         objectSummaryFields.add(rof);
                     }
@@ -615,7 +615,7 @@ public class ReportObject
         Set<Object> listOfListObjects = null;
         String columnToDisplayBy = null;
         InlineList list = null;
-		try {
+        try {
             // create a new path to the collection of objects
             Path path = new Path(im.getModel(),
                     DynamicUtil.getSimpleClass(object.getClass()).getSimpleName()
@@ -632,7 +632,12 @@ public class ReportObject
             }
             // resolve path to a collection and save into a new list
             listOfListObjects = PathUtil.resolveCollectionPath(path, object);
-            list = new InlineList(listOfListObjects, columnToDisplayBy, listConfig.getShowLinksToObjects(), listConfig.getPath(), listConfig.getLineLength());
+            list = new InlineList(
+                    listOfListObjects,
+                    columnToDisplayBy,
+                    listConfig.getShowLinksToObjects(),
+                    listConfig.getPath(),
+                    listConfig.getLineLength());
 
         } catch (PathException e) {
             throw new RuntimeException("Your collections of inline lists"
@@ -757,7 +762,7 @@ public class ReportObject
             long queryStartTime = System.currentTimeMillis();
             // determine the types in the collection
             List<Class<?>> listOfTypes = PathQueryResultHelper.
-            queryForTypesInCollection(object, colName, im.getObjectStore());
+                    queryForTypesInCollection(object, colName, im.getObjectStore());
             long queryTime = System.currentTimeMillis() - queryStartTime;
             LOG.info("TIME - query for types in collection: " + colName + " took: " + queryTime);
 
@@ -789,9 +794,11 @@ public class ReportObject
         // combined Map of References & Collections
         refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
 
-        /** InlineLists **/
-        inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader : new ArrayList<InlineList>(); 
-        inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal : new ArrayList<InlineList>(); 
+        // Ensure not null
+        inlineListsHeader = (inlineListsHeader != null)
+                ? inlineListsHeader : new ArrayList<InlineList>();
+        inlineListsNormal = (inlineListsNormal != null)
+                ? inlineListsNormal : new ArrayList<InlineList>();
 
         Type type = webConfig.getTypes().get(getClassDescriptor().getName());
         // init lists from WebConfig Type

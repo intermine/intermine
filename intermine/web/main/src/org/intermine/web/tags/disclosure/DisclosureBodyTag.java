@@ -1,7 +1,7 @@
 package org.intermine.web.tags.disclosure;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,6 +38,7 @@ public class DisclosureBodyTag extends BaseDisclosureTag
      * @throws JspException if element is not inside &lt;disclosure&gt; element
      * @throws IOException if error occurs during writing to stream output
      */
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         DisclosureTag parent = (DisclosureTag) getParent();

@@ -1,7 +1,7 @@
 package org.intermine.bio.web;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -50,17 +50,18 @@ public class OtherMinesLinkController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         final HttpSession session = request.getSession();
         final ServletContext servletContext = session.getServletContext();
-        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final Properties props = SessionMethods.getWebProperties(servletContext);
         InterMineObject o = (InterMineObject) request.getAttribute("object");
         Model model = im.getModel();
         Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(o.getClass());
-        ClassDescriptor gene = model.getClassDescriptorByName("org.intermine.model.bio.Gene");
-        if (classDescriptors.contains(gene)) {
-            final FriendlyMineManager linkManager
-                = FriendlyMineManager.getInstance(im, webProperties);
-            Collection<Mine> mines = linkManager.getFriendlyMines();
-            request.setAttribute("otherMines", mines);
-        }
+        ClassDescriptor gene = model.getClassDescriptorByName("Gene");
+
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, props);
+        Collection<Mine> mines = linkManager.getFriendlyMines();
+        Mine localMine = linkManager.getLocalMine();
+        request.setAttribute("mines", mines);
+        request.setAttribute("localMine", localMine);
+        request.setAttribute("mayHaveLinks", classDescriptors.contains(gene));
         return null;
     }
 

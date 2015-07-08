@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2014 modMine_Test-2.M
+ * Copyright (C) 2002-2015 modMine_Test-2.M
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,6 +36,9 @@ public class WebservicePerlCodeGeneratorTest extends WebserviceJavaCodeGenerator
     /*
      * The tests are defined in the parent class. This subclass simply redefines the language
      * to be used for the generator.
+     *
+     * The expectations are defined as files named *.perl.expected in the resources directory,
+     * under the org.intermine.api.query.codegen namespace.
      */
 
 }

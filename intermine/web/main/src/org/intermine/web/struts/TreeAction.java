@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,6 +48,7 @@ public class TreeAction extends DispatchAction
     public ActionForward expand(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                 HttpServletResponse response)
         throws Exception {
+        @SuppressWarnings("unchecked")
         Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.add(request.getParameter("node"));
         return mapping.findForward("renderTree");
@@ -72,6 +73,7 @@ public class TreeAction extends DispatchAction
     public ActionForward collapse(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
+        @SuppressWarnings("unchecked")
         Set<String> openClasses = (Set<String>) request.getSession().getAttribute("openClasses");
         openClasses.remove(request.getParameter("node"));
         return mapping.findForward("renderTree");

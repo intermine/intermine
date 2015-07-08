@@ -1,7 +1,7 @@
 package org.intermine.codegen;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,9 @@ package org.intermine.codegen;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import static org.intermine.objectstore.intermine.NotXmlParser.DELIM;
+import static org.intermine.objectstore.intermine.NotXmlParser.ENCODED_DELIM;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,17 +23,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static org.intermine.objectstore.intermine.NotXmlParser.DELIM;
-import static org.intermine.objectstore.intermine.NotXmlParser.ENCODED_DELIM;
-
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Maps InterMine metadata to Java source files
@@ -130,8 +130,9 @@ public class JavaModelOutput
             if (hasReferences) {
                 sb.append("import org.intermine.objectstore.proxy.ProxyReference;" + ENDL);
             }
-            sb.append("import org.intermine.util.StringConstructor;" + ENDL);
-            sb.append("import org.intermine.util.TypeUtil;" + ENDL);
+            sb.append("import org.intermine.model.StringConstructor;" + ENDL);
+            sb.append("import org.intermine.metadata.TypeUtil;" + ENDL);
+            sb.append("import org.intermine.util.DynamicUtil;" + ENDL);
             if (shadow) {
                 sb.append("import org.intermine.model.ShadowClass;" + ENDL);
             }
@@ -507,7 +508,14 @@ public class JavaModelOutput
                     needComma = true;
                     sb.append(field.getName());
                     if (field instanceof AttributeDescriptor) {
-                        sb.append("=\\\"\" + " + field.getName() + " + \"\\\"");
+                        AttributeDescriptor attr = (AttributeDescriptor) field;
+                        if (attr.isPrimitive() || attr.isNumeric()) {
+                            sb.append("=\" + " + field.getName() + " + \"");
+                        } else {
+                            sb.append("=\" + (" + field.getName()
+                                    + " == null ? \"null\" : \"\\\"\" + "
+                                    + field.getName() + " + \"\\\"\") + \"");
+                        }
                     } else {
                         sb.append("=\" + (" + field.getName() + " == null ? \"null\" : ("
                                 + field.getName() + ".getId() == null ? \"no id\" : "
@@ -912,7 +920,7 @@ public class JavaModelOutput
             .append(INDENT + INDENT + INDENT)
             .append("if (!" + cld.getName() + ".class.equals(getClass())) {\n")
             .append(INDENT + INDENT + INDENT + INDENT)
-            .append("TypeUtil.setFieldValue(this, fieldName, value);\n")
+            .append("DynamicUtil.setFieldValue(this, fieldName, value);\n")
             .append(INDENT + INDENT + INDENT + INDENT)
             .append("return;\n")
             .append(INDENT + INDENT + INDENT)

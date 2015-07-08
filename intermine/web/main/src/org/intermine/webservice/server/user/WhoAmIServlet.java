@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,18 +10,17 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
 import org.intermine.webservice.server.core.WebServiceServlet;
 
-public class WhoAmIServlet extends WebServiceServlet {
+/** @author Alex Kalderimis **/
+public class WhoAmIServlet extends WebServiceServlet
+{
 
+    private static final long serialVersionUID = -8186762486810978232L;
+
+    @Override
     public WebService getService(Method method) throws NoServiceException {
         if (Method.GET == method) {
             return new WhoAmIService(api);

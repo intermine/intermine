@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,9 @@ package org.intermine.webservice.server.output;
  *
  */
 
-public class JSONFormattingException extends RuntimeException {
+/** @author Alex Kalderimis **/
+public final class JSONFormattingException extends RuntimeException
+{
 
     private static final long serialVersionUID = 1L;
 

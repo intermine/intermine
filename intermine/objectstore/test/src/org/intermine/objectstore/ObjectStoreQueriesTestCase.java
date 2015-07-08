@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,7 +48,7 @@ import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.MultipleInBagConstraint;
@@ -249,6 +249,10 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("DynamicClassConstraint", dynamicClassConstraint());
         queries.put("ContainsConstraintNull", containsConstraintNull());
         queries.put("ContainsConstraintNotNull", containsConstraintNotNull());
+        queries.put("ContainsConstraintNullCollection1N", containsConstraintNullCollection1N());
+        queries.put("ContainsConstraintNotNullCollection1N", containsConstraintNotNullCollection1N());
+        queries.put("ContainsConstraintNullCollectionMN", containsConstraintNullCollectionMN());
+        queries.put("ContainsConstraintNotNullCollectionMN", containsConstraintNotNullCollectionMN());
         queries.put("SimpleConstraintNull", simpleConstraintNull());
         queries.put("SimpleConstraintNotNull", simpleConstraintNotNull());
         queries.put("TypeCast", typeCast());
@@ -319,10 +323,14 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("SubclassCollection2", subclassCollection2());
         queries.put("SelectWhereBackslash", selectWhereBackslash());
         queries.put("MultiColumnObjectInCollection", multiColumnObjectInCollection());
-        queries.put("Range1", range1());
+        queries.put("RangeOverlaps", rangeOverlaps());
+        queries.put("RangeDoesNotOverlap", rangeDoesNotOverlap());
+        queries.put("RangeOverlapsValues", rangeOverlapsValues());
         queries.put("ConstrainClass1", constrainClass1());
         queries.put("ConstrainClass2", constrainClass2());
         queries.put("MultipleInBagConstraint1", multipleInBagConstraint1());
+
+        // null or not null collections
     }
 
     /*
@@ -1351,6 +1359,67 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
+     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees IS NULL;
+     * Department.employees is a 1:N collection
+     */
+    public static Query containsConstraintNullCollection1N() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Department AS a1_ WHERE a1_.employees IS NOT NULL;
+     * Department.employees is a 1:N collection
+     */
+    public static Query containsConstraintNotNullCollection1N() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "employees"), ConstraintOp.IS_NOT_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+
+    /*
+     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors IS NULL;
+     * Company.contractors is a many to many collection
+     */
+    public static Query containsConstraintNullCollectionMN() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
+     * SELECT a1_ FROM Company AS a1_ WHERE a1_.contractors IS NOT NULL;
+     * Company.contractors is a many to many collection
+     */
+    public static Query containsConstraintNotNullCollectionMN() throws Exception {
+        Query q1 = new Query();
+        QueryClass qc = new QueryClass(Company.class);
+        q1.addFrom(qc);
+        q1.addToSelect(qc);
+        ContainsConstraint c = new ContainsConstraint(
+                new QueryCollectionReference(qc, "contractors"), ConstraintOp.IS_NOT_NULL);
+        q1.setConstraint(c);
+        return q1;
+    }
+
+    /*
      * SELECT a1_ FROM Manager AS a1_ WHERE a1_.title IS NULL;
      */
     public static Query simpleConstraintNull() throws Exception {
@@ -2273,7 +2342,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     /*
      * SELECT a1_, a2_ FROM Range AS a1_, Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)
      */
-    public static Query range1() throws Exception {
+    public static Query rangeOverlaps() throws Exception {
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Range.class);
         QueryClass qc2 = new QueryClass(Range.class);
@@ -2283,6 +2352,39 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.addToSelect(new QueryField(qc2, "id"));
         OverlapRange r1 = new OverlapRange(new QueryField(qc1, "rangeStart"), new QueryField(qc1, "rangeEnd"), new QueryObjectReference(qc1, "parent"));
         OverlapRange r2 = new OverlapRange(new QueryField(qc2, "rangeStart"), new QueryField(qc2, "rangeEnd"), new QueryObjectReference(qc2, "parent"));
+        q.setConstraint(new OverlapConstraint(r1, ConstraintOp.OVERLAPS, r2));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a2_ FROM Range AS a1_, Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) DOES NOT OVERLAP RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)
+     */
+    public static Query rangeDoesNotOverlap() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Range.class);
+        QueryClass qc2 = new QueryClass(Range.class);
+        q.addFrom(qc1);
+        q.addFrom(qc2);
+        q.addToSelect(new QueryField(qc1, "id"));
+        q.addToSelect(new QueryField(qc2, "id"));
+        OverlapRange r1 = new OverlapRange(new QueryField(qc1, "rangeStart"), new QueryField(qc1, "rangeEnd"), new QueryObjectReference(qc1, "parent"));
+        OverlapRange r2 = new OverlapRange(new QueryField(qc2, "rangeStart"), new QueryField(qc2, "rangeEnd"), new QueryObjectReference(qc2, "parent"));
+        q.setConstraint(new OverlapConstraint(r1, ConstraintOp.DOES_NOT_OVERLAP, r2));
+        q.setDistinct(false);
+        return q;
+    }
+
+    /*
+     * SELECT a1_, a2_ FROM Range AS a1_, Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(1000, 2000, a2_.parent)
+     */
+    public static Query rangeOverlapsValues() throws Exception {
+        Query q = new Query();
+        QueryClass qc1 = new QueryClass(Range.class);
+        q.addFrom(qc1);
+        q.addToSelect(new QueryField(qc1, "id"));
+        OverlapRange r1 = new OverlapRange(new QueryField(qc1, "rangeStart"), new QueryField(qc1, "rangeEnd"), new QueryObjectReference(qc1, "parent"));
+        OverlapRange r2 = new OverlapRange(new QueryValue(35), new QueryValue(45), new QueryObjectReference(qc1, "parent"));
         q.setConstraint(new OverlapConstraint(r1, ConstraintOp.OVERLAPS, r2));
         q.setDistinct(false);
         return q;

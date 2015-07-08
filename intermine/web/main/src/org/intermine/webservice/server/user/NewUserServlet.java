@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,12 +9,6 @@ package org.intermine.webservice.server.user;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.ServletConfig;
 
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.NoServiceException;
@@ -32,8 +26,10 @@ public class NewUserServlet extends WebServiceServlet
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case POST: return new NewUserService(api);
-            default: throw new NoServiceException();
+            case POST:
+                return new NewUserService(api);
+            default:
+                throw new NoServiceException();
         }
     }
 

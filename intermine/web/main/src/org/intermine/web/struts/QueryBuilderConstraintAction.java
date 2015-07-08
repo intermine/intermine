@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,11 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
@@ -60,9 +59,13 @@ public class QueryBuilderConstraintAction extends InterMineAction
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws an exception
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         //to prevent submit twice
         if (!isTokenValid(request)) {
@@ -149,8 +152,8 @@ public class QueryBuilderConstraintAction extends InterMineAction
                         constraintValue);
             }
         } else if (constrainToABag) {
-            ConstraintOp constraintOp = ConstraintOp
-            .getOpForIndex(Integer.valueOf(constraintForm.getBagOp()));
+            ConstraintOp constraintOp =
+                    ConstraintOp.getOpForIndex(Integer.valueOf(constraintForm.getBagOp()));
             String constraintValue = constraintForm.getBagValue();
             // Note, we constrain the parent if the path is an attribute
             Path path1 = query.makePath(constraintForm.getPath());
@@ -197,8 +200,8 @@ public class QueryBuilderConstraintAction extends InterMineAction
             }
             sb.append("}, parameters = {");
             needComma = false;
-            for (Map.Entry<String, String[]> param : ((Map<String, String[]>) request
-                    .getParameterMap()).entrySet()) {
+            for (Map.Entry<String, String[]> param
+                    : ((Map<String, String[]>) request.getParameterMap()).entrySet()) {
                 if (needComma) {
                     sb.append(", ");
                 }

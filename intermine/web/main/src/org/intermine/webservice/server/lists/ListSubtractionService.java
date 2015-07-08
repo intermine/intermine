@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,8 +9,6 @@ package org.intermine.webservice.server.lists;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.operations.RelativeComplement;

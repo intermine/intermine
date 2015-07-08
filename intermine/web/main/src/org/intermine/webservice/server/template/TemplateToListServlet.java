@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,9 +27,12 @@ public class TemplateToListServlet extends WebServiceServlet
     @Override
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
-            case GET: return new TemplateToListService(api);
-            case POST: return new TemplateToListService(api);
-            default: throw new NoServiceException();
+            case GET:
+                return new TemplateToListService(api);
+            case POST:
+                return new TemplateToListService(api);
+            default:
+                throw new NoServiceException();
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -133,6 +133,7 @@ public abstract class DirectDataLoaderTask extends Task
 
             getIntegrationWriter().commitTransaction();
             getIntegrationWriter().close();
+            directDataLoader.close();
         } catch (ObjectStoreException e) {
             throw new BuildException(e);
         }

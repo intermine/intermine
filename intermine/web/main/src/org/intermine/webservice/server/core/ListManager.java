@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,7 +34,8 @@ public class ListManager implements Producer<Map<String, InterMineBag>>
 
     /**
      * ListManager constructor.
-     * @param request request
+     * @param im The InterMine state object
+     * @param profile The current user's profile.
      */
     public ListManager(InterMineAPI im, Profile profile) {
         this.bagManager = im.getBagManager();

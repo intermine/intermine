@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,8 +9,6 @@ package org.intermine.util;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-import net.sf.cglib.proxy.Factory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import net.sf.cglib.proxy.Factory;
 
 /**
  * Utilities for Collections.

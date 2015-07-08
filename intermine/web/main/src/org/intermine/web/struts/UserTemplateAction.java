@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,10 +20,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -49,7 +45,6 @@ public class UserTemplateAction extends InterMineDispatchAction
                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ServletContext servletContext = session.getServletContext();
         String templateName = request.getParameter("name");
         Profile profile = SessionMethods.getProfile(session);
 

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -395,7 +395,7 @@ public class TfMrnaNetworkConverter extends BioDirectoryConverter
             if ("mir-316".endsWith(symbol)) {
                 primaryId = "FBgn0262417";
             } else {
-            	primaryId = resolver.resolveId(FLY_TAXON_ID, symbol).iterator().next();
+                primaryId = resolver.resolveId(FLY_TAXON_ID, symbol).iterator().next();
             }
         }
 

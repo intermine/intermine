@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,9 +12,7 @@ package org.intermine.webservice.server.query;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +36,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.exceptions.UnauthorizedException;
 import org.intermine.webservice.server.lists.ListInput;
@@ -94,7 +92,12 @@ public class QueryToListService extends AbstractQueryService
         PathQuery pq = getQuery(request);
 
         setHeaderAttributes(input.getListName());
-        generateListFromQuery(pq, input.getListName(), input.getDescription(), input.getTags(), profile);
+        generateListFromQuery(
+                pq,
+                input.getListName(),
+                input.getDescription(),
+                input.getTags(),
+                profile);
 
     }
 
@@ -165,7 +168,7 @@ public class QueryToListService extends AbstractQueryService
             throw new BadRequestException("List not created - it would be of size 0");
         } catch (UnknownBagTypeException e) {
             output.addResultItem(Arrays.asList("0"));
-            throw new InternalErrorException(e.getMessage(), e);
+            throw new ServiceException(e.getMessage(), e);
         } catch (ClassKeysNotFoundException cke) {
             throw new BadRequestException("Bag has not class key set", cke);
         } finally {
@@ -190,7 +193,7 @@ public class QueryToListService extends AbstractQueryService
                 im.getBagQueryRunner(),
                 new HashMap<String, BagQueryResult>());
         } catch (ObjectStoreException e) {
-            throw new InternalErrorException(e);
+            throw new ServiceException(e);
         }
         return ret;
     }

@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,11 +30,24 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class QueryTrackBinding
+/**
+ * @author Daniela Butano
+ */
+public final class QueryTrackBinding
 {
     private static final Logger LOG = Logger.getLogger(QueryTrackBinding.class);
+    /**
+     * label for XML
+     */
     public static final String QUERYTRACKS = "querytracks";
+    /**
+     * label for XML
+     */
     public static final String QUERYTRACK = "querytrack";
+
+    private QueryTrackBinding() {
+        // don't
+    }
 
     /**
      * Convert a QueryTrack to XML and write XML to given writer.
@@ -70,6 +83,7 @@ public class QueryTrackBinding
             try {
                 writer.writeEndElement();
             } catch (XMLStreamException e) {
+                LOG.error("XML broke", e);
             }
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling query tracks", e);
@@ -119,7 +133,7 @@ class QueryTrackHandler extends TrackHandler
                 stm = connection.prepareStatement("INSERT INTO " + TrackerUtil.QUERY_TRACKER_TABLE
                                                   + " VALUES(?, ?, ?, ?)");
             } catch (SQLException sqle) {
-                new BuildException("Problem to retrieve the connection", sqle);
+                throw new BuildException("Problem to retrieve the connection", sqle);
             }
         }
         if (QueryTrackBinding.QUERYTRACK.equals(qName)) {

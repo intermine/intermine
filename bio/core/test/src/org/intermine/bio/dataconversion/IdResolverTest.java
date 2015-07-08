@@ -1,6 +1,8 @@
 package org.intermine.bio.dataconversion;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,7 +30,7 @@ public class IdResolverTest extends TestCase
     String taxId2 = "102";
     String taxId3 = "103";
     String clsName1 = "gene";
-    String clsName2 = "mRNA";
+    private final String clsName2 = "mRNA";
     String clsName3 = "exon";
     String primaryId1 = "Gene1";
     String primaryId2 = "Gene2";
@@ -77,14 +79,14 @@ public class IdResolverTest extends TestCase
             resolver.checkTaxonId(taxId1, clsName3);
             fail("Expected to Fail to assert: No exception thrown");
         } catch(IllegalArgumentException ex) {
-            assertEquals("Catched exception", clsName3 + " IdResolver has no data for taxonId: " + taxId1 + ".", ex.getMessage());
+            assertEquals("Catched exception", clsName3 + " IdResolver has no data for taxonId: '" + taxId1 + "'.", ex.getMessage());
         }
 
         try {
-            resolver.checkTaxonId(taxId1, clsName1);
+            resolver.checkTaxonId(taxId3, clsName3);
             fail("Expected to Fail to assert: No exception thrown");
         } catch(IllegalArgumentException ex) {
-            assertEquals("Catched exception", clsName1 + " IdResolver has no data for taxonId: " + taxId1 + ".", ex.getMessage());
+            assertEquals("Catched exception", clsName3 + " IdResolver has no data for taxonId: '" + taxId3 + "'.", ex.getMessage());
         }
     }
 
@@ -109,13 +111,13 @@ public class IdResolverTest extends TestCase
             resolver.resolveId(taxId1, clsName3, primaryId1);
             fail("Expected to Fail to assert: No exception thrown");
         } catch(IllegalArgumentException ex) {
-            assertEquals("Catched exception", clsName3 + " IdResolver has no data for taxonId: " + taxId1 + ".", ex.getMessage());
+            assertEquals("Catched exception", clsName3 + " IdResolver has no data for taxonId: '" + taxId1 + "'.", ex.getMessage());
         }
     }
 
     public void testResolveIds() throws Exception {
-        assertEquals(null, resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym3)));
-        assertEquals("primaryId3", resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym1)));
+        assertEquals(primaryId3, resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym3)));
+        assertEquals(primaryId3, resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym1)));
         assertEquals(null, resolver.resolveIds(taxId1, clsName1, Arrays.asList(synonym1)));
         assertEquals(null, resolver.resolveIds(taxId1, clsName1, Arrays.asList(synonym1, synonym2)));
         assertEquals(null, resolver.resolveIds(taxId1, clsName1, Arrays.asList(mainId1, synonym1, synonym3)));
@@ -199,18 +201,21 @@ public class IdResolverTest extends TestCase
     }
 
     public void testWriteToFile() throws Exception {
-        File cacheFile = new File("build/resolver.cache");
+        //File cacheFile = new File("build/resolver.cache");
+        File cacheFile = getResolverCache();
         resolver.writeToFile(cacheFile);
         File testFile = new File(getClass().getClassLoader().
                 getResource("resolver.cache.test").toURI());
 
-        assertEquals("The files differ!",
-                FileUtils.readFileToString(cacheFile, "utf-8"),
-                FileUtils.readFileToString(testFile, "utf-8"));
+        assertEquals("The files differ!", FileUtils.readFileToString(testFile, "utf-8"), FileUtils.readFileToString(cacheFile, "utf-8"));
+    }
+
+    private File getResolverCache() throws IOException {
+        return File.createTempFile("resolver", "cache");
     }
 
     public void testFileRoundTrip() throws Exception {
-        File f = new File("build/resolver.cache");
+        File f = getResolverCache();
         resolver.writeToFile(f);
 
         IdResolver readFromFile = new IdResolver();

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,7 +9,7 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 import java.util.Set;
 import java.io.BufferedReader;

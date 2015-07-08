@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -107,14 +107,17 @@ public final class SearchResults implements Iterable<SearchResult>
             Map<WebSearchable, Float> hitMap,
             Map<String, WebSearchable> items,
             Map<WebSearchable, String> descriptions,
-            Map<WebSearchable, Set<String>> itemsTags
-            ) {
+            Map<WebSearchable, Set<String>> itemsTags) {
         this.hits.putAll(hitMap);
         this.items.putAll(items);
         this.descs.putAll(descriptions);
         this.tags.putAll(itemsTags);
     }
 
+    /**
+     *
+     * @return size
+     */
     public int size() {
         return items.size();
     }
@@ -196,7 +199,7 @@ public final class SearchResults implements Iterable<SearchResult>
      */
     private static MultiSearcher prepareSearcher(SearchTarget target,
             Directory userDirectory, List<Directory> globalDirectories)
-            throws CorruptIndexException, IOException {
+        throws CorruptIndexException, IOException {
         IndexSearcher userIndexSearcher = new IndexSearcher(userDirectory);
         IndexSearcher[] globalIndexSearchers = new IndexSearcher[globalDirectories.size()];
         for (int i = 0; i < globalDirectories.size(); i++) {

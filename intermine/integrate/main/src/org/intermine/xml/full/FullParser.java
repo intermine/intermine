@@ -1,7 +1,7 @@
 package org.intermine.xml.full;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,13 +19,14 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.objectstore.query.PendingClob;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.SAXParser;
-import org.intermine.util.TypeUtil;
 import org.xml.sax.InputSource;
 
 /**
@@ -164,12 +165,12 @@ public final class FullParser
                         attrClass = obj.getFieldType(attrName);
                         if (attrClass == null) {
                             String message = "Class '" + attrClass + "' not found for "
-                                + DynamicUtil.getFriendlyName(obj.getClass());
+                                + Util.getFriendlyName(obj.getClass());
                             throw new IllegalArgumentException(message);
                         }
                     } catch (IllegalArgumentException e) {
                         String message = "Field " + attr.getName() + " not found in "
-                            + DynamicUtil.getFriendlyName(obj.getClass());
+                            + Util.getFriendlyName(obj.getClass());
                         throw new IllegalArgumentException(message);
                     }
                     if (ClobAccess.class.equals(attrClass)) {
@@ -181,7 +182,7 @@ public final class FullParser
                                     value));
                         } else {
                             String message = "Field '" + attr.getName() + "' has NULL value in "
-                                + DynamicUtil.getFriendlyName(obj.getClass());
+                                + Util.getFriendlyName(obj.getClass());
                             throw new IllegalArgumentException(message);
                         }
                     }
@@ -202,7 +203,7 @@ public final class FullParser
                     refClass = obj.getFieldType(refName);
                 } catch (IllegalArgumentException e) {
                     String message = "Field " + ref.getName() + " not found in "
-                        + DynamicUtil.getFriendlyName(obj.getClass());
+                        + Util.getFriendlyName(obj.getClass());
                     if (abortOnError) {
                         throw new IllegalArgumentException(message);
                     } else {

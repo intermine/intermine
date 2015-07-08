@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,10 +27,11 @@ import org.json.JSONObject;
 public class TableJSONProcessor implements WidgetResultProcessor
 {
 
-    private static final TableJSONProcessor instance = new TableJSONProcessor();
+    private static final TableJSONProcessor INSTANCE = new TableJSONProcessor();
 
+    /** @return a table json processor **/
     public static TableJSONProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override

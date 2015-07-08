@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,7 +27,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 
 /**
  * Merge model additions into a source model to produce a new larger model.

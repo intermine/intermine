@@ -12,7 +12,7 @@
        soTermListFile="${so.termlist.file}"
        soFile="${so.obo.file}"
        outputFile="${so.output.file}"/>
-  </target>   
+  </target>
 
   <target name="-pre-init-merge" depends="create-so-model"/>
 
@@ -21,7 +21,6 @@
     <merge-additions file="bio/test-all/dbmodel/build/model/so_additions.xml"/>
     <merge-additions file="bio/core/genomic_additions.xml"/>
     <merge-additions file="bio/sources/human/ncbi-gene/ncbi-gene_additions.xml"/>
-    <merge-additions file="bio/sources/ensembl/ensembl-snp-db/ensembl-snp-db_additions.xml"/>
     <merge-additions file="bio/sources/human/huge-gwas/huge-gwas_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/sources/fly/rnai/rnai_additions.xml"/>
@@ -45,7 +44,6 @@
     <merge-additions file="bio/sources/mosquito/anoph-expr/anoph-expr_additions.xml"/>
     <merge-additions file="bio/sources/fly/bdgp-insitu/bdgp-insitu_additions.xml"/>
     <merge-additions file="bio/sources/biogrid/biogrid_additions.xml"/>
-    <merge-additions file="bio/sources/biopax/biopax_additions.xml"/>
     <merge-additions file="bio/sources/treefam/treefam_additions.xml"/>
     <merge-additions file="bio/sources/interpro-go/interpro-go_additions.xml"/>
     <merge-additions file="bio/sources/human/protein-atlas/protein-atlas_additions.xml"/>
@@ -55,8 +53,9 @@
     <merge-additions file="bio/sources/panther/panther_additions.xml"/>
     <merge-additions file="bio/sources/homologene/homologene_additions.xml"/>
     <merge-additions file="bio/sources/orthodb/orthodb_additions.xml"/>
-    <merge-additions file="bio/sources/human/ncbi-gene/ncbi-gene_additions.xml"/>
     <merge-additions file="bio/sources/human/hpo-annotation/hpo-annotation_additions.xml"/>
+    <merge-additions file="bio/sources/ensembl/ensembl-snp/ensembl-snp_additions.xml"/>
+    <merge-additions file="bio/sources/reactome/reactome_additions.xml"/>
   </target>
 
 </project>

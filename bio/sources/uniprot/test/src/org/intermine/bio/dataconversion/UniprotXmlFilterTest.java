@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import org.intermine.bio.dataconversion.UniprotXmlFilter;
-import  org.intermine.util.StringUtil;
+import  org.intermine.metadata.StringUtil;
 
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;

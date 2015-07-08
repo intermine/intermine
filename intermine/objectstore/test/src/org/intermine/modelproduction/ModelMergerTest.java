@@ -1,7 +1,7 @@
 package org.intermine.modelproduction;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,8 +18,8 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.InterMineModelParser;
 import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 
 public class ModelMergerTest extends TestCase
 {

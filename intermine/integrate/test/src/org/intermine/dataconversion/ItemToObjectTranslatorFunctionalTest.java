@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -23,15 +25,12 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
-import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.objectstore.translating.Translator;
 import org.intermine.objectstore.translating.ObjectStoreTranslatingImpl;
-import org.intermine.xml.full.Item;
-import org.intermine.xml.full.FullRenderer;
+import org.intermine.objectstore.translating.Translator;
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.FullRenderer;
+import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ItemHelper;
-
-import junit.framework.TestCase;
 
 public class ItemToObjectTranslatorFunctionalTest extends TestCase
 {

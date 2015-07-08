@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.exceptions;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,6 @@ public class ServiceUnavailableException extends ServiceException
 {
 
     private static final long serialVersionUID = 1L;
-    protected static final int ERROR_CODE = HttpURLConnection.HTTP_UNAVAILABLE;
 
     /**
      * @param message message
@@ -59,6 +58,6 @@ public class ServiceUnavailableException extends ServiceException
 
     @Override
     public int getHttpErrorCode() {
-        return ERROR_CODE;
+        return HttpURLConnection.HTTP_UNAVAILABLE;
     }
 }

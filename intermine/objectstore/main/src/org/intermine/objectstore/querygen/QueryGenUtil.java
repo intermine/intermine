@@ -1,7 +1,7 @@
 package org.intermine.objectstore.querygen;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -30,8 +32,6 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Utility methods for paths.
@@ -68,7 +68,7 @@ public final class QueryGenUtil
                 QueryAndClass qac = createClassFindingQuery(os.getModel(), part);
                 for (Object cls : os.executeSingleton(qac.getQuery(), 1000, false, false, false)) {
                     Class<?> clazz = (Class<?>) cls;
-                    for (Class<?> classPart : DynamicUtil.decomposeClass(clazz)) {
+                    for (Class<?> classPart : Util.decomposeClass(clazz)) {
                         if (qac.getClazz().isAssignableFrom(classPart)) {
                             clsNames.add(TypeUtil.unqualifiedName(classPart.getName()));
                         }

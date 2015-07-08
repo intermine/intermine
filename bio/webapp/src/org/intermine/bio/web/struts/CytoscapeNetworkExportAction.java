@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,10 +30,10 @@ import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.bio.web.logic.CytoscapeNetworkService;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.http.TableExporterFactory;
 import org.intermine.web.logic.export.http.TableHttpExporter;
@@ -52,6 +52,7 @@ public class CytoscapeNetworkExportAction extends Action
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ActionMapping mapping,
                                  ActionForm form,
                                  HttpServletRequest request,
@@ -135,7 +136,7 @@ public class CytoscapeNetworkExportAction extends Action
      * @param response http response
      * @throws Exception
      */
-    private void toExportNetworkAsList(String format, String fullInteractingGeneSetStr,
+    private static void toExportNetworkAsList(String format, String fullInteractingGeneSetStr,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();

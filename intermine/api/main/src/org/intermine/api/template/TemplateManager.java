@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -381,10 +381,6 @@ public class TemplateManager
             List<Tag> tags = tagManager.getTags(tag, template.getName(), TagTypes.TEMPLATE,
                     profile.getUsername());
             if (tags.size() > 0) {
-                // if filtering by admin tag, don't include this template if it's tagged with ADMIN
-                if (filterOutAdmin && hasTag(profile, TagNames.IM_ADMIN, template)) {
-                    continue;
-                }
                 templatesWithTag.put(entry.getKey(), entry.getValue());
             }
         }

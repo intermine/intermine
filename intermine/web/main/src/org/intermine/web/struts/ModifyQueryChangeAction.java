@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -114,7 +114,7 @@ public class ModifyQueryChangeAction extends InterMineDispatchAction
 
         SessionMethods.loadQuery(sq.getPathQuery(), session, response);
         if (StringUtils.isEmpty(trail)) {
-        	trail = "|query|results";
+            trail = "|query|results";
         }
         return new ForwardParameters(mapping.findForward("results"))
                     .addParameter("trail", trail)

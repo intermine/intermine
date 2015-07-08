@@ -1,7 +1,7 @@
 package org.intermine.webservice.client.services;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,9 +10,10 @@ package org.intermine.webservice.client.services;
  *
  */
 
+import static org.junit.Assert.assertEquals;
+
 import org.intermine.webservice.client.core.Request;
 import org.intermine.webservice.client.results.XMLTableResult;
-import static org.junit.Assert.*;
 
 /**
  * Provides a dummy-fied QueryService.

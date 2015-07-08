@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,9 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.sql.Database;
-
 import org.apache.log4j.Logger;
+import org.intermine.sql.Database;
 
 /**
  * Interface providing access to data tracking.
@@ -497,8 +496,8 @@ public class DataTracker
             ByteArrayOutputStream baos = null;
             DataOutputStream dos = null;
             Statement s = null;
-            if (storeConn instanceof org.postgresql.PGConnection) {
-                copyManager = ((org.postgresql.PGConnection) storeConn).getCopyAPI();
+            if (storeConn.isWrapperFor(org.postgresql.PGConnection.class)) {
+                copyManager = (storeConn.unwrap(org.postgresql.PGConnection.class)).getCopyAPI();
                 baos = new ByteArrayOutputStream();
                 dos = new DataOutputStream(baos);
                 dos.writeBytes("PGCOPY\n");

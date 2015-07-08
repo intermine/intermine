@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,8 +40,8 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 import org.intermine.xml.full.ReferenceList;
@@ -702,6 +702,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
      * @param featureData the FeatureData for the SequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @param featureId id of feature
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */

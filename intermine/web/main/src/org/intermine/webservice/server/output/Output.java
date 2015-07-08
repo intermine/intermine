@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -73,7 +73,8 @@ public abstract class Output
 
     /**
      * Sets the error message
-     * @param message
+     * @param message The error message.
+     * @param code The error code.
      */
     public void setError(String message, int code) {
         errorMessage = message;

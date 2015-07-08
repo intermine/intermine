@@ -1,7 +1,7 @@
 package org.intermine.api.tag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,30 +15,34 @@ package org.intermine.api.tag;
  * Known tag types.
  * @author Thomas Riley
  */
-public interface TagTypes
+public final class TagTypes
 {
     /**
      * Collection.
      */
-    String COLLECTION = "collection";
+    public static final String COLLECTION = "collection";
 
     /**
      * Reference.
      */
-    String REFERENCE = "reference";
+    public static final String REFERENCE = "reference";
 
     /**
      * Template.
      */
-    String TEMPLATE = "template";
+    public static final String TEMPLATE = "template";
 
     /**
      * Bag.
      */
-    String BAG = "bag";
+    public static final String BAG = "bag";
 
     /**
      * A Class/ClassDescriptor.
      */
-    String CLASS = "class";
+    public static final String CLASS = "class";
+
+    private TagTypes() {
+        // just don't
+    }
 }

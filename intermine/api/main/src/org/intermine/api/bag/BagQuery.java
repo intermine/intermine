@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,12 +21,13 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
@@ -42,7 +43,6 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.iql.IqlQuery;
-import org.intermine.util.StringUtil;
 
 /**
  * A class encapsulating a query used to create a bag from a collection of input identifiers.
@@ -205,6 +205,10 @@ public class BagQuery
                         ConstraintSet replacement = new ConstraintSet(ConstraintOp.OR);
                         nodes.put((QueryEvaluable) ((BagConstraint) c).getQueryNode(), replacement);
                         cs.addConstraint(replacement);
+                    }
+                } else if (c instanceof MultipleInBagConstraint) {
+                    for (QueryEvaluable qe : ((MultipleInBagConstraint) c).getEvaluables()) {
+                        nodes.put(qe, cs);
                     }
                 } else if (c instanceof ConstraintSet) {
                     traverseConstraint(c, nodes);

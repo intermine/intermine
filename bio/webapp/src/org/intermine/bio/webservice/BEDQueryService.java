@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,7 +60,8 @@ public class BEDQueryService extends BioQueryService
                 getOptionalParameter(UCSC_COMPATIBLE, "yes"));
         String trackDescription = getOptionalParameter(TRACK_DESCRIPTION,
                 sourceName + " " + sourceReleaseVersion + " Custom Track");
-        Set<String> orgs = SequenceFeatureExportUtil.getOrganisms(pq, im, getPermission().getProfile());
+        Set<String> orgs = SequenceFeatureExportUtil.getOrganisms(pq, im,
+                getPermission().getProfile());
         List<Integer> indexes = new ArrayList<Integer>();
         List<String> viewColumns = new ArrayList<String>(pq.getView());
         for (int i = 0; i < viewColumns.size(); i++) {

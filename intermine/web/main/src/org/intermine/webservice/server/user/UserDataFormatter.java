@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,12 +14,21 @@ import java.util.List;
 
 import org.intermine.webservice.server.output.XMLFormatter;
 
-public class UserDataFormatter extends XMLFormatter {
+/**
+ * A class that processes information about a user into XML. Used when
+ * exporting a profile following deregistration.
+ * @author Alex Kalderimis
+ *
+ */
+public class UserDataFormatter extends XMLFormatter
+{
 
+    @Override
     protected String getRootElement() {
         return "Deregistration";
     }
 
+    @Override
     protected String getRowElement() {
         return "UserData";
     }

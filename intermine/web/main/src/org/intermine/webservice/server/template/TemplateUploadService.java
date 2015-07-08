@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -50,7 +50,7 @@ public class TemplateUploadService extends WebService
     public TemplateUploadService(InterMineAPI im) {
         super(im);
     }
-    
+
     @Override
     protected void validateState() {
         if (!isAuthenticated()) {
@@ -69,7 +69,8 @@ public class TemplateUploadService extends WebService
             case HTML:
             case XML:
                 return true;
-            default: return false;
+            default:
+                return false;
         }
     }
 

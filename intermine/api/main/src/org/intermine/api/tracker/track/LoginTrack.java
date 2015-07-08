@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.track;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,10 +13,20 @@ import java.sql.Timestamp;
 
 import org.intermine.api.tracker.util.TrackerUtil;
 
+/**
+ *
+ * @author Daniela
+ *
+ */
 public class LoginTrack extends TrackAbstract
 {
     private String user;
 
+    /**
+     *
+     * @param user username
+     * @param timestamp time stamp
+     */
     public LoginTrack(String user, Timestamp timestamp) {
         this.user = user;
         this.timestamp = timestamp;

@@ -8,7 +8,6 @@ default_sources:
   - "FlyBaseFasta"
   - "FlyBaseOrthologues"
   - "FlyCVTerms"
-  - "FlyDevelopmentOntology"
   - "GOAnnotation"
   - "IntAct"
   - "IntActVocabulary"

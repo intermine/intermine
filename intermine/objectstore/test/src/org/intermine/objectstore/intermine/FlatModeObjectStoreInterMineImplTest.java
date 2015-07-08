@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,8 +12,6 @@ package org.intermine.objectstore.intermine;
 
 import junit.framework.Test;
 
-import java.util.List;
-
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Employee;
@@ -23,8 +21,6 @@ import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
-
-import org.intermine.model.testmodel.Employee;
 
 public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineImplTest
 {

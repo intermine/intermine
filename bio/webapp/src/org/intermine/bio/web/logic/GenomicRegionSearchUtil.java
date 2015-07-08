@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,13 +26,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.tools.ant.BuildException;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
-import org.intermine.bio.web.model.RegionParseException;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.OverlapConstraint;
@@ -172,9 +171,9 @@ public final class GenomicRegionSearchUtil
     }
 
     private static ChromosomeInfo getChromosomeInfo(
-            Map<String, ChromosomeInfo> chromsForOrg, String chr)
+            Map<String, ChromosomeInfo> chromsForOrg, String chromosome)
         throws RegionParseException {
-        chr = chr.toLowerCase();
+        String chr = chromosome.toLowerCase();
         if (chromsForOrg.containsKey(chr)) {
             return chromsForOrg.get(chr);
         } else {

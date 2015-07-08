@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -62,7 +62,8 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 "/contact", "/portal", "/templates", "/templateSearch", "/template", "/aspect",
                 "/ping", "/standalone", "/quickStart", "/importQuery", "/tree", "/headMenu",
                 "/htmlHead", "/dataCategories", "/bagDetails", "/results", "/passwordReset",
-                "/experiment", "/features", "/loadQuery", "/loadTemplate","/precomputeTemplates");
+                "/experiment", "/features", "/loadQuery", "/loadTemplate", "/customQuery",
+        	"/importQueries", "/bag", "/precomputeTemplates");
 
     /**
      * This is called during the processing of every controller.

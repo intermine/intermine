@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,7 +22,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 /**
  * Class holding data source priority configuration for a Model.

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,7 +35,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.bio.Gene;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

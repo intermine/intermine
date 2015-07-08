@@ -1,7 +1,7 @@
 package org.intermine.xml.full;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.util.XmlUtil;
 
 /**

@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -74,7 +74,7 @@ public class SearchFilterEngine
                 if (tags.size() == 0) {
                     returnMap.remove(webSearchableName);
                 } else if (!showHidden) {
-                    tags = tagManager.getTags(TagNames.IM_ADMIN, webSearchableName, tagType,
+                    tags = tagManager.getTags(TagNames.IM_HIDDEN, webSearchableName, tagType,
                             userName);
                     if (tags.size() > 0) {
                         returnMap.remove(webSearchableName);

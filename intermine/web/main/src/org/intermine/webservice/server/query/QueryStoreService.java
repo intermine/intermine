@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,8 +15,15 @@ import org.intermine.api.query.BadQueryException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
-public class QueryStoreService extends JSONService {
+/**
+ * A service that stores a query and associates it with an id.
+ * @author Alex Kalderimis
+ *
+ */
+public class QueryStoreService extends JSONService
+{
 
+    /** @param im The InterMine state object **/
     public QueryStoreService(InterMineAPI im) {
         super(im);
     }

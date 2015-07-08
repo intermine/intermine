@@ -1,7 +1,7 @@
 package org.intermine.bio.web.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,8 +35,8 @@ public class BioWidgetUtil implements WidgetHelper
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<String> getExtraAttributes(ObjectStore os, InterMineBag bag) {
-        return BioUtil.getOrganisms(os, bag, false);
+        return BioUtil.getOrganisms(os, bag.getType(), bag.getContentsAsIds(), false);
     }
-
 }

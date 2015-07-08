@@ -1,7 +1,7 @@
 package org.intermine.bio.constants;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -54,8 +54,7 @@ public final class ModMineCacheKeys
     public static final String SUB_SEQUENCED_FEATURE_TYPE
         = "submissionSequencedFeatureTypes";
 
-    
-    
+
     /**
      * Key to submission file source count cache entry.
      */

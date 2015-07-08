@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,17 +10,16 @@ package org.intermine.task;
  *
  */
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.BuildException;
-import org.apache.commons.beanutils.PropertyUtils;
-
+import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
-import java.io.File;
-import java.beans.PropertyDescriptor;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
 /**
  * An ant task that provides a method for setting attributes dynamically within a class.

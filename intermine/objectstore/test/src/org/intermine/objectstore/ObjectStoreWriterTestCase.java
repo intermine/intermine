@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,7 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.ImportantPerson;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

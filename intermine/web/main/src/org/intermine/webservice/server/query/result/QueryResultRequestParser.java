@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -37,6 +37,7 @@ public class QueryResultRequestParser extends QueryRequestParser
     /**
      * RequestProcessor constructor.
      * @param request request
+     * @param queryStore A place to lookup qids in.
      */
     public QueryResultRequestParser(QueryStore queryStore, HttpServletRequest request) {
         super(queryStore, request);

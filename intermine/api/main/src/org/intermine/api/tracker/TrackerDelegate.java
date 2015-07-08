@@ -1,7 +1,7 @@
 package org.intermine.api.tracker;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,7 @@ package org.intermine.api.tracker;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.lang.ref.WeakReference;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.factory.TrackerFactory;
 import org.intermine.api.tracker.track.ListTrack;
 import org.intermine.api.tracker.track.Track;
@@ -27,20 +29,22 @@ import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.api.template.TemplateManager;
+import org.intermine.util.ShutdownHook;
+import org.intermine.util.Shutdownable;
 
 /**
  * Intermediate class which decouples the tracker components from the code that uses them.
  * @author dbutano
  *
  */
-public class TrackerDelegate
+public class TrackerDelegate implements Shutdownable
 {
     private static final Logger LOG = Logger.getLogger(TrackerDelegate.class);
     protected Map<String, Tracker> trackers = new HashMap<String, Tracker>();
     protected ObjectStoreWriter osw;
-    protected Connection connection = null;
+    protected final Connection connection;
     protected Thread trackerLoggerThread;
+    private boolean isClosed = false;
 
     /**
      * Create the tracker manager managing the trackers specified in input
@@ -50,11 +54,13 @@ public class TrackerDelegate
     public TrackerDelegate(String[] trackerClassNames, ObjectStoreWriter osw) {
         Queue<Track> trackQueue = new LinkedList<Track>();
         this.osw = osw;
+        ShutdownHook.registerObject(new WeakReference<Object>(this));
         try {
             connection = getConnection();
             Tracker tracker;
             for (String trackerClassName : trackerClassNames) {
                 try {
+                    // Warning Will Robinson: this method does not do what you think it does.
                     tracker = TrackerFactory.getTracker(trackerClassName, connection, trackQueue);
                     String key = tracker.getName();
                     trackers.put(key, tracker);
@@ -64,7 +70,8 @@ public class TrackerDelegate
             }
         } catch (SQLException sqle) {
             LOG.error("Problems retrieving connection. The tracker "
-                      + " hasn't been instatiated", sqle);
+                      + " hasn't been instantiated", sqle);
+            throw new RuntimeException(sqle);
         }
 
         TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
@@ -125,14 +132,14 @@ public class TrackerDelegate
     public Map<String, Integer> getAccessCounter() {
         TemplateTracker tt = getTemplateTracker();
         if (tt != null) {
-            Connection connection = null;
+            Connection conn = null;
             try {
-                connection = getConnection();
-                return tt.getAccessCounter(connection);
+                conn = getConnection();
+                return tt.getAccessCounter(conn);
             } catch (SQLException sqle) {
-                LOG.error("Problems retrieving conn for getAccessCounter ", sqle);
+                LOG.error("Problems retrieving connection for getAccessCounter ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(conn);
             }
         }
         return null;
@@ -158,15 +165,16 @@ public class TrackerDelegate
      */
     public void updateTemplateName(String oldTemplateName, String newTemplateName) {
         TemplateTracker tt = getTemplateTracker();
+
         if (tt != null) {
-            Connection connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                tt.updateTemplateName(oldTemplateName, newTemplateName, connection);
+                c = getConnection();
+                tt.updateTemplateName(oldTemplateName, newTemplateName, c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getAccessCounter ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
     }
@@ -211,14 +219,14 @@ public class TrackerDelegate
     public List<ListTrack> getListOperations() {
         Tracker lt = getTracker(TrackerUtil.LIST_TRACKER);
         if (lt != null) {
-            Connection connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                return ((ListTracker) lt).getListOperations(connection);
+                c = getConnection();
+                return ((ListTracker) lt).getListOperations(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getListOperations ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -242,14 +250,14 @@ public class TrackerDelegate
     public Map<String, Integer> getUserLogin() {
         Tracker lt = getTracker(TrackerUtil.LOGIN_TRACKER);
         if (lt != null) {
-            Connection connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                return ((LoginTracker) lt).getUserLogin(connection);
+                c = getConnection();
+                return ((LoginTracker) lt).getUserLogin(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getUserLogin ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -276,14 +284,14 @@ public class TrackerDelegate
     public Map<String, Integer> getKeywordSearches() {
         Tracker st = getTracker(TrackerUtil.SEARCH_TRACKER);
         if (st != null) {
-            Connection connection = null;
+            Connection c = null;
             try {
-                connection = getConnection();
-                return ((KeySearchTracker) st).getKeywordSearches(connection);
+                c = getConnection();
+                return ((KeySearchTracker) st).getKeywordSearches(c);
             } catch (SQLException sqle) {
                 LOG.error("Problems retrieving conn for getKeywordSearches ", sqle);
             } finally {
-                releaseConnection(connection);
+                releaseConnection(c);
             }
         }
         return null;
@@ -307,7 +315,7 @@ public class TrackerDelegate
      * Release the database connection
      * @param conn the connection to release
      */
-    private void releaseConnection(Connection conn) {
+    private static void releaseConnection(Connection conn) {
         if (conn != null) {
             try {
                 if (!conn.getAutoCommit()) {
@@ -330,16 +338,39 @@ public class TrackerDelegate
         return uosw.getDatabase().getConnection();
     }
 
-    public void close() {
-        releaseConnection(connection);
-    }
-
-    public void finalize() {
+    /**
+     * Release the db connection when done. Once this connection is released, it will be sent
+     * back to the connection pool and reassigned to someone else. So we need to be careful to
+     * not close a connection someone else is using!
+     */
+    public synchronized void close() {
+        if (isClosed) {
+            return;
+        }
         trackerLoggerThread.interrupt();
         try {
             trackerLoggerThread.join();
         } catch (InterruptedException ie) {
             LOG.error(ie);
         }
+        releaseConnection(connection);
+        isClosed = true;
+    }
+
+    /**
+     * Called from ShutdownHook.
+     */
+    public synchronized void shutdown() {
+        close();
+    }
+
+    /**
+     * clean up threads
+     * @throws Throwable if something goes wrong
+     */
+    @Override
+    public void finalize() throws Throwable {
+        close();
+        super.finalize();
     }
 }

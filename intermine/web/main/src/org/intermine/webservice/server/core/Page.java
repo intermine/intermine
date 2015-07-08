@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,7 +40,7 @@ public class Page
         this(start, null);
     }
 
-    /** 
+    /**
      * Get the index of the first row that is requested.
      * @return The index of the first row to return.
      */
@@ -67,7 +67,7 @@ public class Page
             return start + size;
         }
     }
-    
+
     /**
      * @param index An index to test.
      * @return Whether or not the given index lies within the page.

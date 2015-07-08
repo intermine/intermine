@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -150,7 +150,7 @@ public final class TemplateHelper
         Iterator<String> keys = templates.keySet().iterator();
         while (keys.hasNext()) {
             String name = keys.next();
-            sb.append("\"" + name + "\":" + templates.get(name).toJSON());
+            sb.append("\"" + name + "\":" + templates.get(name).toJson(false));
             if (keys.hasNext()) {
                 sb.append(",");
             }

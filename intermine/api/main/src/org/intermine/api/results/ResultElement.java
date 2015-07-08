@@ -1,7 +1,7 @@
 package org.intermine.api.results;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,8 +16,8 @@ import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
-import org.intermine.util.Util;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 
 /**
  * Cell of results table containing information for the parent Object

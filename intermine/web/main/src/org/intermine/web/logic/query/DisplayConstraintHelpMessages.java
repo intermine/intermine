@@ -1,7 +1,7 @@
 package org.intermine.web.logic.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,8 +15,13 @@ package org.intermine.web.logic.query;
  * @author Richard Smith
  *
  */
-public class DisplayConstraintHelpMessages
+public final class DisplayConstraintHelpMessages
 {
+
+    private DisplayConstraintHelpMessages() {
+        // Hidden constructor.
+    }
+
     /**
      * Generate a context sensitive help message for a constraint.  The message will explain all
      * available options - e.g. if a dropdown will explain how to enter multiple values, if a

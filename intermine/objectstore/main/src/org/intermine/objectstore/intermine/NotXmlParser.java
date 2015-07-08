@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.ProxyCollection;
@@ -31,7 +32,6 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.util.DynamicBean;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 /**
  * Parses a String suitable for storing in the OBJECT field of database tables into an Object.
@@ -150,8 +150,10 @@ public final class NotXmlParser
                             throw new RuntimeException("failed to get field " + fieldName
                                     + " for object from XML: " + xml);
                         }
-                        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
-                            (Class) ref.getReferencedClassDescriptor().getType();
+                        @SuppressWarnings("unchecked")
+                        Class<? extends InterMineObject> tmpType =
+                            (Class<? extends InterMineObject>) ref.getReferencedClassDescriptor()
+                                                                   .getType();
                         valueMap.put(fieldName, new ProxyReference(os, id, tmpType));
                     }
                 }
@@ -224,8 +226,10 @@ public final class NotXmlParser
                             throw new RuntimeException("failed to get field " + fieldName
                                     + " for object from XML: " + xml);
                         }
-                        @SuppressWarnings("unchecked") Class<? extends InterMineObject> tmpType =
-                            (Class) ref.getReferencedClassDescriptor().getType();
+                        @SuppressWarnings("unchecked")
+                        Class<? extends InterMineObject> tmpType =
+                            (Class<? extends InterMineObject>) ref.getReferencedClassDescriptor()
+                                                                   .getType();
                         retval.setFieldValue(fieldName, new ProxyReference(os, id, tmpType));
                     }
                 }

@@ -45,7 +45,7 @@
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="3_3" class="Gene">
-<attribute name="primaryIdentifier" value="HumanGene2"/>
+<attribute name="symbol" value="HumanGene2"/>
 <reference name="organism" ref_id="4_2"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -67,7 +67,7 @@
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="3_2" class="Gene">
-<attribute name="primaryIdentifier" value="HumanGene1"/>
+<attribute name="symbol" value="HumanGene1"/>
 <reference name="organism" ref_id="4_2"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>

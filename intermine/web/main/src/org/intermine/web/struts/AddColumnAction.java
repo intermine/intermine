@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,7 +21,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.results.WebResults;
 import org.intermine.api.results.WebTable;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
@@ -39,6 +38,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Jakub Kulaviak
  *
  */
+@SuppressWarnings("deprecation")
 public class AddColumnAction extends InterMineAction
 {
     /**
@@ -78,9 +78,8 @@ public class AddColumnAction extends InterMineAction
         List<Path> paths = new ArrayList<Path>();
         Path path = new Path(model, columnToAdd);
         paths.add(path);
-        WebResults webResults = (WebResults) table;
-        webResults.getColumnsPath().add(path);
-        webResults.addColumns(paths);
+        table.getColumnsPath().add(path);
+        table.addColumns(paths);
 
         // add to path query as well
         PathQuery query = table.getPathQuery();

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
@@ -23,7 +23,7 @@ import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;
 import org.intermine.webservice.server.WebServiceConstants;

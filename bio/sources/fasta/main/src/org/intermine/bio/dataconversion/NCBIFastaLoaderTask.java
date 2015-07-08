@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,8 +27,8 @@ public class NCBIFastaLoaderTask extends FastaLoaderTask
     protected static final Logger LOG = Logger.getLogger(NCBIFastaLoaderTask.class);
 
     private static final Pattern NCBI_DB_PATTERN =
-//        Pattern.compile("^gi\\|([^\\|]*)\\|(gb|emb|dbj|ref)\\|([^\\|]*?)(\\.\\d+)?\\|.*");
-    Pattern.compile("^gi\\|([^\\|]*)\\|(gb|emb|dbj|ref)\\|([^\\|]*?)(\\.\\d+\\.?(\\d+)?)?\\|.*");
+            Pattern.compile(
+                    "^gi\\|([^\\|]*)\\|(gb|emb|dbj|ref)\\|([^\\|]*?)(\\.\\d+\\.?(\\d+)?)?\\|.*");
     // private static final Pattern PROT_DB_PATTERN =
     //    Pattern.compile("^(ref|pir|prf)\\|([^\\|]*)\\|([^\\|]*).*");
     private static final Pattern UNIPROT_PATTERN =

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,7 +38,7 @@ public class ResultProcessor
      * Constructor.
      */
     public ResultProcessor() {
-        // don't instantiate
+        // Nothing to do.
     }
 
     /**
@@ -47,11 +47,9 @@ public class ResultProcessor
      * @param output output
      */
     public void write(Iterator<List<ResultElement>> resultIt, Output output) {
-        int writtenCount = 0;
         while (resultIt.hasNext())  {
             List<ResultElement> row = resultIt.next();
             output.addResultItem(convertResultElementsToStrings(row));
-            writtenCount++;
         }
     }
 
