@@ -97,7 +97,7 @@ public class AffyProbesConverter extends BioFileConverter
                     Integer end = new Integer(endString);
                     holder.addLocation(chromosomeRefId, start, end, strand);
                 } catch (NumberFormatException e) {
-                    throw new RuntimeException("bad start/end values");
+                    LOG.error("bad start/end values " + startString + " and " + endString);
                 }
             }
         }
