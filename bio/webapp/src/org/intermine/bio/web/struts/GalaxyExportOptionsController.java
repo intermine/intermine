@@ -239,7 +239,7 @@ public class GalaxyExportOptionsController extends TilesAction
             request.setAttribute("bedURL", bedURL);
 
             genomeBuildSet = (Set<String>) OrganismGenomeBuildLookup
-            .getGenomeBuildByOrgansimCollection(orgSet);
+            .getGenomeBuildByOrganismCollection(orgSet);
 
             String org = (orgSet.size() < 1)
                     ? "Organism information not available"

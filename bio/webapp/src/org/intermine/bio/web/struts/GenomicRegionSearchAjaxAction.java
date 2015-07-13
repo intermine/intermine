@@ -463,7 +463,7 @@ public class GenomicRegionSearchAjaxAction extends Action
                     String ucscCompatibleCheck = "yes";
                     exportForm = new BEDExportForm();
                     exportForm.setDoGzip(doGzip);
-                    ((BEDExportForm) exportForm).setOrgansimString(organism);
+                    ((BEDExportForm) exportForm).setOrganismString(organism);
                     ((BEDExportForm) exportForm)
                             .setUcscCompatibleCheck(ucscCompatibleCheck);
                 }

@@ -1,5 +1,7 @@
 package org.intermine.bio.web.model;
 
+import java.io.Serializable;
+
 /*
  * Copyright (C) 2002-2015 FlyMine
  *
@@ -16,8 +18,10 @@ package org.intermine.bio.web.model;
  * @author Fengyuan Hu
  *
  */
-public class ChromosomeInfo
+public class ChromosomeInfo implements Serializable
 {
+    
+  private static final long serialVersionUID = -5238979368372959656L;
     private String orgName;
     private String chrPID;
     private String chrPIDLowerCase;

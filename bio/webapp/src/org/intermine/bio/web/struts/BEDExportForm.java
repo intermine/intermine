@@ -20,7 +20,7 @@ import org.intermine.web.struts.TableExportForm;
 public class BEDExportForm extends TableExportForm
 {
     private static final long serialVersionUID = 1L;
-    private String organsimString = null;
+    private String organismString = null;
     private boolean makeUcscCompatible = false;
     private String ucscCompatibleCheck; // a patch to Struts checkbox design...
     private String trackDescription = "";
@@ -56,17 +56,17 @@ public class BEDExportForm extends TableExportForm
     }
 
     /**
-     * @return the organsimString
+     * @return the organismString
      */
-    public String getOrgansimString() {
-        return organsimString;
+    public String getOrganismString() {
+        return organismString;
     }
 
     /**
-     * @param organsimString the organsimString to set
+     * @param organismString the organismString to set
      */
-    public void setOrgansimString(String organsimString) {
-        this.organsimString = organsimString;
+    public void setOrganismString(String organismString) {
+        this.organismString = organismString;
     }
 
     /**

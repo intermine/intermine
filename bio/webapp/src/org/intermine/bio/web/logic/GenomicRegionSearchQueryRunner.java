@@ -10,10 +10,17 @@ package org.intermine.bio.web.logic;
  *
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,7 +33,9 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.lucene.KeywordSearch;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
@@ -60,6 +69,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     private String spanUUIDString = null;
     private GenomicRegionSearchConstraint grsc = null;
     private Map<GenomicRegion, Query> queryMap = null;
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
 
     private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
 
@@ -224,10 +234,31 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @param im - the InterMineAPI
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
+
+          long start = (new Date()).getTime();
+          
+          //TODO: figure out how to configure this path more better.
+          File chrMapFile = new File("webapps/phytomine/chrMapInfo.obj");
+          if (chrMapFile.exists() && chrMapFile.canRead()) {
+            try {
+              ObjectInputStream ois = new ObjectInputStream(new FileInputStream(chrMapFile));
+              chrInfoMap = (Map<String, Map<String, ChromosomeInfo>>)ois.readObject();
+              ois.close();
+            } catch( Exception e) {
+              LOG.warn("Exception thrown while reading chrInfoMap: "+e.getMessage()+". Regenerating...");
+              chrMapFile.delete();
+            }
+            long elapsed = (new Date()).getTime() - start;
+            LOG.info("Read chrInfoMap in "+elapsed+" milliseconds.");
+            return chrInfoMap;
+          }
+        
+          
             // a Map contains orgName and its chrInfo accordingly
             // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
             chrInfoMap = new HashMap<String, Map<String, ChromosomeInfo>>();
@@ -246,13 +277,13 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
                 PathQueryExecutor pQE = im.getPathQueryExecutor();
                 // JWC bigger batch size.
-                pQE.setBatchSize(100000);
+                pQE.setBatchSize(200000);
                 ExportResultsIterator results = pQE.execute(query);
 
                 // a List contains all the chrInfo (organism, chrPID, length)
-                List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>(500000);
+                //List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>(500000);
                 // a Set contains all the orgName
-                Set<String> orgSet = new HashSet<String>();
+                //Set<String> orgSet = new HashSet<String>();
 
                 while (results.hasNext()) {
                     List<ResultElement> row = results.next();
@@ -261,8 +292,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                     String chrPID = (String) row.get(1).getField();
                     Integer chrLength = (Integer) row.get(2).getField();
 
-                    // Add orgName to HashSet to filter out duplication
-                    orgSet.add(org);
+                    // Have we seen this organism before?
+                    // Put a key in the chrInfoMap is not.
+                    if (!chrInfoMap.containsKey(org)) {
+                      chrInfoMap.put(org,new HashMap<String, ChromosomeInfo>());
+                    }
 
                     ChromosomeInfo chrInfo = new ChromosomeInfo();
                     chrInfo.setOrgName(org);
@@ -270,28 +304,25 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                     if (chrLength != null) {
                         chrInfo.setChrLength(chrLength);
                     }
-                    // Add ChromosomeInfo to Arraylist
-                    chrInfoList.add(chrInfo);
-                }
+                    // Add ChromosomeInfo to map
+                    chrInfoMap.get(org).put(chrPID.toLowerCase(),chrInfo);
 
-                // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
-                // orgName and value as a ArrayList containing a list of chrInfo which has the same
-                // orgName
-                for (String o : orgSet) {
-                    // a map to store chrInfo for the same organism
-                    Map<String, ChromosomeInfo> chrInfoSubMap =
-                        new HashMap<String, ChromosomeInfo>();
-
-                    for (ChromosomeInfo chrInfo : chrInfoList) {
-                        if (o.equals(chrInfo.getOrgName())) {
-                            chrInfoSubMap.put(chrInfo.getChrPIDLowerCase(), chrInfo);
-                            chrInfoMap.put(o, chrInfoSubMap);
-                        }
-                    }
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+
+            long elapsed = (new Date()).getTime() - start;
+            LOG.info("Created chrInfoMap in "+elapsed+" milliseconds.");
+            
+            try {
+              ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(chrMapFile));
+              oos.writeObject(chrInfoMap);
+              oos.flush();
+              oos.close();
+            } catch( IOException e) {
+              LOG.warn("Exception thrown while writing chrInfoMap: "+e.getMessage()+".");
             }
 
             return chrInfoMap;
@@ -311,6 +342,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
         Map<String, List<String>> featureTypeToSOTermMap = new HashMap<String, List<String>>();
 
+        long start = (new Date()).getTime();
+        
         Query q = new Query();
         q.setDistinct(true);
 
@@ -366,6 +399,9 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 featureTypeToSOTermMap.put(ft, soInfo);
             }
         }
+        
+        long elapsed = (new Date()).getTime() - start;
+        LOG.info("Created featureTypeToSOTermMap in "+elapsed+" milliseconds.");
 
         return featureTypeToSOTermMap;
     }

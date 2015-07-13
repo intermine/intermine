@@ -161,7 +161,7 @@ public class BEDExporter implements Exporter
             if (orgSet != null) {
                 List<String> genomeBuildList = new ArrayList<String>();
                 for (String org : orgSet) {
-                    String gb = OrganismGenomeBuildLookup.getGenomeBuildbyOrgansimAbbreviation(org);
+                    String gb = OrganismGenomeBuildLookup.getGenomeBuildbyOrganismAbbreviation(org);
                     if (gb != null && gb.length() > 0) {
                         genomeBuildList.add(org + " " + gb);
                     } else {

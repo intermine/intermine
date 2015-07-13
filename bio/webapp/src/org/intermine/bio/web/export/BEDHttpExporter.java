@@ -73,7 +73,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
 
         // try to find the organism from the form
         if (form != null && form instanceof BEDExportForm) {
-            organisms = ((BEDExportForm) form).getOrgansimString();
+            organisms = ((BEDExportForm) form).getOrganismString();
             trackDescription = ((BEDExportForm) form).getTrackDescription();
             if ("yes".equals(((BEDExportForm) form).getUcscCompatibleCheck())) {
                 makeUcscCompatible = true;
