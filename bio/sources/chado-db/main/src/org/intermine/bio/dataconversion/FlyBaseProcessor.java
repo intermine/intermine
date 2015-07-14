@@ -782,17 +782,8 @@ public class FlyBaseProcessor extends SequenceProcessor
         if ("golden_path_region".equals(chadoFeatureType)) {
             // For organisms other than D. melanogaster sometimes we can convert a
             // golden_path_region to an actual chromosome: if name is 2L, 4, etc
-            if (taxonId == 7237) {
-                // chromosomes are stored as golden_path_region
-                realInterMineType = "Chromosome";
-            } else {
-                if (taxonId != 7227 && !uniqueName.contains("_")) {
-                    realInterMineType = "Chromosome";
-                } else {
-                    // golden_path_fragment is the actual SO term (call scaffold instead?)
-                    realInterMineType = "GoldenPathFragment";
-                }
-            }
+            // 2015 June - most Drosophila are now golden path fragments
+            realInterMineType = "Chromosome";
         }
 
         if (chadoFeatureType.equals(CHROMOSOME_STRUCTURE_VARIATION_SO_NAME)) {

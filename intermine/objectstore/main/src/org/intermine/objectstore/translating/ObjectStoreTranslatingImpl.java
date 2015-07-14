@@ -32,6 +32,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.sql.DatabaseConnectionException;
 
 /**
  * ObjectStore that transparently translates incoming queries and outgoing objects
@@ -83,9 +84,18 @@ public class ObjectStoreTranslatingImpl extends ObjectStoreAbstractImpl
         ObjectStore sub;
         try {
             sub = ObjectStoreFactory.getObjectStore(subAlias);
+        } catch (DatabaseConnectionException e) {
+            throw new ObjectStoreException("Failed to get database connection when creating"
+                    + " ObjectStore", e);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Unable to get sub-ObjectStore for Translating"
+            // preserve ObjectStoreExceptions for more useful message
+            Throwable t = e.getCause();
+            if (t instanceof ObjectStoreException) {
+                throw (ObjectStoreException) t;
+            } else {
+                throw new IllegalArgumentException("Unable to get sub-ObjectStore for Translating"
                     + " ObjectStore (check properties file)");
+            }
         }
         Model classpathModel;
         try {
