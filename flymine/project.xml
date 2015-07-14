@@ -120,10 +120,12 @@
       <property name="source.db.name" value="anoest"/>
     </source>
 -->
+<!-- See #83
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
     </source>
+-->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>
@@ -517,19 +519,12 @@
       <property name="reactome.curated" value="false"/>
     </source>
 
-    <source name="reactome-curated" type="reactome">
-      <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
-      <property name="reactome.organisms" value="7227"/>
-      <property name="reactome.datasourcename" value="Reactome"/>
-      <property name="reactome.datasetname" value="FlyReactome data set"/>
-      <property name="reactome.curated" value="true"/>
-    </source>
-
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/micklem/data/flymine/bdgp-insitu/current"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fbbt.obo"/>
+      <property name="ontologyPrefix" value="FBbt"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
@@ -594,14 +589,14 @@
     <source name="flymine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
     </source>
-<!--
     <source name="update-data-sources" type="update-data-sources">
       <property name="src.data.file" location="build/datasources.xml"/>
       <property name="dataSourceFile" value="/micklem/data/uniprot/xrefs/current/dbxref.txt"/>
     </source>
---> 
+
    <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml"/>
+      <property name="loadFullRecord" value="true"/>
     </source>
   </sources>
 

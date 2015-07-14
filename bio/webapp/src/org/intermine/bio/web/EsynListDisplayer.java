@@ -35,6 +35,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class EsynListDisplayer extends TilesAction
 {
     private static final String IDENTIFIER = "primaryIdentifier";
+    private static final String DELIMITER = "|";
 
     /**
      * {@inheritDoc}
@@ -47,7 +48,7 @@ public class EsynListDisplayer extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 
         String identifiers = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "",
-                IDENTIFIER);
+                IDENTIFIER, DELIMITER);
         request.setAttribute("identifiers", identifiers);
 
         Collection<String> organismsInBag = BioUtil.getOrganisms(im.getObjectStore(), bag.getType(),

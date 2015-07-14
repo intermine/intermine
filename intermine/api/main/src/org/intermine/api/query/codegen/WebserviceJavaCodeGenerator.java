@@ -148,6 +148,8 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             put(ConstraintOp.GREATER_THAN_EQUALS, "greaterThanEqualTo");
             put(ConstraintOp.IN, "in");
             put(ConstraintOp.NOT_IN, "notIn");
+            put(ConstraintOp.CONTAINS, "contains");
+            put(ConstraintOp.DOES_NOT_CONTAIN, "doesNotContain");
         }
     };
 
