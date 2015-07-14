@@ -1,0 +1,33 @@
+<project name="vcf" default="default" basedir=".">
+  <description>build, test, package vcf</description>
+
+  <import file="../../../imbuild/source.xml"/>
+
+
+    <!-- no retrieve -->
+  <target name="retrieve"/>
+
+  <target name="-init-loader-classname" unless="vcf.loaderClassName">
+    <!-- set the default -->
+    <property name="vcf.loaderClassName"
+              value="org.intermine.bio.dataconversion.VcfLoaderTask"/>
+  </target>
+
+  <!-- NOTE: we can do this with dynamic properties -->
+  <target name="load" depends="-init-loader-classname, init, -init-deps">
+    <taskdef name="read-vcf"
+      classname="${vcf.loaderClassName}"
+      classpathref="task.class.path"/>
+    <read-vcf integrationWriterAlias="integration.production"
+                vcfDataSetName="${vcf.vcfDataSetName}"
+                vcfDataSourceName="${vcf.vcfDataSourceName}"
+                vcfTaxonId="${vcf.vcfTaxonId}"
+                sourceName="${source.name}"
+                sourceType="${source.type}">
+      <fileset dir="${src.data.dir}" includes="${vcf.includes}"/>
+    </read-vcf>
+  </target>
+
+
+
+</project>
