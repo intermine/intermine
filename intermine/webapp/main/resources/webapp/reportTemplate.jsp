@@ -54,7 +54,7 @@
 <div class="template" id="${elemId}">
   <im:templateLine scope="${scope}" templateQuery="${templateQuery}" interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" templateType="${tmlType}" />
   <p class="description" style="display:none;">${templateQuery.description}</p>
-  
+
   <%-- JS target for the table --%>
   <div class="collection-table" id="${tableContainerId}"></div>
   <script type="text/javascript">
@@ -71,6 +71,8 @@
             $SERVICE.count(query).then(
                 function(c) {
                     var cstr = intermine.utils.numToString(c, ",", 3);
+                    if (typeof c === 'undefined') {c = 0;}
+                    cstr = c.toString()
                     $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
                     if (c < 1) {
                         disableTemplate();
@@ -92,7 +94,7 @@
                       }else{
                         localStorage.${elemId} = "show";
                       }
-                    }  
+                    }
                 });
             });
             if(${useLocalStorage} && typeof(Storage)!=="undefined"){
