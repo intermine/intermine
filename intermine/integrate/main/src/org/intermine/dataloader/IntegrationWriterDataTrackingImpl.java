@@ -523,16 +523,18 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     if (!(field instanceof CollectionDescriptor)) {
                         lastSource = dataTracker.getSource(obj.getId(), fieldName);
                     }
+                    // if lastSource is null there was no value in the tracker table, which means
+                    // the source provided a null value or was beaten by a priority
                     if (field instanceof CollectionDescriptor || lastSource != null) {
                         copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);
                     }
                 }
             }
-            if (!(field instanceof CollectionDescriptor)) {
-                if (lastSource == null) {
-                    throw new NullPointerException("Error: lastSource is null for"
-                            + " object " + o.getId() + " and fieldName " + fieldName);
-                }
+            // the last source we saw is the value stored in the object, write tracking information
+            // for this field. Note - lastSource could be null if and object is merging with a
+            // subclass already in the database AND the class we're storing doesn't have that field
+            // AND the stored object has a null value for the field.
+            if (!(field instanceof CollectionDescriptor) && lastSource != null) {
                 // if the field has a non-null value or it there is a priority configured
                 // add details to the data tracker
                 Object value = null;
@@ -543,7 +545,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 }
 
                 if (value != null) {
-                    trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                    trackingMap.put(fieldName, lastSource);
                 } else {
                     // check if a priority is configured for the field
                     List<String> priorities = priorityConfig.getPriorities(o.getClass(),
