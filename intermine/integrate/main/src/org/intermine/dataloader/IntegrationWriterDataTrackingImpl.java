@@ -538,10 +538,19 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 // if the field has a non-null value or it there is a priority configured
                 // add details to the data tracker
                 Object value = null;
-                if (field instanceof ReferenceDescriptor) {
-                    value = o.getFieldProxy(fieldName);
-                } else {
-                    value = o.getFieldValue(fieldName);
+                try {
+                    if (field instanceof ReferenceDescriptor) {
+                        value = o.getFieldProxy(fieldName);
+                    } else {
+                        value = o.getFieldValue(fieldName);
+                    }
+                } catch (IllegalAccessException e) {
+                    // this can happen for dynamic objects where an equivalent non-dynamic
+                    // object is found it will be missing fields for one of the classes.
+                    // DO NOTHING, the value is null
+                } catch (IllegalArgumentException e) {
+                    // same as above but error is thrown from model class rather than from
+                    // getFieldInfos
                 }
 
                 if (value != null) {
@@ -602,10 +611,19 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     // if the field has a non-null value or it there is a priority configured
                     // add details to the data tracker
                     Object value = null;
-                    if (field instanceof ReferenceDescriptor) {
-                        value = o.getFieldProxy(fieldName);
-                    } else {
-                        value = o.getFieldValue(fieldName);
+                    try {
+                        if (field instanceof ReferenceDescriptor) {
+                            value = o.getFieldProxy(fieldName);
+                        } else {
+                            value = o.getFieldValue(fieldName);
+                        }
+                    } catch (IllegalAccessException e) {
+                        // this can happen for dynamic objects where an equivalent non-dynamic
+                        // object is found it will be missing fields for one of the classes.
+                        // DO NOTHING, the value is null
+                    } catch (IllegalArgumentException e) {
+                        // same as above but error is thrown from model class rather than from
+                        // getFieldInfos
                     }
 
                     if (value != null) {
