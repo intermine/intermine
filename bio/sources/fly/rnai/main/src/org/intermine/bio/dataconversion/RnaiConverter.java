@@ -66,7 +66,7 @@ public class RnaiConverter extends BioFileConverter
                 processScreen(line);
             } else {
                 String[] cols = line.split("\t");
-                if (cols.length < 8) {
+                if (cols.length < 7) {
                     continue;
                 }
                 processResult(cols);
@@ -141,7 +141,10 @@ public class RnaiConverter extends BioFileConverter
         String reagentId = line[4];
         String score = line[5];
         String phenotype = line[6];
-        String conditions = line[7];
+        String conditions = null;
+        if (line.length > 7) {
+            conditions = line[7];
+        }
         storeScreen(screenId);
 
         Item result = createItem("RNAiResult");
