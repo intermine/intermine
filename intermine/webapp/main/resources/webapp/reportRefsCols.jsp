@@ -104,9 +104,8 @@
                        localStorage.${innerDivName}="hide";
                    }
                  }
-               }
-               });
-            });
+                 });
+              });
             })(window.jQuery);
           </script>
           </div>
