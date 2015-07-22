@@ -115,6 +115,7 @@ my $dest_db;
 my $release;
 my @required_actions_list = ();
 my $start_action = undef;
+my $end_action = undef;
 
 # Process command-line opts
 my %opts = ();
@@ -173,6 +174,9 @@ if (exists $opts{a}) {
   }
   if ($arg =~ /(.*)-$/) {
     $start_action = $1;
+  } elsif ($arg =~ /(.+)--(.+)$/) {
+    $start_action = $1;
+    $end_action = $2;
   } else {
     @required_actions_list = split (',', $arg);
   }
@@ -708,6 +712,7 @@ sub get_actions
       if ($seen_start || $action->{name} eq $start_action) {
         push @return_actions, $action;
         $seen_start = 1;
+        last if defined($end_action) && $action->{name} eq $end_action;
       }
     }
 

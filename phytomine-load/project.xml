@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE doc [
-  <!ENTITY chado SYSTEM "../chado.xml">
+  <!ENTITY chado SYSTEM "/global/u1/j/jcarlson/src/intermine/phytomine-load/chado.xml">
+  <!ENTITY family SYSTEM "/global/u1/j/jcarlson/src/intermine/phytomine-load/family.xml">
 ]>
 <project type="bio">
   <property name="intermine.properties.file" value="phytomine-load.properties" />
@@ -10,312 +11,14 @@
   <property name="source.location" location="../bio/sources/" />
   <sources>
     &chado;
-    <source name="family-fasta" type="fasta">
-      <property name="fasta.taxonId" value="999"/>
-      <property name="fasta.className" value="org.intermine.model.bio.ProteinFamily"/>
-      <property name="fasta.classAttribute" value="clusterId"/>
-      <property name="fasta.dataSetTitle" value="Phytozome V10"/>
-      <property name="fasta.dataSourceName" value="Phytozome V10"/>
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/fasta/"/>
-      <property name="fasta.includes" value="family.fasta"/>
-      <property name="fasta.sequenceType" value="protein" />
-      <property name="fasta.loaderClassName"
-                value="org.intermine.bio.dataconversion.PhytozomeFastaLoaderTask"/>
-    </source>
-    <source name="pac-clusters-crown" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="2289,2290,2295,2296,2297,2298,2299,2304,2307,2312,2395,3123,3124,3127,3141,3142,3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4614,4759,4850,4851,4865,4907,4908,4909,4910,4986,4987,4988" />
-    </source>
-
-    <source name="pac-clusters-crown-3142" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="3142" />
-    </source>
-
-    <source name="pac-clusters-crown-set2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="3144,3246,3252,3253,3254,3299,3301,3302,3304,3305,3306,3307,3308,3309,3352,3445,3451,3464,3467,4431,4432,4433,4434,4435,4436,4612,4614,4759,4850,4851,4865,4907,4908,4909,4910,4986,4987,4988" />
-    </source>
-
-    <source name="pac-clusters-crown-3467" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="3467" />
-    </source>
-
+    &family;
     <source name="provisional-defline" type="gene-defline">
       <property name="src.data.file" value="defline.tsv" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/defline/" />
       <property name="dataSourceName" value="Phytozome v10" />
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
-    <source name="provisional-defline-2" type="gene-defline">
-      <property name="src.data.file" value="defline-2.tsv" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/defline/" />
-      <property name="dataSourceName" value="Phytozome v10" />
-      <property name="dataSetTitle" value="Phytozome v10" />
-    </source>
-    <source name="provisional-defline-3" type="gene-defline">
-      <property name="src.data.file" value="defline-3.tsv" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/defline/" />
-      <property name="dataSourceName" value="Phytozome v10" />
-      <property name="dataSetTitle" value="Phytozome v10" />
-    </source>
-    <source name="provisional-defline-4" type="gene-defline">
-      <property name="src.data.file" value="modified.tsv" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/defline/" />
-      <property name="dataSourceName" value="Phytozome v10" />
-      <property name="dataSetTitle" value="Phytozome v10" />
-    </source>
 
-    <source name="pac-clusters-crown-set3" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4431,4432,4433,4434,4435,4436,4612,4614,4759,4850" />
-    </source>
-
-    <source name="pac-clusters-crown-set4" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4851,4865,4907,4908,4909,4910,4986,4987,4988" />
-    </source>
-
-    <source name="pac-clusters-crown-set5" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4907,4908,4909,4910,4986,4987,4988" />
-    </source>
-
-    <source name="pac-cluster-nodes-4954" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4954" />
-    </source>
-    <source name="pac-cluster-nodes-4954-part2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4954" />
-    </source>
-    <source name="pac-cluster-nodes-4954-part3" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4954" />
-    </source>
-    <source name="pac-cluster-nodes-4954-part4" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4954" />
-    </source>
-    <source name="pac-cluster-nodes-4954-part5" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4954" />
-    </source>
-
-    <source name="pac-cluster-nodes-4955" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4955" />
-    </source>
-    <source name="pac-cluster-nodes-4956" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4956" />
-    </source>
-    <source name="pac-cluster-nodes-4957" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4957" />
-    </source>
-    <source name="pac-cluster-nodes-4958" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4958" />
-    </source>
-    <source name="pac-cluster-nodes-4959" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4959" />
-    </source>
-    <source name="pac-cluster-nodes-4955-part2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4955" />
-    </source>
-    <source name="pac-cluster-nodes-4956-part2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4956" />
-    </source>
-    <source name="pac-cluster-nodes-4957-part2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4957" />
-    </source>
-    <source name="pac-cluster-nodes-4958-part2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4958" />
-    </source>
-    <source name="pac-cluster-nodes-4959-part2" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4959" />
-    </source>
-
-    <source name="pac-cluster-nodes-4960" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4960" />
-    </source>
-    <source name="pac-cluster-nodes-4961" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4961" />
-    </source>
-    <source name="pac-cluster-nodes-4962" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4962" />
-    </source>
-    <source name="pac-cluster-nodes-4963" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4963" />
-    </source>
-    <source name="pac-cluster-nodes-4964" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4964" />
-    </source>
-    <source name="pac-cluster-nodes-4965" type="phytozome-clusters">
-      <property name="source.db.name" value="PAC" />
-      <property name="dataSourceName" value="pac-clusters" />
-      <property name="dataSetTitle" value="Phytozome Clusters" />
-      <property name="createrelations" value="false" />
-      <property name="methodIds" value="4965" />
-    </source>
-
-    <source name="chlamy-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="281" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Creinhardtii_KEGG.cre_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="C.reinhardtii KEGG Pathway" />
-    </source>
-    <source name="soybean-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="275" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Gmax_KEGG.gmx_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="G.max KEGG Pathway" />
-    </source>
-    <source name="medicago-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="285" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Mtruncatula_KEGG.mtr_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="M.truncatula KEGG Pathway" />
-    </source>
-    <source name="hallii-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="300" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Phallii_KEGG.ath_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="P.hallii KEGG Pathway" />
-    </source>
-    <source name="physco-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="251" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Ppatens_KEGG.ppp_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="P.patens Pathway" />
-    </source>
-    <source name="poplar-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="210" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Ptrichocarpa_KEGG.pop_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="P.trichocarpa KEGG Pathway" />
-    </source>
-    <source name="switchgrass-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="273" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Pvirgatum_KEGG.ath_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="P.virgatum KEGG Pathway" />
-    </source>
-    <source name="sorghum-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="255" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Sbicolor_KEGG.sbi_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="S.bicolor KEGG Pathway" />
-    </source>
-    <source name="millet-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="164" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Sitalica_KEGG.sita_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="S.italica KEGG Pathway" />
-    </source>
 
     <source name="diversity-S.bicolor" type="gatkvcf">
       <property name="proteomeId" value="255" />
@@ -331,6 +34,7 @@
       <property name="dataSourcename" value="diversity-P.vulgaris" />
       <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
     </source>
+
     <source name="diversity-P.trichocarpa" type="gatkvcf">
       <property name="proteomeId" value="210" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
@@ -338,13 +42,14 @@
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
     </source>
-    <source name="diversity-P.trichocarpa-part2" type="gatkvcf">
+    <source name="diversity-P.trichocarpa-continued" type="gatkvcf">
       <property name="proteomeId" value="210" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
     </source>
+
     <source name="diversity-B.distachyon" type="gatkvcf">
       <property name="proteomeId" value="283" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
@@ -372,42 +77,6 @@
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-M.esculenta-early-release" />
       <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
-    </source>
-
-    <source name="diversity-S.bicolor-corrected-info" type="gatkvcf">
-      <property name="proteomeId" value="255" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-S.bicolor" />
-      <property name="dataSetTitle" value="S.bicolor Natural Diversity" />
-    </source>
-    <source name="diversity-P.vulgaris-corrected-info" type="gatkvcf">
-      <property name="proteomeId" value="218" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Pvulgaris/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.vulgaris" />
-      <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
-    </source>
-    <source name="diversity-P.trichocarpa-corrected-info" type="gatkvcf">
-      <property name="proteomeId" value="210" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.trichocarpa" />
-      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
-    </source>
-    <source name="diversity-B.distachyon-corrected-info" type="gatkvcf">
-      <property name="proteomeId" value="283" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-B.distachyon" />
-      <property name="dataSetTitle" value="B.distachyon Natural Diversity" />
-    </source>
-    <source name="diversity-E.grandis-corrected-info" type="gatkvcf">
-      <property name="proteomeId" value="201" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Egrandis/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-E.grandis" />
-      <property name="dataSetTitle" value="E.grandis Natural Diversity" />
     </source>
     <source name="diversity-P.trichocarpa-samples" type="vcfsampleinfo">
       <property name="proteomeId" value="210"/>
@@ -585,31 +254,73 @@
       <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
       <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq Info" />
     </source>
-
     <source name="phytozome-homologs" type="inparanoid-homologs" >
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
       <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
     </source>
-    <source name="phytozome-homologs-extra" type="inparanoid-homologs" >
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
-      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    <source name="chlamy-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="281" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Creinhardtii_KEGG.cre_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="C.reinhardtii KEGG Pathway" />
     </source>
-    <source name="phytozome-homologs-extra-extra" type="inparanoid-homologs" >
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
-      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    <source name="soybean-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="275" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Gmax_KEGG.gmx_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="G.max KEGG Pathway" />
     </source>
-    <source name="phytozome-homologs-extra-extra-extra-extra" type="inparanoid-homologs" >
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
-      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    <source name="medicago-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="285" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Mtruncatula_KEGG.mtr_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="M.truncatula KEGG Pathway" />
     </source>
-    <source name="phytozome-homologs-redo" type="inparanoid-homologs" >
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
-      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    <source name="hallii-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="300" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Phallii_KEGG.ath_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="P.hallii KEGG Pathway" />
     </source>
-    <source name="phytozome-homologs-redo2" type="inparanoid-homologs" >
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
-      <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
+    <source name="physco-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="251" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Ppatens_KEGG.ppp_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="P.patens Pathway" />
     </source>
+    <source name="poplar-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="210" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Ptrichocarpa_KEGG.pop_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="P.trichocarpa KEGG Pathway" />
+    </source>
+    <source name="switchgrass-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="273" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Pvirgatum_KEGG.ath_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="P.virgatum KEGG Pathway" />
+    </source>
+    <source name="sorghum-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="255" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Sbicolor_KEGG.sbi_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="S.bicolor KEGG Pathway" />
+    </source>
+    <!-- this is problematic source name="millet-kegg-pathways" type="plantcyc-pathway">
+      <property name="proteomeId" value="164" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
+      <property name="src.data.dir.includes" value="Sitalica_KEGG.sita_Pathway2Gene.csv" />
+      <property name="dataSourcename" value="KEGG" />
+      <property name="dataSetTitle" value="S.italica KEGG Pathway" />
+    </source-->
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro/" />
     </source>
@@ -626,9 +337,8 @@
       <property name="dataSetTitle" value="Phytozome V10" />
       <property name="dataSourceName" value="Phytozome V10" />
     </source>
-
     <source name="Panther-terms" type="ontology-terms">
-      <property name="src.data.dir" value="/projectb/sandbox/phytomine/panther-terms/" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
       <property name="src.data.file" value="names.tab" />
       <property name="dataSetTitle" value="PANTHER" />
       <property name="dataSetURL" value="ftp://ftp.pantherdb.org/panther_library/8.1" />
@@ -766,6 +476,7 @@
       <property name="converter.class" value="org.intermine.bio.dataconversion.OntologyTermsXMLConverter" />
     </source>
   </sources>
+
   <post-processing>
     <post-process name="create-references" />
     <post-process name="transfer-sequences" />

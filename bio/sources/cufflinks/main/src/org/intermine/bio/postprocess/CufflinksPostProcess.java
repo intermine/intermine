@@ -45,17 +45,11 @@ public class CufflinksPostProcess extends PostProcessor {
 
   ObjectStoreWriter osw;
   private static final Logger LOG = Logger.getLogger(CufflinksPostProcess.class);
-  PrintWriter writer;
   private static final int batchSize = 100000;
   
   public CufflinksPostProcess(ObjectStoreWriter osw) {
     super(osw);
     this.osw = osw;
-    try {
-    writer = new PrintWriter(new File("cufflinks_class.txt"));
-    } catch (Exception e) {
-      throw new BuildException("Problem opening writer file.");
-    }
     
   }
 
@@ -66,8 +60,6 @@ public class CufflinksPostProcess extends PostProcessor {
     processSet("BioEntity");
     LOG.info("Processing Experiments...");
     processSet("Experiment");
-    writer.flush();
-    writer.close();
   }
   
   private void processSet(String setName) throws BuildException {
@@ -138,7 +130,7 @@ public class CufflinksPostProcess extends PostProcessor {
       if (nSamples > 1) {
         double mean = sum/nSamples;
         double stddev = Math.sqrt((sum2-sum*mean)/(nSamples-1));
-        LOG.info("Means and stdev for set containing "+group.get(0).getId()+
+        LOG.debug("Means and stdev for set containing "+group.get(0).getId()+
             " is " + mean + " and " + stddev);
 
         // this is a stupid test. Just something to get us going.
@@ -146,7 +138,6 @@ public class CufflinksPostProcess extends PostProcessor {
           double fpkm = cs.getFpkm();
           if (fpkm != 0.) {
 
-            writer.println((Math.log(fpkm)-mean)/stddev);
             if (Math.log(fpkm) > mean + stddev) {
               if (groupBy.equals("BioEntity") ) {
                 cs.setLocusExpressionLevel("High");

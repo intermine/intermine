@@ -19,7 +19,7 @@ public class ProfileTermsConverter extends OntologyTermsFileConverter {
   public ProfileTermsConverter(ItemWriter writer, Model model) {
     super(writer, model);
     identifierKey = "^AC.*";
-    nameKey = "^ID.*; MATRIX.";
+    nameKey = "^ID.*";
     descKey = "^DE.*";
     identifierReplacement = "^AC\\s*";
     nameReplacement = "^ID\\s*";
@@ -35,6 +35,11 @@ public class ProfileTermsConverter extends OntologyTermsFileConverter {
   String cleanDescription(String desc) {
     // remove final period. It's not a sentence!
     return desc.replaceAll("\\.$", "");
+  }
+  // @Override
+  void parseName(String line) {
+    // weird case. Trim off the first, then take the first word up to the ;
+    nameLine = line.replaceAll(nameReplacement,"").replaceAll(";\\s.*","").trim(); 
   }
   // @Override
   String cleanName(String name) {
