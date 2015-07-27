@@ -11,6 +11,7 @@ package org.intermine.webservice.server.complexes;
  */
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +23,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.xml.full.Item;
 
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.bridges.ols.CachedOlsOntologyTermFetcher;
@@ -31,6 +33,7 @@ import psidev.psi.mi.jami.json.InteractionViewerJson;
 import psidev.psi.mi.jami.json.MIJsonOptionFactory;
 import psidev.psi.mi.jami.json.MIJsonType;
 import psidev.psi.mi.jami.model.CvTerm;
+import psidev.psi.mi.jami.model.Feature;
 import psidev.psi.mi.jami.model.InteractionCategory;
 import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
@@ -52,6 +55,7 @@ public class ExportService extends JSONService
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
     private static final String EBI = "intact";
+    private static final String BINDING_SITE = "binding region";
 
     /**
      * Default constructor.
@@ -137,7 +141,7 @@ public class ExportService extends JSONService
         DefaultComplex complex = new DefaultComplex(identifier, complexXref);
 
         // loop through query results
-        // each row will be a different protein
+        // proteins will span different rows if there are interacting regions
         while (results.hasNext()) {
             List<ResultElement> row = results.next();
 
@@ -152,11 +156,15 @@ public class ExportService extends JSONService
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
 
+            String start = (String) row.get(9).getField();
+            String end = (String) row.get(10).getField();
+
             // set complex attributes
             complex.setFullName(name);
             complex.setSystematicName(systematicName);
             complex.setPhysicalProperties(properties);
 
+            // TODO get MI value - get from onto lookup?
             // interactor type
             CvTerm type = new DefaultCvTerm(moleculeType);
 
@@ -186,6 +194,40 @@ public class ExportService extends JSONService
             DefaultModelledParticipant participant
                 = new DefaultModelledParticipant(interactor, bioRole, stoichTerm);
 
+            // TODO add features
+            // participant.addAllFeatures();
+
+//            Collection<Feature> linkedFeatures = feature.getLinkedFeatures();
+//            for (Feature linkedFeature : linkedFeatures) {
+//                CvTerm term = linkedFeature.getType();
+//                String type = term.getShortName();
+
+
+            /**
+            // only create interactions if we have binding information
+            if (BINDING_SITE.equals(type)) {
+                String binderRefId = processProtein(linkedFeature.getParticipant()
+                        .getInteractor());
+
+                Item interaction = createItem("Interaction");
+                interaction.setReference("participant1", refId);
+                interaction.setReference("participant2", binderRefId);
+                interaction.setReference("complex", complex);
+                store(interaction);
+                interactor.addToCollection("interactions", interaction);
+
+                Item detailItem = createItem("InteractionDetail");
+                detailItem.setAttribute("type", INTERACTION_TYPE);
+                detailItem.setAttribute("relationshipType", detail.getRelationshipType());
+                detailItem.setReference("interaction", interaction);
+                detailItem.setCollection("allInteractors", detail.getAllInteractors());
+
+                processRegions(linkedFeature.getRanges(), detailItem, refId, binderRefId);
+
+                store(detailItem);
+            }
+*/
+
             // set relationship to complex
             complex.addParticipant(participant);
         }
@@ -193,7 +235,11 @@ public class ExportService extends JSONService
     }
 
 /**
- * <query name="" model="genomic" view="Complex.identifier Complex.allInteractors.interactions.details.interactingRegions.location.start Complex.allInteractors.interactions.details.interactingRegions.location.end" longDescription="" sortOrder="Complex.identifier asc">
+ * TODO add regions
+ * <query name="" model="genomic" view="Complex.identifier
+ * Complex.allInteractors.interactions.details.interactingRegions.location.start
+ * Complex.allInteractors.interactions.details.interactingRegions.location.end"
+ * longDescription="" sortOrder="Complex.identifier asc">
 
   <constraint path="Complex.allInteractors.interactions.complex" op="=" loopPath="Complex"/>
 </query>
@@ -208,7 +254,13 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.stoichiometry",
                 "Complex.allInteractors.participant.organism.taxonId",
                 "Complex.allInteractors.biologicalRole",
-                "Complex.allInteractors.type");
+                "Complex.allInteractors.type",
+                "Complex.allInteractors.interactions.details.interactingRegions.location.feature."
+                + "primaryIdentifier",
+                "Complex.allInteractors.interactions.details.interactingRegions.location.locatedOn."
+                + "primaryIdentifier",
+                "Complex.allInteractors.interactions.details.interactingRegions.location.start",
+                "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         return query;
     }
