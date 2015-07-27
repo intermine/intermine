@@ -332,10 +332,7 @@ public class BioGridConverter extends BioFileConverter
                                 + " not found");
                         }
                     } else {
-                        String identifierField = config.getIdentifierName();
-                        String identifierSource = config.getXref();
-                        setGene(taxId, interactorHolder, identifierField, identifierSource,
-                            config.getPrefix());
+                        setGene(taxId, interactorHolder, config);
                     }
                 }
             /*********************************** INTERACTIONS ***********************************/
@@ -423,8 +420,9 @@ public class BioGridConverter extends BioFileConverter
             // <interactorList><interactor id="4"><names><shortLabel>YFL039C</shortLabel>
             } else if (attName != null && "shortLabel".equals(attName)
                             && "shortLabel".equals(qName) && stack.search("interactor") == 2) {
-
                 String shortLabel = attValue.toString();
+
+                // TODO put this in config
                 if (shortLabel.startsWith("Dmel")) {
                     shortLabel = shortLabel.substring(4);
                     shortLabel = shortLabel.trim();
@@ -583,25 +581,28 @@ public class BioGridConverter extends BioFileConverter
             return itemId;
         }
 
-        private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
-                                String db, String prefix) throws SAXException {
+        private boolean setGene(String taxonId, InteractorHolder ih, Config config)
+            throws SAXException {
 
             String identifier = null;
-            String label = identifierField;
 
-            if ("shortLabel".equals(db)) {
+            if ("shortLabel".equals(config.getNameSource())) {
                 identifier = ih.shortLabel;
             } else {
-                identifier = ih.xrefs.get(db);
+                identifier = ih.xrefs.get(config.getIdentifierSource());
             }
+
+            String prefix = config.getPrefix();
 
             if (StringUtils.isNotEmpty(prefix)) {
                 identifier = prefix + identifier;
             }
 
+            String identifierField = config.getIdentifierName();
+
             if (rslv != null) {
                 identifier = resolveGene(taxonId, identifier);
-                label = "primaryIdentifier";
+                identifierField = "primaryIdentifier";
             }
 
             // no valid identifiers
@@ -610,7 +611,7 @@ public class BioGridConverter extends BioFileConverter
                 return false;
             }
 
-            ih.participant = storeGene(label, identifier, ih, taxonId);
+            ih.participant = storeGene(identifierField, identifier, ih, taxonId);
 
             ih.valid = true;
             return true;
