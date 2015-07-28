@@ -10,11 +10,9 @@ package org.intermine.objectstore;
  *
  */
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
-import java.util.HashSet;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.BigDepartment;
@@ -23,10 +21,8 @@ import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.ImportantPerson;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -42,17 +38,6 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
     protected static ObjectStoreWriter writer;
     protected static ObjectStore realOs;
 
-    /*protected Address address1;
-    protected Company company1, company2;
-    protected Department department1;
-    protected CEO employee1;
-    protected Contractor contractor1, contractor2, contractor3;
-
-    protected Address address1Template;
-    protected Company company1Template;
-    protected CEO employee1Template;
-    protected Contractor contractor1Template, contractor3Template;
-*/
     public ObjectStoreWriterTestCase(String arg) {
         super(arg);
     }
@@ -69,73 +54,6 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
             writer.abortTransaction();
         }
     }
-/*
-    public void setUp() throws Exception {
-        super.setUp();
-
-        address1 = new Address();
-        address1.setAddress("Employee Street, BVille");
-
-        company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company1.setName("Company 1");
-        company1.setAddress(address1);
-
-        company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company2.setName("Company 2");
-        company2.setAddress(address1);
-
-        department1 = new Department();
-        department1.setName("Dept1");
-        department1.setCompany(company1);
-
-        employee1 = new CEO();
-        employee1.setName("EmployeeB1");
-        employee1.setFullTime(true);
-        employee1.setAddress(address1);
-        employee1.setAge(40);
-        employee1.setTitle("Mr.");
-        employee1.setSalary(45000);
-        employee1.setDepartment(department1);
-
-        contractor1 = new Contractor();
-        contractor1.setName("Contractor 1");
-        contractor1.setBusinessAddress(address1);
-        contractor1.setPersonalAddress(address1);
-
-        contractor2 = new Contractor();
-        contractor2.setName("Contractor 2");
-        contractor2.setBusinessAddress(address1);
-        contractor2.setPersonalAddress(address1);
-
-        contractor3 = new Contractor();
-        contractor3.setName("Contractor 3");
-        contractor3.setBusinessAddress(address1);
-        contractor3.setPersonalAddress(address1);
-
-        address1Template = new Address();
-        address1Template.setAddress(address1.getAddress());
-
-        company1Template = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        company1Template.setName(company1.getName());
-        company1Template.setAddress(company1.getAddress());
-
-        employee1Template = new CEO();
-        employee1Template.setName(employee1.getName());
-        employee1Template.setAddress(employee1.getAddress());
-        employee1Template.setAge(employee1.getAge());
-
-        contractor1Template = new Contractor();
-        contractor1Template.setName(contractor1.getName());
-        contractor1Template.setBusinessAddress(contractor1.getBusinessAddress());
-        contractor1Template.setPersonalAddress(contractor1.getPersonalAddress());
-
-        contractor3Template = new Contractor();
-        contractor3Template.setName(contractor3.getName());
-        contractor3Template.setBusinessAddress(contractor3.getBusinessAddress());
-        contractor3Template.setPersonalAddress(contractor3.getPersonalAddress());
-    }
-*/
-
     /**
      * Storing an object without an ID field should insert it into the database
      */
@@ -617,40 +535,9 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         }
     }
 
-    public void testWriteDynamicObject() throws Exception {
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Employee.class})));
-        try {
-            writer.store(o);
-            o = writer.getObjectById(o.getId(), Employee.class);
-            if (!(o instanceof Company)) {
-                fail("Expected a Company back");
-            }
-            if (!(o instanceof Employee)) {
-                fail("Expected an Employee back");
-            }
-        } finally {
-            writer.delete(o);
-        }
-    }
-
-    public void testWriteDynamicObject2() throws Exception {
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {ImportantPerson.class, Employee.class})));
-        try {
-            writer.store(o);
-            o = writer.getObjectById(o.getId(), Employee.class);
-            if (!(o instanceof ImportantPerson)) {
-                fail("Expected an ImportantPerson back");
-            }
-            if (!(o instanceof Employee)) {
-                fail("Expected an Employee back");
-            }
-        } finally {
-            writer.delete(o);
-        }
-    }
 
     public void testWriteInterMineObject() throws Exception {
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
+        InterMineObject o = (InterMineObject) DynamicUtil.createObject(InterMineObject.class);
         try {
             writer.store(o);
         } finally {
@@ -671,19 +558,6 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         }
     }
 
-    public void testWriteCloneable() throws Exception {
-        InterMineObject o = (InterMineObject) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Employee.class, Cloneable.class})));
-        try {
-            writer.store(o);
-            o = writer.getObjectById(o.getId(), Employee.class);
-            if (!(o instanceof Cloneable)) {
-                fail("Expected a Cloneable back");
-            }
-        } finally {
-            writer.delete(o);
-        }
-    }
-
     public void testWriteBigDepartment() throws Exception {
         InterMineObject o = new BigDepartment();
         try {
@@ -698,7 +572,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
     }
 
     public void testAddToCollection() throws Exception {
-        Company c1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c1 = (Company) DynamicUtil.createObject(Company.class);
         Contractor c2 = new Contractor();
         c1.setName("Michael");
         c2.setName("Albert");
@@ -736,7 +610,7 @@ public class ObjectStoreWriterTestCase extends ObjectStoreAbstractImplTestCase
         } catch (ConcurrentModificationException e) {
         }
     }
-    
+
     public void testClob() throws Exception {
         Clob clob = writer.createClob();
         writer.replaceClob(clob, "Monkey");

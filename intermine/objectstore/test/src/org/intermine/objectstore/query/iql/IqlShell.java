@@ -12,36 +12,32 @@ package org.intermine.objectstore.query.iql;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.gnu.readline.Readline;
-import org.gnu.readline.ReadlineLibrary;
 import org.gnu.readline.ReadlineCompleter;
-
+import org.gnu.readline.ReadlineLibrary;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.ObjectStoreFactory;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.intermine.SqlGenerator;
-import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.QueryHelper;
-import org.intermine.sql.precompute.QueryOptimiser;
-import org.intermine.sql.precompute.QueryOptimiserContext;
-import org.intermine.util.DynamicUtil;
 import org.intermine.metadata.TypeUtil;
-
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.SqlGenerator;
+import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryHelper;
+import org.intermine.objectstore.query.Results;
+import org.intermine.sql.precompute.QueryOptimiser;
+import org.intermine.sql.precompute.QueryOptimiserContext;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Shell for doing IQL queries
@@ -275,7 +271,7 @@ public class IqlShell
                 ObjectStoreWriter osw = os.getNewWriter();
                 osw.beginTransaction();
                 for (int i = 0; i < 1000000; i++) {
-                    Company comp = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+                    Company comp = (Company) DynamicUtil.createObject(Company.class);
                     comp.setVatNumber(i);
                     comp.setName("Name" + i);
                     comp.proxycEO(new ProxyReference(os, i, CEO.class));

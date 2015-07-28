@@ -36,7 +36,7 @@ public class TypeUtilTest extends TestCase
     }
 
     public void testGetFieldValue() throws Exception {
-        assertNotNull(TypeUtil.getFieldValue((Company) DynamicUtil.createObject(Collections.singleton(Company.class)), "departments"));
+        assertNotNull(TypeUtil.getFieldValue((Company) DynamicUtil.createObject(Company.class), "departments"));
     }
 
     public void testSetFieldValue() throws Exception {
@@ -105,7 +105,7 @@ public class TypeUtilTest extends TestCase
 
 
     public void testGetFieldInfosDynamic() throws Exception {
-        Class<?> c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
+        Class<?> c = DynamicUtil.createObject(Company.class).getClass();
 
         Map got = TypeUtil.getFieldInfos(c);
         assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "bank", "address", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());

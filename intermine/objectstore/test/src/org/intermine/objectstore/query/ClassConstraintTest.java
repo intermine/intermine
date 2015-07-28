@@ -10,8 +10,6 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.util.Collections;
-
 import junit.framework.TestCase;
 
 import org.intermine.metadata.ConstraintOp;
@@ -43,7 +41,7 @@ public class ClassConstraintTest extends TestCase {
         employee = new QueryClass(Employee.class);
         manager = new QueryClass(Manager.class);
         contractor = new QueryClass(Contractor.class);
-        company1Object = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company1Object = (Company) DynamicUtil.createObject(Company.class);
         company1Object.setId(new Integer(8762134));
         managerObject = new Manager();
         managerObject.setId(new Integer(2687634));

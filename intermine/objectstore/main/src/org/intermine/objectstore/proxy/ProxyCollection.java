@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -228,7 +229,7 @@ public class ProxyCollection<E> extends AbstractSet<E> implements LazyCollection
 
     private Query internalGetQuery() {
         Query q = new Query();
-        QueryClass qc1 = new QueryClass(clazz);
+        QueryClass qc1 = new QueryClass(clazz.asSubclass(FastPathObject.class));
         q.addFrom(qc1);
         q.addToSelect(qc1);
         q.setConstraint(new ContainsConstraint(new QueryCollectionReference(o, fieldName),

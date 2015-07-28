@@ -18,7 +18,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -231,13 +230,13 @@ public class DatabaseUtilTest extends TestCase
         bag.add(new Boolean(false));
         bag.add(new Date(999999));
         bag.add(new Date(100));
-        Employee employee = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
+        Employee employee = (Employee) DynamicUtil.createObject(Employee.class);
         employee.setId(new Integer(5000));
         bag.add(employee);
-        Manager manager = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
+        Manager manager = (Manager) DynamicUtil.createObject(Manager.class);
         manager.setId(new Integer(5001));
         bag.add(manager);
-        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company company = (Company) DynamicUtil.createObject(Company.class);
         company.setId(new Integer(6000));
         bag.add(company);
 

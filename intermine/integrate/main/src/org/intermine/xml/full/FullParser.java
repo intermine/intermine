@@ -12,11 +12,15 @@ package org.intermine.xml.full;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
@@ -97,16 +101,15 @@ public final class FullParser
         List<FastPathObject> result = new ArrayList<FastPathObject>();
         for (Item item : items) {
             if (item.getIdentifier() != null) {
+                Class<? extends FastPathObject> cls = getSingleItemClass(item, model, abortOnError);
                 try {
-                    objMap.put(item.getIdentifier(), DynamicUtil.instantiateObject(
-                            ItemHelper.generateClassNames(item.getClassName(), model),
-                            ItemHelper.generateClassNames(item.getImplementations(), model)));
-                } catch (ClassNotFoundException e) {
+                    objMap.put(item.getIdentifier(), DynamicUtil.createObject(cls));
+                } catch (IllegalArgumentException e) {
                     if (abortOnError) {
                         throw e;
                     } else {
                         LOG.warn("Not creating object for item: " + item.getIdentifier()
-                                 + " class: " + item.getClassName() + " not found in model.");
+                                + " class: " + item.getClassName() + " no valid class found.");
                     }
                 }
             }
@@ -117,18 +120,8 @@ public final class FullParser
             // simple objects don't have identifiers so can't be put in the objMap, need to
             // create again in this loop to get an instance
             if (item.getIdentifier() == null) {
-                try {
-                    instance = DynamicUtil.instantiateObject(
-                            ItemHelper.generateClassNames(item.getClassName(), model),
-                            ItemHelper.generateClassNames(item.getImplementations(), model));
-                } catch (ClassNotFoundException e) {
-                    if (abortOnError) {
-                        throw e;
-                    } else {
-                        LOG.warn("Not creating object for item: " + item.getIdentifier()
-                                 + " class: " + item.getClassName() + " not found in model.");
-                    }
-                }
+                Class<? extends FastPathObject> cls = getSingleItemClass(item, model, abortOnError);
+                instance = DynamicUtil.createObject(cls);
             } else {
                 instance = objMap.get(item.getIdentifier());
             }
@@ -139,6 +132,57 @@ public final class FullParser
         }
 
         return result;
+    }
+
+    /**
+     * Get a single class for an item whether it is a class or interface. If abortOnError is true
+     * throw an exception if the item has more than one class, log a warning otherwise.
+     * @param item the item to get a class for
+     * @param model the model
+     * @param abortOnError if true throw an exception on error, otherwise log a warning
+     * @return
+     * @throws ClassNotFoundException
+     */
+    private static Class<? extends FastPathObject> getSingleItemClass(Item item, Model model,
+            boolean abortOnError) throws ClassNotFoundException {
+        Class<? extends FastPathObject> cls = null;
+
+        Set<String> classes = new HashSet<String>();
+        if (!StringUtils.isBlank(item.getClassName())) {
+            classes.add(item.getClassName());
+        }
+        if (!StringUtils.isBlank(item.getImplementations())) {
+            classes.addAll(Arrays.asList(item.getImplementations().split(" ")));
+        }
+        if (classes.size() == 1) {
+            String clsName = classes.iterator().next();
+            try {
+                cls = Class.forName(clsName).asSubclass(FastPathObject.class);
+            } catch (ClassNotFoundException e) {
+                try {
+                    // first try adding package name
+                    cls = Class.forName(model.getPackageName() + "." + clsName)
+                            .asSubclass(FastPathObject.class);
+                } catch (ClassNotFoundException ee) {
+                    if (abortOnError) {
+                        throw ee;
+                    } else {
+                        LOG.warn("Not creating object for item: " + item.getIdentifier()
+                                 + " class: " + item.getClassName() + " not found in model.");
+                    }
+                }
+            }
+        } else {
+            String message = "Not creating object for item: " + item.getIdentifier()
+                    + " multiple classes/interfaces defined but dynamic classes are no"
+                    + " longer supported: " + classes;
+            if (abortOnError) {
+                throw new IllegalArgumentException(message);
+            } else {
+                LOG.warn(message);
+            }
+        }
+        return cls;
     }
 
     /**

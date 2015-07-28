@@ -10,17 +10,12 @@ package org.intermine.objectstore.intermine;
  *
  */
 
-import java.util.Map;
-
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.util.DynamicBean;
 
 public class NotXmlTest extends TestCase
 {
@@ -59,31 +54,12 @@ public class NotXmlTest extends TestCase
 
         assertEquals("Employee1", obj1.getName());
         assertEquals(new Integer(1234), obj1.getId());
-        Class c = Employee.class;
+        Class<Employee> c = Employee.class;
         java.lang.reflect.Field f = c.getDeclaredField("department");
         f.setAccessible(true);
         ProxyReference o = (ProxyReference) f.get(obj1);
         assertNotNull(o);
         assertEquals(new Integer(5678), o.getId());
-    }
-
-    public void testParseDynamic() throws Exception {
-
-        String s = NotXmlParser.DELIM + "org.intermine.model.testmodel.Company net.sf.cglib.proxy.Factory"
-            + NotXmlParser.DELIM + "raddress" + NotXmlParser.DELIM + "74328"
-            + NotXmlParser.DELIM + "avatNumber" + NotXmlParser.DELIM + "100"
-            + NotXmlParser.DELIM + "aname" + NotXmlParser.DELIM + "CompanyC"
-            + NotXmlParser.DELIM + "aid" + NotXmlParser.DELIM + "74350";
-
-        Company obj1 = (Company) NotXmlParser.parse(s, os);
-
-        assertEquals("CompanyC", obj1.getName());
-        assertEquals(100, obj1.getVatNumber());
-        assertEquals(new Integer(74350), obj1.getId());
-        Map fieldMap = ((DynamicBean) ((net.sf.cglib.proxy.Factory) obj1).getCallback(0)).getMap();
-        ProxyReference addressRef = (ProxyReference) fieldMap.get("address");
-        assertNotNull(addressRef);
-        assertEquals(new Integer(74328), addressRef.getId());
     }
 
     public void testHandleDelims() throws Exception {

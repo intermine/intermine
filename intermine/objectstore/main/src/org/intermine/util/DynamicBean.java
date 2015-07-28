@@ -66,30 +66,30 @@ public class DynamicBean implements MethodInterceptor
         // empty
     }
 
+
     /**
-     * Create a DynamicBean
-     *
-     * @param clazz the class to extend
-     * @param inter the interfaces to implement
-     * @return the DynamicBean
+     * Create dynamic bean representing and object of a particular class, allows us instantiate
+     * interfaces like regular classes.
+     * @param clazz the class or inteface to create an object for
+     * @return a dynamic bean object
      */
-    public static FastPathObject create(Class<? extends FastPathObject> clazz, Class<?> [] inter) {
-        if ((clazz != null) && clazz.isInterface()) {
-            throw new IllegalArgumentException("clazz must not be an interface");
+    public static <C extends FastPathObject> C create(Class<C> clazz) {
+        if (clazz == null) {
+            throw new IllegalArgumentException("You must specify a class when creating a "
+                    + "DynamicBean, was: " + clazz);
         }
-        // If Enhancer.create() called with a null class it will alter java.lang.Object
-        // this causes a security exception if run with Kaffe JRE
-        //if ( clazz == null) {
-        //    clazz = DynamicBean.class;
-        //}
         Callback[] callbacks = {new DynamicBean(), NoOp.INSTANCE};
         Enhancer e = new Enhancer();
-        e.setSuperclass(clazz);
-        e.setInterfaces(inter);
+        if (clazz.isInterface()) {
+            e.setInterfaces(new Class<?> [] {clazz});
+        } else {
+            e.setSuperclass(clazz);
+        }
         e.setCallbackFilter(FINALIZE_FILTER);
         e.setCallbacks(callbacks);
-        return (FastPathObject) e.create();
+        return (C) e.create();
     }
+
 
     /**
      * Intercept all method calls, and operate on Map.

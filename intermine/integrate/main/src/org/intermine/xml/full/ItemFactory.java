@@ -10,7 +10,6 @@ package org.intermine.xml.full;
  *
  */
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -22,7 +21,7 @@ import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ClobAccess;
-import org.intermine.xml.XmlHelper;
+import org.intermine.util.DynamicUtil;
 
 /**
  * ItemFactory class
@@ -149,13 +148,15 @@ public class ItemFactory
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
 
-        String className = XmlHelper.getClassName(obj, model);
+        String clsName = DynamicUtil.getSimpleClassName(obj);
+        ClassDescriptor cld = model.getClassDescriptorByName(clsName);
 
         Item item = makeItem(obj instanceof InterMineObject ? ((InterMineObject) obj).getId()
                 .toString() : null);
-        item.setClassName("".equals(className) ? ""
-                : TypeUtil.unqualifiedName(className));
-        item.setImplementations(getImplements(obj, model));
+
+        // Set a classname or implements depending on whether a concrete class or interface
+        item.setClassName(cld.isInterface() ? "" : TypeUtil.unqualifiedName(cld.getName()));
+        item.setImplementations(cld.isInterface() ? TypeUtil.unqualifiedName(cld.getName()) : "");
 
         try {
             for (String fieldname : includeFields) {
@@ -213,28 +214,5 @@ public class ItemFactory
         } else {
             return value.toString();
         }
-    }
-
-    /**
-     * Get all interfaces that an object implements.
-     *
-     * @param obj the object
-     * @param model the parent model
-     * @return space separated list of extended/implemented classes/interfaces
-     */
-    protected static String getImplements(Object obj, Model model) {
-        StringBuffer sb = new StringBuffer();
-
-        Class<?>[] interfaces = obj.getClass().getInterfaces();
-        Arrays.sort(interfaces, new RendererComparator());
-
-        for (int i = 0; i < interfaces.length; i++) {
-            ClassDescriptor cld = model.getClassDescriptorByName(interfaces[i].getName());
-            if (cld != null && cld.isInterface()
-                && !"org.intermine.model.InterMineObject".equals(cld.getName())) {
-                sb.append(TypeUtil.unqualifiedName(interfaces[i].getName())).append(" ");
-            }
-        }
-        return sb.toString().trim();
     }
 }

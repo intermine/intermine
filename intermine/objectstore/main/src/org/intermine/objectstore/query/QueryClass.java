@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
-import org.intermine.util.DynamicUtil;
 
 /**
  * Represents the database extent of a Java class
@@ -37,24 +36,6 @@ public class QueryClass implements QueryNode, FromElement
      */
     public QueryClass(Class<? extends FastPathObject> type) {
         this.type = type;
-    }
-
-    /**
-     * Constructs a QueryClass representing the specified set of classes
-     *
-     * @param types the Set of classes
-     */
-    public QueryClass(Set<Class<?>> types) {
-        this(types.toArray(new Class[0]));
-    }
-
-    /**
-     * Constructs a QueryClass representing the specified array of classes
-     *
-     * @param types the array of classes
-     */
-    public QueryClass(Class<?>... types) {
-        this.type = DynamicUtil.composeDescriptiveClass(types);
     }
 
     /**

@@ -21,20 +21,20 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         ObjectStoreWriterDummyImpl osw = new ObjectStoreWriterDummyImpl(os);
 
         InterMineObject o1 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         osw.store(o1);
 
         InterMineObject o2 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         o2.setId(new Integer(1));
         osw.store(o2);
 
         InterMineObject o3 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         osw.store(o3);
 
         InterMineObject o4 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         o4.setId(new Integer(100));
         // store twice to make sure we get only one copy
         osw.store(o4);
@@ -42,7 +42,7 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
 
 
         InterMineObject o5 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         // store twice to make sure we get only one copy
         osw.store(o5);
         osw.store(o5);
@@ -71,16 +71,16 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         osw.beginTransaction();
 
         InterMineObject o1 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         osw.store(o1);
 
         InterMineObject o2 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         o2.setId(new Integer(1));
         osw.store(o2);
 
         InterMineObject o3 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         osw.store(o3);
 
         assertTrue(osw.isInTransaction());
@@ -108,13 +108,13 @@ public class ObjectStoreWriterDummyImplTest extends TestCase {
         assertTrue(osw.isInTransaction());
 
         InterMineObject o4 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         o4.setId(new Integer(100));
         osw.store(o4);
 
 
         InterMineObject o5 =
-            (InterMineObject) DynamicUtil.createObject(Collections.singleton(Company.class));
+            (InterMineObject) DynamicUtil.createObject(Company.class);
         osw.store(o5);
 
         storedObjects = osw.getStoredObjects();
