@@ -23,6 +23,7 @@ import java.util.Set;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
@@ -36,7 +37,6 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.Util;
 
 /**
  * Methods for creating feature for intergenic regions.
@@ -62,7 +62,7 @@ public class IntergenicRegionUtil
         this.osw = osw;
         this.os = osw.getObjectStore();
         this.model = os.getModel();
-        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource = DynamicUtil.createObject(DataSource.class);
         dataSource.setName("FlyMine");
         try {
             dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
@@ -91,7 +91,7 @@ public class IntergenicRegionUtil
 
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
                 false, false, 1000);
-        dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        dataSet = DynamicUtil.createObject(DataSet.class);
         dataSet.setName("FlyMine intergenic regions");
         dataSet.setDescription("Intergenic regions created by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
@@ -234,10 +234,9 @@ public class IntergenicRegionUtil
 
                 Class<? extends FastPathObject> igCls =
                     os.getModel().getClassDescriptorByName("IntergenicRegion").getType();
-                SequenceFeature intergenicRegion = (SequenceFeature) DynamicUtil
-                .createObject(Collections.singleton(igCls));
-                Location location = (Location) DynamicUtil.createObject(
-                        Collections.singleton(Location.class));
+                SequenceFeature intergenicRegion =
+                        (SequenceFeature) DynamicUtil.createObject(igCls);
+                Location location = DynamicUtil.createObject(Location.class);
                 location.setStart(new Integer(newLocStart));
                 location.setEnd(new Integer(newLocEnd));
                 location.setStrand("1");

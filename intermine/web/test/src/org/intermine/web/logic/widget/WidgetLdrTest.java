@@ -12,6 +12,10 @@ package org.intermine.web.logic.widget;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -55,17 +59,17 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         Query query = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         query.setConstraint(cs);
-        QueryClass employeeQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Employee"));
+        QueryClass employeeQc = new QueryClass(Employee.class);
         query.addFrom(employeeQc);
-        QueryClass departmentQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Department"));
+        QueryClass departmentQc = new QueryClass(Department.class);
         query.addFrom(departmentQc);
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(employeeQc, "department"),
                         ConstraintOp.CONTAINS, departmentQc));
-        QueryClass companyQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Company"));
+        QueryClass companyQc = new QueryClass(Company.class);
         query.addFrom(companyQc);
         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(departmentQc, "company"),
                 ConstraintOp.CONTAINS, companyQc));
-        QueryClass contractorQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Contractor"));
+        QueryClass contractorQc = new QueryClass(Contractor.class);
         query.addFrom(contractorQc);
         cs.addConstraint(new ContainsConstraint(new QueryCollectionReference(companyQc, "contractors"),
                 ConstraintOp.CONTAINS, contractorQc));
@@ -83,14 +87,14 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
 
         widgetLdr.createQueryFieldByPath("department.company.name", q, false);
         assertEquals(query.toString(), q.toString());
-        
+
     }
 
     public void testAddReference() throws ClassNotFoundException {
         Query query = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         query.setConstraint(cs);
-        QueryClass startQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Employee"));
+        QueryClass startQc = new QueryClass(Employee.class);
         query.addFrom(startQc);
         widgetLdr.addReference(query, startQc, "department", "Employee.department");
         ContainsConstraint cc = (ContainsConstraint) (cs.getConstraints().iterator().next());

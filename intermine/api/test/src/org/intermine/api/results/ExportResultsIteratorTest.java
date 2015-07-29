@@ -12,7 +12,6 @@ package org.intermine.api.results;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,6 @@ import org.intermine.util.IteratorIterable;
 public class ExportResultsIteratorTest extends TestCase
 {
     private final Model model = Model.getInstanceByName("testmodel");
-    private Map classKeys;
 
     public ExportResultsIteratorTest (String arg) {
         super(arg);
@@ -57,7 +55,7 @@ public class ExportResultsIteratorTest extends TestCase
         os.setResultsSize(1);
 
         // Set up some known objects in the first 3 results rows
-        Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company company1 = DynamicUtil.createObject(Company.class);
         company1.setName("Company1");
         company1.setVatNumber(101);
         company1.setId(new Integer(1));
@@ -126,27 +124,27 @@ public class ExportResultsIteratorTest extends TestCase
 
         List expected = Arrays.asList(
                 Arrays.asList(
-                    new ResultElement(company1, p1, false), 
-                    new ResultElement(company1, p2, false), 
-                    new ResultElement(department1, p3, false), 
+                    new ResultElement(company1, p1, false),
+                    new ResultElement(company1, p2, false),
+                    new ResultElement(department1, p3, false),
                     new ResultElement(employee1, p4, false)
                 ),
                 Arrays.asList(
-                    new ResultElement(company1, p1, false), 
-                    new ResultElement(company1, p2, false), 
-                    new ResultElement(department1, p3, false), 
+                    new ResultElement(company1, p1, false),
+                    new ResultElement(company1, p2, false),
+                    new ResultElement(department1, p3, false),
                     new ResultElement(employee2, p4, false)
                 ),
                 Arrays.asList(
-                    new ResultElement(company1, p1, false), 
-                    new ResultElement(company1, p2, false), 
-                    new ResultElement(department2, p3, false), 
+                    new ResultElement(company1, p1, false),
+                    new ResultElement(company1, p2, false),
+                    new ResultElement(department2, p3, false),
                     new ResultElement(employee3, p4, false)
                 ),
                 Arrays.asList(
-                    new ResultElement(company1, p1, false), 
-                    new ResultElement(company1, p2, false), 
-                    new ResultElement(department2, p3, false), 
+                    new ResultElement(company1, p1, false),
+                    new ResultElement(company1, p2, false),
+                    new ResultElement(department2, p3, false),
                     new ResultElement(employee4, p4, false)
                 )
         );
@@ -171,7 +169,7 @@ public class ExportResultsIteratorTest extends TestCase
         os.setResultsSize(1);
 
         // Set up some known objects in the first 3 results rows
-        Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company company1 = DynamicUtil.createObject(Company.class);
         company1.setName("Company1");
         company1.setVatNumber(101);
         company1.setId(new Integer(1));
@@ -227,32 +225,32 @@ public class ExportResultsIteratorTest extends TestCase
 
         List expected = Arrays.asList(
                 Arrays.asList(
-                        new ResultElement(company1, p1, false), 
-                        new ResultElement(company1, p2, false), 
-                        new ResultElement(department1, p3, false), 
+                        new ResultElement(company1, p1, false),
+                        new ResultElement(company1, p2, false),
+                        new ResultElement(department1, p3, false),
                         null
                 ),
-                Arrays.asList(new ResultElement(company1, p1, false), 
-                        new ResultElement(company1, p2, false), 
-                        new ResultElement(department2, p3, false), 
+                Arrays.asList(new ResultElement(company1, p1, false),
+                        new ResultElement(company1, p2, false),
+                        new ResultElement(department2, p3, false),
                         null
                 ),
                 Arrays.asList(
-                        new ResultElement(company1, p1, false), 
-                        new ResultElement(company1, p2, false), 
-                        null, 
+                        new ResultElement(company1, p1, false),
+                        new ResultElement(company1, p2, false),
+                        null,
                         new ResultElement(contractor1, p4, false)
                 ),
                 Arrays.asList(
-                        new ResultElement(company1, p1, false), 
-                        new ResultElement(company1, p2, false), 
-                        null, 
+                        new ResultElement(company1, p1, false),
+                        new ResultElement(company1, p2, false),
+                        null,
                         new ResultElement(contractor2, p4, false)
                 ),
                 Arrays.asList(
-                        new ResultElement(company1, p1, false), 
-                        new ResultElement(company1, p2, false), 
-                        null, 
+                        new ResultElement(company1, p1, false),
+                        new ResultElement(company1, p2, false),
+                        null,
                         new ResultElement(contractor3, p4, false)
                 )
             );
@@ -277,7 +275,7 @@ public class ExportResultsIteratorTest extends TestCase
         os.setResultsSize(2);
 
         // Set up some known objects in the first 3 results rows
-        Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company company1 = DynamicUtil.createObject(Company.class);
         company1.setName("Company1");
         company1.setVatNumber(101);
         company1.setId(new Integer(1));
@@ -306,11 +304,11 @@ public class ExportResultsIteratorTest extends TestCase
 
         List expected = Arrays.asList(
                 Arrays.asList(
-                        new ResultElement(department1, p1, false), 
+                        new ResultElement(department1, p1, false),
                         new ResultElement(company1, p2, false)
                 ),
                 Arrays.asList(
-                        new ResultElement(department2, p1, false), 
+                        new ResultElement(department2, p1, false),
                         new ResultElement(company1, p2, false)
                 )
         );
@@ -336,7 +334,7 @@ public class ExportResultsIteratorTest extends TestCase
         os.setResultsSize(2);
 
         // Set up some known objects in the first 3 results rows
-        Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company company1 = DynamicUtil.createObject(Company.class);
         company1.setName("Company1");
         company1.setVatNumber(101);
         company1.setId(new Integer(1));
@@ -376,13 +374,13 @@ public class ExportResultsIteratorTest extends TestCase
 
         List expected = Arrays.asList(
                 Arrays.asList(
-                        new ResultElement(e1, p1, false), 
-                        new ResultElement(department1, p2, false), 
+                        new ResultElement(e1, p1, false),
+                        new ResultElement(department1, p2, false),
                         new ResultElement(company1, p3, false)
                 ),
                 Arrays.asList(
-                        new ResultElement(e2, p1, false), 
-                        new ResultElement(department2, p2, false), 
+                        new ResultElement(e2, p1, false),
+                        new ResultElement(department2, p2, false),
                         new ResultElement(company1, p3, false)
                 )
         );
@@ -407,7 +405,7 @@ public class ExportResultsIteratorTest extends TestCase
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(1);
 
-        Company company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company company = DynamicUtil.createObject(Company.class);
         company.setName("Company1");
         company.setVatNumber(101);
         company.setId(1);

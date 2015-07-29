@@ -46,6 +46,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.BagConstraint;
@@ -244,7 +245,8 @@ public final class MainHelper
                     // This is the root path. Just add the QueryClass, no further action.
                     if (root.equals(outerJoinGroup)) {
                         // This class is relevant to this outer join group
-                        QueryClass qc = new QueryClass(path.getEndType());
+                        QueryClass qc =
+                                new QueryClass(path.getEndType().asSubclass(FastPathObject.class));
                         ((Query) q).addFrom(qc);
                         queryBits.put(stringPath, qc);
                     }
@@ -281,7 +283,8 @@ public final class MainHelper
                                     continue;
                                 }
                             } else {
-                                qc = new QueryClass(path.getEndType());
+                                qc = new QueryClass(
+                                        path.getEndType().asSubclass(FastPathObject.class));
                                 if (!pathConstraintNullOnly.containsKey(path.toString())) {
                                     if (q instanceof Query) {
                                         ((Query) q).addFrom(qc);
@@ -332,7 +335,8 @@ public final class MainHelper
                                 if (isCollection) {
                                     QueryCollectionPathExpression qn
                                         = new QueryCollectionPathExpression(parentQc,
-                                                path.getLastElement(), path.getEndType());
+                                                path.getLastElement(),
+                                                path.getEndType().asSubclass(FastPathObject.class));
                                     makeQuery(qn, stringPath, pathQuery, savedBags,
                                             pathToQueryNode, bagQueryRunner, returnBagQueryResults);
                                     queryBits.put(stringPath, qn);
@@ -340,7 +344,8 @@ public final class MainHelper
                                 } else {
                                     QueryObjectPathExpression qn
                                         = new QueryObjectPathExpression(parentQc,
-                                                path.getLastElement(), path.getEndType());
+                                                path.getLastElement(),
+                                                path.getEndType().asSubclass(FastPathObject.class));
                                     makeQuery(qn, stringPath, pathQuery, savedBags, pathToQueryNode,
                                             bagQueryRunner, returnBagQueryResults);
                                     queryBits.put(stringPath, qn);

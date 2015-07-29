@@ -1,7 +1,6 @@
 package org.intermine.bio.web.export;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,11 +25,9 @@ public class GFF3UtilTest extends TestCase
     private Map<String, List<String>> emptyAttributes = new HashMap<String, List<String>>();
 
     public void setUp() {
-        exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        chromosome =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        exonLocation =
-            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exon = DynamicUtil.createObject(Exon.class);
+        chromosome = DynamicUtil.createObject(Chromosome.class);
+        exonLocation = DynamicUtil.createObject(Location.class);
 
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);

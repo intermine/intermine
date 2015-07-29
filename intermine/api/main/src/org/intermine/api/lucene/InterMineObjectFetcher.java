@@ -575,7 +575,7 @@ public class InterMineObjectFetcher extends Thread
         for (int i = 0; i < classDescriptors.size(); i++) {
             ClassDescriptor classDescriptor = classDescriptors.get(i);
 
-            Class<?> classInCollection = classDescriptor.getType();
+            Class<? extends FastPathObject> classInCollection = classDescriptor.getType();
 
             QueryClass queryClass = new QueryClass(classInCollection);
             q.addFrom(queryClass);

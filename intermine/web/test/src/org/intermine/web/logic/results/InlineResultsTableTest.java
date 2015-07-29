@@ -3,7 +3,6 @@ package org.intermine.web.logic.results;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,11 +44,11 @@ public class InlineResultsTableTest extends TestCase
         super.setUp();
 
         // InterMine Objects
-        company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company = DynamicUtil.createObject(Company.class);
         company.setId(new Integer(1));
         company.setName("Weyland Yutani");
 
-        ceo = (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
+        ceo = DynamicUtil.createObject(CEO.class);
         ceo.setId(new Integer(2));
         ceo.setName("Radek");
 
