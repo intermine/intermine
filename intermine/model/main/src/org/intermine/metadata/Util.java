@@ -599,6 +599,8 @@ public final class Util
 
     private static HashMap<Class<?>, Set<Class<?>>> decomposeMap = new HashMap<Class<?>,
             Set<Class<?>>>();
+    private static HashMap<Class<?>, Class<?>> dynamicClassCache =
+            new HashMap<Class<?>, Class<?>>();
     private static Map<Class<?>, String> friendlyNameMap = new HashMap<Class<?>, String>();
 
     /**
@@ -669,35 +671,38 @@ public final class Util
      * @return the class (usually from the data model), this may be an interface
      */
     public static synchronized Class<?> dynamicGetClass(Class<?> clazz) {
-        Class<?> retval = null;
+        Class<?> retval = dynamicClassCache.get(clazz);
 
-        // this is dynamic class - an interface instantiated as a class at runtime
-        if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
-            //retval = clazz.getSuperclass();
-            Class<?>[] interfs = clazz.getInterfaces();
-            for (int i = 0; i < interfs.length; i++) {
-                Class<?> inter = interfs[i];
-                if (net.sf.cglib.proxy.Factory.class != inter) {
-                    if (retval != null || clazz.getSuperclass() != java.lang.Object.class) {
-                        throw new IllegalArgumentException("Found a dynamic object composed of"
-                                + " multiple interfaces, but only one is now allowed.  Superclass: "
-                                + clazz.getSuperclass() + " interfaces: " + interfs);
+        if (retval == null) {
+            // this is dynamic class - an interface instantiated as a class at runtime
+            if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
+                Class<?>[] interfs = clazz.getInterfaces();
+                for (int i = 0; i < interfs.length; i++) {
+                    Class<?> inter = interfs[i];
+                    if (net.sf.cglib.proxy.Factory.class != inter) {
+                        if (retval != null || clazz.getSuperclass() != java.lang.Object.class) {
+                            throw new IllegalArgumentException("Found a dynamic object composed of"
+                                    + " multiple interfaces, but only one is now allowed. "
+                                    + " Superclass: " + clazz.getSuperclass() + " interfaces: "
+                                    + interfs);
+                        }
+                        retval = inter;
                     }
-                    retval = inter;
                 }
+            } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
+                try {
+                    retval = ((Class<?>) clazz.getField("shadowOf").get(null));
+                } catch (NoSuchFieldException e) {
+                    throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
+                            + "shadowOf method", e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(clazz.getName()
+                            + ".shadowOf method is inaccessible", e);
+                }
+            } else {
+                retval = clazz;
             }
-        } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
-            try {
-                retval = ((Class<?>) clazz.getField("shadowOf").get(null));
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
-                        + "shadowOf method", e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(clazz.getName()
-                        + ".shadowOf method is inaccessible", e);
-            }
-        } else {
-            retval = clazz;
+            dynamicClassCache.put(clazz, retval);
         }
 
         return retval;

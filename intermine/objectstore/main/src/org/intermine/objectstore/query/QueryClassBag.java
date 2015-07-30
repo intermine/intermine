@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 
 /**
  * An element that can appear in the FROM clause of a query
@@ -113,7 +113,6 @@ public class QueryClassBag implements FromElement
      */
     @Override
     public String toString() {
-        Set<Class<?>> classes = Util.decomposeClass(type);
         StringBuffer retval = new StringBuffer();
         if (osb != null) {
             retval.append("BAG(" + osb.getBagId() + ")::");
@@ -122,17 +121,8 @@ public class QueryClassBag implements FromElement
         } else {
             retval.append("!::");
         }
-        if (classes.size() == 1) {
-            retval.append(type.getName());
-        } else {
-            boolean needComma = false;
-            for (Class<?> clazz : classes) {
-                retval.append(needComma ? ", " : "(");
-                needComma = true;
-                retval.append(clazz.getName());
-            }
-            retval.append(")");
-        }
+        retval.append(DynamicUtil.getClass(type).getName());
+
         return retval.toString();
     }
 }

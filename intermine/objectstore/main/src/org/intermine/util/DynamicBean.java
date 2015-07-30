@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import net.sf.cglib.proxy.Callback;
@@ -26,8 +25,6 @@ import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 
 import org.intermine.metadata.StringUtil;
-import org.intermine.metadata.TypeUtil;
-import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.NotXmlRenderer;
@@ -323,19 +320,10 @@ public class DynamicBean implements MethodInterceptor
     }
 
     private String doToString(Object obj) {
-        StringBuffer className = new StringBuffer();
-        boolean needComma = false;
-        Set<Class<?>> classes = Util.decomposeClass(obj.getClass());
-        for (Class<?> clazz : classes) {
-            if (needComma) {
-                className.append(",");
-            }
-            needComma = true;
-            className.append(TypeUtil.unqualifiedName(clazz.getName()));
-        }
-        StringBuffer retval = new StringBuffer(className.toString() + " [");
+        Class<?> cls = DynamicUtil.getClass(obj);
+        StringBuffer retval = new StringBuffer(cls.getName() + " [");
         Map<String, Object> sortedMap = new TreeMap<String, Object>(map);
-        needComma = false;
+        boolean needComma = false;
         for (Map.Entry<String, Object> mapEntry : sortedMap.entrySet()) {
             String fieldName = mapEntry.getKey();
             Object fieldValue = mapEntry.getValue();

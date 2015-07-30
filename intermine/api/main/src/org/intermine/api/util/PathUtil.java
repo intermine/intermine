@@ -174,11 +174,6 @@ public final class PathUtil
      * @return a boolean
      */
     public static boolean canAssignObjectToType(Class<?> cls, InterMineObject obj) {
-        for (Class<?> c : Util.decomposeClass(obj.getClass())) {
-            if (cls.isAssignableFrom(c)) {
-                return true;
-            }
-        }
-        return false;
+        return cls.isAssignableFrom(DynamicUtil.getClass(obj));
     }
 }

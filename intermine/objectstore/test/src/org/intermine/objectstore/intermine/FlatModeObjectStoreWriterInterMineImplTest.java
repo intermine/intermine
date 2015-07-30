@@ -64,7 +64,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.store(o);
             fail("Expected: error");
         } catch (ObjectStoreException e) {
-            assertEquals("Object [interface org.intermine.model.InterMineObject] does not map onto any database table.", e.getMessage());
+            assertEquals("Object interface org.intermine.model.InterMineObject does not map onto any database table.", e.getMessage());
         } finally {
             writer.delete(o);
         }
@@ -76,7 +76,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.store(o);
             fail("Expected: error");
         } catch (ObjectStoreException e) {
-            assertEquals("Cannot store object [class org.intermine.model.testmodel.Cleaner] - no column for field evenings in table Employee", e.getMessage());
+            assertEquals("Cannot store object class org.intermine.model.testmodel.Cleaner - no column for field evenings in table Employee", e.getMessage());
         } finally {
             writer.delete(o);
         }
@@ -88,7 +88,7 @@ public class FlatModeObjectStoreWriterInterMineImplTest extends ObjectStoreWrite
             writer.store(o);
             fail("Expected: error");
         } catch (ObjectStoreException e) {
-            assertEquals("Non-flat model heirarchy used in flat mode. Cannot store object with classes = [class org.intermine.model.testmodel.BigDepartment]", e.getMessage());
+            assertEquals("Non-flat model heirarchy used in flat mode. Cannot store object with class = class org.intermine.model.testmodel.BigDepartment", e.getMessage());
         } finally {
             writer.delete(o);
         }

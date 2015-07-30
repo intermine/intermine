@@ -102,7 +102,7 @@ public final class TypeUtil
                 type = " (available fields are " + getFieldInfos(o.getClass()).keySet() + ")";
             }
             IllegalAccessException e2 = new IllegalAccessException("Couldn't get field \""
-                    + Util.decomposeClass(o.getClass()) + "." + fieldName + "\""
+                    + Util.dynamicGetClass(o.getClass()) + "." + fieldName + "\""
                     + type);
             e2.initCause(e);
             throw e2;

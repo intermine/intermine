@@ -20,7 +20,6 @@ import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
-import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,6 +32,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Utility methods for paths.
@@ -69,11 +69,7 @@ public final class QueryGenUtil
                 QueryAndClass qac = createClassFindingQuery(os.getModel(), part);
                 for (Object cls : os.executeSingleton(qac.getQuery(), 1000, false, false, false)) {
                     Class<?> clazz = (Class<?>) cls;
-                    for (Class<?> classPart : Util.decomposeClass(clazz)) {
-                        if (qac.getClazz().isAssignableFrom(classPart)) {
-                            clsNames.add(TypeUtil.unqualifiedName(classPart.getName()));
-                        }
-                    }
+                    clsNames.add(TypeUtil.unqualifiedName(DynamicUtil.getClass(clazz).getName()));
                 }
             } else {
                 if (part.startsWith("+")) {
