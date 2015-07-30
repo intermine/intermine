@@ -661,6 +661,50 @@ public final class Util
     }
 
     /**
+     * Get the actual class from a class that may be a dynamic class. For dynamic objects that
+     * represent the instantiation of an interface the interface class is returned. For interfaces
+     * where a Shadow class is used the interface class is returned. This util method is needed
+     * because DynamicBean can't override getClass().
+     * @param clazz a class to decompose
+     * @return the class (usually from the data model), this may be an interface
+     */
+    public static synchronized Class<?> dynamicGetClass(Class<?> clazz) {
+        Class<?> retval = null;
+
+        // this is dynamic class - an interface instantiated as a class at runtime
+        if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
+            //retval = clazz.getSuperclass();
+            Class<?>[] interfs = clazz.getInterfaces();
+            for (int i = 0; i < interfs.length; i++) {
+                Class<?> inter = interfs[i];
+                if (net.sf.cglib.proxy.Factory.class != inter) {
+                    if (retval != null || clazz.getSuperclass() != java.lang.Object.class) {
+                        throw new IllegalArgumentException("Found a dynamic object composed of"
+                                + " multiple interfaces, but only one is now allowed.  Superclass: "
+                                + clazz.getSuperclass() + " interfaces: " + interfs);
+                    }
+                    retval = inter;
+                }
+            }
+        } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
+            try {
+                retval = ((Class<?>) clazz.getField("shadowOf").get(null));
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
+                        + "shadowOf method", e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(clazz.getName()
+                        + ".shadowOf method is inaccessible", e);
+            }
+        } else {
+            retval = clazz;
+        }
+
+        return retval;
+    }
+
+
+    /**
      * Creates a friendly name for a given class.
      *
      * @param clazz the class

@@ -79,6 +79,35 @@ public final class DynamicUtil
     }
 
     /**
+     * Get the actual class from a class that may be a dynamic class. For dynamic objects that
+     * represent the instantiation of an interface the interface class is returned. For interfaces
+     * where a Shadow class is used the interface class is returned. This util method is needed
+     * because DynamicBean can't override getClass().
+     * @param cls a class, usually from the data model
+     * @return the class (usually from the data model), this may be an interface
+     */
+    // NOTE - due to dependencies the code for this method is in a Util class in the model project
+    //        but it is clearer if code in the objectstore project calls DynamicUtil.getClass().
+    //        Also creation of dynamic objects is required to test this method which requires that
+    //        the test is in the objectstore project.
+    public static Class<?> getClass(Class<?> cls) {
+        return Util.dynamicGetClass(cls);
+    }
+
+    /**
+     * Get the actual class from an object that may be a dynamic class. For dynamic objects that
+     * represent the instantiation of an interface the interface class is returned. For interfaces
+     * where a Shadow class is used the interface class is returned. This util method is needed
+     * because DynamicBean can't override getClass().
+     * @param o an object from the data model
+     * @return the class (usually from the data model) that describes the object, this may be an
+     * interface
+     */
+    public static Class<?> getClass(Object o) {
+        return getClass(o.getClass());
+    }
+
+    /**
      * Create a new object given a class, which may be an interface. This method is equivalent to
      * calling createObject(Collections.singleton(clazz)), except that it is genericised.
      *

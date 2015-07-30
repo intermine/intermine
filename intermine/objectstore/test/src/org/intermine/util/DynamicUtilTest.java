@@ -68,4 +68,29 @@ public class DynamicUtilTest extends TestCase
         } catch (IllegalArgumentException e) {
         }
     }
+
+    // Employee is a class
+    public void testGetClassSimple() {
+        Employee e = DynamicUtil.createObject(Employee.class);
+        assertTrue(e instanceof Employee);
+        assertEquals(Employee.class, DynamicUtil.getClass(e));
+        assertEquals(Employee.class, DynamicUtil.getClass(e.getClass()));
+    }
+
+    // Company is an interface, a Shadow class is available
+    public void testGetClassInterfaceShadow() {
+        Company c = DynamicUtil.createObject(Company.class);
+        assertTrue(c.getClass() == CompanyShadow.class);
+        assertTrue(c instanceof Company);
+        assertEquals(Company.class, DynamicUtil.getClass(c));
+        assertEquals(Company.class, DynamicUtil.getClass(c.getClass()));
+    }
+
+    // Create with an interface that doesn't have a Shadow class
+    public void testGetClassInterface() {
+        NewInterface ni = DynamicUtil.createObject(NewInterface.class);
+        assertTrue(ni instanceof NewInterface);
+        assertEquals(NewInterface.class, DynamicUtil.getClass(ni));
+        assertEquals(NewInterface.class, DynamicUtil.getClass(ni.getClass()));
+    }
 }
