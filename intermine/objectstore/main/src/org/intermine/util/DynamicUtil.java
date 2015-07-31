@@ -10,8 +10,6 @@ package org.intermine.util;
  *
  */
 
-import java.util.Set;
-
 import net.sf.cglib.proxy.Factory;
 
 import org.intermine.metadata.TypeUtil;
@@ -38,6 +36,7 @@ public final class DynamicUtil
      * Create a DynamicBean from a class or interface.
      *
      * @param cls the classes and interfaces to extend/implement
+     * @param <C> a class exteding FastPathObject
      * @return the DynamicBean
      * @throws IllegalArgumentException if there is more than one Class, or if fields are not
      * compatible.
@@ -124,13 +123,7 @@ public final class DynamicUtil
      * @return a boolean
      */
     public static boolean isAssignableFrom(Class<?> sup, Class<?> sub) {
-        Set<Class<?>> classes = Util.decomposeClass(sup);
-        for (Class<?> clazz : classes) {
-            if (!clazz.isAssignableFrom(sub)) {
-                return false;
-            }
-        }
-        return true;
+        return getClass(sup).isAssignableFrom(getClass(sub));
     }
 
     /**

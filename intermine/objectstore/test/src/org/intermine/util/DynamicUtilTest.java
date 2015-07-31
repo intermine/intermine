@@ -16,7 +16,10 @@ import org.intermine.model.FastPathObject;
 import org.intermine.model.ShadowClass;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.CompanyShadow;
+import org.intermine.model.testmodel.Employable;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.HasAddress;
+import org.intermine.model.testmodel.Manager;
 
 public class DynamicUtilTest extends TestCase
 {
@@ -92,5 +95,43 @@ public class DynamicUtilTest extends TestCase
         assertTrue(ni instanceof NewInterface);
         assertEquals(NewInterface.class, DynamicUtil.getClass(ni));
         assertEquals(NewInterface.class, DynamicUtil.getClass(ni.getClass()));
+    }
+
+    // Employee and Manager are classes
+    public void testIsAssignableFromClass() {
+        Employee e = DynamicUtil.createObject(Employee.class);
+        assertTrue(DynamicUtil.isAssignableFrom(Employable.class, DynamicUtil.getClass(e)));
+        assertFalse(DynamicUtil.isAssignableFrom(e.getClass(), Employable.class));
+
+        Manager m = DynamicUtil.createObject(Manager.class);
+        assertTrue(DynamicUtil.isAssignableFrom(e.getClass(), m.getClass()));
+        assertFalse(DynamicUtil.isAssignableFrom(m.getClass(), e.getClass()));
+    }
+
+    // Company has a shadow class
+    public void testIsAssignableFromShadow() {
+        Company c = DynamicUtil.createObject(Company.class);
+        assertTrue(DynamicUtil.isAssignableFrom(HasAddress.class, c.getClass()));
+        assertFalse(DynamicUtil.isAssignableFrom(c.getClass(), HasAddress.class));
+    }
+
+    // Employee and Manager are classes
+    public void testIsInstanceClass() {
+        Employee e = DynamicUtil.createObject(Employee.class);
+        assertTrue(DynamicUtil.isInstance(e, Employee.class));
+        assertTrue(DynamicUtil.isInstance(e, Employable.class));
+        assertFalse(DynamicUtil.isInstance(e, Company.class));
+
+        Manager m = DynamicUtil.createObject(Manager.class);
+        assertTrue(DynamicUtil.isInstance(m, e.getClass()));
+        assertFalse(DynamicUtil.isInstance(e, m.getClass()));
+    }
+
+ // Company has a shadow class
+    public void testIsInstanceShadow() {
+        Company c = DynamicUtil.createObject(Company.class);
+        assertTrue(DynamicUtil.isInstance(c, Company.class));
+        assertTrue(DynamicUtil.isInstance(c, HasAddress.class));
+        assertFalse(DynamicUtil.isInstance(c, Employee.class));
     }
 }

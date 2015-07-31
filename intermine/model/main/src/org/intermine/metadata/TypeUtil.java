@@ -533,25 +533,6 @@ public final class TypeUtil
     }
 
     /**
-     * Return true if and only if the object is an instance of the class given by the className.
-     * @param object the object to test
-     * @param className the super class name to test for
-     * @return true if object is an instance of className
-     * @exception ClassNotFoundException if the class given by className cannot be located
-     */
-    public static boolean isInstanceOf(FastPathObject object, String className)
-        throws ClassNotFoundException {
-        Set<Class<?>> classes = Util.decomposeClass(object.getClass());
-        Class<?> testClass = Class.forName(className);
-        for (Class<?> objectClass: classes) {
-            if (testClass.isAssignableFrom(objectClass)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Inner class to hold info on a field.
      *
      * @author Matthew Wakeling

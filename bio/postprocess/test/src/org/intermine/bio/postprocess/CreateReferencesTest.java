@@ -164,6 +164,7 @@ public class CreateReferencesTest extends TestCase {
 
     private void createData() throws Exception {
         osw.flushObjectById();
+        osw.beginTransaction();
 
         storedChromosome = DynamicUtil.createObject(Chromosome.class);
         storedChromosome.setPrimaryIdentifier("chr1");

@@ -23,8 +23,6 @@ import org.intermine.metadata.TypeUtil;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Manager;
-import org.intermine.objectstore.query.Clob;
-import org.intermine.objectstore.query.ClobAccess;
 
 
 
@@ -190,19 +188,6 @@ public class TypeUtilTest extends TestCase
         assertEquals("modmine123", TypeUtil.javaisePackageName("modMine123"));
         assertEquals("modminetest", TypeUtil.javaisePackageName("modMine TEST"));
         assertEquals("modminetest2r", TypeUtil.javaisePackageName("modMine_TEST-2.r"));
-    }
-
-    public void testIsInstanceOf() throws Exception {
-        Manager man = DynamicUtil.createObject(Manager.class);
-        assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Manager"));
-        assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Employee"));
-        assertFalse(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Company"));
-        try {
-            assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.NoSuchClass"));
-            fail("Expected exception");
-        } catch (ClassNotFoundException e) {
-            // expected
-        }
     }
 
     //===========================
