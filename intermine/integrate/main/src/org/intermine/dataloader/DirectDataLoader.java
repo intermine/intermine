@@ -179,7 +179,7 @@ public class DirectDataLoader extends DataLoader
                 if (fpo instanceof InterMineObject) {
                     InterMineObject imo = (InterMineObject) fpo;
                     for (Class<?> keyCls : refsInKeys.keySet()) {
-                        if (DynamicUtil.isAssignableFrom(keyCls, DynamicUtil.getSimpleClass(imo))) {
+                        if (DynamicUtil.isAssignableFrom(keyCls, DynamicUtil.getClass(imo))) {
                             for (String fieldName : refsInKeys.get(keyCls)) {
                                 // check and throw an exception if a ProxyReference in a key field
                                 checkForNullProxyReference(imo, fieldName);
@@ -202,7 +202,7 @@ public class DirectDataLoader extends DataLoader
             InterMineObject refObj = (InterMineObject) imo.getFieldProxy(fieldName);
             if (refObj instanceof ProxyReference) {
                 throw new IllegalArgumentException("Found ProxyReference in a key field reference"
-                        + " for " + DynamicUtil.getSimpleClassName(imo) + "." + fieldName + "."
+                        + " for " + DynamicUtil.getClass(imo).getName() + "." + fieldName + "."
                         + " With the DirectDataLoader any reference that is part of a primary"
                         + " key must be set as an InterMineObject not a ProxyReference.");
             }
@@ -241,7 +241,7 @@ public class DirectDataLoader extends DataLoader
      * @return the new InterMineObject
      */
     public <C extends InterMineObject> C createObject(Class<C> c) {
-        C o = DynamicUtil.simpleCreateObject(c);
+        C o = DynamicUtil.createObject(c);
         o.setId(new Integer(idCounter));
         idCounter++;
         return o;
@@ -254,7 +254,7 @@ public class DirectDataLoader extends DataLoader
      * @return an empty simple object of the given class
      */
     public <C extends FastPathObject> C createSimpleObject(Class<C> c) {
-        C o = DynamicUtil.simpleCreateObject(c);
+        C o = DynamicUtil.createObject(c);
         return o;
     }
 

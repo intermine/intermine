@@ -108,7 +108,7 @@ public class InlineResultsTableTest extends TestCase
 
         assertEquals(new Integer(1), (Integer) resultsTable.getListOfTypes().size());
         assertEquals(new Boolean(false), resultsTable.getHasMoreThanOneType());
-        assertEquals(DynamicUtil.getSimpleClass(ceo), resultsTable.getListOfTypes().get(0));
+        assertEquals(DynamicUtil.getClass(ceo), resultsTable.getListOfTypes().get(0));
     }
 
     /**
@@ -140,7 +140,7 @@ public class InlineResultsTableTest extends TestCase
         assertEquals(new Boolean(true), resultsTable.getHasMoreThanOneType());
         assertEquals(
                 new ArrayList<Class<?>>(Arrays.asList(
-                        DynamicUtil.getSimpleClass(ceo), DynamicUtil.getSimpleClass(company))),
+                        DynamicUtil.getClass(ceo), DynamicUtil.getClass(company))),
                         resultsTable.getListOfTypes());
     }
 

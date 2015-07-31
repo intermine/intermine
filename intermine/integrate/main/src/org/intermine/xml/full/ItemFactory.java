@@ -148,7 +148,7 @@ public class ItemFactory
             throw new IllegalArgumentException("Id of object was null (" + obj.toString() + ")");
         }
 
-        String clsName = DynamicUtil.getSimpleClassName(obj);
+        String clsName = DynamicUtil.getClass(obj).getName();
         ClassDescriptor cld = model.getClassDescriptorByName(clsName);
 
         Item item = makeItem(obj instanceof InterMineObject ? ((InterMineObject) obj).getId()

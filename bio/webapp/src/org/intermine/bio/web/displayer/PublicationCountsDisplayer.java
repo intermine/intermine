@@ -63,7 +63,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
         Map<Publication, String> publications = new LinkedHashMap<Publication, String>();
         InterMineObject object = reportObject.getObject();
-        String type = DynamicUtil.getSimpleClass(object).getSimpleName();
+        String type = DynamicUtil.getClass(object).getSimpleName();
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Query q = getQuery(im, object, type);

@@ -435,7 +435,7 @@ public class InterMineObjectFetcher extends Thread
         Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
-        Set<String> fieldsToIgnore = ignoredFields.get(DynamicUtil.getSimpleClass(obj));
+        Set<String> fieldsToIgnore = ignoredFields.get(DynamicUtil.getClass(obj));
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {

@@ -10,10 +10,6 @@ package org.intermine.util;
  *
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import net.sf.cglib.proxy.Factory;
@@ -31,8 +27,6 @@ import org.intermine.objectstore.proxy.ProxyReference;
  */
 public final class DynamicUtil
 {
-    private static Map<Class<?>, String> simpleNameMap = new HashMap<Class<?>, String>();
-
     /**
      * Cannot construct
      */
@@ -108,39 +102,6 @@ public final class DynamicUtil
     }
 
     /**
-     * Create a new object given a class, which may be an interface. This method is equivalent to
-     * calling createObject(Collections.singleton(clazz)), except that it is genericised.
-     *
-     * @param clazz the class of the object to instantiate
-     * @param <C> The type of the object that is expected
-     * @return the object
-     * @throws IllegalArgumentException if an error occurs
-     */
-    @SuppressWarnings("unchecked")
-    public static <C extends FastPathObject> C simpleCreateObject(Class<C> clazz) {
-        // TODO this method is now no different to standard createObject()
-        return createObject(clazz);
-    }
-
-    /**
-     * Convert a set of interface names to a set of Class objects
-     *
-     * @param names the set of interface names
-     * @return set of Class objects
-     * @throws ClassNotFoundException if class cannot be found
-     */
-    protected static Set<Class<?>> convertToClasses(Set<String> names)
-        throws ClassNotFoundException {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        Iterator<String> iter = names.iterator();
-        while (iter.hasNext()) {
-            classes.add(Class.forName(iter.next()));
-        }
-
-        return classes;
-    }
-
-    /**
      * Creates a friendly description of an object - that is, the class and the ID (if it has one).
      *
      * @param o the object to be described
@@ -152,38 +113,6 @@ public final class DynamicUtil
         } else {
             return o.toString();
         }
-    }
-
-    /**
-     * Returns the simple class name for the given class or throws an exception if
-     * there are more than one.
-     * @param clazz the class
-     * @return the simple class name
-     */
-    public static synchronized String getSimpleClassName(Class<?> clazz) {
-        String retval = simpleNameMap.get(clazz);
-        if (retval == null) {
-            Set<Class<?>> decomposedClass = Util.decomposeClass(clazz);
-            if (decomposedClass.size() > 1) {
-                throw new IllegalArgumentException("No simple name for class: "
-                                                   + Util.getFriendlyName(clazz));
-            } else {
-                retval = decomposedClass.iterator().next().getName();
-                simpleNameMap.put(clazz, retval);
-            }
-
-        }
-        return retval;
-    }
-
-    /**
-     * Returns the simple class name for the given object or throws an exception if
-     * there are more than one.
-     * @param obj an object from the model
-     * @return the simple class name
-     */
-    public static synchronized String getSimpleClassName(FastPathObject obj) {
-        return getSimpleClassName(obj.getClass());
     }
 
     /**
@@ -214,39 +143,6 @@ public final class DynamicUtil
     public static boolean isInstance(Object obj, Class<?> clazz) {
         return isAssignableFrom(clazz, obj.getClass());
     }
-
-
-    /**
-     * Returns the result of decomposeClass if that is a single class, or throws an exception if
-     * there are more than one.
-     *
-     * @param clazz the class
-     * @return the corresponding non-dynamic class
-     */
-    @SuppressWarnings("unchecked")
-    public static Class<? extends FastPathObject> getSimpleClass(
-            Class<? extends FastPathObject> clazz) {
-        Set<Class<?>> decomposed = Util.decomposeClass(clazz);
-        if (decomposed.size() > 1) {
-            throw new IllegalArgumentException("No simple class for "
-                    + Util.getFriendlyName(clazz));
-        }
-        return (Class) decomposed.iterator().next();
-    }
-
-    /**
-     * For the given object returns the result of decomposeClass if that is a single class, or
-     * throws an exception if there are more than one class.
-     *
-     * @param obj an object from the model
-     * @return the corresponding non-dynamic class
-     */
-    @SuppressWarnings("unchecked")
-    public static Class<? extends FastPathObject> getSimpleClass(FastPathObject obj) {
-        return getSimpleClass(obj.getClass());
-    }
-
-
 
     /**
      * Sets the value of a public or protected Field of an Object given the field name.

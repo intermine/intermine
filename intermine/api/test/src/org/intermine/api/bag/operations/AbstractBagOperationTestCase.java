@@ -47,7 +47,7 @@ public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase 
         System.out.println("Storing test data");
         Long start = System.currentTimeMillis();
         ObjectStoreWriter osw = os.getNewWriter();
-    
+
         employees1 = new HashSet<Integer>();
         employees2 = new HashSet<Integer>();
         employables = new HashSet<Integer>();
@@ -94,7 +94,7 @@ public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase 
             if (i % 2 == 0) employables.add(emp.getId()); // 5
         }
         for (int i = 65; i < 75; i++) {
-            Employable x = DynamicUtil.simpleCreateObject(Employable.class);
+            Employable x = DynamicUtil.createObject(Employable.class);
             x.setName("Employable" + Character.toString((char) i));
             osw.store(x);
             employables.add(x.getId()); // 10
@@ -106,7 +106,7 @@ public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase 
             osw.store(s);
             secretaries.add(s.getId());
         }
-    
+
         osw.close();
         System.out.printf("Finished storing test data. Took %d ms.\n", System.currentTimeMillis() - start);
     }
@@ -119,7 +119,7 @@ public abstract class AbstractBagOperationTestCase extends InterMineAPITestCase 
         bagE = testUser.createBag("cons", "Contractor", "bag of things", im.getClassKeys());
         bagF = testUser.createBag("empabls", "Employable", "bag of things", im.getClassKeys());
         bagG = testUser.createBag("secretaries", "Secretary", "bag of secretaries", im.getClassKeys());
-    
+
         bagA.addIdsToBag(employees1, "Employee");
         bagB.addIdsToBag(employees2, "Employee");
         bagC.addIdsToBag(managers, "Manager");

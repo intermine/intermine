@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.StringReader;
 import java.util.HashMap;
@@ -10,25 +10,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.query.MainHelper;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
-import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryEvaluable;
-import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -79,7 +74,7 @@ public class NullRefs {
                         }
                     }
                     if ((int) c % 2 == 1) { // Half the departments have no managers.
-                        Company comp = DynamicUtil.simpleCreateObject(Company.class);
+                        Company comp = DynamicUtil.createObject(Company.class);
                         comp.setName(String.format("temp-manager-%s", c));
                         d.setCompany(comp);
                         osw.store(comp);
