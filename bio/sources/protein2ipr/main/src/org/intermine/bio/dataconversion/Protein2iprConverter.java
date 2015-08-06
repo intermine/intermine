@@ -121,23 +121,34 @@ public class Protein2iprConverter extends BioFileConverter
         while (iterator.hasNext()) {
             String[] cols = iterator.next();
             if (proteinIds.contains(cols[0])) {
-                Item item = createItem("ProteinDomainRegion");
 
+                String proteinDomainRefId = getProteinDomain(cols[1]);
+
+                Item item = createItem("Location");
                 item.setAttribute("start", cols[4]);
                 item.setAttribute("end", cols[5]);
-                item.setAttribute("originalId", cols[3]);
-                item.setAttribute("originalDb", getDatabaseName(cols[3]));
-                item.setReference("proteinDomain", getProteinDomain(cols[1]));
-                item.setReference("protein", getProtein(cols[0]));
-
+                item.setReference("feature", getProteinDomain(cols[1]));
+                item.setReference("locatedOn", getProtein(cols[0]));
                 store(item);
                 count++;
+
+                storeCrossReference(cols[3], proteinDomainRefId);
+
             } else {
                 skipped++;
             }
         }
         LOG.info("Number of processed lines: " + count);
         LOG.info("Number of skipped lines: " + skipped);
+    }
+
+    private void storeCrossReference(String proteinDomainIdentifier, String proteinDomainRefId)
+        throws ObjectStoreException {
+        Item item = createItem("CrossReference");
+        item.setAttribute("identifier", proteinDomainIdentifier);
+        item.setReference("subject", proteinDomainRefId);
+        item.setReference("source", getSource(proteinDomainIdentifier));
+        store(item);
     }
 
     private String getProtein(String identifier) throws ObjectStoreException {
@@ -164,7 +175,7 @@ public class Protein2iprConverter extends BioFileConverter
         return ret;
     }
 
-    private String getDatabaseName(String dbId) {
+    private String getSource(String dbId) {
         String dbName = null;
         if (dbId.startsWith("PF")) {
             dbName = "Pfam";
@@ -191,8 +202,7 @@ public class Protein2iprConverter extends BioFileConverter
         } else {
             throw new RuntimeException("Unknown DB found. ID: " + dbId);
         }
-
-        return dbName;
+        return getDataSource(dbName);
     }
 
     private String osAlias = null;
