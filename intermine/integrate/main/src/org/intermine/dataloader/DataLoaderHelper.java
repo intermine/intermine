@@ -314,6 +314,34 @@ public final class DataLoaderHelper
     }
 
     /**
+     * Find all database table names corresponding to primary keys specified in the given source.
+     * This list represents all tables that will need to be queried when dataloading the source.
+     * Note that a reference can be part of a primary key but that key must also be defined for the
+     * source so will still be found.
+     * @param source the source to fetch primary keys for
+     * @param os the production ObjectStore to find table names in
+     * @return a set of tableNames as strings
+     */
+    public static Set<String> getPrimaryKeyTableNames(Source source, ObjectStoreInterMineImpl os) {
+        Set<String> tableNames = new HashSet<String>();
+        Properties keys = getKeyProperties(source);
+        for (Object key : keys.keySet()) {
+            String cldName = (String) key;
+            if (cldName.contains(".")) {
+                cldName = cldName.substring(0, cldName.indexOf('.'));
+            }
+            ClassDescriptor cld = os.getModel().getClassDescriptorByName(cldName);
+            if (cld == null) {
+                throw new IllegalArgumentException("Failed to find class '" + cldName + "' in model"
+                        + " while reading keys for source '" + source.getName() + "'.");
+            }
+            String tableName = DatabaseUtil.getTableName(cld);
+            tableNames.add(tableName);
+        }
+        return tableNames;
+    }
+
+    /**
      * Return the Properties that enumerate the keys for this Source
      *
      * @param source the Source

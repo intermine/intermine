@@ -12,6 +12,7 @@ package org.intermine.dataloader;
 
 import java.util.Collection;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemToObjectTranslator;
@@ -21,9 +22,11 @@ import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.fastcollections.ObjectStoreFastCollectionsForTranslatorImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
 
@@ -77,6 +80,31 @@ public class ObjectStoreDataLoader extends DataLoader
         int errorCount = 0;
         ObjectStore origOs = os;
         try {
+
+            // Find the tables that will be accessed by primary queries during integration and give
+            // the ObjectStore we're loading into a BatchWriter that will only ANALYSE those tables.
+            // This should improve performance of loading into large databases where ANALYSEs take
+            // a significant time to run.
+
+            // This change needs more testing. These are the only tables that require selects during
+            // the load but there are DELETEs from other tables as well. It may be that not
+            // ANALYSEing those tables will cause a slowdown.
+//            if (IntegrationWriterAbstractImpl.class.isAssignableFrom(
+//                    getIntegrationWriter().getClass())) {
+//                IntegrationWriterAbstractImpl iab =
+//                        (IntegrationWriterAbstractImpl) getIntegrationWriter();
+//                if (iab.getObjectStoreWriter() instanceof ObjectStoreWriterInterMineImpl) {
+//                    ObjectStoreWriterInterMineImpl targetOsw =
+//                            (ObjectStoreWriterInterMineImpl) iab.getObjectStoreWriter();
+//                    Set<String> tableNames =
+//                            DataLoaderHelper.getPrimaryKeyTableNames(source, targetOsw);
+//                    BatchWriterPostgresCopyImpl bw = new BatchWriterPostgresCopyImpl();
+//                    LOG.info("Setting tables to analyse during dataloading: " + tableNames);
+//                    bw.setTablesToAnalyse(tableNames);
+//                    targetOsw.setBatchWriter(bw);
+//                }
+//            }
+
             if (os instanceof ObjectStoreFastCollectionsForTranslatorImpl) {
                 ((ObjectStoreFastCollectionsForTranslatorImpl) os).setSource(source);
             }
