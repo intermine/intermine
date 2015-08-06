@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -25,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
@@ -249,6 +251,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
         try {
             if (!(nimo instanceof InterMineObject)) {
+                // simple objects don't appear in data tracker so can just be stored
                 storeNonInterMineObject(nimo, source, skelSource, type);
                 return null;
             }
@@ -257,12 +260,17 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             Set<InterMineObject> equivObjects = getEquivalentObjects(o, source);
             long time2 = System.currentTimeMillis();
             timeSpentEquiv += time2 - time1;
+            // 1. we're storing an object and didn't find any equivalents
+            // 2. there is one equivalent object but we've already seen that before and know it
+            //    didn't merge with anything.
             if ((type != FROM_DB) && ((equivObjects.size() == 0) || ((equivObjects.size() == 1)
                     && (o.getId() != null) && (pureObjects.contains(o.getId()))
                     && (type == SOURCE)))) {
                 return shortcut(o, equivObjects, type, time2, source, skelSource);
             }
             if ((equivObjects.size() == 1) && (type == SKELETON)) {
+                // we were storing a skeleton so only primary key fields will be populated. Can't
+                // be merged properly until the real object is stored.
                 InterMineObject onlyEquivalent = equivObjects.iterator().next();
                 assignMapping(o.getId(), onlyEquivalent.getId());
                 return onlyEquivalent;
@@ -515,17 +523,46 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                     if (!(field instanceof CollectionDescriptor)) {
                         lastSource = dataTracker.getSource(obj.getId(), fieldName);
                     }
+                    // if lastSource is null there was no value in the tracker table, which means
+                    // the source provided a null value or was beaten by a priority
                     if (field instanceof CollectionDescriptor || lastSource != null) {
                         copyField(obj, newObj, lastSource, lastSource, field, FROM_DB);
                     }
                 }
             }
-            if (!(field instanceof CollectionDescriptor)) {
-                if (lastSource == null) {
-                    throw new NullPointerException("Error: lastSource is null for"
-                            + " object " + o.getId() + " and fieldName " + fieldName);
+            // the last source we saw is the value stored in the object, write tracking information
+            // for this field. Note - lastSource could be null if and object is merging with a
+            // subclass already in the database AND the class we're storing doesn't have that field
+            // AND the stored object has a null value for the field.
+            if (!(field instanceof CollectionDescriptor) && lastSource != null) {
+                // if the field has a non-null value or it there is a priority configured
+                // add details to the data tracker
+                Object value = null;
+                try {
+                    if (field instanceof ReferenceDescriptor) {
+                        value = o.getFieldProxy(fieldName);
+                    } else {
+                        value = o.getFieldValue(fieldName);
+                    }
+                } catch (IllegalAccessException e) {
+                    // this can happen for dynamic objects where an equivalent non-dynamic
+                    // object is found it will be missing fields for one of the classes.
+                    // DO NOTHING, the value is null
+                } catch (IllegalArgumentException e) {
+                    // same as above but error is thrown from model class rather than from
+                    // getFieldInfos
                 }
-                trackingMap.put(fieldName, lastSource);
+
+                if (value != null) {
+                    trackingMap.put(fieldName, lastSource);
+                } else {
+                    // check if a priority is configured for the field
+                    List<String> priorities = priorityConfig.getPriorities(o.getClass(),
+                            fieldName);
+                    if (priorities != null && priorities.size() > 0) {
+                        trackingMap.put(fieldName, lastSource);
+                    }
+                }
             }
         }
     }
@@ -569,8 +606,42 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
             String fieldName = entry.getKey();
             FieldDescriptor field = entry.getValue();
             copyField(o, newObj, source, skelSource, field, type);
-            if (!(field instanceof CollectionDescriptor)) {
-                trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+            try {
+                if (!(field instanceof CollectionDescriptor)) {
+                    // if the field has a non-null value or it there is a priority configured
+                    // add details to the data tracker
+                    Object value = null;
+                    try {
+                        if (field instanceof ReferenceDescriptor) {
+                            value = o.getFieldProxy(fieldName);
+                        } else {
+                            value = o.getFieldValue(fieldName);
+                        }
+                    } catch (IllegalAccessException e) {
+                        // this can happen for dynamic objects where an equivalent non-dynamic
+                        // object is found it will be missing fields for one of the classes.
+                        // DO NOTHING, the value is null
+                    } catch (IllegalArgumentException e) {
+                        // same as above but error is thrown from model class rather than from
+                        // getFieldInfos
+                    }
+
+                    if (value != null) {
+                        trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                    } else {
+
+                        // is there a priority defined for this field?
+                        List<String> priorities = priorityConfig.getPriorities(o.getClass(),
+                                fieldName);
+                        if (priorities != null && priorities.size() > 0) {
+                            trackingMap.put(fieldName, type == SOURCE ? source : skelSource);
+                        }
+                    }
+                }
+            } catch (NullPointerException e) {
+                LOG.error("Failed to do something with tracking: " + o.getClass() + " - "
+                        + fieldName);
+                throw(e);
             }
         }
         time2 = System.currentTimeMillis();
