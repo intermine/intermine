@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<classes>
+   <class name="SequenceAlteration" extends="SequenceFeature" is-interface="true">
+     <attribute name="variantSequence" type="java.lang.String"/>
+     <attribute name="referenceSequence" type="java.lang.String"/>
+     <attribute name="type" type="java.lang.String"/>
+     <attribute name="uniqueLocation" type="java.lang.Boolean"/>
+     <collection name="validations" referenced-type="ValidationState" />
+     <collection name="consequences" referenced-type="Consequence" reverse-reference="snp"/>
+   </class>
+   <class name="GeneticMarker" extends="SequenceAlteration" is-interface="true"/>
+   <class name="Indel" extends="SequenceAlteration" is-interface="true"/>
+   <class name="Deletion" extends="SequenceAlteration" is-interface="true"/>
+   <class name="Insertion" extends="SequenceAlteration" is-interface="true"/>
+   <class name="SNV" extends="SequenceAlteration" is-interface="true"/>
+   <class name="Substitution" extends="SequenceAlteration" is-interface="true"/>
+
+   <!-- this is just a sequence feature, not an alteration -->
+   <class name="TandemRepeat" extends="SequenceAlteration" is-interface="true"/>
+
+   <class name="ValidationState" is-interface="true">
+     <attribute name="name" type="java.lang.String"/>
+   </class>
+   <class name="Consequence" is-interface="false" extends="java.lang.Object">
+     <attribute name="description" type="java.lang.String"/>
+     <attribute name="peptideAlleles" type="java.lang.String"/>
+     <attribute name="polyphenPrediction" type="java.lang.String"/>
+     <attribute name="polyphenScore" type="java.lang.Double"/>
+     <attribute name="siftPrediction" type="java.lang.String"/>
+     <attribute name="siftScore" type="java.lang.Double"/>
+     <reference name="transcript" referenced-type="Transcript"/>
+     <reference name="snp" referenced-type="SequenceAlteration" reverse-reference="consequences"/>
+     <!-- <collection name="types" referenced-type="ConsequenceType"/> -->
+   </class>
+   <class name="ConsequenceType" is-interface="true">
+     <attribute name="type" type="java.lang.String"/>
+   </class>
+
+</classes>

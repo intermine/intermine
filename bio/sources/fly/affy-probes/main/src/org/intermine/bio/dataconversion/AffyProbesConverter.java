@@ -78,12 +78,12 @@ public class AffyProbesConverter extends BioFileConverter
             String probesetIdentifier = line[1];
             String transcriptIdentifier = line[2];
             String fbgn = line[3];
-            String chromosomeIdentifier = line[4];
-            String startString = line[5];
-            String endString = line[6];
-            String strand = line[7];
-
-            String chromosomeRefId = createChromosome(chromosomeIdentifier);
+//            String chromosomeIdentifier = line[4];
+//            String startString = line[5];
+//            String endString = line[6];
+//            String strand = line[7];
+//
+//            String chromosomeRefId = createChromosome(chromosomeIdentifier);
             String geneRefId = createGene(fbgn);
             if (geneRefId != null) {
                 String transcriptRefId = createBioentity("Transcript", transcriptIdentifier,
@@ -92,13 +92,13 @@ public class AffyProbesConverter extends BioFileConverter
                 holder.transcripts.add(transcriptRefId);
                 holder.genes.add(geneRefId);
                 holder.datasets.add(dataSet);
-                try {
-                    Integer start = new Integer(startString);
-                    Integer end = new Integer(endString);
-                    holder.addLocation(chromosomeRefId, start, end, strand);
-                } catch (NumberFormatException e) {
-                    throw new RuntimeException("bad start/end values");
-                }
+//                try {
+//                    Integer start = new Integer(startString);
+//                    Integer end = new Integer(endString);
+//                    holder.addLocation(chromosomeRefId, start, end, strand);
+//                } catch (NumberFormatException e) {
+//                    LOG.error("bad start/end values " + startString + " and " + endString);
+//                }
             }
         }
     }
@@ -127,8 +127,8 @@ public class AffyProbesConverter extends BioFileConverter
         probeSet.setCollection("dataSets", holder.datasets);
         probeSet.setCollection("transcripts", holder.transcripts);
         probeSet.setCollection("genes", holder.genes);
-        probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier(),
-                holder.datasets));
+//        probeSet.setCollection("locations", holder.createLocations(probeSet.getIdentifier(),
+//                holder.datasets));
         store(probeSet);
     }
 
