@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
@@ -58,6 +59,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.translating.Translator;
 import org.intermine.util.DynamicUtil;
+import org.intermine.xml.full.ItemHelper;
 
 /**
  * Translator that translates fulldata Items to business objects
@@ -296,10 +298,14 @@ public class ItemToObjectTranslator extends Translator
         timeSpentSizing += time2 - time1;
         FastPathObject obj;
 
-        // make sure only have one class as Dynamic objects are no longer supported
         Set<String> classes = new HashSet<String>();
-        classes.add(item.getClassName());
-        classes.addAll(Arrays.asList(item.getImplementations().split(" ")));
+        classes.add(ItemHelper.generateClassNames(item.getClassName(), model));
+        if (StringUtils.isNotEmpty(item.getImplementations())) {
+            classes.addAll(Arrays.asList(ItemHelper.generateClassNames(
+                    item.getImplementations(), model).split(" ")));
+        }
+
+        // make sure only have one class as Dynamic objects are no longer supported
         if (classes.size() == 1) {
             try {
                 Class<? extends FastPathObject> cls =
@@ -311,8 +317,11 @@ public class ItemToObjectTranslator extends Translator
                         + item.getIdentifier(), e);
             }
         } else {
-            throw new RuntimeException("Item " + item.getIdentifier() + " has multiple classes/"
-                    + "implementations but dynamic objects are no longer supported.");
+            throw new RuntimeException("Item " + item.getIdentifier() + " has multiple ("
+                    + classes.size() + ") classes/implementations "
+                    + "but dynamic objects are no longer supported. ["
+                    + StringUtil.prettyList(classes) + ", original class:"
+                    + item.getClassName() + "]");
         }
 
         try {
