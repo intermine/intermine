@@ -1,209 +1,200 @@
 <items>
-<item id="4_12" class="Location">
-<attribute name="end" value="353"/>
-<attribute name="start" value="344"/>
-<reference name="feature" ref_id="3_6"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<item id="4_6" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR020479"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="3_1"/></collection>
 </item>
-<item id="3_3" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR009057"/>
+<item id="4_1" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001356"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_7" class="CrossReference">
-<attribute name="identifier" value="PS00027"/>
-<reference name="source" ref_id="1_3"/>
-<reference name="subject" ref_id="3_4"/>
-</item>
-<item id="4_9" class="Location">
-<attribute name="end" value="313"/>
-<attribute name="start" value="298"/>
-<reference name="feature" ref_id="3_5"/>
-<reference name="locatedOn" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="3_1"/></collection>
 </item>
 <item id="1_7" class="DataSource">
 <attribute name="name" value="PRINTS"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="4_4" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR017970"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="3_1"/></collection>
+</item>
 <item id="1_3" class="DataSource">
 <attribute name="name" value="PROSITE"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="Location">
+<attribute name="end" value="354"/>
+<attribute name="start" value="298"/>
+<reference name="feature" ref_id="4_1"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="InterPro"/>
 </item>
-<item id="3_5" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR017995"/>
+<item id="5_11" class="Location">
+<attribute name="end" value="344"/>
+<attribute name="start" value="334"/>
+<reference name="feature" ref_id="4_6"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_8" class="Location">
+<item id="6_9" class="CrossReference">
+<attribute name="identifier" value="PR00024"/>
+<reference name="source" ref_id="1_7"/>
+<reference name="subject" ref_id="4_6"/>
+</item>
+<item id="3_1" class="Protein">
+<attribute name="primaryAccession" value="P02833"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="Location">
+<attribute name="end" value="357"/>
+<attribute name="start" value="276"/>
+<reference name="feature" ref_id="4_3"/>
+<reference name="locatedOn" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_8" class="Location">
 <attribute name="end" value="289"/>
 <attribute name="start" value="282"/>
-<reference name="feature" ref_id="3_5"/>
-<reference name="locatedOn" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_3" class="CrossReference">
-<attribute name="identifier" value="SM00389"/>
-<reference name="source" ref_id="1_4"/>
-<reference name="subject" ref_id="3_1"/>
-</item>
-<item id="3_4" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR017970"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="4_1" class="Location">
-<attribute name="end" value="354"/>
-<attribute name="start" value="298"/>
-<reference name="feature" ref_id="3_1"/>
-<reference name="locatedOn" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="4_10" class="Location">
-<attribute name="end" value="330"/>
-<attribute name="start" value="319"/>
-<reference name="feature" ref_id="3_6"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<reference name="feature" ref_id="4_5"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="4_4" class="Location">
-<attribute name="end" value="288"/>
-<attribute name="start" value="283"/>
-<reference name="feature" ref_id="3_2"/>
-<reference name="locatedOn" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_5" class="CrossReference">
-<attribute name="identifier" value="G3DSA:1.10.10.60"/>
-<reference name="source" ref_id="1_5"/>
-<reference name="subject" ref_id="3_3"/>
-</item>
-<item id="3_2" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR001827"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="6_6" class="CrossReference">
+<attribute name="identifier" value="SSF46689"/>
+<reference name="source" ref_id="1_6"/>
+<reference name="subject" ref_id="4_3"/>
 </item>
 <item id="1_2" class="DataSource">
 <attribute name="name" value="Pfam"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_6" class="CrossReference">
-<attribute name="identifier" value="SSF46689"/>
-<reference name="source" ref_id="1_6"/>
-<reference name="subject" ref_id="3_3"/>
-</item>
 <item id="1_6" class="DataSource">
 <attribute name="name" value="SUPERFAMILY"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="5_5" class="Location">
+<attribute name="end" value="358"/>
+<attribute name="start" value="267"/>
+<reference name="feature" ref_id="4_3"/>
+<reference name="locatedOn" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001827"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="3_1"/></collection>
+</item>
 <item id="6_8" class="CrossReference">
 <attribute name="identifier" value="PR00025"/>
 <reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="3_5"/>
+<reference name="subject" ref_id="4_5"/>
 </item>
-<item id="6_12" class="CrossReference">
-<attribute name="identifier" value="PR00024"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="3_6"/>
-</item>
-<item id="6_1" class="CrossReference">
-<attribute name="identifier" value="PF00046"/>
-<reference name="source" ref_id="1_2"/>
-<reference name="subject" ref_id="3_1"/>
-</item>
-<item id="6_2" class="CrossReference">
-<attribute name="identifier" value="PS50071"/>
-<reference name="source" ref_id="1_3"/>
-<reference name="subject" ref_id="3_1"/>
-</item>
-<item id="6_10" class="CrossReference">
-<attribute name="identifier" value="PR00024"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="3_6"/>
-</item>
-<item id="4_6" class="Location">
-<attribute name="end" value="357"/>
-<attribute name="start" value="276"/>
-<reference name="feature" ref_id="3_3"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<item id="4_3" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR009057"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="3_1"/></collection>
 </item>
 <item id="1_4" class="DataSource">
 <attribute name="name" value="SMART"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_9" class="CrossReference">
-<attribute name="identifier" value="PR00025"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="3_5"/>
-</item>
-<item id="6_11" class="CrossReference">
-<attribute name="identifier" value="PR00024"/>
-<reference name="source" ref_id="1_7"/>
-<reference name="subject" ref_id="3_6"/>
-</item>
-<item id="3_1" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR001356"/>
+<item id="5_9" class="Location">
+<attribute name="end" value="313"/>
+<attribute name="start" value="298"/>
+<reference name="feature" ref_id="4_5"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_2" class="Location">
+<item id="5_2" class="Location">
 <attribute name="end" value="355"/>
 <attribute name="start" value="295"/>
-<reference name="feature" ref_id="3_1"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<reference name="feature" ref_id="4_1"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_5" class="Location">
-<attribute name="end" value="358"/>
-<attribute name="start" value="267"/>
-<reference name="feature" ref_id="3_3"/>
-<reference name="locatedOn" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="6_1" class="CrossReference">
+<attribute name="identifier" value="PF00046"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="4_1"/>
 </item>
-<item id="5_1" class="Protein">
-<attribute name="primaryAccession" value="P02833"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_4" class="CrossReference">
-<attribute name="identifier" value="PS00032"/>
-<reference name="source" ref_id="1_3"/>
-<reference name="subject" ref_id="3_2"/>
-</item>
-<item id="4_7" class="Location">
+<item id="5_12" class="Location">
 <attribute name="end" value="353"/>
-<attribute name="start" value="330"/>
-<reference name="feature" ref_id="3_4"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<attribute name="start" value="344"/>
+<reference name="feature" ref_id="4_6"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_11" class="Location">
-<attribute name="end" value="344"/>
-<attribute name="start" value="334"/>
-<reference name="feature" ref_id="3_6"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<item id="6_3" class="CrossReference">
+<attribute name="identifier" value="SM00389"/>
+<reference name="source" ref_id="1_4"/>
+<reference name="subject" ref_id="4_1"/>
+</item>
+<item id="5_4" class="Location">
+<attribute name="end" value="288"/>
+<attribute name="start" value="283"/>
+<reference name="feature" ref_id="4_2"/>
+<reference name="locatedOn" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_3" class="Location">
+<attribute name="end" value="359"/>
+<attribute name="start" value="297"/>
+<reference name="feature" ref_id="4_1"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="InterPro data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
+<item id="6_2" class="CrossReference">
+<attribute name="identifier" value="PS50071"/>
+<reference name="source" ref_id="1_3"/>
+<reference name="subject" ref_id="4_1"/>
+</item>
 <item id="1_5" class="DataSource">
 <attribute name="name" value="Gene3D"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_6" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR020479"/>
+<item id="6_7" class="CrossReference">
+<attribute name="identifier" value="PS00027"/>
+<reference name="source" ref_id="1_3"/>
+<reference name="subject" ref_id="4_4"/>
+</item>
+<item id="5_7" class="Location">
+<attribute name="end" value="353"/>
+<attribute name="start" value="330"/>
+<reference name="feature" ref_id="4_4"/>
+<reference name="locatedOn" ref_id="3_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_3" class="Location">
-<attribute name="end" value="359"/>
-<attribute name="start" value="297"/>
-<reference name="feature" ref_id="3_1"/>
-<reference name="locatedOn" ref_id="5_1"/>
+<item id="6_5" class="CrossReference">
+<attribute name="identifier" value="G3DSA:1.10.10.60"/>
+<reference name="source" ref_id="1_5"/>
+<reference name="subject" ref_id="4_3"/>
+</item>
+<item id="4_5" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR017995"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="proteins"><reference ref_id="3_1"/></collection>
+</item>
+<item id="5_10" class="Location">
+<attribute name="end" value="330"/>
+<attribute name="start" value="319"/>
+<reference name="feature" ref_id="4_6"/>
+<reference name="locatedOn" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_4" class="CrossReference">
+<attribute name="identifier" value="PS00032"/>
+<reference name="source" ref_id="1_3"/>
+<reference name="subject" ref_id="4_2"/>
 </item>
 </items>

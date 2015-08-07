@@ -101,7 +101,7 @@ public class Protein2iprConverterTest extends ItemsTestCase
         Reader reader = new InputStreamReader(getClass().getClassLoader()
                                             .getResourceAsStream(currentFile));
         converter.setCurrentFile(new File(currentFile));
-        converter.setOrganisms("7227");
+        converter.setProtein2iprOrganisms("7227");
         converter.process(reader);
         converter.close();
 

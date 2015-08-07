@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -68,14 +69,14 @@ public class Protein2iprConverter extends BioFileConverter
     private Collection<Integer> taxonIds = new ArrayList<Integer>();
 
     private Set<String> proteinIds = new HashSet<String>();
-
+    private Set<MultiKey> xrefs = new HashSet<MultiKey>();
     private Map<String, String> proteinMap = new HashMap<String, String>();
-    private Map<String, String> proteinDomainMap = new HashMap<String, String>();
+    private Map<String, Item> proteinDomainMap = new HashMap<String, Item>();
 
     /**
      * @param taxonIds set valid taxonIds to process
      */
-    public void setOrganisms(String taxonIds) {
+    public void setProtein2iprOrganisms(String taxonIds) {
         String[] taxonStringIds = StringUtils.split(taxonIds, " ");
         for (String string : taxonStringIds) {
             this.taxonIds.add(Integer.valueOf(string));
@@ -122,57 +123,70 @@ public class Protein2iprConverter extends BioFileConverter
             String[] cols = iterator.next();
             if (proteinIds.contains(cols[0])) {
 
-                String proteinDomainRefId = getProteinDomain(cols[1]);
+                String proteinRefId = getProtein(cols[0]);
+                Item proteinDomain = getProteinDomain(cols[1]);
 
                 Item item = createItem("Location");
                 item.setAttribute("start", cols[4]);
                 item.setAttribute("end", cols[5]);
-                item.setReference("feature", getProteinDomain(cols[1]));
-                item.setReference("locatedOn", getProtein(cols[0]));
+                item.setReference("feature", proteinDomain);
+                item.setReference("locatedOn", proteinRefId);
                 store(item);
                 count++;
 
-                storeCrossReference(cols[3], proteinDomainRefId);
+                storeCrossReference(cols[3], proteinDomain);
+
+                proteinDomain.addToCollection("proteins", proteinRefId);
 
             } else {
                 skipped++;
             }
         }
+
+        for (Item proteinDomain : proteinDomainMap.values()) {
+            store(proteinDomain);
+        }
+
         LOG.info("Number of processed lines: " + count);
         LOG.info("Number of skipped lines: " + skipped);
     }
 
-    private void storeCrossReference(String proteinDomainIdentifier, String proteinDomainRefId)
+    private void storeCrossReference(String proteinDomainIdentifier, Item proteinDomain)
         throws ObjectStoreException {
+
+        String source = getSource(proteinDomainIdentifier);
+        MultiKey key = new MultiKey(proteinDomainIdentifier, source);
+        if (xrefs.contains(key)) {
+            return;
+        }
         Item item = createItem("CrossReference");
         item.setAttribute("identifier", proteinDomainIdentifier);
-        item.setReference("subject", proteinDomainRefId);
-        item.setReference("source", getSource(proteinDomainIdentifier));
+        item.setReference("subject", proteinDomain);
+        item.setReference("source", source);
         store(item);
+        xrefs.add(key);
     }
 
     private String getProtein(String identifier) throws ObjectStoreException {
-        String ret = proteinMap.get(identifier);
-        if (ret == null) {
-            Item item = createItem("Protein");
-            item.setAttribute("primaryAccession", identifier);
-            ret = item.getIdentifier();
-            store(item);
-            proteinMap.put(identifier, ret);
+        String refId = proteinMap.get(identifier);
+        if (refId == null) {
+            Item protein = createItem("Protein");
+            protein.setAttribute("primaryAccession", identifier);
+            store(protein);
+            refId = protein.getIdentifier();
+            proteinMap.put(identifier, refId);
         }
-        return ret;
+        return refId;
     }
 
-    private String getProteinDomain(String identifier) throws ObjectStoreException {
-        String ret = proteinDomainMap.get(identifier);
-        if (ret == null) {
-            Item item = createItem("ProteinDomain");
-            item.setAttribute("primaryIdentifier", identifier);
-            ret = item.getIdentifier();
-            store(item);
-            proteinDomainMap.put(identifier, ret);
+    private Item getProteinDomain(String identifier) throws ObjectStoreException {
+        Item proteinDomain = proteinDomainMap.get(identifier);
+        if (proteinDomain == null) {
+            proteinDomain = createItem("ProteinDomain");
+            proteinDomain.setAttribute("primaryIdentifier", identifier);
+            proteinDomainMap.put(identifier, proteinDomain);
         }
-        return ret;
+        return proteinDomain;
     }
 
     private String getSource(String dbId) {

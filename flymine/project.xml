@@ -102,6 +102,7 @@
     <source name="protein2ipr" type="protein2ipr">
      <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
      <property name="src.data.dir.includes" value="protein2ipr.dat"/>
+     <property name="protein2ipr.organisms" value="7227"/>
     </source>
 
     <source name="omim" type="omim">
