@@ -48,7 +48,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
 
 /**
@@ -281,6 +280,23 @@ public class InterMineObjectFetcher extends Thread
             seenClasses.add(object.getClass());
         }
 
+        addReferences(object, references, referenceResults, referenceFacetFields, doc);
+
+        objectParseTime += (System.currentTimeMillis() - objectParseTime);
+        return doc;
+    }
+
+    /**
+     * Add object references to search document.
+     */
+    private void addReferences(
+            InterMineObject object,
+            HashSet<String> references,
+            HashMap<String, InterMineResultsContainer> referenceResults,
+            HashMap<String, KeywordSearchFacetData> referenceFacetFields,
+            Document doc)
+        throws IllegalAccessException {
+
         // find all references and add them
         for (String reference : references) {
             InterMineResultsContainer resultsContainer =
@@ -366,8 +382,6 @@ public class InterMineObjectFetcher extends Thread
                 }
             }
         }
-        objectParseTime += (System.currentTimeMillis() - objectParseTime);
-        return doc;
     }
 
     private int iterateOverObjects(long time, long objectParseTime,
