@@ -11,8 +11,9 @@ package org.intermine.webservice.server.complexes;
  */
 
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -23,7 +24,6 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.xml.full.Item;
 
 import psidev.psi.mi.jami.bridges.exception.BridgeFailedException;
 import psidev.psi.mi.jami.bridges.ols.CachedOlsOntologyTermFetcher;
@@ -33,7 +33,6 @@ import psidev.psi.mi.jami.json.InteractionViewerJson;
 import psidev.psi.mi.jami.json.MIJsonOptionFactory;
 import psidev.psi.mi.jami.json.MIJsonType;
 import psidev.psi.mi.jami.model.CvTerm;
-import psidev.psi.mi.jami.model.Feature;
 import psidev.psi.mi.jami.model.InteractionCategory;
 import psidev.psi.mi.jami.model.Stoichiometry;
 import psidev.psi.mi.jami.model.Xref;
@@ -56,6 +55,7 @@ public class ExportService extends JSONService
     private static final String DEFAULT_FORMAT = "JSON";
     private static final String EBI = "intact";
     private static final String BINDING_SITE = "binding region";
+    private static final Map<String, String> MOLECULE_TYPES = new HashMap<String, String>();
 
     /**
      * Default constructor.
@@ -63,6 +63,15 @@ public class ExportService extends JSONService
      */
     public ExportService(InterMineAPI im) {
         super(im);
+    }
+
+    // TODO this is stupid and dumb to hardcode this. Replace with a webservice call.
+    static {
+        MOLECULE_TYPES.put("protein", "MI:0326");
+        MOLECULE_TYPES.put("small molecule", "MI:0328");
+        MOLECULE_TYPES.put("ribonucleic acid", "MI:0320");
+        MOLECULE_TYPES.put("transfer rna", "MI:0325");
+        MOLECULE_TYPES.put("double stranded deoxyribonucleic acid", "MI:0681");
     }
 
     @Override
@@ -164,9 +173,8 @@ public class ExportService extends JSONService
             complex.setSystematicName(systematicName);
             complex.setPhysicalProperties(properties);
 
-            // TODO get MI value - get from onto lookup?
             // interactor type
-            CvTerm type = new DefaultCvTerm(moleculeType);
+            CvTerm type = getInteractorType(moleculeType);
 
             // organism
             DefaultOrganism organism = new DefaultOrganism(taxonId);
@@ -232,6 +240,12 @@ public class ExportService extends JSONService
             complex.addParticipant(participant);
         }
         return complex;
+    }
+
+    private DefaultCvTerm getInteractorType(String moleculeType) {
+        String identifier = MOLECULE_TYPES.get(moleculeType);
+        DefaultCvTerm cvTerm = new DefaultCvTerm(moleculeType, identifier);
+        return cvTerm;
     }
 
 /**
