@@ -11,6 +11,7 @@ package org.intermine.webservice.server.complexes;
  */
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -39,8 +41,11 @@ import psidev.psi.mi.jami.model.Xref;
 import psidev.psi.mi.jami.model.impl.DefaultComplex;
 import psidev.psi.mi.jami.model.impl.DefaultCvTerm;
 import psidev.psi.mi.jami.model.impl.DefaultInteractor;
+import psidev.psi.mi.jami.model.impl.DefaultModelledFeature;
 import psidev.psi.mi.jami.model.impl.DefaultModelledParticipant;
 import psidev.psi.mi.jami.model.impl.DefaultOrganism;
+import psidev.psi.mi.jami.model.impl.DefaultPosition;
+import psidev.psi.mi.jami.model.impl.DefaultRange;
 import psidev.psi.mi.jami.model.impl.DefaultStoichiometry;
 import psidev.psi.mi.jami.model.impl.DefaultXref;
 
@@ -165,8 +170,10 @@ public class ExportService extends JSONService
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
 
-            String start = (String) row.get(9).getField();
-            String end = (String) row.get(10).getField();
+            String feature = (String) row.get(9).getField();
+            String locatedOn = (String) row.get(10).getField();
+            String start = (String) row.get(11).getField();
+            String end = (String) row.get(12).getField();
 
             // set complex attributes
             complex.setFullName(name);
@@ -202,39 +209,17 @@ public class ExportService extends JSONService
             DefaultModelledParticipant participant
                 = new DefaultModelledParticipant(interactor, bioRole, stoichTerm);
 
-            // TODO add features
-            // participant.addAllFeatures();
+            // range
+            DefaultPosition startPosition = new DefaultPosition(new Long(start));
+            DefaultPosition endPosition = new DefaultPosition(new Long(end));
 
-//            Collection<Feature> linkedFeatures = feature.getLinkedFeatures();
-//            for (Feature linkedFeature : linkedFeatures) {
-//                CvTerm term = linkedFeature.getType();
-//                String type = term.getShortName();
+            DefaultRange range = new DefaultRange(startPosition, endPosition);
+
+            // binding feature
+            DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
 
 
-            /**
-            // only create interactions if we have binding information
-            if (BINDING_SITE.equals(type)) {
-                String binderRefId = processProtein(linkedFeature.getParticipant()
-                        .getInteractor());
-
-                Item interaction = createItem("Interaction");
-                interaction.setReference("participant1", refId);
-                interaction.setReference("participant2", binderRefId);
-                interaction.setReference("complex", complex);
-                store(interaction);
-                interactor.addToCollection("interactions", interaction);
-
-                Item detailItem = createItem("InteractionDetail");
-                detailItem.setAttribute("type", INTERACTION_TYPE);
-                detailItem.setAttribute("relationshipType", detail.getRelationshipType());
-                detailItem.setReference("interaction", interaction);
-                detailItem.setCollection("allInteractors", detail.getAllInteractors());
-
-                processRegions(linkedFeature.getRanges(), detailItem, refId, binderRefId);
-
-                store(detailItem);
-            }
-*/
+            participant.addAllFeatures(Collections.singleton(bindingFeature));
 
             // set relationship to complex
             complex.addParticipant(participant);
@@ -248,16 +233,6 @@ public class ExportService extends JSONService
         return cvTerm;
     }
 
-/**
- * TODO add regions
- * <query name="" model="genomic" view="Complex.identifier
- * Complex.allInteractors.interactions.details.interactingRegions.location.start
- * Complex.allInteractors.interactions.details.interactingRegions.location.end"
- * longDescription="" sortOrder="Complex.identifier asc">
-
-  <constraint path="Complex.allInteractors.interactions.complex" op="=" loopPath="Complex"/>
-</query>
- */
     private PathQuery getQuery(String identifier) throws ObjectStoreException {
         PathQuery query = new PathQuery(model);
         query.addViews("Complex.name",
@@ -276,6 +251,7 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.interactions.details.interactingRegions.location.start",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
+        query.addOrderBy("Gene.proteins.primaryIdentifier", OrderDirection.ASC);
         return query;
     }
 }
