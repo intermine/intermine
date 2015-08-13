@@ -221,7 +221,7 @@ public class DynamicBean implements MethodInterceptor
                 Method getMethod = obj.getClass().getMethod(methodName);
                 fieldType = getMethod.getReturnType();
             } catch (NoSuchMethodException e) {
-                throw new RuntimeException("No such field " + args[0], e);
+                throw new IllegalArgumentException("No such field " + args[0], e);
             }
 
             if (Collection.class.isAssignableFrom(fieldType)) {

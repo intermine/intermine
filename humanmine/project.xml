@@ -75,6 +75,22 @@
       <property name="src.data.dir" location="/micklem/data/uniprot/current" />
       <property name="src.data.dir.includes" value="keywlist.xml" />
     </source>
+
+    <source name="uniprot-fasta" type="fasta">
+     <!-- <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>-->
+      <property name="fasta.taxonId" value="9606 10090 10116"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
+      <property name="fasta.classAttribute" value="primaryAccession"/>
+      <property name="fasta.dataSetTitle" value="UniProt data set"/>
+      <property name="fasta.dataSourceName" value="UniProt"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
+      <property name="fasta.includes" value="uniprot_sprot_varsplic.fasta"/>
+      <property name="fasta.sequenceType" value="protein" />
+      <property name="fasta.loaderClassName"
+                value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
+    </source>
+
+
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current" />
     </source>
