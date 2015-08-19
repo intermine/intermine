@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+      <collection name="proteins" referenced-type="Protein" reverse-reference="proteinDomains" />
+  </class>
+  <class name="Protein" is-interface="true">
+    <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins" />
+  </class>
+</classes>
