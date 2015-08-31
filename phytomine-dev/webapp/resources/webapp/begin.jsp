@@ -74,7 +74,7 @@
                                         </div>
                                         <div class="bottom">
                                                 <center>
-                                                        <a class="advanced" href="bag.do?subtab=upload">advanced</a>
+                                                        <a class="advanced" href="bag.do?subtab=upload">Advanced</a>
                                                         <br />
                                                         <input class="button light" type="submit" value="analyze"/>
                                                 </center>
@@ -82,56 +82,8 @@
                                 </form>
                         </div>
                 </div>
-                <div id="welcome-bochs">
-                        <div class="inner">
-                            <c:choose>
-                                <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedTitle'])}">
-                                    <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedTitle']}" /></h3>
-                                </c:when>
-                                <c:otherwise>
-                                    <h3><c:out value="${WEB_PROPERTIES['begin.thirdBox.title']}" /></h3>
-                                </c:otherwise>
-                            </c:choose>
-                                <br />
-                                <c:choose>
-                                    <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedDescription'])}">
-                                        <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedDescription']}" escapeXml="false" /></p>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <p><c:out value="${WEB_PROPERTIES['begin.thirdBox.description']}" escapeXml="false" /></p>
-                                    </c:otherwise>
-                                </c:choose>
-                                <c:if test="${!empty WEB_PROPERTIES['begin.thirdBox.linkTitle']}">
-                                    <div class="bottom">
-                                            <center>
-                                                <c:choose>
-                                                    <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedLink'])}">
-                                                        <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />"
-                                                        onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLink']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a class="button gray" href="<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />"
-                                                        onclick="javascript:window.open('<c:out value="${WEB_PROPERTIES['begin.thirdBox.link']}" />','_help','toolbar=0,scrollbars=1,location=1,statusbar=1,menubar=0,resizable=1,width=800,height=600');return false">
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                        <div>
-                                                            <span>
-                                                                <c:choose>
-                                                                    <c:when test="${!isNewUser && !empty (WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle'])}">
-                                                                        <c:out value="${WEB_PROPERTIES['begin.thirdBox.visitedLinkTitle']}" />
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <c:out value="${WEB_PROPERTIES['begin.thirdBox.linkTitle']}" />
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </span>
-                                                        </div>
-                                                    </a>
-                                            </center>
-                                    </div>
-                                </c:if>
-                        </div>
-                </div>
+
+          <span class="stretch"></span>
         </div>
 
         <div style="clear:both"></div>
@@ -213,7 +165,7 @@
         </div>
     </c:if>
 
-                <div id="low">
+                <!--div id="low">
                         <div id="rss" style="display:none;">
                                 <h4>News<span>&nbsp;&amp;&nbsp;</span>Updates</h4>
                                 <table id="articles"></table>
@@ -236,7 +188,7 @@
                                         <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=ruby">Ruby</a>
                                         <li><a href="<c:out value="${WEB_PROPERTIES['path']}" />api.do?subtab=java">Java</a>
                                 </ul>
-                        </div>
+                        </div -->
 
                         <div style="clear:both;"></div>
                 </div>

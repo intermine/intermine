@@ -72,11 +72,19 @@ public class PhytozomeDbProcessor {
   
   public void process() throws SQLException, ObjectStoreException {
     // the steps
+    System.out.println("Chromosomes...");
     fillChromosomeTable();
+    System.out.println("Annotations...");
     fillAnnotationTable();
+    System.out.println("Properties...");
     fillProperties();
+    System.out.println("Synonyms...");
+    //fillSynonyms();
+    System.out.println("Relationships...");
     fillRelationships();
+    System.out.println("Analyses...");
     fillAnalyses();
+    System.out.println("Done.");
     converter.getDatabase().getConnection().createStatement().execute(
         "DROP TABLE "+ tempChromosomeTableName);
     converter.getDatabase().getConnection().createStatement().execute(
@@ -233,6 +241,38 @@ public class PhytozomeDbProcessor {
     converter.recordObject(matchId,converter.store(feature));
     converter.recordObject(matchId, feature.getIdentifier());    
     return true;
+  }
+
+  
+  private void fillSynonyms() throws ObjectStoreException, SQLException {
+    // and for the synonyms
+
+    String query =
+            "SELECT " +
+            "f.feature_id AS feature_id," +
+            "s.name as synonym " +
+            "FROM " +
+            tempFeatureTableName + " f," +
+            "feature_synonym fs, synonym s " +
+            "WHERE f.feature_id=fs.feature_id " +
+            "AND fs.synonym_id=s.synonym_id " +
+            "ORDER BY feature_id, synonym";
+            
+    Statement stmt = converter.getDatabase().getConnection().createStatement();
+    ResultSet res = stmt.executeQuery(query);
+    int count = 0;
+    while (res.next()) {
+      Integer featureId = res.getInt("feature_id");
+      String synonym = res.getString("synonym");
+      Item syn = converter.createItem("Synonym");
+      syn.setAttribute("value", synonym);
+      syn.setReference("subject",converter.objectIdentifier(featureId));
+      converter.store(syn);
+      count++;
+    }
+    LOG.info("created " + count + " synonyms.");
+    res.close();
+  
   }
   
   private void fillProperties() throws ObjectStoreException, SQLException {

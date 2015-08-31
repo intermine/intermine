@@ -286,6 +286,9 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
             } else if ("rename-ontologies".equals(operation)) {
               OntologyRenamer task = new OntologyRenamer(getObjectStoreWriter());
               task.execute();
+            } else if ("summarize-go".equals(operation)) {
+              GOSummarizer task = new GOSummarizer(getObjectStoreWriter());
+              task.execute();
             } else if ("name-features".equals(operation)) {
               FeatureNamer task = new FeatureNamer(getObjectStoreWriter());
               task.execute();

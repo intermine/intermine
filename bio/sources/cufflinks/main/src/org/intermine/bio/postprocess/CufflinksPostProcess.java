@@ -46,11 +46,20 @@ public class CufflinksPostProcess extends PostProcessor {
   ObjectStoreWriter osw;
   private static final Logger LOG = Logger.getLogger(CufflinksPostProcess.class);
   private static final int batchSize = 100000;
+  private Integer proteomeId = null;
   
   public CufflinksPostProcess(ObjectStoreWriter osw) {
     super(osw);
     this.osw = osw;
     
+  }
+  
+  public void setProteomeId(String id) {
+    try {
+      proteomeId = Integer.parseInt(id);
+    } catch (NumberFormatException e) {
+      throw new BuildException("Cannot parse integer from "+id);
+    }
   }
 
   public void postProcess() throws BuildException {
@@ -184,26 +193,39 @@ public class CufflinksPostProcess extends PostProcessor {
       QueryClass qcCufflinks = new QueryClass(CufflinksScore.class);
       q.addFrom(qcCufflinks);
       q.addToSelect(qcCufflinks);
-      if (groupBy.equals("BioEntity")) {
-        QueryClass qcB = new QueryClass(BioEntity.class);
-        q.addFrom(qcB);
-        QueryField qf = new QueryField(qcB,"id");
-        q.addToSelect(qf);
-        QueryObjectReference bioentityRef = new QueryObjectReference(qcCufflinks, "bioentity");
-        q.setConstraint(new ContainsConstraint(bioentityRef, ConstraintOp.CONTAINS, qcB));
-        q.addToOrderBy(qf);
 
+ 
+      QueryClass qcOrg = null;
+      QueryClass qcBase;
+      QueryObjectReference qcBaseRef;
+      
+      if (groupBy.equals("BioEntity")) {
+        qcBase = new QueryClass(BioEntity.class);
+        qcBaseRef = new QueryObjectReference(qcCufflinks, "bioentity");
       } else if (groupBy.equals("Experiment")) {
-        QueryClass qcE = new QueryClass(RNAseqExperiment.class);
-        q.addFrom(qcE);
-        QueryField qf = new QueryField(qcE,"id");
-        q.addToSelect(qf);
-        QueryObjectReference experimentRef = new QueryObjectReference(qcCufflinks, "experiment");
-        q.setConstraint(new ContainsConstraint(experimentRef, ConstraintOp.CONTAINS, qcE));
-        q.addToOrderBy(qf);
+        qcBase = new QueryClass(RNAseqExperiment.class);
+        qcBaseRef = new QueryObjectReference(qcCufflinks, "experiment");
       } else {
         throw new BuildException("Unknown grouping entry "+groupBy);
       }
+
+      q.addFrom(qcBase);
+      QueryField qf = new QueryField(qcBase,"id");
+      q.addToSelect(qf);
+      ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+      cs.addConstraint(new ContainsConstraint(qcBaseRef, ConstraintOp.CONTAINS, qcBase));
+      q.addToOrderBy(qf);
+      
+      if (proteomeId != null) {
+        qcOrg = new QueryClass(Organism.class);
+        QueryField qfProt = new QueryField(qcOrg,"proteomeId");
+        QueryObjectReference orgRef = new QueryObjectReference(qcCufflinks,"organism");
+        QueryValue qvProtId = new QueryValue(proteomeId);
+        cs.addConstraint(new SimpleConstraint(qfProt,ConstraintOp.EQUALS,qvProtId));
+        cs.addConstraint(new ContainsConstraint(orgRef,ConstraintOp.CONTAINS, qcOrg));
+      }
+      
+      q.setConstraint(cs); 
 
       ((ObjectStoreInterMineImpl) osw.getObjectStore()).precompute(q, Constants.PRECOMPUTE_CATEGORY);
       List<ResultsRow<Object>> res = osw.getObjectStore().execute(q, offset, batchSize, true, true,ObjectStore.SEQUENCE_IGNORE);

@@ -91,9 +91,9 @@
     <br/>
 
     <em>Phytomine</em> accounts for external users are managed by JGI's Single Sign On.
-    Internal intermine accounts are reserved for administrative purposes only.<br/>
+    Internal intermine accounts are reserved for local administrative purposes only.<br/>
     
-    <html:link href="https://signon.phytozome.net/signon">Create account now</html:link>
+    <html:link href="https://signon.jgi.doe.gov/signon">Create account now</html:link>
   </div>
 </div>
 

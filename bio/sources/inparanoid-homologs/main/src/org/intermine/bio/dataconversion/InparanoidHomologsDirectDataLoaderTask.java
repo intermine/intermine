@@ -63,7 +63,6 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
   private static final Logger LOG =
       Logger.getLogger(InparanoidHomologsDirectDataLoaderTask.class);
 
-  private HashMap<Integer,ProxyReference> organismMap = new HashMap<Integer,ProxyReference>();
   private HashMap<String,ProxyReference> geneMap = null;
   Pattern filePattern;
   int orthoRegistered;
@@ -93,23 +92,6 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
         proteomeId[1] = Integer.parseInt(fileMatcher.group(2));
       } catch (NumberFormatException e) {
         throw new BuildException("Cannot parse proteome ids from string "+theFile.getName());
-      }
-
-      // register both as needed.
-      for ( Integer proteome: proteomeId ) {
-        if (!organismMap.containsKey(proteome)) {
-          try {
-            Organism org = getDirectDataLoader().createObject(Organism.class);
-            org.setProteomeId(proteome);
-            // and store the organism.
-            getDirectDataLoader().store(org);  
-            ProxyReference orgRef = new ProxyReference(getIntegrationWriter().getObjectStore(),
-                org.getId(), Organism.class);
-            organismMap.put(proteome, orgRef);
-          } catch (ObjectStoreException e) {
-            throw new BuildException("Problem storing Organism: " + e.getMessage());
-          }  
-        }
       }
 
       Iterator<?> tsvIter;
@@ -179,8 +161,6 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
           } else {
             try {
               Homolog o = getDirectDataLoader().createSimpleObject(Homolog.class);
-              o.proxyOrganism1(organismMap.get(Integer.parseInt(p1)));
-              o.proxyOrganism2(organismMap.get(Integer.parseInt(p2)));
               String pacGene1 = "PAC:"+gene1;
               String pacGene2 = "PAC:"+gene2;
               o.proxyGene1(getGene(pacGene1,p1));
@@ -205,7 +185,6 @@ public class InparanoidHomologsDirectDataLoaderTask extends FileDirectDataLoader
       try {
         Gene g = getDirectDataLoader().createObject(Gene.class);
         g.setSecondaryIdentifier(geneName);
-        g.proxyOrganism(organismMap.get(Integer.parseInt(proteomeId)));
         getDirectDataLoader().store(g);
         ProxyReference ref = new ProxyReference(getIntegrationWriter().getObjectStore(),g.getId(),Gene.class);
         geneMap.put(geneName,ref); 

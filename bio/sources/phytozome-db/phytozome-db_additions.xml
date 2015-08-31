@@ -34,4 +34,15 @@
     <attribute name="genomicOrder" type="java.lang.Integer" />
   </class>
 
+  <class name="GOSummary" is-interface="true">
+    <reference name="term" referenced-type="GOTerm" />
+    <reference name="organism" referenced-type="Organism" />
+    <attribute name="count" type="java.lang.Integer" />
+    <attribute name="total" type="java.lang.Integer" />
+    <attribute name="children" type="java.lang.String" />
+    <attribute name="parents" type="java.lang.String" />
+    <collection name="childSummary" referenced-type="GOSummary" reverse-reference="parentSummary" />
+    <collection name="parentSummary" referenced-type="GOSummary" reverse-reference="childSummary" />
+  </class>
+
 </classes>
