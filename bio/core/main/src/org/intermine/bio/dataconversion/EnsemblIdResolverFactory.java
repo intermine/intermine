@@ -15,29 +15,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 
-
 /**
- * Create an IdResolverFactory for human Ensembl gene ids, this doesn't include any synonyms or id
- * tracking but simply filters for ids that are located on a the main chromosomes.
+ * Create an IdResolverFactory for human Ensembl gene ids
  *
- * @author Richard Smith
+ * @author Julie Sullivan
  */
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
-    private final String propKey = "resolver.file.rootpath";
-    private final String resolverFileSymbo = "ensembl";
-    private final String taxonId = "9606";
-
+    private static final String PROP_KEY = "resolver.file.rootpath";
+    private static final String FILE_SYMBOLIC_LINK = "ensembl";
+    private static final String TAXON_ID = "9606";
+    private static final String OMIM_PREFIX = "OMIM:";
     /**
      * Construct without SO term of the feature type.
      */
@@ -47,9 +43,8 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
 
     @Override
     protected void createIdResolver() {
-        if (resolver != null
-                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
-                        .iterator().next())) {
+        if (resolver != null && resolver.hasTaxonAndClassName(TAXON_ID,
+                this.clsCol.iterator().next())) {
             return;
         }
         if (resolver == null) {
@@ -63,9 +58,9 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                String resolverFileRoot =
-                        PropertiesUtil.getProperties().getProperty(propKey);
+                    && !resolver.hasTaxonAndClassName(TAXON_ID, this.clsCol.iterator().next()))) {
+
+                String resolverFileRoot = PropertiesUtil.getProperties().getProperty(PROP_KEY);
 
                 if (StringUtils.isBlank(resolverFileRoot)) {
                     String message = "Resolver data file root path is not specified";
@@ -74,10 +69,11 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + FILE_SYMBOLIC_LINK;
+
                 File f = new File(resolverFileName);
                 if (f.exists()) {
-                    createFromFile(f);
+                    populateFromFile(f);
                     resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
@@ -94,35 +90,28 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
      * @param f the file
      * @throws IOException if we can't read from the file
      */
-    protected void createFromFile(File f) throws IOException {
+    protected void populateFromFile(File f) throws IOException {
 
-        Set<String> validChromosomes = validChromosomes();
-
-        // Ensembl Id | chromosome name
+        // Ensembl Gene ID EntrezGene ID   HGNC ID(s)      HGNC symbol
         Iterator<?> lineIter = FormattedTextParser
                 .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String ensembl = line[0];
-            String chr = line[1];
-            if (validChromosomes.contains(chr)) {
-                resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
+            String entrez = line[1];
+            String symbol = line[2];
+            String mim = line[3];
+
+            resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(ensembl));
+            if (StringUtils.isNotEmpty(entrez)) {
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(entrez));
+            }
+            if (StringUtils.isNotEmpty(mim)) {
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(OMIM_PREFIX + mim));
+            }
+            if (StringUtils.isNotEmpty(symbol)) {
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(symbol));
             }
         }
-    }
-
-    /**
-     * Get a set of valid chromosome identifiers for human as we want to ignore other data types
-     * @return a set of strings
-     */
-    protected static Set<String> validChromosomes() {
-        Set<String> chrs = new HashSet<String>();
-        for (int i = 1; i <= 22; i++) {
-            chrs.add("" + i);
-        }
-        chrs.add("X");
-        chrs.add("Y");
-        chrs.add("MT");
-        return chrs;
     }
 }

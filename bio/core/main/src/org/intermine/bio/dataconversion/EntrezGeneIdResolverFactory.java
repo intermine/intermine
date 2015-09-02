@@ -36,10 +36,11 @@ import org.intermine.util.PropertiesUtil;
 public class EntrezGeneIdResolverFactory extends IdResolverFactory
 {
     private static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
-    private String propKey = "resolver.file.rootpath"; // set in .intermine/MINE.properties
-    private String resolverFileSymbo = "entrez";
+ // set in .intermine/MINE.properties
+    private static final String PROP_KEY = "resolver.file.rootpath";
+    private static final String SYMBOLIC_LINK = "entrez";
 
-    private String propFile = "entrezIdResolver_config.properties";
+    private static final String PROP_FILE = "entrezIdResolver_config.properties";
     private Map<String, String> configXref = new HashMap<String, String>();
     private Map<String, String> configNonxref = new HashMap<String, String>();
     private Map<String, String> configPrefix = new HashMap<String, String>();
@@ -51,7 +52,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      */
     public EntrezGeneIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
-        readConfig(propFile);
+        readConfig(PROP_FILE);
     }
 
     /**
@@ -169,7 +170,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonsAndClassName(taxonIds, this.clsCol.iterator().next()))) {
                 String resolverFileRoot =
-                        PropertiesUtil.getProperties().getProperty(propKey);
+                        PropertiesUtil.getProperties().getProperty(PROP_KEY);
 
                 // File path not set in MINE.properties
                 if (StringUtils.isBlank(resolverFileRoot)) {
@@ -179,7 +180,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + SYMBOLIC_LINK;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);

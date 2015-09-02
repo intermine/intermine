@@ -13,7 +13,10 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +45,10 @@ public class OmimConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OmimConverter(itemWriter, model);
+
+
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("9606", "ENSG001", Collections.singleton("609300"));
         super.setUp();
     }
 
@@ -49,27 +56,21 @@ public class OmimConverterTest extends ItemsTestCase
      * Basic test of converter functionality.
      * @throws Exception
      */
-    public void testSimpleFiles() throws Exception {
-        process("human_gene");
-        assertEquals(42, itemWriter.getItems().size());
+    public void testProcess() throws Exception {
+        File tmp = new File(getClass().getClassLoader()
+                .getResource("omim.txt").toURI());
+        File datadir = tmp.getParentFile();
+
+        process(datadir);
+        assertEquals(4, itemWriter.getItems().size());
     }
 
-    /**
-     * Test the count of items created from the records that have gene type: protein-coding, etc.
-     * @throws Exception
-     */
-    public void testGeneCount() throws Exception {
-        process("human_gene");
-        assertEquals(6, getGenes().size());
-    }
-
-    private void process(String infoFile) throws Exception {
-        File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
-        converter.process(geneInfo);
+    private void process(File infoFile) throws Exception {
+        converter.process(infoFile);
         converter.close();
 
         storedItems = itemWriter.getItems();
-        // writeItemsFile(storedItems, "humangene-tgt-items.xml");
+        writeItemsFile(storedItems, "humangene-tgt-items.xml");
     }
 
     private List<Item> getGenes() {

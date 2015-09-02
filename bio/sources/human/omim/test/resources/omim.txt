@@ -1,0 +1,863 @@
+*RECORD*
+*FIELD* NO
+124015
+*FIELD* TI
+*124015 CYTOCHROME P450 OXIDOREDUCTASE; POR
+;;CYTOCHROME P450 REDUCTASE
+*FIELD* TX
+
+DESCRIPTION
+
+Cytochrome P450 oxidoreductase is a flavoprotein that donates electrons
+to all microsomal P450 enzymes, including the steroidogenic enzymes
+P450c17 (CYP17A1; 609300), P450c21 (CYP21A2; 613815), and CYP51A1
+(601637) (Miller, 1986).
+
+CLONING
+
+Shephard et al. (1989) isolated and sequenced cDNA clones that code for
+rat and human NADPH-dependent cytochrome P450 reductase.
+
+MAPPING
+
+By Southern blot analysis of DNA isolated from a panel of 8 independent
+human-rodent somatic cell hybrids, Shephard et al. (1989) determined
+that cytochrome P450 reductase is encoded by a single gene located on
+7pter-q22. By in situ hybridization to metaphase chromosomes, they
+refined the localization to 7q11.2.
+
+MOLECULAR GENETICS
+
+- Congenital Adrenal Hyperplasia due to Cytochrome P450 Oxidoreductase
+Deficiency
+
+Apparent combined P450C17 and P450C21 deficiency (see 613571) is a rare
+variant of congenital adrenal hyperplasia, first reported by Peterson et
+al. (1985). Affected girls are born with ambiguous genitalia, indicating
+intrauterine androgen excess. After birth, however, virilization does
+not progress and amounts of circulating androgens are low or normal.
+Affected boys are sometimes born undermasculinized. Boys and girls can
+also present with bone malformations. Findings of biochemical
+investigations of urinary steroid excretion in affected patients have
+shown accumulation of steroid metabolites, indicating impaired C17 and
+C21 hydroxylation, suggesting concurrent partial deficiencies of the 2
+steroidogenic enzymes, P450C17 and P450C21. However, sequencing of the
+genes encoding these enzymes showed no mutations, which accorded with
+the idea of a defect in a cofactor that interacts with both enzymes.
+
+Arlt et al. (2004) investigated the underlying molecular basis of
+congenital adrenal hyperplasia with apparent combined P450C17 and
+P450C21 deficiency in 3 affected children, a brother and sister and a
+third unrelated patient. All 3 patients were compound heterozygotes for
+mutations in the POR gene (see 124015.0005 and 124015.0007-124015.0009),
+whereas their parents and an unaffected sib were heterozygotes. One
+patient (see 124015.0007) had mild bone abnormalities suggesting
+Antley-Bixler syndrome.
+
+In a 23-year-old 46,XX Brazilian female with normal breast development,
+primary amenorrhea, and mild arterial hypertension, but no dysmorphic
+features, Fluck et al. (2004) detected compound heterozygosity for
+mutations in the POR gene (see 124015.0003).
+
+- Antley-Bixler Syndrome with Disordered Steroidogenesis
+
+In 4 unrelated patients with disordered steroidogenesis including 3
+children with bony features of Antley-Bixler syndrome, Fluck et al.
+(2004) found mutations in the POR gene. This was somewhat surprising
+since the affected individuals lacked apparent disorders of bile acid
+synthesis or drug metabolism, which also requires P450 enzymes, and
+knockout of POR is embryonically lethal in mice (Shen et al., 2002; Otto
+et al., 2003).
+
+Huang et al. (2005) sequenced the POR gene in 32 individuals with
+Antley-Bixler syndrome and/or hormonal changes that suggested POR
+deficiency (201750). Fifteen patients carried POR mutations on both
+alleles; 4 carried mutations on only 1 allele. The 34 affected POR
+alleles included 10 with ala287-to-pro (124015.0002), all from whites,
+and 7 with arg457-to-his (R457H; 124015.0005), including 4 Japanese, 1
+African, and 2 Caucasians; 17 of the 34 carried 16 'private' mutations,
+including 9 missense and 7 frameshift mutations. One of the patients
+with an Antley-Bixler syndrome-like skeletal phenotype and abnormal
+steroids and genitalia, in whom Huang et al. (2005) identified compound
+heterozygosity for a frameshift and a missense mutation in the POR gene
+(see 124015.0015 and 124015.0016, respectively), was the patient in whom
+Hurley et al. (2004) had previously found a heterozygous missense
+mutation of unclear significance in the FGFR1 gene (136350.0011). Huang
+et al. (2005) recreated these 11 missense mutations, plus 10 others
+found in databases or reported elsewhere, by site-directed mutagenesis
+and assessed them by 4 assays: assays that were based on cytochrome c,
+which is not a physiologic substrate for POR, correlated fully with
+clinical phenotype, but assays that were based on POR's support of
+catalysis by P450c17 (the enzyme most closely associated with the
+hormonal phenotype) provided an excellent genotype/phenotype
+correlation. Huang et al. (2005) concluded that individuals with an ABS
+phenotype and normal steroidogenesis have FGFR mutations, whereas those
+with ambiguous genitalia and disordered steroidogenesis should be
+recognized as having a distinct new disease: POR deficiency. The
+existence of 2 distinct disorders was first suggested by Reardon et al.
+(2000).
+
+Fukami et al. (2005) reported molecular and genetic findings in 10
+Japanese patients from 8 families with skeletal findings of ABS and
+abnormal genitalia and/or impaired steroidogenesis. POR mutations were
+identified in 15 of 16 alleles from the 8 families; the R457H mutation
+was found in 10 of 16 alleles and was associated with a specific
+haplotype. Fukami et al. (2005) suggested that the high frequency of
+R457H in the Japanese is due to a founder effect. Four other mutations
+were also identified in these patients: a 1-bp insertion (124015.0011),
+a 24-bp deletion (124015.0012), a missense mutation (Y578C;
+124015.0013), and a silent 15A-G transition (G5G; 124015.0014).
+
+ANIMAL MODEL
+
+Otto et al. (2003) found that deletion of the Cpr gene in mice resulted
+in death in early to middle gestation. Cpr -/- embryos exhibited
+multiple abnormalities, including severe inhibition of vasculogenesis
+and hematopoiesis and defects in brain and limb development. Some of the
+abnormalities could be attributed to perturbations in retinoic acid
+homeostasis. Embryos at 9.5 days postcoitum had significantly elevated
+levels of retinoic acid and reduced levels of retinol. Furthermore, some
+of the phenotypes could be either reversed or exacerbated by decreasing
+or increasing maternal retinoic acid exposure, respectively.
+
+*FIELD* AV
+.0001
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, VAL492GLU
+
+In a child with bony features of Antley-Bixler syndrome and disordered
+steroidogenesis (201750), Fluck et al. (2004) found heterozygosity for a
+transversion in the POR gene, 1475T-A, leading to the amino acid
+substitution val492 to glu (V492E). The mutation was inherited from the
+mother, who was heterozygous; no mutation in the exons or first 50
+basepairs of splice donor-acceptor sites on the paternal allele was
+found.
+
+.0002
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, ALA287PRO
+
+In a child with bony features of Antley-Bixler syndrome with genital
+ambiguity and abnormal steroidogenesis (201750), Fluck et al. (2004)
+found apparent homozygosity for a nucleotide substitution 859G-C in the
+POR gene leading to an ala287-to-pro (A287P) substitution. This child
+had been described by Kelley et al. (2002). The mother was heterozygous
+for the mutation; paternal DNA was not available.
+
+Huang et al. (2005) sequenced the POR gene in 29 individuals with
+Antley-Bixler syndrome and/or hormonal findings that suggested POR
+deficiency. Fifteen patients carried POR mutations on both alleles; 4
+carried mutations on only 1 allele. The 34 affected POR alleles included
+10 with A287P, all in Caucasians.
+
+.0003
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, CYS569TYR
+
+In a phenotypically normal woman with amenorrhea and disordered
+steroidogenesis (613571), Fluck et al. (2004) found compound
+heterozygosity for 2 mutations in the POR gene, 1706G-A and 1822G-T,
+leading to the amino acid substitutions cys569 to tyr (C569Y) and val608
+to phe (V608F; 124015.0004), respectively. Parental DNA was not
+available.
+
+.0004
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, VAL608PHE
+
+See 124015.0003 and Fluck et al. (2004).
+
+.0005
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY,
+INCLUDED
+POR, ARG457HIS
+
+In a child with Antley-Bixler syndrome and disordered steroidogenesis
+(201750), Fluck et al. (2004) found compound heterozygosity for a
+1370G-A transition in the POR gene leading to an arg457-to-his (R457H)
+substitution on the maternal allele, and a 731+1G-A change (124015.0006)
+in the first base of the splice donor site of intron 6 on the paternal
+allele. The corresponding minigene construct retained intron 6, leading
+to a premature stop codon.
+
+In a female (46,XX) offspring of healthy, unrelated parents of Polish
+descent with congenital adrenal hyperplasia due to apparent combined
+deficiency of P450C17 and P450C21 (613571), Arlt et al. (2004) described
+compound heterozygosity for 2 mutations in the POR gene: an 849G-C
+transversion in exon 8 resulting in ala284-to-pro (A284P; 124015.0009)
+substitution, and the R457H mutation. (The authors, using the rat
+nomenclature, designated this mutation R454H.) The girl was born with
+clubfeet and ambiguous genitalia, including enlargement of the clitoris
+and partial labial fusion. Virilization did not progress after birth.
+Follow-up at 13 years of age showed a marfanoid habitus, scoliosis,
+arachnodactyly, dysplastic ears, and long, slim limbs. Ovarectomy due to
+rupture of large ovarian cysts was performed at 14 and 16 years of age.
+In this family, 5 preceding and 2 subsequent pregnancies resulted in
+early miscarriages. The unaffected father was heterozygous for A284P;
+the unaffected mother and younger brother were heterozygous for R457H.
+
+Huang et al. (2005) sequenced the POR gene in 29 individuals with a
+diagnosis of Antley-Bixler syndrome and/or hormonal findings that
+suggested POR deficiency. Fifteen patients carried POR mutations on both
+alleles, and 4 carried mutations on only 1 allele. The 34 affected POR
+alleles included 7 with R457H, in 4 Japanese, 1 African, and 2 white
+patients.
+
+Fukami et al. (2005) identified the R457H mutation in 10 of 16 alleles
+from 8 Japanese families with skeletal findings of ABS and abnormal
+genitalia and/or impaired steroidogenesis. R457H was associated with a
+specific haplotype; Fukami et al. (2005) suggested that the high
+frequency of R457H in the Japanese is due to a founder effect.
+
+Adachi et al. (2006) performed SNP analysis in 5 previously reported
+patients with POR deficiency and the R457H mutation (4 Japanese and 1
+Polish), and found that the non-Japanese patient had the same SNP
+pattern as Japanese patients, suggesting that R457H is a global founder
+mutation.
+
+.0006
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, IVS6DS, G-A, +1 
+
+See 124015.0005 and Fluck et al. (2004).
+
+.0007
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, TYR178ASP 
+
+In a brother and sister with congenital adrenal hyperplasia associated
+with apparent combined P450C17 and P450C21 deficiency (613571), Arlt et
+al. (2004) found compound heterozygosity for 2 mutations in the POR
+gene: a 531T-G transversion in exon 5, resulting in tyr178 to asp
+(Y178D), and a 1696G-A transition in exon 13, resulting in cys566 to tyr
+(C566Y; 124015.0008). The girl was born with ambiguous genitalia;
+ultrasound examination showed the presence of a uterus and ovaries, and
+the karyotype was confirmed as 46,XX. In addition, she had a broad nasal
+bridge and ulnar deviation of the wrists with brachytelephalangia and
+flattened metacarpal epiphyses, features resembling those of
+Antley-Bixler syndrome (see 207410). Virilization did not progress after
+birth. In the case of the younger brother, the mother's urinary steroid
+excretion was monitored longitudinally during pregnancy. Her estriol
+concentration failed to rise, and androsterone excretion rose, peaking
+around 20 weeks' gestation. Signs of virilization (acne, hirsutism)
+developed in the mother by 23 weeks' gestation. The mother's
+hyperandrogenism resolved rapidly after birth. The boy's karyotype was
+46,XY and he had normal male genitalia, including descended testes, at
+birth. There was no evidence of skeletal abnormalities. The unaffected
+parents were heterozygous for Y178D and C566Y, respectively.
+
+.0008
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, CYS566TYR 
+
+See 124015.0007 and Arlt et al. (2004).
+
+.0009
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY
+POR, ALA284PRO 
+
+See 124015.0005 and Arlt et al. (2004).
+
+.0010
+REMOVED FROM DATABASE
+.0011
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 1-BP INS, 1329C  
+
+In 2 Japanese sibs and an unrelated Japanese individual with skeletal
+findings of Antley-Bixler syndrome and abnormal genitalia and/or
+impaired steroidogenesis (201750), Fukami et al. (2005) identified
+compound heterozygosity for mutations in the POR gene, one of which was
+a 1-bp insertion (1329C) in exon 11, resulting in a truncated protein at
+codon 449. On the other allele, the 2 sibs had a 1733A-G transition in
+exon 13, resulting in a tyr578-to-cys substitution (Y578C; 124015.0012);
+the third patient had an R457H mutation in exon 11 (124015.0005).
+
+.0012
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, TYR578CYS  
+
+See 124015.0011 and Fukami et al. (2005).
+
+.0013
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 24-BP DEL, NT1835  
+
+In 2 Japanese sibs with skeletal findings of Antley-Bixler syndrome and
+abnormal genitalia (201750), Fukami et al. (2005) identified compound
+heterozygosity for a 24-bp deletion in exon 14 of the POR gene,
+resulting in the loss of 9 amino acids and the creation of 1 amino acid
+(arg612), and an R457H mutation in exon 11 (124015.0005).
+
+.0014
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 15A-G
+
+In a Japanese boy with skeletal findings of Antley-Bixler syndrome and
+abnormal genitalia (201750), Fukami et al. (2005) identified compound
+heterozygosity for a 15A-G transition in exon 1 of the POR gene,
+resulting in a 'silent' gly5-to-gly (G5G) substitution, and an R457H
+mutation in exon 11 (124015.0005). Computerized modeling analysis
+indicated that the 15A-G transition could disturb an exonic splicing
+enhancer motif.
+
+.0015
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+POR, 13-BP INS, NT580
+
+In a male infant with skeletal findings of Antley-Bixler syndrome and
+abnormal steroids and genitalia (201750), in whom Hurley et al. (2004)
+had previously found a heterozygous missense mutation of unclear
+significance in the FGFR1 gene (136350.0011), Huang et al. (2005)
+identified compound heterozygosity for a 13-bp insertion
+(580insTACGTGGACAAGC) and a gly539-to-arg (G539R; 124015.0016)
+substitution in the POR gene. The frameshift was predicted to disrupt
+the flavin mononucleotide (FMN)- and NADPH-binding sites and to result
+in premature termination of the protein. Functional studies showed that
+the G539R mutant retained 46% of the 17-alpha-hydroxylase activity but
+only 8% of the 17,20 lyase activity; consistent with this, the patient
+was able to synthesize cortisol adequately (17-alpha-hydrolase activity)
+but had poor production of sex steroids (17,20 lyase activity).
+
+.0016
+ANTLEY-BIXLER SYNDROME WITH GENITAL ANOMALIES AND DISORDERED STEROIDOGENESIS
+DISORDERED STEROIDOGENESIS DUE TO CYTOCHROME P450 OXIDOREDUCTASE DEFICIENCY,
+INCLUDED
+POR, GLY539ARG
+
+See 124015.0015 and Huang et al. (2005).
+
+Hershkovitz et al. (2008) reported 4 undervirilized males of an extended
+Bedouin family. One of these had been reported by Biason-Lauber et al.
+(1997) to carry mutations in the CYP17A1 gene (609300), encoding
+P450c17, causing isolated 17,20-lyase deficiency (202110). Gas
+chromatography-mass spectrometry (GC-MS) urinary steroid profiling and
+serum steroid measurements showed combined deficiencies of 17,20-lyase
+and 21-hydroxylase. Sequencing of exons 1 and 8 of CYP17A1 in 2
+different laboratories showed no mutations. Sequencing of the POR gene
+showed that all 4 patients were homozygous for G539R, which was shown by
+Huang et al. (2005) to retain 46% of normal 17-alpha-hydroxylase
+activity but only 8% of the 17,20-lyase activity of P450c17. Hershkovitz
+et al. (2008) concluded that POR deficiency (613571) can masquerade
+clinically as isolated 17,20-lyase deficiency.
+
+*FIELD* RF
+1. Adachi, M.; Asakura, Y.; Matsuo, M.; Yamamoto, T.; Hanaki, K.;
+Arlt, W.: POR R457H is a global founder mutation causing Antley-Bixler
+syndrome with autosomal recessive trait. (Letter) Am. J. Med. Genet. 140A:
+633-635, 2006.
+
+2. Arlt, W.; Walker, E. A.; Draper, N.; Ivison, H. E.; Ride, J. P.;
+Hammer, F.; Chalder, S. M.; Borucka-Mankiewicz, M.; Hauffa, B. P.;
+Malunowicz, E. M.; Stewart, P. M.; Shackleton, C. H. L.: Congenital
+adrenal hyperplasia caused by mutant P450 oxidoreductase and human
+androgen synthesis: analytical study. Lancet 363: 2128-2135, 2004.
+
+3. Biason-Lauber, A.; Leiberman, E.; Zachmann, M.: A single amino
+acid substitution in the putative redox partner-binding site of P450c17
+as cause of isolated 17,20-lyase deficiency. J. Clin. Endocr. Metab. 82:
+3807-3812, 1997.
+
+4. Fluck, C. E.; Tajima, T.; Pandey, A. V.; Arlt, W.; Okuhara, K.;
+Verge, C. F.; Jabs, E. W.; Mendonca, B. B.; Fujieda, K.; Miller, W.
+L.: Mutant P450 oxidoreductase causes disordered steroidogenesis
+with and without Antley-Bixler syndrome. Nature Genet. 36: 228-230,
+2004.
+
+5. Fukami, M.; Horikawa, R.; Nagai, T.; Tanaka, T.; Naiki, Y.; Sato,
+N.; Okuyama, T.; Nakai, H.; Soneda, S.; Tachibana, K.; Matsuo, N.;
+Sato, S.; Homma, K.; Nishimura, G.; Hasegawa, T.; Ogata, T.: Cytochrome
+P450 oxidoreductase gene mutations and Antley-Bixler syndrome with
+abnormal genitalia and/or impaired steroidogenesis: molecular and
+clinical studies in 10 patients. J. Clin. Endocr. Metab. 90: 414-426,
+2005.
+
+6. Hershkovitz, E.; Parvari, R.; Wudy, S. A.; Hartmann, M. F.; Gomes,
+L. G.; Loewental, N.; Miller, W. L.: Homozygous mutation G539R in
+the gene for P450 oxidoreductase in a family previously diagnosed
+as having 17,20-lyase deficiency. J. Clin. Endocr. Metab. 93: 3584-3588,
+2008.
+
+7. Huang, N.; Pandey, A. V.; Agrawal, V.; Reardon, W.; Lapunzina,
+P. D.; Mowat, D.; Jabs, E. W.; Van Vliet, G.; Sack, J.; Fluck, C.
+E.; Miller, W. L.: Diversity and function of mutations in P450 oxidoreductase
+in patients with Antley-Bixler syndrome and disordered steroidogenesis. Am.
+J. Hum. Genet. 76: 729-749, 2005.
+
+8. Hurley, M. E.; White, M. J.; Green, A. J.; Kelleher, J.: Antley-Bixler
+syndrome with radioulnar synostosis. Pediat. Radiol. 34: 148-151,
+2004.
+
+9. Kelley, R. I.; Kratz, L. E.; Glaser, R. L.; Netzloff, M. L.; Wolf,
+L. M.; Jabs, E. W.: Abnormal sterol metabolism in a patient with
+Antley-Bixler syndrome and ambiguous genitalia. Am. J. Med. Genet. 110:
+95-102, 2002.
+
+10. Miller, W. L.: Congenital adrenal hyperplasia. (Letter) New
+Eng. J. Med. 314: 1321-1322, 1986.
+
+11. Otto, D. M. E.; Henderson, C. J.; Carrie, D.; Davey, M.; Gundersen,
+T. E.; Blomhoff, R.; Adams, R. H.; Tickle, C.; Wolf, C. R.: Identification
+of novel roles of the cytochrome P450 system in early embryogenesis:
+effects on vasculogenesis and retinoic acid homeostasis. Molec. Cell.
+Biol. 23: 6103-6116, 2003.
+
+12. Otto, D. M. E.; Henderson, C. J.; Carrie, D.; Davey, M.; Gundersen,
+T. E.; Blomhoff, R.; Adams, R. H.; Tickle, C.; Wolf, C. R.: Identification
+of novel roles of the cytochrome P450 system in early embryogenesis:
+effects on vasculogenesis and retinoic acid homeostasis. Molec. Cell.
+Biol. 23: 6103-6116, 2003.
+
+13. Peterson, R. E.; Imperato-McGinley, J.; Gautier, T.; Shackleton,
+C.: Male pseudohermaphroditism due to multiple defects in steroid-biosynthetic
+microsomal mixed-function oxidases: a new variant of congenital adrenal
+hyperplasia. New Eng. J. Med. 313: 1182-1191, 1985.
+
+14. Reardon, W.; Smith, A.; Honour, J. W.; Hindmarsh, P.; Das, D.;
+Rumsby, G.; Nelson, I.; Malcolm, S.; Ades, L.; Sillence, D.; Kumar,
+D.; DeLozier-Blanchet, C.; McKee, S.; Kelly, T.; McKeehan, W. L.;
+Baraitser, M.; Winter, R. M.: Evidence for digenic inheritance in
+some cases of Antley-Bixler syndrome? J. Med. Genet. 37: 26-32,
+2000.
+
+15. Shen, A. L.; O'Leary, K. A.; Kasper, C. B.: Association of multiple
+developmental defects and embryonic lethality with loss of microsomal
+NADPH-cytochrome P450 oxidoreductase. J. Biol. Chem. 277: 6536-6541,
+2002.
+
+16. Shephard, E. A.; Phillips, I. R.; Santisteban, I.; West, L. F.;
+Palmer, C. N.; Ashworth, A.; Povey, S.: Isolation of a human cytochrome
+P-450 reductase cDNA clone and localization of the corresponding gene
+to chromosome 7q11.2. Ann. Hum. Genet. 53: 291-301, 1989.
+
+*FIELD* CN
+John A. Phillips, III - updated: 6/15/2009
+Patricia A. Hartz - updated: 3/20/2009
+Marla J. F. O'Neill - updated: 1/26/2009
+Marla J. F. O'Neill - updated: 6/20/2006
+Marla J. F. O'Neill - updated: 9/23/2005
+Marla J. F. O'Neill - updated: 9/1/2005
+Victor A. McKusick - updated: 6/8/2005
+Marla J. F. O'Neill - updated: 10/11/2004
+Victor A. McKusick - updated: 10/6/2004
+Victor A. McKusick - updated: 2/13/2004
+
+*FIELD* CD
+Victor A. McKusick: 10/2/1990
+
+*FIELD* ED
+alopez: 03/24/2011
+alopez: 1/11/2011
+alopez: 9/24/2010
+alopez: 6/15/2009
+mgross: 3/23/2009
+terry: 3/20/2009
+carol: 1/26/2009
+joanna: 1/26/2009
+wwang: 6/8/2007
+wwang: 12/13/2006
+wwang: 10/19/2006
+wwang: 6/22/2006
+terry: 6/20/2006
+alopez: 11/29/2005
+terry: 11/17/2005
+carol: 9/26/2005
+carol: 9/23/2005
+terry: 9/23/2005
+carol: 9/1/2005
+terry: 6/8/2005
+terry: 11/4/2004
+carol: 10/11/2004
+alopez: 10/8/2004
+terry: 10/6/2004
+mgross: 3/17/2004
+alopez: 3/1/2004
+alopez: 2/16/2004
+terry: 2/13/2004
+supermim: 3/16/1992
+carol: 10/2/1990
+
+*RECORD*
+*FIELD* NO
+202110
+*FIELD* TI
+#202110 ADRENAL HYPERPLASIA, CONGENITAL, DUE TO 17-ALPHA-HYDROXYLASE DEFICIENCY
+;;ADRENAL HYPERPLASIA V;;
+17-@ALPHA-HYDROXYLASE DEFICIENCY
+17,20-@LYASE DEFICIENCY, ISOLATED, INCLUDED;;
+17-@ALPHA-HYDROXYLASE/17,20-LYASE DEFICIENCY, COMBINED COMPLETE, INCLUDED;;
+17-@ALPHA-HYDROXYLASE/17,20-LYASE DEFICIENCY, COMBINED PARTIAL, INCLUDED
+*FIELD* TX
+A number sign (#) is used with this entry because the phenotype is
+caused by mutation in the gene encoding steroid 17-monooxygenase
+(CYP17A1; 609300). The enzyme has both 17-alpha-hydroxylase and
+17,20-lyase activities.
+
+CLINICAL FEATURES
+
+Deficiency of adrenal 17-hydroxylation activity was first demonstrated
+in a single patient by Biglieri et al. (1966), who suggested a similar
+defect in the gonad. Production of excessive corticosterone and
+deoxycorticosterone resulted in hypertension and hypokalemic alkalosis.
+Aldosterone synthesis was almost totally absent. The patient had normal
+stature and amenorrhea. Although there were no other cases in the family
+and parental consanguinity was not noted, recessive inheritance was
+possible. Biglieri (1997) reviewed the evolution of the clinical
+features and laboratory findings in this case over 3 years.
+
+Goldsmith et al. (1967) reported a second case in whom the defect in
+17-alpha-hydroxylation may have been less complete than in the first
+case. The patient was a 26-year-old woman with hypertension, primary
+amenorrhea, and lack of secondary sexual characteristics. Mallin (1969)
+described congenital adrenal hyperplasia due to 17-hydroxylase
+deficiency in 2 sisters. New (1970) reported the first affected male.
+The clinical features were pseudohermaphroditism with ambiguous external
+genitalia and prominent breast development at puberty. Unlike the
+previously reported female cases, this male patient did not demonstrate
+severe hypertension or hypokalemia. Testicular feminization was
+simulated in a patient reported by Heremans et al. (1976).
+
+Yazaki et al. (1982) reported a Japanese phenotypic female, born of
+consanguineous parents, with generalized muscle weakness due to
+hypokalemic myopathy, primary amenorrhea, and lack of pubertal
+development. Laparoscopy showed intraabdominal testes and no uterus.
+Karyotype was 46,XY. Laboratory studies showed increased plasma
+progesterone, corticosterone, aldosterone, ACTH (see 176830), LH (see
+152780), and FSH (see 136530). Glucocorticoid replacement normalized
+plasma levels of ACTH, 17-deoxysteroids, and potassium. This patient was
+later found to have a homozygous mutation in the CYP17A1 gene
+(609300.0011; Yamaguchi et al., 1997), consistent with combined complete
+17-alpha-hydroxylase/17,20-lyase deficiency.
+
+Scaroni et al. (1991) reported a family in which 3 members, 2 adult
+females and 1 pubertal-aged genotypic male, had congenital adrenal
+hyperplasia due to 17-alpha hydroxylase deficiency. All presented as
+phenotypic females with lack of sexual development and hypokalemic
+hypertension. Baseline hormonal studies showed low glucocorticoid,
+androgen, and estrogen levels. As a consequence, ACTH, LH, and FSH
+concentrations were increased. Plasma renin and aldosterone were also
+decreased. Short-term dexamethasone treatment normalized potassium and
+reduced blood pressure and the abnormal mineralocorticoid levels.
+
+Martin et al. (2003) reported 11 patients from 6 Brazilian families with
+combined 17-alpha-hydroxylase/17,20-lyase deficiency. All patients had
+elevated basal serum levels of progesterone and suppressed plasma renin
+activity. The authors concluded that basal progesterone measurement is a
+useful marker of P450c17 deficiency and that its use should reduce the
+misdiagnosis of this deficiency in patients presenting with male
+pseudohermaphroditism, primary or secondary amenorrhea, and
+mineralocorticoid excess syndrome.
+
+- Combined Partial 17-alpha-Hydroxylase/17,20-Lyase Deficiency
+
+Oshiro et al. (1995) reported a 32-year-old Japanese woman with combined
+partial 17-alpha-hydroxylase/17,20-lyase deficiency caused by mutation
+in the CYP17A1 gene (609300.0008). The patient was referred because of
+hypertension and amenorrhea. She had menarche at the age of 14 years
+with irregular menstruation until the age of 20, but no menstruation
+thereafter. Hypertension had been known since the age of 20 years. She
+had a flat chest, infantile genitalia, and no pubic or axillary hair.
+Computed tomography revealed bilateral adrenal hyperplasia without
+tumors, uterine hypoplasia, and atrophy of the ovaries. The patient had
+hypokalemia, metabolic alkalosis, and positive Trousseau sign.
+
+Yanase et al. (1989) reported a Japanese woman with combined partial
+17-alpha-hydroxylase/17,20-lyase deficiency caused by mutation in the
+CYP17A1 gene (609300.0002). Functional expression studies showed that
+17-alpha-hydroxylase and 17,20-lyase activities were less than 37% and
+8% of normal, respectively. On a visit to the hospital at the age of 20
+because of occipital headache, the patient was found to have
+hypertension and hypokalemia. Menstruation was irregular. Physical
+examination showed hypoplastic breasts and no pubic or axillary hair.
+Miura et al. (1996) reported follow-up of the Japanese woman reported by
+Yanase et al. (1989). In 1968, she was reported as having
+glucocorticoid-responsive hyperaldosteronism. She was treated with
+dexamethasone, resulting in normal blood pressure and normokalemia for
+28 years. Because of sustained vaginal bleeding, she had a total
+hysterectomy at age 42. No follicles or corpus luteum were detected in
+the ovarian specimen. At age 45 years, she had decreased levels of sex
+steroids and increased levels of gonadotropins. Miura et al. (1996)
+concluded that the disorder resulted in early reduction of gonadal
+function with increasing age.
+
+- Isolated 17,20-Lyase Deficiency 
+
+Geller et al. (1997) reported 2 patients with isolated 17,20-lyase
+deficiency caused by different homozygous mutations in the CYP17A1 gene
+(609300.00012 and 609300.0013, respectively). The first patient had
+genital ambiguity at birth, but was assigned female gender. When seen at
+13 months of age, the patient showed a 2.2-cm phallus, perineal
+hypospadias, bilateral gonads palpable in a bifid scrotum, and a blind
+vaginal pouch seen on urethrocystograms. The parents were first cousins.
+Serum cortisol and electrolytes and blood pressure were normal.
+Gonadotropins were at normal prepubertal level in this patient.
+Testicular stimulation with human chorionic gonadotropin elicited
+grossly subnormal responses of testosterone, DHEA, and androstenedione.
+Basal and hCG-stimulated progesterone was normal. The second patient had
+a 46,XY karyotype, but genital ambiguity at birth when male gender was
+assigned. Gynecomastia developed at 14 years of age, and at 16 years the
+breasts were Tanner stage V; pubic hair was Tanner stage IV, but there
+was minimal body hair. The genitalia were characterized by a 4.5-cm
+phallus, perineal hypospadias, bifid scrotum, small descended testis on
+the right and left in the inguinal canal, and a blind vaginal pouch
+detected by urethrocystography. The parents denied consanguinity.
+
+Biason-Lauber et al. (1997) reported a newborn male patient from Israel
+with micropenis, undescended testes, and a hormonal pattern consistent
+with isolated 17,20-lyase deficiency. They found compound heterozygosity
+for mutations in the CYP17A1 gene. Gupta et al. (2001) studied one of
+the mutations and was unable to demonstrate activity consistent with the
+diagnosis. Hershkovitz et al. (2008) restudied this patient along with 3
+other affected male relatives. They found deficiency of cytochrome P450
+oxidoreductase (POR) caused by homozygosity for a mutation in the POR
+gene (124015.0016) in these individuals. Sequencing of the CYP17A1 in 2
+different laboratories failed to find the mutations reported by
+Biason-Lauber et al. (1997). Hershkovitz et al. (2008) concluded that
+POR deficiency (201750) can masquerade clinically as isolated
+17,20-lyase deficiency.
+
+MAPPING
+
+Mantero et al. (1980) found no evidence of linkage between HLA and
+17-alpha-hydroxylase deficiency. D'Armiento et al. (1983) demonstrated
+that, like 11-beta-hydroxylase deficiency (202010), 17-alpha-hydroxylase
+deficiency is not linked to HLA.
+
+MOLECULAR GENETICS
+
+In a patient with combined 17-alpha-hydroxylase/17,20-lyase deficiency,
+Kagimoto et al. (1988) identified a 4-base duplication in the CYP17A1
+gene (609300.0001), resulting in the loss of both enzymatic activities.
+
+In 2 patients with isolated 17,20-lyase deficiency from a small village
+in Brazil, Geller et al. (1997) identified 2 different homozygous
+mutations in the CYP17A1 gene (609300.0012; 609300.0013). When expressed
+in COS-1 cells, the mutants retained 17-alpha-hydroxylase activity, but
+had minimal 17,20-lyase activity.
+
+Yanase et al. (1991) stated that since the first description by Biglieri
+et al. (1966), at least 122 cases of 17-alpha-hydroxylase deficiency had
+been reported. Furthermore, 14 cases of 17,20-lyase deficiency had been
+reported in which 17-alpha-hydroxylase activity remained normal, this
+being a major reason that the 2 enzymes were long thought to be
+different. Yanase et al. (1991) reviewed 8 cases in which intragenic
+lesions had been identified.
+
+In 11 patients from 6 Brazilian families with combined
+17-alpha-hydroxylase/17,20-lyase deficiency, Martin et al. (2003)
+identified mutations in the CYP17A1 gene (609300.0009;
+609300.0023-609300.0026).
+
+*FIELD* SA
+Rovner and Gordon (1978)
+*FIELD* RF
+1. Biason-Lauber, A.; Leiberman, E.; Zachmann, M.: A single amino
+acid substitution in the putative redox partner-binding site of P450c17
+as cause of isolated 17,20-lyase deficiency. J. Clin. Endocr. Metab. 82:
+3807-3812, 1997.
+
+2. Biglieri, E.G.: A prismatic case: 17-alpha-hydroxylase deficiency:
+1963-1966. J. Clin. Endocr. Metab. 82: 48-50, 1997.
+
+3. Biglieri, E. G.; Herron, M. A.; Brust, N.: 17-Hydroxylation deficiency
+in man. J. Clin. Invest. 45: 1946-1954, 1966.
+
+4. D'Armiento, M.; Reda, G.; Bisignani, G.; Tabolli, S.; Capellaci,
+S.; Lulli, P.; Carbonara, A.; Biglieri, E. G.: No linkage between
+HLA and congenital adrenal hyperplasia due to 17-alpha-hydroxylase
+deficiency. (Letter) New Eng. J. Med. 308: 970-971, 1983.
+
+5. Geller, D. H.; Auchus, R. J.; Mendonca, B. B.; Miller, W. L.:
+The genetic and functional basis of isolated 17,20-lyase deficiency. Nature
+Genet. 17: 201-205, 1997.
+
+6. Goldsmith, O.; Solomon, D. H.; Horton, R.: Hypogonadism and mineralocorticoid
+excess: 17-hydroxylase deficiency. New Eng. J. Med. 277: 673-677,
+1967.
+
+7. Gupta, M. K.; Geller, D. H.; Auchus, R. J.: Pitfalls in characterizing
+P450c17 mutations associated with isolated 17,20-lyase deficiency. J.
+Clin. Endocr. Metab. 86: 4416-4423, 2001.
+
+8. Heremans, G. F. P.; Moolenaar, A. J.; Van Gelderen, H. H.: Female
+phenotype in a male child due to 17-alpha-hydroxylase deficiency. Arch.
+Dis. Child. 51: 721-723, 1976.
+
+9. Hershkovitz, E.; Parvari, R.; Wudy, S. A.; Hartmann, M. F.; Gomes,
+L. G.; Loewental, N.; Miller, W. L.: Homozygous mutation G539R in
+the gene for P450 oxidoreductase in a family previously diagnosed
+as having 17,20-lyase deficiency. J. Clin. Endocr. Metab. 93: 3584-3588,
+2008.
+
+10. Kagimoto, M.; Winter, J. S. D.; Kagimoto, K.; Simpson, E. R.;
+Waterman, M. R.: Structural characterization of normal and mutant
+human steroid 17-alpha-hydroxylase genes: molecular basis of one example
+of combined 17-alpha-hydroxylase/17,20 lyase deficiency. Molec. Endocr. 2:
+564-570, 1988.
+
+11. Mallin, S. R.: Congenital adrenal hyperplasia secondary to 17-hydroxylase
+deficiency. Ann. Intern. Med. 70: 69-76, 1969.
+
+12. Mantero, F.; Scaroni, C.; Pasini, C. V.; Fagiolo, U.: No linkage
+between HLA and congenital adrenal hyperplasia due to 17-alpha-hydroxylase
+deficiency. (Letter) New Eng. J. Med. 303: 530, 1980.
+
+13. Martin, R. M.; Lin, C. J.; Costa, E. M. F.; Leocadia de Oliveira,
+M.; Carrilho, A.; Villar, H.; Longui, C. A.; Mendonca, B. B.: P450c17
+deficiency in Brazilian patients: biochemical diagnosis through progesterone
+levels confirmed by CYP17 genotyping. J. Clin. Endocr. Metab. 88:
+5739-5746, 2003.
+
+14. Miura, K.; Yasuda, K.; Yanase, T.; Yamakita, N.; Sasano, H.; Nawata,
+H.; Inoue, M.; Fukaya, T.; Shizuta, Y.: Mutation of cytochrome P-45017
+alpha gene (CYP17) in a Japanese patient previously reported as having
+glucocorticoid-responsive hyperaldosteronism: with a review of Japanese
+patients with mutations of CYP17. J. Clin. Endocr. Metab. 81: 3797-3801,
+1996.
+
+15. New, M. I.: Male pseudohermaphroditism due to 17-alpha-hydroxylase
+deficiency. J. Clin. Invest. 49: 1930-1941, 1970.
+
+16. Oshiro, C.; Takasu, N.; Wakugami, T.; Komiya, I.; Yamada, T.;
+Eguchi, Y.; Takei, H.: Seventeen alpha-hydroxylase deficiency with
+one base pair deletion of the cytochrome P450c17 (CYP17) gene. J.
+Clin. Endocr. Metab. 80: 2526-2529, 1995.
+
+17. Rovner, D. R.; Gordon, D. L.: Direct evidence for a functional
+block with 18 oxidation in a patient with 17-alpha-hydroxylase deficiency. Trans.
+Assoc. Am. Phys. 91: 416-423, 1978.
+
+18. Scaroni, C.; Biason, A.; Carpene, G.; Opocher, G.; Mantero, F.
+: 17-Alpha-hydroxylase deficiency in three siblings: short- and long-term
+studies. J. Endocr. Invest. 14: 99-108, 1991.
+
+19. Yamaguchi, H.; Nakazato, M.; Miyazato, M.; Kangawa, K.; Matsukura,
+S.: A 5-prime-splice site mutation in the cytochrome P450 steroid
+17-alpha-hydroxylase gene in 17-alpha-hydroxylase deficiency. J.
+Clin. Endocr. Metab. 82: 1934-1938, 1997.
+
+20. Yanase, T.; Kagimoto, M.; Suzuki, S.; Hashiba, K.; Simpson, E.
+R.; Waterman, M. R.: Deletion of a phenylalanine in the N-terminal
+region of human cytochrome P-450(17a) results in partial combined
+17-alpha-hydroxylase/17,20-lyase deficiency. J. Biol. Chem. 264:
+18076-18082, 1989. Note: Erratum: J. Biol. Chem. 264: 21433 only,
+1989.
+
+21. Yanase, T.; Simpson, E. R.; Waterman, M. R.: 17-Alpha-hydroxylase/17,20-lyase
+deficiency: from clinical investigation to molecular definition. Endocr.
+Rev. 12: 91-108, 1991.
+
+22. Yazaki, K.; Kuribayashi, T.; Yamamura, Y.; Kurihara, T.; Araki,
+S.: Hypokalemic myopathy associated with 17-alpha-hydroxylase deficiency:
+a case report. Neurology 32: 94-97, 1982.
+
+*FIELD* CS
+
+GU:
+   Ambiguous genitalia;
+   Primary amenorrhea;
+   Male pseudohermaphroditism
+
+Thorax:
+   Gynecomastia
+
+Endo:
+   Adrenogenital syndrome
+
+Metabolic:
+   Hypertension;
+   Hypokalemic alkalosis
+
+Lab:
+   17-alpha-hydroxylase deficiency;
+   ACTH increased;
+   FSH increased
+
+Inheritance:
+   Autosomal recessive
+
+*FIELD* CN
+John A. Phillips, III - updated: 6/15/2009
+Cassandra L. Kniffin - reorganized: 4/21/2005
+John A. Phillips, III - updated: 4/1/2005
+John A. Phillips, III - updated: 10/14/2004
+Marla J. F. O'Neill - updated: 5/19/2004
+John A. Phillips, III - updated: 2/11/2004
+John A. Phillips, III - updated: 4/8/2003
+Victor A. McKusick - updated: 1/10/2003
+John A. Phillips, III - updated: 8/8/2002
+John A. Phillips, III - updated: 7/12/2002
+John A. Phillips, III - updated: 2/14/2002
+John A. Phillips, III - updated: 7/30/2001
+John A. Phillips, III - updated: 6/29/2001
+John A. Phillips, III - updated: 3/8/2001
+John A. Phillips, III - updated: 3/5/2001
+John A. Phillips, III - updated: 5/12/1998
+Victor A. McKusick - updated: 9/30/1997
+John A. Phillips, III - updated: 6/28/1997
+John A. Phillips, III - updated: 2/25/1997
+John A. Phillips, III - updated: 1/18/1997
+Jennifer P. Macke - updated: 11/14/1996
+John A. Phillips, III - updated: 9/16/1996
+
+*FIELD* CD
+Victor A. McKusick: 6/2/1986
+
+*FIELD* ED
+carol: 07/12/2013
+alopez: 6/15/2009
+carol: 1/29/2008
+alopez: 7/13/2007
+tkritzer: 4/21/2005
+ckniffin: 4/7/2005
+alopez: 4/1/2005
+alopez: 10/14/2004
+carol: 5/20/2004
+terry: 5/19/2004
+carol: 3/17/2004
+carol: 2/23/2004
+alopez: 2/11/2004
+carol: 10/17/2003
+tkritzer: 4/16/2003
+tkritzer: 4/14/2003
+terry: 4/8/2003
+carol: 3/5/2003
+carol: 1/13/2003
+terry: 1/10/2003
+cwells: 8/8/2002
+alopez: 7/12/2002
+alopez: 2/14/2002
+carol: 2/11/2002
+cwells: 8/1/2001
+cwells: 7/30/2001
+cwells: 7/3/2001
+cwells: 6/29/2001
+alopez: 3/8/2001
+mgross: 3/5/2001
+alopez: 5/12/1998
+psherman: 3/19/1998
+mark: 1/10/1998
+alopez: 12/8/1997
+terry: 9/30/1997
+jenny: 8/27/1997
+mark: 6/16/1997
+alopez: 6/10/1997
+jenny: 6/3/1997
+jenny: 5/28/1997
+jenny: 3/7/1997
+jenny: 3/4/1997
+jenny: 2/25/1997
+jamie: 11/14/1996
+carol: 9/25/1996
+carol: 9/16/1996
+terry: 5/24/1996
+mark: 2/9/1996
+terry: 1/30/1996
+mimadm: 11/12/1995
+carol: 12/13/1994
+carol: 1/8/1993
+carol: 1/7/1993
+carol: 10/26/1992
+carol: 7/24/1992
+

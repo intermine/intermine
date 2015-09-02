@@ -37,6 +37,7 @@ public class HumanIdResolverFactory extends IdResolverFactory
 
     private static final String HGNC_PREFIX = "HGNC:";
     private static final String OMIM_PREFIX = "OMIM:";
+    private static final String TAXON_ID = "9606";
 
     /**
      * Construct without SO term of the feature type.
@@ -101,22 +102,20 @@ public class HumanIdResolverFactory extends IdResolverFactory
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
-            String symbol = line[0];
-            String hgnc = line[1];
-            String entrez = line[2];
-            String ensembl = line[3];
-            String omim = line[4];
+            String ensembl = line[0];
+            String entrez = line[1];
+            String hgncID = line[2];
+            String symbol = line[3];
 
-            resolver.addMainIds(taxonId, symbol, Collections.singleton(symbol));
-            resolver.addMainIds(taxonId, symbol, Collections.singleton(HGNC_PREFIX + hgnc));
+            resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(ensembl));
             if (!StringUtils.isEmpty(entrez)) {
-                resolver.addMainIds(taxonId, symbol, Collections.singleton(entrez));
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(entrez));
             }
-            if (!StringUtils.isEmpty(ensembl)) {
-                resolver.addMainIds(taxonId, symbol, Collections.singleton(ensembl));
+            if (!StringUtils.isEmpty(hgncID)) {
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(hgncID));
             }
-            if (!StringUtils.isEmpty(omim)) {
-                resolver.addMainIds(taxonId, symbol, Collections.singleton(OMIM_PREFIX + omim));
+            if (!StringUtils.isEmpty(symbol)) {
+                resolver.addMainIds(TAXON_ID, ensembl, Collections.singleton(symbol));
             }
         }
     }
