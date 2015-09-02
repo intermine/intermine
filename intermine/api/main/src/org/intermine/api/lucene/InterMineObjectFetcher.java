@@ -186,10 +186,11 @@ public class InterMineObjectFetcher extends Thread
             }
         } catch (Exception e) {
             LOG.warn(null, e);
+            throw new RuntimeException("Index creation failed: ", e);
+        } finally {
+            //notify main thread that we're done
+            indexingQueue.finish();
         }
-
-        //notify main thread that we're done
-        indexingQueue.finish();
     }
 
     private Document handleObject(
