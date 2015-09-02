@@ -16,10 +16,8 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;

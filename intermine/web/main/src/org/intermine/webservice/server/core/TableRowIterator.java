@@ -26,7 +26,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultCell;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;

@@ -223,8 +223,7 @@ public class InterMineObjectFetcher extends Thread
                     for (KeywordSearchFacetData facet : facets) {
                         for (String field : facet.getFields()) {
                             if (field.startsWith(reference + ".")
-                                    && !field.substring(reference.length() + 1)
-                                    .contains(".")) {
+                                    && !field.substring(reference.length() + 1).contains(".")) {
                                 referenceFacetFields.put(fullReference, facet);
                             }
                         }

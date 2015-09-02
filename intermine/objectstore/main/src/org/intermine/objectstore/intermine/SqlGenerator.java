@@ -691,14 +691,14 @@ public final class SqlGenerator
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
                 Class<?> cls = DynamicUtil.getClass(((QueryClass) fromElement).getType());
-//                for (Class<?> cls : Util.decomposeClass(((QueryClass) fromElement)
-//                        .getType())) {
-                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
-                    if (cld == null) {
-                        throw new ObjectStoreException(cls + " is not in the model");
-                    }
-                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                //                for (Class<?> cls : Util.decomposeClass(((QueryClass) fromElement)
+                //                        .getType())) {
+                ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
+                if (cld == null) {
+                    throw new ObjectStoreException(cls + " is not in the model");
+                }
+                ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                tablenames.add(DatabaseUtil.getTableName(tableMaster));
                 //}
             } else if (fromElement instanceof Query) {
                 Query subQ = (Query) fromElement;

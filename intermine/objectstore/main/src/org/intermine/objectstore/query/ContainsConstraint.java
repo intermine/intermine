@@ -12,7 +12,6 @@ package org.intermine.objectstore.query;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Util;

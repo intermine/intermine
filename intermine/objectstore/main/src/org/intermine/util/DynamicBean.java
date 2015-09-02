@@ -67,7 +67,8 @@ public class DynamicBean implements MethodInterceptor
     /**
      * Create dynamic bean representing and object of a particular class, allows us instantiate
      * interfaces like regular classes.
-     * @param clazz the class or inteface to create an object for
+     * @param clazz the class or interface to create an object for
+     * @param <C> a class extending FastPathObject
      * @return a dynamic bean object
      */
     public static <C extends FastPathObject> C create(Class<C> clazz) {
