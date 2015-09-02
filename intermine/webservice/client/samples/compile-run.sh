@@ -13,7 +13,7 @@ if !(test -e ${FILE}); then
     exit; 
 fi;
 
-CLASSPATH=../../lib/intermine-objectstore.jar:../../lib/intermine-pathquery.jar:../../lib/commons-codec-1.3.jar:../../lib/commons-httpclient-3.0.jar:../../lib/commons-logging-1.1.1.jar:../../lib/intermine-client.jar:../../lib/log4j.jar:../../lib/stax-api-1.0.jar:../../lib/stax-ri-1.0.jar:../../lib/antlr-2.7.6-caching.jar:../../lib/commons-lang-2.3.jar
+CLASSPATH=../../../../objectstore/main/dist/intermine-objectstore.jar:../../../../pathquery/main/dist/intermine-pathquery.jar:../../../../web/main/lib/commons-codec-1.9.jar:../../../../webservice/client/main/lib/commons-httpclient-3.0.jar:../../../../web/main/lib/commons-logging-1.1.1.jar:../../main/dist/intermine-webservice-client.jar:../main/lib/log4j.jar:../../../../integrate/main/lib/stax-api-1.0.jar:../../../../integrate/main/lib/stax-ri-1.0.jar:../../../../model/main/lib/antlr-2.7.6-caching.jar:../../../../model/main/lib/commons-lang-2.6.jar:../../../../model/main/lib/commons-io-1.2.jar:../../../../model/main/lib/json20110106.jar:../../../../model/main/dist/intermine-model.jar:../../../../model/main/lib/log4j.jar
 
 cd $1;
 mkdir -p build;

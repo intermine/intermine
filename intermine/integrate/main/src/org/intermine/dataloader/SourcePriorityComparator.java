@@ -98,6 +98,10 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
         }
         List<String> srcs = priorityConfig.getPriorities(clazz, fieldName);
         if (srcs != null) {
+            // there are priorities defined for this field
+
+            // one object is being loaded (from default source) and one should be in the data
+            // tracker (if it has a value for this field)
             if (o1 == defObj) {
                 source1 = def;
             } else {
@@ -122,6 +126,9 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
             }
             if (source1 != null && source2 != null) {
                 if (source1.getName().equals(source2.getName())) {
+                    // the two objects are from the same source, we expect one to be a skeleton
+                    // (which has lower precedence) or there may be duplicate objects from the
+                    // same data source which is an error.
                     if (source1.getSkeleton() && (!source2.getSkeleton())) {
                         return -1;
                     } else if (source2.getSkeleton() && (!source1.getSkeleton())) {
@@ -174,6 +181,8 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
                     }
                 }
                 if (errorMessage != null) {
+                    // if one source wasn't mentioned in the priorities but one of the objects has
+                    // a null value for this field we prefer the non-null value
                     if ((value1 == null) && (value2 == null)) {
                         return (o1 == defObj ? 1 : -1);
                     }
@@ -186,12 +195,16 @@ public class SourcePriorityComparator implements Comparator<InterMineObject>
                     LOG.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
                 }
+                // both sources are defined in priorities, return the priority order even if the
+                // higher priority source has a null value
                 int retval = source2Priority - source1Priority;
                 if (retval != 0) {
                     return retval;
                 }
             }
         }
+
+        // there were no priorities defined for this field
         if ((value1 == null) && (value2 == null)) {
             return (o1 == defObj ? 1 : -1);
         }
