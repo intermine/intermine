@@ -67,9 +67,7 @@ public class ContainsConstraint extends Constraint
 
         Class<?> c1 = ref.getType();
         Class<? extends FastPathObject> c2 = cls.getType();
-        Set<Class<?>> cs1 = Util.decomposeClass(c1);
-        Set<Class<?>> cs2 = Util.decomposeClass(c2);
-        if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
+        if (!c1.isInterface() && !c2.isInterface()) {
             if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
                 throw new IllegalArgumentException("Invalid constraint: "
                         + c1 + " " + op + " " + c2);

@@ -79,7 +79,7 @@ public final class TableCell implements ResultCell
         if (fpo == null) {
             return null;
         }
-        String cls = DynamicUtil.getSimpleClassName(fpo.getClass());
+        String cls = DynamicUtil.getClass(fpo).getName();
         return TypeUtil.unqualifiedName(cls);
     }
 

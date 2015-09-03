@@ -20,7 +20,7 @@ import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
-import org.intermine.metadata.Util;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryHelper;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Utility methods for paths.
@@ -68,11 +69,7 @@ public final class QueryGenUtil
                 QueryAndClass qac = createClassFindingQuery(os.getModel(), part);
                 for (Object cls : os.executeSingleton(qac.getQuery(), 1000, false, false, false)) {
                     Class<?> clazz = (Class<?>) cls;
-                    for (Class<?> classPart : Util.decomposeClass(clazz)) {
-                        if (qac.getClazz().isAssignableFrom(classPart)) {
-                            clsNames.add(TypeUtil.unqualifiedName(classPart.getName()));
-                        }
-                    }
+                    clsNames.add(TypeUtil.unqualifiedName(DynamicUtil.getClass(clazz).getName()));
                 }
             } else {
                 if (part.startsWith("+")) {
@@ -114,7 +111,7 @@ public final class QueryGenUtil
             String[] paths = part.split("\\.");
             Query q = new Query();
             QueryClass qc = new QueryClass(Class.forName(model.getPackageName() + "."
-                        + paths[0]));
+                    + paths[0]).asSubclass(FastPathObject.class));
             q.addFrom(qc);
             ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
             for (int i = 1; i < paths.length; i++) {
@@ -292,7 +289,7 @@ public final class QueryGenUtil
         Query q = new Query();
         q.setDistinct(false);
         QueryClass qcStart = new QueryClass(Class.forName(model.getPackageName()
-                                                          + "." + queryBits[0]));
+                + "." + queryBits[0]).asSubclass(FastPathObject.class));
         List<QueryClass> qcs = new ArrayList<QueryClass>();
         qcs.add(qcStart);
         for (int i = 0; i + 2 < queryBits.length; i += 2) {
@@ -313,7 +310,7 @@ public final class QueryGenUtil
                 }
             }
             QueryClass qcEnd = new QueryClass(Class.forName(model.getPackageName()
-                        + "." + queryBits[i + 2]));
+                    + "." + queryBits[i + 2]).asSubclass(FastPathObject.class));
             addReferenceConstraint(model, q, qcStart, refName, qcEnd, (i == 0));
             qcs.add(qcEnd);
             qcStart = qcEnd;

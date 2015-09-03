@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.util.DynamicUtil;
 
@@ -44,31 +43,6 @@ public class QueryClassBag implements FromElement
     }
 
     /**
-     * Constructs a QueryClass representing the specified set of classes and bag of objects.
-     *
-     * @param types the Set of classes
-     * @param bag the Collection of objects
-     */
-    public QueryClassBag(Set<Class<?>> types, Collection<?> bag) {
-        Class<?> clazz;
-        if (types.size() == 1) {
-            clazz = types.iterator().next();
-        } else {
-            clazz = DynamicUtil.composeClass(types);
-        }
-        if (!InterMineObject.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException("Cannot create a QueryClassBag with a class that"
-                    + " is not a subclass of InterMineObject: " + Util.getFriendlyName(
-                            clazz));
-        }
-        @SuppressWarnings("unchecked") Class<? extends InterMineObject> thisType = (Class) clazz;
-        this.type = thisType;
-        this.bag = bag;
-        ids = convertToIds(bag, this.type);
-        this.osb = null;
-    }
-
-    /**
      * Constructs a QueryClassBag representing the specified Java class and ObjectStoreBag.
      *
      * @param type the Java class
@@ -76,31 +50,6 @@ public class QueryClassBag implements FromElement
      */
     public QueryClassBag(Class<? extends InterMineObject> type, ObjectStoreBag osb) {
         this.type = type;
-        this.osb = osb;
-        this.ids = null;
-        this.bag = null;
-    }
-
-    /**
-     * Constructs a QueryClass representing the specified set of classes and ObjectStoreBag.
-     *
-     * @param types the Set of classes
-     * @param osb the ObjectStoreBag
-     */
-    public QueryClassBag(Set<Class<?>> types, ObjectStoreBag osb) {
-        Class<?> clazz;
-        if (types.size() == 1) {
-            clazz = types.iterator().next();
-        } else {
-            clazz = DynamicUtil.composeClass(types);
-        }
-        if (!InterMineObject.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException("Cannot create a QueryClassBag with a class that"
-                    + " is not a subclass of InterMineObject: " + Util.getFriendlyName(
-                            clazz));
-        }
-        @SuppressWarnings("unchecked") Class<? extends InterMineObject> thisType = (Class) clazz;
-        this.type = thisType;
         this.osb = osb;
         this.ids = null;
         this.bag = null;
@@ -164,7 +113,6 @@ public class QueryClassBag implements FromElement
      */
     @Override
     public String toString() {
-        Set<Class<?>> classes = Util.decomposeClass(type);
         StringBuffer retval = new StringBuffer();
         if (osb != null) {
             retval.append("BAG(" + osb.getBagId() + ")::");
@@ -173,17 +121,8 @@ public class QueryClassBag implements FromElement
         } else {
             retval.append("!::");
         }
-        if (classes.size() == 1) {
-            retval.append(type.getName());
-        } else {
-            boolean needComma = false;
-            for (Class<?> clazz : classes) {
-                retval.append(needComma ? ", " : "(");
-                needComma = true;
-                retval.append(clazz.getName());
-            }
-            retval.append(")");
-        }
+        retval.append(DynamicUtil.getClass(type).getName());
+
         return retval.toString();
     }
 }

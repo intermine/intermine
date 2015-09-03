@@ -9,15 +9,15 @@
     </collection>
   </item>
 
-  <item id="2" class="Address" implements="Thing">
+  <item id="2" class="Address">
     <attribute name="address" value="&quot;Company&apos;s&quot; street"/>
   </item>
 
-  <item id="3" class="Department" implements="RandomInterface">
+  <item id="3" class="Department">
     <attribute name="name" value="Department1"/>
   </item>
 
-  <item id="4" class="Department" implements="RandomInterface">
+  <item id="4" class="Department">
     <attribute name="name" value="Department2"/>
   </item>
 </items>

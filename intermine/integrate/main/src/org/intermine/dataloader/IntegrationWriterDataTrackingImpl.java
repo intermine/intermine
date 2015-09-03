@@ -29,7 +29,6 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.StringUtil;
 import org.intermine.metadata.TypeUtil;
-import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -275,20 +274,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                 assignMapping(o.getId(), onlyEquivalent.getId());
                 return onlyEquivalent;
             }
-            Set<Class<?>> classes = new HashSet<Class<?>>();
-            classes.addAll(Util.decomposeClass(o.getClass()));
-            for (InterMineObject obj : equivObjects) {
-                if (obj instanceof ProxyReference) {
-                    obj = ((ProxyReference) obj).getObject();
-                }
-                try {
-                    classes.addAll(Util.decomposeClass(obj.getClass()));
-                } catch (Exception e) {
-                    LOG.error("Broken with: " + Util.decomposeClass(o.getClass()));
-                    throw new ObjectStoreException(e);
-                }
-            }
-            InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(classes);
+            InterMineObject newObj = (InterMineObject) DynamicUtil.createObject(o.getClass());
             Integer newId = null;
             // if multiple equivalent objects in database just use id of first one
             Iterator<InterMineObject> equivalentIter = equivObjects.iterator();

@@ -15,18 +15,12 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
 import junit.framework.Test;
 
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
-import org.intermine.metadata.TypeUtil;
 
 public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 {
@@ -127,43 +121,6 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("BagConstraint2", Collections.singleton("InterMineObject"));
         results.put("InterfaceField", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.name = 'EmployeeA1' ORDER BY a1_.id");
         results2.put("InterfaceField", Collections.singleton("InterMineObject"));
-        Set res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a1__1.debt > 0 AND a1_.age > 0 ORDER BY a1_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.debt > 0 AND a1__1.age > 0 ORDER BY a1_.id");
-        results.put("DynamicInterfacesAttribute", res);
-        results2.put("DynamicInterfacesAttribute", Collections.singleton("InterMineObject"));
-        res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' ORDER BY a1_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' ORDER BY a1_.id");
-        results.put("DynamicClassInterface", res);
-        results2.put("DynamicClassInterface", Collections.singleton("InterMineObject"));
-        res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Bank' AND a2_.id = a1_.companyId AND a3_.id = a1__1.bankId ORDER BY a1_.id, a2_.id, a3_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Department' AND a2_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Bank' AND a2_.id = a1__1.companyId AND a3_.id = a1_.bankId ORDER BY a1_.id, a2_.id, a3_.id");
-        results.put("DynamicClassRef1", res);
-        results2.put("DynamicClassRef1", Collections.singleton("InterMineObject"));
-        res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Bank' AND a1_.companyId = a2_.id AND a1__1.bankId = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Department' AND a2_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Bank' AND a1__1.companyId = a2_.id AND a1_.bankId = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
-        results.put("DynamicClassRef2", res);
-        results2.put("DynamicClassRef2", Collections.singleton("InterMineObject"));
-        res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Bank' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' AND a3_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a2_.companyId AND a1_.id = a3_.bankId ORDER BY a1_.id, a2_.id, a3_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Bank' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Company' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' AND a3_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a2_.companyId AND a1_.id = a3_.bankId ORDER BY a1_.id, a2_.id, a3_.id");
-        results.put("DynamicClassRef3", res);
-        results2.put("DynamicClassRef3", Collections.singleton("InterMineObject"));
-        res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Bank' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' AND a3_.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.companyId = a1_.id AND a3_.bankId = a1_.id ORDER BY a1_.id, a2_.id, a3_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Bank' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Company' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' AND a3_.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.companyId = a1_.id AND a3_.bankId = a1_.id ORDER BY a1_.id, a2_.id, a3_.id");
-        results.put("DynamicClassRef4", res);
-        results2.put("DynamicClassRef4", Collections.singleton("InterMineObject"));
-        res = new HashSet();
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a2__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.tableclass = 'org.intermine.model.testmodel.HasAddress' AND a2_.id = a2__1.id AND a2__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a2_.id ORDER BY a1_.id");
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a2__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.id = a2__1.id AND a2__1.tableclass = 'org.intermine.model.testmodel.HasAddress' AND a1_.id = a2_.id ORDER BY a1_.id");
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a2__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' AND a2_.tableclass = 'org.intermine.model.testmodel.HasAddress' AND a2_.id = a2__1.id AND a2__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a2_.id ORDER BY a1_.id");
-        res.add("SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1, InterMineObject AS a2_, InterMineObject AS a2__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' AND a2_.tableclass = 'org.intermine.model.testmodel.Broke' AND a2_.id = a2__1.id AND a2__1.tableclass = 'org.intermine.model.testmodel.HasAddress' AND a1_.id = a2_.id ORDER BY a1_.id");
-        results.put("DynamicClassConstraint", res);
-        results2.put("DynamicClassConstraint", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.addressId IS NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNull", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintNotNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.addressId IS NOT NULL ORDER BY a1_.id");
@@ -188,8 +145,6 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsConstraintNotCollectionRefObject", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintMMCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, CompanysContractors AS indirect0 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a1_.id = indirect0.Companys AND indirect0.Contractors = 3 ORDER BY a1_.id");
         results2.put("ContainsConstraintMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
-        //results.put("ContainsConstraintNotMMCollectionRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, CompanysContractors AS indirect0 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND (a1_.id != indirect0.Contractors AND indirect0.Companys = 3) ORDER BY a1_.id");
-        //results2.put("ContainsConstraintNotMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
         results.put("SimpleConstraintNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Manager' AND a1_.title IS NULL ORDER BY a1_.id");
         results2.put("SimpleConstraintNull", Collections.singleton("InterMineObject"));
         results.put("SimpleConstraintNotNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Manager' AND a1_.title IS NOT NULL ORDER BY a1_.id");
@@ -240,17 +195,6 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("QueryClassBag", Collections.singleton("InterMineObject"));
         results.put("QueryClassBagMM", "SELECT indirect0.HasSecretarys AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a2_.tableclass = 'org.intermine.model.testmodel.Secretary' AND indirect0.HasSecretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
         results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
-        results.put("QueryClassBagDynamic", "SELECT indirect0.HasSecretarys AS a3_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a2_, HasSecretarysSecretarys AS indirect0 WHERE a2_.tableclass = 'org.intermine.model.testmodel.Secretary' AND indirect0.HasSecretarys IN (" + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
-        results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"InterMineObject", "HasSecretarysSecretarys"})));
-        //res = new HashSet()
-        //res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
-        //res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
-        //results.put("DynamicBagConstraint", res);
-        //results2.put("DynamicBagConstraint", Collections.singleton("InterMineObject")); // See ticket #469
-        res = new HashSet();
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.CEO' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id IN (" + employeeB1Id + ") ORDER BY a1_.id");
-        res.add("SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.CEO' AND a1_.id IN (" + employeeB1Id + ") ORDER BY a1_.id");
-        results.put("DynamicBagConstraint2", res);
         results2.put("DynamicBagConstraint2", Collections.singleton("InterMineObject"));
         results.put("QueryClassBagDouble", "SELECT a2_.departmentId AS a4_, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id FROM InterMineObject AS a2_, InterMineObject AS a3_ WHERE a2_.tableclass = 'org.intermine.model.testmodel.Employee' AND a3_.tableclass = 'org.intermine.model.testmodel.Employee' AND a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ") AND a3_.departmentId = a2_.departmentId ORDER BY a2_.departmentId, a2_.id, a3_.id");
         results2.put("QueryClassBagDouble", Collections.singleton("InterMineObject"));
@@ -298,7 +242,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("CollectionPathExpression6", Collections.singleton("InterMineObject"));
         results.put("CollectionPathExpression7", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results2.put("CollectionPathExpression7", Collections.singleton("InterMineObject"));
-        results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND (a1_.id IN (SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' UNION SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke')) ORDER BY a1_.id");
+        results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND (a1_.id IN (SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' UNION SELECT a1_.id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Manager')) ORDER BY a1_.id");
         results2.put("OrSubquery", Collections.singleton("InterMineObject"));
         results.put("ScientificNumber", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Types' AND a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
         results2.put("ScientificNumber", Collections.singleton("InterMineObject"));
@@ -325,12 +269,8 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results.put("SelectClassFromInterMineObject", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results2.put("SelectClassFromEmployee", Collections.singleton("InterMineObject"));
-        results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' GROUP BY a1_.class ORDER BY a1_.class, a3_")));
-        results2.put("SelectClassFromBrokeEmployable", Collections.singleton("InterMineObject"));
         results.put("SubclassCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' ORDER BY a1_.id");
         results2.put("SubclassCollection", Collections.singleton("InterMineObject"));
-        results.put("SubclassCollection2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' ORDER BY a1_.id");
-        results2.put("SubclassCollection2", Collections.singleton("InterMineObject"));
         results.put("SelectWhereBackslash", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", Collections.singleton("InterMineObject"));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");

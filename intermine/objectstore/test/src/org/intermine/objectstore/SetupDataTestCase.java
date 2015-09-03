@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
-import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
@@ -42,7 +42,6 @@ import org.intermine.model.testmodel.Secretary;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -56,7 +55,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.util.XmlBinding;
 
 public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
@@ -93,9 +91,6 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         queries.put("QueryClassBagMM", queryClassBagMM());
         queries.put("QueryClassBagNot", queryClassBagNot());
         queries.put("QueryClassBagNotMM", queryClassBagNotMM());
-        queries.put("QueryClassBagDynamic", queryClassBagDynamic());
-        //queries.put("DynamicBagConstraint", dynamicBagConstraint()); // See ticket #469
-        queries.put("DynamicBagConstraint2", dynamicBagConstraint2());
         queries.put("QueryClassBagDouble", queryClassBagDouble());
         queries.put("QueryClassBagContainsObject", queryClassBagContainsObject());
         queries.put("QueryClassBagContainsObjectDouble", queryClassBagContainsObjectDouble());
@@ -136,17 +131,15 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
 
     // Used to re-generate testmodel_data.xml file from java objects, called by main method
     public static Collection setUpDataObjects() throws Exception {
-        Company companyA = (Company) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Company.class, Broke.class})));
+        Company companyA = DynamicUtil.createObject(Company.class);
         companyA.setName("CompanyA");
         companyA.setVatNumber(1234);
-        ((Broke) companyA).setDebt(876324);
 
-        Contractor contractorA = (Contractor) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {Contractor.class, Broke.class})));
+        Contractor contractorA = DynamicUtil.createObject(Contractor.class);
         contractorA.setName("ContractorA");
         contractorA.setSeniority(new Integer(128764));
-        ((Broke) contractorA).setDebt(7634);
 
-        Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));;
+        Company companyB = DynamicUtil.createObject(Company.class);
         companyB.setName("CompanyB");
         companyB.setVatNumber(5678);
 
@@ -166,14 +159,13 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         Department departmentB1 = new Department();
         departmentB1.setName("DepartmentB1");
 
-        CEO employeeB1 = (CEO) DynamicUtil.createObject(new HashSet(Arrays.asList(new Class[] {CEO.class, Broke.class})));
+        CEO employeeB1 = DynamicUtil.createObject(CEO.class);
         employeeB1.setName("EmployeeB1");
         employeeB1.setFullTime(true);
         employeeB1.setAge(40);
         employeeB1.setTitle("Mr.");
         employeeB1.setSalary(45000);
         employeeB1.setSeniority(new Integer(76321));
-        ((Broke) employeeB1).setDebt(340);
 
         Address address4 = new Address();
         address4.setAddress("Employee Street, BVille");
@@ -669,49 +661,6 @@ public abstract class SetupDataTestCase extends ObjectStoreQueriesTestCase
         q.addToSelect(new QueryField(qcb));
         q.addToSelect(qc);
         q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.DOES_NOT_CONTAIN, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_.id, a2_ FROM ?::(CEO, Broke) AS a1_, Secretary AS a2_ WHERE a1_.secretarys CONTAINS a2_
-     */
-    public static Query queryClassBagDynamic() throws Exception {
-        Query q = new Query();
-        QueryClassBag qcb = new QueryClassBag(new HashSet(Arrays.asList(new Class[] {CEO.class, Broke.class})), Collections.singletonList(data.get("EmployeeB1")));
-        QueryClass qc = new QueryClass(Secretary.class);
-        q.addFrom(qcb);
-        q.addFrom(qc);
-        q.addToSelect(new QueryField(qcb));
-        q.addToSelect(qc);
-        q.setConstraint(new ContainsConstraint(new QueryCollectionReference(qcb, "secretarys"), ConstraintOp.CONTAINS, qc));
-        q.setDistinct(false);
-        return q;
-    }
-
-    /*
-     * SELECT a1_ FROM (Broke, Employable) AS a1_ WHERE a1_ IN ?
-     */
-    /* See ticket #469
-    public static Query dynamicBagConstraint() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[] {Broke.class, Employable.class})));
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("CompanyA"), new Integer(5), data.get("EmployeeB1")}))));
-        q.setDistinct(false);
-        return q;
-    }*/
-
-    /*
-     * SELECT a1_ FROM (Broke, CEO) AS a1_ WHERE a1_ IN ?
-     */
-    public static Query dynamicBagConstraint2() throws Exception {
-        Query q = new Query();
-        QueryClass qc = new QueryClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
-        q.addFrom(qc);
-        q.addToSelect(qc);
-        q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, new HashSet(Arrays.asList(new Object[] {data.get("EmployeeB1")}))));
         q.setDistinct(false);
         return q;
     }

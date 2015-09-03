@@ -261,7 +261,7 @@ public final class IqlQueryParser
             Iterator<?> iterator) {
         String tableAlias = null;
         String tableName = null;
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+        Class<? extends InterMineObject> cls = null;
         boolean isBag = false;
         ObjectStoreBag osb = null;
         if (ast.getType() == IqlTokenTypes.QUESTION_MARK) {
@@ -282,13 +282,13 @@ public final class IqlQueryParser
                         tableName = (tableName == null ? temp : tableName + "." + temp);
                         tableNameAst = tableNameAst.getNextSibling();
                     } while (tableNameAst != null);
-                    Class<?> c = null;
                     try {
-                        c = Class.forName(tableName);
+                        cls = Class.forName(tableName).asSubclass(InterMineObject.class);
                     } catch (ClassNotFoundException e) {
                         if (modelPackage != null) {
                             try {
-                                c = Class.forName(modelPackage + "." + tableName);
+                                cls = Class.forName(modelPackage + "."
+                                        + tableName).asSubclass(InterMineObject.class);
                             } catch (ClassNotFoundException e2) {
                                 throw new IllegalArgumentException("Unknown class name " + tableName
                                         + " in package " + modelPackage);
@@ -297,7 +297,6 @@ public final class IqlQueryParser
                             throw new IllegalArgumentException("Unknown class name " + tableName);
                         }
                     }
-                    classes.add(c);
                     break;
                 case IqlTokenTypes.TABLE_ALIAS:
                     tableAlias = unescape(ast.getFirstChild().getText());
@@ -309,28 +308,23 @@ public final class IqlQueryParser
             ast = ast.getNextSibling();
         } while (ast != null);
         if (tableAlias == null) {
-            if (classes.size() == 1) {
-                int index = tableName.lastIndexOf('.');
-                if (index == -1) {
-                    tableAlias = tableName;
-                } else {
-                    tableAlias = tableName.substring(index + 1);
-                }
+            int index = tableName.lastIndexOf('.');
+            if (index == -1) {
+                tableAlias = tableName;
             } else {
-                throw new IllegalArgumentException("Dynamic classes in the FROM clause must have"
-                        + " an alias");
+                tableAlias = tableName.substring(index + 1);
             }
         }
         if (isBag) {
             if (osb == null) {
-                QueryClassBag qcb = new QueryClassBag(classes, (Collection<?>) iterator.next());
+                QueryClassBag qcb = new QueryClassBag(cls, (Collection<?>) iterator.next());
                 q.addFrom(qcb, tableAlias);
             } else {
-                QueryClassBag qcb = new QueryClassBag(classes, osb);
+                QueryClassBag qcb = new QueryClassBag(cls, osb);
                 q.addFrom(qcb, tableAlias);
             }
         } else {
-            QueryClass qc = new QueryClass(classes);
+            QueryClass qc = new QueryClass(cls);
             q.addFrom(qc, tableAlias);
         }
     }

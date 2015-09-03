@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -214,7 +215,7 @@ public class ObjectStoreFastCollectionsImpl extends ObjectStorePassthruImpl
                         lowestId = (lowestId < id ? lowestId : id);
                         highestId = (highestId > id ? highestId : id);
                     }
-                    Class<?> clazz = ((QueryClass) node).getType();
+                    Class<? extends FastPathObject> clazz = ((QueryClass) node).getType();
                     Map<String, FieldDescriptor> fieldDescriptors = getModel()
                         .getFieldDescriptorsForClass(clazz);
                     time1 = System.currentTimeMillis();
