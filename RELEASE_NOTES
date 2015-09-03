@@ -9,6 +9,21 @@
  */
 
 
+InterMine 1.5.4
+
+#1021 - View on widgets opens a blank window
+#1013 - OBO converter - fails on creating synonyms. 
+#967 - Java client code gen errors
+#948 - Error during ant build-db on bio/test-all/dbmodel
+#931 - Logo for human InterMine
+#866 - Panther - rat genes
+#865 - Delete mystery properties
+#846 - InterPro - description text is too long for index
+#824 - Duplicate human genes in data file
+#722 - Table cell previews display too many fields
+#591 - Links to FlyMine contain release number
+#152 - Use ontology for data sources
+
 InterMine 1.5.3
 
 #1022 - Widget download fix

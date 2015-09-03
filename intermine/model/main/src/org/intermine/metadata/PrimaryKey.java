@@ -64,6 +64,14 @@ public class PrimaryKey
         return name;
     }
 
+    /**
+     * Return the ClassDescriptor for class this key is defined for
+     *
+     * @return the class descriptor
+     */
+    public ClassDescriptor getClassDescriptor() {
+        return cld;
+    }
 
     /**
      * Return the Set of field names

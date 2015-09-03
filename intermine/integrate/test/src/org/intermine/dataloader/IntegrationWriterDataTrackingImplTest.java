@@ -68,6 +68,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         if (iw.isInTransaction()) {
             iw.abortTransaction();
         }
+        iw.getDataTracker().clear();
         storeData();
         iw.reset();
         iw.skeletons.clear();
