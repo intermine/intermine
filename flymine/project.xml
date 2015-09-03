@@ -120,7 +120,7 @@
       <property name="source.db.name" value="anoest"/>
     </source>
 -->
-<!-- See #83
+<!--
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
@@ -608,18 +608,12 @@
     <post-process name="populate-located-features"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
-
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
     <post-process name="populate-child-features"/>
-    <post-process name="create-overlap-relations-flymine" dump="true"/>
-    <post-process name="do-sources" />
-    <post-process name="create-intron-features">
-      <property name="organisms" value="7165"/>
-    </post-process>
-    <post-process name="create-bioseg-location-index"/>
-    <post-process name="create-location-range"/>
+    <post-process name="do-sources" dump="true"/>
+    <post-process name="create-location-overlap-index"/>
     <post-process name="create-overlap-view" />
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>
