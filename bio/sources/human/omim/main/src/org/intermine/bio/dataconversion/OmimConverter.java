@@ -57,7 +57,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -114,7 +114,6 @@ public class OmimConverter extends BioDirectoryConverter
         final BufferedReader br = new BufferedReader(reader);
 
         String line = null;
-
         StringBuilder sb = new StringBuilder();
         boolean readingTitle = false;
         while ((line = br.readLine()) != null) {
@@ -236,6 +235,7 @@ public class OmimConverter extends BioDirectoryConverter
                     counts.get(geneMapType).resolved++;
                 }
             }
+
             String geneItemId = getGeneItemId(geneSymbol);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
