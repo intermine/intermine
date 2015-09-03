@@ -82,6 +82,11 @@ public class EnsembSnpLoaderTask extends FileDirectDataLoaderTask
             for (int i = 0; i < files.length; i++) {
                 processFile(files[i]);
             }
+            try {
+                getDirectDataLoader().close();
+            } catch (ObjectStoreException e) {
+                throw new BuildException("Failed closing DirectDataLoader", e);
+            }
         } else {
             // this will call processFile() for each file
             super.execute();

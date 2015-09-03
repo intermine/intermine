@@ -10,6 +10,7 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import org.apache.log4j.Logger;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
@@ -25,6 +26,7 @@ import java.sql.Statement;
  */
 public class OverlapViewTask
 {
+    private static final Logger LOG = Logger.getLogger(OverlapViewTask.class);
     protected ObjectStoreWriterInterMineImpl osw;
 
     /**
@@ -79,6 +81,8 @@ public class OverlapViewTask
                     + " and doesn't have bioseg installed. Aborting.");
         }
 
+        LOG.info("Creating overlap view with SQL: " + viewSql);
+
         // initially this is a table, need to try dropping table first, if the postprocess has been
         // run before then it will be a view. We need to try dropping table first then view.
         String dropSql = "DROP TABLE overlappingfeaturessequencefeature";
@@ -93,7 +97,6 @@ public class OverlapViewTask
             statement.executeUpdate(dropSql);
             statement.close();
         }
-
 
         Statement statement = con.createStatement();
         statement.executeUpdate(viewSql);

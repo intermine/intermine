@@ -372,8 +372,6 @@ public final class ResultsConverter
             Set<PrecomputedTable> goFasterTables,
             OptimiserCache goFasterCache) throws ObjectStoreException {
         int startingPoint;
-        // This is a Map from the starting point ID to the ID of the referenced object
-        Map<Integer, Integer> objectIds = new HashMap<Integer, Integer>();
         Set<Integer> idsToFetch = new HashSet<Integer>();
         QueryClass qc = qope.getQueryClass();
         // Search for starting point, this is the class on the SELECT of the parent query that
@@ -385,17 +383,13 @@ public final class ResultsConverter
         }
         // from the original query results find all objects that have a value for the outer joined
         // reference. The id of the referenced object is in the table for the starting class so
-        // these objects will have a ProxyReference containing the referenced id. Map the starting
-        // object ids to the outer joined object ids.
+        // these objects will have a ProxyReference containing the referenced id.
         for (ResultsRow<Object> row : retval) {
-            InterMineObject o = (InterMineObject) row.get(startingPoint);
-            Integer refId = null;
+            FastPathObject o = (FastPathObject) row.get(startingPoint);
             try {
                 InterMineObject ref = (InterMineObject) o.getFieldProxy(qope.getFieldName());
                 if (ref != null) {
-                    refId = ref.getId();
-                    idsToFetch.add(refId);
-                    objectIds.put(o.getId(), refId);
+                    idsToFetch.add(ref.getId());
                 }
             } catch (Exception e) {
                 throw new ObjectStoreException("Shouldn't ever happen", e);
@@ -415,8 +409,18 @@ public final class ResultsConverter
         // iterate over main query results again and add the outer join query results in the
         // appropriate column
         for (ResultsRow<Object> row : retval) {
-            Integer startingId = ((InterMineObject) row.get(startingPoint)).getId();
-            ResultsRow<Object> pathRow = fetched.get(objectIds.get(startingId));
+            FastPathObject o = (FastPathObject) row.get(startingPoint);
+            Integer refId = null;
+            try {
+                InterMineObject ref = (InterMineObject) o.getFieldProxy(qope.getFieldName());
+                if (ref != null) {
+                    refId = ref.getId();
+                }
+            } catch (IllegalAccessException e) {
+                throw new ObjectStoreException("Error fetching proxy reference for object: "
+                        + o + " field: " + qope.getFieldName());
+            }
+            ResultsRow<Object> pathRow = fetched.get(refId);
             if (pathRow != null) {
                 for (int column = 0; column < columnCount; column++) {
                     QuerySelectable qs = q.getSelect().get(column);
