@@ -39,6 +39,9 @@ public class RnaiConverter extends BioFileConverter
     private static final String TAXON_FLY = "7227";
     private static final String NCBI = "NCBI Entrez Gene identifiers";
     private Item screen;
+    // RNAi people use "np" to signal that there is no data. There is actually a gene with Np
+    // as it's symbol, so we have to test for this. All identifiers should start with FBgn
+    private static final String NO_DATA = "np";
 
     protected IdResolver rslv;
 
@@ -66,7 +69,7 @@ public class RnaiConverter extends BioFileConverter
                 processScreen(line);
             } else {
                 String[] cols = line.split("\t");
-                if (cols.length < 8) {
+                if (cols.length < 7) {
                     continue;
                 }
                 processResult(cols);
@@ -129,10 +132,14 @@ public class RnaiConverter extends BioFileConverter
     private void processResult(String[] line) throws ObjectStoreException {
         String screenId = line[0];
         String geneRefId = null;
-        String fbgn = line[2];    // FBgn
+        String fbgn = line[2];
         String ncbi = line[1];
 
-        if (StringUtils.isEmpty(fbgn)) {
+        if (fbgn.contains(",") || ncbi.contains(",")) {
+            return;
+        }
+
+        if (StringUtils.isEmpty(fbgn) || NO_DATA.equals(fbgn)) {
             // some only have entrez IDs and no FBgns.  try both
             geneRefId = getGene(ncbi);
         } else {
@@ -141,7 +148,10 @@ public class RnaiConverter extends BioFileConverter
         String reagentId = line[4];
         String score = line[5];
         String phenotype = line[6];
-        String conditions = line[7];
+        String conditions = null;
+        if (line.length > 7) {
+            conditions = line[7];
+        }
         storeScreen(screenId);
 
         Item result = createItem("RNAiResult");
@@ -159,7 +169,9 @@ public class RnaiConverter extends BioFileConverter
         }
         if (geneRefId != null) {
             result.setReference("gene", geneRefId);
-            createCrossReference(geneRefId, ncbi, NCBI, true);
+            if (StringUtils.isNotEmpty(ncbi)) {
+                createCrossReference(geneRefId, ncbi, NCBI, true);
+            }
         }
         result.setReference("rnaiScreen", screen);
         store(result);

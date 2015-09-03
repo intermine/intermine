@@ -149,6 +149,9 @@ public class IntergenicRegionUtil
             Iterator<SequenceFeature> irIter) throws ObjectStoreException, IllegalAccessException {
         while (irIter.hasNext()) {
             SequenceFeature ir = irIter.next();
+            if (ir == null) {
+                continue;
+            }
             objectStoreWriter.store(ir);
             objectStoreWriter.store(ir.getChromosomeLocation());
             Set<Gene> adjacentGenes = (Set<Gene>) ir.getFieldValue("adjacentGenes");
@@ -231,6 +234,10 @@ public class IntergenicRegionUtil
 
                 int newLocStart = nextIntergenicStart;
                 int newLocEnd = intergenicEnd;
+
+                if (newLocStart > newLocEnd) {
+                    return null;
+                }
 
                 Class<? extends FastPathObject> igCls =
                     os.getModel().getClassDescriptorByName("IntergenicRegion").getType();
