@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.context.InterMineContext;
@@ -163,6 +165,7 @@ public class ServiceListingHandler extends DefaultHandler
             currentParam.put("Options", attrs.getValue("options"));
             currentParam.put("Recommended", "true".equals(attrs.getValue("recommended")));
             String defaultValue = attrs.getValue("default");
+            defaultValue = interpolateDefaultValues(defaultValue);
             if (defaultValue != null) {
                 currentParam.put("Default", defaultValue);
             }
@@ -181,6 +184,24 @@ public class ServiceListingHandler extends DefaultHandler
             returns.add(format);
         }
         sb = new StringBuffer();
+    }
+
+    private static final Pattern WEB_PROPS_INTERPOLATION_PATTERN =
+            Pattern.compile("\\{\\{([\\w\\.]+)\\}\\}");
+
+    private String interpolateDefaultValues(String defaultValue) {
+        if (defaultValue == null) {
+            return null;
+        }
+        Matcher m = WEB_PROPS_INTERPOLATION_PATTERN.matcher(defaultValue);
+        StringBuffer interpolated = new StringBuffer();
+        while (m.find()) {
+            String key = "services.defaults." + m.group(1);
+            String value = webProperties.getProperty(key, "");
+            m.appendReplacement(interpolated, value);
+        }
+        m.appendTail(interpolated);
+        return interpolated.toString();
     }
 
     @Override
