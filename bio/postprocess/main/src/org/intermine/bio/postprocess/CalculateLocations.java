@@ -10,12 +10,9 @@ package org.intermine.bio.postprocess;
  *
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +40,6 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 
@@ -76,93 +72,6 @@ public class CalculateLocations
         this.os = osw.getObjectStore();
         this.model = os.getModel();
     }
-
-
-    /**
-     * Create OverlapRelation objects for all overlapping SequenceFeatures by querying
-     * objects that are located on chromosomes and overlap.
-     * @param classNamesToIgnore a List of the names of those classes that should be ignored when
-     * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
-     * entry can be of the form class=class, which specifies that the particular combination should
-     * be ignored. Hence an entry of the form class is equivalent to class=InterMineObject
-     * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
-     * same class
-     * @throws Exception if anything goes wrong
-     */
-    public void createOverlapRelations(List<String> classNamesToIgnore, boolean ignoreSelfMatches)
-        throws Exception {
-        osw.beginTransaction();
-        Map<String, Integer> summary = new HashMap<String, Integer>();
-        Map<Integer, Chromosome> chromosomeMap = makeChromosomeMap();
-        Iterator<?> chromosomeIdIter = chromosomeMap.keySet().iterator();
-        while (chromosomeIdIter.hasNext()) {
-            Integer id = (Integer) chromosomeIdIter.next();
-            createSubjectOverlapRelations(chromosomeMap.get(id), classNamesToIgnore,
-                    ignoreSelfMatches, summary);
-        }
-        osw.commitTransaction();
-        LOG.info("Stored a total of " + summary.remove("total") + " overlaps");
-        List<SortElement> sortList = new ArrayList<SortElement>();
-        Iterator<?> summaryIter = summary.entrySet().iterator();
-        while (summaryIter.hasNext()) {
-            Map.Entry<String, Integer> summaryEntry = (Map.Entry<String, Integer>)
-                summaryIter.next();
-            sortList.add(new SortElement(summaryEntry.getKey(),
-                        summaryEntry.getValue().intValue()));
-        }
-        Collections.sort(sortList);
-        summaryIter = sortList.iterator();
-        while (summaryIter.hasNext()) {
-            LOG.info(((SortElement) summaryIter.next()).toString());
-        }
-    }
-
-    private class SortElement implements Comparable
-    {
-        String text;
-        int number;
-
-        public SortElement(String text, int number) {
-            this.text = text;
-            this.number = number;
-        }
-
-        @Override
-        public int compareTo(Object o) {
-            int retval = ((SortElement) o).number - number;
-            if (retval == 0) {
-                retval = ((SortElement) o).text.compareTo(text);
-            }
-            return retval;
-        }
-
-        @Override
-        public String toString() {
-            return number + " overlap" + (number == 1 ? "" : "s") + " for " + text;
-        }
-    }
-
-    /**
-     * Create OverlapRelation objects for locations that have the given subject.
-     *
-     * @param subject a Chromosome object on which to create the overlaps
-     * @param classNamesToIgnore a List of the names of those classes that should be ignored when
-     * searching for overlaps.  Sub classes to these classes are ignored too. In addition, an
-     * entry can be of the form class=class, which specifies that the particular combination should
-     * be ignored. Hence an entry of the form class is equivalent to class=InterMineObject
-     * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
-     * same class
-     * @param summary a Map to which summary data will be added
-     */
-    private void createSubjectOverlapRelations(Chromosome subject, List<String> classNamesToIgnore,
-            boolean ignoreSelfMatches, Map<String, Integer> summary) throws Exception {
-        LOG.info("Creating overlaps for id " + subject.getId() + ", identifier: "
-                 + subject.getPrimaryIdentifier());
-
-        OverlapUtil.createOverlaps(os, subject, classNamesToIgnore, ignoreSelfMatches, osw,
-                summary);
-    }
-
 
     /**
      * Create a Location that spans the locations of some child objects.  eg. create a location for
@@ -338,27 +247,6 @@ public class CalculateLocations
         return res.iterator();
     }
 
-
-    /**
-     * Hold Chromosomes in map by id
-     */
-    private Map<Integer, Chromosome> makeChromosomeMap() throws Exception {
-        Map<Integer, Chromosome>  returnMap = new HashMap<Integer, Chromosome> ();
-        Query q = new Query();
-        QueryClass qc = new QueryClass(Chromosome.class);
-        q.addToSelect(qc);
-        q.addFrom(qc);
-
-        SingletonResults sr = os.executeSingleton(q);
-        Iterator<?> chrIter = sr.iterator();
-        while (chrIter.hasNext()) {
-            Chromosome chr = (Chromosome) chrIter.next();
-            returnMap.put(chr.getId(), chr);
-        }
-        return returnMap;
-    }
-
-
     /**
      * For each SequenceFeature, if it has a Location on a Chromosome, set the
      * SequenceFeature.chromosomeLocation reference to be that Location and set the length
@@ -482,23 +370,6 @@ public class CalculateLocations
         lsfClone.proxyChromosome(new ProxyReference(os, chrId, Chromosome.class));
 
         osw.store(lsfClone);
-    }
-
-    /**
-     * Return true if locations of two objects on some parent object
-     * have any overlap.
-     * @param sl1 first location
-     * @param sl2 second location
-     * @return true if the two locations have any overlap
-     */
-    protected static boolean overlap(SimpleLoc sl1, SimpleLoc sl2) {
-        if ((sl1.getStart() >= sl2.getStart() && sl1.getStart() <= sl2.getEnd())
-            || (sl1.getEnd() >= sl2.getStart() && sl1.getEnd() <= sl2.getEnd())
-            || (sl1.getStart() >= sl2.getStart() && sl1.getEnd() <= sl2.getEnd())
-            || (sl2.getStart() >= sl1.getStart() && sl2.getEnd() <= sl1.getEnd())) {
-            return true;
-        }
-        return false;
     }
 
     /**

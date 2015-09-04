@@ -334,55 +334,6 @@ public class CalculateLocationsTest extends TestCase
         assertEquals(300, resGeneLocation.getEnd().intValue());
     }
 
-
-    public void testOverlap() throws Exception {
-        CalculateLocations cl = new CalculateLocations(osw);
-        CalculateLocations.SimpleLoc parent = cl.new SimpleLoc(101, 102, 101, 200, "1");
-
-        //   ------------>       parent
-        //          |
-        //          --------->   child
-        CalculateLocations.SimpleLoc s1 = cl.new SimpleLoc(101, 103, 151, 250, "1");
-        assertTrue(CalculateLocations.overlap(s1, parent));
-        assertTrue(CalculateLocations.overlap(parent, s1));
-
-        //       -------------->   parent
-        //            |
-        //   ---------->           child
-        CalculateLocations.SimpleLoc s2 = cl.new SimpleLoc(101, 103, 51, 150, "1");
-        assertTrue(CalculateLocations.overlap(s2, parent));
-        assertTrue(CalculateLocations.overlap(parent, s2));
-
-        //  ------------------>   parent
-        //      |        |
-        //      ---------->       child
-        CalculateLocations.SimpleLoc s3 = cl.new SimpleLoc(101, 103, 126, 175, "1");
-        assertTrue(CalculateLocations.overlap(s3, parent));
-        assertTrue(CalculateLocations.overlap(parent, s3));
-
-        //      -------->        parent
-        //      |      |
-        //   -------------->     child
-        CalculateLocations.SimpleLoc s4 = cl.new SimpleLoc(101, 103, 51, 250, "1");
-        assertTrue(CalculateLocations.overlap(s4, parent));
-        assertTrue(CalculateLocations.overlap(parent, s4));
-
-        // ------->               parent
-        //
-        //           ------->     child
-        CalculateLocations.SimpleLoc s5 = cl.new SimpleLoc(101, 103, 251, 350, "1");
-        assertFalse(CalculateLocations.overlap(s5, parent));
-        assertFalse(CalculateLocations.overlap(parent, s5));
-
-        //           ------->     parent
-        //
-        // ------->               child
-        CalculateLocations.SimpleLoc s6 = cl.new SimpleLoc(101, 103, 26, 75, "1");
-        assertFalse(CalculateLocations.overlap(s6, parent));
-        assertFalse(CalculateLocations.overlap(parent, s6));
-    }
-
-
     public void testSetChromosomeLocationsAndLengths() throws Exception {
         Chromosome chr1 = DynamicUtil.createObject(Chromosome.class);
         chr1.setPrimaryIdentifier("1");
