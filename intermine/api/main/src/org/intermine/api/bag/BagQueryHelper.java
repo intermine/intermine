@@ -22,6 +22,7 @@ import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.MultipleInBagConstraint;
@@ -65,7 +66,7 @@ public final class BagQueryHelper
             Model model, Map<String, List<FieldDescriptor>> classKeys,
             Collection<String> input) throws ClassNotFoundException {
 
-        Class<?> cls = Class.forName(type);
+        Class<? extends FastPathObject> cls = Class.forName(type).asSubclass(FastPathObject.class);
         if (!ClassKeyHelper.hasKeyFields(classKeys, type)) {
             throw new IllegalArgumentException("Internal error - no key fields found for type: "
                                                + type + ".");

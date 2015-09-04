@@ -134,12 +134,12 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
                             // cast
                             InterMineObject imObj = (InterMineObject) o;
                             // type match?
-                            Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
+                            Class<?> imObjClass = DynamicUtil.getClass(imObj);
                             if (c.equals(imObjClass)) {
                                 count--;
                                 s.add(imObj);
                                 // determine type
-                                type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
+                                type = DynamicUtil.getClass(s.get(0)).getSimpleName();
                                 // do we actually want any of this?
                                 if (!featureCounts.containsKey(type)) {
                                     continue looptyloop;
@@ -170,7 +170,7 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
     }
 
     private void incrementCount(Map<String, Integer> featureCounts, InterMineObject feature) {
-        String type = DynamicUtil.getSimpleClass(feature).getSimpleName();
+        String type = DynamicUtil.getClass(feature).getSimpleName();
         Integer count = featureCounts.get(type);
         if (count == null) {
             count = new Integer(0);

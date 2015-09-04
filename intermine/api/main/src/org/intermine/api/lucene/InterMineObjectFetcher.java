@@ -17,9 +17,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +31,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -48,6 +47,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathException;
+import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
 
 /**
@@ -72,7 +72,7 @@ public class InterMineObjectFetcher extends Thread
     final Map<Integer, Document> documents = new HashMap<Integer, Document>();
     final Set<String> fieldNames = new HashSet<String>();
     private Set<String> normFields = new HashSet<String>();
-    final Map<Class<?>, Vector<ClassAttributes>> decomposedClassesCache =
+    final Map<Class<?>, Vector<ClassAttributes>> attributesCache =
             new HashMap<Class<?>, Vector<ClassAttributes>>();
     private Map<String, String> attributePrefixes = null;
 
@@ -213,10 +213,9 @@ public class InterMineObjectFetcher extends Thread
         throws PathException, ObjectStoreException, IllegalAccessException {
         long objectParseStart = System.currentTimeMillis();
         long objectParseTime = 0L;
-        Set<Class<?>> objectClasses = Util.decomposeClass(object.getClass());
-        Class<?> objectTopClass = objectClasses.iterator().next();
+        Class<?> objectClass = DynamicUtil.getClass(object.getClass());
         ClassDescriptor classDescriptor =
-                os.getModel().getClassDescriptorByName(objectTopClass.getName());
+                os.getModel().getClassDescriptorByName(objectClass.getName());
 
         // create base doc for object
         Document doc = createDocument(object, classDescriptor);
@@ -224,27 +223,23 @@ public class InterMineObjectFetcher extends Thread
         HashMap<String, KeywordSearchFacetData> referenceFacetFields =
                 new HashMap<String, KeywordSearchFacetData>();
 
-        // find all references associated with this object or
-        // its superclasses
+        // find all references associated with this object or its superclasses
         for (Entry<Class<? extends InterMineObject>, String[]> specialClass
                 : specialReferences.entrySet()) {
-            for (Class<?> objectClass : objectClasses) {
-                if (specialClass.getKey().isAssignableFrom(objectClass)) {
-                    for (String reference : specialClass.getValue()) {
-                        String fullReference =
-                                classDescriptor.getUnqualifiedName() + "."
-                                        + reference;
-                        references.add(fullReference);
+            if (specialClass.getKey().isAssignableFrom(objectClass)) {
+                for (String reference : specialClass.getValue()) {
+                    String fullReference =
+                            classDescriptor.getUnqualifiedName() + "."
+                                    + reference;
+                    references.add(fullReference);
 
-                        //check if this reference returns a field we are
-                        //faceting by. if so, add it to referenceFacetFields
-                        for (KeywordSearchFacetData facet : facets) {
-                            for (String field : facet.getFields()) {
-                                if (field.startsWith(reference + ".")
-                                        && !field.substring(reference.length() + 1)
-                                                .contains(".")) {
-                                    referenceFacetFields.put(fullReference, facet);
-                                }
+                    //check if this reference returns a field we are
+                    //faceting by. if so, add it to referenceFacetFields
+                    for (KeywordSearchFacetData facet : facets) {
+                        for (String field : facet.getFields()) {
+                            if (field.startsWith(reference + ".")
+                                    && !field.substring(reference.length() + 1).contains(".")) {
+                                referenceFacetFields.put(fullReference, facet);
                             }
                         }
                     }
@@ -279,11 +274,11 @@ public class InterMineObjectFetcher extends Thread
 
             seenClasses.add(object.getClass());
         }
-
         addReferences(object, references, referenceResults, referenceFacetFields, doc);
 
         objectParseTime += (System.currentTimeMillis() - objectParseTime);
         return doc;
+
     }
 
     /**
@@ -294,8 +289,8 @@ public class InterMineObjectFetcher extends Thread
             HashSet<String> references,
             HashMap<String, InterMineResultsContainer> referenceResults,
             HashMap<String, KeywordSearchFacetData> referenceFacetFields,
-            Document doc)
-        throws IllegalAccessException {
+            Document doc) throws IllegalAccessException {
+
 
         // find all references and add them
         for (String reference : references) {
@@ -465,22 +460,11 @@ public class InterMineObjectFetcher extends Thread
         }
     }
 
-    private Set<String> getIgnorableFields(FastPathObject obj) {
-        Set<String> ret = new HashSet<String>();
-        for (Class<?> clazz: Util.decomposeClass(obj.getClass())) {
-            if (ignoredFields.containsKey(clazz)) {
-                ret.addAll(ignoredFields.get(clazz));
-            }
-        }
-        return ret;
-    }
-
     private Set<ObjectValueContainer> getAttributeMapForObject(Model model, FastPathObject obj) {
         Set<ObjectValueContainer> values = new HashSet<ObjectValueContainer>();
         Vector<ClassAttributes> decomposedClassAttributes =
                 getClassAttributes(model, obj.getClass());
-
-        Set<String> fieldsToIgnore = getIgnorableFields(obj);
+        Set<String> fieldsToIgnore = ignoredFields.get(DynamicUtil.getClass(obj));
         for (ClassAttributes classAttributes : decomposedClassAttributes) {
             for (AttributeDescriptor att : classAttributes.getAttributes()) {
                 try {
@@ -582,19 +566,17 @@ public class InterMineObjectFetcher extends Thread
 
     // simple caching of attributes
     private Vector<ClassAttributes> getClassAttributes(Model model, Class<?> baseClass) {
-        Vector<ClassAttributes> attributes = decomposedClassesCache.get(baseClass);
+        Vector<ClassAttributes> attributes = attributesCache.get(baseClass);
 
         if (attributes == null) {
             LOG.info("decomposedClassesCache: No entry for " + baseClass + ", adding...");
             attributes = new Vector<ClassAttributes>();
-
-            for (Class<?> cls : Util.decomposeClass(baseClass)) {
-                ClassDescriptor cld = model.getClassDescriptorByName(cls.getName());
-                attributes.add(new ClassAttributes(cld.getUnqualifiedName(), cld
+            ClassDescriptor cld =
+                    model.getClassDescriptorByName(DynamicUtil.getClass(baseClass).getName());
+            attributes.add(new ClassAttributes(cld.getUnqualifiedName(), cld
                         .getAllAttributeDescriptors()));
-            }
 
-            decomposedClassesCache.put(baseClass, attributes);
+            attributesCache.put(baseClass, attributes);
         }
 
         return attributes;
@@ -615,7 +597,7 @@ public class InterMineObjectFetcher extends Thread
         for (int i = 0; i < classDescriptors.size(); i++) {
             ClassDescriptor classDescriptor = classDescriptors.get(i);
 
-            Class<?> classInCollection = classDescriptor.getType();
+            Class<? extends FastPathObject> classInCollection = classDescriptor.getType();
 
             QueryClass queryClass = new QueryClass(classInCollection);
             q.addFrom(queryClass);

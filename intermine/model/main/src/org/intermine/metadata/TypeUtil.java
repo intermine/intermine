@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.TreeMap;
@@ -102,7 +101,7 @@ public final class TypeUtil
                 type = " (available fields are " + getFieldInfos(o.getClass()).keySet() + ")";
             }
             IllegalAccessException e2 = new IllegalAccessException("Couldn't get field \""
-                    + Util.decomposeClass(o.getClass()) + "." + fieldName + "\""
+                    + Util.dynamicGetClass(o.getClass()) + "." + fieldName + "\""
                     + type);
             e2.initCause(e);
             throw e2;
@@ -530,25 +529,6 @@ public final class TypeUtil
      */
     public static String generateClassName(String packageName, String className) {
         return packageName + "." + javaiseClassName(className);
-    }
-
-    /**
-     * Return true if and only if the object is an instance of the class given by the className.
-     * @param object the object to test
-     * @param className the super class name to test for
-     * @return true if object is an instance of className
-     * @exception ClassNotFoundException if the class given by className cannot be located
-     */
-    public static boolean isInstanceOf(FastPathObject object, String className)
-        throws ClassNotFoundException {
-        Set<Class<?>> classes = Util.decomposeClass(object.getClass());
-        Class<?> testClass = Class.forName(className);
-        for (Class<?> objectClass: classes) {
-            if (testClass.isAssignableFrom(objectClass)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

@@ -5,7 +5,6 @@ package org.intermine.webservice.server.output;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +80,7 @@ public class JSONRowIteratorTest extends TestCase {
     public void setUp() {
         os = new ObjectStoreDummyImpl();
 
-        wernhamHogg = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        wernhamHogg = DynamicUtil.createObject(Company.class);
         wernhamHogg.setId(new Integer(1));
         wernhamHogg.setName("Wernham-Hogg");
         wernhamHogg.setVatNumber(101);
@@ -182,7 +181,7 @@ public class JSONRowIteratorTest extends TestCase {
         trudy.setName("Trudy");
         trudy.setAge(25);
 
-        bms = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        bms = DynamicUtil.createObject(Company.class);
         bms.setId(new Integer(23));
         bms.setName("Business Management Seminars");
         bms.setVatNumber(102);
@@ -501,7 +500,7 @@ public class JSONRowIteratorTest extends TestCase {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testSingleObjectWithNestedCollectionsAndMultipleAttributes() throws Exception {
-        
+
 
         ResultsRow row = new ResultsRow();
         row.add(wernhamHogg);

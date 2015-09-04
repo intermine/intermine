@@ -50,6 +50,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
@@ -66,12 +67,35 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         ObjectStoreAbstractImplTestCase.oneTimeSetUp();
     }
 
+    public static void oneTimeTearDown() throws Exception {
+        ObjectStoreAbstractImplTestCase.oneTimeTearDown();
+        ((ObjectStoreInterMineImpl) os).close();
+    }
+
     public ObjectStoreInterMineImplTest(String arg) throws Exception {
         super(arg);
     }
 
     public static Test suite() {
         return buildSuite(ObjectStoreInterMineImplTest.class);
+    }
+
+    /*
+     * SELECT a1_, a1_.employees AS a2_ FROM Department AS a1_
+     */
+    public void testCollectionPathExpression() throws Exception {
+        Query q = new Query();
+        QueryClass qc = new QueryClass(Department.class);
+        q.addFrom(qc);
+        q.addToSelect(qc);
+        q.addToSelect(new QueryCollectionPathExpression(qc, "employees"));
+        q.setDistinct(false);
+
+        Results res = os.execute(q);
+        for (Object rowObj : res) {
+            ResultsRow<?> row = (ResultsRow<?>) rowObj;
+        }
+
     }
 
     public void testLargeOffset() throws Exception {
@@ -763,6 +787,14 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         assertFalse(((ObjectStoreInterMineImpl)os).isPrecomputed(q,"template"));
     }
 
+    private String outputSingletonResults(SingletonResults res) {
+        StringBuilder sb = new StringBuilder();
+        for (Object o : res) {
+            sb.append(o);
+        }
+        return sb.toString();
+    }
+
     public void testObjectStoreBag() throws Exception {
         System.out.println("Starting testObjectStoreBag");
         ObjectStoreBag osb = storeDataWriter.createObjectStoreBag();
@@ -798,14 +830,14 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         q.addToSelect(qc);
         q.setConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
         r = os.executeSingleton(q);
-        assertEquals(Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("EmployeeA2")}), r);
+        assertEquals("Failed, results were: " + outputSingletonResults(r), Arrays.asList(new Object[] {data.get("EmployeeA1"), data.get("EmployeeA2")}), r);
         ObjectStoreBag osb2 = storeDataWriter.createObjectStoreBag();
         storeDataWriter.addToBag(osb2, ((Employee) data.get("EmployeeA1")).getId());
         storeDataWriter.addToBagFromQuery(osb2, q);
         q = new Query();
         q.addToSelect(osb2);
         r = os.executeSingleton(q);
-        assertEquals(Arrays.asList(new Object[] {((Employee) data.get("EmployeeA1")).getId(), ((Employee) data.get("EmployeeA2")).getId()}), r);
+        assertEquals("Failed, results were: " + outputSingletonResults(r), Arrays.asList(new Object[] {((Employee) data.get("EmployeeA1")).getId(), ((Employee) data.get("EmployeeA2")).getId()}), r);
     }
 
     public void testClosedConnectionBug() throws Exception {
@@ -948,7 +980,7 @@ public class ObjectStoreInterMineImplTest extends ObjectStoreAbstractImplTestCas
         assertNotNull(r2.get(1));
     }
 
-    public void testBatchesFavourFilled() throws Exception {
+    public void BatchesFavourFilled() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(CEO.class);
         q.addFrom(qc);

@@ -11,13 +11,11 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
@@ -221,28 +219,28 @@ public class TransferSequencesTest extends TestCase
 
         Exon resExon0 = (Exon) os.getObjectById(storedExons[0].getId());
 
-        Assert.assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence0, resExon0.getSequence().getResidues().toString());
 
         Exon resExon4 = (Exon) os.getObjectById(storedExons[4].getId());
-        Assert.assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence4, resExon4.getSequence().getResidues().toString());
 
         Exon resExon1 = (Exon) os.getObjectById(storedExons[1].getId());
-        Assert.assertEquals(expectedExonSequence1, resExon1.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence1, resExon1.getSequence().getResidues().toString());
 
         Exon resExon2 = (Exon) os.getObjectById(storedExons[2].getId());
-        Assert.assertEquals(expectedExonSequence2, resExon2.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence2, resExon2.getSequence().getResidues().toString());
 
         Exon resExon5 = (Exon) os.getObjectById(storedExons[5].getId());
-        Assert.assertEquals(expectedExonSequence5, resExon5.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence5, resExon5.getSequence().getResidues().toString());
 
         Exon resExon3 = (Exon) os.getObjectById(storedExons[3].getId());
-        Assert.assertEquals(expectedExonSequence3, resExon3.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence3, resExon3.getSequence().getResidues().toString());
 
         Exon resExon6 = (Exon) os.getObjectById(storedExons[6].getId());
-        Assert.assertEquals(expectedExonSequence6, resExon6.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence6, resExon6.getSequence().getResidues().toString());
 
         Exon resExon7 = (Exon) os.getObjectById(storedExons[7].getId());
-        Assert.assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues().toString());
+        assertEquals(expectedExonSequence7, resExon7.getSequence().getResidues().toString());
 
     }
 
@@ -267,15 +265,13 @@ public class TransferSequencesTest extends TestCase
 
         Set<InterMineObject> toStore = new HashSet<InterMineObject>();
 
-        storedChromosome =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        storedChromosome = DynamicUtil.createObject(Chromosome.class);
         storedChromosome.setLength(new Integer(4000));
         storedChromosome.setId(new Integer(101));
         storedChromosome.setPrimaryIdentifier("store_chromosome");
 
 
-        Sequence chrSequence =
-            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+        Sequence chrSequence = DynamicUtil.createObject(Sequence.class);
         PendingClob clob = new PendingClob(storedChrSequence);
         chrSequence.setResidues(clob.subSequence(0, storedChrSequence.length()));
         storedChromosome.setSequence(chrSequence);
@@ -284,13 +280,11 @@ public class TransferSequencesTest extends TestCase
 
         storedTranscripts = new Transcript[2];
         for (int i = 0 ; i < storedTranscripts.length ; i++) {
-            storedTranscripts[i] =
-                (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+            storedTranscripts[i] = DynamicUtil.createObject(Transcript.class);
             storedTranscripts[i].setPrimaryIdentifier("transcript_" + i);
         }
 
-        Sequence transcriptSequence =
-            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+        Sequence transcriptSequence = DynamicUtil.createObject(Sequence.class);
         clob = new PendingClob(EXPECTED_TRANSCRIPT_0_RESIDUES);
         transcriptSequence.setResidues(clob.subSequence(0, EXPECTED_TRANSCRIPT_0_RESIDUES.length()));
         storedTranscripts[0].setSequence(transcriptSequence);
@@ -298,12 +292,11 @@ public class TransferSequencesTest extends TestCase
 
         storedExons = new Exon [8];
         for (int i = 0 ; i < storedExons.length ; i++) {
-            storedExons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
+            storedExons[i] = DynamicUtil.createObject(Exon.class);
             storedExons[i].setPrimaryIdentifier("exon_" + i);
         }
 
-        Sequence exonSequence =
-            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
+        Sequence exonSequence = DynamicUtil.createObject(Sequence.class);
         clob = new PendingClob(expectedExonSequence0);
         exonSequence.setResidues(clob.subSequence(0, expectedExonSequence0.length()));
         storedExons[0].setSequence(exonSequence);
@@ -341,7 +334,7 @@ public class TransferSequencesTest extends TestCase
         toStore.add(loc7);
         storedExons[7].setChromosomeLocation(loc7);
 
-        storedCDS = (CDS) DynamicUtil.createObject(Collections.singleton(CDS.class));
+        storedCDS = DynamicUtil.createObject(CDS.class);
         storedCDS.setPrimaryIdentifier("cds_1");
         toStore.add(storedCDS);
         Location loc8 = createLocation(storedChromosome, storedCDS, "1", 3863, 3993);
@@ -363,7 +356,7 @@ public class TransferSequencesTest extends TestCase
 
     private Location createLocation(BioEntity object, BioEntity subject,
                                     String strand, int start, int end) {
-        Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        Location loc = DynamicUtil.createObject(Location.class);
         loc.setLocatedOn(object);
         loc.setFeature(subject);
         loc.setStrand(strand);

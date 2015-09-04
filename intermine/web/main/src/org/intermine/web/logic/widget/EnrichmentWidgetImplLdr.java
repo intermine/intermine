@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -263,7 +264,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 try {
                     qr = new QueryObjectReference(qc,
                                                pathsConstraint[index]);
-                    qcConstraint = new QueryClass(qr.getType());
+                    qcConstraint = new QueryClass(qr.getType().asSubclass(FastPathObject.class));
                 } catch (IllegalArgumentException e) {
                     // Not a reference - try collection instead
                     qr = new QueryCollectionReference(qc, pathsConstraint[index]);

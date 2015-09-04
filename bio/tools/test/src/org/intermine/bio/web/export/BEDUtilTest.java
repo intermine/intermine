@@ -1,7 +1,5 @@
 package org.intermine.bio.web.export;
 
-import java.util.Collections;
-
 import junit.framework.TestCase;
 
 import org.intermine.bio.io.bed.BEDRecord;
@@ -19,11 +17,9 @@ public class BEDUtilTest extends TestCase
 
 
     public void setUp() {
-        exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
-        chromosome =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
-        exonLocation =
-            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+        exon = DynamicUtil.createObject(Exon.class);
+        chromosome = DynamicUtil.createObject(Chromosome.class);
+        exonLocation = DynamicUtil.createObject(Location.class);
 
         exon.setChromosome(chromosome);
         exon.setChromosomeLocation(exonLocation);

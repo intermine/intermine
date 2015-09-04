@@ -59,8 +59,7 @@ public final class SearchUtils
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
         LinkRedirectManager redirector = im.getLinkRedirector();
         for (KeywordSearchHit keywordSearchHit : searchHits) {
-            Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
-                    .getClass());
+            Class<?> objectClass = DynamicUtil.getClass(keywordSearchHit.getObject());
             ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass.getName());
             InterMineObject o = keywordSearchHit.getObject();
             String linkRedirect = null;

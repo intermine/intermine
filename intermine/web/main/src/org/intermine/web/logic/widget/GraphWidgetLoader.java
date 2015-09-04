@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -119,7 +120,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
             QueryClass bagTypeQueryClass;
             try {
                 bagTypeQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                                                          + "." + bag.getType()));
+                        + "." + bag.getType()).asSubclass(FastPathObject.class));
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("Not found the class typebag for the bag "
                                                   + bag.getName(), e);

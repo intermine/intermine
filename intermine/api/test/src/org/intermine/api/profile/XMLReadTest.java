@@ -3,7 +3,6 @@ package org.intermine.api.profile;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -76,26 +75,26 @@ public class XMLReadTest extends InterMineAPITestCase
         assertEquals(1, stored2.getSavedTemplates().size());
 
         Set<Tag> expectedTags = new HashSet<Tag>();
-        Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        Tag tag1 = (Tag) DynamicUtil.createObject(Tag.class);
 
         tag1.setTagName("test-tag");
         tag1.setObjectIdentifier("Department.company");
         tag1.setType("reference");
         tag1.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
-        Tag tag2 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        Tag tag2 = (Tag) DynamicUtil.createObject(Tag.class);
         tag2.setTagName("test-tag2");
         tag2.setObjectIdentifier("Department.name");
         tag2.setType("attribute");
         tag2.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
-        Tag tag3 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        Tag tag3 = (Tag) DynamicUtil.createObject(Tag.class);
         tag3.setTagName("test-tag2");
         tag3.setObjectIdentifier("Department.company");
         tag3.setType("reference");
         tag3.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
-        Tag tag4 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        Tag tag4 = (Tag) DynamicUtil.createObject(Tag.class);
         tag4.setTagName("test-tag2");
         tag4.setObjectIdentifier("Department.employees");
         tag4.setType("collection");

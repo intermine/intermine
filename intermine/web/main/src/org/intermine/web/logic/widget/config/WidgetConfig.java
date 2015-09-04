@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -35,7 +37,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.Widget;
 import org.intermine.web.logic.widget.WidgetOptions;
 
@@ -126,7 +127,7 @@ public abstract class WidgetConfig
             QueryClass startClassQueryClass;
             try {
                 startClassQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                    + "." + startClass));
+                    + "." + startClass).asSubclass(FastPathObject.class));
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException("Class not found " + bag.getType(), e);
             }

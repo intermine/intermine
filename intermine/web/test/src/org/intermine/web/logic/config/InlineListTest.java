@@ -2,7 +2,6 @@ package org.intermine.web.logic.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,15 +29,15 @@ public class InlineListTest extends TestCase
         super.setUp();
 
         // InterMine Objects
-        company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company1 = DynamicUtil.createObject(Company.class);
         company1.setId(new Integer(1));
         company1.setName("Weyland Yutani");
 
-        company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company2 = DynamicUtil.createObject(Company.class);
         company2.setId(new Integer(2));
         company2.setName("Initech");
 
-        company3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        company3 = DynamicUtil.createObject(Company.class);
         company3.setId(new Integer(3));
         company3.setName("Umbrella Corp.");
     }

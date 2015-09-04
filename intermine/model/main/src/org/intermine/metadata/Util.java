@@ -21,17 +21,14 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
@@ -597,52 +594,40 @@ public final class Util
         return loadProperties(getFilename(KEY_DEFINITIONS, modelName));
     }
 
-    private static HashMap<Class<?>, Set<Class<?>>> decomposeMap = new HashMap<Class<?>,
-            Set<Class<?>>>();
-    private static Map<Class<?>, String> friendlyNameMap = new HashMap<Class<?>, String>();
+    private static HashMap<Class<?>, Class<?>> dynamicClassCache =
+            new HashMap<Class<?>, Class<?>>();
 
     /**
-     * Convert a dynamic Class into a Set of Class objects that comprise it.
-     *
-     * @param clazz the Class to decompose
-     * @return a Set of Class objects
+     * Get the actual class from a class that may be a dynamic class. For dynamic objects that
+     * represent the instantiation of an interface the interface class is returned. For interfaces
+     * where a Shadow class is used the interface class is returned. This util method is needed
+     * because DynamicBean can't override getClass().
+     * @param clazz a class to decompose
+     * @return the class (usually from the data model), this may be an interface
      */
-    public static synchronized Set<Class<?>> decomposeClass(Class<?> clazz) {
-        Set<Class<?>> retval = decomposeMap.get(clazz);
+    public static synchronized Class<?> dynamicGetClass(Class<?> clazz) {
+        Class<?> retval = dynamicClassCache.get(clazz);
+
         if (retval == null) {
+            // this is dynamic class - an interface instantiated as a class at runtime
             if (net.sf.cglib.proxy.Factory.class.isAssignableFrom(clazz)) {
-                // Decompose
-                retval = new TreeSet<Class<?>>(new ClassNameComparator());
-                retval.add(clazz.getSuperclass());
                 Class<?>[] interfs = clazz.getInterfaces();
                 for (int i = 0; i < interfs.length; i++) {
                     Class<?> inter = interfs[i];
                     if (net.sf.cglib.proxy.Factory.class != inter) {
-                        boolean notIn = true;
-                        Iterator<Class<?>> inIter = retval.iterator();
-                        while (inIter.hasNext() && notIn) {
-                            Class<?> in = inIter.next();
-                            if (in.isAssignableFrom(inter)) {
-                                // That means that the one already in the return value is more
-                                // general than the one we are about to put in, so we can get rid
-                                // of the one already in.
-                                inIter.remove();
-                            }
-                            if (inter.isAssignableFrom(in)) {
-                                // That means that the one already in the return value is more
-                                // specific than the one we would have added, so don't bother.
-                                notIn = false;
-                            }
+                        if (retval != null || clazz.getSuperclass() != java.lang.Object.class) {
+                            throw new IllegalArgumentException("Found a dynamic object composed of"
+                                    + " multiple interfaces, but only one is now allowed. "
+                                    + " Superclass: " + clazz.getSuperclass() + " interfaces: "
+                                    + interfs);
                         }
-                        if (notIn) {
-                            retval.add(inter);
-                        }
+                        retval = inter;
                     }
                 }
             } else if (org.intermine.model.ShadowClass.class.isAssignableFrom(clazz)) {
+                // this is a Shadow class, we can get the actual class it shadows
                 try {
-                    retval = new TreeSet<Class<?>>(new ClassNameComparator());
-                    retval.add((Class<?>) clazz.getField("shadowOf").get(null));
+                    retval = ((Class<?>) clazz.getField("shadowOf").get(null));
                 } catch (NoSuchFieldException e) {
                     throw new RuntimeException("ShadowClass " + clazz.getName() + " has no "
                             + "shadowOf method", e);
@@ -651,12 +636,11 @@ public final class Util
                             + ".shadowOf method is inaccessible", e);
                 }
             } else {
-                // Normal class - return it.
-                retval = new TreeSet<Class<?>>(new ClassNameComparator());
-                retval.add(clazz);
+                retval = clazz;
             }
-            decomposeMap.put(clazz, retval);
+            dynamicClassCache.put(clazz, retval);
         }
+
         return retval;
     }
 
@@ -667,28 +651,7 @@ public final class Util
      * @return a String describing the class, without package names
      */
     public static synchronized String getFriendlyName(Class<?> clazz) {
-        String retval = friendlyNameMap.get(clazz);
-        if (retval == null) {
-            retval = "";
-            Iterator<Class<?>> iter = decomposeClass(clazz).iterator();
-            boolean needComma = false;
-            while (iter.hasNext()) {
-                Class<?> constit = iter.next();
-                retval += needComma ? "," : "";
-                needComma = true;
-                retval += constit.getName().substring(constit.getName().lastIndexOf('.') + 1);
-            }
-            friendlyNameMap.put(clazz, retval);
-        }
-        return retval;
-    }
-
-    private static class ClassNameComparator implements Comparator<Class<?>>
-    {
-        @Override
-        public int compare(Class<?> a, Class<?> b) {
-            return a.getName().compareTo(b.getName());
-        }
+        return dynamicGetClass(clazz).getSimpleName();
     }
 }
 

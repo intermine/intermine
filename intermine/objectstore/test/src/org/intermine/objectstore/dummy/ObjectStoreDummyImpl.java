@@ -19,10 +19,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreAbstractImpl;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.objectstore.query.ResultsInfo;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.DynamicUtil;
-import org.intermine.objectstore.*;
-import org.intermine.objectstore.query.*;
 
 /**
  * Generate dummy Results from a query. Used for testing purposes.
@@ -84,7 +91,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
     public void setPoisonRowNo(int row) {
         poisonRowNo = row;
     }
- 
+
     /**
      * Execute a Query on this ObjectStore, asking for a certain range of rows to be returned.
      * This will usually only be called by the Results object returned from
@@ -99,7 +106,7 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
      * @return a list of ResultsRows
      * @throws ObjectStoreException if an error occurs during the running of the Query
      */
-    
+
     public List execute(Query q, int start, int limit, boolean optimise, boolean explain,
             Map<Object, Integer> sequence) throws ObjectStoreException {
         checkStartLimit(start, limit, q);
@@ -209,9 +216,9 @@ public class ObjectStoreDummyImpl extends ObjectStoreAbstractImpl
             Object obj = null;
             if (qn instanceof QueryClass) {
                 try {
-                    Class<?> cls = ((QueryClass) qn).getType();
+                    Class<? extends FastPathObject> cls = ((QueryClass) qn).getType();
                     if (cls.isInterface()) {
-                        obj = DynamicUtil.createObject(Collections.singleton(cls));
+                        obj = DynamicUtil.createObject(cls);
                     } else {
                         obj = ((QueryClass) qn).getType().newInstance();
                     }

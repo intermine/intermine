@@ -170,7 +170,7 @@ public final class PortalHelper
         String url = null;
         Object externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys);
         if (externalId != null) {
-            String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
+            String clsName = DynamicUtil.getClass(obj).getSimpleName();
             StringBuilder sb = new StringBuilder();
             sb.append("/").append(EXTERNAL_PORTAL_PAGE).append("?class=");
             sb.append(clsName);

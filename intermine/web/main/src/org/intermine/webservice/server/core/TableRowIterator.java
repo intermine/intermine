@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ResultCell;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
@@ -524,8 +523,7 @@ public class TableRowIterator implements
                 } else if (o instanceof FastPathObject) {
                     FastPathObject fpo = (FastPathObject) o;
                     for (Path p: views) {
-                        String cls = TypeUtil.unqualifiedName(
-                                DynamicUtil.getSimpleClassName(o.getClass()));
+                        String cls = DynamicUtil.getClass(o).getSimpleName();
                         boolean isKeyField = false;
                         if (im != null) {
                             List<FieldDescriptor> keyFields = im.getClassKeys().get(cls);
