@@ -26,6 +26,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.StringUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -245,9 +246,10 @@ public class BagQuery
                     // add a new QueryClass to the query and constrain the connect field of this
                     // class to be equal to the new QueryClass
                     if (fd instanceof ReferenceDescriptor) {
-                        Class<?> extraClass;
+                        Class<? extends FastPathObject> extraClass;
                         try {
-                            extraClass = Class.forName(extraClassName);
+                            extraClass =
+                                    Class.forName(extraClassName).asSubclass(FastPathObject.class);
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException("can't find Class for extraClassName: "
                                                        + extraClassName);

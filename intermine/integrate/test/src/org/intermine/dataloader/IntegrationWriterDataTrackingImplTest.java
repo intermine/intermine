@@ -163,7 +163,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testStoreObject() throws Exception {
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         Address a = new Address();
         a.setAddress("Company Street, AVille");
         c.setAddress(a);
@@ -187,7 +187,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertNotNull(example.getAddress());
         assertEquals(c.getAddress().getAddress(), example.getAddress().getAddress());
 
-        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c2 = (Company) DynamicUtil.createObject(Company.class);
         c2.setName("CompanyA");
         Company example2 = (Company) iw.getObjectByExample(c2, Collections.singleton("name"));
         assertEquals(example.getAddress(), example2.getAddress());
@@ -196,7 +196,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public void testUpdateObjectField() throws Exception {
         Employee e = new Employee();
         Department d = new Department();
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         e.setName("EmployeeA2");
         e.setAge(32);
         e.setEnd("2");
@@ -228,7 +228,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testUpdateObjectOneToOne() throws Exception {
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         Address a = new Address();
         Address a2 = new Address();
         CEO ceo = new CEO();
@@ -270,7 +270,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertNotNull(rceo.getCompany());
         assertEquals(rc, rceo.getCompany());
 
-        Company exampleOC = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleOC = (Company) DynamicUtil.createObject(Company.class);
         exampleOC.setName("CompanyB");
         Company oc = (Company) iw.getObjectByExample(exampleOC, Collections.singleton("name"));
 
@@ -283,7 +283,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source skelSource = iw.getSkeletonSource("testsource", "testsource");
 
         {
-            Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+            Company companyA = (Company) DynamicUtil.createObject(Company.class);
             CEO ceoA = new CEO();
             Address companyAAddress = new Address();
             Address ceoAAddress = new Address();
@@ -314,9 +314,9 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
             iw.store(ceoAAddress, source, skelSource);
         }
 
-        Company exampleCompanyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleCompanyA = (Company) DynamicUtil.createObject(Company.class);
         exampleCompanyA.setName("CompanyA");
-        Company exampleCompanyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleCompanyB = (Company) DynamicUtil.createObject(Company.class);
         exampleCompanyB.setName("CompanyB");
         CEO exampleCEOA = new CEO();
         exampleCEOA.setName("Fred");
@@ -340,7 +340,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source source2 = iw.getMainSource("testsource2", "testsource2");
         Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
         {
-            Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+            Company c = (Company) DynamicUtil.createObject(Company.class);
             Address a = new Address();
             Address a2 = new Address();
             CEO ceo = new CEO();
@@ -393,7 +393,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testUpdateObjectOneToOneNull() throws Exception {
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         Address a = new Address();
         a.setAddress("Company Street, BVille");
         c.setAddress(a);
@@ -426,7 +426,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public void testUpdateObjectManyToOne() throws Exception {
         Manager e = new Manager();
         Department d = new Department();
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         Address a = new Address();
         Address a2 = new Address();
         a.setAddress("Company Street, BVille");
@@ -512,7 +512,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public void testUpdateObjectOneToMany() throws Exception {
         Manager e = new Manager();
         Department d = new Department();
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         Address a = new Address();
         Address a2 = new Address();
         a.setAddress("Company Street, BVille");
@@ -566,7 +566,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     public void testUpdateObjectManyToMany() throws Exception {
         Contractor con = new Contractor();
         Address companyAAddress = new Address();
-        Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company companyA = (Company) DynamicUtil.createObject(Company.class);
         companyAAddress.setAddress("Company Street, AVille");
         companyA.setAddress(companyAAddress);
         companyA.setName("CompanyA");
@@ -597,7 +597,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Source skelSource2 = iw.getSkeletonSource("testsource2", "testsource2");
 
         Address companyBAddress = new Address();
-        Company companyB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company companyB = (Company) DynamicUtil.createObject(Company.class);
         companyBAddress.setAddress("Company Street, BVille");
         companyB.setAddress(companyBAddress);
         companyB.setName("CompanyB");
@@ -633,7 +633,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         Address exampleCAA = new Address();
         exampleCAA.setAddress("Company Street, AVille");
         Address dbCAA = (Address) iw.getObjectByExample(exampleCAA, Collections.singleton("address"));
-        Company ca = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company ca = (Company) DynamicUtil.createObject(Company.class);
         ca.setAddress(dbCAA);
         ca.setName("CompanyA");
         Contractor exampleConA = new Contractor();
@@ -650,11 +650,11 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         conA.setName("ContractorA");
         conA.setSeniority(new Integer(128764));
         conA.addCompanys(ca);
-        Company exampleCA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleCA = (Company) DynamicUtil.createObject(Company.class);
         exampleCA.setName("CompanyA");
         Company dbCA = (Company) iw.getObjectByExample(exampleCA, Collections.singleton("name"));
         conA.addCompanys(dbCA);
-        Company exampleCB = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company exampleCB = (Company) DynamicUtil.createObject(Company.class);
         exampleCB.setName("CompanyB");
         Company dbCB = (Company) iw.getObjectByExample(exampleCB, Collections.singleton("name"));
         conA.addCompanys(dbCB);
@@ -708,7 +708,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         // Now set up a standard store operation that will set off a object merge.
         Contractor con = new Contractor();
         Address companyAAddress = new Address();
-        Company companyA = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company companyA = (Company) DynamicUtil.createObject(Company.class);
         companyAAddress.setAddress("Company Street, AVille");
         companyA.setAddress(companyAAddress);
         companyA.setName("CompanyA");
@@ -776,29 +776,6 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         assertTrue(rconA.getCompanys().contains(rca));
     }
 
-    public void testAddClass() throws Exception {
-        Employee e = (Employee) DynamicUtil.createObject(new HashSet<Class<? extends InterMineObject>>(Arrays.asList(Employee.class, Broke.class)));
-        e.setName("EmployeeA1");
-        ((Broke) e).setDebt(8762);
-
-        if (doIds) {
-            e.setId(new Integer(1));
-        }
-
-        Source source = iw.getMainSource("testsource", "testsource");
-        Source skelSource = iw.getSkeletonSource("testsource", "testsource");
-
-        iw.store(e, source, skelSource);  // method we are testing
-
-        InterMineObject re = iw.getObjectByExample(e, Collections.singleton("name"));
-        assertNotNull(re);
-        assertTrue(re instanceof Broke);
-        assertTrue(re instanceof Employee);
-        assertTrue(re instanceof Manager);
-        assertEquals(8762, ((Broke) re).getDebt());
-        assertEquals(new Integer(876123), ((Manager) re).getSeniority());
-    }
-
     public void testSourceWithMultipleCopies() throws Exception {
         Employee e1 = new Employee();
         e1.setName("EmployeeA1");
@@ -853,10 +830,10 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         cs.addConstraint(new SimpleConstraint(new QueryField(qc, "vatNumber"), ConstraintOp.EQUALS, new QueryValue(new Integer(876213))));
         q.setConstraint(cs);
 
-        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c2 = (Company) DynamicUtil.createObject(Company.class);
         Address a2 = new Address();
-        Company c3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        Company c4 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c3 = (Company) DynamicUtil.createObject(Company.class);
+        Company c4 = (Company) DynamicUtil.createObject(Company.class);
         Address a4 = new Address();
 
         c2.setName("CompanyZ");
@@ -918,7 +895,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
         // CompanyA is in db with source "storedata"
         // source "testsource3" has a lower priority than "storedata"
 
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
         c.setVatNumber(1234);
 
         Department d = new Department();
@@ -952,7 +929,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
 
     public void testGetEquivalentObjects() throws Exception {
 
-        Bank b = (Bank) DynamicUtil.createObject(Collections.singleton(Bank.class));
+        Bank b = (Bank) DynamicUtil.createObject(Bank.class);
         b.setName("bank1");
 
         Source source = iw.getMainSource("testsource", "testsource");
@@ -964,7 +941,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testSkeletonsNoException() throws Exception {
-        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        Address a = (Address) DynamicUtil.createObject(Address.class);
         a.setAddress("address1");
         if (doIds) {
             a.setId(new Integer(1));
@@ -980,7 +957,7 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testSkeletonsException() throws Exception {
-        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        Address a = (Address) DynamicUtil.createObject(Address.class);
         a.setAddress("address1");
         if (doIds) {
             a.setId(new Integer(1));
@@ -1051,8 +1028,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testHintedPrimaryKeyReference() throws Exception {
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Address a = (Address) DynamicUtil.createObject(Address.class);
         // In testsource1, Company has key name, address, and address has key address.
         c.setName("CompanyA");
         a.setAddress("Albert");
@@ -1079,8 +1056,8 @@ public class IntegrationWriterDataTrackingImplTest extends SetupDataTestCase
     }
 
     public void testPrimaryKeyReferenceContainsNull() throws Exception {
-        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
-        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
+        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Address a = (Address) DynamicUtil.createObject(Address.class);
         // In testsource1, Company has key name, address, and address has key address.
         c.setName("CompanyA");
         a.setAddress(null);

@@ -69,7 +69,7 @@ public class InlineTableResultElement extends ResultElement
      * @return a class name so we can display what kind of object, in a Collection, this is
      */
     public String getClassName() {
-        return DynamicUtil.getSimpleClass((InterMineObject) imObj).getSimpleName();
+        return DynamicUtil.getClass((InterMineObject) imObj).getSimpleName();
     }
 
 }

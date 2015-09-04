@@ -23,8 +23,6 @@ import org.intermine.metadata.TypeUtil;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Manager;
-import org.intermine.objectstore.query.Clob;
-import org.intermine.objectstore.query.ClobAccess;
 
 
 
@@ -36,7 +34,7 @@ public class TypeUtilTest extends TestCase
     }
 
     public void testGetFieldValue() throws Exception {
-        assertNotNull(TypeUtil.getFieldValue((Company) DynamicUtil.createObject(Collections.singleton(Company.class)), "departments"));
+        assertNotNull(TypeUtil.getFieldValue((Company) DynamicUtil.createObject(Company.class), "departments"));
     }
 
     public void testSetFieldValue() throws Exception {
@@ -105,7 +103,7 @@ public class TypeUtilTest extends TestCase
 
 
     public void testGetFieldInfosDynamic() throws Exception {
-        Class<?> c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
+        Class<?> c = DynamicUtil.createObject(Company.class).getClass();
 
         Map got = TypeUtil.getFieldInfos(c);
         assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "bank", "address", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());
@@ -190,19 +188,6 @@ public class TypeUtilTest extends TestCase
         assertEquals("modmine123", TypeUtil.javaisePackageName("modMine123"));
         assertEquals("modminetest", TypeUtil.javaisePackageName("modMine TEST"));
         assertEquals("modminetest2r", TypeUtil.javaisePackageName("modMine_TEST-2.r"));
-    }
-
-    public void testIsInstanceOf() throws Exception {
-        Manager man = DynamicUtil.createObject(Manager.class);
-        assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Manager"));
-        assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Employee"));
-        assertFalse(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.Company"));
-        try {
-            assertTrue(TypeUtil.isInstanceOf(man, "org.intermine.model.testmodel.NoSuchClass"));
-            fail("Expected exception");
-        } catch (ClassNotFoundException e) {
-            // expected
-        }
     }
 
     //===========================

@@ -32,6 +32,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.objectstore.ObjectStore;
@@ -348,7 +349,8 @@ public class InterMineBag extends StorableBag implements Cloneable
         Query q = new Query();
         q.setDistinct(false);
         try {
-            QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
+            QueryClass qc = new QueryClass(
+                    Class.forName(getQualifiedType()).asSubclass(FastPathObject.class));
             q.addFrom(qc);
             if (hasExtraValue) {
                 QueryObjectPathExpression qope = new QueryObjectPathExpression(qc,

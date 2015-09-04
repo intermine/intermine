@@ -690,15 +690,16 @@ public final class SqlGenerator
         findTableNamesInConstraint(tablenames, q.getConstraint(), schema, individualOsbs);
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
-                for (Class<?> cls : Util.decomposeClass(((QueryClass) fromElement)
-                        .getType())) {
-                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
-                    if (cld == null) {
-                        throw new ObjectStoreException(cls + " is not in the model");
-                    }
-                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                    tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                Class<?> cls = DynamicUtil.getClass(((QueryClass) fromElement).getType());
+                //                for (Class<?> cls : Util.decomposeClass(((QueryClass) fromElement)
+                //                        .getType())) {
+                ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
+                if (cld == null) {
+                    throw new ObjectStoreException(cls + " is not in the model");
                 }
+                ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                tablenames.add(DatabaseUtil.getTableName(tableMaster));
+                //}
             } else if (fromElement instanceof Query) {
                 Query subQ = (Query) fromElement;
                 findTableNames(tablenames, subQ, schema, false, individualOsbs);
@@ -826,44 +827,21 @@ public final class SqlGenerator
         for (FromElement fromElement : q.getFrom()) {
             if (fromElement instanceof QueryClass) {
                 QueryClass qc = (QueryClass) fromElement;
-                String baseAlias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(qc));
-                Set<Class<?>> classes = Util.decomposeClass(qc.getType());
-                List<ClassDescriptorAndAlias> aliases = new ArrayList<ClassDescriptorAndAlias>();
-                int sequence = 0;
-                String lastAlias = "";
-                for (Class<?> cls : classes) {
-                    ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
-                    if (cld == null) {
-                        throw new ObjectStoreException(cls.toString() + " is not in the model");
-                    }
-                    ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                    if (sequence == 0) {
-                        aliases.add(new ClassDescriptorAndAlias(cld, baseAlias));
-                        state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS "
-                                + baseAlias);
-                        if (schema.isTruncated(tableMaster)) {
-                            if (state.getWhereBuffer().length() > 0) {
-                                state.addToWhere(" AND ");
-                            }
-                            state.addToWhere(baseAlias + ".tableclass = '" + cls.getName() + "'");
-                        }
-                    } else {
-                        aliases.add(new ClassDescriptorAndAlias(cld, baseAlias + "_" + sequence));
-                        state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS " + baseAlias
-                                + "_" + sequence);
-                        if (state.getWhereBuffer().length() > 0) {
-                            state.addToWhere(" AND ");
-                        }
-                        state.addToWhere(baseAlias + lastAlias + ".id = " + baseAlias
-                                + "_" + sequence + ".id");
-                        lastAlias = "_" + sequence;
-                        if (schema.isTruncated(tableMaster)) {
-                            state.addToWhere(" AND " + baseAlias + "_" + sequence
-                                    + ".tableclass = '" + cls.getName() + "'");
-                        }
-                    }
-                    sequence++;
+                String alias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(qc));
+                Class<?> cls = DynamicUtil.getClass(qc.getType());
+                ClassDescriptor cld = schema.getModel().getClassDescriptorByName(cls.getName());
+                if (cld == null) {
+                    throw new ObjectStoreException(cls.toString() + " is not in the model");
                 }
+                ClassDescriptor tableMaster = schema.getTableMaster(cld);
+                state.addToFrom(DatabaseUtil.getTableName(tableMaster) + " AS " + alias);
+                if (schema.isTruncated(tableMaster)) {
+                    if (state.getWhereBuffer().length() > 0) {
+                        state.addToWhere(" AND ");
+                    }
+                    state.addToWhere(alias + ".tableclass = '" + cls.getName() + "'");
+                }
+
                 Map<String, FieldDescriptor> fields = schema.getModel()
                     .getFieldDescriptorsForClass(qc.getType());
                 Map<String, String> fieldToAlias = state.getFieldToAlias(qc);
@@ -871,10 +849,10 @@ public final class SqlGenerator
                 if (schema.isFlatMode(qc.getType())) {
                     List<Iterator<? extends FieldDescriptor>> iterators
                         = new ArrayList<Iterator<? extends FieldDescriptor>>();
-                    ClassDescriptor cld = schema.getTableMaster(schema.getModel()
+                    ClassDescriptor masterCld = schema.getTableMaster(schema.getModel()
                         .getClassDescriptorsForClass(qc.getType()).iterator().next());
                     DatabaseSchema.Fields dbsFields = schema.getTableFields(schema
-                            .getTableMaster(cld));
+                            .getTableMaster(masterCld));
                     iterators.add(dbsFields.getAttributes().iterator());
                     iterators.add(dbsFields.getReferences().iterator());
                     fieldIter = new CombinedIterator<FieldDescriptor>(iterators);
@@ -884,31 +862,20 @@ public final class SqlGenerator
                 while (fieldIter.hasNext()) {
                     FieldDescriptor field = fieldIter.next();
                     String name = field.getName();
-                    for (ClassDescriptorAndAlias aliasEntry : aliases) {
-                        ClassDescriptor cld = aliasEntry.getClassDescriptor();
-                        String alias = aliasEntry.getAlias();
-                        if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode(qc
-                                    .getType())) {
-                            fieldToAlias.put(name, alias + "." + DatabaseUtil.getColumnName(field));
-                            break;
-                        }
+                    if (cld.getAllFieldDescriptors().contains(field) || schema.isFlatMode(qc
+                            .getType())) {
+                        fieldToAlias.put(name, alias + "." + DatabaseUtil.getColumnName(field));
                     }
                 }
                 // Deal with OBJECT column
                 if (schema.isMissingNotXml()) {
-                    for (ClassDescriptorAndAlias aliasEntry : aliases) {
-                        ClassDescriptor cld = aliasEntry.getClassDescriptor();
-                        String alias = aliasEntry.getAlias();
-                        ClassDescriptor tableMaster = schema.getTableMaster(cld);
-                        if (InterMineObject.class.equals(tableMaster.getType())) {
-                            fieldToAlias.put("OBJECT", alias + ".OBJECT");
-                            break;
-                        }
+                    if (InterMineObject.class.equals(tableMaster.getType())) {
+                        fieldToAlias.put("OBJECT", alias + ".OBJECT");
                     }
                 } else if (!schema.isFlatMode(qc.getType())) {
-                    fieldToAlias.put("OBJECT", baseAlias + ".OBJECT");
+                    fieldToAlias.put("OBJECT", alias + ".OBJECT");
                 }
-                fieldToAlias.put("class", baseAlias + ".class");
+                fieldToAlias.put("class", alias + ".class");
             } else if (fromElement instanceof Query) {
                 state.addToFrom("(" + generate((Query) fromElement, schema, state.getDb(), null,
                                 QUERY_SUBQUERY_FROM, bagTableNames) + ") AS "
@@ -2871,25 +2838,6 @@ public final class SqlGenerator
 
         public String getLastSQL() {
             return lastSQL;
-        }
-    }
-
-    private static class ClassDescriptorAndAlias
-    {
-        private ClassDescriptor cld;
-        private String alias;
-
-        public ClassDescriptorAndAlias(ClassDescriptor cld, String alias) {
-            this.cld = cld;
-            this.alias = alias;
-        }
-
-        public ClassDescriptor getClassDescriptor() {
-            return cld;
-        }
-
-        public String getAlias() {
-            return alias;
         }
     }
 }

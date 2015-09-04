@@ -20,14 +20,10 @@ import java.util.Set;
 
 import junit.framework.Test;
 
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
-import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
-import org.intermine.metadata.TypeUtil;
 
 public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
 {
@@ -109,20 +105,6 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("InterfaceField", NO_RESULT);
         results2.put("InterfaceField", NO_RESULT);
         Set res = new HashSet();
-        results.put("DynamicInterfacesAttribute", NO_RESULT);
-        results2.put("DynamicInterfacesAttribute", NO_RESULT);
-        results.put("DynamicClassInterface", NO_RESULT);
-        results2.put("DynamicClassInterface", NO_RESULT);
-        results.put("DynamicClassRef1", NO_RESULT);
-        results2.put("DynamicClassRef1", NO_RESULT);
-        results.put("DynamicClassRef2", NO_RESULT);
-        results2.put("DynamicClassRef2", NO_RESULT);
-        results.put("DynamicClassRef3", NO_RESULT);
-        results2.put("DynamicClassRef3", NO_RESULT);
-        results.put("DynamicClassRef4", NO_RESULT);
-        results2.put("DynamicClassRef4", NO_RESULT);
-        results.put("DynamicClassConstraint", NO_RESULT);
-        results2.put("DynamicClassConstraint", NO_RESULT);
         results.put("ContainsConstraintNull", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.employmentPeriodId AS a1_employmentPeriodId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.addressId IS NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNull", Collections.singleton("Employee"));
         results.put("ContainsConstraintNotNull", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.employmentPeriodId AS a1_employmentPeriodId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.addressId IS NOT NULL ORDER BY a1_.id");
@@ -202,10 +184,6 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results2.put("QueryClassBag", Collections.singleton("Employee"));
         results.put("QueryClassBagMM", "SELECT indirect0.HasSecretarys AS a3_, a2_.id AS a2_id, a2_.name AS a2_name FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.HasSecretarys IN (" + companyAId + ", " + companyBId + ", " + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
         results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
-        results.put("QueryClassBagDynamic", "SELECT indirect0.HasSecretarys AS a3_, a2_.id AS a2_id, a2_.name AS a2_name FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.HasSecretarys IN (" + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
-        results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"Secretary", "HasSecretarysSecretarys"})));
-        //results.put("DynamicBagConstraint", NO_RESULT); // See ticket #469
-        results.put("DynamicBagConstraint2", NO_RESULT);
         results.put("QueryClassBagDouble", "SELECT a2_.departmentId AS a4_, a2_.addressId AS a2_addressId, a2_.age AS a2_age, a2_.companyId AS a2_companyId, a2_.departmentId AS a2_departmentId, a2_.departmentThatRejectedMeId AS a2_departmentThatRejectedMeId, a2_.employmentPeriodId AS a2_employmentPeriodId, a2_.fullTime AS a2_fullTime, a2_.id AS a2_id, a2_.intermine_end AS a2_intermine_end, a2_.name AS a2_name, a2_.salary AS a2_salary, a2_.seniority AS a2_seniority, a2_.title AS a2_title, a2_.class AS a2_objectclass, a3_.addressId AS a3_addressId, a3_.age AS a3_age, a3_.companyId AS a3_companyId, a3_.departmentId AS a3_departmentId, a3_.departmentThatRejectedMeId AS a3_departmentThatRejectedMeId, a3_.employmentPeriodId AS a3_employmentPeriodId, a3_.fullTime AS a3_fullTime, a3_.id AS a3_id, a3_.intermine_end AS a3_intermine_end, a3_.name AS a3_name, a3_.salary AS a3_salary, a3_.seniority AS a3_seniority, a3_.title AS a3_title, a3_.class AS a3_objectclass FROM Employee AS a2_, Employee AS a3_ WHERE a2_.tableclass = 'org.intermine.model.testmodel.Employee' AND a3_.tableclass = 'org.intermine.model.testmodel.Employee' AND a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ") AND a3_.departmentId = a2_.departmentId ORDER BY a2_.departmentId, a2_.id, a3_.id");
         results2.put("QueryClassBagDouble", Collections.singleton("Employee"));
         results.put("QueryClassBagContainsObject", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0 WHERE indirect0.tableclass = 'org.intermine.model.testmodel.Employee' AND indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ") AND indirect0.id = " + employeeA1Id + " ORDER BY indirect0.departmentId");
@@ -266,8 +244,6 @@ public class FlatModeSqlGeneratorTest extends SqlGeneratorTest
         results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results.put("SubclassCollection", "SELECT a1_.companyId AS a1_companyId, a1_.id AS a1_id, a1_.managerId AS a1_managerId, a1_.name AS a1_name FROM Department AS a1_ ORDER BY a1_.id");
         results2.put("SubclassCollection", new HashSet(Arrays.asList("Department", "Employee")));
-        results.put("SubclassCollection2", NO_RESULT);
-        results2.put("SubclassCollection2", NO_RESULT);
         results.put("SelectWhereBackslash", "SELECT a1_.addressId AS a1_addressId, a1_.age AS a1_age, a1_.companyId AS a1_companyId, a1_.departmentId AS a1_departmentId, a1_.departmentThatRejectedMeId AS a1_departmentThatRejectedMeId, a1_.employmentPeriodId AS a1_employmentPeriodId, a1_.fullTime AS a1_fullTime, a1_.id AS a1_id, a1_.intermine_end AS a1_intermine_end, a1_.name AS a1_name, a1_.salary AS a1_salary, a1_.seniority AS a1_seniority, a1_.title AS a1_title, a1_.class AS a1_objectclass FROM Employee AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", Collections.singleton("Employee"));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.CEOId AS a1_CEOId, a1_.addressId AS a1_addressId, a1_.bankId AS a1_bankId, a1_.id AS a1_id, a1_.name AS a1_name, a1_.vatNumber AS a1_vatNumber FROM Company AS a1_ ORDER BY a1_.id");

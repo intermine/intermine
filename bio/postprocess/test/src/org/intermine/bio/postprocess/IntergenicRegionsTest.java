@@ -13,7 +13,6 @@ package org.intermine.bio.postprocess;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +23,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
@@ -40,7 +40,6 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-import org.intermine.metadata.Util;
 
 /**
  * Tests for the IntergenicRegionUtil class.
@@ -55,8 +54,8 @@ public class IntergenicRegionsTest extends TestCase
     public IntergenicRegionsTest(String arg) {
         super(arg);
 
-        organism = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
-        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        organism = DynamicUtil.createObject(Organism.class);
+        dataSource = DynamicUtil.createObject(DataSource.class);
         dataSource.setName("FlyMine");
     }
 
@@ -249,8 +248,7 @@ public class IntergenicRegionsTest extends TestCase
     }
 
     private Integer createChrX(List geneLocList, Map chrXlocMap, int idStart) throws ObjectStoreException {
-        Chromosome chr =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
         chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(1000));
         chr.setId(new Integer(101));
@@ -272,7 +270,7 @@ public class IntergenicRegionsTest extends TestCase
         Location[] geneLocs = new Location[geneInfo.length];
 
         for (int i = 0; i < genes.length; i++) {
-            genes[i] = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+            genes[i] = DynamicUtil.createObject(Gene.class);
             int geneId = geneInfo[i][0] + idStart;
             int start = geneInfo[i][1];
             int end = geneInfo[i][2];
@@ -300,8 +298,7 @@ public class IntergenicRegionsTest extends TestCase
     }
 
     private Integer createChr1(List geneLocList, Map chr1locMap, int idStart) throws ObjectStoreException {
-        Chromosome chr =
-            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
         chr.setPrimaryIdentifier("I");
         chr.setLength(new Integer(2000));
         chr.setId(new Integer(102));
@@ -327,7 +324,7 @@ public class IntergenicRegionsTest extends TestCase
         Location[] geneLocs = new Location[geneInfo.length];
 
         for (int i = 0; i < genes.length; i++) {
-            genes[i] = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+            genes[i] = DynamicUtil.createObject(Gene.class);
             int geneId = geneInfo[i][0] + idStart;
             int start = geneInfo[i][1];
             int end = geneInfo[i][2];
@@ -355,8 +352,8 @@ public class IntergenicRegionsTest extends TestCase
     }
 
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
-                                    int start, int end, Class<?> locationClass) {
-        Location loc = (Location) DynamicUtil.createObject(Collections.singleton(locationClass));
+                                    int start, int end, Class<Location> locationClass) {
+        Location loc = DynamicUtil.createObject(locationClass);
         loc.setLocatedOn(object);
         loc.setFeature(subject);
         loc.setStrand(strand);

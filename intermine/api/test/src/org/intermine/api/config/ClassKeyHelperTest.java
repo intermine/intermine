@@ -11,7 +11,8 @@ import junit.framework.TestCase;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.util.DynamicUtil;
 
 public class ClassKeyHelperTest extends TestCase {
@@ -82,15 +83,13 @@ public class ClassKeyHelperTest extends TestCase {
     public void testGetKeyFieldValue() throws Exception {
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys();
         // class keys for Company: name, vatNumber
-        FastPathObject obj =
-            DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        Company obj = DynamicUtil.createObject(Company.class);
         obj.setFieldValue("vatNumber", 1234);
         assertEquals(1234, ClassKeyHelper.getKeyFieldValue(obj, classKeys));
         obj.setFieldValue("name", "CompanyA");
         assertEquals("CompanyA", ClassKeyHelper.getKeyFieldValue(obj, classKeys));
 
-        FastPathObject manager =
-            DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", null);
+        Manager manager = DynamicUtil.createObject(Manager.class);
         assertEquals(null, ClassKeyHelper.getKeyFieldValue(manager, classKeys));
         manager.setFieldValue("title", "Sir");
         assertEquals("Sir", ClassKeyHelper.getKeyFieldValue(manager, classKeys));

@@ -107,7 +107,7 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter
                     }
                     Set<String> categories = (Set<String>) identifiers.get(ident);
                     categories.add(key);
-                    String className = DynamicUtil.getSimpleClassName(imo.getClass());
+                    String className = DynamicUtil.getClass(imo).getName();
                     resultItem.put("type", className.replaceAll("^.*\\.", ""));
                     ret.put(idKey, resultItem);
                 }
@@ -144,7 +144,7 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter
                 Set<String> categories = (Set<String>) identifiers.get(ident);
                 categories.add("MATCH");
             }
-            String className = DynamicUtil.getSimpleClassName(imo.getClass());
+            String className = DynamicUtil.getClass(imo).getName();
             resultItem.put("type", className.replaceAll("^.*\\.", ""));
             ret.put(idKey, resultItem);
         }
@@ -154,7 +154,7 @@ public class BagResultOutputKeyFormatter implements BagResultFormatter
         WebConfig webConfig = InterMineContext.getWebConfig();
         Model m = im.getModel();
         Map<String, Object> objectDetails = new HashMap<String, Object>();
-        String className = DynamicUtil.getSimpleClassName(imo.getClass());
+        String className = DynamicUtil.getClass(imo).getName();
         ClassDescriptor cd = m.getClassDescriptorByName(className);
         for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
             try {

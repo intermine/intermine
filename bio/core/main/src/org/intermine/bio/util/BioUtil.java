@@ -18,6 +18,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -73,7 +74,7 @@ public final class BioUtil
         QueryClass qcObject = null;
         try {
             String className = model.getPackageName() + "." + type;
-            qcObject  = new QueryClass(Class.forName(className));
+            qcObject  = new QueryClass(Class.forName(className).asSubclass(FastPathObject.class));
         } catch (ClassNotFoundException e) {
             return null;
         }

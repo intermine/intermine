@@ -11,11 +11,9 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.intermine.model.bio.Chromosome;
@@ -35,38 +33,39 @@ public class PostProcessUtilTest extends TestCase {
     public void testCloneInterMineObject() throws Exception {
         Gene gene = createExampleGene();
         Gene clonedGene = (Gene) PostProcessUtil.cloneInterMineObject(gene);
-        Assert.assertEquals(gene.getId(), clonedGene.getId());
+        assertEquals(gene.getId(), clonedGene.getId());
         compareGenes(gene, clonedGene);
     }
 
     public void testCopyInterMineObject() throws Exception {
         Gene gene = createExampleGene();
         Gene copiedGene = (Gene) PostProcessUtil.copyInterMineObject(gene);
-        Assert.assertNull(copiedGene.getId());
+        assertNull(copiedGene.getId());
         compareGenes(gene, copiedGene);
     }
 
 
     private Gene createExampleGene() {
-        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Gene gene = DynamicUtil.createObject(Gene.class);
         gene.setId(new Integer(101));
-        Transcript tran1 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        Transcript tran1 = DynamicUtil.createObject(Transcript.class);
         tran1.setId(new Integer(102));
-        Transcript tran2 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+        Transcript tran2 = DynamicUtil.createObject(Transcript.class);
         tran2.setId(new Integer(103));
-        Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
+        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
         chr.setId(new Integer(104));
 
         gene.setPrimaryIdentifier("gene1");
         gene.setChromosome(chr);
-        Set transcripts = new HashSet(Arrays.asList(new Object[] {tran1, tran2}));
+        Set<Transcript> transcripts =
+                new HashSet<Transcript>(Arrays.asList(new Transcript[] {tran1, tran2}));
         gene.setTranscripts(transcripts);
         return gene;
     }
 
     private void compareGenes(Gene gene, Gene copiedGene) {
-        Assert.assertEquals(gene.getSecondaryIdentifier(), copiedGene.getSecondaryIdentifier());
-        Assert.assertEquals(gene.getChromosome(), copiedGene.getChromosome());
-        Assert.assertEquals(gene.getTranscripts(), copiedGene.getTranscripts());
+        assertEquals(gene.getSecondaryIdentifier(), copiedGene.getSecondaryIdentifier());
+        assertEquals(gene.getChromosome(), copiedGene.getChromosome());
+        assertEquals(gene.getTranscripts(), copiedGene.getTranscripts());
     }
 }

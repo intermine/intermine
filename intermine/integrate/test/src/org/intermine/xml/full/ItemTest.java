@@ -10,8 +10,8 @@ package org.intermine.xml.full;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -239,11 +239,11 @@ public class ItemTest extends TestCase
         item1.addToCollection("contractors", "contractor_id_2");
         item1.addToCollection("contractors", itemFactory.makeItem("contractor_id_3"));
 
-        List resultContractors = item1.getCollection("contractors").getRefIds();
+        List<String> resultContractors = item1.getCollection("contractors").getRefIds();
 
         assertEquals(3, resultContractors.size());
 
-        List expected = new ArrayList();
+        List<String> expected = new ArrayList<String>();
 
         expected.add("contractor_id_1");
         expected.add("contractor_id_2");
@@ -266,7 +266,7 @@ public class ItemTest extends TestCase
 
         item1.setClassName("Company");
 
-        List idsToAdd = new ArrayList();
+        List<String> idsToAdd = new ArrayList<String>();
 
         idsToAdd.add("contractor_id_1");
         idsToAdd.add("contractor_id_2");
@@ -274,11 +274,11 @@ public class ItemTest extends TestCase
 
         item1.setCollection("contractors", idsToAdd);
 
-        List resultContractors = item1.getCollection("contractors").getRefIds();
+        List<String> resultContractors = item1.getCollection("contractors").getRefIds();
 
         assertEquals(3, resultContractors.size());
 
-        List expected = new ArrayList();
+        List<String> expected = new ArrayList<String>();
 
         expected.add("contractor_id_1");
         expected.add("contractor_id_2");

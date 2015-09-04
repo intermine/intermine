@@ -46,9 +46,9 @@ public class OmimConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OmimConverter(itemWriter, model);
 
-
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("9606", "ENSG001", Collections.singleton("609300"));
+        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("100070", "OMIM:100070", "MIM:OMIM:100070")));
+        converter.rslv.addResolverEntry("9606", "PEX6", new HashSet<String>(Arrays.asList("601498", "OMIM:601498", "MIM:OMIM:601498")));
         super.setUp();
     }
 
@@ -60,26 +60,15 @@ public class OmimConverterTest extends ItemsTestCase
         File tmp = new File(getClass().getClassLoader()
                 .getResource("omim.txt").toURI());
         File datadir = tmp.getParentFile();
-
-        process(datadir);
-        assertEquals(4, itemWriter.getItems().size());
-    }
-
-    private void process(File infoFile) throws Exception {
-        converter.process(infoFile);
+        converter.process(datadir);
         converter.close();
-
         storedItems = itemWriter.getItems();
-        writeItemsFile(storedItems, "humangene-tgt-items.xml");
+        //writeItemsFile(storedItems, "omim-tgt-items.xml");
+
+
+        Set<org.intermine.xml.full.Item> expected = readItemSet("OmimConverterTest_tgt.xml");
+        assertEquals(expected, storedItems);
     }
 
-    private List<Item> getGenes() {
-        List<Item> ret = new  ArrayList<Item>();
-        for (Item item : storedItems) {
-            if (item.getClassName().contains("Gene")) {
-                ret.add(item);
-            }
-        }
-        return ret;
-    }
+
 }

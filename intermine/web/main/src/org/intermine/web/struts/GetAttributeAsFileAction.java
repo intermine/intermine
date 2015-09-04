@@ -11,8 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,10 +21,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -59,24 +57,16 @@ public class GetAttributeAsFileAction extends Action
 
         FieldExporter fieldExporter = null;
 
-        Set<Class<?>> classes = Util.decomposeClass(object.getClass());
+        Class<?> c = DynamicUtil.getClass(object.getClass());
+        Type thisTypeConfig = webConfig.getTypes().get(c.getName());
 
-        Iterator<Class<?>> classIter = classes.iterator();
+        FieldConfig fc = thisTypeConfig.getFieldConfigMap().get(fieldName);
 
-        while (classIter.hasNext()) {
-            Class<?> c = classIter.next();
-
-            Type thisTypeConfig = webConfig.getTypes().get(c.getName());
-
-            FieldConfig fc = thisTypeConfig.getFieldConfigMap().get(fieldName);
-
-            if (fc != null) {
-                String fieldExporterClassName = fc.getFieldExporter();
-                if (fieldExporterClassName != null) {
-                    fieldExporter =
+        if (fc != null) {
+            String fieldExporterClassName = fc.getFieldExporter();
+            if (fieldExporterClassName != null) {
+                fieldExporter =
                         (FieldExporter) Class.forName(fieldExporterClassName).newInstance();
-                    break;
-                }
             }
         }
 
