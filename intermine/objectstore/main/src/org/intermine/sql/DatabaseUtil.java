@@ -574,10 +574,15 @@ public final class DatabaseUtil
     public static void removeAllTables(Connection con) throws SQLException {
         ResultSet res = con.getMetaData().getTables(null, null, "%", null);
         Set<String> tablenames = new HashSet<String>();
+        String OVERLAP_VIEW = "overlappingfeaturessequencefeature";
         while (res.next()) {
             String tablename = res.getString(3);
             if ("TABLE".equals(res.getString(4))) {
                 tablenames.add(tablename);
+            }
+            if ("VIEW".equals(res.getString(4)) && OVERLAP_VIEW.equals(tablename)) {
+                LOG.info("Dropping view " + OVERLAP_VIEW);
+                con.createStatement().execute("DROP VIEW " + tablename);
             }
         }
         for (String tablename : tablenames) {
@@ -597,6 +602,19 @@ public final class DatabaseUtil
         LOG.info("Dropping sequence " + sequence);
         con.createStatement().execute("DROP SEQUENCE " + sequence);
     }
+
+    /**
+     * Remove the view from the database given.
+     *
+     * @param con the Connection to the database
+     * @param view the view to remove
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    public static void removeView(Connection con, String view) throws SQLException {
+        LOG.info("Dropping view " + view);
+        con.createStatement().execute("DROP VIEW IF EXISTS " + view);
+    }
+
 
     /**
      * Creates a table name for a class descriptor
