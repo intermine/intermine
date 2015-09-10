@@ -19,13 +19,19 @@
       <property name="dataSetTitle" value="Phytozome v10" />
     </source>
 
-
     <source name="diversity-S.bicolor" type="gatkvcf">
       <property name="proteomeId" value="255" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor/" />
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-S.bicolor" />
       <property name="dataSetTitle" value="S.bicolor Natural Diversity" />
+    </source>
+    <source name="diversity-G.max" type="gatkvcf">
+      <property name="proteomeId" value="275" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Gmax/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-G.max" />
+      <property name="dataSetTitle" value="G.max Natural Diversity" />
     </source>
     <source name="diversity-P.vulgaris" type="gatkvcf">
       <property name="proteomeId" value="218" />
@@ -34,7 +40,6 @@
       <property name="dataSourcename" value="diversity-P.vulgaris" />
       <property name="dataSetTitle" value="P.vulgaris Natural Diversity" />
     </source>
-
     <source name="diversity-P.trichocarpa" type="gatkvcf">
       <property name="proteomeId" value="210" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
@@ -42,14 +47,6 @@
       <property name="dataSourcename" value="diversity-P.trichocarpa" />
       <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
     </source>
-    <source name="diversity-P.trichocarpa-continued" type="gatkvcf">
-      <property name="proteomeId" value="210" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Ptrichocarpa/" />
-      <property name="src.data.dir.includes" value="*.vcf" />
-      <property name="dataSourcename" value="diversity-P.trichocarpa" />
-      <property name="dataSetTitle" value="P.trichocarpa Natural Diversity" />
-    </source>
-
     <source name="diversity-B.distachyon" type="gatkvcf">
       <property name="proteomeId" value="283" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Bdistachyon/" />
@@ -77,6 +74,12 @@
       <property name="src.data.dir.includes" value="*.vcf" />
       <property name="dataSourcename" value="diversity-M.esculenta-early-release" />
       <property name="dataSetTitle" value="M.esculenta Natural Diversity" />
+    </source>
+    <source name="diversity-G.max-samples" type="vcfsampleinfo">
+      <property name="proteomeId" value="275" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Gmax/" />
+      <property name="dataSourcename" value="diversity-G.max" />
+      <property name="dataSetTitle" value="G.max Natural Diversity Sample Info" />
     </source>
     <source name="diversity-P.trichocarpa-samples" type="vcfsampleinfo">
       <property name="proteomeId" value="210"/>
@@ -254,10 +257,12 @@
       <property name="dataSourceName" value="rnaseq-P.patens-geneAtlas" />
       <property name="dataSetTitle" value="P.patens-geneAtlas RNA-seq Info" />
     </source>
+
     <source name="phytozome-homologs" type="inparanoid-homologs" >
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/inparanoid-homologs/" />
       <property name="src.data.dir.includes" value="table.*.fa-*.fa" />
     </source>
+
     <source name="chlamy-kegg-pathways" type="plantcyc-pathway">
       <property name="proteomeId" value="281" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
@@ -314,13 +319,7 @@
       <property name="dataSourcename" value="KEGG" />
       <property name="dataSetTitle" value="S.bicolor KEGG Pathway" />
     </source>
-    <!-- this is problematic source name="millet-kegg-pathways" type="plantcyc-pathway">
-      <property name="proteomeId" value="164" />
-      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/kegg-pathway/" />
-      <property name="src.data.dir.includes" value="Sitalica_KEGG.sita_Pathway2Gene.csv" />
-      <property name="dataSourcename" value="KEGG" />
-      <property name="dataSetTitle" value="S.italica KEGG Pathway" />
-    </source-->
+
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/interpro/" />
     </source>
@@ -337,6 +336,7 @@
       <property name="dataSetTitle" value="Phytozome V10" />
       <property name="dataSourceName" value="Phytozome V10" />
     </source>
+
     <source name="Panther-terms" type="ontology-terms">
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/panther-terms/" />
       <property name="src.data.file" value="names.tab" />
@@ -478,20 +478,17 @@
   </sources>
 
   <post-processing>
-    <post-process name="create-references" />
+    <post-process name="create-gene-flanking-features" />
     <post-process name="transfer-sequences" />
+    <post-process name="create-references" />
+    <post-process name="add-uniprot-ids" />
     <!-- this runs the postprocessing steps in all sources -->
     <post-process name="do-sources" />
-    <post-process name="create-gene-flanking-features" />
+    <post-process name="transfer-go-terms" />
+    <post-process name="transfer-ontology-terms" />
     <post-process name="summarise-objectstore" />
     <post-process name="create-autocomplete-index" />
     <post-process name="create-search-index" />
     <post-process name="create-lucene-index" />
-    <post-process name="add-uniprot-ids" />
-    <post-process name="transfer-go-terms" />
-    <post-process name="transfer-ontology-terms" />
-    <post-process name="name-features" />
-
-    
   </post-processing>
 </project>

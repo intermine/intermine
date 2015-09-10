@@ -91,9 +91,7 @@ public class TransferGOAnnotations {
     try {
       gEC = findOrCreateCode("ISS");
       knownGO = new HashMap<Integer,HashMap<String,HashSet<String>>>();
-      fillGOHash();
       knownOntology = new HashMap<Integer,HashMap<String,HashSet<String>>>();
-      fillOntologyHash();
       goTerms = new HashMap<String,Integer>();
     } catch (ObjectStoreException e) {
       throw new RuntimeException(
@@ -161,10 +159,14 @@ public class TransferGOAnnotations {
 
       osw.beginTransaction();
 
+      // this is an opportune place to hack in an if statement if we know only
+      // some things need to be done.
+      // if ( proteomeId.intValue() >= 310) {
 
       LOG.info("Making query for "+proteomeId);
 
-
+      fillGOHash(proteomeId);
+      fillOntologyHash(proteomeId);
       Iterator<?> resIter = findProteinDomains(proteomeId);
       while (resIter.hasNext()  ) {
         ResultsRow<?> rr = (ResultsRow<?>) resIter.next();
@@ -270,6 +272,9 @@ public class TransferGOAnnotations {
         lastProtein.setOntologyAnnotations(proteinAnnotationSet);
         osw.store(lastProtein);
       }
+      
+      // end of opportune hack
+      //}
 
       osw.commitTransaction();
     }
@@ -279,7 +284,7 @@ public class TransferGOAnnotations {
 
   }
 
-  private void fillGOHash() throws ObjectStoreException {
+  private void fillGOHash(Integer proteomeId) throws ObjectStoreException {
 
     Query q = new Query();
 
@@ -289,6 +294,9 @@ public class TransferGOAnnotations {
     q.addFrom(qcGene);
     q.addToSelect(qcGene);
     q.addToOrderBy(qcGene);
+    
+    QueryClass qcOrganism = new QueryClass(Organism.class);
+    q.addFrom(qcOrganism);
 
     QueryClass qcGOAnnotation = new QueryClass(GOAnnotation.class);
     q.addFrom(qcGOAnnotation);
@@ -304,8 +312,17 @@ public class TransferGOAnnotations {
 
     QueryObjectReference goTermRef = new QueryObjectReference(qcGOAnnotation, "ontologyTerm");
     cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcGoTerm));
+    
+    QueryObjectReference organismRef = new QueryObjectReference(qcGene,"organism");
+    cs.addConstraint(new ContainsConstraint(organismRef,ConstraintOp.CONTAINS, qcOrganism));
+    
+    QueryField qfProteome = new QueryField(qcOrganism,"proteomeId");
+    QueryValue qvProteome = new QueryValue(proteomeId);
+    cs.addConstraint(new SimpleConstraint(qfProteome,ConstraintOp.EQUALS,qvProteome));
 
     q.setConstraint(cs);
+    
+    LOG.info("Query for known GO terms is "+q);
 
     ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
     Iterator<?>  res = os.execute(q, 500000, true, true, true).iterator();
@@ -325,7 +342,7 @@ public class TransferGOAnnotations {
   }
 
 
-  private void fillOntologyHash() throws ObjectStoreException {
+  private void fillOntologyHash(Integer proteomeId) throws ObjectStoreException {
 
     Query q = new Query();
 
@@ -336,6 +353,9 @@ public class TransferGOAnnotations {
     q.addToSelect(qcBio);
     q.addToOrderBy(qcBio);
 
+    QueryClass qcOrganism = new QueryClass(Organism.class);
+    q.addFrom(qcOrganism);
+    
     QueryClass qcOAnnotation = new QueryClass(OntologyAnnotation.class);
     q.addFrom(qcOAnnotation);
 
@@ -351,10 +371,18 @@ public class TransferGOAnnotations {
     QueryObjectReference goTermRef = new QueryObjectReference(qcOAnnotation, "ontologyTerm");
     cs.addConstraint(new ContainsConstraint(goTermRef, ConstraintOp.CONTAINS, qcOTerm));
 
+    QueryObjectReference organismRef = new QueryObjectReference(qcBio,"organism");
+    cs.addConstraint(new ContainsConstraint(organismRef,ConstraintOp.CONTAINS, qcOrganism));
+    
+    QueryField qfProteome = new QueryField(qcOrganism,"proteomeId");
+    QueryValue qvProteome = new QueryValue(proteomeId);
+    cs.addConstraint(new SimpleConstraint(qfProteome,ConstraintOp.EQUALS,qvProteome));
     q.setConstraint(cs);
 
+    LOG.info("Query for known Ontology terms is "+q);
+    
     ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-    Iterator<?>  res = os.execute(q, 5000, true, true, true).iterator();
+    Iterator<?>  res = os.execute(q, 500000, true, true, true).iterator();
     while(res.hasNext()) {
       ResultsRow<?> rr = (ResultsRow<?>) res.next();
       Protein thisBio = (Protein) rr.get(0);
@@ -442,7 +470,7 @@ public class TransferGOAnnotations {
     q.setConstraint(cs);
 
     ((ObjectStoreInterMineImpl) os).precompute(q, Constants.PRECOMPUTE_CATEGORY);
-    Results res = os.execute(q, 5000, true, true, true);
+    Results res = os.execute(q, 500000, true, true, true);
     return res.iterator();
   }
   private void prepareHash(HashMap<Integer,HashMap<String,HashSet<String>>> hash, Integer orgId,String featureName) {

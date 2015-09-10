@@ -96,6 +96,10 @@ public class TransferOntologyAnnotations {
 
     for(Integer proteomeId : proteomes ) {
 
+      // this is an opportune place to hack in an if statement if we know only
+      // some things need to be done.
+       if ( proteomeId.intValue() >= 310) {
+
       LOG.info("Making query for "+proteomeId);
       
       HashSet<KnownPair> knownTerms = getKnownTerms(os,proteomeId);
@@ -193,6 +197,10 @@ public class TransferOntologyAnnotations {
 
       LOG.info("Created "+geneCount+" gene records and "+protCount+" protein records.");
       LOG.info("Knew about "+knownGCount+" genes and "+knownPCount+" proteins.");
+      
+      // end of opportune hack
+      }
+
     }
   }
 

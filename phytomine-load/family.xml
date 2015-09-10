@@ -467,3 +467,45 @@
     <property name="createrelations" value="false" />
     <property name="methodIds" value="5004" />
   </source>
+  <source name="phytozome-cluster-node-5006" type="phytozome-clusters">
+    <property name="source.db.name" value="PAC" />
+    <property name="dataSourceName" value="pac-clusters" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+    <property name="createrelations" value="false" />
+    <property name="methodIds" value="5006" />
+  </source>
+  <source name="phytozome-cluster-node-5007" type="phytozome-clusters">
+    <property name="source.db.name" value="PAC" />
+    <property name="dataSourceName" value="pac-clusters" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+    <property name="createrelations" value="false" />
+    <property name="methodIds" value="5007" />
+  </source>
+  <source name="phytozome-cluster-node-5008" type="phytozome-clusters">
+    <property name="source.db.name" value="PAC" />
+    <property name="dataSourceName" value="pac-clusters" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+    <property name="createrelations" value="false" />
+    <property name="methodIds" value="5008" />
+  </source>
+  <source name="phytozome-cluster-node-5009" type="phytozome-clusters">
+    <property name="source.db.name" value="PAC" />
+    <property name="dataSourceName" value="pac-clusters" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+    <property name="createrelations" value="false" />
+    <property name="methodIds" value="5009" />
+  </source>
+  <source name="phytozome-cluster-node-5010" type="phytozome-clusters">
+    <property name="source.db.name" value="PAC" />
+    <property name="dataSourceName" value="pac-clusters" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+    <property name="createrelations" value="false" />
+    <property name="methodIds" value="5010" />
+  </source>
+  <source name="phytozome-cluster-node-5011" type="phytozome-clusters">
+    <property name="source.db.name" value="PAC" />
+    <property name="dataSourceName" value="pac-clusters" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+    <property name="createrelations" value="false" />
+    <property name="methodIds" value="5011" />
+  </source>
