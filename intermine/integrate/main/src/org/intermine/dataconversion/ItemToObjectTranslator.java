@@ -305,6 +305,9 @@ public class ItemToObjectTranslator extends Translator
                     item.getImplementations(), model).split(" ")));
         }
 
+        // see #1123
+        classes.remove("");
+
         // make sure only have one class as Dynamic objects are no longer supported
         if (classes.size() == 1) {
             try {
