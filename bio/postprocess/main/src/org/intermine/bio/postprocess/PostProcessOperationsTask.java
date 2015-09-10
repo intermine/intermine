@@ -144,26 +144,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 configureDynamicAttributes(iu);
                 LOGGER.info("Starting IntronUtil.createIntronFeatures()");
                 iu.createIntronFeatures();
-            } else if ("create-overlap-relations-flymine".equals(operation)) {
-                LOGGER.info("Starting CalculateLocations.createOverlapRelations()");
-                List<String> classNamesToIgnoreList = new ArrayList<String>();
-                String ignoreFileName = "overlap.config";
-                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
-                InputStream classesToIgnoreStream =
-                    classLoader.getResourceAsStream(ignoreFileName);
-                if (classesToIgnoreStream == null) {
-                    throw new RuntimeException("can't find resource: " + ignoreFileName);
-                }
-                BufferedReader classesToIgnoreReader =
-                    new BufferedReader(new InputStreamReader(classesToIgnoreStream));
-                String line = classesToIgnoreReader.readLine();
-                while (line != null) {
-                    classNamesToIgnoreList.add(line);
-                    line = classesToIgnoreReader.readLine();
-                }
-
-                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                cl.createOverlapRelations(classNamesToIgnoreList, false);
             } else if ("create-attribute-indexes".equals(operation)) {
                 CreateIndexesTask cit = new CreateIndexesTask();
                 cit.setAttributeIndexes(true);
