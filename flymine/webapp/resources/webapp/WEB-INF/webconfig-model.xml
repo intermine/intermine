@@ -902,21 +902,6 @@
                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
-                                 title="Protein Domain Enrichment"
-                                 description="Protein Domains enriched for items in this list."
-                                 label="Protein Domain"
-                                 startClass="Protein"
-                                 startClassDisplay="primaryIdentifier"
-                                 enrich="proteinDomains.name"
-                                 enrichIdentifier="proteinDomains.primaryIdentifier"
-                                 constraints="organism.name=[list]"
-                                 typeClass="Protein"
-                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
-                                       proteinDomains.name"
-                                 externalLink="http://www.ebi.ac.uk/interpro/entry/"/>
-
-
       <enrichmentwidgetdisplayer id="bdgp_enrichment"
                                  title="BDGP Enrichment"
                                  description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BDGP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
