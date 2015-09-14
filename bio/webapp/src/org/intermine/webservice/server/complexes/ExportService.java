@@ -170,7 +170,7 @@ public class ExportService extends JSONService
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
 
-            String feature = (String) row.get(9).getField();
+            String featureIdentifier = (String) row.get(9).getField();
             String locatedOn = (String) row.get(10).getField();
             String start = (String) row.get(11).getField();
             String end = (String) row.get(12).getField();
@@ -213,11 +213,14 @@ public class ExportService extends JSONService
             DefaultPosition startPosition = new DefaultPosition(new Long(start));
             DefaultPosition endPosition = new DefaultPosition(new Long(end));
 
+            // TODO how to add this to the binding feature?
             DefaultRange range = new DefaultRange(startPosition, endPosition);
 
             // binding feature
             DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
 
+            // TODO set as the identifier instead. How to do that?
+            bindingFeature.setShortName(featureIdentifier);
 
             participant.addAllFeatures(Collections.singleton(bindingFeature));
 
