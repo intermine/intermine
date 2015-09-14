@@ -58,6 +58,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.WidthBucketFunction;
+import org.intermine.util.DynamicUtil;
 
 /**
  * OQL representation of an object-based Query
@@ -376,20 +377,8 @@ public class IqlQuery
             .append(".")
             .append(col.getFieldName());
         if (col.getSubclass() != null) {
-            Class<?> subclass = col.getSubclass();
-            Collection<Class<?>> subclasses = Util.decomposeClass(subclass);
-            if (subclasses.size() == 1) {
-                retval.append("::")
-                    .append(subclasses.iterator().next().getName());
-            } else {
-                boolean needComma = false;
-                for (Class<?> subclas : subclasses) {
-                    retval.append(needComma ? ", " : "::(");
-                    needComma = true;
-                    retval.append(subclas.getName());
-                }
-                retval.append(")");
-            }
+            Class<?> subclass = DynamicUtil.getClass(col.getSubclass());
+            retval.append("::").append(subclass.getName());
         }
         if ((!col.getSelect().isEmpty()) || (!col.getFrom().isEmpty())
                 || (col.getConstraint() != null)) {
@@ -476,20 +465,8 @@ public class IqlQuery
             .append(".")
             .append(ref.getFieldName());
         if (ref.getSubclass() != null) {
-            Class<?> subclass = ref.getSubclass();
-            Collection<Class<?>> subclasses = Util.decomposeClass(subclass);
-            if (subclasses.size() == 1) {
-                retval.append("::")
-                    .append(subclasses.iterator().next().getName());
-            } else {
-                boolean needComma = false;
-                for (Class<?> subclas : subclasses) {
-                    retval.append(needComma ? ", " : "::(");
-                    needComma = true;
-                    retval.append(subclas.getName());
-                }
-                retval.append(")");
-            }
+            Class<?> subclass = DynamicUtil.getClass(ref.getSubclass());
+            retval.append("::").append(subclass.getName());
         }
         if ((!ref.getSelect().isEmpty()) || (ref.getConstraint() != null)) {
             Set<Integer> empty = Collections.emptySet();

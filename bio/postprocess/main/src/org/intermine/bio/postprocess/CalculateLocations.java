@@ -22,8 +22,10 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioQueries;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
@@ -33,7 +35,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -87,7 +88,9 @@ public class CalculateLocations
      * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
      * same class
      * @throws Exception if anything goes wrong
+     * @deprecated You should be using the create-overlap-view task instead
      */
+    @Deprecated
     public void createOverlapRelations(List<String> classNamesToIgnore, boolean ignoreSelfMatches)
         throws Exception {
         osw.beginTransaction();
@@ -185,8 +188,10 @@ public class CalculateLocations
             return;
         }
 
-        Class<?> parentClass = model.getClassDescriptorByName(parentClsName).getType();
-        Class<?> childClass = model.getClassDescriptorByName(childClsName).getType();
+        Class<? extends FastPathObject> parentClass =
+                model.getClassDescriptorByName(parentClsName).getType();
+        Class<? extends FastPathObject> childClass =
+                model.getClassDescriptorByName(childClsName).getType();
 
         Query parentIdQuery =
             new IqlQuery("SELECT DISTINCT a1_.id as id FROM "
@@ -273,8 +278,7 @@ public class CalculateLocations
                 Integer parentObjectId = (Integer) parentObjectMapIterator.next();
                 BioEntity parentObject = (BioEntity) os.getObjectById(parentObjectId);
                 SimpleLoc parentObjectSimpleLoc = parentObjectMap.get(parentObjectId);
-                Location newLocation =
-                    (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+                Location newLocation = DynamicUtil.createObject(Location.class);
 
                 newLocation.setStart(new Integer(parentObjectSimpleLoc.getStart()));
                 newLocation.setEnd(new Integer(parentObjectSimpleLoc.getEnd()));
@@ -292,8 +296,9 @@ public class CalculateLocations
      * Query a class like Transcript that refers to a collection of located classes (like Exon) and
      * return an Results object containing Transcript, Exon, Exon location and location.object
      */
-    private static Iterator<?> findCollections(ObjectStore os, Class<?> parentClass,
-            Class<?> childClass, String refField)
+    private static Iterator<?> findCollections(ObjectStore os,
+            Class<? extends FastPathObject> parentClass,
+            Class<? extends FastPathObject> childClass, String refField)
         throws ObjectStoreException {
 
         Query q = new Query();

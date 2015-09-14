@@ -41,6 +41,8 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -50,7 +52,6 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -187,7 +188,7 @@ public class BagBuildController extends TilesAction
             q.setDistinct(true);
             QueryClass qc;
             try {
-                qc = new QueryClass(Class.forName(extraClassName));
+                qc = new QueryClass(Class.forName(extraClassName).asSubclass(FastPathObject.class));
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Can't find class for: " + extraClassName);
             }

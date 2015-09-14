@@ -22,8 +22,10 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.Constants;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.DataSource;
@@ -37,7 +39,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -77,7 +78,7 @@ public class IntronUtil
         this.osw = osw;
         this.os = osw.getObjectStore();
         this.model = os.getModel();
-        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
+        dataSource = DynamicUtil.createObject(DataSource.class);
         dataSource.setName("FlyMine");
         try {
             dataSource = os.getObjectByExample(dataSource, Collections.singleton("name"));
@@ -107,7 +108,7 @@ public class IntronUtil
     public void createIntronFeatures()
         throws ObjectStoreException {
 
-        dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        dataSet = DynamicUtil.createObject(DataSet.class);
         dataSet.setName("FlyMine introns");
         dataSet.setDescription("Introns calculated by FlyMine");
         dataSet.setVersion("" + new Date()); // current time and date
@@ -318,11 +319,10 @@ public class IntronUtil
                 + "_" + Integer.toString(newLocStart) + ".." + Integer.toString(newLocEnd);
 
             if (intronMap.get(identifier) == null) {
-                Class<?> intronCls = model.getClassDescriptorByName("Intron").getType();
-                Intron intron = (Intron)
-                    DynamicUtil.createObject(Collections.singleton(intronCls));
-                Location location =
-                    (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
+                Class<? extends FastPathObject> intronCls =
+                        model.getClassDescriptorByName("Intron").getType();
+                Intron intron = (Intron) DynamicUtil.createObject(intronCls);
+                Location location = DynamicUtil.createObject(Location.class);
 
                 intron.setChromosome(chr);
                 intron.setOrganism(chr.getOrganism());

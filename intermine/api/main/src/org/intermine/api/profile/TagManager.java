@@ -31,13 +31,13 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -617,7 +617,7 @@ public class TagManager
         }
 
         UserProfile userProfile = getUserProfile(username);
-        Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
+        Tag tag = (Tag) DynamicUtil.createObject(Tag.class);
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);
         tag.setType(type);

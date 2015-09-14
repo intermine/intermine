@@ -238,7 +238,7 @@ public class AutoCompleter
 
                 Query q = new Query();
                 q.setDistinct(true);
-                QueryClass qc = new QueryClass(Class.forName(cld.getName()));
+                QueryClass qc = new QueryClass(cld.getType());
                 q.addToSelect(new QueryField(qc, fieldName));
                 q.addFrom(qc);
                 Results results = os.execute(q);

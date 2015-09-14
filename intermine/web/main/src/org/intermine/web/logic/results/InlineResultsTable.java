@@ -183,7 +183,7 @@ public class InlineResultsTable
             }
             // init new
             listOfTypes = new ArrayList<Class<?>>();
-            listOfTypes.add(DynamicUtil.getSimpleClass(o));
+            listOfTypes.add(DynamicUtil.getClass(o));
         }
         return listOfTypes;
     }
@@ -316,12 +316,11 @@ public class InlineResultsTable
                         // column name also known as field expression
                         column = fc.getFieldExpr();
                         // determine the class of the object
-                        Class<?> clazz = DynamicUtil.getSimpleClass((FastPathObject) o);
+                        Class<?> clazz = DynamicUtil.getClass((FastPathObject) o);
                         // does THIS row object have THIS column?
                         if (isThisFieldConfigInThisObject(clazz, fc)) {
                             // resolve class name
-                            className =
-                                DynamicUtil.getSimpleClass((FastPathObject) o).getSimpleName();
+                            className = DynamicUtil.getClass((FastPathObject) o).getSimpleName();
                             setClassNameOnTableRow(className, columnList);
                             // form a new path
                             path = new Path(model, className + '.' + column);
@@ -342,7 +341,7 @@ public class InlineResultsTable
 
                             // save the InterMine Object identifier
                             if (!foundMainIdentifier) {
-                                Class<?> objectType = DynamicUtil.getSimpleClass(imObj);
+                                Class<?> objectType = DynamicUtil.getClass(imObj);
                                 if (InterMineObject.class.isAssignableFrom(objectType)) {
                                     saveObjectIdOnTableRow(((InterMineObject) imObj).getId(),
                                             columnList);

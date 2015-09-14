@@ -19,10 +19,10 @@ import java.util.Map;
 
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.TypeUtil.FieldInfo;
-import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.StringConstructor;
 import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.util.DynamicUtil;
 
 /**
  * Render on object into a String suitable for storing in the OBJECT field of database tables.
@@ -44,14 +44,8 @@ public final class NotXmlRenderer
         try {
             StringConstructor sb = new StringConstructor();
             sb.append(DELIM);
-            boolean needComma = false;
-            for (Class<?> clazz : Util.decomposeClass(obj.getClass())) {
-                if (needComma) {
-                    sb.append(" ");
-                }
-                needComma = true;
-                sb.append(clazz.getName());
-            }
+            Class<?> cls = DynamicUtil.getClass(obj.getClass());
+            sb.append(cls.getName());
 
             Map<String, FieldInfo> infos = TypeUtil.getFieldInfos(obj.getClass());
             for (String fieldName : infos.keySet()) {

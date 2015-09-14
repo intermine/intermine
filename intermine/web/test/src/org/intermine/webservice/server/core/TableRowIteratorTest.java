@@ -1,6 +1,5 @@
 package org.intermine.webservice.server.core;
 
-import static java.util.Collections.singleton;
 import static org.intermine.util.DynamicUtil.createObject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -69,7 +68,7 @@ public class TableRowIteratorTest
                 made++;
             }
             for (int k = 0; k < COMPANIES; k++) {
-                Company c = (Company) createObject(singleton(Company.class));
+                Company c = createObject(Company.class);
                 c.setName("temp-company" + k);
                 c.setVatNumber((k + 1) * (k + 1));
                 c.setBank(banks[k / 2]);
@@ -96,7 +95,7 @@ public class TableRowIteratorTest
                     }
                     osw.store(d);
                     made++;
-                    
+
                     for (int j = 0; j < EMPLOYEES; j++) {
                         Employee e = new Employee();
                         e.setName(String.format("temp-employee-%d-%d-%d", k, i, j));
@@ -158,23 +157,23 @@ public class TableRowIteratorTest
                 }
                 return st;
             }
-        
+
     };
 
     private  EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
-    
+
     @Before
     public void setup() throws ObjectStoreException {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
     }
-    
+
     @After
     public void teardown() throws ObjectStoreException {
         if (osw != null) {
             osw.close();
         }
     }
-    
+
     @AfterClass
     public static void shutdown() {
         int deleted = 0;
@@ -230,7 +229,7 @@ public class TableRowIteratorTest
                     osw.delete(b);
                     deleted++;
                 }
-                
+
                 osw.commitTransaction();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
@@ -247,16 +246,16 @@ public class TableRowIteratorTest
 
     /* VISITORS WE WILL BE USING... */
     private static class IndentingPrinter extends EitherVisitor<ResultCell, SubTable, Void> {
-        
+
         int indent = 0;
         int depth = 0;
         String spacer = null;
-        
+
         IndentingPrinter(int indent) {
             this.indent = indent;
             this.spacer = "";
         }
-        
+
         private IndentingPrinter(int indent, int depth) {
             this.indent = indent;
             this.depth = depth;
@@ -284,7 +283,7 @@ public class TableRowIteratorTest
             return null;
         }
     };
-    
+
     private static final EitherVisitor<ResultCell, SubTable, Integer> deepCounter = new EitherVisitor<ResultCell, SubTable, Integer>() {
 
         @Override public Integer visitLeft(ResultCell a) { return Integer.valueOf(1); }
@@ -298,7 +297,7 @@ public class TableRowIteratorTest
             }
             return c;
         }
-        
+
     };
 
     private static final EitherVisitor<ResultCell, SubTable, String> toStringNoTables = new EitherVisitor<ResultCell, SubTable, String>() {
@@ -311,14 +310,14 @@ public class TableRowIteratorTest
         public Integer visitRight(SubTable b) { fail("No subtables expected"); return null; }
     };
 
-    
+
     /* AND NOW FOR THE TESTS... */
 
     /*
      * This test is to test the ability to deal with ungrouped OJGs. This involves changing the order
      * of the view slightly so that outer-joined groups are grouped.
      */
-    @Test 
+    @Test
     public void ungroupedOJG() throws ObjectStoreException {
         /*
          *   4 cells * 3
@@ -381,11 +380,11 @@ public class TableRowIteratorTest
     @Test public void someOuterJoinedReferences() throws ObjectStoreException {
         runQuery("someOuterJoinedReferences", 24);
     }
-    
+
     @Test public void nestedOuterJoinedReferences() throws ObjectStoreException {
         runQuery("nestedOuterJoinedReferences", 24);
     }
-    
+
     @Test public void outerJoinRefWithInnerJoinOnIt() throws ObjectStoreException {
         /*
          *   3 cells * 3 (E.{name,age,fullTime})
@@ -395,7 +394,7 @@ public class TableRowIteratorTest
          */
         runQuery("outerJoinRefWithInnerJoinOnIt", 13, new Page(4, 3));
     }
-    
+
     @Test public void allOuterJoinedCollections() throws ObjectStoreException {
         /* Per company:
          *  - 1 name
@@ -408,7 +407,7 @@ public class TableRowIteratorTest
          * times 3 companies.
          */
         runQuery("AllOuterJoinedCollections", 84);
-        
+
     }
 
     @Test public void refsFirst() throws ObjectStoreException {
@@ -424,7 +423,7 @@ public class TableRowIteratorTest
         */
         runQuery("refsFirst", 84);
     }
-    
+
     @Test public void noTopLevel() throws ObjectStoreException {
         /* Per company:
          *  - 2 departments
@@ -448,13 +447,13 @@ public class TableRowIteratorTest
          */
         runQuery("noTopLevelReversed", 78);
     }
-    
+
     /* Tests an outer join reference on an inner join collection. */
     @Test
     public void ticket2936() throws ObjectStoreException {
     	runQuery("ticket2936", 12);
     }
-    
+
     /*
      * Not totally sure what the error was - likely something to do with the fact
      * that outerjoined subtables can themselves be totally null if their underlying
@@ -472,17 +471,17 @@ public class TableRowIteratorTest
          *   4 cells * 3
          * + 3 cells * 1
          * --------------
-         * = 15  
+         * = 15
          */
     	runQuery("itWasWorking", 15, new Page(4, 3));
     }
-    
+
     @Test
     public void NoSuchElement() throws ObjectStoreException {
         // NOTE THAT THE STRUCTURE OF THESE RESULTS IS MENTAL. FIX THIS.
         runQuery("noSuchElement", 21);
     }
-    
+
     @Test
     public void GettingEffectiveView() throws ObjectStoreException {
         PathQuery pq = getPQ("ungroupedOJG");
@@ -507,7 +506,7 @@ public class TableRowIteratorTest
         assertEquals(expected, rejiggered);
     }
 
-    
+
     /* THE ACTUAL TEST RUNNING INFRASTRUCTURE */
 
     private static void puts(Object s) {
@@ -521,7 +520,7 @@ public class TableRowIteratorTest
     private void runQuery(String name, int expected) throws ObjectStoreException {
         runQuery(name, expected, new Page(2, 3));
     }
-    
+
     private PathQuery getPQ(String name) {
         return Queries.getPathQuery("TableRowIteratorTest." + name);
     }
@@ -548,7 +547,7 @@ public class TableRowIteratorTest
             }
             puts("-----");
         }
-		
+
         assertEquals(expected, c);
     }
 }

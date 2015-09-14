@@ -80,7 +80,7 @@ public class ReactomePostProcess extends PostProcessor
     private void copyProteinPathways()
         throws ObjectStoreException, IllegalAccessException, SQLException {
 
-        reactomeDataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        reactomeDataSet = DynamicUtil.createObject(DataSet.class);
         reactomeDataSet.setName("Reactome pathways data set");
         reactomeDataSet =
             (DataSet) osw.getObjectByExample(reactomeDataSet, Collections.singleton("name"));

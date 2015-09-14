@@ -11,6 +11,7 @@ package org.intermine.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
@@ -206,7 +208,7 @@ public class ItemToObjectTranslator extends Translator
                 && "id".equals(((QueryField) ((BagConstraint) constraint).getQueryNode())
                         .getFieldName())) {
                 @SuppressWarnings("unchecked") Collection<Integer> bag =
-                    (Collection) ((BagConstraint) constraint).getBag();
+                    (Collection<Integer>) ((BagConstraint) constraint).getBag();
                 BagConstraint bc = new BagConstraint(new QueryField(qc, "identifier"),
                         ConstraintOp.IN, toStrings(bag));
                 q.setConstraint(bc);
@@ -295,14 +297,34 @@ public class ItemToObjectTranslator extends Translator
         long time2 = System.currentTimeMillis();
         timeSpentSizing += time2 - time1;
         FastPathObject obj;
-        try {
-            obj = DynamicUtil.instantiateObject(
-                    ItemHelper.generateClassNames(item.getClassName(), model),
-                    ItemHelper.generateClassNames(item.getImplementations(), model));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("class \"" + item.getClassName() + "\" does not exist\n"
-                    + "Problem found while loading Item with identifier " + item.getIdentifier(),
-                    e);
+
+        Set<String> classes = new HashSet<String>();
+        classes.add(ItemHelper.generateClassNames(item.getClassName(), model));
+        if (StringUtils.isNotEmpty(item.getImplementations())) {
+            classes.addAll(Arrays.asList(ItemHelper.generateClassNames(
+                    item.getImplementations(), model).split(" ")));
+        }
+
+        // see #1123
+        classes.remove("");
+
+        // make sure only have one class as Dynamic objects are no longer supported
+        if (classes.size() == 1) {
+            try {
+                Class<? extends FastPathObject> cls =
+                        Class.forName(classes.iterator().next()).asSubclass(FastPathObject.class);
+                obj = DynamicUtil.createObject(cls);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("class \"" + item.getClassName() + "\" does not exist\n"
+                        + "Problem found while loading Item with identifier "
+                        + item.getIdentifier(), e);
+            }
+        } else {
+            throw new RuntimeException("Item " + item.getIdentifier() + " has multiple ("
+                    + classes.size() + ") classes/implementations "
+                    + "but dynamic objects are no longer supported. ["
+                    + StringUtil.prettyList(classes) + ", original class:"
+                    + item.getClassName() + "]");
         }
 
         try {

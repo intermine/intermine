@@ -10,11 +10,12 @@ package org.intermine.util;
  *
  */
 
-import java.util.List;
-
 import junit.framework.TestCase;
 
-import org.intermine.model.testmodel.*;
+import org.intermine.model.testmodel.CEO;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 
 public class DynamicBeanTest extends TestCase
 {
@@ -22,16 +23,9 @@ public class DynamicBeanTest extends TestCase
         super(arg);
     }
 
-    public void testCreateObjectInterfaceAsClass() {
-        try {
-            DynamicBean.create(Company.class, null);
-            fail("Expected: IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-        }
-    }
-
-    public void testCreateObjectClassNoInterfaces() {
-        Object obj = DynamicBean.create(Employee.class, null);
+    // Employee is a class
+    public void testCreateObjectClass() {
+        Object obj = DynamicBean.create(Employee.class);
         assertTrue(obj instanceof Employee);
 
         Employee e = (Employee) obj;
@@ -44,26 +38,25 @@ public class DynamicBeanTest extends TestCase
         assertTrue(e.getDepartment() == d);
     }
 
-    public void testCreateObjectNoClassOneInterface() {
-        Object obj = DynamicBean.create(null, new Class[] { Employable.class });
-        assertTrue(obj instanceof Employable);
+    // Company is an interface
+    public void testCreateObjectInterface() {
+        Company company = DynamicBean.create(Company.class);
+        assertTrue(company instanceof Company);
 
-        Employable e = (Employable) obj;
-        e.setName("Employee1");
-        assertEquals("Employee1", e.getName());
+        company.setName("Company1");
 
+        CEO ceo = new CEO();
+        company.setcEO(ceo);
+
+        assertEquals("Company1", company.getName());
+        assertTrue(company.getcEO() == ceo);
     }
 
-    public void testCreateObjectNoClassTwoInterfaces() {
-        Object obj = DynamicBean.create(null, new Class[] { Employable.class, ImportantPerson.class });
-        assertTrue(obj instanceof Employable);
-        assertTrue(obj instanceof ImportantPerson);
-    }
-
-    public void testCreateObjectClassTwoInterfaces() {
-        Object obj = DynamicBean.create(Department.class, new Class[] { Employable.class, ImportantPerson.class });
-        assertTrue(obj instanceof Department);
-        assertTrue(obj instanceof Employable);
-        assertTrue(obj instanceof ImportantPerson);
+    public void testCreateObjectNull() {
+        try {
+            DynamicBean.create(null);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 }

@@ -84,7 +84,7 @@ public class BagUploadConfirmIssueController extends TilesAction
                     objectList.add(pair.getNewObject());
                     if (initialTypeMap.get(identifier) == null) {
                         initialTypeMap.put(identifier, TypeUtil.unqualifiedName(DynamicUtil
-                                .getSimpleClassName(pair.getOldObject().getClass())));
+                                .getClass(pair.getOldObject()).getName()));
                     }
                 } else {
                     objectList.add(obj);

@@ -57,7 +57,7 @@
       <reference ref_id="2"/>
     </collection>
   </item>
-  <item id="4" class="Contractor" implements="Employable ImportantPerson">
+  <item id="4" class="Contractor">
     <attribute name="name" value="ContractorB"/>
     <attribute name="seniority" value="62341"/>
     <reference name="businessAddress" ref_id="17"/>
@@ -71,7 +71,7 @@
       <reference ref_id="2"/>
     </collection>
   </item>
-  <item id="5" class="Department" implements="RandomInterface">
+  <item id="5" class="Department">
     <attribute name="name" value="DepartmentA1"/>
     <reference name="company" ref_id="1"/>
     <reference name="manager" ref_id="8"/>
@@ -81,7 +81,7 @@
       <reference ref_id="10"/>
     </collection>
   </item>
-  <item id="6" class="Department" implements="RandomInterface">
+  <item id="6" class="Department">
     <attribute name="name" value="DepartmentB1"/>
     <reference name="company" ref_id="2"/>
     <reference name="manager" ref_id="11"/>
@@ -90,7 +90,7 @@
       <reference ref_id="11"/>
     </collection>
   </item>
-  <item id="7" class="Department" implements="RandomInterface">
+  <item id="7" class="Department">
     <attribute name="name" value="DepartmentB2"/>
     <reference name="company" ref_id="2"/>
     <reference name="manager" ref_id="13"/>
@@ -98,7 +98,7 @@
       <reference ref_id="13"/>
     </collection>
   </item>
-  <item id="8" class="Manager" implements="ImportantPerson">
+  <item id="8" class="Manager">
     <attribute name="age" value="10"/>
     <attribute name="end" value="1"/>
     <attribute name="fullTime" value="true"/>
@@ -107,7 +107,7 @@
     <reference name="address" ref_id="24"/>
     <reference name="department" ref_id="5"/>
   </item>
-  <item id="9" class="Employee" implements="Employable HasAddress">
+  <item id="9" class="Employee">
     <attribute name="age" value="20"/>
     <attribute name="end" value="2"/>
     <attribute name="fullTime" value="true"/>
@@ -115,7 +115,7 @@
     <reference name="address" ref_id="24"/>
     <reference name="department" ref_id="5"/>
   </item>
-  <item id="10" class="Employee" implements="Employable HasAddress">
+  <item id="10" class="Employee">
     <attribute name="age" value="30"/>
     <attribute name="end" value="3"/>
     <attribute name="fullTime" value="false"/>
@@ -134,7 +134,7 @@
     <reference name="company" ref_id="2"/>
     <reference name="department" ref_id="6"/>
   </item>
-  <item id="12" class="Employee" implements="Employable HasAddress">
+  <item id="12" class="Employee">
     <attribute name="age" value="50"/>
     <attribute name="end" value="5"/>
     <attribute name="fullTime" value="true"/>
@@ -142,7 +142,7 @@
     <reference name="address" ref_id="20"/>
     <reference name="department" ref_id="6"/>
   </item>
-  <item id="13" class="Manager" implements="ImportantPerson">
+  <item id="13" class="Manager">
     <attribute name="age" value="60"/>
     <attribute name="end" value="6"/>
     <attribute name="fullTime" value="true"/>
@@ -161,28 +161,28 @@
   <item id="16" class="Secretary">
     <attribute name="name" value="Secretary3"/>
   </item>
-  <item id="17" class="Address" implements="Thing">
+  <item id="17" class="Address">
     <attribute name="address" value="Contractor Business Street, BVille"/>
   </item>
-  <item id="18" class="Address" implements="Thing">
+  <item id="18" class="Address">
     <attribute name="address" value="Contractor Personal Street, BVille"/>
   </item>
-  <item id="19" class="Address" implements="Thing">
+  <item id="19" class="Address">
     <attribute name="address" value="Company Street, BVille"/>
   </item>
-  <item id="20" class="Address" implements="Thing">
+  <item id="20" class="Address">
     <attribute name="address" value="Employee Street, BVille"/>
   </item>
-  <item id="21" class="Address" implements="Thing">
+  <item id="21" class="Address">
     <attribute name="address" value="Contractor Business Street, AVille"/>
   </item>
-  <item id="22" class="Address" implements="Thing">
+  <item id="22" class="Address">
     <attribute name="address" value="Contractor Personal Street, AVille"/>
   </item>
-  <item id="23" class="Address" implements="Thing">
+  <item id="23" class="Address">
     <attribute name="address" value="Company Street, AVille"/>
   </item>
-  <item id="24" class="Address" implements="Thing">
+  <item id="24" class="Address">
     <attribute name="address" value="Employee Street, AVille"/>
   </item>
   <item id="25" class="Types">
