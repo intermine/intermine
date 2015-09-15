@@ -83,6 +83,8 @@ public class HgncIdResolverFactory extends IdResolverFactory
                 } else {
                     LOG.warn("Resolver file does not exist: " + resolverFileName);
                 }
+            } else {
+                LOG.info("Using previously cached id resolver file: " + idResolverCachedFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

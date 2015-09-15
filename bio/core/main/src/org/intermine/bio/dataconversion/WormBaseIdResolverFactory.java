@@ -119,9 +119,10 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
                     resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
-                    LOG.warn("Resolver file not exists: " + wormIdFileName);
+                    LOG.warn("Resolver file does not exist: " + wormIdFileName);
                 }
-
+            } else {
+                LOG.info("Using previously cached id resolver file: " + idResolverCachedFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
