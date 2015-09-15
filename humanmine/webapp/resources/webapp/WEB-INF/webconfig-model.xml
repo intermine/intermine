@@ -299,6 +299,13 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.SNV">
+    <fields>
+      <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
+      <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Source">
     <fields>
       <fieldconfig fieldExpr="name"/>
