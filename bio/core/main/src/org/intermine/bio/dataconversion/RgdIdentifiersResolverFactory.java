@@ -90,7 +90,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                     createFromFile(f);
                     resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
-                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                    LOG.warn("Resolver file does not exist: " + resolverFileName);
                 }
             }
         } catch (Exception e) {

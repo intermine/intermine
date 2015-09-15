@@ -113,7 +113,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                     if (wb2NcbiDataFile.exists()) {
                         createFromWb2NcbiFile(wb2NcbiDataFile);
                     } else {
-                        LOG.warn("Resolver file not exists: " + wb2NcbiFileName);
+                        LOG.warn("Resolver file does not exist: " + wb2NcbiFileName);
                     }
                     // END OF HACK
 
