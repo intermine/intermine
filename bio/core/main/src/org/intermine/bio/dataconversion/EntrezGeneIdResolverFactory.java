@@ -179,7 +179,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + "/" + resolverFileSymbo;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);

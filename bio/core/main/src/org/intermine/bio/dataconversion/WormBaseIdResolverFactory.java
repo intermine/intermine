@@ -99,7 +99,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("To process WormId file");
-                String wormIdFileName =  resolverFileRoot.trim() + resolverFileSymboWormId;
+                String wormIdFileName = resolverFileRoot.trim() + "/" + resolverFileSymboWormId;
                 File wormIdDataFile = new File(wormIdFileName);
 
                 if (wormIdDataFile.exists()) {
@@ -107,7 +107,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
-                    String wb2NcbiFileName = resolverFileRoot.trim() + resolverFileSymboWb2Ncbi;
+                    String wb2NcbiFileName = resolverFileRoot.trim() + "/" + resolverFileSymboWb2Ncbi;
                     File wb2NcbiDataFile = new File(wb2NcbiFileName);
 
                     if (wb2NcbiDataFile.exists()) {
