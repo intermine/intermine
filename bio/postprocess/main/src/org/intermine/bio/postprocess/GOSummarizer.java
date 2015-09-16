@@ -20,7 +20,7 @@ import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.GeneFlankingRegion;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.GOAnnotation;
-import org.intermine.model.bio.GOSummary;
+//import org.intermine.model.bio.GOSummary;
 import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
@@ -51,7 +51,7 @@ public class GOSummarizer {
   private static final Logger LOG = Logger.getLogger(GOSummarizer.class);
   protected ObjectStore os;
   protected ObjectStoreWriter osw = null;
-
+/*
   // a hash map of the GOSummary terms. The First Integer key is the key for the
   // organism id. The second Integer key is referenced GO Term. The value is a HashSet
   // of gene id's.
@@ -61,15 +61,15 @@ public class GOSummarizer {
   protected HashMap<Integer,HashMap<Integer,HashSet<Integer>>> geneSummaryMap;
   protected HashMap<Integer,ProxyReference> orgMap;
   // this is a set of 'roots' of all namespaces.
-  protected HashMap<Integer,GOSummary> superRoot;
+  protected HashMap<Integer,GOSummary> superRoot;*/
   
   public  GOSummarizer(ObjectStoreWriter osw) {    
     this.osw = osw;
     this.os = osw.getObjectStore();
-    geneSummaryMap = new HashMap<Integer,HashMap<Integer,HashSet<Integer>>>();
+ /*   geneSummaryMap = new HashMap<Integer,HashMap<Integer,HashSet<Integer>>>();
     goSummaryMap = new HashMap<Integer,HashMap<Integer,GOSummary>>();
     orgMap = new HashMap<Integer,ProxyReference>();
-    superRoot = new HashMap<Integer,GOSummary>();
+    superRoot = new HashMap<Integer,GOSummary>();*/
   }
   
   /**
@@ -85,7 +85,7 @@ public class GOSummarizer {
     Integer lastGeneId = null;
     
     Iterator<?> it = res.iterator();
-    
+  /*  
     while(it.hasNext()) {
       ResultsRow<?> rr = (ResultsRow<?>) it.next();
       GOTerm t = (GOTerm) rr.get(0);
@@ -110,7 +110,7 @@ public class GOSummarizer {
         // same organism, same term. Just add an id.
         geneSummaryMap.get(o.getId()).get(t.getId()).add(g.getId());
       }
-    }
+    }*/
     // last one
     makeTermCount(termP,orgP);
     makeSummaryCount(orgP);
@@ -122,7 +122,7 @@ public class GOSummarizer {
     if (orgP == null ) return;
     // Look every GOSummary record for this organism, then combine the sets of
     // gene id's
-    
+   /* 
     // we're also going to make a 'super' root: the parent of every namespace
     GOSummary rootTerm = (GOSummary) DynamicUtil
         .createObject(Collections.singleton(GOSummary.class));
@@ -173,31 +173,31 @@ public class GOSummarizer {
       // update the total counts
       Integer count = geneSummaryMap.get(orgP.getId()).get(id).size();
       goSummaryMap.get(orgP.getId()).get(id).setTotal(count);
-    }
+    }*/
   }
   private void storeResults() throws ObjectStoreException
   {
     // now store everything
-    for( Integer orgId : goSummaryMap.keySet() ) {
+ /*   for( Integer orgId : goSummaryMap.keySet() ) {
       HashMap<Integer,GOSummary> orgGoSummary = goSummaryMap.get(orgId);
       for(GOSummary gS : orgGoSummary.values() ) {
         osw.store(gS);
       }
       osw.store(superRoot.get(orgId));
-    }
+    }*/
   }
   
   private void makeTermCount(ProxyReference termP,ProxyReference orgP) throws ObjectStoreException
   {
     if (termP == null || orgP == null) return;
-    
+  /*  
     GOSummary summary = (GOSummary) DynamicUtil
         .createObject(Collections.singleton(GOSummary.class));
     
     summary.setCount(geneSummaryMap.get(orgP.getId()).get(termP.getId()).size());
     summary.proxyOrganism(orgP);
     summary.proxyTerm(termP);
-    goSummaryMap.get(orgP.getId()).put(termP.getId(),summary);
+    goSummaryMap.get(orgP.getId()).put(termP.getId(),summary);*/
     
   }
 
