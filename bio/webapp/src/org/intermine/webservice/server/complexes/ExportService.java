@@ -23,6 +23,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -170,10 +171,9 @@ public class ExportService extends JSONService
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
 
-            String featureIdentifier = (String) row.get(9).getField();
-            String locatedOn = (String) row.get(10).getField();
-            String start = (String) row.get(11).getField();
-            String end = (String) row.get(12).getField();
+
+
+
 
             // set complex attributes
             complex.setFullName(name);
@@ -209,24 +209,32 @@ public class ExportService extends JSONService
             DefaultModelledParticipant participant
                 = new DefaultModelledParticipant(interactor, bioRole, stoichTerm);
 
-            // range
-            DefaultPosition startPosition = new DefaultPosition(new Long(start));
-            DefaultPosition endPosition = new DefaultPosition(new Long(end));
+            // interactions -- not all complexes will have them!
+            if (row.get(9).getField() != null) {
+                String featureIdentifier = (String) row.get(9).getField();
+                String locatedOn = (String) row.get(10).getField();
+                String start = (String) row.get(11).getField();
+                String end = (String) row.get(12).getField();
 
-            DefaultRange range = new DefaultRange(startPosition, endPosition);
+                // range
+                DefaultPosition startPosition = new DefaultPosition(new Long(start));
+                DefaultPosition endPosition = new DefaultPosition(new Long(end));
 
-            // binding feature
-            DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
+                DefaultRange range = new DefaultRange(startPosition, endPosition);
 
-            bindingFeature.getRanges().add(range);
+                // binding feature
+                DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
 
-            // TODO set as the identifier instead. How to do that?
-            bindingFeature.setShortName(featureIdentifier);
+                bindingFeature.getRanges().add(range);
 
-            participant.addAllFeatures(Collections.singleton(bindingFeature));
+                // TODO set as the identifier instead. How to do that?
+                bindingFeature.setShortName(featureIdentifier);
 
-            // set relationship to complex
-            complex.addParticipant(participant);
+                participant.addAllFeatures(Collections.singleton(bindingFeature));
+
+                // set relationship to complex
+                complex.addParticipant(participant);
+            }
         }
         return complex;
     }
@@ -254,6 +262,7 @@ public class ExportService extends JSONService
                 + "primaryIdentifier",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.start",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
+        query.setOuterJoinStatus("Complex.allInteractors.interactions", OuterJoinStatus.OUTER);
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
         query.addOrderBy("Complex.allInteractors.interactions.details.interactingRegions."
                 + "location.feature.primaryIdentifier", OrderDirection.ASC);
