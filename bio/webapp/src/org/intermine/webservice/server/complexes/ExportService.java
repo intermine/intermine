@@ -213,11 +213,12 @@ public class ExportService extends JSONService
             DefaultPosition startPosition = new DefaultPosition(new Long(start));
             DefaultPosition endPosition = new DefaultPosition(new Long(end));
 
-            // TODO how to add this to the binding feature?
             DefaultRange range = new DefaultRange(startPosition, endPosition);
 
             // binding feature
             DefaultModelledFeature bindingFeature = new DefaultModelledFeature();
+
+            bindingFeature.getRanges().add(range);
 
             // TODO set as the identifier instead. How to do that?
             bindingFeature.setShortName(featureIdentifier);
@@ -254,7 +255,8 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.interactions.details.interactingRegions.location.start",
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
-        query.addOrderBy("Gene.proteins.primaryIdentifier", OrderDirection.ASC);
+        query.addOrderBy("Complex.allInteractors.interactions.details.interactingRegions."
+                + "location.feature.primaryIdentifier", OrderDirection.ASC);
         return query;
     }
 }
