@@ -60,7 +60,7 @@ public class ExportService extends JSONService
     private static final String FORMAT_PARAMETER = "format";
     private static final String DEFAULT_FORMAT = "JSON";
     private static final String EBI = "intact";
-    private static final String BINDING_SITE = "binding region";
+    // private static final String BINDING_SITE = "binding region";
     private static final Map<String, String> MOLECULE_TYPES = new HashMap<String, String>();
 
     /**
@@ -163,17 +163,13 @@ public class ExportService extends JSONService
             String name = (String) row.get(0).getField();
             String systematicName = (String) row.get(1).getField();
             String properties = (String) row.get(2).getField();
-            String function = (String) row.get(3).getField();
+            // String function = (String) row.get(3).getField();
             String primaryIdentifier = (String) row.get(4).getField();
             Integer stoichiometry = (Integer) row.get(5).getField();
             Integer taxonId = (Integer) row.get(6).getField();
             String biologicalRole = (String) row.get(7).getField();
             // e.g. protein, SmallMolecule
             String moleculeType = (String) row.get(8).getField();
-
-
-
-
 
             // set complex attributes
             complex.setFullName(name);
@@ -209,12 +205,15 @@ public class ExportService extends JSONService
             DefaultModelledParticipant participant
                 = new DefaultModelledParticipant(interactor, bioRole, stoichTerm);
 
+            // set relationship to complex
+            complex.addParticipant(participant);
+
             // interactions -- not all complexes will have them!
             if (row.get(9).getField() != null) {
                 String featureIdentifier = (String) row.get(9).getField();
-                String locatedOn = (String) row.get(10).getField();
-                String start = (String) row.get(11).getField();
-                String end = (String) row.get(12).getField();
+                //String locatedOn = (String) row.get(10).getField();
+                Integer start = (Integer) row.get(11).getField();
+                Integer end = (Integer) row.get(12).getField();
 
                 // range
                 DefaultPosition startPosition = new DefaultPosition(new Long(start));
@@ -231,9 +230,6 @@ public class ExportService extends JSONService
                 bindingFeature.setShortName(featureIdentifier);
 
                 participant.addAllFeatures(Collections.singleton(bindingFeature));
-
-                // set relationship to complex
-                complex.addParticipant(participant);
             }
         }
         return complex;
@@ -264,8 +260,8 @@ public class ExportService extends JSONService
                 "Complex.allInteractors.interactions.details.interactingRegions.location.end");
         query.setOuterJoinStatus("Complex.allInteractors.interactions", OuterJoinStatus.OUTER);
         query.addConstraint(Constraints.eq("Complex.identifier", identifier));
-        query.addOrderBy("Complex.allInteractors.interactions.details.interactingRegions."
-                + "location.feature.primaryIdentifier", OrderDirection.ASC);
+        query.addOrderBy("Complex.allInteractors.participant.primaryIdentifier",
+                OrderDirection.ASC);
         return query;
     }
 }
