@@ -30,9 +30,9 @@ import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
@@ -81,6 +81,8 @@ public class BioGridConverter extends BioFileConverter
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final String SPOKE_MODEL = "prey";
     private static final String BLANK_EXPERIMENT_NAME = "NAME NOT AVAILABLE";
+    // interactions are duplicated across XML files -- don't store dupes
+    private Set<Integer> interactionDetails = new HashSet<Integer>();
 
     protected IdResolver rslv;
 
@@ -541,7 +543,6 @@ public class BioGridConverter extends BioFileConverter
                     }
 
                     Item interaction = getInteraction(refId, gene2RefId);
-                    Item detail = createItem("InteractionDetail");
 
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
@@ -551,12 +552,9 @@ public class BioGridConverter extends BioFileConverter
                         continue;
                     }
 
-                    if (gene1Interactor.role != null) {
-                        detail.setAttribute("role1", role1);
-                    }
-                    if (gene2Interactor.role != null) {
-                        detail.setAttribute("role2", role2);
-                    }
+                    Item detail = createItem("InteractionDetail");
+                    detail.setAttribute("role1", role1);
+                    detail.setAttribute("role2", role2);
                     detail.setAttribute("type", h.interactionType);
                     detail.setAttribute("relationshipType", h.relationshipType);
                     detail.setReference("experiment", h.eh.experimentRefId);
@@ -568,7 +566,17 @@ public class BioGridConverter extends BioFileConverter
                     }
                     detail.setReference("interaction", interaction);
                     detail.addCollection(allInteractors);
-                    store(detail);
+
+                    DetailHolder detailHolder = new DetailHolder(h.name, role1, role2,
+                            h.interactionType, h.methodRefId, h.eh.experimentRefId,
+                            interaction.getIdentifier());
+
+                    if (interactionDetails.contains(detailHolder.hashCode())) {
+                        continue;
+                    } else {
+                        interactionDetails.add(detailHolder.hashCode());
+                        store(detail);
+                    }
                 }
             }
         }
@@ -924,6 +932,42 @@ public class BioGridConverter extends BioFileConverter
     }
 
     /**
+     * We need to uniqueify the InteractionDetails. These data are stored across XML files.
+     * We can't just use the InterMine items for comparison because the hash function includes
+     * the identifier
+     */
+    private class DetailHolder
+    {
+
+        private String name, role1, role2, type;
+        private String relationshipType, experiment, interaction;
+
+        protected DetailHolder(String name, String role1, String role2, String type,
+                String relationshipType, String experiment, String interaction) {
+            this.name = name;
+            this.role1 = role1;
+            this.role2 = role2;
+            this.type = type;
+            this.relationshipType = relationshipType;
+            this.experiment = experiment;
+            this.interaction = interaction;
+        }
+
+        @Override
+        public String toString() {
+            return name + role1 + role2 + type + relationshipType + experiment + interaction;
+        }
+
+        @Override
+        public int hashCode() {
+            return (name.hashCode() + 3 * role1.hashCode() + 5 * role2.hashCode()
+                    + 7 * type.hashCode() + 11 * relationshipType.hashCode()
+                    + 13 * experiment.hashCode() + 17 * interaction.hashCode());
+        }
+
+    }
+
+    /**
      * Represents configuration for a specific organism
      *
      * @author Julie Sullivan
@@ -1025,5 +1069,7 @@ public class BioGridConverter extends BioFileConverter
             }
         }
     }
+
+
 }
 

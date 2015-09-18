@@ -761,7 +761,6 @@ public class PsiConverter extends BioFileConverter
                     location.setAttribute("end", ih.end);
                     location.setReference("locatedOn", geneRefId);
                     location.setReference("feature", refId);
-                    region.setReference("location", location);
                     store(location);
                 }
                 store(region);

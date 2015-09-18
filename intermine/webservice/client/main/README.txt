@@ -17,8 +17,8 @@ webservices, as well as all dependencies. It also includes
 documentation and samples to help you get started. 
 
 For further documentation, please visit:
-  - www.intermine.org/wiki/JavaClient
-  - www.intermine.org/docs/java-client-docs/
+  - http://extrac.sysbiol.ac.uk/wiki/JavaClient
+  - http://www.flymine.org/download/docs/java-client-docs/
 
 Running A Query
 ---------------

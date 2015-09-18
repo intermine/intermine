@@ -8,6 +8,26 @@
  *
  */
 
+InterMine 1.5.6
+
+#1075 -  Fix mising template row counts. 
+
+InterMine 1.5.5
+
+Minor fixes, plus new esyN displayer.
+
+#1027 - Outer joins break the results table
+#1020 - Manage columns labels gone
+#1017 - Panther - didn't load yeast orthologues
+#1000 - GeneLenghtCorrectionCoefficient misspelled
+#996 - Inheritance in webconfig-model.xml is inconsistant
+#988 - Download script failed on a few sources
+#986 - JS tests failing
+#980 - FlyMine: genes not being merged correctly
+#978 - template with lookup failing if selecting the organism
+#967 - Java client code gen errors
+#957 - Homologues need to merge
+
 
 InterMine 1.5.4
 
