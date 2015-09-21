@@ -574,14 +574,13 @@ public final class DatabaseUtil
     public static void removeAllTables(Connection con) throws SQLException {
         ResultSet res = con.getMetaData().getTables(null, null, "%", null);
         Set<String> tablenames = new HashSet<String>();
-        String OVERLAP_VIEW = "overlappingfeaturessequencefeature";
         while (res.next()) {
             String tablename = res.getString(3);
             if ("TABLE".equals(res.getString(4))) {
                 tablenames.add(tablename);
             }
-            if ("VIEW".equals(res.getString(4)) && OVERLAP_VIEW.equals(tablename)) {
-                LOG.info("Dropping view " + OVERLAP_VIEW);
+            if ("VIEW".equals(res.getString(4))) {
+                LOG.info("Dropping view " + tablename);
                 con.createStatement().execute("DROP VIEW " + tablename);
             }
         }
