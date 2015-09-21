@@ -37,54 +37,55 @@ import org.intermine.web.context.InterMineContext;
 public class ReleaseEtagFilter implements Filter
 {
 
-	private final static Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
-	private static String RELEASE = null;
-	private final static Date START_UP = new Date();
+    private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
+    private static String release = null;
+    private static final Date START_UP = new Date();
 
-	@Override
-	public void doFilter(
-			ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		HttpServletResponse inner = (HttpServletResponse) response;
-		getRelease();
-		inner.setHeader("ETag", RELEASE);
-		inner.setHeader("Cache-Control", "public");
-		inner.setDateHeader("Last-Modified", START_UP.getTime());
-		chain.doFilter(request, new EtagIgnorer(inner));
-	}
-	
-	public static String getRelease() {
-		if (RELEASE == null) {
-			RELEASE = InterMineContext.getWebProperties().getProperty("project.releaseVersion");
-		}
-		return RELEASE;
-	}
-	
-	@Override
-	public void destroy() {
-		// Nothing to do
-	}
-	
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// Nothing to do.
-		
-	}
-	
-	private class EtagIgnorer extends HttpServletResponseWrapper
-	{
+    @Override
+    public void doFilter(
+            ServletRequest request, ServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
+        HttpServletResponse inner = (HttpServletResponse) response;
+        getRelease();
+        inner.setHeader("ETag", release);
+        inner.setHeader("Cache-Control", "public");
+        inner.setDateHeader("Last-Modified", START_UP.getTime());
+        chain.doFilter(request, new EtagIgnorer(inner));
+    }
 
-		public EtagIgnorer(HttpServletResponse response) {
-			super(response);
-		}
-		
-		@Override
-		public void setHeader(String name, String value) {
+    /**
+     * @return release version as a string
+     */
+    public static String getRelease() {
+        if (release == null) {
+            release = InterMineContext.getWebProperties().getProperty("project.releaseVersion");
+        }
+        return release;
+    }
+
+    @Override
+    public void destroy() {
+        // Nothing to do
+    }
+
+    @Override
+    public void init(FilterConfig arg0) throws ServletException {
+        // Nothing to do.
+
+    }
+
+    private class EtagIgnorer extends HttpServletResponseWrapper
+    {
+
+        public EtagIgnorer(HttpServletResponse response) {
+            super(response);
+        }
+
+        @Override
+        public void setHeader(String name, String value) {
             if (
-            	!"etag".equalsIgnoreCase(name)
-            	|| !"cache-control".equalsIgnoreCase(name)
-            	|| !"Last-Modified".equalsIgnoreCase(name)) {
-
+                !"etag".equalsIgnoreCase(name) || !"cache-control".equalsIgnoreCase(name)
+                    || !"Last-Modified".equalsIgnoreCase(name)) {
                 super.setHeader(name, value);
             } else {
                 LOG.debug("Ignoring cache header: " + name + " " + value);
