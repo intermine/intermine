@@ -20,12 +20,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
 import org.intermine.web.context.InterMineContext;
-import org.intermine.web.logic.Constants;
 
 /**
  * Return responses tagged with the release version.
@@ -40,47 +38,27 @@ public class ReleaseEtagFilter implements Filter
 {
 
     private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
-    /**
-     * When the server is started up
-     */
-    static final Date START_UP = new Date(); // Default visibility for testing.
     private static String release = null;
+    static final Date START_UP = new Date();
 
     @Override
     public void doFilter(
             ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-        String etag = getRelease();
-        String zipEtag = etag + "-gzip";
-
         HttpServletResponse inner = (HttpServletResponse) response;
-        HttpServletRequest req = ((HttpServletRequest) request);
-
-        String ifNoneMatch = req.getHeader("If-None-Match");
-        long ifModSince = req.getDateHeader("If-Modified-Since");
-        LOG.debug("etag = " + etag
-                + ", START_UP = " + START_UP
-                + ", ifNoneMatch = " + ifNoneMatch
-                + ", ifModSince = " + ifModSince);
-
-        if (etag.equals(ifNoneMatch)
-                || zipEtag.equals(ifNoneMatch)
-                || (ifModSince == START_UP.getTime())) {
-            inner.setStatus(304);
-        } else {
-            inner.setHeader("ETag", etag);
-            inner.setHeader("Cache-Control", "public,max-age=600");
-            inner.setDateHeader("Last-Modified", START_UP.getTime());
-            chain.doFilter(request, new EtagIgnorer(inner));
-        }
+        getRelease();
+        inner.setHeader("ETag", release);
+        inner.setHeader("Cache-Control", "public");
+        inner.setDateHeader("Last-Modified", START_UP.getTime());
+        chain.doFilter(request, new EtagIgnorer(inner));
     }
 
-    /* The release is the combination of the release version AND the API version - since
-     * we want fresh data served if either changes. */
-    private String getRelease() {
+    /**
+     * @return release version as a string
+     */
+    public static String getRelease() {
         if (release == null) {
-            release = InterMineContext.getWebProperties().getProperty("project.releaseVersion")
-                        + "-" + Constants.WEB_SERVICE_VERSION;
+            release = InterMineContext.getWebProperties().getProperty("project.releaseVersion");
         }
         return release;
     }
@@ -93,6 +71,7 @@ public class ReleaseEtagFilter implements Filter
     @Override
     public void init(FilterConfig arg0) throws ServletException {
         // Nothing to do.
+
     }
 
     private class EtagIgnorer extends HttpServletResponseWrapper
@@ -104,13 +83,12 @@ public class ReleaseEtagFilter implements Filter
 
         @Override
         public void setHeader(String name, String value) {
-            if ("etag".equalsIgnoreCase(name)
-                || "cache-control".equalsIgnoreCase(name)
-                || ("pragma".equalsIgnoreCase(name) && "no-cache".equals(value))
-                || "Last-Modified".equalsIgnoreCase(name)) {
-                LOG.debug("Ignoring cache header: " + name + " " + value);
-            } else {
+            if (
+                !"etag".equalsIgnoreCase(name) || !"cache-control".equalsIgnoreCase(name)
+                    || !"Last-Modified".equalsIgnoreCase(name)) {
                 super.setHeader(name, value);
+            } else {
+                LOG.debug("Ignoring cache header: " + name + " " + value);
             }
         }
     }
