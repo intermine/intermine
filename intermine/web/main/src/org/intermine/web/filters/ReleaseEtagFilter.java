@@ -39,7 +39,7 @@ public class ReleaseEtagFilter implements Filter
 
     private static final Logger LOG = Logger.getLogger(ReleaseEtagFilter.class);
     private static String release = null;
-    private static final Date START_UP = new Date();
+    static final Date START_UP = new Date();
 
     @Override
     public void doFilter(
