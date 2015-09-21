@@ -27,13 +27,13 @@ function initConstraint(selectedConstraint) {
                 case 20:
                     var attribute8 = jQuery('#attribute8');
                     if (attribute8.exists()) attribute8.css('display', 'inline').val('');
-                    
+
                     var attribute7 = jQuery('#attribute7');
                     if (attribute7.exists()) attribute7.hide();
 
                     var multiValue = jQuery('#multiValue');
                     if (multiValue.exists()) multiValue.hide();
-                    
+
                     break;
                 case 23:
                 case 24:
@@ -95,8 +95,9 @@ function initConstraint(selectedConstraint) {
 // ***********************************************************
 
 function swapInputs(open) {
+
     // different constraints available to the user
-    var constraints = new Array("attribute","subclass","loopQuery","bag","empty");
+    var constraints = new Array("attribute","subclass","loopQuery","bag","empty","range");
     // field names, different fields will be visible for different constraints
     for (var i = 0; i < constraints.length; i++) {
        // enable if this is what the user just selected
@@ -128,6 +129,7 @@ function swapInputs(open) {
             return swapInputs('attribute');
         }
     }
+
     if(open == "bag") {
         //we use the same button for attribute/lookup and bag
         if(document.getElementById('attributeSubmit') != null) {

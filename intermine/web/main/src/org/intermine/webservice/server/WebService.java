@@ -400,9 +400,7 @@ public abstract class WebService
             }
         }
 
-        String origin = StringUtils.defaultIfBlank(
-                    webProperties.getProperty("ws.response.origin"),
-                    request.getHeader("Origin"));
+        String origin = request.getHeader("Origin");
         if (StringUtils.isNotBlank(origin)) {
             response.setHeader("Access-Control-Allow-Origin", origin);
         }
