@@ -18,6 +18,7 @@
             The data available is:
             <UL>
               <LI><em>Populus trichocarpa</em> (549 individuals)</LI>
+              <LI><em>Glycine max</em> (302 individuals from Zhixi Tian's lab at the State Key Laboratory of Plant Cell and Chromosome Engineering in Beijing)</LI>
               <LI><em>Manihot esculenta</em> (61 individuals including
                   <em>M. esc.</em> ssp. <em>esculenta</em>,
                   <em>M. esc.</em> ssp. <em>flabellifolia</em> and
