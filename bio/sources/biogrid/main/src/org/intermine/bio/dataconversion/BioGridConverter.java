@@ -568,7 +568,7 @@ public class BioGridConverter extends BioFileConverter
                     detail.addCollection(allInteractors);
 
                     DetailHolder detailHolder = new DetailHolder(h.name, role1, role2,
-                            h.interactionType, h.methodRefId, h.eh.experimentRefId,
+                            h.interactionType, h.relationshipType, h.eh.experimentRefId,
                             interaction.getIdentifier());
 
                     if (interactionDetails.contains(detailHolder.hashCode())) {
@@ -823,7 +823,8 @@ public class BioGridConverter extends BioFileConverter
 
             @Override
             public int hashCode() {
-                return (relationshipType.hashCode() + 3 * eh.hashCode() + 5 * identifiers.hashCode());
+                return (relationshipType.hashCode() + 3 * eh.hashCode()
+                        + 5 * identifiers.hashCode());
             }
         }
 
