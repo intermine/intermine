@@ -1,0 +1,2 @@
+#!/bin/csh
+wget -O /dev/stdout "http://zome-dev.phytozome.net/phytomine/service"

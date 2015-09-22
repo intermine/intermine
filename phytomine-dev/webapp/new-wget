@@ -1,0 +1,2 @@
+#!/bin/csh
+wget -O /dev/stdout "http://zome-dev.phytozome.net/phytomine/service/regions/sequence?query=%7B%22regions%22:[%22Chr01:10698727..10700215%22],%22featureTypes%22:[%22Chromosome%22],%22organism%22:%22P.+trichocarpa%22%7D"
