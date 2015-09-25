@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,16 +16,22 @@ import java.util.List;
 
 import org.json.JSONArray;
 
-public class GraphJSONProcessor implements WidgetResultProcessor
+/**
+ * A widget result processor that produces chart results in JSON.
+ * @author Alex Kalderimis
+ *
+ */
+public final class GraphJSONProcessor implements WidgetResultProcessor
 {
-    private static final WidgetResultProcessor instance = new GraphJSONProcessor();
+    private static final WidgetResultProcessor INSTANCE = new GraphJSONProcessor();
 
     private GraphJSONProcessor() {
-        // Not to be instantiated.
+        // hidden
     }
 
+    /** @return A widget result processor of some kind **/
     public static WidgetResultProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,7 +31,7 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.StringUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -71,6 +71,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * Method called to export a PagedTable object using the BioJava sequence and feature writers.
      * {@inheritDoc}
      */
+    @Override
     public void export(PagedTable pt, HttpServletRequest request,
             HttpServletResponse response, TableExportForm form,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
@@ -152,6 +153,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * {@inheritDoc}
      * @throws PathException
      */
+    @Override
     public List<Path> getInitialExportPaths(PagedTable pt) throws PathException {
         List<Path> paths = new ArrayList<Path>(ExportHelper.getColumnPaths(pt));
 
@@ -178,6 +180,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(PagedTable pt) {
         return SequenceExporter.canExportStatic(ExportHelper.getColumnClasses(pt));
     }

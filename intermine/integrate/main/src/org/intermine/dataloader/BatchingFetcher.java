@@ -1,7 +1,7 @@
 package org.intermine.dataloader;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,12 +22,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.PrimaryKey;
 import org.intermine.metadata.PrimaryKeyUtil;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -35,7 +39,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStorePassthruImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -45,12 +48,8 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CollectionUtil;
-import org.intermine.util.DynamicUtil;
-import org.intermine.util.Shutdownable;
 import org.intermine.util.ShutdownHook;
-import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
+import org.intermine.util.Shutdownable;
 
 /**
  * Class providing EquivalentObjectFetcher functionality that batches fetches to improve
@@ -211,7 +210,7 @@ public class BatchingFetcher extends HintingFetcher
                     if (!keysForClass.isEmpty()) {
                         time = System.currentTimeMillis();
                         boolean classNotExists = hints.classNotExists(cld.getType());
-                        String className = DynamicUtil.getFriendlyName(cld.getType());
+                        String className = Util.getFriendlyName(cld.getType());
                         if (!savedTimes.containsKey(className)) {
                             savedTimes.put(className, new Long(System.currentTimeMillis() - time));
                         }
@@ -397,7 +396,7 @@ public class BatchingFetcher extends HintingFetcher
                                     long time = System.currentTimeMillis();
                                     boolean pkQueryFruitless = hints.pkQueryFruitless(cld
                                             .getType(), fieldName, fieldValue);
-                                    String summaryName = DynamicUtil.getFriendlyName(cld
+                                    String summaryName = Util.getFriendlyName(cld
                                             .getType()) + "." + fieldName;
                                     if (!savedTimes.containsKey(summaryName)) {
                                         savedTimes.put(summaryName, new Long(System

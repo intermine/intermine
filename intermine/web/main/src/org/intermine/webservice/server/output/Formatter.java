@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -37,6 +37,8 @@ public abstract class Formatter
 
     /**
      * Returns formatted footer.
+     * @param errorMessage The error message, if sth went wrong.
+     * @param errorCode The error code, if sth went wrong.
      * @return formatted footer
      */
     public abstract String formatFooter(String errorMessage, int errorCode);

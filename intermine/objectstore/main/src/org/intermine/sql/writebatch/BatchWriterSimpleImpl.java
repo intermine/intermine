@@ -1,7 +1,7 @@
 package org.intermine.sql.writebatch;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.intermine.sql.DatabaseUtil;
-
 import org.apache.log4j.Logger;
+import org.intermine.sql.DatabaseUtil;
 
 /**
  * An implementation of the BatchWriter interface that uses simple JDBC addBatch() and

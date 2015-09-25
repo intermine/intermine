@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.iql;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -146,6 +146,12 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("DynamicClassConstraint", res);
         results.put("ContainsConstraintNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NULL", null));
         results.put("ContainsConstraintNotNull", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.address IS NOT NULL", null));
+
+        results.put("ContainsConstraintNullCollection1N", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees IS NULL", null));
+        results.put("ContainsConstraintNotNullCollection1N", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_ WHERE a1_.employees IS NOT NULL", null));
+        results.put("ContainsConstraintNullCollectionMN", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.contractors IS NULL", null));
+        results.put("ContainsConstraintNotNullCollectionMN", new IqlQuery("SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Company AS a1_ WHERE a1_.contractors IS NOT NULL", null));
+
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.department CONTAINS ?", null);
         fq.setParameters(Collections.singletonList(data.get("DepartmentA1")));
         results.put("ContainsConstraintObjectRefObject", fq);
@@ -299,7 +305,9 @@ public abstract class IqlQueryTestCase extends SetupDataTestCase
         results.put("SelectWhereBackslash", new IqlQuery("SELECT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.name = 'Fred\\Blog's'", null));
         results.put("SelectWhereBackslash", NO_RESULT);
         results.put("MultiColumnObjectInCollection", new IqlQuery("SELECT a1_, a1_.departments(SELECT default, a1_.0, a1_.1 PATH default.company(SELECT default, default.contractors) AS a1_) AS a2_ FROM org.intermine.model.testmodel.Company AS a1_", null));
-        results.put("Range1", new IqlQuery("SELECT a1_.id AS a3_, a2_.id AS a4_ FROM org.intermine.model.testmodel.Range AS a1_, org.intermine.model.testmodel.Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)", null));
+        results.put("RangeOverlaps", new IqlQuery("SELECT a1_.id AS a3_, a2_.id AS a4_ FROM org.intermine.model.testmodel.Range AS a1_, org.intermine.model.testmodel.Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)", null));
+        results.put("RangeDoesNotOverlap", new IqlQuery("SELECT a1_.id AS a3_, a2_.id AS a4_ FROM org.intermine.model.testmodel.Range AS a1_, org.intermine.model.testmodel.Range AS a2_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) DOES NOT OVERLAP RANGE(a2_.rangeStart, a2_.rangeEnd, a2_.parent)", null));
+        results.put("RangeOverlapsValues", new IqlQuery("SELECT a1_.id AS a2_ FROM org.intermine.model.testmodel.Range AS a1_ WHERE RANGE(a1_.rangeStart, a1_.rangeEnd, a1_.parent) OVERLAPS RANGE(35, 45, a1_.parent)", null));
         results.put("ConstrainClass1", new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.class = 'org.intermine.model.testmodel.Employee'", null));
         fq = new IqlQuery("SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.class IN ?", null);
         fq.setParameters(Arrays.asList(Arrays.asList(Employee.class, Company.class)));

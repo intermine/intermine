@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,9 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * @author Daniela Butano
+ */
 public class TrackHandler extends DefaultHandler
 {
     private static final Logger LOG = Logger.getLogger(TrackHandler.class);
@@ -26,10 +29,16 @@ public class TrackHandler extends DefaultHandler
     protected Connection connection;
     protected PreparedStatement stm;
 
+    /**
+     * @param uosw userprofile db connection
+     */
     public TrackHandler(ObjectStoreWriter uosw) {
         this.osw = uosw;
     }
 
+    /**
+     * @throws SAXException if something goes wrong
+     */
     public void releaseResources()
         throws SAXException {
         if (stm != null) {

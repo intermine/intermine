@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,16 +60,15 @@ public class HintsController extends TilesAction
         WebState webState = SessionMethods.getWebState(request.getSession());
 
         String pageName = (String) context.getAttribute("pageName");
-
         ActionMessages actionErrors = getErrors(request);
         ActionMessages actionMessages = getMessages(request);
         // Ticket #2449 - hide hints if messages are on a page
         if (actionErrors.isEmpty() && actionMessages.isEmpty()) {
-	        HintManager hintManager = HintManager.getInstance(webProperties);
-	        String hint = hintManager.getHintForPage(pageName, webState);
-	        if (hint != null) {
-	            request.setAttribute("hint", hint);
-	        }
+            HintManager hintManager = HintManager.getInstance(webProperties);
+            String hint = hintManager.getHintForPage(pageName, webState);
+            if (hint != null) {
+                request.setAttribute("hint", hint);
+            }
         }
 
         return null;

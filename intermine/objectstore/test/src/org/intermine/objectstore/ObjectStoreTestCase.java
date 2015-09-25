@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,7 +36,7 @@ import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -277,6 +277,19 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("EmployeeB2") },
                              { data.get("EmployeeB3") } };
         results.put("ContainsConstraintNotNull", toList(r));
+
+        results.put("ContainsConstraintNullCollection1N", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("DepartmentA1") },
+                { data.get("DepartmentB1") },
+                { data.get("DepartmentB2") } };
+        results.put("ContainsConstraintNotNullCollection1N", toList(r));
+
+        results.put("ContainsConstraintNullCollectionMN", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("CompanyA") },
+                { data.get("CompanyB") } };
+        results.put("ContainsConstraintNotNullCollectionMN", toList(r));
 
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
@@ -637,7 +650,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(data.get("CompanyB"), Arrays.asList(
                             Arrays.asList(data.get("DepartmentB1"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB"))),
                             Arrays.asList(data.get("DepartmentB2"), data.get("CompanyB"), Arrays.asList(data.get("ContractorA"), data.get("ContractorB")))))));
-        results.put("Range1", Arrays.asList(
+        results.put("RangeOverlaps", Arrays.asList(
                     Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range1")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range2")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range4")).getId()),
@@ -652,6 +665,12 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range2")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range3")).getId()),
                     Arrays.asList(((InterMineObject) data.get("Range4")).getId(), ((InterMineObject) data.get("Range4")).getId())));
+        results.put("RangeDoesNotOverlap", Arrays.asList(
+                Arrays.asList(((InterMineObject) data.get("Range1")).getId(), ((InterMineObject) data.get("Range3")).getId()),
+                Arrays.asList(((InterMineObject) data.get("Range3")).getId(), ((InterMineObject) data.get("Range1")).getId())));
+        results.put("RangeOverlapsValues", Arrays.asList(
+                Arrays.asList(((InterMineObject) data.get("Range3")).getId()),
+                Arrays.asList(((InterMineObject) data.get("Range4")).getId())));
 
         results.put("ConstrainClass1", Arrays.asList(
                     Arrays.asList(data.get("EmployeeA2")),

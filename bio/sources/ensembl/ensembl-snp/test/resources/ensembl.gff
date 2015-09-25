@@ -1,0 +1,3 @@
+11	dbSNP	deletion	91275	91275	.	+	.	ID=42;Variant_seq=G;Variant_effect=upstream_gene_variant 0 transcript ENST00000424047;Dbxref=dbSNP_138:rs200329693;Reference_seq=A
+11	dbSNP	insertion	101153	101153	.	+	.	ID=43;Variant_seq=G;Dbxref=dbSNP_138:rs372153001;Reference_seq=A
+	

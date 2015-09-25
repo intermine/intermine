@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,19 +43,20 @@ public class GenomicRegionBedService extends AbstractRegionExportService
 
     @Override
     protected Exporter getExporter(PathQuery pq) {
-        boolean isUcsc= !"no".equalsIgnoreCase(getOptionalParameter(UCSC_COMPATIBLE, "yes"));
+        boolean isUcsc = !"no".equalsIgnoreCase(getOptionalParameter(UCSC_COMPATIBLE, "yes"));
 
         // get the project title to be written in BED records
         String sourceName = webProperties.getProperty("project.title");
         String sourceReleaseVersion = webProperties.getProperty("project.releaseVersion");
-        String trackDescription = getOptionalParameter(TRACK_DESCRIPTION,
-            trackDescription = sourceName + " " + sourceReleaseVersion + " Custom Track");
+        String descr = sourceName + " " + sourceReleaseVersion + " Custom Track";
+        String trackDescription = getOptionalParameter(TRACK_DESCRIPTION, descr);
 
         String organisms = StringUtils.join(
             SequenceFeatureExportUtil.getOrganisms(pq, im, getPermission().getProfile()), ",");
         List<Integer> indexes = Arrays.asList(new Integer(0));
 
-        return new BEDExporter(getPrintWriter(), indexes, sourceName, organisms, isUcsc, trackDescription);
+        return new BEDExporter(getPrintWriter(), indexes, sourceName, organisms, isUcsc,
+                trackDescription);
     }
 
     @Override

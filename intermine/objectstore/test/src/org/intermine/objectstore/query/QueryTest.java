@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,13 +10,16 @@ package org.intermine.objectstore.query;
  *
  */
 
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.intermine.model.testmodel.*;
+import junit.framework.TestCase;
+
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
 
 public class QueryTest extends TestCase
 {
@@ -222,7 +225,7 @@ public class QueryTest extends TestCase
 
         assertEquals(expected, q.getEffectiveOrderBy());
     }
-    
+
     public void testToString() {
         Query q = new Query();
         QueryClass qc = new QueryClass(Employee.class);

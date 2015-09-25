@@ -1,5 +1,15 @@
 package org.intermine.web.struts;
 
+/*
+ * Copyright (C) 2002-2015 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 import java.io.PrintStream;
 
@@ -19,7 +29,7 @@ import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,6 +38,12 @@ import org.intermine.web.logic.session.SessionMethods;
  *
  */
 
+/**
+ * An action that presents how all the labels configured for classes and their
+ * top-level fields appear.
+ * @author Alex Kalderimis
+ *
+ */
 public class LabelsSummaryAction extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(LabelsSummaryAction.class);
@@ -41,7 +57,7 @@ public class LabelsSummaryAction extends InterMineAction
         WebConfig config = SessionMethods.getWebConfig(request);
         PrintStream out;
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition",  "inline; filename=labels.csv");
+        response.setHeader("Content-Disposition", "inline; filename=labels.csv");
         try {
             out = new PrintStream(response.getOutputStream());
             for (ClassDescriptor cd: model.getClassDescriptors()) {

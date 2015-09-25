@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,7 +31,7 @@ import org.intermine.util.CombinedIterator;
  * @author Richard Smith
  * @author Matthew Wakeling
  */
-public class Query implements FromElement, Queryable
+public class Query implements FromElement, Queryable, HasFromList
 {
     private boolean distinct = true;
     private Constraint constraint = null;
@@ -78,16 +78,15 @@ public class Query implements FromElement, Queryable
      * Adds a FromElement to the FROM clause of this Query
      *
      * @param cls the FromElement to be added
-     * @return the updated Query
      */
-    public Query addFrom(FromElement cls) {
+    @Override
+    public void addFrom(FromElement cls) {
         if (cls == null) {
             throw new NullPointerException("cls must not be null");
         }
         iqlQuery = null;
         queryClasses.add(cls);
         alias(cls, null);
-        return this;
     }
 
     /**

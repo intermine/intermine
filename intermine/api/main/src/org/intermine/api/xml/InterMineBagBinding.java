@@ -1,7 +1,7 @@
 package org.intermine.api.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -89,6 +89,7 @@ public class InterMineBagBinding
      * @param uosw UserProfile ObjectStoreWriter
      * @param osw ObjectStoreWriter used to resolve object id's and write to ObjectStoreBags
      * @param userId an Integer
+     * @return map of queries read from XML
      */
     public static Map unmarshal(final Reader reader, final ObjectStoreWriter uosw,
             final ObjectStoreWriter osw, Integer userId) {

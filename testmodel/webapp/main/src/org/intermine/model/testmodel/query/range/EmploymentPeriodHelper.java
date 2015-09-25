@@ -8,9 +8,8 @@ import java.util.TimeZone;
 import org.intermine.api.query.range.AbstractHelper;
 import org.intermine.api.query.range.ConstraintOptions;
 import org.intermine.api.query.range.Range;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.QueryValue;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.ConstraintOp;
+import org.intermine.metadata.TypeUtil;
 
 public class EmploymentPeriodHelper extends AbstractHelper {
 
@@ -25,17 +24,17 @@ public class EmploymentPeriodHelper extends AbstractHelper {
             "end"
         );
     }
-    
+
     @Override
     protected Range parseRange(String range) {
         return new DateRange(range);
     }
-    
+
     private class DateRange implements Range
     {
-        
+
         private Date start, end;
-        
+
         DateRange(String range) {
             if (range == null) {
                 throw new NullPointerException("range may not be null");
@@ -59,7 +58,7 @@ public class EmploymentPeriodHelper extends AbstractHelper {
             startOfPeriod.set(Calendar.SECOND, 0);
             startOfPeriod.set(Calendar.MILLISECOND, 0);
             this.start = startOfPeriod.getTime();
-            
+
             Date endDate = (Date) TypeUtil.stringToObject(Date.class, endStr);
             Calendar endOfPeriod = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
             endOfPeriod.setTime(endDate);
@@ -70,17 +69,17 @@ public class EmploymentPeriodHelper extends AbstractHelper {
             endOfPeriod.add(Calendar.DATE, 1);
             this.end = endOfPeriod.getTime();
         }
-        
+
         @Override
         public Date getStart() {
-            return start; 
+            return start;
         }
-        
+
         @Override
         public Date getEnd() {
             return end;
         }
     }
-    
+
 
 }

@@ -198,3 +198,8 @@ malariamine/
 nbproject/
 nb-build.xml
 .idea/
+apache-tomcat*
+prefixed
+failures.list
+*.jks
+biotestmine/project.xml

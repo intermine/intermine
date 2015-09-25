@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,6 @@ package org.intermine.bio.web.export;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.bio.io.bed.BEDRecord;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
@@ -24,9 +23,6 @@ import org.intermine.model.bio.SequenceFeature;
  */
 public final class BEDUtil
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(BEDUtil.class);
-
     private static final String UCSC_CHR_PREFIX = "chr";
 
     private BEDUtil() {
@@ -57,7 +53,7 @@ public final class BEDUtil
         int chromStart = -1;
         int chromEnd = -1;
         String name = null;
-        int score = 0;
+        final int score = 0;
         String strand = ".";
 
         if (lsf instanceof Chromosome) {

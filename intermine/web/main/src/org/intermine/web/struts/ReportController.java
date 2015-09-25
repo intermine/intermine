@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
@@ -53,6 +52,7 @@ import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
 import org.jfree.util.Log;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * New objectDetails.
@@ -68,9 +68,9 @@ public class ReportController extends InterMineAction
      */
     @SuppressWarnings("unused")
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         long startTime = System.currentTimeMillis();
 
@@ -93,7 +93,7 @@ public class ReportController extends InterMineAction
             request.setAttribute("requestedObject", requestedObject);
 
             // hell starts here
-            TagManager tagManager = im.getTagManager();
+            TagManager tm = im.getTagManager();
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = im.getObjectStore();
             String superuser = im.getProfileManager().getSuperuser();
@@ -111,9 +111,7 @@ public class ReportController extends InterMineAction
                 // assign lists to any aspects they are tagged to or put in unplaced lists
                 String fieldPath = fd.getClassDescriptor().getUnqualifiedName()
                     + "." + fd.getName();
-                List<Tag> tags = tagManager.getTags(null, fieldPath, taggedType, superuser);
-                for (Tag tag : tags) {
-                    String tagName = tag.getTagName();
+                for (String tagName: tm.getObjectTagNames(fieldPath, taggedType, superuser)) {
                     if (AspectTagUtil.isAspectTag(tagName)) {
                         List<InlineList> listsForAspect = placedInlineLists.get(tagName);
                         if (listsForAspect == null) {
@@ -121,7 +119,7 @@ public class ReportController extends InterMineAction
                             placedInlineLists.put(tagName, listsForAspect);
                         }
                         listsForAspect.add(list);
-                    } else if (tagName.equals(TagNames.IM_SUMMARY)) {
+                    } else if (TagNames.IM_SUMMARY.equals(tagName)) {
                         List<InlineList> summaryLists = placedInlineLists.get(tagName);
                         if (summaryLists == null) {
                             summaryLists = new ArrayList<InlineList>();
@@ -171,11 +169,11 @@ public class ReportController extends InterMineAction
                 DisplayField df = entry.getValue();
                 if (df instanceof DisplayReference) {
                     categoriseBasedOnTags(((DisplayReference) df).getDescriptor(),
-                            "reference", df, miscRefs, tagManager, superuser,
+                            "reference", df, miscRefs, tm, superuser,
                             placementRefsAndCollections, SessionMethods.isSuperUser(session));
                 } else if (df instanceof DisplayCollection) {
                     categoriseBasedOnTags(((DisplayCollection) df).getDescriptor(),
-                            "collection", df, miscRefs, tagManager, superuser,
+                            "collection", df, miscRefs, tm, superuser,
                             placementRefsAndCollections, SessionMethods.isSuperUser(session));
                 }
             }
@@ -247,6 +245,9 @@ public class ReportController extends InterMineAction
     private InterMineObject getRequestedObject(InterMineAPI im, HttpServletRequest request) {
 
         String idString = request.getParameter("id");
+        if (!StringUtils.isNumeric(idString) || StringUtils.isBlank(idString)) {
+            return null;
+        }
         Integer id = new Integer(Integer.parseInt(idString));
         ObjectStore os = im.getObjectStore();
         InterMineObject requestedObject = null;
@@ -286,6 +287,7 @@ public class ReportController extends InterMineAction
             String taggedType, DisplayField dispRef, Map<String, DisplayField> miscRefs,
             TagManager tagManager, String sup, Map<String, Map<String, DisplayField>>
             placementRefsAndCollections, boolean isSuperUser) {
+        @SuppressWarnings("deprecation")
         List<Tag> tags = tagManager.getTags(null, fd.getClassDescriptor()
                 .getUnqualifiedName()
                 + "." + fd.getName(), taggedType, sup);

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,10 +16,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 
-import org.intermine.metadata.Model;
-import org.intermine.modelproduction.xml.InterMineModelParser;
-
 import junit.framework.TestCase;
+
+import org.intermine.metadata.InterMineModelParser;
+import org.intermine.metadata.Model;
 
 /**
  * Test for ModelMergerTask.

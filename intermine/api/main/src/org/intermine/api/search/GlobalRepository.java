@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -106,6 +106,7 @@ public class GlobalRepository extends UserRepository
      * @param type A valid TagType.
      * @return A new unmodifiable map containing the requested information.
      */
+    @Override
     public Map<String, WebSearchable> getWebSearchableMap(String type) {
         if (type == null) {
             throw new IllegalArgumentException("'type' may not be null");
@@ -123,8 +124,11 @@ public class GlobalRepository extends UserRepository
         return Collections.unmodifiableMap(retval);
     }
 
-    public void deleteGlobalRepository(Profile profile) {
-        SearchRepository sr = getGlobalSearchRepository(profile);
+    /**
+     * @param userprofile user profile
+     */
+    public void deleteGlobalRepository(Profile userprofile) {
+        SearchRepository sr = getGlobalSearchRepository(userprofile);
         GLOBALS.remove(sr);
     }
 

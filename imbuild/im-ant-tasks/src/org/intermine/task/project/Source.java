@@ -1,7 +1,7 @@
 package org.intermine.task.project;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -55,7 +55,7 @@ public class Source extends Action
     public String getName() {
         return name;
     }
-    
+
     /**
      * Set the location of this Source directory.
      * @param location the directory containing this source
@@ -72,3 +72,5 @@ public class Source extends Action
         return location;
     }
 }
+
+

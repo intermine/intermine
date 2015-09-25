@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,12 +27,15 @@ import org.biojava.bio.seq.DNATools;
 import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava.bio.symbol.IllegalAlphabetException;
 import org.biojava.bio.symbol.IllegalSymbolException;
+import org.biojava.bio.symbol.SymbolList;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.StringUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
@@ -43,7 +46,6 @@ import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
 import org.intermine.web.logic.export.ExportHelper;
 import org.intermine.web.logic.export.Exporter;
@@ -57,19 +59,18 @@ import org.intermine.web.logic.export.Exporter;
  **/
 public class SequenceExporter implements Exporter
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
 
     private ObjectStore os;
     private OutputStream out;
     private int featureIndex;
     private int writtenResultsCount = 0;
     private final Map<String, List<FieldDescriptor>> classKeys;
-
+    private static final String NEGATIVE_STRAND = "-1";
     private int extension; // must > 0
     // Map to hold DNA sequence of a whole chromosome in memory
     private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
     private List<Path> paths = Collections.emptyList();
+    private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
 
     /**
      * Constructor.
@@ -81,6 +82,7 @@ public class SequenceExporter implements Exporter
      * @param featureIndex
      *            index of cell in row that contains object to be exported
      * @param classKeys for the model
+     * @param extension extension
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
             int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension) {
@@ -91,6 +93,19 @@ public class SequenceExporter implements Exporter
         this.extension = extension;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param os
+     *            object store used for fetching sequence for exported object
+     * @param outputStream
+     *            output stream
+     * @param featureIndex
+     *            index of cell in row that contains object to be exported
+     * @param classKeys for the model
+     * @param extension extension
+     * @param paths paths to include
+     */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
             int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
             List<Path> paths) {
@@ -105,6 +120,7 @@ public class SequenceExporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public int getWrittenResultsCount() {
         return writtenResultsCount;
     }
@@ -118,6 +134,7 @@ public class SequenceExporter implements Exporter
      * {@inheritDoc} Lines are always separated with \n because third party tool
      * writeFasta is used for writing sequence.
      */
+    @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt,
             Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         // IDs of the features we have successfully output - used to avoid
@@ -236,15 +253,16 @@ public class SequenceExporter implements Exporter
         int start = feature.getChromosomeLocation().getStart();
         int end = feature.getChromosomeLocation().getEnd();
         String org = feature.getOrganism().getShortName();
+        String strand = feature.getChromosomeLocation().getStrand();
 
         String chrResidueString;
         if (chromosomeSequenceMap.get(new MultiKey(chrName, org)) == null) {
             chrResidueString = chr.getSequence().getResidues()
                     .toString();
             chromosomeSequenceMap.put(
-                    new MultiKey(chrName, org), chr.getSequence().getResidues().toString());
+                    new MultiKey(chrName, strand, org), chr.getSequence().getResidues().toString());
         } else {
-            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, org));
+            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, strand, org));
         }
 
         if (extension > 0) {
@@ -261,6 +279,16 @@ public class SequenceExporter implements Exporter
 
         Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
                         seqName);
+
+        if (NEGATIVE_STRAND.equals(strand)) {
+            try {
+                SymbolList flippedSeq = DNATools.reverseComplement(seq);
+                seq = DNATools.createDNASequence(flippedSeq.seqString(), seqName);
+            } catch (IllegalAlphabetException e) {
+                LOG.error("Export failed, Invalid sequence", e);
+                return null;
+            }
+        }
 
         makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return seq;
@@ -337,7 +365,7 @@ public class SequenceExporter implements Exporter
 
                 // Disable collection export until further bug diagnose
                 if (re.getPath().containsCollections()) {
-                  continue;
+                    continue;
                 }
 
                 Object fieldValue = re.getField();
@@ -363,7 +391,7 @@ public class SequenceExporter implements Exporter
 
                 // Disable collection export until further bug diagnose
                 if (re.getPath().containsCollections()) {
-                  continue;
+                    continue;
                 }
 
                 Object fieldValue = re.getField();
@@ -383,6 +411,7 @@ public class SequenceExporter implements Exporter
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean canExport(List<Class<?>> clazzes) {
         return canExportStatic(clazzes);
     }

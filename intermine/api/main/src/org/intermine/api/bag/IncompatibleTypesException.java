@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,18 +9,16 @@ package org.intermine.api.bag;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Collection;
 
 /**
  * Exception thrown when given bags are of incompatible types, has methods to set and fetch the
- * types
+ * types.
+ *
  * @author Richard Smith
  *
  */
 public class IncompatibleTypesException extends RuntimeException
 {
-    private Collection<String> types;
-
     /**
      * Constructs an IncompatibleBagTypesException with the specified detail message.
      *
@@ -48,21 +46,5 @@ public class IncompatibleTypesException extends RuntimeException
      */
     public IncompatibleTypesException(String msg, Throwable t) {
         super(msg, t);
-    }
-
-    /**
-     * Set the bag types that were incompatible.
-     * @param types the bag types
-     */
-    public void setTypes(Collection<String> types) {
-        this.types = types;
-    }
-
-    /**
-     * Get the bag types that were incompatible.
-     * @return the incompatible types
-     */
-    public Collection<String> getTypes() {
-        return this.types;
     }
 }

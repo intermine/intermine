@@ -1,7 +1,7 @@
 package org.intermine.bio.io.gff3;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,22 +63,21 @@ public final class GFF3Parser
             public Object next() {
                 if (currentLine == null) {
                     throw new NoSuchElementException();
-                } else {
-                    Object objectToReturn = null;
-                    try {
-                        objectToReturn = new GFF3Record(currentLine);
-                        while ((currentLine = reader.readLine()) != null) {
-                            String trimmedLine = currentLine.trim();
-                            if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
-                                continue;
-                            }
-                            break;
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException("IOException while getting next GFF record", e);
-                    }
-                    return objectToReturn;
                 }
+                Object objectToReturn = null;
+                try {
+                    objectToReturn = new GFF3Record(currentLine);
+                    while ((currentLine = reader.readLine()) != null) {
+                        String trimmedLine = currentLine.trim();
+                        if (trimmedLine.length() == 0 || trimmedLine.startsWith("#")) {
+                            continue;
+                        }
+                        break;
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("IOException while getting next GFF record", e);
+                }
+                return objectToReturn;
             }
 
             @Override

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,6 +43,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -61,13 +63,14 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.tracker.Tracker;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.tracker.util.TrackerUtil;
-import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
@@ -79,11 +82,10 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.TypeUtil;
+import org.intermine.util.ShutdownHook;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.Constants;
@@ -116,6 +118,14 @@ public class InitialiserPlugin implements PlugIn
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
 
+    private static final Map<String, String> DERIVED_PROPERTIES = new HashMap<String, String>() {
+        {
+            put("jwt.publicidentity", "project.title");
+        }
+    };
+
+    private ObjectStoreWriter userprofileOSW;
+
     /**
      * Init method called at Servlet initialisation
      *
@@ -127,6 +137,7 @@ public class InitialiserPlugin implements PlugIn
      * @throws ServletException if this <code>PlugIn</code> cannot
      * be successfully initialized
      */
+    @Override
     public void init(ActionServlet servlet, ModuleConfig config) throws ServletException {
 
         // NOTE throwing exceptions other than a ServletException from this class causes the
@@ -147,6 +158,7 @@ public class InitialiserPlugin implements PlugIn
         loadAspectsConfig(servletContext);
         loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
+        loadOAuth2Providers(servletContext, webProperties);
 
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
@@ -158,7 +170,7 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("webConfig is null");
         }
 
-        final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
+        userprofileOSW = getUserprofileWriter(webProperties);
         if (userprofileOSW == null) {
             throw new ServletException("userprofileOSW is null");
         }
@@ -173,16 +185,21 @@ public class InitialiserPlugin implements PlugIn
 
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
 
+
         final InterMineAPI im = loadInterMineAPI(
                 servletContext, webProperties, webConfig, userprofileOSW, oss);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
         profileManager = im.getProfileManager();
-        LOG.debug("LOADED PROFILE MANAGER");
 
         // Verify that the superuser found in the DB matches the user set in the properties file.
         final Profile superProfile = profileManager.getSuperuserProfile();
-        initSuperUser(im, superProfile);
+        initSuperUser(superProfile);
+        try {
+            startBagUpgrade(im, profileManager.getAllSuperUsers());
+        } catch (ObjectStoreException e) {
+            throw new ServletException("Could not read from userprofile data store", e);
+        }
 
         initSearch(servletContext, superProfile);
 
@@ -200,7 +217,7 @@ public class InitialiserPlugin implements PlugIn
         LOG.debug("Application initialised in " + (System.currentTimeMillis() - start) + "ms");
     }
 
-    protected void initSearch(final ServletContext servletContext,
+    private void initSearch(final ServletContext servletContext,
             final Profile superProfile) {
         // index global webSearchables
         SearchRepository searchRepository = new GlobalRepository(superProfile);
@@ -212,22 +229,29 @@ public class InitialiserPlugin implements PlugIn
         LOG.debug("LOADED SEARCH REPOSITORY");
     }
 
-    protected void initSuperUser(final InterMineAPI im,
-            final Profile superProfile) {
+    private void initSuperUser(final Profile superProfile) {
         if (!superProfile.getUsername()
             .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
             blockingErrorKeys.put("errors.init.superuser", null);
         }
 
-        if (!im.getBagManager().isAnyBagInState(superProfile, BagState.UPGRADING)) {
-            UpgradeBagList upgrade = new UpgradeBagList(superProfile, im.getBagQueryRunner());
-            LoginHandler.runBagUpgrade(upgrade, im, superProfile);
-        }
-
         LOG.debug("CHECKED SUPER PROFILE");
     }
 
-    protected void initKeylessClasses(final ServletContext servletContext,
+    private void startBagUpgrade(final InterMineAPI im, final Collection<Profile> users) {
+
+        // Start the bag upgrade for all of a set of users.
+        for (Profile user: users) {
+            if (!im.getBagManager().isAnyBagInState(user, BagState.UPGRADING)) {
+                UpgradeBagList upgrade = new UpgradeBagList(user, im.getBagQueryRunner());
+                LoginHandler.runBagUpgrade(upgrade, im, user);
+            }
+            LOG.info("UPGRADING BAGS FOR " + user.getUsername());
+        }
+    }
+
+    private void initKeylessClasses(
+            final ServletContext servletContext,
             final WebConfig webConfig) {
         Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
         for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
@@ -247,11 +271,13 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
     }
 
-    protected InterMineAPI loadInterMineAPI(
+    private InterMineAPI loadInterMineAPI(
             final ServletContext servletContext,
-            final Properties webProperties, final WebConfig webConfig,
-            final ObjectStoreWriter userprofileOSW, final ObjectStoreSummary oss) throws ServletException {
-        final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
+            final Properties webProperties,
+            final WebConfig webConfig,
+            final ObjectStoreWriter userprofileOSW,
+            final ObjectStoreSummary oss) throws ServletException {
+        final ClassKeys classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
         final LinkRedirectManager redirector = getLinkRedirector(webProperties);
 
@@ -264,12 +290,14 @@ public class InitialiserPlugin implements PlugIn
             throw new ServletException("Super user not found");
         }
         SessionMethods.setInterMineAPI(servletContext, im);
+        ResourceFinder finder = new ResourceFinder(servletContext);
 
-        InterMineContext.initilise(im, webProperties, webConfig);
+        InterMineContext.initialise(im, webProperties, webConfig, finder);
         return im;
     }
 
-    protected void verifyUserProfile(final ObjectStoreWriter userprofileOSW) throws ServletException {
+    private void verifyUserProfile(final ObjectStoreWriter userprofileOSW)
+        throws ServletException {
         if (userprofileOSW != null) {
             //verify all table mapping classes exist in the userprofile db
             if (!verifyTablesExist(userprofileOSW)) {
@@ -288,11 +316,12 @@ public class InitialiserPlugin implements PlugIn
         }
     }
 
-    private void createPermaTokenTable(ObjectStore os, Connection con) throws SQLException, ObjectStoreException, ClassNotFoundException {
+    private void createPermaTokenTable(ObjectStore os, Connection con)
+        throws SQLException, ObjectStoreException, ClassNotFoundException {
         ClassDescriptor cd = os.getModel().getClassDescriptorByName("PermanentToken");
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
         if (cd == null) {
-            throw new IllegalStateException("Expected model to containt PermanentToken");
+            throw new IllegalStateException("Expected model to contain PermanentToken");
         }
         String tableDef = DatabaseUtil.getTableDefinition(db, cd);
         LOG.info("Adding table for " + cd.getName());
@@ -300,8 +329,15 @@ public class InitialiserPlugin implements PlugIn
         // It might be worthwhile at some point adding an index, but
         // a) the data set is expected to be reasonably small, and
         // b) the profile manager manages an in memory index of its own.
-        Statement s = con.createStatement();
-        s.execute(tableDef);
+        Statement s = null;
+        try {
+            s = con.createStatement();
+            s.execute(tableDef);
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+        }
     }
 
     private void initBlockingErrors(ServletContext servletContext) {
@@ -406,8 +442,8 @@ public class InitialiserPlugin implements PlugIn
         WebConfig retval = null;
         InputStream xmlInputStream = servletContext
             .getResourceAsStream("/WEB-INF/webconfig-model.xml");
-        InputStream xmlInputStreamForValidation = servletContext
-        .getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        InputStream xmlInputStreamForValidation =
+                servletContext.getResourceAsStream("/WEB-INF/webconfig-model.xml");
         if (xmlInputStream == null) {
             LOG.error("Unable to find /WEB-INF/webconfig-model.xml.");
             blockingErrorKeys.put("errors.init.webconfig.notfound", null);
@@ -471,7 +507,7 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private Map<String, List<FieldDescriptor>> loadClassKeys(Model model) {
+    private ClassKeys loadClassKeys(Model model) {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(InitialiserPlugin.class.getClassLoader()
@@ -480,8 +516,7 @@ public class InitialiserPlugin implements PlugIn
             LOG.error("Error loading class descriptions", e);
             blockingErrorKeys.put("errors.init.classkeys", null);
         }
-        Map<String, List<FieldDescriptor>>  classKeys =
-            ClassKeyHelper.readKeys(model, classKeyProps);
+        ClassKeys  classKeys = ClassKeyHelper.readKeys(model, classKeyProps);
         return classKeys;
     }
 
@@ -607,9 +642,23 @@ public class InitialiserPlugin implements PlugIn
         }
         SessionMethods.setPropertiesOrigins(servletContext, origins);
         Properties trimProperties = trimProperties(webProperties);
+        setComputedProperties(trimProperties);
         SessionMethods.setWebProperties(servletContext, trimProperties);
         MainHelper.loadHelpers(trimProperties);
         return trimProperties;
+    }
+
+    // Propagate properties that derive their default values from other properties.
+    private void setComputedProperties(Properties props) {
+        Map<String, String> computedMapping = DERIVED_PROPERTIES;
+        for (String dest: computedMapping.keySet()) {
+            if (StringUtils.isBlank(props.getProperty(dest))) {
+                String src = computedMapping.get(dest);
+                if (src != null) {
+                    props.setProperty(dest, props.getProperty(src));
+                }
+            }
+        }
     }
 
     private Properties trimProperties(Properties webProperties) {
@@ -656,6 +705,21 @@ public class InitialiserPlugin implements PlugIn
         SessionMethods.setOpenIdProviders(context, providers);
     }
 
+    private void loadOAuth2Providers(ServletContext context, Properties webProperties) {
+        Set<String> providers = new LinkedHashSet<String>();
+
+        // All all the providers found in oauth2.providers that have at least
+        // a client-id configured.
+        String oauth2Providers = webProperties.getProperty("oauth2.providers", "");
+        for (String provider: oauth2Providers.split(",")) {
+            String providerName = provider.trim().toUpperCase();
+            if (webProperties.containsKey("oauth2." + providerName + ".client-id")) {
+                providers.add(providerName);
+            }
+        }
+
+        SessionMethods.setOAuth2Providers(context, providers);
+    }
 
     private LinkRedirectManager getLinkRedirector(Properties webProperties) {
         final String err = "Initialisation of link redirector failed: ";
@@ -688,7 +752,11 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Summarize the ObjectStore to get class counts
+     * Summarise the ObjectStore to get class counts
+     *
+     * This method does not actually perform any queries, but relies on the
+     * existence of a existing set of pre-calculated counts, generated as
+     * part of the build process.
      */
     private ObjectStoreSummary summariseObjectStore(ServletContext servletContext) {
         Properties objectStoreSummaryProperties = new Properties();
@@ -706,12 +774,12 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.objectstoresummary.loading", null);
         }
 
-        final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
-        return oss;
+        return new ObjectStoreSummary(objectStoreSummaryProperties);
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
-            final Model model) {
+            final Model model) throws ServletException {
+        String errorKey = "errors.init.objectstoresummary.classcount";
         Map<String, String> classes = new LinkedHashMap<String, String>();
         Map<String, Integer> classCounts = new LinkedHashMap<String, Integer>();
 
@@ -720,10 +788,11 @@ public class InitialiserPlugin implements PlugIn
                 classes.put(className, TypeUtil.unqualifiedName(className));
             }
             try {
-                classCounts.put(className, new Integer(oss.getClassCount(className)));
+                classCounts.put(className, Integer.valueOf(oss.getClassCount(className)));
             } catch (Exception e) {
                 LOG.error("Unable to get class count for " + className, e);
-                blockingErrorKeys.put("errors.init.objectstoresummary.classcount", e.getMessage());
+                blockingErrorKeys.put(errorKey, e.getMessage());
+                return;
             }
         }
         servletContext.setAttribute("classes", classes);
@@ -733,7 +802,12 @@ public class InitialiserPlugin implements PlugIn
         for (ClassDescriptor cld : model.getClassDescriptors()) {
             ArrayList<String> subclasses = new ArrayList<String>();
             for (String thisClassName : new TreeSet<String>(getChildren(cld))) {
-                if (classCounts.get(thisClassName).intValue() > 0) {
+                Integer classCount = classCounts.get(thisClassName);
+                if (classCount == null) {
+                    blockingErrorKeys.put(errorKey, thisClassName);
+                    return;
+                }
+                if (classCount.intValue() > 0) {
                     subclasses.add(TypeUtil.unqualifiedName(thisClassName));
                 }
             }
@@ -743,18 +817,18 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
-        ObjectStoreWriter userprofileOSW = null;
+        ObjectStoreWriter osw = null;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
-            userprofileOSW = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
             LOG.error("Unable to create userprofile - " + e.getMessage(), e);
             blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
-            return userprofileOSW;
+            return osw;
         }
 
-        applyUserProfileUpgrades(userprofileOSW, blockingErrorKeys);
-        return userprofileOSW;
+        applyUserProfileUpgrades(osw, blockingErrorKeys);
+        return osw;
     }
 
     private void applyUserProfileUpgrades(ObjectStoreWriter osw,
@@ -809,44 +883,52 @@ public class InitialiserPlugin implements PlugIn
         blockingErrorKeys.put("errors.init.superusernotexist", null);
         return false;
     }
+
     private UserProfile getSuperUser(ObjectStoreWriter uosw) {
-         String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-         UserProfile superuserProfile = new UserProfile();
-         superuserProfile.setUsername(superuser);
-         Set<String> fieldNames = new HashSet<String>();
-         fieldNames.add("username");
-         try {
-             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
-         } catch (ObjectStoreException e) {
-             throw new RuntimeException("Unable to load user profile", e);
-         }
-         return superuserProfile;
+        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setUsername(superuser);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("username");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
+        return superuserProfile;
     }
 
     /**
      * Destroy method called at Servlet destroy. Close connection pools
      * and the mail queue thread pool.
      */
+    @Override
     public void destroy() {
-        InterMineContext.shutdown();
-        if (profileManager != null) {
-            ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
-                .getDatabase().shutdown();
-        }
-        ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
-    }
+        // We're undeploying the webapp so we need to shut everything down. The ShutdownHook will
+        // shutdown all objects that have registerted themselves. However, this doesn't get
+        // called automatically unless the JVM itself (tomcat) is shut down,
+        ShutdownHook.shutdown();
 
+        // The ShutdownHook is registered JVM-wide so unless we remove it a reference will be held
+        // to the current WebappClassLoader preventing it from being garbage collected. This will
+        // cause a memory leak, where tomcat would run out of PermGen space after several deploy
+        // cycles.
+        Runtime.getRuntime().removeShutdownHook(ShutdownHook.getInstance());
+    }
 
     /**
      * Remove class tags from the user profile that refer to classes that non longer exist
      * @param tagManager tag manager
      */
     protected static void cleanTags(TagManager tagManager) {
-        List<Tag> classTags = tagManager.getTags(null, null, "class", null);
-
-        for (Tag tag : classTags) {
+        for (Tag tag : tagManager.getTagsByType(TagTypes.CLASS)) {
             // check that class exists
             try {
+                // nb: it has been discussed whether to store fully qualified
+                // or short class names in the tags table. Shorter names would save
+                // some space (but not very much). If that were to ever happen, this
+                // method would have to be changed, as otherwise it would delete all
+                // the class tags in the database.
                 Class.forName(tag.getObjectIdentifier());
             } catch (ClassNotFoundException e) {
                 tagManager.deleteTag(tag);
@@ -929,7 +1011,6 @@ public class InitialiserPlugin implements PlugIn
         return null;
     }
 
-    @SuppressWarnings("resource")
     private boolean verifyTablesExist(ObjectStore uos) {
         Connection con = null;
         Set<ClassDescriptor> classDescriptors = uos.getModel().getClassDescriptors();
@@ -978,7 +1059,8 @@ public class InitialiserPlugin implements PlugIn
 
     /**
      * Verify if we need to upgrade the list
-     * @throws ServletException 
+     * @param uosw A reference to the user DB.
+     * @throws ServletException if all is not right with the world
      */
     private void checkSerialNumber(ObjectStore uosw) throws ServletException {
         try {

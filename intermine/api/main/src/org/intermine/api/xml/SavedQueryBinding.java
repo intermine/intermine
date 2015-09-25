@@ -1,7 +1,7 @@
 package org.intermine.api.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -83,12 +83,13 @@ public final class SavedQueryBinding
 
     /**
      * Parse TemplateQuerys from XML
-     * @param reader the saved templates
+     * @param reader the saved queries
      * @param savedBags Map from bag name to bag
      * @param version the version of the XML, an attribute on the profile manager
-     * @return a Map from template name to TemplateQuery
+     * @return a Map from query name to SavedQuery
      */
-    public static Map<String, SavedQuery> unmarshal(Reader reader, Map savedBags, int version) {
+    public static Map<String, SavedQuery> unmarshal(
+            Reader reader, @SuppressWarnings("rawtypes") Map savedBags, int version) {
         Map<String, SavedQuery> queries = new LinkedHashMap<String, SavedQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new SavedQueryHandler(queries, savedBags,

@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -97,7 +97,7 @@ public class InheritanceDotTask extends Task
         try {
             PrintWriter out = new PrintWriter(new FileWriter(file));
             File dir = new File(directory);
-            String packageBits[] = packageName.split("\\.");
+            String[] packageBits = packageName.split("\\.");
             for (int i = 0; i < packageBits.length; i++) {
                 dir = new File(dir, packageBits[i]);
             }

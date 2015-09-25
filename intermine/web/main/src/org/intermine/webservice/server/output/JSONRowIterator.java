@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,7 +29,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     private final ExportResultsIterator subIter;
     private final List<Path> viewPaths = new ArrayList<Path>();
-    private final InterMineAPI im;
     private final TableCellFormatter tableCellFormatter;
 
     /**
@@ -39,7 +38,6 @@ public class JSONRowIterator implements Iterator<JSONArray>
      */
     public JSONRowIterator(ExportResultsIterator it, InterMineAPI im) {
         this.subIter = it;
-        this.im = im;
         this.tableCellFormatter = new TableCellFormatter(im);
         init();
     }

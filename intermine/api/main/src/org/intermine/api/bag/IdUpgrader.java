@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,11 +41,13 @@ public interface IdUpgrader
      * An upgrader that always fails.  For use when upgrading shouldn't be happening.
      */
     IdUpgrader ERROR_UPGRADER = new IdUpgrader() {
+        @Override
         public Set<Integer> getNewIds(@SuppressWarnings("unused") InterMineObject oldObject,
                 @SuppressWarnings("unused") ObjectStore objectStore) {
             throw new RuntimeException("Shouldn't call getNewIds() in a running webapp");
         }
 
+        @Override
         public boolean doUpgrade() {
             return false;
         }

@@ -1,7 +1,7 @@
 package org.intermine.web.tags.disclosure;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -126,6 +126,7 @@ public class DisclosureTag extends BaseDisclosureTag
      * @throws IOException if error occurs during writing to stream output
      * @throws JspException if JspException error occurs during rendering nested tags
      */
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         out.write("<div");

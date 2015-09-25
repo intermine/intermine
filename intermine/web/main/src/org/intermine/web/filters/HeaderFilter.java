@@ -1,7 +1,7 @@
 package org.intermine.web.filters;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,10 +33,12 @@ public class HeaderFilter implements Filter
      * Do the filtering.
      * {@inheritDoc}
      */
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
 
+        @SuppressWarnings("unchecked")
         Enumeration<String> e = fc.getInitParameterNames();
         while (e.hasMoreElements()) {
             String headerName = e.nextElement();
@@ -52,6 +54,7 @@ public class HeaderFilter implements Filter
      * Initialise this Filter.
      * {@inheritDoc}
      */
+    @Override
     public void init(FilterConfig filterConfig) {
         this.fc = filterConfig;
     }
@@ -59,6 +62,7 @@ public class HeaderFilter implements Filter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void destroy() {
        // empty
     }

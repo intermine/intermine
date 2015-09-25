@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,6 +52,7 @@ public class ObjectStoreItemWriter implements ItemWriter
      * {@inheritDoc}
      */
     public Integer store(Item item) throws ObjectStoreException {
+        osw.store(item);
         for (Attribute a : item.getAttributes()) {
             osw.store(a);
             transactionCounter++;
@@ -68,7 +69,6 @@ public class ObjectStoreItemWriter implements ItemWriter
             && StringUtils.isEmpty(item.getImplementations())) {
             throw new RuntimeException("className not set for item: " + item.getIdentifier());
         }
-        osw.store(item);
         incrementTransaction();
         return item.getId();
     }

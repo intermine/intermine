@@ -1,6 +1,6 @@
 package org.intermine.webservice.server.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +19,6 @@ public class ResultProcessorTest {
         row.add(null);
         row.add(null);
         row.add(null);
-        @SuppressWarnings("unchecked")
         List<List<ResultElement>> table = Arrays.asList(row);
         MemoryOutput output = new MemoryOutput();
         ResultProcessor processor = new ResultProcessor();

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -46,7 +46,7 @@ public final class CytoscapeNetworkUtil
      * @param model the Model
      * @param executor the PathQueryExecutor
      * @return a map in which the key is organism name and value is a list of data sources
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException can't execute queries
      */
     public static synchronized Map<String, Set<String>> getInteractionInfo(
             Model model, PathQueryExecutor executor) throws ObjectStoreException {
@@ -65,9 +65,10 @@ public final class CytoscapeNetworkUtil
      *
      * @param model the Model
      * @param executor the PathQueryExecutor
-     * @throws ObjectStoreException 
+     * @throws ObjectStoreException can't execute queries
      */
-    private static void queryInteractionInfo(Model model, PathQueryExecutor executor) throws ObjectStoreException {
+    private static void queryInteractionInfo(Model model, PathQueryExecutor executor)
+        throws ObjectStoreException {
         interactionInfoMap = new LinkedHashMap<String, Set<String>>();
 
         PathQuery query = new PathQuery(model);

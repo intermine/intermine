@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,8 +11,6 @@ package org.intermine.web.struts;
  */
 
 
-import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,10 +42,10 @@ public class SharingBagUsersController extends TilesAction
      */
     @Override
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         String bagName = (String) context.getAttribute("bagName");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
@@ -56,6 +54,7 @@ public class SharingBagUsersController extends TilesAction
         request.setAttribute("currentSharingUsers", bm.getUsersSharingBag(bagName,
             profile.getUsername()));
         TagManager tm = im.getTagManager();
+        @SuppressWarnings("deprecation")
         List<Tag> tags = tm.getTags(TagNames.IM_PUBLIC, bagName, TagTypes.BAG,
                                     profile.getUsername());
         if (tags.isEmpty() || !profile.isSuperuser()) {

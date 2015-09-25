@@ -6,8 +6,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-pathquery"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/userprofile"/>
 	<classpathentry kind="lib" path="lib/xalan.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/stax-ri-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/lucene-core-3.0.2.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://lucene.apache.org/java/3_0_2/api/all/"/>
@@ -19,7 +17,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/fastutil.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/kamikaze-2.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bobo-browse-2.5.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/json20110106.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

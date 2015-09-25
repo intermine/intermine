@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -263,7 +263,8 @@ public class AcceptanceTestTask extends Task
         pw.close();
     }
 
-    private void outputTable(PrintWriter pw, AcceptanceTestResult atr, List<String> columnHeadings,
+    private static void outputTable(PrintWriter pw, AcceptanceTestResult atr,
+            List<String> columnHeadings,
             List<List<Object>> results) {
         pw.println("<table border=1>");
         if (columnHeadings != null) {
@@ -386,7 +387,7 @@ public class AcceptanceTestTask extends Task
         return null;
     }
 
-    private AcceptanceTestResult runTest(Connection con, AcceptanceTest test) {
+    private static AcceptanceTestResult runTest(Connection con, AcceptanceTest test) {
         Statement sm = null;
         ResultSet rs = null;
         long startTime = (new Date()).getTime();

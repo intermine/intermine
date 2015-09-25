@@ -1,0 +1,1 @@
+base_url="http://beta.flymine.org/beta/"

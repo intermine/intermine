@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,10 +30,12 @@ public final class SearchResult
 
     /**
      * Constructor.
+     *
      * @param ws The web searchable found.
      * @param score A Lucene score to associate with it. If it is above 1,
      *              it will be normalised to 1.
      * @param highlightedDesc A description (potentially with highlighting).
+     * @param tags tags to search for
      */
     SearchResult(WebSearchable ws, Float score, String highlightedDesc, Collection<String> tags) {
         this.ws = ws;

@@ -1,6 +1,6 @@
 package org.intermine.web.struts;
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -8,18 +8,18 @@ package org.intermine.web.struts;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.List;
-import java.util.Map;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
-import org.intermine.metadata.FieldDescriptor;
+import org.intermine.api.types.ClassKeys;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.api.template.TemplateManager;
+import org.intermine.objectstore.ObjectStoreWriter;
 
 /**
  * InterMineAPITest is a class created only to allow some tests.
@@ -36,9 +36,11 @@ public class TestInterMineAPI extends InterMineAPI
      * @param bagQueryConfig configured bag queries used by BagQueryRunner
      * @param oss summary information for the ObjectStore
      */
-    public TestInterMineAPI(ObjectStore objectStore, ProfileManager pm,
-            Map<String, List<FieldDescriptor>> classKeys,
-            BagQueryConfig bagQueryConfig, ObjectStoreSummary oss) {
+    public TestInterMineAPI(ObjectStore objectStore,
+            ProfileManager pm,
+            ClassKeys classKeys,
+            BagQueryConfig bagQueryConfig,
+            ObjectStoreSummary oss) {
         super(objectStore, null, classKeys, bagQueryConfig, oss, null, null);
         this.objectStore = objectStore;
         this.model = objectStore.getModel();
@@ -52,5 +54,10 @@ public class TestInterMineAPI extends InterMineAPI
                 pm.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
+    }
+
+    @Override
+    protected void initUserProfileResources(ObjectStoreWriter userProfileWriter) {
+        // no-op.
     }
 }

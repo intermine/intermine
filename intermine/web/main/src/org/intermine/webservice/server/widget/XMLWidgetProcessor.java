@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,9 +48,9 @@ public final class XMLWidgetProcessor extends WidgetProcessorImpl
         sb.append(formatCell("name", name));
         sb.append(formatCell("title", widgetConfig.getTitle()));
         sb.append(formatCell("description", widgetConfig.getDescription()));
-        String widgetType = getWidgetType(widgetConfig);
-        sb.append(formatCell("widgetType", widgetType));
-        if ("chart".equals(widgetType)) {
+        WidgetType widgetType = getWidgetType(widgetConfig);
+        sb.append(formatCell("widgetType", widgetType.name().toLowerCase()));
+        if (widgetType == WidgetType.CHART) {
             sb.append(formatCell("chartType",
                     ((GraphWidgetConfig) widgetConfig).getGraphType()));
             sb.append(formatCell("labels", getLabels((GraphWidgetConfig) widgetConfig)));

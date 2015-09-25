@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -82,7 +82,7 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }

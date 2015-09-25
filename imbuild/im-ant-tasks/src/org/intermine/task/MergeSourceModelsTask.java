@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -127,7 +127,7 @@ public class MergeSourceModelsTask extends Task
 
         for (Source source: sources) {
             String additionsFileName = source.getType() + "_additions.xml";
-            
+
             File additionsFile = new File(source.getLocation(), additionsFileName);
             addToAdditionsList(pathsToMerge, additionsFile);
         }

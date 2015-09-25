@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,7 +31,7 @@ import org.intermine.bio.web.biojava.BioSequence;
 import org.intermine.bio.web.biojava.BioSequenceFactory;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -64,6 +64,7 @@ public class ResidueFieldExporter implements FieldExporter
      * @param response The HTTP response we are creating - used to get the OutputStream to write to
      * @throws ExportException if the application business logic throws an exception
      */
+    @Override
     public void exportField(InterMineObject object, String fieldName, ObjectStore os,
             HttpServletResponse response) {
         if (!(object instanceof Sequence)) {

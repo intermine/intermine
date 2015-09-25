@@ -1,7 +1,7 @@
 package org.intermine.api.tracker.track;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,6 +27,15 @@ public class ListTrack extends TrackAbstract
     private ListBuildMode buildMode;
     private ListTrackerEvent event;
 
+    /**
+     * @param type the class type of items contained into the list
+     * @param count number of items contained into the list
+     * @param buildMode the way the list is built
+     * @param event type of event to track (creation or list execution )
+     * @param username user who created list
+     * @param sessionIdentifier session
+     * @param timestamp time stamp
+     */
     public ListTrack(String type, int count, ListBuildMode buildMode, ListTrackerEvent event,
                      String username, String sessionIdentifier, Timestamp timestamp) {
         this.type = type;
@@ -38,6 +47,13 @@ public class ListTrack extends TrackAbstract
         this.timestamp = timestamp;
     }
 
+    /**
+     *
+     * @param type the class type of items contained into the list
+     * @param count number of items contained into the list
+     * @param buildMode the way the list is built
+     * @param event type of event to track (creation or list execution )
+     */
     public ListTrack(String type, int count, ListBuildMode buildMode, ListTrackerEvent event) {
         this.type = type;
         this.count = count;

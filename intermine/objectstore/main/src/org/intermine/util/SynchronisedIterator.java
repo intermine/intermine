@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,6 +34,7 @@ public class SynchronisedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized boolean hasNext() {
         return iterator.hasNext();
     }
@@ -41,6 +42,7 @@ public class SynchronisedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized E next() {
         return iterator.next();
     }
@@ -48,6 +50,7 @@ public class SynchronisedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public synchronized void remove() {
         iterator.remove();
     }

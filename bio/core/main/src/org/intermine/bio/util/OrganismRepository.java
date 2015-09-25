@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.log4j.Logger;
 
 /**
  * A class to hold information about organisms.
@@ -28,8 +27,6 @@ import org.apache.log4j.Logger;
  */
 public final class OrganismRepository
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(OrganismRepository.class);
     private static OrganismRepository or = null;
     private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
@@ -220,7 +217,7 @@ public final class OrganismRepository
      * @param abbreviation the UniProt abbreviation, eg. HUMAN or DROME
      * @return the OrganismData
      */
-    public OrganismData getOrganismDataByUniprot(String abbreviation) {
+    public static OrganismData getOrganismDataByUniprot(String abbreviation) {
         return uniprotToTaxon.get(abbreviation);
     }
 

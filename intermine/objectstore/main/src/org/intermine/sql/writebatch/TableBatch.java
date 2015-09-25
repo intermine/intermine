@@ -1,7 +1,7 @@
 package org.intermine.sql.writebatch;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,8 +19,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.intermine.model.StringConstructor;
 import org.intermine.util.NullFirstComparator;
-import org.intermine.util.StringConstructor;
 
 /**
  * A class representing all changes to be made to an SQL table.

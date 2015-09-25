@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -130,8 +130,8 @@ public class BagUploadConfirmForm extends ActionForm
     * @param mapping the mapping
     * @param request the request
     */
-   @Override
-   public void reset(ActionMapping mapping, HttpServletRequest request) {
-       initialise();
-   }
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
+        initialise();
+    }
 }

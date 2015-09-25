@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,6 +34,7 @@ public final class MappingUtil
 
     private static final MappingUtilChecker<Object> DEFAULT_CHECKER
         = new MappingUtilChecker<Object>() {
+            @Override
             public boolean check(@SuppressWarnings("unused") Map<Object, Object> map) {
                 return true;
             }

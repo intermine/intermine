@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,7 +26,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.testing.OneTimeTestCase;
-import org.intermine.util.TypeUtil;
+import org.intermine.metadata.TypeUtil;
 
 public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 {
@@ -97,11 +97,11 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
         results.put("ContainsDuplicatesMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_, OldComsOldContracts AS indirect0 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Contractor' AND a2_.tableclass = 'org.intermine.model.testmodel.Company' AND a1_.id = indirect0.OldContracts AND indirect0.OldComs = a2_.id ORDER BY a1_.id, a2_.id");
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "OldComsOldContracts"})));
-        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM InterMineObject AS a1_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Department' AND a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM InterMineObject AS a1_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Department' AND a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, a2_");
         results2.put("SimpleGroupBy", Collections.singleton("InterMineObject"));
         results.put("MultiJoin", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM InterMineObject AS a1_, InterMineObject AS a2_, InterMineObject AS a3_, InterMineObject AS a4_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' AND a3_.tableclass = 'org.intermine.model.testmodel.Manager' AND a4_.tableclass = 'org.intermine.model.testmodel.Address' AND a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1' ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
         results2.put("MultiJoin", Collections.singleton("InterMineObject"));
-        results.put("SelectComplex", "SELECT DISTINCT (AVG(a1_.vatNumber) + 20) AS a3_, STDDEV(a1_.vatNumber) AS a4_, a2_.name AS a5_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' GROUP BY a2_.OBJECT, a2_.companyId, a2_.id, a2_.managerId, a2_.name ORDER BY (AVG(a1_.vatNumber) + 20), STDDEV(a1_.vatNumber), a2_.name, a2_.id");
+        results.put("SelectComplex", "SELECT DISTINCT (AVG(a1_.vatNumber) + 20) AS a3_, STDDEV(a1_.vatNumber) AS a4_, a2_.name AS a5_, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' GROUP BY a2_.OBJECT, a2_.companyId, a2_.id, a2_.managerId, a2_.name ORDER BY (AVG(a1_.vatNumber) + 20), a4_, a2_.name, a2_.id");
         results2.put("SelectComplex", Collections.singleton("InterMineObject"));
         results.put("SelectClassAndSubClasses", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a1_.name AS orderbyfield0 FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.name, a1_.id");
         results2.put("SelectClassAndSubClasses", Collections.singleton("InterMineObject"));
@@ -168,6 +168,16 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsConstraintNull", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintNotNull", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.addressId IS NOT NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNotNull", Collections.singleton("InterMineObject"));
+
+        results.put("ContainsConstraintNullCollection1N", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND (NOT EXISTS(SELECT 1 FROM InterMineObject AS indirect0 WHERE indirect0.departmentId = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollection1N", new HashSet(Arrays.asList(new String[] {"InterMineObject"})));
+        results.put("ContainsConstraintNotNullCollection1N", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND EXISTS(SELECT 1 FROM InterMineObject AS indirect0 WHERE indirect0.departmentId = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollection1N", new HashSet(Arrays.asList(new String[] {"InterMineObject"})));
+        results.put("ContainsConstraintNullCollectionMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND (NOT EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id)) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNullCollectionMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
+        results.put("ContainsConstraintNotNullCollectionMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND EXISTS(SELECT 1 FROM CompanysContractors AS indirect0 WHERE indirect0.Companys = a1_.id) ORDER BY a1_.id");
+        results2.put("ContainsConstraintNotNullCollectionMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
+
         results.put("ContainsConstraintObjectRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.departmentId = 5 ORDER BY a1_.id");
         results2.put("ContainsConstraintObjectRefObject", Collections.singleton("InterMineObject"));
         results.put("ContainsConstraintNotObjectRefObject", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.departmentId != 5 ORDER BY a1_.id");
@@ -300,7 +310,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("OrderDescending", Collections.singleton("InterMineObject"));
         results.put("SelectForeignKey", "SELECT a1_.departmentId AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.departmentId");
         results2.put("SelectForeignKey", Collections.singleton("InterMineObject"));
-        results.put("WhereCount", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND a2_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.id = a2_.departmentId GROUP BY a1_.OBJECT, a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
+        results.put("WhereCount", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' AND a2_.tableclass = 'org.intermine.model.testmodel.Employee' AND a1_.id = a2_.departmentId GROUP BY a1_.OBJECT, a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, a3_");
         results2.put("WhereCount", Collections.singleton("InterMineObject"));
         results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' LIMIT 3) AS a1_ ORDER BY a1_.a2_");
         results2.put("LimitedSubquery", Collections.singleton("InterMineObject"));
@@ -312,10 +322,10 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("MergeTrue", Collections.singleton("InterMineObject"));
         results.put("SelectFunctionNoGroup", "SELECT MIN(a1_.id) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee'");
         results2.put("SelectFunctionNoGroup", Collections.singleton("InterMineObject"));
-        results.put("SelectClassFromInterMineObject", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)");
-        results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)");
+        results.put("SelectClassFromInterMineObject", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' GROUP BY a1_.class ORDER BY a1_.class, a3_");
+        results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results2.put("SelectClassFromEmployee", Collections.singleton("InterMineObject"));
-        results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)")));
+        results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employable' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Broke' GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_, InterMineObject AS a1__1 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Broke' AND a1_.id = a1__1.id AND a1__1.tableclass = 'org.intermine.model.testmodel.Employable' GROUP BY a1_.class ORDER BY a1_.class, a3_")));
         results2.put("SelectClassFromBrokeEmployable", Collections.singleton("InterMineObject"));
         results.put("SubclassCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Department' ORDER BY a1_.id");
         results2.put("SubclassCollection", Collections.singleton("InterMineObject"));
@@ -325,18 +335,28 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("SelectWhereBackslash", Collections.singleton("InterMineObject"));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id");
         results2.put("MultiColumnObjectInCollection", new HashSet(Arrays.asList("InterMineObject", "CompanysContractors")));
-        results.put("Range1", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a2_.parentId AND bioseg_create(a1_.rangeStart, a1_.rangeEnd) && bioseg_create(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
-        results2.put("Range1", new HashSet(Arrays.asList("InterMineObject")));
+
+        results.put("RangeOverlaps", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd) ORDER BY a1_.id, a2_.id");
+        results2.put("RangeOverlaps", new HashSet(Arrays.asList("InterMineObject")));
+        results.put("RangeDoesNotOverlap", "SELECT a1_.id AS a3_, a2_.id AS a4_ FROM InterMineObject AS a1_, InterMineObject AS a2_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a2_.tableclass = 'org.intermine.model.testmodel.Range' AND (NOT (a1_.parentId = a2_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(a2_.rangeStart, a2_.rangeEnd))) ORDER BY a1_.id, a2_.id");
+        results2.put("RangeDoesNotOverlap", new HashSet(Arrays.asList("InterMineObject")));
+        results.put("RangeOverlapsValues", "SELECT a1_.id AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Range' AND a1_.parentId = a1_.parentId AND int4range(a1_.rangeStart, a1_.rangeEnd) && int4range(35, 45) ORDER BY a1_.id");
+        results2.put("RangeOverlapsValues", new HashSet(Arrays.asList("InterMineObject")));
+
         results.put("ConstrainClass1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class = 'org.intermine.model.testmodel.Employee' ORDER BY a1_.id");
         results.put("ConstrainClass2", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.InterMineObject' AND a1_.class IN ('org.intermine.model.testmodel.Company', 'org.intermine.model.testmodel.Employee') ORDER BY a1_.id");
         results.put("MultipleInBagConstraint1", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND (a1_.intermine_end IN ('1', '2', 'EmployeeA1', 'EmployeeB1') OR a1_.name IN ('1', '2', 'EmployeeA1', 'EmployeeB1')) ORDER BY a1_.id");
         results2.put("MultipleInBagConstraint1", new HashSet(Arrays.asList("InterMineObject")));
     }
 
+    public void testOverlapQueries() throws Exception {
+        // we don't need to test the overlap query generation sequence again here.
+    }
+
     protected DatabaseSchema getSchema() throws Exception {
-        //return new DatabaseSchema(model, Collections.singletonList(model.getClassDescriptorByName("org.intermine.model.InterMineObject")), true, Collections.EMPTY_SET, 1, false);
         return ((ObjectStoreInterMineImpl) ObjectStoreFactory.getObjectStore("os.truncunittest")).getSchema();
     }
+
     public String getRegisterOffset1() {
         return "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY a1_.id";
     }

@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,10 +34,15 @@ public class DisplayReference extends DisplayField
      * @param ref metadata for the referenced object
      * @param webConfig the WebConfig object for this webapp
      * @param classKeys Map of class name to set of keys
+     * @param objectType the type of the object.
      * @throws Exception if an error occurs
      */
-    public DisplayReference(ProxyReference proxy, ReferenceDescriptor ref,
-                            WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys, String objectType)
+    public DisplayReference(ProxyReference proxy,
+                            ReferenceDescriptor ref,
+                            WebConfig webConfig,
+                            Map<String,
+                            List<FieldDescriptor>> classKeys,
+                            String objectType)
         throws Exception {
         super(getProxyList(proxy), ref, webConfig, null, classKeys, null, objectType);
         this.proxy = proxy;

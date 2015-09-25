@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,6 +21,7 @@ import org.intermine.web.logic.results.PagedTable;
  *
  * @author rns
  */
+@SuppressWarnings("deprecation")
 public final class ExportHelper
 {
     private ExportHelper() {

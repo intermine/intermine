@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,16 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.profile.LoginHandler;
+import org.intermine.web.logic.profile.ProfileMergeIssues;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -35,8 +34,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class LoginAction extends LoginHandler
 {
-    private static final Logger LOG = Logger.getLogger(LoginAction.class);
-
     /**
      * Method called for login in
      *
@@ -60,15 +57,21 @@ public class LoginAction extends LoginHandler
             return mapping.findForward("login");
         }
 
-        Map<String, String> renamedBags = doLogin(request, lf.getUsername(), lf.getPassword());
-        recordMessage(new ActionMessage("login.loggedin", lf.getUsername()), request);
+        ProfileMergeIssues issues = doLogin(request, lf.getUsername(), lf.getPassword());
+        Profile user = SessionMethods.getProfile(session);
+        recordMessage(new ActionMessage("login.loggedin", user.getName()), request);
         //track the user login
         im.getTrackerDelegate().trackLogin(lf.getUsername());
 
-        if (renamedBags.size() > 0) {
-            for (String initName : renamedBags.keySet()) {
-                recordMessage(new ActionMessage("login.renamedbags", initName,
-                            renamedBags.get(initName)), request);
+        if (issues.hasIssues()) {
+            for (Map.Entry<String, String> renamed: issues.getRenamedBags().entrySet()) {
+                recordMessage(new ActionMessage("login.renamedbags", renamed.getKey(),
+                            renamed.getValue()), request);
+            }
+            for (Map.Entry<String, String> renamed: issues.getRenamedTemplates().entrySet()) {
+                recordMessage(
+                    new ActionMessage("login.failedtemplate", renamed.getKey(), renamed.getValue()),
+                    request);
             }
             return mapping.findForward("mymine");
         }

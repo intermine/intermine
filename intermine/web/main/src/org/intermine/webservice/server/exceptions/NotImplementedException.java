@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.exceptions;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,22 +10,18 @@ package org.intermine.webservice.server.exceptions;
  *
  */
 
-public class NotImplementedException extends InternalErrorException
+/**
+ * @author Alex Kalderimis
+ *
+ */
+public class NotImplementedException extends ServiceException
 {
     private static final long serialVersionUID = -1593418347158889396L;
 
-    public NotImplementedException(String message) {
-        super(message);
-    }
-
-    public NotImplementedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public NotImplementedException(Throwable cause) {
-        super(cause);
-    }
-    
+    /**
+     * @param location The place where this happened.
+     * @param methodName The method we tried to call.
+     */
     public NotImplementedException(Class<?> location, String methodName) {
         super(String.format("%s is not defined for %s", methodName, location.getName()));
     }

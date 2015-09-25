@@ -1,7 +1,7 @@
 package org.intermine.sql.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,8 +10,9 @@ package org.intermine.sql.query;
  *
  */
 
-import org.intermine.util.IdentityMap;
 import java.util.Map;
+
+import org.intermine.util.IdentityMap;
 
 /**
  * An abstract representation of an item that can be present in the WHERE or HAVING

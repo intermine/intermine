@@ -1,7 +1,7 @@
 package org.intermine.xml;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,8 +10,8 @@ package org.intermine.xml;
  *
  */
 
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 
 /**
  * Static methods to assist parsing and rendering of XML.

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,6 @@ import org.apache.struts.actions.DispatchAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
@@ -47,6 +46,7 @@ import org.intermine.web.logic.template.Templates.TemplateValueParseException;
  *
  * @author Julie Sullivan
  */
+@SuppressWarnings("deprecation")
 public class LoadTemplateAction extends DispatchAction
 {
     private TemplateQuery parseTemplate(HttpServletRequest request, InterMineAPI im) {

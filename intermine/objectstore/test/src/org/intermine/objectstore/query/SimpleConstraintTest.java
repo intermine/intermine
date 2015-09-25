@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,9 +10,11 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.Date;
+
 import junit.framework.TestCase;
 
-import java.util.Date;
+import org.intermine.metadata.ConstraintOp;
 
 public class SimpleConstraintTest extends TestCase {
     private SimpleConstraint constraint;

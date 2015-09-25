@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,7 +32,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.util.DynamicUtil;
+import org.intermine.metadata.Util;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -74,7 +74,7 @@ public class TemplateListController extends TilesAction
                 }
                 templates = templateManager.getReportPageTemplatesForAspect(aspect, allClasses);
             } else if (object != null) {
-                ClassDescriptor thisCld = model.getClassDescriptorByName(DynamicUtil
+                ClassDescriptor thisCld = model.getClassDescriptorByName(Util
                         .getFriendlyName(object.getObject().getClass()));
                 for (ClassDescriptor cld : model.getClassDescriptorsForClass(thisCld.getType())) {
                     allClasses.add(cld.getUnqualifiedName());

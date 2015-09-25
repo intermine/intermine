@@ -2,24 +2,25 @@
 <items>
   <item id="1" class="" implements="Broke Company">
     <attribute name="debt" value="876324"/>
+    <attribute name="interestRate" value="0.0"/>
     <attribute name="name" value="CompanyA"/>
     <attribute name="vatNumber" value="1234"/>
     <reference name="address" ref_id="23"/>
     <collection name="contractors">
-      <reference ref_id="4"/>
       <reference ref_id="3"/>
+      <reference ref_id="4"/>
     </collection>
     <collection name="departments">
       <reference ref_id="5"/>
     </collection>
     <collection name="oldContracts">
-      <reference ref_id="4"/>
       <reference ref_id="3"/>
+      <reference ref_id="4"/>
     </collection>
     <collection name="secretarys">
+      <reference ref_id="16"/>
       <reference ref_id="14"/>
       <reference ref_id="15"/>
-      <reference ref_id="16"/>
     </collection>
   </item>
   <item id="2" class="" implements="Company">
@@ -28,16 +29,16 @@
     <reference name="CEO" ref_id="11"/>
     <reference name="address" ref_id="19"/>
     <collection name="contractors">
-      <reference ref_id="4"/>
       <reference ref_id="3"/>
+      <reference ref_id="4"/>
     </collection>
     <collection name="departments">
-      <reference ref_id="7"/>
       <reference ref_id="6"/>
+      <reference ref_id="7"/>
     </collection>
     <collection name="oldContracts">
-      <reference ref_id="4"/>
       <reference ref_id="3"/>
+      <reference ref_id="4"/>
     </collection>
     <collection name="secretarys">
       <reference ref_id="14"/>
@@ -46,6 +47,7 @@
   </item>
   <item id="3" class="Contractor" implements="Broke">
     <attribute name="debt" value="7634"/>
+    <attribute name="interestRate" value="0.0"/>
     <attribute name="name" value="ContractorA"/>
     <attribute name="seniority" value="128764"/>
     <reference name="businessAddress" ref_id="21"/>
@@ -78,9 +80,9 @@
     <reference name="company" ref_id="1"/>
     <reference name="manager" ref_id="8"/>
     <collection name="employees">
+      <reference ref_id="10"/>
       <reference ref_id="9"/>
       <reference ref_id="8"/>
-      <reference ref_id="10"/>
     </collection>
   </item>
   <item id="6" class="Department" implements="RandomInterface">
@@ -88,8 +90,8 @@
     <reference name="company" ref_id="2"/>
     <reference name="manager" ref_id="11"/>
     <collection name="employees">
-      <reference ref_id="12"/>
       <reference ref_id="11"/>
+      <reference ref_id="12"/>
     </collection>
   </item>
   <item id="7" class="Department" implements="RandomInterface">
@@ -130,6 +132,7 @@
     <attribute name="debt" value="340"/>
     <attribute name="end" value="4"/>
     <attribute name="fullTime" value="true"/>
+    <attribute name="interestRate" value="0.0"/>
     <attribute name="name" value="EmployeeB1"/>
     <attribute name="salary" value="45000"/>
     <attribute name="seniority" value="76321"/>
@@ -219,27 +222,27 @@
     <reference name="employee" ref_id="9"/>
   </item>
   <item id="26" class="Range">
-    <attribute name="rangeStart" value="5"/>
-    <attribute name="rangeEnd" value="20"/>
     <attribute name="name" value="Range1"/>
+    <attribute name="rangeEnd" value="20"/>
+    <attribute name="rangeStart" value="5"/>
     <reference name="parent" ref_id="1"/>
   </item>
   <item id="27" class="Range">
-    <attribute name="rangeStart" value="15"/>
-    <attribute name="rangeEnd" value="30"/>
     <attribute name="name" value="Range2"/>
+    <attribute name="rangeEnd" value="30"/>
+    <attribute name="rangeStart" value="15"/>
     <reference name="parent" ref_id="1"/>
   </item>
   <item id="28" class="Range">
-    <attribute name="rangeStart" value="25"/>
-    <attribute name="rangeEnd" value="40"/>
     <attribute name="name" value="Range3"/>
+    <attribute name="rangeEnd" value="40"/>
+    <attribute name="rangeStart" value="25"/>
     <reference name="parent" ref_id="1"/>
   </item>
   <item id="29" class="Range">
-    <attribute name="rangeStart" value="3"/>
-    <attribute name="rangeEnd" value="50"/>
     <attribute name="name" value="Range4"/>
+    <attribute name="rangeEnd" value="50"/>
+    <attribute name="rangeStart" value="3"/>
     <reference name="parent" ref_id="1"/>
   </item>
 </items>

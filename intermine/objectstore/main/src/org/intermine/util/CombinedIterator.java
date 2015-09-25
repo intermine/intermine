@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,6 +40,7 @@ public class CombinedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasNext() {
         while (((currentIterator == null) || (!currentIterator.hasNext()))
                 && iteratorIterator.hasNext()) {
@@ -51,6 +52,7 @@ public class CombinedIterator<E> implements Iterator<E>
     /**
      * {@inheritDoc}
      */
+    @Override
     public E next() {
         if (hasNext()) {
             return currentIterator.next();
@@ -63,6 +65,7 @@ public class CombinedIterator<E> implements Iterator<E>
      * {@inheritDoc}
      * This operation is not supported.
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

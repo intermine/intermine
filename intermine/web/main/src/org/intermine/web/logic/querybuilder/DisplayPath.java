@@ -1,7 +1,7 @@
 package org.intermine.web.logic.querybuilder;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,7 +63,7 @@ public class DisplayPath
     }
 
     /**
-     * Return the last field descriptor (the last element) of the path. If the 
+     * Return the last field descriptor (the last element) of the path. If the
      * path represents the root class, return null.
      * @return A field descriptor.
      */

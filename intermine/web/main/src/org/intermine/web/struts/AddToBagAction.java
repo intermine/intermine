@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2014 FlyMine
+ * Copyright (C) 2002-2015 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,9 +22,9 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 
@@ -61,7 +61,7 @@ public class AddToBagAction extends InterMineAction
             // TODO add a warning when object already in bag ??
             try {
                 InterMineObject o = im.getObjectStore().getObjectById(id);
-                existingBag.addIdToBag(id, DynamicUtil.getFriendlyName(o.getClass()));
+                existingBag.addIdToBag(id, Util.getFriendlyName(o.getClass()));
                 recordMessage(new ActionMessage("bag.addedToBag", existingBag.getName()),
                         request);
             } catch (IncompatibleTypesException e) {
