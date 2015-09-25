@@ -38,7 +38,7 @@
     Human genes, including symbols, names, ids, and genome coordinates.
     </td>
     <td> 
-    <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene" target="_new">EntrezGene</a> (via MGI)
+    <a href="http://www.informatics.jax.org/"  target="_new">MGI</a>
     </td>
   </tr>
 
@@ -105,15 +105,24 @@
   <!-- ******************************************************* -->
 
   <tr>
-    <td class="leftcol">
+    <td rowspan="2" class="leftcol">
     <p><h2>Interactions</h2></p></td>
     <td> 
-    Mouse and human interaction data from BioGrid and IntAct.
+    Mouse and human protein-protein interaction data from BioGrid and IntAct. 
     </td>
     <td > 
       <a href="http://thebiogrid.org/" target="_new">BioGrid</a>
       <br/>
       <a href="http://www.ebi.ac.uk/intact/" target="_new">IntAct</a>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+    Mouse micro RNA (miRNA) interaction data from MGI.
+    </td>
+    <td>
+	<a href="http://www.informatics.jax.org/" target="_new">MGI</a>
     </td>
   </tr>
 
