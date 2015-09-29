@@ -270,6 +270,9 @@
 
                         return false;
                 });
+		// if URL contains '#Foo', open tab Foo.
+		if(location.hash)
+		    jQuery("table#menu td:contains('"+location.hash.slice(1)+"')").trigger("click");
         });
 
 
