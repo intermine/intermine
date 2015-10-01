@@ -70,7 +70,7 @@ public class InlineList
 
             listOfObjects.add(inlineListObject);
           }else{
-              System.out.println("Not adding null inlineListObject with column "+columnToDisplayBy);
+           // do nothing   System.out.println("Not adding null inlineListObject with column "+columnToDisplayBy);
           }
 
         }
