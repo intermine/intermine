@@ -26,6 +26,22 @@
       <property name="dataSourcename" value="diversity-S.bicolor" />
       <property name="dataSetTitle" value="S.bicolor Natural Diversity" />
     </source>
+
+    <source name="diversity-S.bicolor_v3" type="gatkvcf">
+      <property name="proteomeId" value="313" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor_v3/" />
+      <property name="src.data.dir.includes" value="*.vcf" />
+      <property name="dataSourcename" value="diversity-S.bicolor" />
+      <property name="dataSetTitle" value="S.bicolor Natural Diversity" />
+    </source>
+
+    <source name="diversity-S.bicolor_v3-samples" type="vcfsampleinfo">
+      <property name="proteomeId" value="313" />
+      <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Sbicolor_v3/" />
+      <property name="dataSourcename" value="diversity-S.bicolor" />
+      <property name="dataSetTitle" value="S.bicolor Natural Diversity Sample Info" />
+    </source>
+
     <source name="diversity-G.max" type="gatkvcf">
       <property name="proteomeId" value="275" />
       <property name="src.data.dir" value="/projectb/sandbox/plant/phytomine/diversity/Gmax/" />

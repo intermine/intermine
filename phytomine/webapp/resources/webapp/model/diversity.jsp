@@ -23,7 +23,8 @@
                   <em>M. esc.</em> ssp. <em>esculenta</em>,
                   <em>M. esc.</em> ssp. <em>flabellifolia</em> and
                   <em>M. glaziovii</em>) </LI>
-              <LI><em>Sorghum bicolor</em> (23 individuals from Andy Paterson's lab at UGA)</LI>
+              <LI><em>Sorghum bicolor (v2.1)</em> (23 individuals from Andy Paterson's lab at UGA)</LI>
+              <LI><em>Sorghum bicolor (v3.1)</em> (48 individuals from Emma Mace's 's lab at The University of Queensland)</LI>
               <LI><em>Eucalyptus grandis</em> (8 individuals)</LI>
               <LI><em>Brachipodium distachyon</em> (7 individuals)</LI>
               <LI><em>Phaseolus vulgaris</em> (8 individuals)</LI>
