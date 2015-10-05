@@ -70,7 +70,7 @@ public class InlineList
 
                 listOfObjects.add(inlineListObject);
             } else {
-                // do nothing   
+                // do nothing
             }
 
         }
