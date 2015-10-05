@@ -51,27 +51,27 @@ public class InlineList
         listOfObjects = new HashSet<InlineListObject>();
 
         for (Object listObject : listOfListObjects) {
-          if(listObject != null){
-            InterMineObject interMineListObject = (InterMineObject) listObject;
+            if (listObject != null) {
+                InterMineObject interMineListObject = (InterMineObject) listObject;
 
-            Object value = null;
-            Object id = null;
-            try {
-                // get field values from the object
-                value = interMineListObject.getFieldValue(columnToDisplayBy);
-                id = interMineListObject.getFieldValue("id");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                Object value = null;
+                Object id = null;
+                try {
+                    // get field values from the object
+                    value = interMineListObject.getFieldValue(columnToDisplayBy);
+                    id = interMineListObject.getFieldValue("id");
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                // make our InlineListObject
+                InlineListObject inlineListObject =
+                    new InlineListObject(interMineListObject, value, id);
+
+                listOfObjects.add(inlineListObject);
+            } else {
+                // do nothing   
             }
-
-            // make our InlineListObject
-            InlineListObject inlineListObject =
-                new InlineListObject(interMineListObject, value, id);
-
-            listOfObjects.add(inlineListObject);
-          }else{
-           // do nothing   System.out.println("Not adding null inlineListObject with column "+columnToDisplayBy);
-          }
 
         }
     }
