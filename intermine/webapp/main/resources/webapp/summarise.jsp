@@ -5,7 +5,7 @@
 <tiles:importAttribute name="templateName" ignore="false"/>
 <tiles:importAttribute name="summarisedTemplateMap" ignore="false"/>
 
-<c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
+<c:set var="templateName" value="${fn:replace(templateName,'\\\'','#039;')}" />
 <c:set var="isSummarised" value="${summarisedTemplateMap[templateName]}" />
 
 <!--summarise.jsp-->
