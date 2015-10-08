@@ -143,7 +143,7 @@ public class CreateReferencesTest extends TestCase {
         cr.createUtrRefs();
 
         Query q = new Query();
-        QueryClass qcMRNA = new QueryClass(MRNA.class);
+        QueryClass qcMRNA = new QueryClass(osw.getModel().getClassDescriptorByName("MRNA").getType());
         q.addFrom(qcMRNA);
         q.addToSelect(qcMRNA);
         QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
