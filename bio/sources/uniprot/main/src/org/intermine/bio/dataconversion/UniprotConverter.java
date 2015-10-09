@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -960,6 +961,7 @@ public class UniprotConverter extends BioDirectoryConverter
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
                 if (gene != null && hasMultipleGenes) {
+                    addPubs2Gene(uniprotEntry, gene);
                     store(gene);
                 }
             }
@@ -993,7 +995,22 @@ public class UniprotConverter extends BioDirectoryConverter
 
                     }
                 }
+                addPubs2Gene(uniprotEntry, gene);
                 store(gene);
+            }
+        }
+
+        /**
+         * @param uniprotEntry
+         * @param gene
+         */
+        private void addPubs2Gene(UniprotEntry uniprotEntry, Item gene) {
+            if (uniprotEntry.getPubs() != null) {
+                Iterator<String> pubs = uniprotEntry.getPubs().iterator();
+                while (pubs.hasNext()) {
+                    String refId = pubs.next();
+                    gene.addToCollection("publications", refId);
+                }
             }
         }
 
