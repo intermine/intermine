@@ -5,7 +5,7 @@
 <tiles:importAttribute name="templateName" ignore="false"/>
 <tiles:importAttribute name="precomputedTemplateMap" ignore="false"/>
 
-<c:set var="templateName" value="${fn:replace(templateName,'\\'','#039;')}" />
+<c:set var="templateName" value="${fn:replace(templateName,'\\\'','#039;')}" />
 <c:set var="isPrecomputed" value="${precomputedTemplateMap[templateName]}" />
 
 <c:choose>
