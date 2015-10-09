@@ -17,10 +17,10 @@
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
 String pageName = (String) request.getAttribute("pageName");
-if(new java.io.File(application.getRealPath("css")+"/"+pageName+".css").exists()) {
+if(new java.io.File(application.getRealPath("/css")+"/"+pageName+".css").exists()) {
         request.setAttribute("pageCSS","true");
 }
-if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) {
+if(new java.io.File(application.getRealPath("/js")+"/"+pageName+".js").exists()) {
     request.setAttribute("pageJS","true");
 }
 %>
