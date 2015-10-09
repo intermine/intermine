@@ -22,6 +22,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
@@ -65,7 +66,8 @@ public final class SequenceFeatureExportUtil
                 // path will be an attribute, prefixPath refers to parent class
                 Path prefixPath = path.getPrefix();
                 ClassDescriptor prefixCld = path.getLastClassDescriptor();
-                Class<?> prefixClass = DynamicUtil.getClass(prefixCld.getType());
+                Class<? extends FastPathObject> prefixClass =
+                    DynamicUtil.getSimpleClass(prefixCld.getType());
                 if (Protein.class.isAssignableFrom(prefixClass)
                         || SequenceFeature.class.isAssignableFrom(prefixClass)) {
                     if (!retPaths.contains(prefixPath)) {

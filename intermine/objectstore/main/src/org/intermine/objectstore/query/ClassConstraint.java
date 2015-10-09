@@ -12,11 +12,11 @@ package org.intermine.objectstore.query;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
 
 /**
  * Constrain whether a QueryClass is equal/not equal to another
@@ -58,9 +58,11 @@ public class ClassConstraint extends Constraint
             throw new NullPointerException("qc2 cannot be null");
         }
 
-        Class<?> c1 = DynamicUtil.getClass(qc1.getType());
-        Class<?> c2 = DynamicUtil.getClass(qc2.getType());
-        if ((!c1.isInterface()) && (!c2.isInterface())) {
+        Class<?> c1 = qc1.getType();
+        Class<?> c2 = qc2.getType();
+        Set<Class<?>> cs1 = Util.decomposeClass(c1);
+        Set<Class<?>> cs2 = Util.decomposeClass(c2);
+        if ((cs1.size() == 1) && (cs2.size() == 1) && (!c1.isInterface()) && (!c2.isInterface())) {
             if (!(c1.isAssignableFrom(c2) || c2.isAssignableFrom(c1))) {
                 throw new IllegalArgumentException("Invalid constraint: "
                         + c1 + " " + op + " " + c2);
@@ -96,8 +98,7 @@ public class ClassConstraint extends Constraint
             throw new NullPointerException("obj cannot be null");
         }
 
-        Class<?> c1 = DynamicUtil.getClass(qc.getType());
-        if (!(c1.isAssignableFrom(DynamicUtil.getClass(obj)))) {
+        if (!(qc.getType().isAssignableFrom(obj.getClass()))) {
             throw new IllegalArgumentException("Invalid constraint: " + qc.getType() + " " + op
                     + " " + obj.getClass());
         }

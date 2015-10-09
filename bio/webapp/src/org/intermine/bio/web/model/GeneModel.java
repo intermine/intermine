@@ -122,7 +122,7 @@ public class GeneModel
                 Collection<InterMineObject> transcriptUTRs =
                     (Collection<InterMineObject>) transcript.getFieldValue("UTRs");
                 for (InterMineObject utr : transcriptUTRs) {
-                    String clsName = DynamicUtil.getClass(utr).getSimpleName();
+                    String clsName = DynamicUtil.getSimpleClass(utr).getSimpleName();
                     if ("FivePrimeUTR".equals(clsName)) {
                         if (fivePrimeUTR != null) {
                             LOG.warn("More than one five prime UTR found for transcript: "

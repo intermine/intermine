@@ -82,7 +82,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Source source = new Source("testsource");
 
         Employable e =
-            (Employable) DynamicUtil.createObject(Employable.class);
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Employable");
@@ -96,7 +96,7 @@ public class DataLoaderHelperTest extends QueryTestCase
         Source source = new Source("testsource");
 
         Employable e =
-            (Employable) DynamicUtil.createObject(Employable.class);
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
         ClassDescriptor cld =
             model.getClassDescriptorByName("org.intermine.model.testmodel.Employable");
@@ -109,7 +109,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testObjectPrimaryKeyIsNull2() throws Exception {
         Source source = new Source("testsource");
 
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         Address a = new Address();
         a.setAddress("10 Downing Street");
@@ -127,7 +127,7 @@ public class DataLoaderHelperTest extends QueryTestCase
     public void testObjectPrimaryKeyIsNullNullField2() throws Exception {
         Source source = new Source("testsource");
 
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         Address a = new Address();
         a.setAddress(null);
@@ -159,9 +159,9 @@ public class DataLoaderHelperTest extends QueryTestCase
     }
 
     public void testObjectPrimaryKeyIsNullNullField3() throws Exception {
-        Department d = (Department) DynamicUtil.createObject(Department.class);
+        Department d = (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         d.setName("jkhsdfg");
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setAddress(null);
         c.setVatNumber(765213);
         d.setCompany(c);

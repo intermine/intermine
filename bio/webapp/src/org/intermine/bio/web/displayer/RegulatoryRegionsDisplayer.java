@@ -134,12 +134,12 @@ public class RegulatoryRegionsDisplayer extends ReportDisplayer
                         // cast
                         InterMineObject imObj = (InterMineObject) o;
                         // type match?
-                        Class<?> imObjClass = DynamicUtil.getClass(imObj);
+                        Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
                         if (c.equals(imObjClass)) {
                             count--;
                             s.add(imObj);
                             // determine type
-                            type = DynamicUtil.getClass(s.get(0)).getSimpleName();
+                            type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
                             // do we actually want any of this?
                             if (!regionCounts.containsKey(type)) {
                                 continue looptyloop;
@@ -169,7 +169,7 @@ public class RegulatoryRegionsDisplayer extends ReportDisplayer
     }
 
     private void incrementCount(Map<String, Integer> regionCounts, InterMineObject feature) {
-        String type = DynamicUtil.getClass(feature).getSimpleName();
+        String type = DynamicUtil.getSimpleClass(feature).getSimpleName();
         Integer count = regionCounts.get(type);
         if (count == null) {
             count = new Integer(0);

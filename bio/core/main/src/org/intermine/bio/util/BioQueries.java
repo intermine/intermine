@@ -13,11 +13,10 @@ package org.intermine.bio.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.metadata.ConstraintOp;
-import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -55,9 +54,9 @@ public abstract class BioQueries
      * @return a Results object: object.id, subject, location
      * @throws ObjectStoreException if problem reading ObjectStore
      */
-    public static Results findLocationAndObjects(ObjectStore os,
-        Class<? extends FastPathObject> objectCls, Class<? extends FastPathObject> subjectCls,
-        boolean orderBySubject, boolean hasLength, boolean hasChromosomeLocation, int batchSize)
+    public static Results findLocationAndObjects(ObjectStore os, Class<?> objectCls,
+        Class<?> subjectCls, boolean orderBySubject, boolean hasLength,
+        boolean hasChromosomeLocation, int batchSize)
         throws ObjectStoreException {
         // TODO check objectCls and subjectCls assignable to BioEntity
 
@@ -76,10 +75,9 @@ public abstract class BioQueries
         if (orderBySubject) {
             q.addToOrderBy(qcSub);
         }
-        Class<? extends FastPathObject> locationCls;
+        Class<?> locationCls;
         try {
-            locationCls = Class.forName(
-                    "org.intermine.model.bio.Location").asSubclass(FastPathObject.class);
+            locationCls = Class.forName("org.intermine.model.bio.Location");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

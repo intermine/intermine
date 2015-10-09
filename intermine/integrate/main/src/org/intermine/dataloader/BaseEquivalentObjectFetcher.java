@@ -407,7 +407,8 @@ public class BaseEquivalentObjectFetcher implements EquivalentObjectFetcher
                             return;
                         }
                     } else {
-                        InterMineObject destObj = DynamicUtil.createObject(InterMineObject.class);
+                        InterMineObject destObj = (InterMineObject)
+                            DynamicUtil.createObject(Collections.singleton(InterMineObject.class));
                         destObj.setId(destId);
                         cs.addConstraint(new ContainsConstraint(new QueryObjectReference(qc,
                                 fieldName), ConstraintOp.CONTAINS, destObj));

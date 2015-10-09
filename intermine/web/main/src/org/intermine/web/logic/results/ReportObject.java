@@ -116,7 +116,7 @@ public class ReportObject
         this.webProperties = webProperties;
 
         // infer dynamic type of IM object
-        this.objectType = DynamicUtil.getClass(object).getSimpleName();
+        this.objectType = DynamicUtil.getSimpleClass(object).getSimpleName();
     }
 
     /**
@@ -300,7 +300,7 @@ public class ReportObject
      * @return Collection<FieldConfig>
      */
     public Collection<FieldConfig> getFieldConfigs() {
-        String qualifiedType = DynamicUtil.getClass(object).getName();
+        String qualifiedType = DynamicUtil.getSimpleClass(object).getName();
         return webConfig.getFieldConfigs(qualifiedType);
     }
 
@@ -456,7 +456,7 @@ public class ReportObject
     private Map<String, TitleValue> getTitles(String key) {
         if (headerTitles == null) {
             headerTitles = new HashMap<String, Map<String, TitleValue>>();
-            Type type = webConfig.getTypes().get(DynamicUtil.getClass(object).getName());
+            Type type = webConfig.getTypes().get(DynamicUtil.getSimpleClassName(object));
             HeaderConfigTitle hc = type.getHeaderConfigTitle();
 
             for (String part : HeaderConfigTitle.TYPES) {
@@ -618,7 +618,7 @@ public class ReportObject
         try {
             // create a new path to the collection of objects
             Path path = new Path(im.getModel(),
-                    DynamicUtil.getClass(object).getSimpleName()
+                    DynamicUtil.getSimpleClass(object.getClass()).getSimpleName()
                     + '.' + listConfig.getPath());
             try {
                 // save the suffix, the value we will show the list by
@@ -876,7 +876,7 @@ public class ReportObject
 
     private Set<ReportDisplayer> getAllReportDisplayers() {
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
-        String clsName = DynamicUtil.getClass(object).getSimpleName();
+        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
         return displayerManager.getAllReportDisplayersForType(clsName);
     }
 

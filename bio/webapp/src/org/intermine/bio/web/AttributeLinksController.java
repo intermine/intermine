@@ -308,7 +308,8 @@ public class AttributeLinksController extends TilesAction
             String datasetToMatch) throws PathException {
         boolean isValidDataset = false;
         InterMineObject imo = reportObject.getObject();
-        Path path = new Path(im.getModel(), DynamicUtil.getClass(imo).getSimpleName()
+        Path path = new Path(im.getModel(), DynamicUtil.getSimpleClass(
+                imo.getClass()).getSimpleName()
                 + ".dataSets");
         Set<Object> listOfListObjects = PathUtil.resolveCollectionPath(path, imo);
         for (Object listObject : listOfListObjects) {

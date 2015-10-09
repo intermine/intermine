@@ -15,10 +15,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.metadata.ConstraintOp;
-import org.intermine.metadata.TypeUtil;
-import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -29,6 +27,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -63,7 +62,7 @@ public class WidgetLdr
         this.filter = filter;
         try {
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
-                                        + config.getStartClass()).asSubclass(FastPathObject.class));
+                                        + config.getStartClass()));
         } catch (ClassNotFoundException e) {
             if (config instanceof EnrichmentWidgetConfig
                 || config instanceof GraphWidgetConfig) {
@@ -153,12 +152,12 @@ public class WidgetLdr
             if (useSubClass) {
                 try {
                     qcTmp = new QueryClass(Class.forName(os.getModel().getPackageName()
-                            + "." + type).asSubclass(FastPathObject.class));
+                                                      + "." + type));
                 } catch (ClassNotFoundException cnfe) {
                     LOG.error("The type " + type + " doesn't exist in the model.");
                 }
             } else {
-                qcTmp = new QueryClass(qr.getType().asSubclass(FastPathObject.class));
+                qcTmp = new QueryClass(qr.getType());
             }
         } catch (IllegalArgumentException e) {
             // Not a reference - try collection instead
@@ -166,7 +165,7 @@ public class WidgetLdr
             if (useSubClass) {
                 try {
                     qcTmp = new QueryClass(Class.forName(os.getModel().getPackageName()
-                            + "." + type).asSubclass(FastPathObject.class));
+                                                      + "." + type));
                 } catch (ClassNotFoundException cnfe) {
                     LOG.error("The type " + type + " doesn't exist in the model.");
                 }

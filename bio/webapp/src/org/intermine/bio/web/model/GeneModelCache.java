@@ -71,7 +71,7 @@ public final class GeneModelCache
      * @return a list of GeneModels, one per transcript or an empty list
      */
     public static List<GeneModel> getGeneModels(InterMineObject object, Model model) {
-        String clsName = DynamicUtil.getClass(object).getSimpleName();
+        String clsName = DynamicUtil.getSimpleClass(object).getSimpleName();
 
         // TODO make this deal with inheritance (transcripts and UTRs in on statement)
         // TODO handle UTRs better

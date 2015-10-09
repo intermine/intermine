@@ -10,25 +10,22 @@ package org.intermine.xml.full;
  *
  */
 
+import junit.framework.TestCase;
+
 import java.io.InputStream;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.intermine.model.testmodel.*;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
-import org.intermine.model.testmodel.Address;
-import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.Department;
 
 public class FullParserTest extends TestCase
 {
-    private List<Item> exampleItems;
+    private List exampleItems;
     private Item departmentItem;
 
     public FullParserTest(String arg) {
@@ -59,6 +56,7 @@ public class FullParserTest extends TestCase
 
         Item item2 = new Item();
         item2.setClassName("Address");
+        item2.setImplementations("Thing");
         item2.setIdentifier("2");
         Attribute field2 = new Attribute();
         field2.setName("address");
@@ -67,6 +65,7 @@ public class FullParserTest extends TestCase
 
         Item item3 = new Item();
         item3.setClassName("Department");
+        item3.setImplementations("RandomInterface");
         item3.setIdentifier("3");
         Attribute field3 = new Attribute();
         field3.setName("name");
@@ -75,13 +74,14 @@ public class FullParserTest extends TestCase
 
         departmentItem = new Item();
         departmentItem.setClassName("Department");
+        departmentItem.setImplementations("RandomInterface");
         departmentItem.setIdentifier("4");
         Attribute field4 = new Attribute();
         field4.setName("name");
         field4.setValue("Department2");
         departmentItem.addAttribute(field4);
 
-        exampleItems = Arrays.asList(new Item[] {item1, item2, item3, departmentItem});
+        exampleItems = Arrays.asList(new Object[] {item1, item2, item3, departmentItem});
     }
 
     public void testParse() throws Exception {
@@ -98,7 +98,7 @@ public class FullParserTest extends TestCase
     }
 
     public void testRealiseObjects() throws Exception {
-        Collection<FastPathObject> objects =
+        Collection objects =
             FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), false);
         Company c1 = (Company) objects.iterator().next();
         assertEquals("Company1", c1.getName());
@@ -106,7 +106,7 @@ public class FullParserTest extends TestCase
         Address a1 = c1.getAddress();
         assertEquals("\"Company's\" street", a1.getAddress());
         assertNull(a1.getId());
-        List<Department> departments = new ArrayList<Department>(c1.getDepartments());
+        List departments = new ArrayList(c1.getDepartments());
         Collections.sort(departments, new DepartmentComparator());
         Department d1 = (Department) departments.get(0);
         assertEquals("Department1", d1.getName());
@@ -117,7 +117,7 @@ public class FullParserTest extends TestCase
     }
 
     public void testRealiseObjectsWithID() throws Exception {
-        Collection<FastPathObject> objects =
+        Collection objects =
             FullParser.realiseObjects(exampleItems, Model.getInstanceByName("testmodel"), true);
         Company c1 = (Company) objects.iterator().next();
         assertEquals("Company1", c1.getName());
@@ -125,7 +125,7 @@ public class FullParserTest extends TestCase
         Address a1 = c1.getAddress();
         assertEquals("\"Company's\" street", a1.getAddress());
         assertEquals(new Integer(2), a1.getId());
-        List<Department> departments = new ArrayList<Department>(c1.getDepartments());
+        List departments = new ArrayList(c1.getDepartments());
         Collections.sort(departments, new DepartmentComparator());
         Department d1 = (Department) departments.get(0);
         assertEquals("Department1", d1.getName());
@@ -159,10 +159,10 @@ public class FullParserTest extends TestCase
     }
 
 
-    class DepartmentComparator implements Comparator<Department>
+    class DepartmentComparator implements Comparator
     {
-        public int compare(Department a, Department b) {
-            return a.getName().compareTo(b.getName());
+        public int compare(Object a, Object b) {
+            return ((Department) a).getName().compareTo(((Department) b).getName());
         }
     }
 }

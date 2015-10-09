@@ -90,7 +90,7 @@ public class ResultElement implements Serializable, ResultCell
         if (imObj == null) {
             return null;
         }
-        String cls = DynamicUtil.getClass(imObj).getName();
+        String cls = DynamicUtil.getSimpleClassName(imObj.getClass());
         return TypeUtil.unqualifiedName(cls);
     }
 

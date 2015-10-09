@@ -23,6 +23,7 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.GOAnnotation;
 import org.intermine.model.bio.GOEvidence;
 import org.intermine.model.bio.GOEvidenceCode;
+import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Protein;
@@ -111,21 +112,21 @@ public class GoPostprocessTest extends XMLTestCase {
 
     // Store 2 genes with a protein, each protein has a GO term
     private void setUpData() throws Exception {
-        Gene gene1 = DynamicUtil.createObject(Gene.class);
+        Gene gene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene1.setName("GENE 1");
-        Gene gene2 = DynamicUtil.createObject(Gene.class);
+        Gene gene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene2.setName("GENE 2");
-        Protein protein1 = DynamicUtil.createObject(Protein.class);
+        Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein1.addGenes(gene1);
-        Protein protein2 = DynamicUtil.createObject(Protein.class);
+        Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein2.addGenes(gene2);
 
         List toStore = new ArrayList(Arrays.asList(new Object[] {gene1, gene2, protein1, protein2}));
 
-        OntologyTerm ontologyTerm1 = DynamicUtil.createObject(OntologyTerm.class);
+        OntologyTerm ontologyTerm1 = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
         ontologyTerm1.setName("FOR GENE 1");
 
-        OntologyTerm ontologyTerm2 = DynamicUtil.createObject(OntologyTerm.class);
+        OntologyTerm ontologyTerm2 = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
         ontologyTerm2.setName("FOR GENE 2");
 
         toStore.addAll(setUpAnnotations(protein1, ontologyTerm1));
@@ -140,14 +141,14 @@ public class GoPostprocessTest extends XMLTestCase {
     }
 
     private List setUpAnnotations(Protein protein, OntologyTerm ontologyTerm) {
-        GOAnnotation go = DynamicUtil.createObject(GOAnnotation.class);
+        GOAnnotation go = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
         go.setSubject(protein);
 
         go.setOntologyTerm(ontologyTerm);
-        GOEvidence evidence = DynamicUtil.createObject(GOEvidence.class);
-        GOEvidenceCode code = DynamicUtil.createObject(GOEvidenceCode.class);
+        GOEvidence evidence = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
+        GOEvidenceCode code = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
         evidence.setCode(code);
-        Publication pub = DynamicUtil.createObject(Publication.class);
+        Publication pub = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence.addPublications(pub);
         go.setEvidence(Collections.singleton(evidence));
         return new ArrayList(Arrays.asList(new Object[] {go, ontologyTerm, evidence, code, pub}));
@@ -156,30 +157,30 @@ public class GoPostprocessTest extends XMLTestCase {
 
     // one gene, two proteins, ONE annotation, different evidence codes - they should merge
     private void setUpDuplicateData() throws Exception {
-        Gene gene = DynamicUtil.createObject(Gene.class);
-        Protein protein1 = DynamicUtil.createObject(Protein.class);
+        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein1.addGenes(gene);
-        Protein protein2 = DynamicUtil.createObject(Protein.class);
+        Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein2.addGenes(gene);
 
-        GOAnnotation go1 = DynamicUtil.createObject(GOAnnotation.class);
+        GOAnnotation go1 = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
         go1.setSubject(protein1);
-        OntologyTerm ontologyTerm = DynamicUtil.createObject(OntologyTerm.class);
+        OntologyTerm ontologyTerm = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
         go1.setOntologyTerm(ontologyTerm);
-        GOEvidence evidence1 = DynamicUtil.createObject(GOEvidence.class);
-        GOEvidenceCode code1 = DynamicUtil.createObject(GOEvidenceCode.class);
+        GOEvidence evidence1 = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
+        GOEvidenceCode code1 = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
         evidence1.setCode(code1);
-        Publication pub1 = DynamicUtil.createObject(Publication.class);
+        Publication pub1 = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence1.addPublications(pub1);
         go1.setEvidence(Collections.singleton(evidence1));
 
-        GOAnnotation go2 = DynamicUtil.createObject(GOAnnotation.class);
+        GOAnnotation go2 = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
         go2.setSubject(protein2);
         go2.setOntologyTerm(ontologyTerm);
-        GOEvidence evidence2 = DynamicUtil.createObject(GOEvidence.class);
-        GOEvidenceCode code2 = DynamicUtil.createObject(GOEvidenceCode.class);
+        GOEvidence evidence2 = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
+        GOEvidenceCode code2 = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
         evidence2.setCode(code2);
-        Publication pub2 = DynamicUtil.createObject(Publication.class);
+        Publication pub2 = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence2.addPublications(pub2);
         go2.setEvidence(Collections.singleton(evidence2));
 

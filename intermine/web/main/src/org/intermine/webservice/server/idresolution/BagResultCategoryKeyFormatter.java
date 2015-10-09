@@ -211,7 +211,7 @@ public class BagResultCategoryKeyFormatter implements BagResultFormatter
         WebConfig webConfig = InterMineContext.getWebConfig();
         Model m = im.getModel();
         Map<String, Object> objectDetails = new HashMap<String, Object>();
-        String className = DynamicUtil.getClass(imo.getClass()).getName();
+        String className = DynamicUtil.getSimpleClassName(imo.getClass());
         ClassDescriptor cd = m.getClassDescriptorByName(className);
         objectDetails.put("class", cd.getUnqualifiedName());
         for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {

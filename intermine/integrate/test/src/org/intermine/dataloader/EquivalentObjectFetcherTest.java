@@ -66,7 +66,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setConstraint(cs);
         q.setDistinct(false);
 
-        Employable e = (Employable) DynamicUtil.createObject(Employable.class);
+        Employable e = (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName("jkhsdfg");
 
         assertEquals(q, eof.createPKQuery(e, source, false));
@@ -84,7 +84,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setDistinct(false);
 
         Employable e =
-            (Employable) DynamicUtil.createObject(Employable.class);
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
         assertEquals(q, eof.createPKQuery(e, source, true));
@@ -95,7 +95,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         Source source = new Source("testsource");
 
         Employable e =
-            (Employable) DynamicUtil.createObject(Employable.class);
+            (Employable) DynamicUtil.createObject(Collections.singleton(Employable.class));
         e.setName(null);
 
         Query q = eof.createPKQuery(e, source, false);
@@ -107,7 +107,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         Source source = new Source("testsource");
 
         Company c =
-            (Company) DynamicUtil.createObject(Company.class);
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("company1");
         c.setAddress(null);
 
@@ -120,9 +120,9 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         Source source = new Source("testsource");
 
         Company c =
-            (Company) DynamicUtil.createObject(Company.class);
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("company1");
-        Address a = (Address) DynamicUtil.createObject(Address.class);
+        Address a = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
         a.setAddress(null);
         c.setAddress(a);
 
@@ -157,9 +157,9 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setDistinct(false);
 
         Department d =
-            (Department) DynamicUtil.createObject(Department.class);
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         d.setName("dept1");
-        Manager m = (Manager) DynamicUtil.createObject(Manager.class);
+        Manager m = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
         m.setName("manager1");
         d.setManager(m);
 
@@ -193,9 +193,9 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setDistinct(false);
 
         Department d =
-            (Department) DynamicUtil.createObject(Department.class);
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         d.setName("dept1");
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setVatNumber(1234);
         d.setCompany(c);
 
@@ -225,7 +225,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setConstraint(cs);
         q.setDistinct(false);
 
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         Address a = new Address();
         a.setAddress("10 Downing Street");
@@ -247,7 +247,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setConstraint(cs);
         q.setDistinct(false);
 
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         c.setAddress(null);
 
@@ -298,7 +298,7 @@ public class EquivalentObjectFetcherTest extends QueryTestCase
         q.setConstraint(cs);
         q.setDistinct(false);
 
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c.setName("jkhsdfg");
         Address a = new Address();
         a.setAddress("10 Downing Street");

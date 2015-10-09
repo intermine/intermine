@@ -10,6 +10,9 @@ package org.intermine.objectstore.query;
  *
  */
 
+import java.util.Set;
+
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.util.DynamicUtil;
 
@@ -37,6 +40,24 @@ public class QueryClass implements QueryNode, FromElement
     }
 
     /**
+     * Constructs a QueryClass representing the specified set of classes
+     *
+     * @param types the Set of classes
+     */
+    public QueryClass(Set<Class<?>> types) {
+        this(types.toArray(new Class[0]));
+    }
+
+    /**
+     * Constructs a QueryClass representing the specified array of classes
+     *
+     * @param types the array of classes
+     */
+    public QueryClass(Class<?>... types) {
+        this.type = DynamicUtil.composeDescriptiveClass(types);
+    }
+
+    /**
      * Gets the Java class represented by this QueryClass
      *
      * @return the Class
@@ -52,6 +73,18 @@ public class QueryClass implements QueryNode, FromElement
      */
     @Override
     public String toString() {
-        return DynamicUtil.getClass(type).getName();
+        Set<Class<?>> classes = Util.decomposeClass(type);
+        if (classes.size() == 1) {
+            return type.getName();
+        } else {
+            boolean needComma = false;
+            StringBuffer retval = new StringBuffer();
+            for (Class<?> clazz : classes) {
+                retval.append(needComma ? ", " : "(");
+                needComma = true;
+                retval.append(clazz.getName());
+            }
+            return retval.toString() + ")";
+        }
     }
 }

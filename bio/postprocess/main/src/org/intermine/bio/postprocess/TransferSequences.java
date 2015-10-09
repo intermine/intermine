@@ -10,6 +10,7 @@ package org.intermine.bio.postprocess;
  *
  */
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -17,7 +18,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.ClobAccessReverseComplement;
 import org.intermine.bio.util.Constants;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
@@ -31,6 +31,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.ClobAccess;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.PendingClob;
@@ -71,7 +72,8 @@ public class TransferSequences
 
     private void storeNewSequence(SequenceFeature feature, ClobAccess sequenceString)
         throws ObjectStoreException {
-        Sequence sequence = DynamicUtil.createObject(Sequence.class);
+        Sequence sequence =
+            (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
         sequence.setResidues(sequenceString);
         sequence.setLength(sequenceString.length());
         osw.store(sequence);
@@ -226,7 +228,8 @@ public class TransferSequences
                     continue;
                 }
 
-                Sequence sequence = DynamicUtil.createObject(Sequence.class);
+                Sequence sequence =
+                    (Sequence) DynamicUtil.createObject(Collections.singleton(Sequence.class));
                 sequence.setResidues(featureSeq);
                 sequence.setLength(featureSeq.length());
                 osw.store(sequence);

@@ -421,7 +421,7 @@ public class Engine extends CommandRunner
         try {
             Map<String, Object> feature = new HashMap<String, Object>();
             try {
-                feature.put("type", DynamicUtil.getClass(fpo).getName());
+                feature.put("type", DynamicUtil.getSimpleClassName(fpo));
             } catch (Exception e) {
                 feature.put("type", fpo.getClass().getSimpleName());
             }

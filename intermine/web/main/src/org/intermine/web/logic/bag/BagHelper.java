@@ -23,7 +23,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.StringUtil;
-import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
@@ -130,8 +129,7 @@ public final class BagHelper
         Query q = new Query();
         QueryClass queryClass;
         try {
-            queryClass = new QueryClass(
-                    Class.forName(bag.getQualifiedType()).asSubclass(FastPathObject.class));
+            queryClass = new QueryClass(Class.forName(bag.getQualifiedType()));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("no type in the bag??! -> ", e);
         }

@@ -158,6 +158,13 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
                         Arrays.asList(new MultiRowFirstValue(data.get("DepartmentB1"), 1), new MultiRowFirstValue(data.get("EmployeeB1"), 1))),
                     Arrays.asList(
                         Arrays.asList(new MultiRowFirstValue(data.get("DepartmentB2"), 1), new MultiRowFirstValue(data.get("EmployeeB3"), 1)))));
+        results.put("SubclassCollection2", Arrays.asList(
+                    Arrays.asList(
+                        Arrays.asList(new MultiRowFirstValue(data.get("DepartmentA1"), 1), null)),
+                    Arrays.asList(
+                        Arrays.asList(new MultiRowFirstValue(data.get("DepartmentB1"), 1), new MultiRowFirstValue(data.get("EmployeeB1"), 1))),
+                    Arrays.asList(
+                        Arrays.asList(new MultiRowFirstValue(data.get("DepartmentB2"), 1), null))));
         results.put("ObjectStoreBagsForObject", NO_RESULT);
         v1 = new MultiRowFirstValue(data.get("CompanyA"), 2);
         v2 = new MultiRowFirstValue(data.get("DepartmentA1"), 2);

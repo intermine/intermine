@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -47,7 +48,7 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) writer.getObjectStore();
         writer.sequenceBase = sequenceMillions * 1000000;
         writer.sequenceOffset = 0;
-        List<InterMineObject> toRemove = new ArrayList<InterMineObject>();
+        List toRemove = new ArrayList();
         try {
             writer.beginTransaction();
             for (int i = 0; i < 200; i++) {
@@ -127,8 +128,9 @@ public class ObjectStorePrecomputedTablesTest extends TestCase
             System.out.println("Access to modified results took " + (time5 - time4) + " ms");
         } finally {
             writer.beginTransaction();
-            for (InterMineObject obj : toRemove) {
-                writer.delete(obj);
+            Iterator iter = toRemove.iterator();
+            while (iter.hasNext()) {
+                writer.delete((InterMineObject) iter.next());
             }
             writer.commitTransaction();
             writer.close();
