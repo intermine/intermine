@@ -170,7 +170,7 @@ public class ObjectTrailController extends TilesAction
      */
     protected static String createTrailLabel(InterMineObject object, Model model) {
         return StringUtils.trim(model.getClassDescriptorByName(
-                DynamicUtil.getClass(object).getName()).getUnqualifiedName());
+                DynamicUtil.getSimpleClassName(object)).getUnqualifiedName());
     }
 
     /**

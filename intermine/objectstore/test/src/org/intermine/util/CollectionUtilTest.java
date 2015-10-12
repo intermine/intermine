@@ -11,17 +11,12 @@ package org.intermine.util;
  */
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.TestCase;
+
+import org.intermine.model.InterMineObject;
+import org.intermine.model.testmodel.*;
 
 /**
  * Tests for the CollectionUtil class.
@@ -190,5 +185,28 @@ public class CollectionUtilTest extends TestCase
         expected.put(Comparable.class, lSerialisables);
 
         assertEquals(expected, CollectionUtil.groupByClass(c, true));
+    }
+
+    public void testFindCommonSuperclasses() throws Exception {
+        Set<Class<?>> input = new HashSet<Class<?>>();
+        input.add(Employee.class);
+        input.add(Contractor.class);
+        input.add(Manager.class);
+        assertEquals(Collections.singleton(Employable.class), CollectionUtil.findCommonSuperclasses(input));
+
+        input.clear();
+        input.add(DynamicUtil.composeClass(Company.class, Broke.class));
+        input.add(DynamicUtil.composeClass(Company.class));
+        assertEquals(Collections.singleton(Company.class), CollectionUtil.findCommonSuperclasses(input));
+        
+        input.clear();
+        input.add(DynamicUtil.composeClass(Company.class));
+        input.add(Types.class);
+        assertEquals(Collections.singleton(InterMineObject.class), CollectionUtil.findCommonSuperclasses(input));
+
+        input.clear();
+        input.add(DynamicUtil.composeClass(Contractor.class, Broke.class));
+        input.add(DynamicUtil.composeClass(Employee.class, Broke.class));
+        assertEquals(new HashSet(Arrays.asList(Employable.class, Broke.class)), CollectionUtil.findCommonSuperclasses(input));
     }
 }

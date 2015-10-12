@@ -206,7 +206,7 @@ public final class ClassKeyHelper
      */
     public static Object getKeyFieldValue(FastPathObject obj,
             Map<String, List<FieldDescriptor>> classKeys) {
-        String clsName = DynamicUtil.getClass(obj).getSimpleName();
+        String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
 
         try {
             for (String keyField : getKeyFieldNames(classKeys, clsName)) {
@@ -233,7 +233,7 @@ public final class ClassKeyHelper
      */
     public static List<Object> getKeyFieldValues(FastPathObject obj,
             Map<String, List<FieldDescriptor>> classKeys) {
-        String clsName = DynamicUtil.getClass(obj).getSimpleName();
+        String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
         List<Object> fieldValueList = new ArrayList<Object>();
 
         try {

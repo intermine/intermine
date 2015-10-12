@@ -50,7 +50,7 @@ public class IqlQueryParserTest extends IqlQueryTestCase
         results.put("RangeDoesNotOverlap", NO_RESULT);
         results.put("RangeOverlapsValues", NO_RESULT);
         results.put("SubclassCollection", NO_RESULT);
-//        results.put("SubclassCollection2", NO_RESULT);
+        results.put("SubclassCollection2", NO_RESULT);
         results.put("ObjectPathExpression5", NO_RESULT);
         results.put("MultiColumnObjectInCollection", NO_RESULT);
         results.put("CollectionPathExpression7", NO_RESULT);

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,9 +29,9 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
@@ -62,6 +63,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private Map<String, String> ecNumbers = new HashMap<String, String>();
+    private Map<String, String> proteins = new HashMap<String, String>();
     private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
@@ -165,6 +167,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // reset all variables here, new organism
         sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
+        proteins = new HashMap<String, String>();
     }
 
     /**
@@ -676,6 +679,22 @@ public class UniprotConverter extends BioDirectoryConverter
                 addSeenSequence(uniprotEntry.getTaxonId(), uniprotEntry.getMd5checksum(),
                         protein.getIdentifier());
 
+                /* canonical */
+                if (uniprotEntry.isIsoform()) {
+                    // the uniprot accession is parsed in the getIdentifiers() method here
+                    // so don't move this
+                    String canonicalAccession = uniprotEntry.getUniprotAccession();
+                    String canonicalRefId = proteins.get(canonicalAccession);
+                    if (canonicalRefId == null) {
+                        throw new RuntimeException("parsing an isoform without a parent "
+                                + canonicalAccession);
+                    }
+                    protein.setReference("canonicalProtein", canonicalRefId);
+                } else {
+                    /* canonical protein so isoforms can refer to it */
+                    proteins.put(uniprotEntry.getPrimaryAccession(), protein.getIdentifier());
+                }
+
                 try {
                     /* dbrefs (go terms, refseq) */
                     processDbrefs(protein, uniprotEntry);
@@ -943,6 +962,7 @@ public class UniprotConverter extends BioDirectoryConverter
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
                 if (gene != null && hasMultipleGenes) {
+                    addPubs2Gene(uniprotEntry, gene);
                     store(gene);
                 }
             }
@@ -976,7 +996,22 @@ public class UniprotConverter extends BioDirectoryConverter
 
                     }
                 }
+                addPubs2Gene(uniprotEntry, gene);
                 store(gene);
+            }
+        }
+
+        /**
+         * @param uniprotEntry
+         * @param gene
+         */
+        private void addPubs2Gene(UniprotEntry uniprotEntry, Item gene) {
+            if (uniprotEntry.getPubs() != null) {
+                Iterator<String> pubs = uniprotEntry.getPubs().iterator();
+                while (pubs.hasNext()) {
+                    String refId = pubs.next();
+                    gene.addToCollection("publications", refId);
+                }
             }
         }
 

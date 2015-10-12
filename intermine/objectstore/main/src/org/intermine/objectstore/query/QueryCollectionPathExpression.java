@@ -21,6 +21,7 @@ import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
@@ -38,7 +39,7 @@ public class QueryCollectionPathExpression
 {
     private QueryClass qc;
     private String fieldName;
-    private Class<? extends FastPathObject> type;
+    private Class<?> type;
     private Class<? extends FastPathObject> subclass = null;
     private QueryClass defaultClass;
     private List<QuerySelectable> selectList = new ArrayList<QuerySelectable>();
@@ -63,7 +64,7 @@ public class QueryCollectionPathExpression
         if (fieldName == null) {
             throw new NullPointerException("Collection name parameter is null");
         }
-        type = (Class<? extends FastPathObject>) TypeUtil.getFieldType(qc.getType(), fieldName);
+        type = TypeUtil.getFieldType(qc.getType(), fieldName);
         if (type == null) {
             throw new IllegalArgumentException("Field " + fieldName + " not found in "
                     + qc.getType());
@@ -88,22 +89,21 @@ public class QueryCollectionPathExpression
      *
      * @param qc the QueryClass
      * @param fieldName the name of the relevant collection or reference
-     * @param subCls a Class that is a subclass of the field class
+     * @param subclasses a Class that is a subclass of the field class
      * @throws IllegalArgumentException if the field is not a collection or reference
      */
-    public QueryCollectionPathExpression(QueryClass qc, String fieldName,
-            Class<? extends FastPathObject> subCls) {
+    public QueryCollectionPathExpression(QueryClass qc, String fieldName, Class<?>... subclasses) {
+        subclass = DynamicUtil.composeDescriptiveClass(subclasses);
         if (qc == null) {
             throw new NullPointerException("QueryClass parameter is null");
         }
         if (fieldName == null) {
             throw new NullPointerException("Collection name parameter is null");
         }
-        if (subCls == null) {
+        if (subclass == null) {
             throw new NullPointerException("Subclass parameter is null");
         }
-        this.subclass = subCls;
-        type = (Class<? extends FastPathObject>) TypeUtil.getFieldType(qc.getType(), fieldName);
+        type = TypeUtil.getFieldType(qc.getType(), fieldName);
         if (type == null) {
             throw new IllegalArgumentException("Field " + fieldName + " not found in "
                     + qc.getType());

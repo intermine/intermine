@@ -29,12 +29,11 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -134,7 +133,7 @@ public class FindInListAction extends InterMineAction
         Query q = new Query();
         QueryClass qc;
         try {
-            qc = new QueryClass(Class.forName(bagClassName).asSubclass(FastPathObject.class));
+            qc = new QueryClass(Class.forName(bagClassName));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("class not found", e);
         }

@@ -68,7 +68,7 @@ public class ObjectViewController extends TilesAction
             return null;
         }
 
-        String clsName = DynamicUtil.getClass(object).getName();
+        String clsName = DynamicUtil.getSimpleClass(object).getName();
         FieldConfig fc = webConfig.getFieldConfig(clsName, fieldName);
 
         // truncate fields by default, unless it says otherwise in config

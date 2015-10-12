@@ -13,7 +13,9 @@ package org.intermine.objectstore.intermine;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.sf.cglib.proxy.Factory;
@@ -54,6 +56,7 @@ public final class NotXmlParser
      * A Pattern that will find delimiters.
      */
     public static final Pattern SPLITTER = Pattern.compile(DELIM, Pattern.LITERAL);
+    private static final Pattern SPACE_SPLITTER = Pattern.compile(" ", Pattern.LITERAL);
     private static int opCount = 0;
     private static long splitTime = 0;
     private static long classTime = 0;
@@ -86,11 +89,24 @@ public final class NotXmlParser
 
         Class<? extends FastPathObject> clazz = classCache.get(a[1]);
         if (clazz == null) {
-            clazz = Class.forName(a[1]).asSubclass(FastPathObject.class);
+            Set<Class<?>> classes = new HashSet<Class<?>>();
+            if (!"".equals(a[1])) {
+                String[] b = SPACE_SPLITTER.split(a[1]);
+                for (int i = 0; i < b.length; i++) {
+                    classes.add(Class.forName(b[i]));
+                }
+            }
+            time1 = System.currentTimeMillis();
+            classTime += time1 - time2;
+
+            retval = (InterMineObject) DynamicUtil.createObject(classes);
+            clazz = retval.getClass();
+            classCache.put(a[1], clazz);
+        } else {
+            time1 = System.currentTimeMillis();
+            classTime += time1 - time2;
+            retval = (InterMineObject) DynamicUtil.createObject(clazz);
         }
-        time1 = System.currentTimeMillis();
-        classTime += time1 - time2;
-        retval = (InterMineObject) DynamicUtil.createObject(clazz);
         time2 = System.currentTimeMillis();
         createTime += time2 - time1;
 

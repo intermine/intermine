@@ -25,7 +25,6 @@ import java.util.Set;
 
 import junit.framework.Test;
 
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
@@ -37,6 +36,7 @@ import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
@@ -61,7 +61,7 @@ import org.intermine.util.DynamicUtil;
 public class SqlGeneratorTest extends SetupDataTestCase
 {
     protected static Database db;
-    protected static Map<String, Object> results2;
+    protected static Map results2;
     private static Map<String, Map<String, String>> rangeQueries;
 
     public SqlGeneratorTest(String arg) {
@@ -187,6 +187,42 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results.put("InterfaceReference", NO_RESULT);
         results.put("InterfaceCollection", NO_RESULT);
         Set res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id, a1__1.debt AS a2_, a1_.age AS a3_ FROM Employee AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND a1__1.debt > 0 AND a1_.age > 0 ORDER BY a1_.id");
+        res.add("SELECT a1_.id AS a1_id, a1_.debt AS a2_, a1__1.age AS a3_ FROM Broke AS a1_, Employee AS a1__1 WHERE a1_.id = a1__1.id AND a1_.debt > 0 AND a1__1.age > 0 ORDER BY a1_.id");
+        results.put("DynamicInterfacesAttribute", res);
+        results2.put("DynamicInterfacesAttribute", new HashSet(Arrays.asList(new String[] {"Employee", "Broke", "InterMineObject"})));
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id ORDER BY a1_.id");
+        res.add("SELECT a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id ORDER BY a1_.id");
+        results.put("DynamicClassInterface", res);
+        results2.put("DynamicClassInterface", new HashSet(Arrays.asList(new String[] {"Employable", "Broke", "InterMineObject"})));
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Department AS a1_, Broke AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND a2_.id = a1_.companyId AND a3_.id = a1__1.bankId ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Broke AS a1_, Department AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND a2_.id = a1__1.companyId AND a3_.id = a1_.bankId ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef1", res);
+        results2.put("DynamicClassRef1", new HashSet(Arrays.asList(new String[] {"Department", "Broke", "Company", "Bank", "InterMineObject"})));
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Department AS a1_, Broke AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND a1_.companyId = a2_.id AND a1__1.bankId = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Broke AS a1_, Department AS a1__1, Company AS a2_, Bank AS a3_ WHERE a1_.id = a1__1.id AND a1__1.companyId = a2_.id AND a1_.bankId = a3_.id ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef2", res);
+        results2.put("DynamicClassRef2", new HashSet(Arrays.asList(new String[] {"Department", "Broke", "Company", "Bank", "InterMineObject"})));
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Company AS a1_, Bank AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND a1_.id = a2_.companyId AND a1_.id = a3_.bankId ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Bank AS a1_, Company AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND a1_.id = a2_.companyId AND a1_.id = a3_.bankId ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef3", res);
+        results2.put("DynamicClassRef3", new HashSet(Arrays.asList(new String[] {"Department", "Broke", "Company", "Bank", "InterMineObject"})));
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Company AS a1_, Bank AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND a2_.companyId = a1_.id AND a3_.bankId = a1_.id ORDER BY a1_.id, a2_.id, a3_.id");
+        res.add("SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id FROM Bank AS a1_, Company AS a1__1, Department AS a2_, Broke AS a3_ WHERE a1_.id = a1__1.id AND a2_.companyId = a1_.id AND a3_.bankId = a1_.id ORDER BY a1_.id, a2_.id, a3_.id");
+        results.put("DynamicClassRef4", res);
+        results2.put("DynamicClassRef4", new HashSet(Arrays.asList(new String[] {"Department", "Broke", "Company", "Bank", "InterMineObject"})));
+        res = new HashSet();
+        res.add("SELECT DISTINCT a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1, HasAddress AS a2_, Broke AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1, Broke AS a2_, HasAddress AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1, HasAddress AS a2_, Broke AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        res.add("SELECT DISTINCT a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1, Broke AS a2_, HasAddress AS a2__1 WHERE a1_.id = a1__1.id AND a2_.id = a2__1.id AND a1_.id = a2_.id ORDER BY a1_.id");
+        results.put("DynamicClassConstraint", res);
+        results2.put("DynamicClassConstraint", new HashSet(Arrays.asList(new String[] {"Employable", "Broke", "HasAddress", "InterMineObject"})));
         results.put("ContainsConstraintNull", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NULL ORDER BY a1_.id");
         results2.put("ContainsConstraintNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("ContainsConstraintNotNull", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.addressId IS NOT NULL ORDER BY a1_.id");
@@ -212,6 +248,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsConstraintMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CompanysContractors"})));
         results.put("ContainsConstraintNotMMCollectionRefObject", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results2.put("ContainsConstraintNotMMCollectionRefObject", NO_RESULT);
+        //results.put("ContainsConstraintNotMMCollectionRefObject", "SELECT a1_.id AS a1_id FROM Company AS a1_, CompanysContractors AS indirect0 WHERE a1_.id != indirect0.Contractors AND indirect0.Companys = 3 ORDER BY a1_.id");
+        //results2.put("ContainsConstraintNotMMCollectionRefObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "CompanysContractors"})));
         results.put("SimpleConstraintNull", "SELECT a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NULL ORDER BY a1_.id");
         results2.put("SimpleConstraintNull", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Manager"})));
         results.put("SimpleConstraintNotNull", "SELECT a1_.id AS a1_id FROM Manager AS a1_ WHERE a1_.title IS NOT NULL ORDER BY a1_.id");
@@ -269,8 +307,22 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("QueryClassBagMM", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
         results.put("QueryClassBagNot", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
         results2.put("QueryClassBagNot", NO_RESULT);
+        //results.put("QueryClassBagNot", "SELECT a2_.departmentId AS a3_, a2_.id AS a2_id FROM Employee AS a2_ WHERE  NOT (a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ")) ORDER BY a2_.departmentId, a2_.id");
+        //results2.put("QueryClassBagNot", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("QueryClassBagNotMM", new Failure(ObjectStoreException.class, "Invalid constraint: DOES NOT CONTAINS cannot be applied to a QueryClassBag"));
         results2.put("QueryClassBagNotMM", NO_RESULT);
+        results.put("QueryClassBagDynamic", "SELECT indirect0.HasSecretarys AS a3_, a2_.id AS a2_id FROM Secretary AS a2_, HasSecretarysSecretarys AS indirect0 WHERE indirect0.HasSecretarys IN (" + employeeB1Id + ") AND indirect0.Secretarys = a2_.id ORDER BY indirect0.HasSecretarys, a2_.id");
+        results2.put("QueryClassBagDynamic", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Secretary", "HasSecretarysSecretarys"})));
+        //res = new HashSet()
+        //res.add("SELECT a1_.id AS a1_id FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        //res.add("SELECT a1_.id AS a1_id FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id AND (a1_.id IN (" + employeeB1Id + ")) ORDER BY a1_.id");
+        //results.put("DynamicBagConstraint", res);
+        //results2.put("DynamicBagConstraint", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Broke", "CEO"}))); // See ticket #469
+        res = new HashSet();
+        res.add("SELECT a1_.id AS a1_id FROM CEO AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id AND a1_.id IN (" + employeeB1Id + ") ORDER BY a1_.id");
+        res.add("SELECT a1_.id AS a1_id FROM Broke AS a1_, CEO AS a1__1 WHERE a1_.id = a1__1.id AND a1_.id IN (" + employeeB1Id + ") ORDER BY a1_.id");
+        results.put("DynamicBagConstraint2", res);
+        results2.put("DynamicBagConstraint2", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Broke", "CEO"})));
         results.put("QueryClassBagDouble", "SELECT a2_.departmentId AS a4_, a2_.id AS a2_id, a3_.id AS a3_id FROM Employee AS a2_, Employee AS a3_ WHERE a2_.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ") AND a3_.departmentId = a2_.departmentId ORDER BY a2_.departmentId, a2_.id, a3_.id");
         results2.put("QueryClassBagDouble", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
         results.put("QueryClassBagContainsObject", "SELECT indirect0.departmentId AS a2_ FROM Employee AS indirect0 WHERE indirect0.departmentId IN (" + departmentA1Id + ", " + departmentB1Id + ") AND indirect0.id = " + employeeA1Id + " ORDER BY indirect0.departmentId");
@@ -323,8 +375,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("CollectionPathExpression6", new HashSet(Arrays.asList("InterMineObject", "Company", "Department")));
         results.put("CollectionPathExpression7", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id");
         results2.put("CollectionPathExpression7", new HashSet(Arrays.asList("InterMineObject", "Company", "Department", "Employee")));
-        results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE (a1_.id IN (SELECT a1_.id FROM Company AS a1_ UNION SELECT a1_.id FROM Manager AS a1_)) ORDER BY a1_.id");
-        results2.put("OrSubquery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "Manager"})));
+        results.put("OrSubquery", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE (a1_.id IN (SELECT a1_.id FROM Company AS a1_ UNION SELECT a1_.id FROM Broke AS a1_)) ORDER BY a1_.id");
+        results2.put("OrSubquery", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company", "Broke"})));
         results.put("ScientificNumber", "SELECT a1_.id AS a1_id FROM Types AS a1_ WHERE a1_.doubleType < 1.3432E24 AND a1_.floatType > -8.56E-32::REAL ORDER BY a1_.id");
         results2.put("ScientificNumber", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Types"})));
         results.put("LowerBag", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE LOWER(a1_.name) IN ('employeea1', 'employeea2', 'employeeb1') ORDER BY a1_.id");
@@ -333,6 +385,8 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("FetchBag", Collections.singleton("osbag_int"));
         results.put("ObjectStoreBag", "SELECT a1_.id AS a1_id FROM Employee AS a1_, osbag_int AS indirect0 WHERE a1_.id = indirect0.value AND indirect0.bagid = 5 ORDER BY a1_.id");
         results2.put("ObjectStoreBag", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "osbag_int"})));
+        //results.put("ObjectStoreBagQueryClass", "SELECT a1_.departmentId AS a3_, a1_.id AS a1_id FROM Employee AS a1_, osbag_int AS indirect0 WHERE a1_.departmentId = indirect0.value AND indirect0.bagid = 5 ORDER BY a1_.departmentId, a1_.id");
+        //results2.put("ObjectStoreBagQueryClass", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee", "osbag_int"})));
         results.put("ObjectStoreBagQueryClass", NO_RESULT);
         results.put("OrderDescending", "SELECT a1_.id AS a1_id FROM Employee AS a1_ ORDER BY a1_.id DESC");
         results2.put("OrderDescending", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
@@ -368,8 +422,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("SelectClassFromInterMineObject", Collections.singleton("InterMineObject"));
         results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employee AS a1_ GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results2.put("SelectClassFromEmployee", Collections.singleton("Employee"));
+        results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, a3_", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, a3_")));
+        results2.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("Employable", "Broke")));
         results.put("SubclassCollection", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
         results2.put("SubclassCollection", new HashSet(Arrays.asList("InterMineObject", "Department", "Manager")));
+        results.put("SubclassCollection2", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
+        results2.put("SubclassCollection2", new HashSet(Arrays.asList("InterMineObject", "Department", "Employee", "Broke")));
         results.put("SelectWhereBackslash", "SELECT a1_.id AS a1_id FROM Employee AS a1_ WHERE a1_.name = E'Fred\\\\Blog\\'s' ORDER BY a1_.id");
         results2.put("SelectWhereBackslash", new HashSet(Arrays.asList("Employee", "InterMineObject")));
         results.put("MultiColumnObjectInCollection", "SELECT a1_.id AS a1_id FROM Company AS a1_ ORDER BY a1_.id");
@@ -706,7 +764,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass qc = new QueryClass(Company.class);
         q.addFrom(qc);
         q.addToSelect(qc);
-        Company c = (Company) DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         q.setConstraint(new ClassConstraint(qc, ConstraintOp.EQUALS, c));
         try {
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());

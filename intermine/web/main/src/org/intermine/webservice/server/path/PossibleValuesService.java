@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.AttributeDescriptor;
-import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -157,8 +156,7 @@ public class PossibleValuesService extends JSONService
         String[] parts = split(type, '.');
         addOutputInfo("type", parts[parts.length - 1]);
 
-        QueryClass qc =
-                new QueryClass(path.getPrefix().getEndType().asSubclass(FastPathObject.class));
+        QueryClass qc = new QueryClass(path.getPrefix().getEndType());
         q.addFrom(qc);
 
         QueryField qf1 = new QueryField(qc, path.getLastElement());

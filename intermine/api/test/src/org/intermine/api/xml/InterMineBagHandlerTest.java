@@ -10,6 +10,7 @@ package org.intermine.api.xml;
  *
  */
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -124,14 +125,15 @@ public class InterMineBagHandlerTest extends StoreDataTestCase
 
 
     private Company createCompanyWithId(String companyName) {
-        Company company = DynamicUtil.createObject(Company.class);
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setId(new Integer(idCounter++));
         company.setName(companyName);
         return company;
     }
 
     private Address createAddressWithId(String streetAddress) {
-        Address address = DynamicUtil.createObject(Address.class);
+        Address address =  (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
         address.setId(new Integer(idCounter++));
         address.setAddress(streetAddress);
         return address;

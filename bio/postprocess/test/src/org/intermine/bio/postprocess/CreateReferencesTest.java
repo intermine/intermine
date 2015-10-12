@@ -11,13 +11,13 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Exon;
@@ -29,6 +29,7 @@ import org.intermine.model.bio.ThreePrimeUTR;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
@@ -38,7 +39,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-
 /**
  * Tests for the CreateReferences class.
  */
@@ -102,9 +102,9 @@ public class CreateReferencesTest extends TestCase {
 
         Gene resGene = (Gene) row.get(0);
 
-        HashSet<Integer> expectedCollectionIds = new HashSet<Integer>(Arrays.asList(new Integer[] {storedExon1.getId(), storedExon2.getId(), storedExon3.getId()}));
+        HashSet<Integer> expectedCollectionIds = new HashSet(Arrays.asList(new Integer[] {storedExon1.getId(), storedExon2.getId(), storedExon3.getId()}));
 
-        HashSet<Integer> actualCollectionIds = new HashSet<Integer>();
+        HashSet<Integer> actualCollectionIds = new HashSet();
         for (Object o : resGene.getExons()) {
             actualCollectionIds.add(((Exon) o).getId());
         }
@@ -128,9 +128,9 @@ public class CreateReferencesTest extends TestCase {
 
         Chromosome resChromosome = (Chromosome) row.get(0);
 
-        HashSet<Integer> expectedCollectionIds = new HashSet<Integer>(Arrays.asList(new Integer[] {storedGeneLocation1.getId(), storedGeneLocation2.getId()}));
+        HashSet<Integer> expectedCollectionIds = new HashSet(Arrays.asList(new Integer[] {storedGeneLocation1.getId(), storedGeneLocation2.getId()}));
 
-        HashSet<Integer> actualCollectionIds = new HashSet<Integer>();
+        HashSet<Integer> actualCollectionIds = new HashSet();
         for (Object o : resChromosome.getLocatedFeatures()) {
             actualCollectionIds.add(((Location) o).getId());
         }
@@ -139,81 +139,85 @@ public class CreateReferencesTest extends TestCase {
     }
 
 
-//    public void testCreateUtrRefs() throws Exception {
-//        CreateReferences cr = new CreateReferences(osw);
-//        cr.createUtrRefs();
-//
-//        Query q = new Query();
-//        QueryClass qcMRNA = new QueryClass(MRNA.class);
-//        q.addFrom(qcMRNA);
-//        q.addToSelect(qcMRNA);
-//        QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
-//        SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("transcript1"));
-//        q.setConstraint(sc);
-//
-//        ObjectStore os = osw.getObjectStore();
-//        Results res = os.execute(q);
-//        ResultsRow row = (ResultsRow) res.iterator().next();
-//
-//        MRNA resMRNA = (MRNA) row.get(0);
-//
-//        assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
-//        assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
-//    }
+    public void testCreateUtrRefs() throws Exception {
+        CreateReferences cr = new CreateReferences(osw);
+        cr.createUtrRefs();
+
+        Query q = new Query();
+        QueryClass qcMRNA = new QueryClass(osw.getModel().getClassDescriptorByName("MRNA").getType());
+        q.addFrom(qcMRNA);
+        q.addToSelect(qcMRNA);
+        QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
+        SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("transcript1"));
+        q.setConstraint(sc);
+
+        ObjectStore os = osw.getObjectStore();
+        Results res = os.execute(q);
+        ResultsRow row = (ResultsRow) res.iterator().next();
+
+        MRNA resMRNA = (MRNA) row.get(0);
+
+        assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
+        assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
+    }
 
 
     private void createData() throws Exception {
         osw.flushObjectById();
-        osw.beginTransaction();
 
-        storedChromosome = DynamicUtil.createObject(Chromosome.class);
+        storedChromosome = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         storedChromosome.setPrimaryIdentifier("chr1");
 
-        storedGene1 = DynamicUtil.createObject(Gene.class);
+        storedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         storedGene1.setPrimaryIdentifier("gene1");
 
-        storedGene2 = DynamicUtil.createObject(Gene.class);
+        storedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         storedGene2.setPrimaryIdentifier("gene2");
 
-        storedGeneLocation1 = DynamicUtil.createObject(Location.class);
+        storedGeneLocation1 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         storedGeneLocation1.setLocatedOn(storedChromosome);
         storedGeneLocation1.setFeature(storedGene1);
 
-        storedGeneLocation2 = DynamicUtil.createObject(Location.class);
+        storedGeneLocation2 =
+            (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         storedGeneLocation2.setLocatedOn(storedChromosome);
         storedGeneLocation2.setFeature(storedGene2);
 
-        storedTranscript1 = DynamicUtil.createObject(MRNA.class);
+        storedTranscript1 =
+            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript1.setPrimaryIdentifier("transcript1");
         storedTranscript1.setGene(storedGene1);
 
-        storedTranscript2 = DynamicUtil.createObject(MRNA.class);
+        storedTranscript2 =
+            (MRNA) DynamicUtil.createObject(Collections.singleton(MRNA.class));
         storedTranscript2.setPrimaryIdentifier("transcript2");
         storedTranscript2.setGene(storedGene1);
 
-        storedExon1 = DynamicUtil.createObject(Exon.class);
+        storedExon1 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon1.setPrimaryIdentifier("exon1");
 
-        storedExon2 = DynamicUtil.createObject(Exon.class);
+        storedExon2 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon2.setPrimaryIdentifier("exon2");
 
-        storedExon3 = DynamicUtil.createObject(Exon.class);
+        storedExon3 = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         storedExon3.setPrimaryIdentifier("exon3");
 
         storedTranscript1.addExons(storedExon1);
         storedTranscript1.addExons(storedExon2);
         storedTranscript2.addExons(storedExon3);
 
-        storedThreePrimeUTR = DynamicUtil.createObject(ThreePrimeUTR.class);
+        storedThreePrimeUTR =
+            (ThreePrimeUTR) DynamicUtil.createObject(Collections.singleton(ThreePrimeUTR.class));
         storedThreePrimeUTR.setPrimaryIdentifier("utr1-threePrimeUTR");
         storedThreePrimeUTR.addTranscripts(storedTranscript1);
 
-        storedFivePrimeUTR = DynamicUtil.createObject(FivePrimeUTR.class);
+        storedFivePrimeUTR =
+            (FivePrimeUTR) DynamicUtil.createObject(Collections.singleton(FivePrimeUTR.class));
         storedFivePrimeUTR.setPrimaryIdentifier("utr2-fivePrimeUTR");
         storedFivePrimeUTR.addTranscripts(storedTranscript1);
 
-        Set<InterMineObject> toStore = new HashSet<InterMineObject>(Arrays.asList(
-                new InterMineObject[] {
+        Set toStore = new HashSet(Arrays.asList(new Object[] {
                 storedChromosome,
                 storedGene1, storedGene2,
                 storedGeneLocation1, storedGeneLocation2,
@@ -222,8 +226,11 @@ public class CreateReferencesTest extends TestCase {
                 storedThreePrimeUTR, storedFivePrimeUTR
         }));
 
-        for (InterMineObject o : toStore) {
-            osw.store(o);
+        Iterator i = toStore.iterator();
+        osw.beginTransaction();
+        while (i.hasNext()) {
+            InterMineObject object = (InterMineObject) i.next();
+            osw.store(object);
         }
 
         osw.commitTransaction();

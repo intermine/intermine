@@ -71,9 +71,6 @@
       <property name="src.data.dir" location="/micklem/data/flybase/homology/current"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
     </source>
-    <source name="anopheles-identifiers" type="anopheles-identifiers">
-      <property name="src.data.dir" location="/micklem/data/anopheles-identifiers/current"/>
-    </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>

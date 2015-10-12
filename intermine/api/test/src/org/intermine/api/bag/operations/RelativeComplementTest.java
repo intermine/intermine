@@ -23,7 +23,7 @@ public class RelativeComplementTest extends AbstractBagOperationTestCase {
         super.setUp();
         Long start = System.currentTimeMillis();
         hasAddresses = testUser.createBag("has-addresses", "HasAddress", "Has-Addresses", im.getClassKeys());
-        Company c = DynamicUtil.createObject(Company.class);
+        Company c = DynamicUtil.simpleCreateObject(Company.class);
         ObjectStoreWriter osw = os.getNewWriter();
         osw.store(c);
         osw.close();
@@ -40,14 +40,14 @@ public class RelativeComplementTest extends AbstractBagOperationTestCase {
         assertEquals("Employable", winnowed.getType());
         assertEquals(10, winnowed.getSize());
     }
-
+    
     public void testOneFromOne() throws Exception {
         BagOperation operation = new RelativeComplement(im.getModel(), testUser,
                 Arrays.asList(bagA),
                 Arrays.asList(bagC));
         operation.setClassKeys(im.getClassKeys());
         InterMineBag winnowed = operation.operate();
-
+   
         assertEquals("Employee", winnowed.getType());
         assertEquals(8, winnowed.getSize());
     }
@@ -59,7 +59,7 @@ public class RelativeComplementTest extends AbstractBagOperationTestCase {
             Arrays.asList(bagC));
         operation.setClassKeys(im.getClassKeys());
         InterMineBag winnowed = operation.operate();
-
+   
         assertEquals("Employable", winnowed.getType());
         assertEquals(18, winnowed.getSize());
     }

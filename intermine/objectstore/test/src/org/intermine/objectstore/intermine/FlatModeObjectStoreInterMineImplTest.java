@@ -35,12 +35,22 @@ public class FlatModeObjectStoreInterMineImplTest extends ObjectStoreInterMineIm
         results.put("InterfaceField", NO_RESULT);
         results.put("InterfaceReference", NO_RESULT);
         results.put("InterfaceCollection", NO_RESULT);
+        results.put("DynamicInterfacesAttribute", NO_RESULT);
+        results.put("DynamicClassInterface", NO_RESULT);
+        results.put("DynamicClassRef1", NO_RESULT);
+        results.put("DynamicClassRef2", NO_RESULT);
+        results.put("DynamicClassRef3", NO_RESULT);
+        results.put("DynamicClassRef4", NO_RESULT);
+        results.put("DynamicClassConstraint", NO_RESULT);
+        results.put("DynamicBagConstraint2", NO_RESULT);
         results.put("OrSubquery", NO_RESULT);
         results.put("SelectClassFromInterMineObject", NO_RESULT);
         Object[][] r = new Object[][] { { CEO.class, new Long(1) },
                                         { Employee.class, new Long(3) },
                                         { Manager.class, new Long(2) } };
         results.put("SelectClassFromEmployee", toList(r));
+        results.put("SelectClassFromBrokeEmployable", NO_RESULT);
+        results.put("SubclassCollection2", NO_RESULT);
         results.put("ConstrainClass1", NO_RESULT);
         results.put("ConstrainClass2", NO_RESULT);
     }

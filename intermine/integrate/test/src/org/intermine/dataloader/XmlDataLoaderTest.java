@@ -40,7 +40,7 @@ public class XmlDataLoaderTest extends TestCase
     protected int fakeId = 0;
     protected File file;
     protected XmlBinding binding;
-    protected ArrayList<InterMineObject> toDelete;
+    protected ArrayList toDelete;
     protected XmlDataLoader loader;
 
     public XmlDataLoaderTest(String arg) {
@@ -52,11 +52,13 @@ public class XmlDataLoaderTest extends TestCase
         iw = IntegrationWriterFactory.getIntegrationWriter("integration.unittestmulti");
         loader = new XmlDataLoader(iw);
         binding = new XmlBinding(writer.getModel());
-        toDelete = new ArrayList<InterMineObject>();
+        toDelete = new ArrayList();
     }
 
     public void tearDown() throws Exception {
-        for (InterMineObject o : toDelete) {
+        Iterator deleteIter = toDelete.iterator();
+        while (deleteIter.hasNext()) {
+            InterMineObject o = (InterMineObject) deleteIter.next();
             writer.delete(o);
         }
         if (file != null) {
@@ -112,7 +114,7 @@ public class XmlDataLoaderTest extends TestCase
         a1.setAddress("a1");
         m1.setAddress(a1);
 
-        List<InterMineObject> list = new ArrayList<InterMineObject>();
+        List list = new ArrayList();
         list.add(m1);
 
         file = File.createTempFile("temp", "xml");

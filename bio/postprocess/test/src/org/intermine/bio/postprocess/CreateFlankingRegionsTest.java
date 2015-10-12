@@ -1,10 +1,9 @@
 package org.intermine.bio.postprocess;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Chromosome;
@@ -18,6 +17,8 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
+
+import junit.framework.TestCase;
 
 public class CreateFlankingRegionsTest extends TestCase {
 
@@ -82,12 +83,14 @@ public class CreateFlankingRegionsTest extends TestCase {
     private void setupData() throws Exception {
         Set<InterMineObject> toStore = new HashSet<InterMineObject>();
 
-        Organism organism = DynamicUtil.createObject(Organism.class);
+        Organism organism =
+            (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         organism.setTaxonId(new Integer(7227));
 
         toStore.add(organism);
 
-        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
+        Chromosome chr =
+            (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(200000));
         chr.setId(new Integer(101));
@@ -95,14 +98,15 @@ public class CreateFlankingRegionsTest extends TestCase {
 
         toStore.add(chr);
 
-        Gene gene = DynamicUtil.createObject(Gene.class);
+        Gene gene =
+            (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setChromosome(chr);
         gene.setPrimaryIdentifier("gene1");
         gene.setOrganism(organism);
 
         toStore.add(gene);
 
-        Location loc = DynamicUtil.createObject(Location.class);
+        Location loc =  (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         loc.setStart(new Integer(100000));
         loc.setEnd(new Integer(101000));
         loc.setStrand("-1");
@@ -111,7 +115,9 @@ public class CreateFlankingRegionsTest extends TestCase {
 
         toStore.add(loc);
 
-        for (InterMineObject o : toStore) {
+        Iterator iter = toStore.iterator();
+        while (iter.hasNext()) {
+            InterMineObject o = (InterMineObject) iter.next();
             osw.store(o);
         }
     }

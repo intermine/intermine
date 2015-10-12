@@ -38,7 +38,7 @@ import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
 import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.StringUtil;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
@@ -52,6 +52,7 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.DynamicUtil;
+import org.intermine.metadata.StringUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
@@ -286,7 +287,8 @@ public class GalaxyExportOptionsController extends TilesAction
         for (int index = 0; index < columns.size(); index++) {
             Path prefix = columns.get(index).getPath().getPrefix();
             ClassDescriptor prefixCD = prefix.getLastClassDescriptor();
-            Class<?> prefixClass = DynamicUtil.getClass(prefixCD.getType());
+            Class<? extends FastPathObject> prefixClass = DynamicUtil.getSimpleClass(prefixCD
+                    .getType());
             // Chromosome is treated as a sequence feature in the model
             if (SequenceFeature.class.isAssignableFrom(prefixClass)
                     && !Chromosome.class.isAssignableFrom(prefixClass)) {

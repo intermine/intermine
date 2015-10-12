@@ -149,7 +149,7 @@ public class QueryGenUtilTest extends StoreDataTestCase {
         Query actual = QueryGenUtil.constructQuery(os.getModel(), "Company reverse.company Department");
 
         Query q = new IqlQuery("SELECT a1_, a2_ FROM Company AS a1_, Department AS a2_ WHERE a2_.company CONTAINS a1_", "org.intermine.model.testmodel").toQuery();
-
+        
         assertEquals(q, actual);
     }
 
@@ -157,7 +157,7 @@ public class QueryGenUtilTest extends StoreDataTestCase {
         Query actual = QueryGenUtil.constructQuery(os.getModel(), "Company departments Department 1.address Address");
 
         Query q = new IqlQuery("SELECT a1_, a2_, a3_ FROM Company AS a1_, Department AS a2_, Address AS a3_ WHERE a1_.departments CONTAINS a2_ AND a1_.address CONTAINS a3_", "org.intermine.model.testmodel").toQuery();
-
+        
         assertEquals(q, actual);
     }
 
@@ -209,7 +209,7 @@ public class QueryGenUtilTest extends StoreDataTestCase {
         String exp2 = "CEO department Department";
         String exp3 = "Manager department Department";
 
-        Set<String> expected = new LinkedHashSet<String>(Arrays.asList(new String[] {exp1, exp2, exp3}));
+        Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
         assertEquals(expected, QueryGenUtil.expandPath(os, original));
     }
 
@@ -221,7 +221,7 @@ public class QueryGenUtilTest extends StoreDataTestCase {
         String exp2 = "Company departments Department employees Manager";
         String exp3 = "Company departments Department employees CEO";
 
-        Set<String> expected = new LinkedHashSet<String>(Arrays.asList(new String[] {exp1, exp2, exp3}));
+        Set expected = new LinkedHashSet(Arrays.asList(new Object[] {exp1, exp2, exp3}));
         assertEquals(expected, QueryGenUtil.expandPath(os, original));
     }
 
@@ -238,8 +238,7 @@ public class QueryGenUtilTest extends StoreDataTestCase {
         String exp8 = "CEO department Department employees Manager";
         String exp9 = "CEO department Department employees CEO";
 
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9)),
-                QueryGenUtil.expandPath(os, original));
+        assertEquals(new LinkedHashSet(Arrays.asList(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9)), QueryGenUtil.expandPath(os, original));
     }
 
     public void testExpandPathMultipleWithOrder() throws Exception {
@@ -255,31 +254,30 @@ public class QueryGenUtilTest extends StoreDataTestCase {
         String exp8 = "CEO department Department employees Manager ORDER BY 1.name 2.name 3.name";
         String exp9 = "CEO department Department employees CEO ORDER BY 1.name 2.name 3.name";
 
-        assertEquals(new LinkedHashSet<String>(Arrays.asList(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9)),
-                QueryGenUtil.expandPath(os, original));
+        assertEquals(new LinkedHashSet(Arrays.asList(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9)), QueryGenUtil.expandPath(os, original));
     }
 
     public void testGetClassNames() throws Exception {
         String clsName = "+Employee";
-        Set<String> expected = new HashSet<String>(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
+        Set expected = new HashSet(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
         assertEquals(expected, QueryGenUtil.getClassNames(os, clsName));
     }
 
     public void testGetClassNames2() throws Exception {
         String clsName = "Employee,Department";
-        Set<String> expected = new HashSet<String>(Arrays.asList("Employee", "Department"));
+        Set expected = new HashSet(Arrays.asList("Employee", "Department"));
         assertEquals(expected, QueryGenUtil.getClassNames(os, clsName));
     }
 
     public void testGetClassNames3() throws Exception {
         String clsName = "+Employee,Department";
-        Set<String> expected = new HashSet<String>(Arrays.asList("Employee", "Manager", "CEO", "Department"));
+        Set expected = new HashSet(Arrays.asList("Employee", "Manager", "CEO", "Department"));
         assertEquals(expected, QueryGenUtil.getClassNames(os, clsName));
     }
 
     public void testGetClassNames4() throws Exception {
         String clsName = "Department.employees.class";
-        Set<String> expected = new HashSet<String>(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
+        Set expected = new HashSet(Arrays.asList(new String[] {"Employee", "Manager", "CEO"}));
         assertEquals(expected, QueryGenUtil.getClassNames(os, clsName));
     }
 

@@ -61,13 +61,15 @@ public class GenomicRegionSequenceExporter
      */
     public void export(List<GenomicRegion> grList) throws Exception {
         GenomicRegion aRegion = grList.get(0);
-        Organism org = DynamicUtil.createObject(Organism.class);
+        Organism org = (Organism) DynamicUtil.createObject(Collections
+                .singleton(Organism.class));
         org.setShortName(aRegion.getOrganism());
 
         org = os.getObjectByExample(org, Collections.singleton("shortName"));
 
         for (GenomicRegion gr : grList) {
-            Chromosome chr = DynamicUtil.createObject(Chromosome.class);
+            Chromosome chr = (Chromosome) DynamicUtil.createObject(
+                    Collections.singleton(Chromosome.class));
             chr.setPrimaryIdentifier(gr.getChr());
             chr.setOrganism(org);
 

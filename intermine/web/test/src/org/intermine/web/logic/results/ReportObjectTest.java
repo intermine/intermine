@@ -3,6 +3,7 @@ package org.intermine.web.logic.results;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +37,12 @@ public class ReportObjectTest extends InterMineAPITestCase
         super(null);
 
         // InterMine Objects
-        company = DynamicUtil.createObject(Company.class);
+        company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setId(new Integer(1));
         company.setName("Weyland Yutani");
         company.setVatNumber(101);
 
-        address = DynamicUtil.createObject(Address.class);
+        address = (Address) DynamicUtil.createObject(Collections.singleton(Address.class));
         address.setId(new Integer(1));
         address.setAddress("Space");
 

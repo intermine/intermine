@@ -19,6 +19,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.metadata.Util;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
@@ -126,7 +127,9 @@ public final class PathUtil
                     for (Object element : (Collection<?>) current) {
 
                         // what is the class type?
-                        String objectClass = DynamicUtil.getClass(element).getSimpleName();
+                        String objectClass = DynamicUtil.getSimpleClass(
+                                (Class<? extends FastPathObject>) element.getClass())
+                                .getSimpleName();
 
                         // form a new path string starting with the next element
                         //  in the path, separated by a '.'
@@ -171,6 +174,11 @@ public final class PathUtil
      * @return a boolean
      */
     public static boolean canAssignObjectToType(Class<?> cls, InterMineObject obj) {
-        return cls.isAssignableFrom(DynamicUtil.getClass(obj));
+        for (Class<?> c : Util.decomposeClass(obj.getClass())) {
+            if (cls.isAssignableFrom(c)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
