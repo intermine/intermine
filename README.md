@@ -69,7 +69,7 @@ This product includes software developed by the
 [Apache Software Foundation][apache]
 
 [travis-badge-master]: https://travis-ci.org/intermine/intermine.svg?branch=master
-[travis-badge-beta]: https://travis-ci.org/intermine/intermine.svg?branch=beta
+[travis-badge-dev]: https://travis-ci.org/intermine/intermine.svg?branch=dev
 [ci]: https://travis-ci.org/intermine/intermine
 [readthedocs]: http://intermine.readthedocs.org/en/latest
 [tutorial]: http://intermine.readthedocs.org/en/latest/get-started/tutorial
