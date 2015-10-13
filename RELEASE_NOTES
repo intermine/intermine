@@ -8,6 +8,54 @@
  *
  */
 
+InterMine 1.6 (Halloween 2015)
+
+#1163 - QueryBuilder: error querying for NULL relationships
+#1153 - FlyMine: create-utr-references is failing
+#1150 - IntegrationWriterDataTrackingImplTest failing tests, sometimes.
+#1147 - Web service: speed up requests
+#1142 - List Analysis - doesn't show the list contents for SNVs
+#1136 - Problem with SNV list analysis page on upload
+#1135 - FlyMine: postprocess failed on UTR references
+#1125 - UniProt: add publications to genes too
+#1124 - CORS issues
+#1121 - Query Builder: cannot query for disease names because of trailing whitespace
+#1116 - Make protein isoforms collection
+#1114 - YeastMine: serial number not being reset
+#1108 - Point Mutations: new index doesn't seem to handle features of size = 1;
+#1105 - HumanMine - add UniProt fasta
+#1103 - FlyMine: bad locations being created when there are no gaps between features
+#1102 - Result table preview with many collections overflows off screen.
+#1095 - FlyMine: Queries using overlaps are failing
+#1094 - Code generation not updating in result tables in Safari 8
+#1079 - Panther not parsing homologues parameter correctly
+#1072 - Counts missing from templates on report / list pages
+#1071 - Complexes - fails for human
+#1067 - More queries link in summary area on http://www.flymine.org/ fails
+#1065 - FlyMine: flyfish failed on dull pointer exception
+#1063 - FASTA: error loading locations
+#1058 - Esyn: change to use pipe delimiter
+#1053 - Simple objects fail to show in results tables with outer joins
+#1051 - Cytoscape network viewer - upgrade
+#1049 - Add a nicer error if EsyN network to large to load.
+#1035 - VCF data parser for InterMine
+#1032 - CORS issue - www.humanmine.org and humanmine.org
+#1024 - HumanMine config - remove bad paths
+#1019 - Duplicate BioGrid interaction data
+#992 - InterMineObjectFetcher.run() does not report a configuration error
+#968 - Reduce tracker table size
+#962 - Interaction region not a Bioentity causing problems in located features collection
+#919 - Unhelpful error when no database connections available
+#912 - Better error message for running out of connections
+#896 - keyword search task aborts silently if it encounters an error
+#834 - Fresh install on beta has issues with java 8
+#804 - Add complex interaction data to InterMine
+#745 - Tomcat 8
+#652 - Add class keys for sequence feature
+#420 - Save XML button gives "Bad URL" in Safari
+#210 - VCF data parser to load data into Intermine. 
+#169 - Load locations of protein domains
+
 InterMine 1.5.6
 
 #1075 -  Fix mising template row counts. 
