@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entrySet level="2" version="5" minorVersion="4" xsi:schemaLocation="http://psi.hupo.org/mi/mif http://psidev.sourceforge.net/mi/rel25/src/MIF254.xsd" xmlns="http://psi.hupo.org/mi/mif" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <entry>
+        <source releaseDate="2014-11-10Z">
+            <names>
+                <shortLabel>IntAct</shortLabel>
+                <fullName>European Bioinformatics Institute</fullName>
+            </names>
+            <bibref>
+                <xref>
+                    <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+            </bibref>
+            <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0469" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+                <secondaryRef db="intact" dbAc="MI:0469" id="EBI-10" refType="identity" refTypeAc="MI:0356"/>
+            </xref>
+            <attributeList>
+                <attribute name="postaladdress">European Bioinformatics Institute; Wellcome Trust Genome Campus; Hinxton, Cambridge; CB10 1SD; United Kingdom</attribute>
+                <attribute name="url" nameAc="MI:0614">http://www.ebi.ac.uk/intact/</attribute>
+                <attribute name="url">http://www.ebi.ac.uk/</attribute>
+            </attributeList>
+        </source>
+        <experimentList>
+            <experimentDescription id="8124">
+                <names>
+                    <shortLabel>yeast-1</shortLabel>
+                    <fullName>Curated complexes - human</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" dbAc="MI:0469" id="EBI-852566" refType="identity" refTypeAc="MI:0356"/>
+                </xref>
+                <hostOrganismList>
+                    <hostOrganism ncbiTaxId="559292">
+                        <names>
+                            <shortLabel>yeast</shortLabel>
+                            <fullName>Saccharomyces cerevisiae (strain ATCC 204508 / S288c)</fullName>
+                        </names>
+                    </hostOrganism>
+                </hostOrganismList>
+                <interactionDetectionMethod>
+                    <names>
+                        <shortLabel>inferred by curator</shortLabel>
+                        <fullName>inferred by curator</fullName>
+                        <alias typeAc="MI:0303" type="go synonym">modelled by curator</alias>
+                        <alias typeAc="MI:0303" type="go synonym">modeled by curator</alias>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0364" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="intact" dbAc="MI:0469" id="EBI-608505" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </interactionDetectionMethod>
+                <participantIdentificationMethod>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0396" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1465" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </participantIdentificationMethod>
+                <attributeList>
+                    <attribute name="comment" nameAc="MI:0612">A collection of literature-mined stable and functionally defined human molecular complexes of known stoichiometry and biological role.</attribute>
+                    <attribute name="curated-complex"/>
+                </attributeList>
+            </experimentDescription>
+        </experimentList>
+        <interactorList>
+            <interactor id="8125">
+                <names>
+                    <shortLabel>trpe_yeast</shortLabel>
+                    <fullName>Anthranilate synthase component 1</fullName>
+                    <alias typeAc="MI:0301" type="gene name">TRP2</alias>
+                    <alias typeAc="MI:0305" type="locus name">YER090W</alias>
+                    <alias typeAc="MI:0302" type="gene name synonym">Anthranilate synthase component I</alias>
+                </names>
+                <xref>
+                    <primaryRef db="uniprotkb" dbAc="MI:0486" id="P00899" version="SP_76" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0005950"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0000162"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0004049"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005256"/>
+                    <secondaryRef db="refseq" dbAc="MI:0481" id="NP_011014.1"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005801"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR019999"/>
+                    <secondaryRef db="intact" dbAc="MI:0469" id="EBI-19575" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR006805"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR015890"/>
+                    <secondaryRef db="sgd" dbAc="MI:0484" id="S000000892"/>
+                    <secondaryRef db="uniprotkb" dbAc="MI:0486" id="D3DLZ7" version="SP_109" refType="secondary-ac" refTypeAc="MI:0360"/>
+                </xref>
+                <interactorType>
+                    <names>
+                        <shortLabel>protein</shortLabel>
+                        <fullName>protein</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="see-also" refTypeAc="MI:0361"/>
+                        <secondaryRef db="intact" dbAc="MI:0469" id="EBI-619654" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </interactorType>
+                <organism ncbiTaxId="559292">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae (strain ATCC 204508 / S288c)</fullName>
+                    </names>
+                </organism>
+                <sequence>MTASIKIQPDIDSLKQLQQQNDDSSINMYPVYAYLPSLDLTPHVAYLKLAQLNNPDRKESFLLESAKTNNELDRYSFIGISPRKTIKTGPTEGIETDPLEILEKEMSTFKVAENVPGLPKLSGGAIGYISYDCVRYFEPKTRRPLKDVLRLPEAYLMLCDTIIAFDNVFQRFQIIHNINTNETSLEEGYQAAAQIITDIVSKLTDDSSPIPYPEQPPIKLNQTFESNVGKEGYENHVSTLKKHIKKGDIIQGVPSQRVARPTSLHPFNIYRHLRTVNPSPYLFYIDCLDFQIIGASPELLCKSDSKNRVITHPIAGTVKRGATTEEDDALADQLRGSLKDRAEHVMLVDLARNDINRICDPLTTSVDKLLTIQKFSHVQHLVSQVSGVLRPEKTRFDAFRSIFPAGTVSGAPKVRAMELIAELEGERRGVYAGAVGHWSYDGKTMDNCIALRTMVYKDGIAYLQAGGGIVYDSDEYDEYVETMNKMMANHSTIVQAEELWADIVGSA</sequence>
+            </interactor>
+            <interactor id="8126">
+                <names>
+                    <shortLabel>trpg_yeast</shortLabel>
+                    <fullName>Multifunctional tryptophan biosynthesis protein</fullName>
+                    <alias typeAc="MI:0301" type="gene name">TRP3</alias>
+                    <alias typeAc="MI:0305" type="locus name">YKL211C</alias>
+                </names>
+                <xref>
+                    <primaryRef db="uniprotkb" dbAc="MI:0486" id="P00937" version="SP_86" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="cygd" dbAc="MI:0464" id="YKL211c"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0005950"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0004049"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0000162"/>
+                    <secondaryRef db="uniprotkb" dbAc="MI:0486" id="D6VWZ2" version="SP_119" refType="secondary-ac" refTypeAc="MI:0360"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013798"/>
+                    <secondaryRef db="refseq" dbAc="MI:0481" id="NP_012711.1"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0006541"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR006221"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR017926"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013785"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001468"/>
+                    <secondaryRef db="sgd" dbAc="MI:0484" id="S000001694"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR029062"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0004425"/>
+                    <secondaryRef db="interpro" dbAc="MI:0449" id="IPR011060"/>
+                    <secondaryRef db="intact" dbAc="MI:0469" id="EBI-19585" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0016740"/>
+                </xref>
+                <interactorType>
+                    <names>
+                        <shortLabel>protein</shortLabel>
+                        <fullName>protein</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="see-also" refTypeAc="MI:0361"/>
+                        <secondaryRef db="intact" dbAc="MI:0469" id="EBI-619654" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </interactorType>
+                <organism ncbiTaxId="559292">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae (strain ATCC 204508 / S288c)</fullName>
+                    </names>
+                </organism>
+                <sequence>MSVHAATNPINKHVVLIDNYDSFTWNVYEYLCQEGAKVSVYRNDAITVPEIAALNPDTLLISPGPGHPKTDSGISRDCIRYFTGKIPVFGICMGQQCMFDVFGGEVAYAGEIVHGKTSPISHDNCGIFKNVPQGIAVTRYHSLAGTESSLPSCLKVTASTENGIIMGVRHKKYTVEGVQFHPESILTEEGHLMIRNILNVSGGTWEENKSSPSNSILDRIYARRKIDVNEQSKIPGFTFQDLQSNYDLGLAPPLQDFYTVLSSSHKRAVVLAEVKRASPSKGPICLKAVAAEQALKYAEAGASAISVLTEPHWFHGSLQDLVNVRKILDLKFPPKERPCVLRKEFIFSKYQILEARLAGADTVLLIVKMLSQPLLKELYSYSKDLNMEPLVEVNSKEELQRALEIGAKVVGVNNRDLHSFNVDLNTTSNLVESIPKDVLLIALSGITTRDDAEKYKKEGVHGFLVGEALMKSTDVKKFIHELCE</sequence>
+            </interactor>
+        </interactorList>
+        <interactionList>
+            <interaction id="8127">
+                <names>
+                    <shortLabel>aas_yeast</shortLabel>
+                    <fullName>Anthranilate synthase </fullName>
+                    <alias typeAc="MI:1315" type="complex recommended name">anthranilate synthase complex</alias>
+                    <alias typeAc="MI:0673" type="complex synonym">InGPSase/ASase complex;</alias>
+                    <alias typeAc="MI:1316" type="complex systematic name">TRP2:TRP3</alias>
+                </names>
+                <xref>
+                    <primaryRef db="intenz" dbAc="MI:0585" id="4.1.3.27" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0000162" secondary="tryptophan biosynthetic process" refType="process" refTypeAc="MI:0359"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0006541" secondary="glutamine metabolic process" refType="process" refTypeAc="MI:0359"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0005950" secondary="anthranilate synthase complex" refType="component" refTypeAc="MI:0354"/>
+                    <secondaryRef db="go" dbAc="MI:0448" id="GO:0004049" secondary="anthranilate synthase activity" refType="function" refTypeAc="MI:0355"/>
+                    <secondaryRef db="evidence ontology" dbAc="MI:1331" id="ECO:0000306"/>
+                    <secondaryRef db="intact" dbAc="MI:0469" id="EBI-2640371" refType="identity" refTypeAc="MI:0356"/>
+                </xref>
+                <experimentList>
+                    <experimentRef>8124</experimentRef>
+                </experimentList>
+                <participantList>
+                    <participant id="8128">
+                        <names>
+                            <shortLabel>n/a</shortLabel>
+                        </names>
+                        <xref>
+                            <primaryRef db="intact" dbAc="MI:0469" id="EBI-2640374" refType="identity" refTypeAc="MI:0356"/>
+                        </xref>
+                        <interactorRef>8125</interactorRef>
+                        <biologicalRole>
+                            <names>
+                                <shortLabel>unspecified role</shortLabel>
+                                <fullName>unspecified role</fullName>
+                            </names>
+                            <xref>
+                                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                                <secondaryRef db="intact" dbAc="MI:0469" id="EBI-77781" refType="identity" refTypeAc="MI:0356"/>
+                                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                            </xref>
+                        </biologicalRole>
+                        <experimentalRoleList>
+                            <experimentalRole>
+                                <names>
+                                    <shortLabel>neutral component</shortLabel>
+                                    <fullName>neutral component</fullName>
+                                </names>
+                                <xref>
+                                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                                    <secondaryRef db="intact" dbAc="MI:0469" id="EBI-55" refType="identity" refTypeAc="MI:0356"/>
+                                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                                </xref>
+                            </experimentalRole>
+                        </experimentalRoleList>
+                        <attributeList>
+                            <attribute name="comment" nameAc="MI:0612">Stoichiometry: 1.0</attribute>
+                        </attributeList>
+                    </participant>
+                    <participant id="8129">
+                        <names>
+                            <shortLabel>n/a</shortLabel>
+                        </names>
+                        <xref>
+                            <primaryRef db="intact" dbAc="MI:0469" id="EBI-2640373" refType="identity" refTypeAc="MI:0356"/>
+                        </xref>
+                        <interactorRef>8126</interactorRef>
+                        <biologicalRole>
+                            <names>
+                                <shortLabel>unspecified role</shortLabel>
+                                <fullName>unspecified role</fullName>
+                            </names>
+                            <xref>
+                                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                                <secondaryRef db="intact" dbAc="MI:0469" id="EBI-77781" refType="identity" refTypeAc="MI:0356"/>
+                                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                            </xref>
+                        </biologicalRole>
+                        <experimentalRoleList>
+                            <experimentalRole>
+                                <names>
+                                    <shortLabel>neutral component</shortLabel>
+                                    <fullName>neutral component</fullName>
+                                </names>
+                                <xref>
+                                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0497" refType="identity" refTypeAc="MI:0356"/>
+                                    <secondaryRef db="intact" dbAc="MI:0469" id="EBI-55" refType="identity" refTypeAc="MI:0356"/>
+                                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                                </xref>
+                            </experimentalRole>
+                        </experimentalRoleList>
+                        <attributeList>
+                            <attribute name="comment" nameAc="MI:0612">Stoichiometry: 1.0</attribute>
+                        </attributeList>
+                    </participant>
+                </participantList>
+                <interactionType>
+                    <names>
+                        <shortLabel>direct interaction</shortLabel>
+                        <fullName>direct interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0407" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="intact" dbAc="MI:0469" id="EBI-608833" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </interactionType>
+                <modelled>false</modelled>
+                <intraMolecular>false</intraMolecular>
+                <negative>false</negative>
+                <attributeList>
+                    <attribute name="curated-complex">Catalyses the conversion of chorismic acid to anthranilic acid in the first step in the tryptophan branch of aromatic amino acid biosynthesis. Tryptophan-specific regulation of enzyme activity level occurs through feedback regulation by the end product of the pathway, regulated by a tryptophan regulatory element (62LLESAKTNNELDRYS76) within Trp2. Component I (Trp2) and Component II (Trp3) are required for   glutamine-dependent ASase activity while component I can use ammonia as cosubstrate without need of complex formation. . The C-terminal half of Trp3 also has indole-3-glycerol phosphate synthase activity.</attribute>
+                    <attribute name="complex-properties" nameAc="MI:0629">Mol. Wt. = 130kDa</attribute>
+                </attributeList>
+            </interaction>
+        </interactionList>
+    </entry>
+</entrySet>

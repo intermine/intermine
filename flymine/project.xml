@@ -536,14 +536,12 @@
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
-
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir"
                 location="/micklem/data/flymine/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
-
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -553,6 +551,10 @@
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
+    </source>
+    <source name="psi-complexes" type="psi-complexes">
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
+      <property name="complexes.source" value="sgd"/>
     </source>
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>

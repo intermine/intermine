@@ -1,0 +1,4 @@
+<project name="psi-complexes-tasks" default="default" basedir=".">
+  <description>build psi-complexes tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
