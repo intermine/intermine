@@ -351,13 +351,17 @@ public class BioGridConverter extends BioFileConverter
             //<interactionList><interaction><interactionType><xref><primaryRef>
             } else if ("primaryRef".equals(qName) && "xref".equals(stack.peek())
                             && stack.search("interactionType") == 2) {
+                // TODO a better way to determine if interaction is physical / genetic
                 String termIdentifier = attrs.getValue("id");
-                holder.methodRefId = getTerm(termIdentifier);
                 String interactionType = PSI_TERMS.get(termIdentifier);
                 if (interactionType == null) {
                     throw new RuntimeException("Bad interaction type:" + termIdentifier);
                 }
                 holder.interactionType = interactionType;
+            //<interactionList><interaction><interactionType><names><shortLabel>
+            } else if ("shortLabel".equals(qName) && "names".equals(stack.peek())
+                                && stack.search("interactionType") == 2) {
+                attName = "relationshipType";
             // <participant id="62692"><interactorRef>62692</interactorRef>
             // <experimentalRoleList><experimentalRole><names><shortLabel>
             } else if ("shortLabel".equals(qName) && stack.search("experimentalRole") == 2) {
@@ -481,6 +485,11 @@ public class BioGridConverter extends BioFileConverter
                     holder.name = name;
                 }
 
+            //<interactionList><interaction><interactionType><names><shortLabel>
+            } else if (attName != null && "relationshipType".equals(attName)
+                    && "shortLabel".equals(qName) && "names".equals(stack.peek())
+                    && stack.search("interactionType") == 2) {
+                holder.relationshipType = attValue.toString();
             //</interaction>
             } else if ("interaction".equals(qName) && holder != null && holder.validActors) {
                 try {
@@ -497,8 +506,8 @@ public class BioGridConverter extends BioFileConverter
             Item interaction = interactions.get(key);
             if (interaction == null) {
                 interaction = createItem("Interaction");
-                interaction.setReference("gene1", refId);
-                interaction.setReference("gene2", gene2RefId);
+                interaction.setReference("participant1", refId);
+                interaction.setReference("participant2", gene2RefId);
                 interactions.put(key, interaction);
                 store(interaction);
             }
@@ -547,7 +556,7 @@ public class BioGridConverter extends BioFileConverter
                     detail.setAttribute("role1", role1);
                     detail.setAttribute("role2", role2);
                     detail.setAttribute("type", h.interactionType);
-                    detail.setReference("relationshipType", h.methodRefId);
+                    detail.setAttribute("relationshipType", h.relationshipType);
                     detail.setReference("experiment", h.eh.experimentRefId);
                     if (StringUtils.isEmpty(h.name)) {
                         String prettyName = StringUtils.join(h.identifiers, "_");
@@ -559,7 +568,7 @@ public class BioGridConverter extends BioFileConverter
                     detail.addCollection(allInteractors);
 
                     DetailHolder detailHolder = new DetailHolder(h.name, role1, role2,
-                            h.interactionType, h.methodRefId, h.eh.experimentRefId,
+                            h.interactionType, h.relationshipType, h.eh.experimentRefId,
                             interaction.getIdentifier());
 
                     if (interactionDetails.contains(detailHolder.hashCode())) {
@@ -788,7 +797,7 @@ public class BioGridConverter extends BioFileConverter
             protected Set<String> refIds = new HashSet<String>();
             protected Set<String> identifiers = new HashSet<String>();
             protected boolean validActors = true;
-            protected String methodRefId;
+            protected String relationshipType;
             protected String interactionType = "physical";
             protected String name;
 
@@ -814,7 +823,8 @@ public class BioGridConverter extends BioFileConverter
 
             @Override
             public int hashCode() {
-                return (methodRefId.hashCode() + 3 * eh.hashCode() + 5 * identifiers.hashCode());
+                return (relationshipType.hashCode() + 3 * eh.hashCode()
+                        + 5 * identifiers.hashCode());
             }
         }
 

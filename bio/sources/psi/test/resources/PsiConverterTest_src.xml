@@ -261,18 +261,17 @@
                </featureList>
              </participant>
            </participantList>
-           <interactionType>
-             <names>
-               <shortLabel>physical interaction</shortLabel>
-               <fullName>physical interaction</fullName>
-               <alias>aggregation</alias>
-               <alias>aggregation</alias>
-             </names>
-             <xref>
-               <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
-               <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
-             </xref>
-           </interactionType>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical association</shortLabel>
+                        <fullName>physical association</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0915" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="intact" dbAc="MI:0469" id="EBI-1813147" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                    </xref>
+                </interactionType>         
            <attributeList>
              <attribute name="kd">0.0</attribute>
            </attributeList>

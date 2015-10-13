@@ -770,6 +770,7 @@ public class UniprotConverter extends BioDirectoryConverter
             protein.setAttribute("uniprotAccession", uniprotEntry.getUniprotAccession());
             String primaryAccession = uniprotEntry.getPrimaryAccession();
             protein.setAttribute("primaryAccession", primaryAccession);
+            protein.setAttribute("secondaryIdentifier", primaryAccession);
 
             String primaryIdentifier = uniprotEntry.getPrimaryIdentifier();
             protein.setAttribute("uniprotName", primaryIdentifier);

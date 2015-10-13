@@ -2984,6 +2984,43 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+
+   <!-- New in version 18 -->
+
+    <servlet>
+     <servlet-name>ws-complexes-export</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.complexes.ExportService</param-value>
+     </init-param>
+   </servlet>
+
+   <servlet-mapping>
+    <servlet-name>ws-complexes-export</servlet-name>
+    <url-pattern>/service/complexes/export/*</url-pattern>
+    <metadata>
+        <name>Complex Interaction Lookup</name>
+        <minVersion>18</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <name>Find Complexes by Identifier</name>
+            <summary>Lookup Complexes by Identifier</summary>
+            <description format="markdown">
+                This service provides the JSON needed for the Complex Viewer.
+            </description>
+            <param
+                required="false"
+                type="String"
+                default="json"
+                description="The format to return">format</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+   </servlet-mapping>
+
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>

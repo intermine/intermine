@@ -35,6 +35,8 @@
     </fields>
   </class>
 
+
+
   <class className="org.intermine.model.bio.Component">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -78,6 +80,18 @@
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Complex">
+     <headerconfig>
+      <titles>
+        <title mainTitles="identifier|name"/>
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
@@ -200,15 +214,16 @@
 
   <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="gene1.symbol" />
-      <fieldconfig fieldExpr="gene2.symbol" />
+      <fieldconfig fieldExpr="participant1.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant2.primaryIdentifier" />
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.InteractionExperiment">
+
+  <class className="org.intermine.model.bio.InteractionDetail">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationshipType"/>
     </fields>
   </class>
 
@@ -216,6 +231,14 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Interactor">
+    <fields>
+      <fieldconfig fieldExpr="participant.primaryIdentifier" />
+      <fieldconfig fieldExpr="stoichiometry" />
+      <fieldconfig fieldExpr="biologicalRole" />
     </fields>
   </class>
 
