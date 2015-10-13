@@ -37,6 +37,7 @@ import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.StringConstructor;
 import org.intermine.objectstore.DataChangedException;
@@ -645,11 +646,11 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     if (schema.isFlatMode(cld.getType()) && (!schema.isTruncated(schema
                                     .getTableMaster(cld)))
                             && (!(cld.getType().equals(o.getClass())))) {
-
-                        Class<?> cls = DynamicUtil.getClass(o);
-                        if (!(cld.getType().equals(cls))) {
+                        Set<Class<?>> decomposed = Util.decomposeClass(o.getClass());
+                        if (!((decomposed.size() == 1) && cld.getType().equals(decomposed.iterator()
+                                        .next()))) {
                             throw new ObjectStoreException("Non-flat model heirarchy used in flat "
-                                    + "mode. Cannot store object with class = " + cls);
+                                    + "mode. Cannot store object with classes = " + decomposed);
                         }
                     }
                     Object[] values = new Object[tableInfo.colNames.length];
@@ -660,7 +661,17 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                             value = cld.getName();
                         } else if ("class".equals(tableInfo.colNames[colNo])) {
                             if (objectClass == null) {
-                                objectClass = DynamicUtil.getClass(o).getName();
+                                StringBuffer sb = new StringBuffer();
+                                boolean needComma = false;
+                                for (Class<?> objectClazz : Util.decomposeClass(o
+                                        .getClass())) {
+                                    if (needComma) {
+                                        sb.append(" ");
+                                    }
+                                    needComma = true;
+                                    sb.append(objectClazz.getName());
+                                }
+                                objectClass = sb.toString();
                             }
                             value = objectClass;
                         } else if ("OBJECT".equals(tableInfo.colNames[colNo])) {
@@ -718,8 +729,8 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                     if (schema.isFlatMode(cld.getType())) {
                         for (String validFieldName : validFieldNames) {
                             if (!fieldNamesWritten.contains(validFieldName)) {
-                                Class<?> cls = DynamicUtil.getClass(o);
-                                throw new ObjectStoreException("Cannot store object " + cls
+                                Set<Class<?>> decomposed = Util.decomposeClass(o.getClass());
+                                throw new ObjectStoreException("Cannot store object " + decomposed
                                         + " - no column for field " + validFieldName + " in table "
                                         + tableInfo.tableName);
                             }
@@ -734,7 +745,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
                 writeCollections(c, o, collections);
             }
             if (tablesWritten < 1) {
-                throw new ObjectStoreException("Object " + DynamicUtil.getClass(o)
+                throw new ObjectStoreException("Object " + Util.decomposeClass(o.getClass())
                         + " does not map onto any database table.");
             }
             if (o instanceof InterMineObject) {

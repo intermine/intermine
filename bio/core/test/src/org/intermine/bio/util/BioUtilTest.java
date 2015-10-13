@@ -10,15 +10,18 @@ package org.intermine.bio.util;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.intermine.model.FastPathObject;
+import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -47,33 +50,35 @@ public class BioUtilTest extends TestCase
 
     private void createData() throws Exception {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.bio-test");
-        Set<FastPathObject> toStore = new HashSet<FastPathObject>();
+        Set toStore = new HashSet();
 
-        storedOrganism1 = DynamicUtil.createObject(Organism.class);
+        storedOrganism1 = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         storedOrganism1.setShortName("Homo sapiens");
         storedOrganism1.setTaxonId(9606);
         storedOrganism1.setId(new Integer(2001));
         toStore.add(storedOrganism1);
 
-        storedGene1 = DynamicUtil.createObject(Gene.class);
+        storedGene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         storedGene1.setPrimaryIdentifier("gene1");
         storedGene1.setOrganism(storedOrganism1);
         storedGene1.setId(new Integer(3001));
         toStore.add(storedGene1);
 
-        storedOrganism2 = DynamicUtil.createObject(Organism.class);
+        storedOrganism2 = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
         storedOrganism2.setShortName("Drosophila melanogaster");
         storedOrganism2.setTaxonId(7227);
         storedOrganism2.setId(new Integer(2002));
         toStore.add(storedOrganism2);
 
-        storedGene2 = DynamicUtil.createObject(Gene.class);
+        storedGene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         storedGene2.setPrimaryIdentifier("gene2");
         storedGene2.setOrganism(storedOrganism2);
         storedGene2.setId(new Integer(3002));
         toStore.add(storedGene2);
 
-        for (FastPathObject o : toStore) {
+        Iterator iter = toStore.iterator();
+        while (iter.hasNext()) {
+            InterMineObject o = (InterMineObject) iter.next();
             osw.store(o);
         }
         bagContents = Arrays.asList(storedGene1.getId(), storedGene2.getId());
@@ -84,7 +89,7 @@ public class BioUtilTest extends TestCase
         boolean lowercase = false;
         String organismFieldName = "shortName";
         Collection<String> actualOrganismNames = BioUtil.getOrganisms(osw.getObjectStore(), "Gene", bagContents, lowercase, organismFieldName);
-        HashSet<String> expectedOrganismNames = new HashSet<String>(Arrays.asList(new String[] {storedOrganism1.getShortName(),
+        HashSet<String> expectedOrganismNames = new HashSet(Arrays.asList(new String[] {storedOrganism1.getShortName(),
                 storedOrganism2.getShortName()}));
         assertTrue(actualOrganismNames.size() == 2);
         assertTrue(actualOrganismNames.containsAll(expectedOrganismNames));
@@ -100,7 +105,7 @@ public class BioUtilTest extends TestCase
 
         Integer strainId = 46245;
         taxonId = 7237;
-        actualTaxon = BioUtil.replaceStrain(strainId);
+        actualTaxon = BioUtil.replaceStrain(46245);
         assertEquals(taxonId, actualTaxon);
     }
 }

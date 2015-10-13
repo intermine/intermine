@@ -59,7 +59,7 @@ public class RecordIteratorTest
         try {
             osw.beginTransaction();
             for (int k = 0; k < COMPANIES; k++) {
-                Company c =createObject(Company.class);
+                Company c = (Company) createObject(Collections.singleton(Company.class));
                 c.setName("temp-company" + k);
                 c.setVatNumber((k + 1) * (k + 1));
                 osw.store(c);
@@ -85,7 +85,7 @@ public class RecordIteratorTest
                     }
                     osw.store(d);
                     made++;
-
+                    
                     for (int j = 0; j < EMPLOYEES; j++) {
                         Employee e = new Employee();
                         e.setName(String.format("temp-employee-%d-%d-%d", k, i, j));
@@ -147,23 +147,23 @@ public class RecordIteratorTest
                 }
                 return st;
             }
-
+        
     };
 
     private  EitherVisitor<ResultCell, SubTable, Void> printer = new IndentingPrinter(4);
-
+    
     @Before
     public void setup() throws ObjectStoreException {
         osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
     }
-
+    
     @After
     public void teardown() throws ObjectStoreException {
         if (osw != null) {
             osw.close();
         }
     }
-
+    
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @AfterClass
     public static void shutdown() {
@@ -210,7 +210,7 @@ public class RecordIteratorTest
                     osw.delete(c);
                     deleted++;
                 }
-
+                
                 osw.commitTransaction();
             } catch (Exception e) {
                 e.printStackTrace(System.err);
@@ -238,18 +238,18 @@ public class RecordIteratorTest
             "Company.vatNumber");
         return pq;
     }
-
+    
     private static class IndentingPrinter extends EitherVisitor<ResultCell, SubTable, Void> {
-
+        
         int indent = 0;
         int depth = 0;
         String spacer = null;
-
+        
         IndentingPrinter(int indent) {
             this.indent = indent;
             this.spacer = "";
         }
-
+        
         private IndentingPrinter(int indent, int depth) {
             this.indent = indent;
             this.depth = depth;
@@ -276,7 +276,7 @@ public class RecordIteratorTest
             }
             return null;
         }
-
+        
     };
 
     private Map<String, BagQueryResult> getBQRAccumulator() {
@@ -314,7 +314,7 @@ public class RecordIteratorTest
             System.out.println(ja.toString(2));
         }
     }
-
+    
     @Test
     public void allInnerJoined() throws ObjectStoreException {
         PathQuery pq = getPQ();
@@ -325,7 +325,7 @@ public class RecordIteratorTest
         Results res = osw.execute(q, 1000, true, false, true);
 
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
-
+        
         List<Either<ResultCell, SubTable>> row = iter.next();
         String[] values = new String[] {
           "temp-company0", "temp-department-0-0", "temp-employee-0-0-0", "23",
@@ -364,9 +364,9 @@ public class RecordIteratorTest
             }
             return c;
         }
-
+        
     };
-
+    
     @Test public void allOuterJoinedReferences() throws ObjectStoreException {
         PathQuery pq = new PathQuery(osw.getModel());
         pq.addViews(
@@ -381,7 +381,7 @@ public class RecordIteratorTest
         pq.setOuterJoinStatus("Employee.department.manager", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Employee.address", OuterJoinStatus.OUTER);
-
+        
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
         Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
@@ -395,16 +395,16 @@ public class RecordIteratorTest
                 c += ro.accept(deepCounter); //printer.and(deepCounter));
             }
         }
-
-         /*
+        
+         /* 
           * 7 fields in 10 rows
          */
         assertEquals(70, c);
     }
-
+    
     @Test public void outerJoinRefWithInnerJoinOnIt() throws ObjectStoreException {
         PathQuery pq = new PathQuery(osw.getModel());
-
+        
         pq.addViews(
                 "Employee.name",
                 "Employee.department.name",
@@ -420,7 +420,7 @@ public class RecordIteratorTest
         Query q = MainHelper.makeQuery(pq, NO_BAGS, p2qn, null, getBQRAccumulator());
 
         Results res = osw.execute(q, 1000, true, false, true);
-
+        
         TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 6), null);
         int c = 0;
         while (iter.hasNext()) {
@@ -430,17 +430,17 @@ public class RecordIteratorTest
                 c += ro.accept(printer.and(deepCounter));
             }
         }
-
-         /*
+        
+         /* 
           * 3 fields always present in 6 rows
           * 4 fields contingently present if there is a manager (present in two rows)
-          *
+          * 
          */
         assertEquals(26, c);
     }
-
+    
     @Test public void allOuterJoinedCollections() throws ObjectStoreException {
-
+        
         PathQuery pq = getPQ();
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
@@ -459,7 +459,7 @@ public class RecordIteratorTest
                 c += ro.accept(printer.and(deepCounter));
             }
         }
-
+       
          /* Per company:
          *  - 1 name
          *  - 2 departments
@@ -472,9 +472,9 @@ public class RecordIteratorTest
          */
         assertEquals(84, c);
     }
-
+    
     @Test public void refsFirst() throws ObjectStoreException {
-
+        
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
 
         pq.addViews(
@@ -502,7 +502,7 @@ public class RecordIteratorTest
                 c += ro.accept(printer.and(deepCounter));
             }
         }
-
+       
          /* Per company:
          *  - 1 name
          *  - 2 departments
@@ -515,9 +515,9 @@ public class RecordIteratorTest
          */
         assertEquals(84, c);
     }
-
+    
     @Test public void noTopLevel() throws ObjectStoreException {
-
+        
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
 
         pq.addViews(
@@ -543,7 +543,7 @@ public class RecordIteratorTest
                 c += ro.accept(printer.and(deepCounter));
             }
         }
-
+       
          /* Per company:
          *  - 2 departments
          *    - 1 name

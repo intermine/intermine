@@ -1,7 +1,7 @@
 package org.intermine.api.query;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.StringReader;
 import java.util.HashMap;
@@ -10,20 +10,25 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.metadata.ConstraintOp;
+import org.intermine.api.query.MainHelper;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Manager;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
@@ -44,7 +49,7 @@ public class NullRefs {
 
     private static ObjectStoreWriter osw;
     private static final String ALIAS = "osw.unittest";
-
+    
     private static final Logger LOG = Logger.getLogger(NullRefs.class);
     private static Set<InterMineObject> madeThings = new HashSet<InterMineObject>();
 
@@ -74,7 +79,7 @@ public class NullRefs {
                         }
                     }
                     if ((int) c % 2 == 1) { // Half the departments have no managers.
-                        Company comp = DynamicUtil.createObject(Company.class);
+                        Company comp = DynamicUtil.simpleCreateObject(Company.class);
                         comp.setName(String.format("temp-manager-%s", c));
                         d.setCompany(comp);
                         osw.store(comp);
@@ -112,7 +117,7 @@ public class NullRefs {
         } catch (ObjectStoreException e) {
             LOG.error("Could not initialise object-store", e);
             return;
-        }
+        } 
     }
 
     @After
@@ -172,11 +177,11 @@ public class NullRefs {
         Query q = makeQuery(pq);
         doSanityTest(q);
     }
-
+    
     private void doSanityTest(Query q) {
         doTest(q, 4, 22);
     }
-
+    
     @Test
     public void nullRefs() {
         Query q = new Query();
@@ -189,7 +194,7 @@ public class NullRefs {
         q.setConstraint(cons);
         doNullRefTests(q);
     }
-
+    
     @Test
     public void pathQueryNullRefs() {
         PathQuery pq = new PathQuery(osw.getModel());
@@ -242,7 +247,7 @@ public class NullRefs {
     public void nonNullCollections() {
         QueryClass dep = new QueryClass(Department.class);
         QueryClass emp = new QueryClass(Employee.class);
-
+        
         Query q = new Query();
         q.addFrom(dep);
         q.addToSelect(dep);
@@ -250,24 +255,24 @@ public class NullRefs {
         QueryField nameF = new QueryField(dep, "name");
         cons.addConstraint(new SimpleConstraint(nameF, ConstraintOp.MATCHES, new QueryValue("temp-%")));
         q.setConstraint(cons);
-
+        
         Query subQ = new Query();
-        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F.
+        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F. 
         subQ.setDistinct(false);
         subQ.addFrom(emp);
         subQ.addToSelect(new QueryValue(1));
         ConstraintSet subset = new ConstraintSet(ConstraintOp.AND);
-
+        
         //subset.addConstraint(new ContainsConstraint(new QueryObjectReference(emp, "department"), ConstraintOp.CONTAINS, dep));
         subset.addConstraint(new ContainsConstraint(new QueryCollectionReference(dep, "employees"), ConstraintOp.CONTAINS, emp));
         subQ.setConstraint(subset);
         //
-
+        
         cons.addConstraint(new SubqueryExistsConstraint(ConstraintOp.EXISTS, subQ));
-
+        
         doNonNullCollectionTests(q);
     }
-
+    
     @Test
     public void nonNullPathQueryCollections() {
         PathQuery pq = new PathQuery(osw.getModel());
@@ -304,7 +309,7 @@ public class NullRefs {
         Query q = makeQuery(pq);
         doNonNullCollectionTests(q);
     }
-
+    
     private void doNonNullCollectionTests(Query q) {
         Results res = osw.execute(q, 50000, true, false, true);
         for (Object o: res) {
@@ -317,7 +322,7 @@ public class NullRefs {
         }
         doTest(q, 2, 20);
     }
-
+    
     /**
      * This is possible if the following sql can be generated:
      * <pre>
@@ -340,21 +345,21 @@ public class NullRefs {
         q.setConstraint(cons);
 
         Query subQ = new Query();
-        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F.
+        subQ.alias(dep, q.getAliases().get(dep)); // W. T. F. 
         subQ.setDistinct(false);
         subQ.addFrom(emp);
         subQ.addToSelect(new QueryValue(1));
         ConstraintSet subset = new ConstraintSet(ConstraintOp.AND);
-
+        
         //subset.addConstraint(new ContainsConstraint(new QueryObjectReference(emp, "department"), ConstraintOp.CONTAINS, dep));
         subset.addConstraint(
             new ContainsConstraint(
                 new QueryCollectionReference(dep, "employees"), ConstraintOp.CONTAINS, emp));
         subQ.setConstraint(subset);
         //
-
+        
         cons.addConstraint(new SubqueryExistsConstraint(ConstraintOp.DOES_NOT_EXIST, subQ));
-
+        
         doNullCollectionTests(q);
     }
 

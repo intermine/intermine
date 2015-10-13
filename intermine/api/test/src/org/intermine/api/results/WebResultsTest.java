@@ -84,28 +84,28 @@ public class WebResultsTest extends InterMineAPITestCase
         department3.setName("Department3");
         department3.setId(new Integer(6));
 
-        company1 = (Company) DynamicUtil.createObject(Company.class);
+        company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company1");
         company1.setVatNumber(101);
         company1.setId(new Integer(1));
-        company2 = (Company) DynamicUtil.createObject(Company.class);
+        company2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company2.setName("Company2");
         company2.setVatNumber(102);
         company2.setId(new Integer(2));
-        company3 = (Company) DynamicUtil.createObject(Company.class);
+        company3 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company3.setName("Company3");
         company3.setVatNumber(103);
         company3.setId(new Integer(3));
 
-        man1 = (Manager) DynamicUtil.createObject(Manager.class);
+        man1 = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
         man1.setName("Manager1");
         man1.setSeniority(new Integer(100));
         man1.setId(new Integer(1));
-        man2 = (Manager) DynamicUtil.createObject(Manager.class);
+        man2 = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
         man2.setName("Manager2");
         man2.setSeniority(new Integer(200));
         man2.setId(new Integer(2));
-        man3 = (CEO) DynamicUtil.createObject(CEO.class);
+        man3 = (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
         man3.setName("Manager3");
         man3.setSeniority(new Integer(300));
         man3.setId(new Integer(3));
@@ -207,7 +207,7 @@ public class WebResultsTest extends InterMineAPITestCase
         dept1.setName("Department1");
         ResultElement res1 = new ResultElement(dept1, new Path(model, "Department.name"), false);
 
-        Company c1 = DynamicUtil.createObject(Company.class);
+        Company c1 = (Company) DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
         c1.setId(new Integer(1));
         c1.setName("Company1");
         ResultElement res2 = new ResultElement(c1, new Path(model, "Department.company.name"), false);

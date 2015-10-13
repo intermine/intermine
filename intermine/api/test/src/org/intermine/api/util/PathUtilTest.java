@@ -1,5 +1,6 @@
 package org.intermine.api.util;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.TestCase;
@@ -25,7 +26,8 @@ public class PathUtilTest extends TestCase {
 
     public void testResolveShort() throws Exception {
         Path path = new Path(model, "Department.name");
-        Department department = DynamicUtil.createObject(Department.class);
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department.setName("department name");
         assertEquals("department name", PathUtil.resolvePath(path, department));
     }
@@ -33,8 +35,10 @@ public class PathUtilTest extends TestCase {
 
     public void testResolve() throws Exception {
         Path path = new Path(model, "Department.company.name");
-        Department department = DynamicUtil.createObject(Department.class);
-        Company company = DynamicUtil.createObject(Company.class);
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         department.setName("department name");
         company.setName("company name");
         department.setCompany(company);
@@ -43,9 +47,12 @@ public class PathUtilTest extends TestCase {
 
     public void testResolveLong() throws Exception {
         Path path = new Path(model, "Department.company.CEO.name");
-        Department department = DynamicUtil.createObject(Department.class);
-        Company company = DynamicUtil.createObject(Company.class);
-        CEO ceo = DynamicUtil.createObject(CEO.class);
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        CEO ceo =
+            (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
         department.setName("department name");
         company.setName("company name");
         ceo.setName("ceo name");
@@ -56,9 +63,12 @@ public class PathUtilTest extends TestCase {
 
     public void testResolveReference() throws Exception {
         Path path = new Path(model, "Department.company.CEO");
-        Department department = DynamicUtil.createObject(Department.class);
-        Company company = DynamicUtil.createObject(Company.class);
-        CEO ceo = DynamicUtil.createObject(CEO.class);
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        CEO ceo =
+            (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
         department.setName("department name");
         company.setName("company name");
         ceo.setName("ceo name");
@@ -70,9 +80,12 @@ public class PathUtilTest extends TestCase {
 
     public void testResolveReferenceWithClassConstraint() throws Exception {
         Path path = new Path(model, "Department.manager[CEO].company");
-        Department department = DynamicUtil.createObject(Department.class);
-        Company company = DynamicUtil.createObject(Company.class);
-        CEO ceo = DynamicUtil.createObject(CEO.class);
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
+        CEO ceo =
+            (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         department.setName("department name");
         ceo.setName("ceo name");
         company.setName("company name");
@@ -84,14 +97,15 @@ public class PathUtilTest extends TestCase {
 
     public void testResolvePathOneElement() throws Exception {
         Path path = new Path(model, "Department");
-        Department department = DynamicUtil.createObject(Department.class);
+        Department department =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department.setId(10);
         assertEquals(department.getId(), ((Department) PathUtil.resolvePath(path, department)).getId());
     }
 
     public void testNotSuperclass() throws Exception {
         Path path = new Path(model, "Department.name");
-        Company c = DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         try {
             PathUtil.resolvePath(path, c);
             fail("Expected exception");
@@ -108,8 +122,7 @@ public class PathUtilTest extends TestCase {
 
     public void testCollections() throws Exception {
         Path path = new Path(model, "Company.departments.name");
-
-        Company c = DynamicUtil.createObject(Company.class);
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         try {
             PathUtil.resolvePath(path, c);
             fail("Expected exception");
@@ -119,10 +132,10 @@ public class PathUtilTest extends TestCase {
     }
 
     public void testCanAssignObjectToType() throws Exception {
-        Employee e = DynamicUtil.createObject(Employee.class);
+        Employee e = (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         assertTrue(PathUtil.canAssignObjectToType(Employee.class, e));
 
-        Manager m = DynamicUtil.createObject(Manager.class);
+        Manager m = (Manager) DynamicUtil.createObject(Collections.singleton(Manager.class));
         assertTrue(PathUtil.canAssignObjectToType(Employee.class, m));
 
         assertFalse(PathUtil.canAssignObjectToType(Manager.class, e));
@@ -131,12 +144,15 @@ public class PathUtilTest extends TestCase {
 
     public void testResolveCollections() throws Exception {
         Path path = new Path(model, "Company.departments.name");
-        Company company = DynamicUtil.createObject(Company.class);
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setName("company name");
 
-        Department department1 = DynamicUtil.createObject(Department.class);
+        Department department1 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department1.setName("department name 1");
-        Department department2 = DynamicUtil.createObject(Department.class);
+        Department department2 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department2.setName("department name 2");
 
         company.addDepartments(department1);
@@ -155,30 +171,37 @@ public class PathUtilTest extends TestCase {
      */
     public void testResolveCollectionOfCollections() throws Exception {
         Path path = new Path(model, "Company.departments.employees.name");
-        Company company = DynamicUtil.createObject(Company.class);
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setName("Initech");
 
-        Department department1 = DynamicUtil.createObject(Department.class);
+        Department department1 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department1.setName("Office Space");
         department1.setCompany(company);
 
-        Department department2 = DynamicUtil.createObject(Department.class);
+        Department department2 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department2.setName("Storage Room B");
         department2.setCompany(company);
 
-        Employee employee1 = DynamicUtil.createObject(Employee.class);
+        Employee employee1 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee1.setName("Peter Gibbons");
         employee1.setDepartment(department1);
 
-        Employee employee2 = DynamicUtil.createObject(Employee.class);
+        Employee employee2 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee2.setName("Michael Bolton");
         employee2.setDepartment(department1);
 
-        Employee employee3 = DynamicUtil.createObject(Employee.class);
+        Employee employee3 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee3.setName("Samir Nagheenanajar");
         employee3.setDepartment(department2);
 
-        Employee employee4 = DynamicUtil.createObject(Employee.class);
+        Employee employee4 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee4.setName("Tom Smykowski");
         employee4.setDepartment(department2);
 
@@ -207,30 +230,37 @@ public class PathUtilTest extends TestCase {
     public void testResolveCollectionOfCollectionsWithReverseReferences() throws Exception {
         Path path = new Path(model, "Company.departments.employees.department.company.departments.employees.name");
 
-        Company company = DynamicUtil.createObject(Company.class);
+        Company company =
+            (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setName("Initech");
 
-        Department department1 = DynamicUtil.createObject(Department.class);
+        Department department1 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department1.setName("Office Space");
         department1.setCompany(company);
 
-        Department department2 = DynamicUtil.createObject(Department.class);
+        Department department2 =
+            (Department) DynamicUtil.createObject(Collections.singleton(Department.class));
         department2.setName("Storage Room B");
         department2.setCompany(company);
 
-        Employee employee1 = DynamicUtil.createObject(Employee.class);
+        Employee employee1 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee1.setName("Peter Gibbons");
         employee1.setDepartment(department1);
 
-        Employee employee2 = DynamicUtil.createObject(Employee.class);
+        Employee employee2 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee2.setName("Michael Bolton");
         employee2.setDepartment(department1);
 
-        Employee employee3 = DynamicUtil.createObject(Employee.class);
+        Employee employee3 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee3.setName("Samir Nagheenanajar");
         employee3.setDepartment(department2);
 
-        Employee employee4 = DynamicUtil.createObject(Employee.class);
+        Employee employee4 =
+            (Employee) DynamicUtil.createObject(Collections.singleton(Employee.class));
         employee4.setName("Tom Smykowski");
         employee4.setDepartment(department2);
 

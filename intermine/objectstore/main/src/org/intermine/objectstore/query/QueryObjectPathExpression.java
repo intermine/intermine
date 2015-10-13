@@ -20,6 +20,7 @@ import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.TypeUtil;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
+import org.intermine.util.DynamicUtil;
 
 /**
  * An element that can appear in the SELECT clause of a query, representing extra data to be
@@ -88,11 +89,11 @@ public class QueryObjectPathExpression implements QueryPathExpressionWithSelect,
      *
      * @param qc the QueryClass
      * @param fieldName the name of the relevant field
-     * @param subclass a Class that is a subclass of the field class
+     * @param subclasses a Class that is a subclass of the field class
      * @throws IllegalArgumentException if the field is not an object reference
      */
-    public QueryObjectPathExpression(QueryClass qc, String fieldName,
-            Class<? extends FastPathObject> subclass) {
+    public QueryObjectPathExpression(QueryClass qc, String fieldName, Class<?>... subclasses) {
+        subclass = DynamicUtil.composeDescriptiveClass(subclasses);
         if (fieldName == null) {
             throw new NullPointerException("Field name parameter is null");
         }

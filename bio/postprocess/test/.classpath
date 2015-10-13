@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/intermine-integrate-test/lib/mockrunner.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-pathquery"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-postprocess-main"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -51,7 +51,7 @@
       <!--<property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>-->
       <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238 559292"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
-      <property name="createinterpro" value="true"/>
+      <property name="createinterpro" value="false"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
@@ -70,9 +70,6 @@
      <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/micklem/data/flybase/homology/current"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
-    </source>
-    <source name="anopheles-identifiers" type="anopheles-identifiers">
-      <property name="src.data.dir" location="/micklem/data/anopheles-identifiers/current"/>
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
@@ -96,6 +93,13 @@
     </source>
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
+    </source>
+
+<!-- has to be after UniProt because only loads protein domains for loaded proteins -->
+    <source name="protein2ipr" type="protein2ipr">
+     <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
+     <property name="src.data.dir.includes" value="protein2ipr.dat"/>
+     <property name="protein2ipr.organisms" value="7227"/>
     </source>
 
     <source name="omim" type="omim">
@@ -532,14 +536,12 @@
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
-
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir"
                 location="/micklem/data/flymine/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
-
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -549,6 +551,10 @@
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
+    </source>
+    <source name="psi-complexes" type="psi-complexes">
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
+      <property name="complexes.source" value="sgd"/>
     </source>
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>

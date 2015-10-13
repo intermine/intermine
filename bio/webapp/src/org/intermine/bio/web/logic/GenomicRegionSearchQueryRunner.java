@@ -26,14 +26,15 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.intermine.metadata.ConstraintOp;
+import org.intermine.model.bio.Chromosome;
+import org.intermine.model.bio.Organism;
 import org.intermine.model.bio.SOTerm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
@@ -44,14 +45,15 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
+
 
 /**
  * This class has all database query logics for genomic region search.
  *
- * @author Fengyuan Hu
+ *private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
+ *@author Fengyuan Hu
  */
 public class GenomicRegionSearchQueryRunner implements Runnable
 {
@@ -61,6 +63,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     private Map<GenomicRegion, Query> queryMap = null;
 
     private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
+
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchQueryRunner.class);
 
     /**
      * Constructor
@@ -224,71 +228,100 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im) {
+
+        return getChromosomeInfo(im, GenomicRegionSearchService.DEFAULT_REGION_INIT_BATCH_SIZE);
+    }
+
+    /**
+     * Query the information of all the organisms and their chromosomes' names and length. The
+     * results is stored in a Map. The result data will be used to validate users' span data.
+     * For each span, its chromosome must match the chrPID and range must not go beyond the length.
+     *
+     * @param im - the InterMineAPI
+     * @param batchSize - the query batch size to use
+     * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
+     */
+    public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(InterMineAPI im,
+            int batchSize) {
         if (chrInfoMap != null) {
             return chrInfoMap;
         } else {
+            long startTime = System.currentTimeMillis();
+
             // a Map contains orgName and its chrInfo accordingly
             // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
             chrInfoMap = new HashMap<String, Map<String, ChromosomeInfo>>();
 
-            try {
-                PathQuery query = new PathQuery(im.getModel());
 
-                // Add views
-                query.addViews(
-                    "Chromosome.organism.shortName",
-                    "Chromosome.primaryIdentifier",
-                    "Chromosome.length"
-                );
+            Query q = new Query();
+            q.setDistinct(true);
 
-                // Add orderby
-                query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
+            QueryClass qcChr = new QueryClass(Chromosome.class);
+            QueryClass qcOrg = new QueryClass(Organism.class);
 
-                ExportResultsIterator results = im.getPathQueryExecutor().execute(query);
+            q.addFrom(qcChr);
+            q.addFrom(qcOrg);
 
-                // a List contains all the chrInfo (organism, chrPID, length)
-                List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
-                // a Set contains all the orgName
-                Set<String> orgSet = new HashSet<String>();
+            QueryField qfOrgName = new QueryField(qcOrg, "shortName");
+            QueryField qfChrIdentifier = new QueryField(qcChr, "primaryIdentifier");
+            QueryField qfChrLength = new QueryField(qcChr, "length");
 
-                while (results.hasNext()) {
-                    List<ResultElement> row = results.next();
+            q.addToSelect(qfOrgName);
+            q.addToSelect(qfChrIdentifier);
+            q.addToSelect(qfChrLength);
 
-                    String org = (String) row.get(0).getField();
-                    String chrPID = (String) row.get(1).getField();
-                    Integer chrLength = (Integer) row.get(2).getField();
+            QueryObjectReference orgRef = new QueryObjectReference(qcChr, "organism");
+            ContainsConstraint ccOrg = new ContainsConstraint(orgRef,
+                    ConstraintOp.CONTAINS, qcOrg);
+            q.setConstraint(ccOrg);
 
-                    // Add orgName to HashSet to filter out duplication
-                    orgSet.add(org);
+            Results results = im.getObjectStore().execute(q, batchSize, true, true, true);
 
-                    ChromosomeInfo chrInfo = new ChromosomeInfo();
-                    chrInfo.setOrgName(org);
-                    chrInfo.setChrPID(chrPID);
-                    if (chrLength != null) {
-                        chrInfo.setChrLength(chrLength);
-                    }
-                    // Add ChromosomeInfo to Arraylist
-                    chrInfoList.add(chrInfo);
+            // a List contains all the chrInfo (organism, chrPID, length)
+            List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
+            // a Set contains all the orgName
+            Set<String> orgSet = new HashSet<String>();
+            int entryCount = 0;
+
+            for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+                entryCount++;
+                ResultsRow<?> row = (ResultsRow<?>) iter.next();
+
+                String orgName = (String) row.get(0);
+                String chrIdentifier = (String) row.get(1);
+                Integer chrLength = (Integer) row.get(2);
+
+                // Add orgName to HashSet to filter out duplication
+                orgSet.add(orgName);
+
+                ChromosomeInfo chrInfo = new ChromosomeInfo();
+                chrInfo.setOrgName(orgName);
+                chrInfo.setChrPID(chrIdentifier);
+                if (chrLength != null) {
+                    chrInfo.setChrLength(chrLength);
                 }
+                // Add ChromosomeInfo to Arraylist
+                chrInfoList.add(chrInfo);
 
-                // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
-                // orgName and value as a ArrayList containing a list of chrInfo which has the same
-                // orgName
-                for (String o : orgSet) {
-                    // a map to store chrInfo for the same organism
-                    Map<String, ChromosomeInfo> chrInfoSubMap =
-                        new HashMap<String, ChromosomeInfo>();
+            }
 
-                    for (ChromosomeInfo chrInfo : chrInfoList) {
-                        if (o.equals(chrInfo.getOrgName())) {
-                            chrInfoSubMap.put(chrInfo.getChrPIDLowerCase(), chrInfo);
-                            chrInfoMap.put(o, chrInfoSubMap);
-                        }
+
+            // Iterate orgSet and chrInfoList to put data in chrInfoMap which
+            // has the key as the
+            // orgName and value as a ArrayList containing a list of chrInfo
+            // which has the same
+            // orgName
+            for (String o : orgSet) {
+                // a map to store chrInfo for the same organism
+                Map<String, ChromosomeInfo> chrInfoSubMap = new HashMap<String, ChromosomeInfo>();
+
+                for (ChromosomeInfo chrInfo : chrInfoList) {
+                    if (o.equals(chrInfo.getOrgName())) {
+                        chrInfoSubMap
+                                .put(chrInfo.getChrPIDLowerCase(), chrInfo);
+                        chrInfoMap.put(o, chrInfoSubMap);
                     }
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
             return chrInfoMap;
@@ -300,11 +333,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      *
      * @param im - the InterMineAPI
      * @param classDescrs map of feature class/type to description
+     * @param batchSize the query batch size to use
      * @return featureTypeToSOTermMap -
      *         a HashMap with featureType as key and its SO info accordingly as value
      */
     public static Map<String, List<String>> getFeatureAndSOInfo(
-            InterMineAPI im, Map<String, String> classDescrs) {
+            InterMineAPI im, Map<String, String> classDescrs, int batchSize) {
 
         Map<String, List<String>> featureTypeToSOTermMap = new HashMap<String, List<String>>();
 
@@ -327,6 +361,10 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         q.addFrom(qcFeature);
         q.addFrom(qcSOTerm);
 
+        // Make sure the class field isn't the first entry in the order by as it would be used for
+        // a large offset constraint BUT the greater than operator is not supported for classes.
+        q.addToOrderBy(qfSOName);
+
         // TODO missing values in the results...e.g. GoldenPathFragment
         QueryObjectReference soTerm = new QueryObjectReference(qcFeature,
                 "sequenceOntologyTerm");
@@ -334,7 +372,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 ConstraintOp.CONTAINS, qcSOTerm);
         q.setConstraint(ccSoTerm);
 
-        Results results = im.getObjectStore().execute(q);
+        Results results = im.getObjectStore().execute(q, batchSize, true, true, true);
 
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
@@ -371,10 +409,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * Query the information of all organisms and their taxon ids.
      *
      * @param im - the InterMineAPI
-     * @param profile Profile
+     * @param batchSize the query batch size
      * @return orgTaxonIdMap - a HashMap with organism  as key and its taxonId as value
      */
-    public static Map<String, Integer> getTaxonInfo(InterMineAPI im, Profile profile) {
+    public static Map<String, Integer> getTaxonInfo(InterMineAPI im, int batchSize) {
+        long startTime = System.currentTimeMillis();
 
         Map<String, Integer> orgTaxonIdMap = new HashMap<String, Integer>();
         Query q = new Query();
@@ -382,11 +421,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         q.addFrom(organisms);
         q.addToSelect(organisms);
 
-        List<?> orgs = im.getObjectStore().executeSingleton(q);
+        List<?> orgs = im.getObjectStore().executeSingleton(q, batchSize, true, true, true);
         for (Object o: orgs) {
             org.intermine.model.bio.Organism org = (org.intermine.model.bio.Organism) o;
             orgTaxonIdMap.put(org.getShortName(), org.getTaxonId());
         }
+
         return orgTaxonIdMap;
     }
 

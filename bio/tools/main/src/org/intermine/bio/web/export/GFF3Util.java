@@ -13,15 +13,16 @@ package org.intermine.bio.web.export;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.SequenceFeature;
-import org.intermine.util.DynamicUtil;
 
 /**
  * Utility methods for GFF3.
@@ -65,7 +66,8 @@ public final class GFF3Util
     public static GFF3Record makeGFF3Record(SequenceFeature lsf,
             Map<String, String> soClassNameMap, String sourceName,
             Map<String, List<String>> extraAttributes, boolean makeUcscCompatible) {
-        Class<?> c = DynamicUtil.getClass(lsf);
+        Set<Class<?>> classes = Util.decomposeClass(lsf.getClass());
+
         String type = null;
         String sequenceID = null;
         int start = -1;
@@ -92,16 +94,19 @@ public final class GFF3Util
                 sequenceID = chr.getPrimaryIdentifier();
             }
 
-            if (SequenceFeature.class.isAssignableFrom(c)) {
-                String className = TypeUtil.unqualifiedName(c.getName());
-                if (soClassNameMap.containsKey(className)) {
-                    type = soClassNameMap.get(className);
-                } else {
-                    type = className;
-                    LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
-                            + className);
-                }
+            for (Class<?> c : classes) {
+                if (SequenceFeature.class.isAssignableFrom(c)) {
+                    String className = TypeUtil.unqualifiedName(c.getName());
+                    if (soClassNameMap.containsKey(className)) {
+                        type = soClassNameMap.get(className);
+                        break;
+                    } else {
+                        type = className;
+                        LOG.warn("in GFF3Util.makeGFF3Record() - cannot find SO term name for: "
+                                 + className);
+                    }
 
+                }
             }
 
             start = chrLocation.getStart().intValue();
@@ -127,8 +132,10 @@ public final class GFF3Util
 
         Double score = null;
         try {
-            if (TypeUtil.getFieldInfo(c, "score") != null) {
-                score = (Double) lsf.getFieldValue("score");
+            for (Class<?> c : Util.decomposeClass(lsf.getClass())) {
+                if (TypeUtil.getFieldInfo(c, "score") != null) {
+                    score = (Double) lsf.getFieldValue("score");
+                }
             }
         } catch (IllegalAccessException e) {
             // do nothing, we can't set the score

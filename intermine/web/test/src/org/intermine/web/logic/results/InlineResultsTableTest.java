@@ -3,6 +3,7 @@ package org.intermine.web.logic.results;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,11 +45,11 @@ public class InlineResultsTableTest extends TestCase
         super.setUp();
 
         // InterMine Objects
-        company = DynamicUtil.createObject(Company.class);
+        company = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company.setId(new Integer(1));
         company.setName("Weyland Yutani");
 
-        ceo = DynamicUtil.createObject(CEO.class);
+        ceo = (CEO) DynamicUtil.createObject(Collections.singleton(CEO.class));
         ceo.setId(new Integer(2));
         ceo.setName("Radek");
 
@@ -108,7 +109,7 @@ public class InlineResultsTableTest extends TestCase
 
         assertEquals(new Integer(1), (Integer) resultsTable.getListOfTypes().size());
         assertEquals(new Boolean(false), resultsTable.getHasMoreThanOneType());
-        assertEquals(DynamicUtil.getClass(ceo), resultsTable.getListOfTypes().get(0));
+        assertEquals(DynamicUtil.getSimpleClass(ceo), resultsTable.getListOfTypes().get(0));
     }
 
     /**
@@ -140,7 +141,7 @@ public class InlineResultsTableTest extends TestCase
         assertEquals(new Boolean(true), resultsTable.getHasMoreThanOneType());
         assertEquals(
                 new ArrayList<Class<?>>(Arrays.asList(
-                        DynamicUtil.getClass(ceo), DynamicUtil.getClass(company))),
+                        DynamicUtil.getSimpleClass(ceo), DynamicUtil.getSimpleClass(company))),
                         resultsTable.getListOfTypes());
     }
 

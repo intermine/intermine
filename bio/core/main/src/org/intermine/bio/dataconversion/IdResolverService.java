@@ -60,7 +60,6 @@ public final class IdResolverService
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
         // HACK - for worm in ncbi
         IdResolverService.getWormIdResolver();
-        // HACK - resolve human ids to Ensembl
         IdResolverService.getHumanIdResolver();
 
         Set<String> validTaxonIds = new HashSet<String>(taxonIds);

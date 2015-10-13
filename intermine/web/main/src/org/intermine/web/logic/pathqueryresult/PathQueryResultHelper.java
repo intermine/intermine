@@ -10,8 +10,6 @@ package org.intermine.web.logic.pathqueryresult;
  *
  */
 
-import static org.intermine.web.logic.config.FieldConfigHelper.getClassFieldConfigs;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,11 +22,10 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.TypeUtil;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
@@ -41,9 +38,12 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
+import org.intermine.metadata.TypeUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.WebConfig;
+
+import static org.intermine.web.logic.config.FieldConfigHelper.getClassFieldConfigs;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -257,7 +257,8 @@ public final class PathQueryResultHelper
             String referencedClassName,
             String field) {
 
-        String className = DynamicUtil.getClass(object).getSimpleName();
+        String className = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
+                .getClass()));
         Path path;
         try {
             path = new Path(os.getModel(), className + "." + field);
@@ -299,7 +300,7 @@ public final class PathQueryResultHelper
         // if there are no subclasses there can only be one type in the collection
         Model model = os.getModel();
         ClassDescriptor startCld =
-            model.getClassDescriptorByName(DynamicUtil.getClass(object).getName());
+            model.getClassDescriptorByName(DynamicUtil.getSimpleClassName(object));
         CollectionDescriptor col = startCld.getCollectionDescriptorByName(field, true);
         ClassDescriptor colCld = col.getReferencedClassDescriptor();
 
@@ -341,8 +342,10 @@ public final class PathQueryResultHelper
     private static PathQuery makePathQueryForCollectionForClass(WebConfig webConfig, Model model,
             InterMineObject object, String field, List<Class<?>> sr) {
         Class<?> commonClass = CollectionUtil.findCommonSuperclass(sr);
-        String typeOfCollection = DynamicUtil.getClass(commonClass).getSimpleName();
-        String startClass = DynamicUtil.getClass(object).getSimpleName();
+        String typeOfCollection =
+            TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(commonClass));
+        String startClass = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(object
+                .getClass()));
         String collectionPath = startClass + "." + field;
         PathQuery pathQuery = getQueryWithDefaultView(typeOfCollection, model, webConfig,
                 collectionPath);

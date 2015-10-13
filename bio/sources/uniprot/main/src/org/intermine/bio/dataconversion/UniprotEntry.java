@@ -136,24 +136,9 @@ public class UniprotEntry
     }
 
     /**
-     * @param refId id representing protein domain intermine object
-     */
-    public void addDomainRefId(String refId) {
-        addRefId("domains", refId);
-    }
-
-    /**
-     * @return the domains
-     */
-    public List<String> getDomains() {
-        return collections.get("domains");
-    }
-
-    /**
      * @param refId id representing comment intermine object
      * @param objectId id representing the object in the database.  used later to add pub collection
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void addCommentRefId(String refId, Integer objectId) {
         commentEvidence.put(objectId, new ArrayList(comment.evidence));
         addRefId("comments", refId);

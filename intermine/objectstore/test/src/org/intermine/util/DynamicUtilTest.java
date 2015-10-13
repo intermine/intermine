@@ -10,16 +10,26 @@ package org.intermine.util;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.TestCase;
 
 import org.intermine.model.FastPathObject;
-import org.intermine.model.ShadowClass;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
-import org.intermine.model.testmodel.CompanyShadow;
+import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employable;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.HasAddress;
+import org.intermine.model.testmodel.HasSecretarys;
+import org.intermine.model.testmodel.ImportantPerson;
 import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.RandomInterface;
+import org.intermine.model.testmodel.Thing;
 
 public class DynamicUtilTest extends TestCase
 {
@@ -30,108 +40,183 @@ public class DynamicUtilTest extends TestCase
     public void setUp() throws Exception {
     }
 
-    // Employee is a class
-    public void testCreateObjectClass() {
-        Employee e = DynamicUtil.createObject(Employee.class);
-        assertTrue(e instanceof Employee);
-        e.setName("Employee1");
-        assertEquals("Employee1", e.getName());
+    // NEED MORE TESTS FOR MULTIPLE INHERITED INTERFACES WHEN AVAILABLE
+    // eg.    - B
+    //       /
+    //      A     - D
+    //       \   /   \
+    //        - C     - F
+    //           \   /
+    //            - E
+
+    public void testCreateObjectOneInterface() throws Exception {
+        Object obj = DynamicUtil.createObject(Collections.singleton(Company.class));
+        assertTrue(obj instanceof Company);
+        Company c = (Company) obj;
+        c.setName("Flibble");
+        assertEquals("Flibble", c.getName());
     }
 
-    // Company is an interface, a Shadow class is available
-    public void testCreateObjectInterfaceShadow() {
-        Company c = DynamicUtil.createObject(Company.class);
-        assertTrue(c.getClass() == CompanyShadow.class);
-        assertTrue(c instanceof Company);
-        assertTrue(c instanceof ShadowClass);
-
-        c.setName("Company1");
-        assertEquals("Company1", c.getName());
+    public void testCreateObjectOneInterfaceWithParents() throws Exception {
+        Object obj = DynamicUtil.createObject(Collections.singleton(Employable.class));
+        assertTrue(obj instanceof Employable);
+        assertTrue(obj instanceof Thing);
     }
 
-    interface NewInterface extends org.intermine.model.InterMineObject
-    {
-        public String getName();
-        public void setName(final String name);
+    public void testCreateObjectNoClassTwoInterfaces() throws Exception {
+        Set intSet = new HashSet();
+        intSet.add(Company.class);
+        intSet.add(Broke.class);
+        Object obj = DynamicUtil.createObject(intSet);
+        assertTrue(obj instanceof Company);
+        assertTrue(obj instanceof RandomInterface);
+        assertTrue(obj instanceof Broke);
+        assertTrue(obj instanceof HasSecretarys);
+        assertTrue(obj instanceof HasAddress);
+
+        ((Company) obj).setName("Wotsit");
+        ((Broke) obj).setDebt(40);
+
+        assertEquals("Wotsit", ((Company) obj).getName());
+        assertEquals(40, ((Broke) obj).getDebt());
     }
 
-    // Create with an interface that doesn't have a Shadow class
-    public void testCreateObjectInterface() {
-        NewInterface ni = DynamicUtil.createObject(NewInterface.class);
-        assertTrue(ni instanceof NewInterface);
-        ni.setName("NewInterface1");
-        assertEquals("NewInterface1", ni.getName());
+    public void testCreateObjectClassOnly() throws Exception {
+        Object obj = DynamicUtil.createObject(Collections.singleton(Employee.class));
+        assertEquals(Employee.class, obj.getClass());
     }
 
-    public void testCreateObjectNull() {
+    public void testCreateObjectClassAndRedundantInterfaces() {
+        Set intSet = new HashSet();
+        intSet.add(Employee.class);
+        intSet.add(Employable.class);
+        Object obj = DynamicUtil.createObject(intSet);
+        assertEquals(Employee.class, obj.getClass());
+        assertTrue(obj instanceof Employee);
+        assertTrue(obj instanceof Employable);
+    }
+
+    public void testCreateObjectClassInterfaces() throws Exception {
+        Set intSet = new HashSet();
+        intSet.add(Manager.class);
+        intSet.add(Broke.class);
+        Object obj = DynamicUtil.createObject(intSet);
+        assertTrue(obj instanceof Manager);
+        assertTrue(obj instanceof Employee);
+        assertTrue(obj instanceof ImportantPerson);
+        assertTrue(obj instanceof Employable);
+        assertTrue(obj instanceof HasAddress);
+        assertTrue(obj instanceof Broke);
+
+        Manager m = (Manager) obj;
+        m.setName("Frank");
+        m.setTitle("Mr.");
+        ((Broke) m).setDebt(30);
+        assertEquals("Frank", m.getName());
+        assertEquals("Mr.", m.getTitle());
+        assertEquals(30, ((Broke) m).getDebt());
+    }
+
+    public void testCreateObjectTwoClasses() throws Exception {
+        Set intSet = new HashSet();
+        intSet.add(Manager.class);
+        intSet.add(Department.class);
         try {
-            Class<? extends FastPathObject> cls = null;
-            DynamicUtil.createObject(cls);
+            Object obj = DynamicUtil.createObject(intSet);
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }
 
-    // Employee is a class
-    public void testGetClassSimple() {
-        Employee e = DynamicUtil.createObject(Employee.class);
-        assertTrue(e instanceof Employee);
-        assertEquals(Employee.class, DynamicUtil.getClass(e));
-        assertEquals(Employee.class, DynamicUtil.getClass(e.getClass()));
+    public void testCreateObjectNothing() throws Exception {
+        try {
+            Object obj = DynamicUtil.createObject(Collections.EMPTY_SET);
+            fail("Expected: IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
-    // Company is an interface, a Shadow class is available
-    public void testGetClassInterfaceShadow() {
-        Company c = DynamicUtil.createObject(Company.class);
-        assertTrue(c.getClass() == CompanyShadow.class);
-        assertTrue(c instanceof Company);
-        assertEquals(Company.class, DynamicUtil.getClass(c));
-        assertEquals(Company.class, DynamicUtil.getClass(c.getClass()));
+    public void testConstructors() throws Exception {
+        Class c = DynamicUtil.composeClass(Company.class, Broke.class);
+        Company obj = (Company) c.newInstance();
+        ((net.sf.cglib.proxy.Factory) obj).setCallback(0, new DynamicBean());
+        obj.setName("Fred");
+        assertEquals("Fred", obj.getName());
     }
 
-    // Create with an interface that doesn't have a Shadow class
-    public void testGetClassInterface() {
-        NewInterface ni = DynamicUtil.createObject(NewInterface.class);
-        assertTrue(ni instanceof NewInterface);
-        assertEquals(NewInterface.class, DynamicUtil.getClass(ni));
-        assertEquals(NewInterface.class, DynamicUtil.getClass(ni.getClass()));
+    public void testInstantiateObjectNullClassName() throws Exception {
+        Object obj = DynamicUtil.instantiateObject(null, "org.intermine.model.testmodel.Broke");
+        assertTrue(obj instanceof Broke);
     }
 
-    // Employee and Manager are classes
-    public void testIsAssignableFromClass() {
-        Employee e = DynamicUtil.createObject(Employee.class);
-        assertTrue(DynamicUtil.isAssignableFrom(Employable.class, DynamicUtil.getClass(e)));
-        assertFalse(DynamicUtil.isAssignableFrom(e.getClass(), Employable.class));
-
-        Manager m = DynamicUtil.createObject(Manager.class);
-        assertTrue(DynamicUtil.isAssignableFrom(e.getClass(), m.getClass()));
-        assertFalse(DynamicUtil.isAssignableFrom(m.getClass(), e.getClass()));
+    public void testInstantiateObjectEmptyClassName() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("", "org.intermine.model.testmodel.Broke");
+        assertTrue(obj instanceof Broke);
     }
 
-    // Company has a shadow class
-    public void testIsAssignableFromShadow() {
-        Company c = DynamicUtil.createObject(Company.class);
-        assertTrue(DynamicUtil.isAssignableFrom(HasAddress.class, c.getClass()));
-        assertFalse(DynamicUtil.isAssignableFrom(c.getClass(), HasAddress.class));
+    public void testInstantiateObjectNullImplementations() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", null);
+        assertTrue(obj instanceof Manager);
     }
 
-    // Employee and Manager are classes
-    public void testIsInstanceClass() {
-        Employee e = DynamicUtil.createObject(Employee.class);
-        assertTrue(DynamicUtil.isInstance(e, Employee.class));
-        assertTrue(DynamicUtil.isInstance(e, Employable.class));
-        assertFalse(DynamicUtil.isInstance(e, Company.class));
-
-        Manager m = DynamicUtil.createObject(Manager.class);
-        assertTrue(DynamicUtil.isInstance(m, e.getClass()));
-        assertFalse(DynamicUtil.isInstance(e, m.getClass()));
+    public void testInstantiateObjectEmptyImplementations() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "");
+        assertTrue(obj instanceof Manager);
     }
 
- // Company has a shadow class
-    public void testIsInstanceShadow() {
-        Company c = DynamicUtil.createObject(Company.class);
-        assertTrue(DynamicUtil.isInstance(c, Company.class));
-        assertTrue(DynamicUtil.isInstance(c, HasAddress.class));
-        assertFalse(DynamicUtil.isInstance(c, Employee.class));
+    public void testInstantiateObject() throws Exception {
+        Object obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Manager", "org.intermine.model.testmodel.Broke");
+        assertTrue(obj instanceof Manager);
+        assertTrue(obj instanceof Broke);
+    }
+
+    public void testGetSimpleClass() throws Exception {
+        FastPathObject obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        assertEquals(Company.class, DynamicUtil.getSimpleClass(obj.getClass()));
+
+        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        interfaces.add(Company.class);
+        interfaces.add(Employee.class);
+        obj = DynamicUtil.createObject(interfaces);
+
+        // dynamic class composed of multiple classes should throw an exception
+        try {
+            DynamicUtil.getSimpleClass(obj);
+            fail("Expected an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testGetSimpleClassName() throws Exception {
+        FastPathObject obj = DynamicUtil.instantiateObject("org.intermine.model.testmodel.Company", null);
+        assertEquals(Company.class.getName(), DynamicUtil.getSimpleClassName(obj.getClass()));
+
+        Set<Class<?>> interfaces = new HashSet<Class<?>>();
+        interfaces.add(Company.class);
+        interfaces.add(Employee.class);
+        obj = DynamicUtil.createObject(interfaces);
+
+        // dynamic class composed of multiple classes should throw an exception
+        try {
+            DynamicUtil.getSimpleClassName(obj);
+            fail("Expected an IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
+    public void testClassHeirarchyBrokeCEOIsBroke() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        assertTrue(Broke.class.isAssignableFrom(brokeCEO));
+    }
+
+    public void testClassHeirarchyBrokeCEOIsCEO() throws Exception {
+        Class brokeCEO = DynamicUtil.composeClass(new HashSet(Arrays.asList(new Class[] {Broke.class, CEO.class})));
+        assertTrue(CEO.class.isAssignableFrom(brokeCEO));
+    }
+
+    public void testGetNullPrimitives() throws Exception {
+        Company c = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
+        assertEquals(0, c.getVatNumber());
+        assertEquals(new Integer(0), c.getFieldValue("vatNumber"));
     }
 }

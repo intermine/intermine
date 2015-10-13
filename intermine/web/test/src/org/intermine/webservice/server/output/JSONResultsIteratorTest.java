@@ -81,7 +81,7 @@ public class JSONResultsIteratorTest extends TestCase {
     protected void setUp() {
         os = new ObjectStoreDummyImpl();
 
-        wernhamHogg = DynamicUtil.createObject(Company.class);
+        wernhamHogg = DynamicUtil.simpleCreateObject(Company.class);
         wernhamHogg.setId(new Integer(1));
         wernhamHogg.setName("Wernham-Hogg");
         wernhamHogg.setVatNumber(101);
@@ -182,7 +182,7 @@ public class JSONResultsIteratorTest extends TestCase {
         trudy.setName("Trudy");
         trudy.setAge(25);
 
-        bms = DynamicUtil.createObject(Company.class);
+        bms = DynamicUtil.simpleCreateObject(Company.class);
         bms.setId(new Integer(23));
         bms.setName("Business Management Seminars");
         bms.setVatNumber(102);

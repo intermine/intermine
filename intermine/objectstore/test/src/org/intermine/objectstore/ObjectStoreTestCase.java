@@ -20,9 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Broke;
 import org.intermine.model.testmodel.CEO;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Contractor;
@@ -36,6 +36,7 @@ import org.intermine.model.testmodel.SimpleObject;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.query.Constraint;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -252,6 +253,21 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { data.get("CompanyB") } };
         results.put("InterfaceCollection", toList(r));
 
+        r = new Object[][] { { data.get("EmployeeB1"), new Integer(340), new Integer(40) } };
+        results.put("DynamicInterfacesAttribute", toList(r));
+
+        r = new Object[][] { { data.get("ContractorA") },
+                             { data.get("EmployeeB1") } };
+        results.put("DynamicClassInterface", toList(r));
+
+        results.put("DynamicClassRef1", Collections.EMPTY_LIST);
+        results.put("DynamicClassRef2", Collections.EMPTY_LIST);
+        results.put("DynamicClassRef3", Collections.EMPTY_LIST);
+        results.put("DynamicClassRef4", Collections.EMPTY_LIST);
+
+        r = new Object[][] { { data.get("EmployeeB1") } };
+        results.put("DynamicClassConstraint", toList(r));
+
         r = new Object[][] { { data.get("EmployeeB1") } };
         results.put("ContainsConstraintNull", toList(r));
 
@@ -427,6 +443,11 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
         results.put("QueryClassBagNotMM", new Failure(RuntimeException.class, "ObjectStore error has occurred (in get)"));
 
+        results.put("QueryClassBagDynamic", Collections.EMPTY_LIST);
+
+        // results.put("DynamicBagConstraint", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1")))); // See ticket #469
+        results.put("DynamicBagConstraint2", Collections.singletonList(Collections.singletonList(data.get("EmployeeB1"))));
+
         r = new Object[][] { { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA1") },
                              { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA2") },
                              { ((Department) data.get("DepartmentA1")).getId(), data.get("EmployeeA1"), data.get("EmployeeA3") },
@@ -532,9 +553,8 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
 
         r = new Object[][] { { data.get("CompanyA") },
                              { data.get("CompanyB") },
-                             { data.get("EmployeeA1") },
-                             { data.get("EmployeeB1") },
-                             { data.get("EmployeeB3") } };
+                             { data.get("ContractorA") },
+                             { data.get("EmployeeB1") } };
         results.put("OrSubquery", toList(r));
 
         r = new Object[][] { { data.get("Types1") } };
@@ -596,9 +616,11 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { new Integer(minId) } };
         results.put("SelectFunctionNoGroup", toList(r));
         r = new Object[][] { { Address.class, new Long(8) },
-                             { CEO.class, new Long(1) },
-                             { Company.class, new Long(2) },
-                             { Contractor.class, new Long(2) },
+                             { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
+                             { DynamicUtil.composeClass(Broke.class, Company.class), new Long(1) },
+                             { DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1) },
+                             { Company.class, new Long(1) },
+                             { Contractor.class, new Long(1) },
                              { Department.class, new Long(3) },
                              { Employee.class, new Long(3) },
                              { Manager.class, new Long(2) },
@@ -606,10 +628,13 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { Secretary.class, new Long(3) },
                              { Types.class, new Long(1) } };
         results.put("SelectClassFromInterMineObject", toList(r));
-        r = new Object[][] { { CEO.class, new Long(1) },
+        r = new Object[][] { { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
                              { Employee.class, new Long(3) },
                              { Manager.class, new Long(2) } };
         results.put("SelectClassFromEmployee", toList(r));
+        r = new Object[][] { { DynamicUtil.composeClass(Broke.class, CEO.class), new Long(1) },
+                             { DynamicUtil.composeClass(Broke.class, Contractor.class), new Long(1) } };
+        results.put("SelectClassFromBrokeEmployable", toList(r));
         r = new Object[][] { { data.get("DepartmentA1"), Arrays.asList(data.get("EmployeeA1")) },
                              { data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1")) },
                              { data.get("DepartmentB2"), Collections.singletonList(data.get("EmployeeB3")) } };
@@ -617,6 +642,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
         r = new Object[][] { { data.get("DepartmentA1"), Collections.EMPTY_LIST },
                              { data.get("DepartmentB1"), Arrays.asList(data.get("EmployeeB1")) },
                              { data.get("DepartmentB2"), Collections.EMPTY_LIST } };
+        results.put("SubclassCollection2", toList(r));
         results.put("SelectWhereBackslash", Collections.emptyList());
         results.put("MultiColumnObjectInCollection", Arrays.asList(
                     Arrays.asList(data.get("CompanyA"), Arrays.asList(
@@ -652,7 +678,6 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                     Arrays.asList(data.get("EmployeeB2"))));
 
         results.put("ConstrainClass2", Arrays.asList(
-                    Arrays.asList(data.get("CompanyA")),
                     Arrays.asList(data.get("CompanyB")),
                     Arrays.asList(data.get("EmployeeA2")),
                     Arrays.asList(data.get("EmployeeA3")),
@@ -684,7 +709,6 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                 assertEquals(type + " was expected to produce a particular exception", results.get(type), new Failure(e));
             }
         } else {
-            System.out.println(type + " QUERY: " + queries.get(type));
             Results res = os.execute((Query)queries.get(type), 2, true, true, true);
             List expected = (List) results.get(type);
             if ((expected != null) && (!expected.equals(res))) {
@@ -695,7 +719,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                 if (a.equals(b)) {
                     assertEquals(type + " has failed - wrong order", la, lb);
                 }
-                fail(type + " has failed. Expected " + la + " but was " + lb + " - " + b);
+                fail(type + " has failed. Expected " + la + " but was " + lb);
             }
             //assertEquals(type + " has failed", results.get(type), res);
         }
@@ -745,7 +769,6 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     // reference and collection proxy tests
 
     public void testCEOWhenSearchingForManager() throws Exception {
-        // test
         // select manager where manager.name="EmployeeB1" (actually a CEO)
         QueryClass c1 = new QueryClass(Manager.class);
         Query q1 = new Query();
@@ -1003,7 +1026,7 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
     public void testIndirectionTableMultipleCopies() throws Exception {
         Contractor c1 = new Contractor();
         c1.setName("Clippy");
-        Company c2 = (Company) DynamicUtil.createObject(Company.class);
+        Company c2 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         c2.setName("?bersoft");
         c2.addContractors(c1);
         c1.addCompanys(c2);

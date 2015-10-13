@@ -19,12 +19,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.Model;
-import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Publication;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
@@ -63,7 +62,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
     public void display(HttpServletRequest request, ReportObject reportObject) {
         Map<Publication, String> publications = new LinkedHashMap<Publication, String>();
         InterMineObject object = reportObject.getObject();
-        String type = DynamicUtil.getClass(object).getSimpleName();
+        String type = DynamicUtil.getSimpleClass(object).getSimpleName();
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Query q = getQuery(im, object, type);
@@ -92,8 +91,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         QueryClass qcOtherGenes = null;
 
         try {
-            qcOtherGenes = new QueryClass(Class.forName(model.getPackageName()  + "."
-                    + type).asSubclass(FastPathObject.class));
+            qcOtherGenes = new QueryClass(Class.forName(model.getPackageName()  + "." + type));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering publication count displayer", e);
             return null;

@@ -20,6 +20,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.types.Reference;
+import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.ClasspathUtils;
 import org.intermine.task.project.PostProcess;
 import org.intermine.task.project.Project;
@@ -157,6 +158,14 @@ public class PostProcessTask extends Task
     }
 
     private void doSourcePostProcess(String source) {
+        // TODO this needs to work out a way to pass the current ClassLoader to the and subtarget
+        // that is being executed (newPostProcessTask()). As it stands the do-sources step uses a
+        // differenct ClassLoader for each source meaning database connections can't be shared and
+        // may eventually run out.
+        //
+        // Creating the Ant object with the current ClassLoader doesn't seem to be sufficient to
+        // force it's use in actual execution.
+
         Source s = project.getSources().get(source);
         File sourceDir = s.getLocation();
 
@@ -169,8 +178,8 @@ public class PostProcessTask extends Task
             return;
         }
 
-        System.err.print("Performing postprocess on source: " + source + ", in dir: " + sourceDir
-                         + "\n");
+        System.err.print("Performing postprocess on source: " + source + ", in dir: "
+                + sourceDir + "\n");
 
         Ant ant = new Ant();
         ant.setDir(sourceDir);
@@ -216,7 +225,13 @@ public class PostProcessTask extends Task
     }
 
     private Task newPostProcessTask() {
-        ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(), classPathRef);
+        // use ant's ClasspathUtils to construct the postprocess operation task with the current
+        // ClassLoader (and make sure all instances share a ClassLoader. This is important as
+        // database connections are only reused within a ClassLoader - by default a different one
+        // is used each time and we run out of database connections.
+        Path path = (Path) classPathRef.getReferencedObject();
+        ClassLoader cl = ClasspathUtils.getClassLoaderForPath(getProject(),
+                path, path.toString(), false, true);
         String className = "org.intermine.bio.postprocess.PostProcessOperationsTask";
         // use reflection to avoid depending on the bio/postprocess project
         Object pp = ClasspathUtils.newInstance(className, cl);

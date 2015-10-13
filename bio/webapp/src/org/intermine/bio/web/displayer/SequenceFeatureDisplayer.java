@@ -75,8 +75,8 @@ public class SequenceFeatureDisplayer extends ReportDisplayer
                     Object locatedOnObject = imLocation.getFieldValue("locatedOn");
                     if (locatedOnObject != null) {
                         // are we Chromosome?
-                        if ("Chromosome".equals(DynamicUtil.getClass(
-                                locatedOnObject).getSimpleName())) {
+                        if ("Chromosome".equals(DynamicUtil.getSimpleClass(
+                                (InterMineObject) locatedOnObject).getSimpleName())) {
                             results.add(item);
                         }
                     }

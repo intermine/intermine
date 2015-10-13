@@ -11,6 +11,7 @@ package org.intermine.bio.postprocess;
  */
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -53,8 +54,8 @@ public class IntronTest extends TestCase{
     public IntronTest(String arg) {
         super(arg);
 
-        organism = DynamicUtil.createObject(Organism.class);
-        dataSource = DynamicUtil.createObject(DataSource.class);
+        organism = (Organism) DynamicUtil.createObject(Collections.singleton(Organism.class));
+        dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
         dataSource.setName("FlyMine");
     }
 
@@ -167,24 +168,24 @@ public class IntronTest extends TestCase{
 
 
     private Transcript createTranscriptT1(int idStart) throws ObjectStoreException {
-        Set<InterMineObject> toStore = new HashSet<InterMineObject>();
+        Set toStore = new HashSet();
         locationSet1 = new HashSet();
 
-        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
+        Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(10000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
         toStore.add(chr);
 
-        Gene gene = DynamicUtil.createObject(Gene.class);
+        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setPrimaryIdentifier("FBgn00001");
         gene.setLength(new Integer(10000));
         gene.setId(new Integer(1001));
         gene.setOrganism(organism);
         toStore.add(gene);
 
-        Transcript t1 = DynamicUtil.createObject(Transcript.class);
+        Transcript t1 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t1.setLength(new Integer(1000));
         t1.setId(new Integer(10));
         t1.setPrimaryIdentifier("ENST00000306601");
@@ -205,7 +206,7 @@ public class IntronTest extends TestCase{
         Exon[] exons = new Exon[exonInfo.length];
         Location[] exonLocs = new Location[exonInfo.length];
         for (int i = 0; i < exons.length; i++) {
-            exons[i] = DynamicUtil.createObject(Exon.class);
+            exons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
             int exonId = exonInfo[i][0] + idStart;
             int start = exonInfo[i][1];
             int end = exonInfo[i][2];
@@ -222,7 +223,9 @@ public class IntronTest extends TestCase{
         toStore.addAll(Arrays.asList(exons));
         toStore.addAll(Arrays.asList(exonLocs));
 
-        for (InterMineObject o : toStore) {
+        Iterator iter = toStore.iterator();
+        while (iter.hasNext()) {
+            InterMineObject o = (InterMineObject) iter.next();
             osw.store(o);
         }
 
@@ -236,21 +239,21 @@ public class IntronTest extends TestCase{
         Set toStore = new HashSet();
         locationSet2 = new HashSet();
 
-        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
+        Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(10000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
         toStore.add(chr);
 
-        Gene gene = DynamicUtil.createObject(Gene.class);
+        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
         gene.setPrimaryIdentifier("FBgn00002");
         gene.setLength(new Integer(10000));
         gene.setId(new Integer(1002));
         gene.setOrganism(organism);
         toStore.add(gene);
 
-        Transcript t2 = DynamicUtil.createObject(Transcript.class);
+        Transcript t2 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t2.setLength(new Integer(1050));
         t2.setId(new Integer(11));
         t2.setPrimaryIdentifier("ENST00000306610");
@@ -271,7 +274,7 @@ public class IntronTest extends TestCase{
         Exon[] exons = new Exon[exonInfo.length];
         Location[] exonLocs = new Location[exonInfo.length];
         for (int i = 0; i < exons.length; i++) {
-            exons[i] = DynamicUtil.createObject(Exon.class);
+            exons[i] = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
             int exonId = exonInfo[i][0] + idStart;
             int start = exonInfo[i][1];
             int end = exonInfo[i][2];
@@ -305,14 +308,14 @@ public class IntronTest extends TestCase{
         Set toStore = new HashSet();
         locationSet3 = new HashSet();
 
-        Chromosome chr = DynamicUtil.createObject(Chromosome.class);
+        Chromosome chr = (Chromosome) DynamicUtil.createObject(Collections.singleton(Chromosome.class));
         chr.setPrimaryIdentifier("X");
         chr.setLength(new Integer(10000));
         chr.setId(new Integer(101));
         chr.setOrganism(organism);
         toStore.add(chr);
 
-        Transcript t3 = DynamicUtil.createObject(Transcript.class);
+        Transcript t3 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
         t3.setLength(new Integer(1000));
         t3.setId(new Integer(10));
         t3.setPrimaryIdentifier("ENST00000306001");
@@ -323,7 +326,7 @@ public class IntronTest extends TestCase{
         toStore.add(location);
         toStore.add(t3);
 
-        Exon exon = DynamicUtil.createObject(Exon.class);
+        Exon exon = (Exon) DynamicUtil.createObject(Collections.singleton(Exon.class));
         exon.setLength(new Integer(1000));
         exon.setId(new Integer(140));
         exon.setOrganism(organism);
@@ -350,7 +353,7 @@ public class IntronTest extends TestCase{
 
     private Location createLocation(BioEntity object, BioEntity subject, String strand,
                                     int start, int end) {
-        Location loc = DynamicUtil.createObject(Location.class);
+        Location loc = (Location) DynamicUtil.createObject(Collections.singleton(Location.class));
         loc.setLocatedOn(object);
         loc.setFeature(subject);
         loc.setStrand(strand);

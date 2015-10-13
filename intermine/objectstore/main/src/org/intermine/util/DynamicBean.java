@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.sf.cglib.proxy.Callback;
@@ -25,6 +26,8 @@ import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 
 import org.intermine.metadata.StringUtil;
+import org.intermine.metadata.TypeUtil;
+import org.intermine.metadata.Util;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.intermine.NotXmlRenderer;
@@ -63,31 +66,30 @@ public class DynamicBean implements MethodInterceptor
         // empty
     }
 
-
     /**
-     * Create dynamic bean representing and object of a particular class, allows us instantiate
-     * interfaces like regular classes.
-     * @param clazz the class or interface to create an object for
-     * @param <C> a class extending FastPathObject
-     * @return a dynamic bean object
+     * Create a DynamicBean
+     *
+     * @param clazz the class to extend
+     * @param inter the interfaces to implement
+     * @return the DynamicBean
      */
-    public static <C extends FastPathObject> C create(Class<C> clazz) {
-        if (clazz == null) {
-            throw new IllegalArgumentException("You must specify a class when creating a "
-                    + "DynamicBean, was: " + clazz);
+    public static FastPathObject create(Class<? extends FastPathObject> clazz, Class<?> [] inter) {
+        if ((clazz != null) && clazz.isInterface()) {
+            throw new IllegalArgumentException("clazz must not be an interface");
         }
+        // If Enhancer.create() called with a null class it will alter java.lang.Object
+        // this causes a security exception if run with Kaffe JRE
+        //if ( clazz == null) {
+        //    clazz = DynamicBean.class;
+        //}
         Callback[] callbacks = {new DynamicBean(), NoOp.INSTANCE};
         Enhancer e = new Enhancer();
-        if (clazz.isInterface()) {
-            e.setInterfaces(new Class<?> [] {clazz});
-        } else {
-            e.setSuperclass(clazz);
-        }
+        e.setSuperclass(clazz);
+        e.setInterfaces(inter);
         e.setCallbackFilter(FINALIZE_FILTER);
         e.setCallbacks(callbacks);
-        return (C) e.create();
+        return (FastPathObject) e.create();
     }
-
 
     /**
      * Intercept all method calls, and operate on Map.
@@ -321,10 +323,19 @@ public class DynamicBean implements MethodInterceptor
     }
 
     private String doToString(Object obj) {
-        Class<?> cls = DynamicUtil.getClass(obj);
-        StringBuffer retval = new StringBuffer(cls.getName() + " [");
-        Map<String, Object> sortedMap = new TreeMap<String, Object>(map);
+        StringBuffer className = new StringBuffer();
         boolean needComma = false;
+        Set<Class<?>> classes = Util.decomposeClass(obj.getClass());
+        for (Class<?> clazz : classes) {
+            if (needComma) {
+                className.append(",");
+            }
+            needComma = true;
+            className.append(TypeUtil.unqualifiedName(clazz.getName()));
+        }
+        StringBuffer retval = new StringBuffer(className.toString() + " [");
+        Map<String, Object> sortedMap = new TreeMap<String, Object>(map);
+        needComma = false;
         for (Map.Entry<String, Object> mapEntry : sortedMap.entrySet()) {
             String fieldName = mapEntry.getKey();
             Object fieldValue = mapEntry.getValue();

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="main/src"/>
+	<classpathentry kind="src" path="test/src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/intermine-integrate-test"/>
+	<classpathentry kind="lib" path="test/resources"/>
+	<classpathentry kind="lib" path="main/lib/jgrapht-0.8.3.jar"/>
+	<classpathentry kind="lib" path="main/lib/woodstox-core-asl-4.0.6.jar"/>
+	<classpathentry kind="lib" path="main/lib/jaxb-api-2.2.7.jar"/>
+	<classpathentry kind="lib" path="main/lib/jaxb-impl-2.2.7.jar"/>
+	<classpathentry kind="lib" path="main/lib/stax-utils-20070216.jar"/>
+	<classpathentry kind="lib" path="main/lib/jaxb-core-2.2.7.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry kind="lib" path="main/lib/jami-commons-1.1.0.jar"/>
+	<classpathentry kind="lib" path="main/lib/jami-core-1.2.0.jar"/>
+	<classpathentry kind="lib" path="main/lib/jami-mitab-1.1.0.jar"/>
+	<classpathentry kind="lib" path="main/lib/jami-xml-1.1.0.jar"/>
+	<classpathentry kind="lib" path="main/lib/jsr173-1.0.jar"/>
+	<classpathentry kind="lib" path="main/lib/stax2-api-3.0.3.jar"/>
+	<classpathentry kind="lib" path="main/lib/chebiWS-client-2.2.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

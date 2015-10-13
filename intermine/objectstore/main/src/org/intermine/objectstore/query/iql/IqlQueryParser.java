@@ -16,8 +16,10 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
@@ -259,7 +261,7 @@ public final class IqlQueryParser
             Iterator<?> iterator) {
         String tableAlias = null;
         String tableName = null;
-        Class<? extends InterMineObject> cls = null;
+        Set<Class<?>> classes = new HashSet<Class<?>>();
         boolean isBag = false;
         ObjectStoreBag osb = null;
         if (ast.getType() == IqlTokenTypes.QUESTION_MARK) {
@@ -280,13 +282,13 @@ public final class IqlQueryParser
                         tableName = (tableName == null ? temp : tableName + "." + temp);
                         tableNameAst = tableNameAst.getNextSibling();
                     } while (tableNameAst != null);
+                    Class<?> c = null;
                     try {
-                        cls = Class.forName(tableName).asSubclass(InterMineObject.class);
+                        c = Class.forName(tableName);
                     } catch (ClassNotFoundException e) {
                         if (modelPackage != null) {
                             try {
-                                cls = Class.forName(modelPackage + "."
-                                        + tableName).asSubclass(InterMineObject.class);
+                                c = Class.forName(modelPackage + "." + tableName);
                             } catch (ClassNotFoundException e2) {
                                 throw new IllegalArgumentException("Unknown class name " + tableName
                                         + " in package " + modelPackage);
@@ -295,6 +297,7 @@ public final class IqlQueryParser
                             throw new IllegalArgumentException("Unknown class name " + tableName);
                         }
                     }
+                    classes.add(c);
                     break;
                 case IqlTokenTypes.TABLE_ALIAS:
                     tableAlias = unescape(ast.getFirstChild().getText());
@@ -306,23 +309,28 @@ public final class IqlQueryParser
             ast = ast.getNextSibling();
         } while (ast != null);
         if (tableAlias == null) {
-            int index = tableName.lastIndexOf('.');
-            if (index == -1) {
-                tableAlias = tableName;
+            if (classes.size() == 1) {
+                int index = tableName.lastIndexOf('.');
+                if (index == -1) {
+                    tableAlias = tableName;
+                } else {
+                    tableAlias = tableName.substring(index + 1);
+                }
             } else {
-                tableAlias = tableName.substring(index + 1);
+                throw new IllegalArgumentException("Dynamic classes in the FROM clause must have"
+                        + " an alias");
             }
         }
         if (isBag) {
             if (osb == null) {
-                QueryClassBag qcb = new QueryClassBag(cls, (Collection<?>) iterator.next());
+                QueryClassBag qcb = new QueryClassBag(classes, (Collection<?>) iterator.next());
                 q.addFrom(qcb, tableAlias);
             } else {
-                QueryClassBag qcb = new QueryClassBag(cls, osb);
+                QueryClassBag qcb = new QueryClassBag(classes, osb);
                 q.addFrom(qcb, tableAlias);
             }
         } else {
-            QueryClass qc = new QueryClass(cls);
+            QueryClass qc = new QueryClass(classes);
             q.addFrom(qc, tableAlias);
         }
     }

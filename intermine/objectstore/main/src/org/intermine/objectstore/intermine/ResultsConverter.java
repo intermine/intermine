@@ -168,13 +168,22 @@ public final class ResultsConverter
                             if (Date.class.equals(node.getType())) {
                                 currentColumn = new Date(((Long) currentColumn).longValue());
                             } else if (Class.class.equals(node.getType())) {
+                                Set<Class<?>> classes = new HashSet<Class<?>>();
                                 try {
-                                    currentColumn = Class.forName((String) currentColumn);
+                                    String[] b = ((String) currentColumn).split(" ");
+                                    for (int i = 0; i < b.length; i++) {
+                                        classes.add(Class.forName(b[i]));
+                                    }
                                 } catch (ClassNotFoundException e) {
-                                    SQLException e2 = new SQLException(
-                                            "Invalid entry in class column");
+                                    SQLException e2
+                                        = new SQLException("Invalid entry in class column");
                                     e2.initCause(e);
                                     throw e2;
+                                }
+                                if (classes.size() == 1) {
+                                    currentColumn = classes.iterator().next();
+                                } else {
+                                    currentColumn = DynamicUtil.composeClass(classes);
                                 }
                             } else if (Short.class.equals(node.getType())
                                     && (currentColumn instanceof Integer)) {
@@ -263,20 +272,26 @@ public final class ResultsConverter
      * @throws SQLException if something goes wrong
      */
     protected static Object buildObject(ResultSet sqlResults, String alias,
-            ObjectStoreInterMineImpl os, Class<? extends FastPathObject> type,
-            Set<String> noObjectClassColumns)
+            ObjectStoreInterMineImpl os, Class<?> type, Set<String> noObjectClassColumns)
         throws SQLException {
-        Class<? extends FastPathObject> retvalCls = type;
+        //long time1 = System.currentTimeMillis();
+        @SuppressWarnings("unchecked") Set<Class<?>> classes = (Set) Collections.singleton(type);
         if (!noObjectClassColumns.contains(alias)) {
             String objectClass = null;
             try {
+                //long time3 = System.currentTimeMillis();
                 objectClass = sqlResults.getString(alias + "objectclass");
+                //timeSpentSql += System.currentTimeMillis() - time3;
             } catch (SQLException e) {
                 noObjectClassColumns.add(alias);
             }
             if (objectClass != null) {
+                classes = new HashSet<Class<?>>();
                 try {
-                    retvalCls =  Class.forName(objectClass).asSubclass(FastPathObject.class);
+                    String[] b = objectClass.split(" ");
+                    for (int i = 0; i < b.length; i++) {
+                        classes.add(Class.forName(b[i]));
+                    }
                 } catch (ClassNotFoundException e) {
                     SQLException e2 = new SQLException("Invalid entry in objectclass column");
                     e2.initCause(e);
@@ -284,15 +299,16 @@ public final class ResultsConverter
                 }
             }
         }
-        FastPathObject retval = DynamicUtil.createObject(retvalCls);
-
+        FastPathObject retval = DynamicUtil.createObject(classes);
         Map<String, FieldDescriptor> fields = os.getModel().getFieldDescriptorsForClass(retval
                 .getClass());
         for (Map.Entry<String, FieldDescriptor> entry : fields.entrySet()) {
             String fieldName = entry.getKey();
             FieldDescriptor fd = entry.getValue();
             if (fd instanceof AttributeDescriptor) {
+                //long time3 = System.currentTimeMillis();
                 Object value = sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
+                //timeSpentSql += System.currentTimeMillis() - time3;
                 Class<?> expectedType = retval.getFieldType(fieldName);
                 if ((value instanceof Long) && Date.class.equals(expectedType)) {
                     value = new Date(((Long) value).longValue());
@@ -307,13 +323,15 @@ public final class ResultsConverter
                 }
             } else if (fd instanceof CollectionDescriptor) {
                 CollectionDescriptor cd = (CollectionDescriptor) fd;
-                Collection<FastPathObject> lazyColl = new ProxyCollection<FastPathObject>(os,
+                @SuppressWarnings("unchecked") Collection lazyColl = new ProxyCollection(os,
                         (InterMineObject) retval, cd.getName(), cd.getReferencedClassDescriptor()
                             .getType());
                 retval.setFieldValue(cd.getName(), lazyColl);
             } else if (fd instanceof ReferenceDescriptor) {
                 ReferenceDescriptor rd = (ReferenceDescriptor) fd;
+                //long time3 = System.currentTimeMillis();
                 Integer id = (Integer) sqlResults.getObject(alias + DatabaseUtil.getColumnName(fd));
+                //timeSpentSql += System.currentTimeMillis() - time3;
                 @SuppressWarnings("unchecked") Class<? extends InterMineObject> refType =
                     (Class) rd.getReferencedClassDescriptor().getType();
                 if (id == null) {
@@ -323,6 +341,13 @@ public final class ResultsConverter
                 }
             }
         }
+        //long time2 = System.currentTimeMillis();
+        //timeSpentBuildObject += time2 - time1;
+        //countBuildObject++;
+        //if (countBuildObject % 100000 == 0) {
+        //    LOG.info("Called buildObject " + countBuildObject + " times. Time spent: "
+        //    + timeSpentBuildObject + ", Sql: " + timeSpentSql);
+        //}
         return retval;
     }
 
@@ -554,7 +579,7 @@ public final class ResultsConverter
      * @throws ObjectStoreException if an error occurs
      */
     protected static Map<Integer, InterMineObject> fetchByIds(ObjectStoreInterMineImpl os,
-            Connection c, Map<Object, Integer> sequence, Class<? extends FastPathObject> clazz,
+            Connection c, Map<Object, Integer> sequence, Class<?> clazz,
             Collection<Integer> idsToFetch, ExtraQueryTime extra) throws ObjectStoreException {
         try {
             if (idsToFetch.isEmpty()) {
