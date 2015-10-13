@@ -579,6 +579,10 @@ public final class DatabaseUtil
             if ("TABLE".equals(res.getString(4))) {
                 tablenames.add(tablename);
             }
+            if ("VIEW".equals(res.getString(4))) {
+                LOG.info("Dropping view " + tablename);
+                con.createStatement().execute("DROP VIEW " + tablename);
+            }
         }
         for (String tablename : tablenames) {
             LOG.info("Dropping table " + tablename);
@@ -597,6 +601,19 @@ public final class DatabaseUtil
         LOG.info("Dropping sequence " + sequence);
         con.createStatement().execute("DROP SEQUENCE " + sequence);
     }
+
+    /**
+     * Remove the view from the database given.
+     *
+     * @param con the Connection to the database
+     * @param view the view to remove
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    public static void removeView(Connection con, String view) throws SQLException {
+        LOG.info("Dropping view " + view);
+        con.createStatement().execute("DROP VIEW IF EXISTS " + view);
+    }
+
 
     /**
      * Creates a table name for a class descriptor
