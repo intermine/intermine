@@ -1,0 +1,137 @@
+<items>
+<item id="4_6" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR020479"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001827"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_10" class="ProteinDomainRegion">
+<attribute name="database" value="PRINTS"/>
+<attribute name="end" value="330"/>
+<attribute name="identifier" value="PR00024"/>
+<attribute name="start" value="319"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_6"/>
+</item>
+<item id="5_3" class="ProteinDomainRegion">
+<attribute name="database" value="SMART"/>
+<attribute name="end" value="359"/>
+<attribute name="identifier" value="SM00389"/>
+<attribute name="start" value="297"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_1"/>
+</item>
+<item id="5_8" class="ProteinDomainRegion">
+<attribute name="database" value="PRINTS"/>
+<attribute name="end" value="289"/>
+<attribute name="identifier" value="PR00025"/>
+<attribute name="start" value="282"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_5"/>
+</item>
+<item id="5_9" class="ProteinDomainRegion">
+<attribute name="database" value="PRINTS"/>
+<attribute name="end" value="313"/>
+<attribute name="identifier" value="PR00025"/>
+<attribute name="start" value="298"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_5"/>
+</item>
+<item id="5_12" class="ProteinDomainRegion">
+<attribute name="database" value="PRINTS"/>
+<attribute name="end" value="353"/>
+<attribute name="identifier" value="PR00024"/>
+<attribute name="start" value="344"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_6"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="InterPro"/>
+</item>
+<item id="4_1" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR001356"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Protein">
+<attribute name="primaryAccession" value="P02833"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_4" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR017970"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="ProteinDomainRegion">
+<attribute name="database" value="SUPERFAMILY"/>
+<attribute name="end" value="357"/>
+<attribute name="identifier" value="SSF46689"/>
+<attribute name="start" value="276"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_3"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="InterPro data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="5_1" class="ProteinDomainRegion">
+<attribute name="database" value="Pfam"/>
+<attribute name="end" value="354"/>
+<attribute name="identifier" value="PF00046"/>
+<attribute name="start" value="298"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_1"/>
+</item>
+<item id="5_2" class="ProteinDomainRegion">
+<attribute name="database" value="PROSITE"/>
+<attribute name="end" value="355"/>
+<attribute name="identifier" value="PS50071"/>
+<attribute name="start" value="295"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_1"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="4_3" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR009057"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_5" class="ProteinDomain">
+<attribute name="primaryIdentifier" value="IPR017995"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_11" class="ProteinDomainRegion">
+<attribute name="database" value="PRINTS"/>
+<attribute name="end" value="344"/>
+<attribute name="identifier" value="PR00024"/>
+<attribute name="start" value="334"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_6"/>
+</item>
+<item id="5_7" class="ProteinDomainRegion">
+<attribute name="database" value="PROSITE"/>
+<attribute name="end" value="353"/>
+<attribute name="identifier" value="PS00027"/>
+<attribute name="start" value="330"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_4"/>
+</item>
+<item id="5_5" class="ProteinDomainRegion">
+<attribute name="database" value="Gene3D"/>
+<attribute name="end" value="358"/>
+<attribute name="identifier" value="G3DSA:1.10.10.60"/>
+<attribute name="start" value="267"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_3"/>
+</item>
+<item id="5_4" class="ProteinDomainRegion">
+<attribute name="database" value="PROSITE"/>
+<attribute name="end" value="288"/>
+<attribute name="identifier" value="PS00032"/>
+<attribute name="start" value="283"/>
+<reference name="protein" ref_id="3_1"/>
+<reference name="proteinDomain" ref_id="4_2"/>
+</item>
+</items>

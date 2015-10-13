@@ -52,7 +52,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
     private Set<Item> synonymsAndXrefs = new HashSet<Item>();
-    private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
     // md5Checksum -> sequence item identifier  (ensure all sequences are unique across organisms)
@@ -69,7 +68,6 @@ public class UniprotConverter extends BioDirectoryConverter
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
 
-    private boolean createInterpro = false;
     private boolean creatego = false;
     private boolean loadfragments = false;
     private boolean allowduplicates = false;
@@ -224,13 +222,14 @@ public class UniprotConverter extends BioDirectoryConverter
     /**
      * Toggle whether or not to import interpro data
      * @param createinterpro String whether or not to import interpro data (true/false)
+     * @deprecated The UniProt data source does not create interpro domains any longer. Please
+     * use the InterPro data source instead.
      */
+    @Deprecated
     public void setCreateinterpro(String createinterpro) {
-        if ("true".equals(createinterpro)) {
-            this.createInterpro = true;
-        } else {
-            this.createInterpro = false;
-        }
+        final String msg = "UniProt data source does not create protein domains any longer. "
+                + "Please use the InterPro data source instead.";
+        throw new IllegalArgumentException(msg);
     }
 
     /**
@@ -395,16 +394,6 @@ public class UniprotConverter extends BioDirectoryConverter
                     && getAttrValue(attrs, "position") != null) {
                 entry.addFeatureLocation("begin", getAttrValue(attrs, "position"));
                 entry.addFeatureLocation("end", getAttrValue(attrs, "position"));
-            } else if (createInterpro && "dbReference".equals(qName)
-                    && "InterPro".equals(getAttrValue(attrs, "type"))) {
-                entry.addAttribute(getAttrValue(attrs, "id"));
-            } else if (createInterpro && "property".equals(qName) && entry.processing()
-                    && "dbReference".equals(previousQName)
-                    && "entry name".equals(getAttrValue(attrs, "type"))) {
-                String domain = entry.getAttribute();
-                if (domain.startsWith("IPR")) {
-                    entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value")));
-                }
             } else if ("dbReference".equals(qName) && "citation".equals(previousQName)
                     && "PubMed".equals(getAttrValue(attrs, "type"))) {
                 entry.addPub(getPub(getAttrValue(attrs, "id")));
@@ -641,11 +630,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 /* sequence */
                 if (!uniprotEntry.isIsoform()) {
                     processSequence(protein, uniprotEntry);
-                }
-
-                /* interpro */
-                if (createInterpro && uniprotEntry.getDomains() != null) {
-                    protein.setCollection("proteinDomains", uniprotEntry.getDomains());
                 }
 
                 protein.setReference("organism", getOrganism(uniprotEntry.getTaxonId()));
@@ -1007,9 +991,9 @@ public class UniprotConverter extends BioDirectoryConverter
          */
         private void addPubs2Gene(UniprotEntry uniprotEntry, Item gene) {
             if (uniprotEntry.getPubs() != null) {
-                Iterator<String> pubs = uniprotEntry.getPubs().iterator();
-                while (pubs.hasNext()) {
-                    String refId = pubs.next();
+                Iterator<String> genePubs = uniprotEntry.getPubs().iterator();
+                while (genePubs.hasNext()) {
+                    String refId = genePubs.next();
                     gene.addToCollection("publications", refId);
                 }
             }
@@ -1217,24 +1201,6 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
         return null;
-    }
-
-    private String getInterpro(String identifier, String shortName)
-        throws SAXException {
-        String refId = domains.get(identifier);
-        if (refId == null) {
-            Item item = createItem("ProteinDomain");
-            item.setAttribute("primaryIdentifier", identifier);
-            item.setAttribute("shortName", shortName);
-            refId = item.getIdentifier();
-            domains.put(identifier, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
     }
 
     private String getPub(String pubMedId)
