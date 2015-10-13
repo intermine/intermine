@@ -372,18 +372,18 @@
     <property name="assemblyVersion" value="v2.0" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
-  <source name="phytozome-chado-K.laxiflora-early-release" type="phytozome-db">
+  <source name="phytozome-chado-K.marnieriana-early-release" type="phytozome-db">
     <property name="source.db.name" value="phytozome" />
-    <property name="commonName" value="Kalanchoe laxiflora" />
+    <property name="commonName" value="Kalanchoe marnieriana" />
     <property name="genus" value="Kalanchoe" />
-    <property name="name" value="Kalanchoe laxiflora" />
-    <property name="species" value="laxiflora" />
+    <property name="name" value="Kalanchoe marnieriana" />
+    <property name="species" value="marnieriana" />
     <property name="assemblyDbxrefId" value="9140340" />
     <property name="proteomeId" value="309" />
-    <property name="taxonId" value="1670617" />
+    <property name="taxonId" value="80907" />
     <property name="annotationVersion" value="v1.1" />
-    <property name="dataSourceName" value="phytozome-K.laxiflora" />
-    <property name="shortName" value="K. laxiflora early-release" />
+    <property name="dataSourceName" value="phytozome-K.marnieriana" />
+    <property name="shortName" value="K. marnieriana early-release" />
     <property name="version" value="early-release" />
     <property name="annotationDbxrefId" value="9140341" />
     <property name="assemblyVersion" value="v1.0" />
@@ -607,23 +607,6 @@
     <property name="shortName" value="P. patens" />
     <property name="version" value="current" />
     <property name="annotationDbxrefId" value="4417256" />
-    <property name="assemblyVersion" value="v3" />
-    <property name="dataSetTitle" value="Phytozome v10" />
-  </source>
-  <source name="phytozome-chado-P.patens-early-release" type="phytozome-db">
-    <property name="source.db.name" value="phytozome" />
-    <property name="commonName" value="moss" />
-    <property name="genus" value="Physcomitrella" />
-    <property name="name" value="Physcomitrella patens" />
-    <property name="species" value="patens" />
-    <property name="assemblyDbxrefId" value="4417255" />
-    <property name="proteomeId" value="299" />
-    <property name="taxonId" value="3218" />
-    <property name="annotationVersion" value="v3.1" />
-    <property name="dataSourceName" value="phytozome-P.patens" />
-    <property name="shortName" value="P. patens early-release" />
-    <property name="version" value="early-release" />
-    <property name="annotationDbxrefId" value="7816352" />
     <property name="assemblyVersion" value="v3" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
@@ -990,7 +973,7 @@
     <property name="genus" value="Sorghum" />
     <property name="name" value="Sorghum bicolor" />
     <property name="species" value="bicolor" />
-    <property name="assemblyDbxrefId" value="4417257" />
+    <property name="assemblyDbxrefId" value="9520318" />
     <property name="proteomeId" value="313" />
     <property name="taxonId" value="4558" />
     <property name="annotationVersion" value="v3.1" />
@@ -998,7 +981,7 @@
     <property name="shortName" value="S. bicolor early-release" />
     <property name="version" value="early-release" />
     <property name="annotationDbxrefId" value="9419677" />
-    <property name="assemblyVersion" value="v2.0" />
+    <property name="assemblyVersion" value="" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
   <source name="phytozome-chado-B.distachyon-early-release" type="phytozome-db">
@@ -1018,6 +1001,23 @@
     <property name="assemblyVersion" value="v3.0" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
+  <source name="phytozome-chado-A.hypochondriacus-early-release" type="phytozome-db">
+    <property name="source.db.name" value="phytozome" />
+    <property name="commonName" value="grain amaranth" />
+    <property name="genus" value="Amaranthus" />
+    <property name="name" value="Amaranthus hypochondriacus" />
+    <property name="species" value="hypochondriacus" />
+    <property name="assemblyDbxrefId" value="9520319" />
+    <property name="proteomeId" value="315" />
+    <property name="taxonId" value="28502" />
+    <property name="annotationVersion" value="v1.0" />
+    <property name="dataSourceName" value="phytozome-A.hypochondriacus" />
+    <property name="shortName" value="A. hypochondriacus early-release" />
+    <property name="version" value="early-release" />
+    <property name="annotationDbxrefId" value="9520320" />
+    <property name="assemblyVersion" value="v1.0" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+  </source>
   <source name="phytozome-chado-B.stacei-early-release" type="phytozome-db">
     <property name="source.db.name" value="phytozome" />
     <property name="commonName" value="Brachypodium stacei" />
@@ -1033,5 +1033,22 @@
     <property name="version" value="early-release" />
     <property name="annotationDbxrefId" value="9259421" />
     <property name="assemblyVersion" value="v1.0" />
+    <property name="dataSetTitle" value="Phytozome v10" />
+  </source>
+  <source name="phytozome-chado-P.patens-newer-early-release" type="phytozome-db">
+    <property name="source.db.name" value="phytozome" />
+    <property name="commonName" value="moss" />
+    <property name="genus" value="Physcomitrella" />
+    <property name="name" value="Physcomitrella patens" />
+    <property name="species" value="patens" />
+    <property name="assemblyDbxrefId" value="4417255" />
+    <property name="proteomeId" value="318" />
+    <property name="taxonId" value="3218" />
+    <property name="annotationVersion" value="v3.3" />
+    <property name="dataSourceName" value="phytozome-P.patens" />
+    <property name="shortName" value="P. patens early-release" />
+    <property name="version" value="early-release" />
+    <property name="annotationDbxrefId" value="9559456" />
+    <property name="assemblyVersion" value="v3" />
     <property name="dataSetTitle" value="Phytozome v10" />
   </source>
