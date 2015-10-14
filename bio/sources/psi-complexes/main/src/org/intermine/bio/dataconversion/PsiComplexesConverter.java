@@ -65,6 +65,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
     private static final String PROTEIN = "MI:0326";
+    private static final String SMALL_MOLECULE = "MI:0328";
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
@@ -349,12 +350,10 @@ public class PsiComplexesConverter extends BioFileConverter
                 throw new BuildException("Unknown interactor type: " + typeTermIdentifier);
             }
             Item protein = createItem(interactorType);
+            protein.setAttribute("primaryIdentifier", primaryIdentifier);
             if (PROTEIN.equals(typeTermIdentifier)) {
                 protein.setAttribute("primaryAccession", accession);
-                protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            } else {
-                protein.setAttribute("primaryIdentifier", primaryIdentifier);
-                // small molecule
+            } else if (SMALL_MOLECULE.equals(typeTermIdentifier)) {
                 String smallMolecule = getChebiName(primaryIdentifier);
                 if (StringUtils.isNotEmpty(smallMolecule)) {
                     protein.setAttribute("name", smallMolecule);
