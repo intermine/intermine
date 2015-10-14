@@ -84,7 +84,7 @@ public class PsiComplexesConverter extends BioFileConverter
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
         INTERACTOR_TYPES.put("MI:0303", "RNA");
-        INTERACTOR_TYPES.put("MI:0607", "SnoRNA");
+        INTERACTOR_TYPES.put("MI:0609", "SnoRNA");
     }
 
     /**
