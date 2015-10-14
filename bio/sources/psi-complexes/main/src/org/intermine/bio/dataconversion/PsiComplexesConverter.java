@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -78,6 +79,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private Map<String, String> interactors = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
 
+    // See #1168
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
@@ -343,8 +345,8 @@ public class PsiComplexesConverter extends BioFileConverter
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
             if (interactorType == null) {
-                // we don't know how to handle non-protein, non-small molecules
-                return null;
+                // see #1168 - this needs to be automatic
+                throw new BuildException("Unknown interactor type: " + typeTermIdentifier);
             }
             Item protein = createItem(interactorType);
             if (PROTEIN.equals(typeTermIdentifier)) {
