@@ -347,7 +347,7 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
                      jspName="model/geneIdentifiersDisplayer.jsp"
-                     replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
+                     replacesFields="primaryIdentifier,secondaryIdentifier"
                      showImmediately="true"
                      placement="top"
                      types="Gene"/>
