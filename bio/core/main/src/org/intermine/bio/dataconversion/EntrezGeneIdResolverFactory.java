@@ -38,7 +38,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
  // set in .intermine/MINE.properties
     private static final String PROP_KEY = "resolver.file.rootpath";
-    private static final String SYMBOLIC_LINK = "entrez";
+    private static final String FILE_SYMBOLIC_LINK = "entrez";
 
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
     private Map<String, String> configXref = new HashMap<String, String>();
@@ -180,7 +180,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + "/" + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + "/" + FILE_SYMBOLIC_LINK;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);

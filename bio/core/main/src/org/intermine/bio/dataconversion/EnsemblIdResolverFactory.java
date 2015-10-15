@@ -69,7 +69,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + "/" + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + "/" + FILE_SYMBOLIC_LINK;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     populateFromFile(f);
