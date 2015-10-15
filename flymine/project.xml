@@ -551,10 +551,12 @@
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
     </source>
+<!--
     <source name="psi-complexes" type="psi-complexes">
       <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
       <property name="complexes.source" value="sgd"/>
     </source>
+-->
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
