@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -64,6 +65,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String INTERACTION_TYPE = "physical";
     // TODO put this in config file instead
     private static final String PROTEIN = "MI:0326";
+    private static final String SMALL_MOLECULE = "MI:0328";
     private static final String BINDING_SITE = "binding region";
     private static final String GENE_ONTOLOGY = "go";
     private static final String PUBMED = "pubmed";
@@ -78,9 +80,12 @@ public class PsiComplexesConverter extends BioFileConverter
     private Map<String, String> interactors = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
 
+    // See #1168
     static {
         INTERACTOR_TYPES.put("MI:0326", "Protein");
         INTERACTOR_TYPES.put("MI:0328", "SmallMolecule");
+        INTERACTOR_TYPES.put("MI:0320", "RNA");
+        INTERACTOR_TYPES.put("MI:0609", "SnoRNA");
     }
 
     /**
@@ -341,16 +346,14 @@ public class PsiComplexesConverter extends BioFileConverter
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
             if (interactorType == null) {
-                // we don't know how to handle non-protein, non-small molecules
-                return null;
+                // see #1168 - this needs to be automatic
+                throw new BuildException("Unknown interactor type: " + typeTermIdentifier);
             }
             Item protein = createItem(interactorType);
+            protein.setAttribute("primaryIdentifier", primaryIdentifier);
             if (PROTEIN.equals(typeTermIdentifier)) {
                 protein.setAttribute("primaryAccession", accession);
-                protein.setAttribute("primaryIdentifier", primaryIdentifier);
-            } else {
-                protein.setAttribute("primaryIdentifier", primaryIdentifier);
-                // small molecule
+            } else if (SMALL_MOLECULE.equals(typeTermIdentifier)) {
                 String smallMolecule = getChebiName(primaryIdentifier);
                 if (StringUtils.isNotEmpty(smallMolecule)) {
                     protein.setAttribute("name", smallMolecule);

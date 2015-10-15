@@ -10,6 +10,7 @@
 
 InterMine 1.6 (Halloween 2015)
 
+#1164 - GO enrichment widget -- background change error
 #1163 - QueryBuilder: error querying for NULL relationships
 #1153 - FlyMine: create-utr-references is failing
 #1150 - IntegrationWriterDataTrackingImplTest failing tests, sometimes.
