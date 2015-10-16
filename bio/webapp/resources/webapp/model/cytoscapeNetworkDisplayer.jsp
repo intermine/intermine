@@ -44,20 +44,21 @@
 
       element = document.getElementById('geneInteractionDisplayer');
 
-      cymine({
-        parentElem : element,
-        service : $SERVICE,
-        queryOn : {
-          "value" : "${cytoscapeInteractionObjectId}",
-          "path": "id",
-          "op": "="
-        }
-      }).then(function(hasValues) {
-        if (!hasValues) {
-          element.parentElement.style.display = "none";
-        }
+      jQuery('document').ready(function(){
+        cymine({
+          parentElem : element,
+          service : $SERVICE,
+          queryOn : {
+            "value" : "${cytoscapeInteractionObjectId}",
+            "path": "id",
+            "op": "="
+          }
+        }).then(function(hasValues) {
+          if (!hasValues) {
+            element.parentElement.style.display = "none";
+          }
+        });
       });
-
     });
   };
 
