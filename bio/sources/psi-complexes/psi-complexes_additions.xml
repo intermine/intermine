@@ -16,6 +16,7 @@
     </class>
 
     <class name="SmallMolecule" extends="BioEntity" is-interface="true"/>
+    <class name="RNA" extends="BioEntity" is-interface="true"/>
 
     <class name="Complex" is-interface="true">
         <attribute name="identifier" type="java.lang.String"/>
