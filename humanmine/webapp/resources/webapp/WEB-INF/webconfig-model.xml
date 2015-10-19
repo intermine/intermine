@@ -524,12 +524,13 @@
                                  label="Protein Domain"
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
-                                 enrich="proteins.proteinDomains.name"
+                                 enrich="proteins.proteinDomainRegions.proteinDomains.name"
                                  enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
-                                       proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
+                                       proteins.proteinDomainRegions.proteinDomains.primaryIdentifier,
+                                       proteins.proteinDomainRegions.proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
@@ -538,12 +539,12 @@
                                  label="Protein Domain"
                                  startClass="Protein"
                                  startClassDisplay="primaryIdentifier"
-                                 enrich="proteinDomains.name"
-                                 enrichIdentifier="proteinDomains.primaryIdentifier"
+                                 enrich="proteinDomainRegions.proteinDomains.name"
+                                 enrichIdentifier="proteinDomainRegions.proteinDomains.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="Protein"
-                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
-                                       proteinDomains.name"
+                                 views="primaryIdentifier,organism.name,proteinDomainRegions.proteinDomains.primaryIdentifier,
+                                       proteinDomainRegions.proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
 
