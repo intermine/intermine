@@ -50,8 +50,8 @@ public class EmapaOboConverter extends OboConverter implements OboConverterInter
 private static final Logger LOG = Logger.getLogger(EmapaOboConverter.class);
 // child identifier is key to a collection of parent items
 private HashMap<String, ArrayList<Item>> parents = new HashMap<String, ArrayList<Item>>();
-// child identifier is the key to a map of the child's ancestors each ancestor's key is its identifier
-private HashMap<String, HashMap<String,Item>> ancestors = new HashMap<String, HashMap<String,Item>>();
+// child identifier is the key to a list of the child's ancestors
+private HashMap<String, ArrayList<Item>> ancestors = new HashMap<String, ArrayList<Item>>();
 // keep track of visited nodes when recursing
 private HashMap<String, String> visited = new HashMap<String, String>();
 
@@ -149,11 +149,14 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
             String cId = c.getAttribute("identifier").getValue();
             String pId = p.getAttribute("identifier").getValue();
 	    if (ancestors.containsKey(cId)) {
-             if (ancestors.get(cId).containsKey(pId)) {
+             for (Item a : ancestors.get(cId)) {
+               if(a.getAttribute("identifier").getValue().equals(pId)) {
 		super.processRelation(oboRelation);
+                return;
                }               
             }
           }
+       }
     }
 
     // create a collection of ancestors for each node/term
@@ -172,7 +175,7 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
            for (Item p : parents.get(nId)) {
                visit(p);
                String pId = p.getAttribute("identifier").getValue();
-               for (Item a : ancestors.get(pId).values()) {
+               for (Item a : ancestors.get(pId)) {
 
                    String aId = a.getAttribute("identifier").getValue();
 
@@ -207,34 +210,12 @@ public EmapaOboConverter(ItemWriter writer, Model model, String dagFilename, Str
 
          String aId = ancestor.getAttribute("identifier").getValue();
          if (ancestors.containsKey(child)) {
-            if (ancestors.get(child).get(aId) != null) {
-                Item existingA = ancestors.get(child).get(aId);
-                ancestors.get(child).put(aId, merge(ancestor,existingA));
-            }else {
-                ancestors.get(child).put(aId,ancestor);
-            }
+                ancestors.get(child).add(ancestor);
         } else {
-            HashMap<String,Item> map = new HashMap<String,Item>();
-            map.put(aId,ancestor);
-            ancestors.put(child, map);
+            ArrayList<Item> list = new ArrayList<Item>();
+            list.add(ancestor);
+            ancestors.put(child, list);
         }
     }
 
-   // an item is merged if it is being added to a set of ancestors more than once
-   // the start and end stages should be the most inclusive range of stages
-   private Item merge(Item a, Item b) {
-	
-      int aStart = Integer.parseInt(a.getAttribute("startsAt").getValue());
-      int aEnd = Integer.parseInt(a.getAttribute("endsAt").getValue()); 
-       
-      int bStart = Integer.parseInt(b.getAttribute("startsAt").getValue());
-      int bEnd = Integer.parseInt(b.getAttribute("endsAt").getValue());
-        
-      int vStart = Math.min(aStart, bStart);
-      int vEnd = Math.max(aEnd, bEnd);
-
-      a.setAttribute("startsAt",vStart+"");
-      a.setAttribute("endsAt",vEnd+"");
-      return a;
-   }
 }
