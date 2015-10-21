@@ -217,9 +217,11 @@ public class CufflinksPostProcess extends PostProcessor {
       q.addToOrderBy(qf);
       
       if (proteomeId != null) {
+        // both bioentity and rnaseqexperiment have an organism referecne
+        QueryObjectReference orgRef = new QueryObjectReference(qcBase,"organism");
         qcOrg = new QueryClass(Organism.class);
+        q.addFrom(qcOrg);
         QueryField qfProt = new QueryField(qcOrg,"proteomeId");
-        QueryObjectReference orgRef = new QueryObjectReference(qcCufflinks,"organism");
         QueryValue qvProtId = new QueryValue(proteomeId);
         cs.addConstraint(new SimpleConstraint(qfProt,ConstraintOp.EQUALS,qvProtId));
         cs.addConstraint(new ContainsConstraint(orgRef,ConstraintOp.CONTAINS, qcOrg));

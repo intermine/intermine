@@ -30,7 +30,7 @@
 
 <c:if test="${pageName == 'begin'}">
   <!-- html:base server="${pageContext.request.localName}:${pageContext.request.localPort}" /-->
-    <base href="${pageContext.request.scheme}://${pageContext.request.localName}:${pageContext.request.localPort}${pageContext.request.contextPath}/" />
+    <base href="${pageContext.request.contextPath}/" />
   <!--html:base/ -->
   <%-- <base href="http://${pageContext.request.localName}:${pageContext.request.localPort}${pageContext.request.contextPath}/" /> --%>
 </c:if>
