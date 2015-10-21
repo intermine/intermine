@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -26,12 +25,13 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.biojava.bio.structure.DBRef;
 import org.biojava.bio.structure.Structure;
-import org.biojava.bio.structure.io.PDBFileParser;
+import org.biojava.bio.structure.io.PDBFileReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.metadata.StringUtil;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
 import org.xml.sax.SAXException;
 
@@ -119,11 +119,20 @@ public class PdbConverter extends BioDirectoryConverter
 
     private void processPDBFile(File file, String taxonId)
         throws Exception {
+        PDBFileReader reader = new PDBFileReader();
+        reader.setAutoFetch(false);
+        Structure structure = null;
+        LOG.error("parsing " + file.getName());
+        try {
+            structure = reader.getStructure(file);
+        } catch (IOException e) {
+            // see #1179
+            LOG.error("couldn't parse " + file.getName());
+            return;
+            //throw new BuildException("Couldn't open file for: " + taxonId);
+        }
         Item proteinStructure = createItem("ProteinStructure");
-        PDBFileParser pdbfileparser = new PDBFileParser();
-        Reader reader = new FileReader(file);
-        PdbBufferedReader pdbBuffReader = new PdbBufferedReader(reader);
-        Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
+
         String idCode = (String) structure.getHeader().get("idCode");
         if (StringUtils.isNotEmpty(idCode)) {
             proteinStructure.setAttribute("identifier", idCode);
@@ -131,9 +140,9 @@ public class PdbConverter extends BioDirectoryConverter
             throw new BuildException("No value for title in structure: " + idCode);
         }
 
-        List<String> dbrefs = pdbBuffReader.getDbrefs();
-        for (String accnum: dbrefs) {
-            String proteinRefId = getProtein(accnum, taxonId);
+        List<DBRef> dbrefs = structure.getDBRefs();
+        for (DBRef dbref: dbrefs) {
+            String proteinRefId = getProtein(dbref.getDbAccession(), taxonId);
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
 
