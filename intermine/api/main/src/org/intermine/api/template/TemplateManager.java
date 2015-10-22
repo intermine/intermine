@@ -290,6 +290,17 @@ public class TemplateManager
     }
 
     /**
+     * For a public template, return all the tags.
+     *
+     * Used in stepZ to put the template in the right data category
+     * @param template template with tags
+     * @return the list of tags for the template of interest
+     */
+    public List<Tag> getGlobalTags(ApiTemplate template) {
+        return tagManager.getObjectTags(template, superProfile);
+    }
+
+    /**
      * Return a map from template name to template query containing superuser templates that are
      * tagged as public and are valid for the current data model.
      * @return a map from template name to template query

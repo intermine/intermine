@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplateManager;
@@ -28,6 +29,7 @@ import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.NotAcceptableException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
@@ -71,13 +73,13 @@ public class AvailableTemplatesService extends WebService
 
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, ApiTemplate> templates;
+        TagManager tagManager = im.getTagManager();
         boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
             Profile profile = getPermission().getProfile();
             templates = (includeBroken)
                             ? templateManager.getUserAndGlobalTemplates(profile)
                             : templateManager.getWorkingTemplates(profile);
-
         } else {
             templates = (includeBroken)
                             ? templateManager.getGlobalTemplates()
@@ -90,13 +92,16 @@ public class AvailableTemplatesService extends WebService
                         PathQuery.USERPROFILE_VERSION)));
                 break;
             case JSON:
-                Map<String, Object> attributes = new HashMap<String, Object>();
-                if (formatIsJSONP()) {
-                    attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
+                Profile profile = getPermission().getProfile();
+                JSONTemplateFormatter formatter = new JSONTemplateFormatter(im, profile);
+                output.setHeaderAttributes(getHeaderAttributes());
+                for (ApiTemplate template: templates.values()) {
+                    if (template == null) {
+                        continue;
+                    }
+                    output.addResultItem(formatter.format(template));
                 }
-                attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
-                output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(templates)));
+
                 break;
             case TEXT:
                 Set<String> templateNames = new TreeSet<String>(templates.keySet());
@@ -108,5 +113,20 @@ public class AvailableTemplatesService extends WebService
             default:
                 throw new NotAcceptableException();
         }
+    }
+
+    private Map<String, Object> getHeaderAttributes() {
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        if (formatIsJSON()) {
+            attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":[");
+            attributes.put(JSONFormatter.KEY_OUTRO, "]");
+        }
+        if (formatIsJSONP()) {
+            attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
+        } else if (getFormat() == Format.HTML) {
+            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
+                Arrays.asList("Name", "Title", "Description", "Query"));
+        }
+        return attributes;
     }
 }
