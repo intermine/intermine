@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.biojava.bio.structure.DBRef;
+import org.biojava.bio.structure.PDBHeader;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileReader;
 import org.intermine.dataconversion.ItemWriter;
@@ -133,7 +134,9 @@ public class PdbConverter extends BioDirectoryConverter
         }
         Item proteinStructure = createItem("ProteinStructure");
 
-        String idCode = (String) structure.getHeader().get("idCode");
+        PDBHeader header =  structure.getPDBHeader();
+
+        String idCode = header.getIdCode();
         if (StringUtils.isNotEmpty(idCode)) {
             proteinStructure.setAttribute("identifier", idCode);
         } else {
@@ -146,26 +149,25 @@ public class PdbConverter extends BioDirectoryConverter
             proteinStructure.addToCollection("proteins", proteinRefId);
         }
 
-        String title = (((String) structure.getHeader().get("title"))).trim();
+        String title = header.getTitle();
         if (StringUtils.isNotEmpty(title)) {
             proteinStructure.setAttribute("title", title);
         } else {
             LOG.warn("No value for title in structure: " + idCode);
         }
-        String technique = ((String) structure.getHeader().get("technique")).trim();
+        String technique = header.getTechnique();
         if (StringUtils.isNotEmpty(technique)) {
             proteinStructure.setAttribute("technique", technique);
         } else {
             LOG.warn("No value for technique in structure: " + idCode);
         }
-        String classification = ((String) structure.getHeader().get("classification")).trim();
-        proteinStructure.setAttribute("classification",
-                                      classification);
-        Object resolution = structure.getHeader().get("resolution");
-        if (resolution instanceof Float) {
-            final Float resolutionFloat = (Float) structure.getHeader().get("resolution");
+        String classification = header.getClassification();
+        proteinStructure.setAttribute("classification", classification);
+
+        final Float resolutionFloat = header.getResolution();
+        if (resolutionFloat != null) {
             proteinStructure.setAttribute("resolution",
-                                          Float.toString(resolutionFloat.floatValue()));
+                    Float.toString(resolutionFloat.floatValue()));
         }
         try {
             proteinStructure.setAttribute("atm", structure.toPDB());
