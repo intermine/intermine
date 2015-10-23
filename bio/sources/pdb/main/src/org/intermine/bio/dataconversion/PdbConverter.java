@@ -196,46 +196,4 @@ public class PdbConverter extends BioDirectoryConverter
         return refId;
     }
 
-    /**
-     * BioJava doesn't support getting DBREF so we get it as the file is read.
-     *
-     * @author Xavier Watkins
-     *
-     */
-    public class PdbBufferedReader extends BufferedReader
-    {
-
-        private List<String> dbrefs = new ArrayList<String>();
-
-        /**
-         * Create a new PdbBufferedReader object.
-         * @param reader the underlying Reader object
-         */
-        public PdbBufferedReader(Reader reader) {
-            super(reader);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String readLine() throws IOException {
-            String line = super.readLine();
-            if (line != null && line.matches("^DBREF.*")) {
-                String [] split = line.split("\\s+");
-                if ("SWS".equals(split[5]) || "UNP".equals(split[5])) {
-                    dbrefs.add(split[6]);
-                }
-            }
-            return line;
-        }
-
-        /**
-         * Return the db refs read from the Reader.
-         * @return the List of db refs
-         */
-        public List<String> getDbrefs() {
-            return dbrefs;
-        }
-    }
-}
+ }
