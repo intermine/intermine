@@ -329,48 +329,56 @@ public class TransferSequences
         Query q = new Query();
         q.setDistinct(false);
 
+        // Transcript
         QueryClass qcTranscript =
             new QueryClass(model.getClassDescriptorByName("Transcript").getType());
         q.addFrom(qcTranscript);
         q.addToSelect(qcTranscript);
         q.addToOrderBy(qcTranscript);
 
+        // Exon
         QueryClass qcExon = new QueryClass(model.getClassDescriptorByName("Exon").getType());
         q.addFrom(qcExon);
         q.addToSelect(qcExon);
 
-
+        // Sequence
         QueryClass qcExonSequence = new QueryClass(Sequence.class);
         q.addFrom(qcExonSequence);
         q.addToSelect(qcExonSequence);
 
+        // Location
         QueryClass qcExonLocation = new QueryClass(Location.class);
         q.addFrom(qcExonLocation);
         q.addToSelect(qcExonLocation);
 
+        // Exon.location.start
         QueryField qfExonStart = new QueryField(qcExonLocation, "start");
         q.addToSelect(qfExonStart);
         q.addToOrderBy(qfExonStart);
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
+        // Transcript.exons
         QueryCollectionReference exonsRef =
             new QueryCollectionReference(qcTranscript, "exons");
         ContainsConstraint cc1 =
             new ContainsConstraint(exonsRef, ConstraintOp.CONTAINS, qcExon);
         cs.addConstraint(cc1);
 
+        // exon.chromosomeLocation
         QueryObjectReference locRef =
             new QueryObjectReference(qcExon, "chromosomeLocation");
         ContainsConstraint cc2 =
             new ContainsConstraint(locRef, ConstraintOp.CONTAINS, qcExonLocation);
         cs.addConstraint(cc2);
 
+        // Exon.sequence
         QueryObjectReference sequenceRef = new QueryObjectReference(qcExon, "sequence");
         ContainsConstraint cc3 =
             new ContainsConstraint(sequenceRef, ConstraintOp.CONTAINS, qcExonSequence);
         cs.addConstraint(cc3);
 
+        // Transcript.sequence IS NULL
         QueryObjectReference transcriptSeqRef = new QueryObjectReference(qcTranscript, "sequence");
         ContainsConstraint lsfSeqRefNull =
             new ContainsConstraint(transcriptSeqRef, ConstraintOp.IS_NULL);
@@ -396,6 +404,7 @@ public class TransferSequences
 
             if (currentTranscript == null || !transcript.equals(currentTranscript)) {
                 if (currentTranscript != null) {
+                    // copy sequence to transcript
                     storeNewSequence(currentTranscript,
                             new PendingClob(currentTranscriptBases.toString()));
                     i++;
@@ -411,6 +420,8 @@ public class TransferSequences
 
             Sequence exonSequence = (Sequence) rr.get(2);
             Location  location = (Location) rr.get(3);
+
+            // add exon
             if (location.getStrand() != null && "-1".equals(location.getStrand())) {
                 currentTranscriptBases.insert(0, exonSequence.getResidues().toString());
             } else {

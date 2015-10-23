@@ -1,4 +1,12 @@
 <aspects>
+  <aspect name="Function">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
   <aspect name="Genomics">
     <subtitle>Genome annotation</subtitle>
     <icon-image>model/images/genomics.gif</icon-image>
@@ -20,5 +28,73 @@
     </intro-text>
     <tile-name>model/proteins.jsp</tile-name>
     <aspect-source name="UniProt" url="http://www.uniprot.org"/>
+  </aspect>
+  <aspect name="SNPs">
+    <subtitle>Variation data</subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+      Variation data from dbSNP and Ensembl.
+    </intro-text>
+    <tile-name></tile-name>
+    <aspect-source name="Ensembl" url="http://www.ensembl.org"/>
+  </aspect>
+    <aspect name="Disease">
+    <subtitle>Disease data</subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+      Disease information from OMIM
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="GWAS">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Homology">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Interactions">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Expression">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Consequence">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Gene Ontology">
+    <subtitle>GO Term</subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+        Gene Ontology
+    </intro-text>
+    <tile-name></tile-name>
   </aspect>
 </aspects>
