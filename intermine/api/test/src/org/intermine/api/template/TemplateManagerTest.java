@@ -1,6 +1,7 @@
 package org.intermine.api.template;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPITestCase;
@@ -11,7 +12,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManager.TagException;
 import org.intermine.api.search.Scope;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.tag.TagTypes;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 
@@ -49,12 +50,15 @@ public class TemplateManagerTest extends InterMineAPITestCase {
         superUser.saveTemplate(global1.getName(), global1);
 
         tagManager.addTag(TagNames.IM_PUBLIC, global1, superUser);
+        tagManager.addTag("publicMonkeyTag", global1, superUser);
 
         private1 = new ApiTemplate("private1", "", "", q);
         superUser.saveTemplate(private1.getName(), private1);
 
         user1 = new ApiTemplate("user1", "", "", q);
         testUser.saveTemplate(user1.getName(), user1);
+
+        tagManager.addTag("privateMonkeyTag", user1, testUser);
 
         overrideGlobal = new ApiTemplate("global1", "", "", new PathQuery(im.getModel()));
     }
@@ -138,5 +142,20 @@ public class TemplateManagerTest extends InterMineAPITestCase {
         } catch (RuntimeException e) {
             // expected
         }
+    }
+
+    public void testGetTags() throws Exception {
+
+        // public tags
+        assertNotNull(templateManager.getTags(global1, superUser));
+        List<Tag> tags = templateManager.getTags(global1, superUser);
+        // should have PUBLIC and monkey tags
+        assertEquals(2, tags.size());
+
+        // private tags
+        assertNotNull(templateManager.getTags(user1, testUser));
+        tags = templateManager.getTags(user1, testUser);
+        assertEquals(1, tags.size());
+        assertEquals("privateMonkeyTag", tags.iterator().next().getTagName());
     }
 }

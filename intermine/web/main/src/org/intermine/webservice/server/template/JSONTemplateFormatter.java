@@ -57,7 +57,7 @@ public class JSONTemplateFormatter
         templateMap.put("query", template.getJson());
 
         TemplateManager manager = im.getTemplateManager();
-        List<Tag> tags = manager.getGlobalTags(template);
+        List<Tag> tags = manager.getTags(template, profile);
         List<String> tagNames = new ArrayList<String>();
         for (Tag t: tags) {
             tagNames.add(t.getTagName());
