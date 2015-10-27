@@ -10,10 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,10 +23,11 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.biojava.bio.structure.DBRef;
-import org.biojava.bio.structure.PDBHeader;
-import org.biojava.bio.structure.Structure;
-import org.biojava.bio.structure.io.PDBFileReader;
+import org.biojava.nbio.structure.DBRef;
+import org.biojava.nbio.structure.ExperimentalTechnique;
+import org.biojava.nbio.structure.PDBHeader;
+import org.biojava.nbio.structure.Structure;
+import org.biojava.nbio.structure.io.PDBFileReader;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.StringUtil;
@@ -121,16 +120,13 @@ public class PdbConverter extends BioDirectoryConverter
     private void processPDBFile(File file, String taxonId)
         throws Exception {
         PDBFileReader reader = new PDBFileReader();
-        reader.setAutoFetch(false);
         Structure structure = null;
         LOG.error("parsing " + file.getName());
         try {
             structure = reader.getStructure(file);
         } catch (IOException e) {
             // see #1179
-            LOG.error("couldn't parse " + file.getName());
-            return;
-            //throw new BuildException("Couldn't open file for: " + taxonId);
+            throw new BuildException("Couldn't open file for: " + taxonId);
         }
         Item proteinStructure = createItem("ProteinStructure");
 
@@ -155,9 +151,13 @@ public class PdbConverter extends BioDirectoryConverter
         } else {
             LOG.warn("No value for title in structure: " + idCode);
         }
-        String technique = header.getTechnique();
-        if (StringUtils.isNotEmpty(technique)) {
-            proteinStructure.setAttribute("technique", technique);
+        Set<ExperimentalTechnique> techniques = header.getExperimentalTechniques();
+        if (techniques != null && !techniques.isEmpty()) {
+            StringBuffer sb = new StringBuffer();
+            for (ExperimentalTechnique technique : techniques) {
+                sb.append(technique.getName());
+            }
+            proteinStructure.setAttribute("technique", sb.toString());
         } else {
             LOG.warn("No value for technique in structure: " + idCode);
         }
@@ -195,5 +195,4 @@ public class PdbConverter extends BioDirectoryConverter
         }
         return refId;
     }
-
- }
+}
