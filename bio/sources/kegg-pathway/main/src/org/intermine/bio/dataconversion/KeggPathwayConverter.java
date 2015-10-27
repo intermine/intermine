@@ -49,7 +49,6 @@ public class KeggPathwayConverter extends BioFileConverter
     protected Map<String, Item> pathwaysNotStored = new HashMap<String, Item>();
 
     protected IdResolver rslv;
-    protected static final String HUMAN = "9606";
 
     /**
      * Constructor
@@ -120,8 +119,7 @@ public class KeggPathwayConverter extends BioFileConverter
 
         // init resolver
         if (rslv == null) {
-            Set<String> taxons = new HashSet<String>(taxonIds);
-            rslv = IdResolverService.getIdResolverByOrganism(taxons);
+            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
         }
 
         while (lineIter.hasNext()) {
@@ -200,7 +198,7 @@ public class KeggPathwayConverter extends BioFileConverter
             int resCount = rslv.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                         + geneCG + " count: " + resCount + " FBgn: "
+                         + geneCG + " count: " + resCount + " Results: "
                          + rslv.resolveId(taxonId, geneCG));
                 return null;
             }

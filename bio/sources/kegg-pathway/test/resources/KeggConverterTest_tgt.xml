@@ -4,44 +4,30 @@
 <attribute name="name" value="Glycolysis / Gluconeogenesis"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_3" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn003"/>
-<reference name="organism" ref_id="5_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="pathways"><reference ref_id="3_3"/></collection>
-</item>
 <item id="6_1" class="SOTerm">
 <attribute name="name" value="gene"/>
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn002"/>
-<reference name="organism" ref_id="5_1"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+<item id="5_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
-<item id="4_5" class="Gene">
-<attribute name="secondaryIdentifier" value="100"/>
+<item id="4_2" class="Gene">
+<attribute name="symbol" value="PPARG"/>
 <reference name="organism" ref_id="5_2"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/></collection>
 </item>
-<item id="5_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
+<item id="5_2" class="Organism">
+<attribute name="taxonId" value="9606"/>
 </item>
-<item id="4_9" class="Gene">
+<item id="4_3" class="Gene">
 <attribute name="primaryIdentifier" value="MGI:007"/>
 <reference name="organism" ref_id="5_3"/>
 <reference name="sequenceOntologyTerm" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="pathways"><reference ref_id="3_2"/></collection>
-</item>
-<item id="5_2" class="Organism">
-<attribute name="taxonId" value="9606"/>
 </item>
 <item id="5_3" class="Organism">
 <attribute name="taxonId" value="10090"/>
@@ -49,20 +35,6 @@
 <item id="2_1" class="DataSet">
 <attribute name="name" value="KEGG pathways data set"/>
 <reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="4_7" class="Gene">
-<attribute name="secondaryIdentifier" value="10000"/>
-<reference name="organism" ref_id="5_2"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_3"/></collection>
-</item>
-<item id="4_4" class="Gene">
-<attribute name="secondaryIdentifier" value="10"/>
-<reference name="organism" ref_id="5_2"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/><reference ref_id="3_3"/></collection>
 </item>
 <item id="3_3" class="Pathway">
 <attribute name="identifier" value="00030"/>
@@ -81,23 +53,9 @@
 <attribute name="name" value="Citrate cycle (TCA cycle)"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_8" class="Gene">
-<attribute name="secondaryIdentifier" value="10005"/>
-<reference name="organism" ref_id="5_2"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/></collection>
-</item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
-</item>
-<item id="4_6" class="Gene">
-<attribute name="secondaryIdentifier" value="1000"/>
-<reference name="organism" ref_id="5_2"/>
-<reference name="sequenceOntologyTerm" ref_id="6_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="pathways"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="GenomeNet"/>
