@@ -353,7 +353,7 @@ public class OmimConverter extends BioDirectoryConverter
             geneItemId = genes.get(geneSymbol);
             if (geneItemId == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("primaryIdentifier", geneSymbol);
+                gene.setAttribute("symbol", geneSymbol);
                 gene.setReference("organism", organism);
                 store(gene);
                 geneItemId = gene.getIdentifier();
