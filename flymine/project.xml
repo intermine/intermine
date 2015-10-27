@@ -143,7 +143,6 @@
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
       <property name="ontologyPrefix" value="GO"/>
     </source>
