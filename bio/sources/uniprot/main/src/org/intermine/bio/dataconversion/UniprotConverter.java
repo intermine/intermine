@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,9 +29,9 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
-import org.intermine.metadata.StringUtil;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
@@ -51,7 +52,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private static final Logger LOG = Logger.getLogger(UniprotConverter.class);
     private Map<String, String> pubs = new HashMap<String, String>();
     private Set<Item> synonymsAndXrefs = new HashSet<Item>();
-    private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
     // md5Checksum -> sequence item identifier  (ensure all sequences are unique across organisms)
@@ -62,12 +62,12 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private Map<String, String> ecNumbers = new HashMap<String, String>();
+    private Map<String, String> proteins = new HashMap<String, String>();
     private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
 
-    private boolean createInterpro = false;
     private boolean creatego = false;
     private boolean loadfragments = false;
     private boolean allowduplicates = false;
@@ -165,6 +165,7 @@ public class UniprotConverter extends BioDirectoryConverter
         // reset all variables here, new organism
         sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
+        proteins = new HashMap<String, String>();
     }
 
     /**
@@ -221,13 +222,14 @@ public class UniprotConverter extends BioDirectoryConverter
     /**
      * Toggle whether or not to import interpro data
      * @param createinterpro String whether or not to import interpro data (true/false)
+     * @deprecated The UniProt data source does not create interpro domains any longer. Please
+     * use the InterPro data source instead.
      */
+    @Deprecated
     public void setCreateinterpro(String createinterpro) {
-        if ("true".equals(createinterpro)) {
-            this.createInterpro = true;
-        } else {
-            this.createInterpro = false;
-        }
+        final String msg = "UniProt data source does not create protein domains any longer. "
+                + "Please use the InterPro data source instead.";
+        throw new IllegalArgumentException(msg);
     }
 
     /**
@@ -392,16 +394,6 @@ public class UniprotConverter extends BioDirectoryConverter
                     && getAttrValue(attrs, "position") != null) {
                 entry.addFeatureLocation("begin", getAttrValue(attrs, "position"));
                 entry.addFeatureLocation("end", getAttrValue(attrs, "position"));
-            } else if (createInterpro && "dbReference".equals(qName)
-                    && "InterPro".equals(getAttrValue(attrs, "type"))) {
-                entry.addAttribute(getAttrValue(attrs, "id"));
-            } else if (createInterpro && "property".equals(qName) && entry.processing()
-                    && "dbReference".equals(previousQName)
-                    && "entry name".equals(getAttrValue(attrs, "type"))) {
-                String domain = entry.getAttribute();
-                if (domain.startsWith("IPR")) {
-                    entry.addDomainRefId(getInterpro(domain, getAttrValue(attrs, "value")));
-                }
             } else if ("dbReference".equals(qName) && "citation".equals(previousQName)
                     && "PubMed".equals(getAttrValue(attrs, "type"))) {
                 entry.addPub(getPub(getAttrValue(attrs, "id")));
@@ -640,11 +632,6 @@ public class UniprotConverter extends BioDirectoryConverter
                     processSequence(protein, uniprotEntry);
                 }
 
-                /* interpro */
-                if (createInterpro && uniprotEntry.getDomains() != null) {
-                    protein.setCollection("proteinDomains", uniprotEntry.getDomains());
-                }
-
                 protein.setReference("organism", getOrganism(uniprotEntry.getTaxonId()));
 
                 /* publications */
@@ -675,6 +662,22 @@ public class UniprotConverter extends BioDirectoryConverter
                 // record that we have seen this sequence for this organism
                 addSeenSequence(uniprotEntry.getTaxonId(), uniprotEntry.getMd5checksum(),
                         protein.getIdentifier());
+
+                /* canonical */
+                if (uniprotEntry.isIsoform()) {
+                    // the uniprot accession is parsed in the getIdentifiers() method here
+                    // so don't move this
+                    String canonicalAccession = uniprotEntry.getUniprotAccession();
+                    String canonicalRefId = proteins.get(canonicalAccession);
+                    if (canonicalRefId == null) {
+                        throw new RuntimeException("parsing an isoform without a parent "
+                                + canonicalAccession);
+                    }
+                    protein.setReference("canonicalProtein", canonicalRefId);
+                } else {
+                    /* canonical protein so isoforms can refer to it */
+                    proteins.put(uniprotEntry.getPrimaryAccession(), protein.getIdentifier());
+                }
 
                 try {
                     /* dbrefs (go terms, refseq) */
@@ -751,6 +754,7 @@ public class UniprotConverter extends BioDirectoryConverter
             protein.setAttribute("uniprotAccession", uniprotEntry.getUniprotAccession());
             String primaryAccession = uniprotEntry.getPrimaryAccession();
             protein.setAttribute("primaryAccession", primaryAccession);
+            protein.setAttribute("secondaryIdentifier", primaryAccession);
 
             String primaryIdentifier = uniprotEntry.getPrimaryIdentifier();
             protein.setAttribute("uniprotName", primaryIdentifier);
@@ -942,6 +946,7 @@ public class UniprotConverter extends BioDirectoryConverter
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
                 if (gene != null && hasMultipleGenes) {
+                    addPubs2Gene(uniprotEntry, gene);
                     store(gene);
                 }
             }
@@ -975,7 +980,22 @@ public class UniprotConverter extends BioDirectoryConverter
 
                     }
                 }
+                addPubs2Gene(uniprotEntry, gene);
                 store(gene);
+            }
+        }
+
+        /**
+         * @param uniprotEntry
+         * @param gene
+         */
+        private void addPubs2Gene(UniprotEntry uniprotEntry, Item gene) {
+            if (uniprotEntry.getPubs() != null) {
+                Iterator<String> genePubs = uniprotEntry.getPubs().iterator();
+                while (genePubs.hasNext()) {
+                    String refId = genePubs.next();
+                    gene.addToCollection("publications", refId);
+                }
             }
         }
 
@@ -1181,24 +1201,6 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
         return null;
-    }
-
-    private String getInterpro(String identifier, String shortName)
-        throws SAXException {
-        String refId = domains.get(identifier);
-        if (refId == null) {
-            Item item = createItem("ProteinDomain");
-            item.setAttribute("primaryIdentifier", identifier);
-            item.setAttribute("shortName", shortName);
-            refId = item.getIdentifier();
-            domains.put(identifier, refId);
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new SAXException(e);
-            }
-        }
-        return refId;
     }
 
     private String getPub(String pubMedId)

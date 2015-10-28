@@ -87,7 +87,9 @@ public class CalculateLocations
      * @param ignoreSelfMatches if true, don't create OverlapRelations between two objects of the
      * same class
      * @throws Exception if anything goes wrong
+     * @deprecated You should be using the create-overlap-view task instead
      */
+    @Deprecated
     public void createOverlapRelations(List<String> classNamesToIgnore, boolean ignoreSelfMatches)
         throws Exception {
         osw.beginTransaction();

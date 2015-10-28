@@ -9,12 +9,19 @@
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_2" class="Interaction">
-<reference name="gene1" ref_id="7_1"/>
-<reference name="gene2" ref_id="7_2"/>
-</item>
 <item id="6_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
+</item>
+<item id="11_1" class="InteractionDetail">
+<attribute name="name" value="interaction Short Label"/>
+<attribute name="relationshipType" value="direct interaction"/>
+<attribute name="role1" value="prey"/>
+<attribute name="role2" value="bait"/>
+<attribute name="type" value="physical"/>
+<reference name="experiment" ref_id="5_1"/>
+<reference name="interaction" ref_id="10_1"/>
+<collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_1" class="InteractionTerm">
 <attribute name="identifier" value="MI:0018"/>
@@ -27,18 +34,18 @@
 <collection name="crossReferences"><reference ref_id="8_1"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="10_1" class="Interaction">
-<reference name="gene1" ref_id="7_2"/>
-<reference name="gene2" ref_id="7_1"/>
+<item id="10_2" class="Interaction">
+<reference name="participant1" ref_id="7_1"/>
+<reference name="participant2" ref_id="7_2"/>
 </item>
-<item id="11_1" class="InteractionDetail">
+<item id="11_2" class="InteractionDetail">
 <attribute name="name" value="interaction Short Label"/>
-<attribute name="role1" value="prey"/>
-<attribute name="role2" value="bait"/>
+<attribute name="relationshipType" value="direct interaction"/>
+<attribute name="role1" value="bait"/>
+<attribute name="role2" value="prey"/>
 <attribute name="type" value="physical"/>
 <reference name="experiment" ref_id="5_1"/>
-<reference name="interaction" ref_id="10_1"/>
-<reference name="relationshipType" ref_id="4_2"/>
+<reference name="interaction" ref_id="10_2"/>
 <collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
@@ -58,24 +65,9 @@
 <attribute name="name" value="BioGRID interaction data set"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="4_2" class="InteractionTerm">
-<attribute name="identifier" value="MI:0407"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="4_3" class="InteractionTerm">
-<attribute name="identifier" value="MI:0796"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="11_2" class="InteractionDetail">
-<attribute name="name" value="interaction Short Label"/>
-<attribute name="role1" value="bait"/>
-<attribute name="role2" value="prey"/>
-<attribute name="type" value="physical"/>
-<reference name="experiment" ref_id="5_1"/>
-<reference name="interaction" ref_id="10_2"/>
-<reference name="relationshipType" ref_id="4_2"/>
-<collection name="allInteractors"><reference ref_id="7_2"/><reference ref_id="7_1"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="10_1" class="Interaction">
+<reference name="participant1" ref_id="7_2"/>
+<reference name="participant2" ref_id="7_1"/>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>

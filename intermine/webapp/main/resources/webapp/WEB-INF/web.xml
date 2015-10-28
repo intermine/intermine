@@ -107,7 +107,7 @@
             This service provides full access to arbitrary database queries.
             Queries are accepted in a serialised XML format, executed and returned
             in a streaming manner. The query format is a custom subset of the capabilities
-            of SQL; see the InterMine wiki for a full description of the query XML
+            of SQL; see the InterMine documentation for a full description of the query XML
             syntax.
         </description>
         <param required="true" type="XML" schema="/schema/query.xsd" description="A definition of the query to execute in Path-Query XML format">query</param>
@@ -2984,6 +2984,43 @@ The different token types are:
     </metadata>
   </servlet-mapping>
 
+
+   <!-- New in version 18 -->
+
+    <servlet>
+     <servlet-name>ws-complexes-export</servlet-name>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.complexes.ExportService</param-value>
+     </init-param>
+   </servlet>
+
+   <servlet-mapping>
+    <servlet-name>ws-complexes-export</servlet-name>
+    <url-pattern>/service/complexes/export/*</url-pattern>
+    <metadata>
+        <name>Complex Interaction Lookup</name>
+        <minVersion>18</minVersion>
+        <method type="GET" authenticationRequired="false">
+            <name>Find Complexes by Identifier</name>
+            <summary>Lookup Complexes by Identifier</summary>
+            <description format="markdown">
+                This service provides the JSON needed for the Complex Viewer.
+            </description>
+            <param
+                required="false"
+                type="String"
+                default="json"
+                description="The format to return">format</param>
+            <returns>
+                <format accept="application/json">json</format>
+            </returns>
+        </method>
+    </metadata>
+   </servlet-mapping>
+
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
@@ -3104,7 +3141,6 @@ The different token types are:
     <url-pattern>*.css</url-pattern>
   </filter-mapping>
 
-  <!-- The cachable WS responses are configured here. -->
   <filter>
     <filter-name>ReleaseEtags</filter-name>
     <filter-class>org.intermine.web.filters.ReleaseEtagFilter</filter-class>
@@ -3114,46 +3150,13 @@ The different token types are:
     <filter-name>ReleaseEtags</filter-name>
     <servlet-name>ws-model</servlet-name>
   </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>ReleaseEtags</filter-name>
-    <servlet-name>ws-summary-fields</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>ReleaseEtags</filter-name>
-    <servlet-name>ws-classkeys</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>ReleaseEtags</filter-name>
-    <servlet-name>ws-code-gen</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>ReleaseEtags</filter-name>
-    <servlet-name>ws-service-listing</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping> <!-- Does not include user data, and over read-only db -->
-    <filter-name>ReleaseEtags</filter-name>
-    <servlet-name>ws-quick-search</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping> <!-- NB: if we ever make widgets dynamic, this will have to change. -->
-    <filter-name>ReleaseEtags</filter-name>
-    <servlet-name>ws-available-widgets</servlet-name>
-  </filter-mapping>
-
- <filter>
-  <filter-name>CompressingFilter</filter-name>
-  <filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
- </filter>
-
  <filter-mapping>
-  <filter-name>CompressingFilter</filter-name>
-  <url-pattern>/*</url-pattern>
- </filter-mapping>
+  	<filter-name>ReleaseEtags</filter-name>
+  	<servlet-name>ws-model</servlet-name>
+  	<dispatcher>REQUEST</dispatcher>
+  	<dispatcher>FORWARD</dispatcher>
+
+  </filter-mapping>
 
   <error-page>
     <error-code>500</error-code>

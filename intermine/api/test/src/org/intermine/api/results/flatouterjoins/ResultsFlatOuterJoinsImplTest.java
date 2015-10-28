@@ -50,7 +50,7 @@ public class ResultsFlatOuterJoinsImplTest extends ObjectStoreAbstractImplTestCa
     public static void setUpResults() throws Exception {
         ObjectStoreAbstractImplTestCase.setUpResults();
         Map newResults = new LinkedHashMap();
-        for (Map.Entry resultsEntry : ((Set<Map.Entry>) results.entrySet())) {
+        for (Map.Entry<String, Object> resultsEntry : results.entrySet()) {
             String testName = (String) resultsEntry.getKey();
             Object testValue = resultsEntry.getValue();
             if (testValue instanceof List) {

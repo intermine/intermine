@@ -11,6 +11,7 @@ package org.intermine.bio.postprocess;
  */
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -58,9 +59,17 @@ public class CreateLocationOverlapIndex
     public void create() throws SQLException {
         Database db = this.osw.getDatabase();
 
+
+
         if (osw.getSchema().useRangeTypes()) {
             Connection con = db.getConnection();
+
             try {
+                if (hasIndexAlready(con)) {
+                    // index was already created during this build
+                    return;
+                }
+
                 // SPGIST indexes are fastest for range queries but only added support for
                 // ranges in 9.3, for older versions we need to use GIST
                 String indexType = db.isVersionAtLeast("9.3") ? "SPGIST" : "GIST";
@@ -68,7 +77,7 @@ public class CreateLocationOverlapIndex
                 long startTime = System.currentTimeMillis();
                 String indexSql = "CREATE INDEX location__int4range "
                         + "ON location USING " + indexType + " (" + RANGE_TYPE
-                        + "(intermine_start, intermine_end))";
+                        + "(intermine_start, intermine_end + 1))";
                 LOG.info(indexSql);
                 Statement statement = con.createStatement();
                 statement.executeUpdate(indexSql);
@@ -76,7 +85,8 @@ public class CreateLocationOverlapIndex
                 long took = System.currentTimeMillis() - startTime;
                 LOG.info("Created " + RANGE_TYPE + " index on location, took: " + took + "ms.");
             } catch (SQLException e) {
-                LOG.info("Index location__" + RANGE_TYPE + " index already existed.");
+                throw new SQLException("Failed to create location__" + RANGE_TYPE
+                        + ". You likely have bad locations. ", e);
             } finally {
                 con.close();
             }
@@ -103,5 +113,17 @@ public class CreateLocationOverlapIndex
                     + " location table but database doesn't support Postgres built in ranges (has"
                     + " to be > 9.2) and doesn't have bioseg installed. Aborting.");
         }
+    }
+
+    private boolean hasIndexAlready(Connection con) throws SQLException {
+        final String sql = "SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = "
+                + "c.relnamespace WHERE c.relname = 'location__int4range' "
+                + "AND n.nspname = 'public'";
+        Statement statement = con.createStatement();
+        ResultSet res = statement.executeQuery(sql);
+        // true if index is present, false if this query returned no rows
+        boolean hasIndex = res.next();
+        statement.close();
+        return hasIndex;
     }
 }

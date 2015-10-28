@@ -5,6 +5,8 @@
 
 <!-- esynListDisplayer.jsp -->
 
+<c:if test="${fn:length(identifiers) < 8190}">
+
 <div id="cwhead">
     <h3 class="goog">esyN Network Diagram</h3>
 </div>
@@ -14,4 +16,7 @@ src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${identifiers}&o
 width="500" height="500"></iframe>
 
     <p>Physical (Orange) and Genetic (Green) interactions between the genes in the list. Visit <a href="http://esyn.org/">esyN</a> for more details or click the Edit in esyN button if you wish to extend or modify the network.</p>
+
+</c:if>
+
 <!-- /esynListDisplayer.jsp -->
