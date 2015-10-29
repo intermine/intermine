@@ -148,7 +148,7 @@
       <customlinks>
         <customlink
           url="http://flybase.org/reports/{primaryIdentifier}.html"
-          image="flybase_logo_link.png"
+          image="flybase_logo.jpeg"
         />
       </customlinks>
     </headerconfig>
@@ -706,12 +706,13 @@
                      replacesFields="publications"
                      placement="Genes"
                      types="BioEntity"/>
-
+<!--
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
                      jspName="model/minePathwaysDisplayer.jsp"
                      replacesFields="pathways"
                      placement="summary"
                      types="Gene"/>
+<!--
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.DiseaseDisplayer"
                      jspName="model/diseaseDisplayer.jsp"
