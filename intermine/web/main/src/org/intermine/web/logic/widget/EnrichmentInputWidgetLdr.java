@@ -148,7 +148,7 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
             size = ((Long) info.get(0)).intValue();
             if (info.size() > 1) {
                 if (info.get(1) != null) {
-                    extraAttribute = (Float) info.get(1);
+                    extraAttribute = ((BigDecimal) info.get(1)).floatValue();
                 }
             }
             populationInfo = new PopulationInfo(size, extraAttribute);
