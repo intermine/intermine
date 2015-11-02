@@ -1,2 +1,2 @@
 #!/bin/csh
-wget -O /dev/stdout "http://zome-dev.phytozome.net/phytomine/service/regions/sequence?query=%7B%22regions%22:[%22Chr19\t10692566\t10700215%22],%22organism%22:%22251%22%7D"
+wget -O /dev/stdout "http://phytozome-olddev.jgi.doe.gov/phytomine/service/regions/sequence?query=%7B%22regions%22:[%22Chr19\t10492566\t10700215%22],%22organism%22:%22251%22%7D"
