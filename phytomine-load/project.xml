@@ -134,6 +134,32 @@
       <property name="dataSetTitle" value="M.esculenta-early-release Natural Diversity Sample Info" />
     </source>
 
+    <source name="cufflinks-A.hypochondriacus" type="cufflinks">
+      <property name="proteomeId" value="315" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ahypochondriacus/" />
+      <property name="dataSourceName" value="rnaseq-A.hypochondriacus" />
+      <property name="dataSetTitle" value="A.hypochondriacus RNA-seq" />
+    </source>
+    <source name="cufflinks-A.hypochondriacus-redo" type="cufflinks">
+      <property name="proteomeId" value="315" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ahypochondriacus/" />
+      <property name="dataSourceName" value="rnaseq-A.hypochondriacus" />
+      <property name="dataSetTitle" value="A.hypochondriacus RNA-seq" />
+    </source>
+    <source name="coexpression-A.hypochondriacus" type="coexpression">
+      <property name="proteomeId" value="315" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ahypochondriacus/" />
+      <property name="src.data.dir.includes" value="coexpression.tsv" />
+      <property name="dataSourceName" value="rnaseq-A.hypochondriacus" />
+      <property name="dataSetTitle" value="A.hypochondriacus RNA-seq" />
+    </source>
+    <source name="cufflinks-A.hypochondriacus-info" type="rnaseq-experiment-info">
+      <property name="proteomeId" value="315" />
+      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ahypochondriacus/" />
+      <property name="dataSourceName" value="rnaseq-A.hypochondriacus" />
+      <property name="dataSetTitle" value="A.hypochondriacus RNA-seq Info" />
+    </source>
+
     <source name="cufflinks-P.vulgaris" type="cufflinks">
       <property name="proteomeId" value="218" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Pvulgaris/" />
