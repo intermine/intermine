@@ -19,11 +19,7 @@
   </class>
   <class className="org.intermine.model.bio.Consequence">
     <fields>
-<<<<<<< HEAD
-      <fieldconfig fieldExpr="types"/>
-=======
       <fieldconfig fieldExpr="description"/>
->>>>>>> intermine-1.6
     </fields>
   </class>
   <class className="org.intermine.model.bio.ValidationState">
@@ -127,13 +123,6 @@
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
       <fieldconfig fieldExpr="description" doNotTruncate="true" showInSummary="false" showInResults="false" showInInlineCollection="false" />
-<<<<<<< HEAD
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
-      <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
-      <fieldconfig fieldExpr="organism.name"/>
-=======
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <bagdisplayers>
@@ -182,66 +171,12 @@
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="name"/>
->>>>>>> intermine-1.6
-    </fields>
-    <bagdisplayers>
-      <!-- attribute links can now be configured for gene list analysis pages -->
-      <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
-    </bagdisplayers>
-  </class>
-
-<<<<<<< HEAD
-  <class className="org.intermine.model.bio.Protein">
-    <inlinelist>
-      <table path="synonyms.value" showInHeader="true" lineLength="100" />
-    </inlinelist>
-    <fields>
-        <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
-        <fieldconfig fieldExpr="primaryAccession"/>
-        <fieldconfig fieldExpr="organism.name"/>
-        <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.GOAnnotation">
-    <fields>
-      <fieldconfig fieldExpr="subject.primaryIdentifier"/>
-      <fieldconfig fieldExpr="ontologyTerm.identifier" />
-      <fieldconfig fieldExpr="ontologyTerm.name" />
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.GOEvidenceCode">
-    <fields>
-      <fieldconfig fieldExpr="code"/>
-    </fields>
-  </class>
-
-    <class className="org.intermine.model.bio.GOTerm">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="ontology.name"/>
-      <fieldconfig fieldExpr="description" showInResults="false" showInInlineCollection="false" doNotTruncate="true" />
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.GWAS">
-    <fields>
-      <fieldconfig fieldExpr="firstAuthor"/>
-      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
   <class className="org.intermine.model.bio.GWASResult">
     <fields>
       <fieldconfig fieldExpr="SNP.primaryIdentifier"/>
-      <fieldconfig fieldExpr="SNP.alleles"/>
-=======
-  <class className="org.intermine.model.bio.GWASResult">
-    <fields>
-      <fieldconfig fieldExpr="SNP.primaryIdentifier"/>
->>>>>>> intermine-1.6
       <fieldconfig fieldExpr="SNP.chromosomeLocation.start"/>
       <fieldconfig fieldExpr="SNP.chromosome.primaryIdentifier"/>
       <fieldconfig fieldExpr="phenotype"/>
@@ -360,17 +295,6 @@
   <class className="org.intermine.model.bio.SNP">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
-<<<<<<< HEAD
-      <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp"/>
-      <fieldconfig fieldExpr="alleles"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="organism.name"/>
-    </fields>
-    <bagdisplayers>
-      <displayer src="snpToGeneFormDisplayer.tile" showOnLeft="true"/>
-    </bagdisplayers>
-=======
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
@@ -380,7 +304,6 @@
       <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
->>>>>>> intermine-1.6
   </class>
 
   <class className="org.intermine.model.bio.Source">
@@ -414,15 +337,6 @@
 
 <!-- report page displayers -->
 <reportdisplayers>
-<<<<<<< HEAD
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
-                     jspName="model/geneIdentifiersDisplayer.jsp"
-                     replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
-                     showImmediately="true"
-                     placement="top"
-                     types="Gene"/>
-
-=======
 
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.EsynDisplayer"
@@ -438,7 +352,6 @@
                      placement="top"
                      types="Gene"/>
 
->>>>>>> intermine-1.6
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,mapLocation"
@@ -461,7 +374,6 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
-<<<<<<< HEAD
                      replacesFields=""
                      placement="summary"
                      types="Gene,Protein"/>
@@ -484,36 +396,6 @@
                      placement="Genomics"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
-                     jspName="model/jbrowseDisplayer.jsp"
-                     replacesFields=""
-                     placement="Genomics"
-                     types="SequenceFeature"/>
-
-=======
-                     replacesFields=""
-                     placement="summary"
-                     types="Gene,Protein"/>
-
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SnpToGeneDisplayer"
-                     jspName="model/snpToGeneDisplayer.jsp"
-                     replacesFields=""
-                     placement="summary"
-                     types="SNP"/>
-
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
-                     jspName="model/overlappingFeaturesDisplayer.jsp"
-                     replacesFields="overlappingFeatures"
-                     placement="Genomics"
-                     types="SequenceFeature"/>
-
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MouseAllelesDisplayer"
-                     jspName="model/mouseAllelesDisplayer.jsp"
-                     replacesFields="alleles"
-                     placement="Genomics"
-                     types="Gene"/>
-
->>>>>>> intermine-1.6
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
                      replacesFields="interactions"
@@ -528,15 +410,9 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
                      jspName="model/homologueDisplayer.jsp"
-<<<<<<< HEAD
-                     replacesFields="homologues"
-                     placement="Homology"
-                     parameters="{'dataSets': ['Ensembl Compara data set']}"
-=======
                      replacesFields=""
                      placement="Homology"
                      parameters="{'dataSets': ['Panther data set']}"
->>>>>>> intermine-1.6
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinAtlasDisplayer"
@@ -648,14 +524,6 @@
                                  label="Protein Domain"
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
-<<<<<<< HEAD
-                                 enrich="proteins.proteinDomains.name"
-                                 enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
-                                 constraints="organism.name=[list]"
-                                 typeClass="Gene"
-                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
-                                       proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
-=======
                                  enrich="proteins.proteinDomainRegions.proteinDomain.name"
                                  enrichIdentifier="proteins.proteinDomainRegions.proteinDomain.primaryIdentifier"
                                  constraints="organism.name=[list]"
@@ -663,7 +531,6 @@
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        proteins.proteinDomainRegions.proteinDomain.primaryIdentifier,
                                        proteins.proteinDomainRegions.proteinDomain.name"
->>>>>>> intermine-1.6
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
@@ -672,21 +539,12 @@
                                  label="Protein Domain"
                                  startClass="Protein"
                                  startClassDisplay="primaryIdentifier"
-<<<<<<< HEAD
-                                 enrich="proteinDomains.name"
-                                 enrichIdentifier="proteinDomains.primaryIdentifier"
-                                 constraints="organism.name=[list]"
-                                 typeClass="Protein"
-                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
-                                       proteinDomains.name"
-=======
                                  enrich="proteinDomainRegions.proteinDomain.name"
                                  enrichIdentifier="proteinDomainRegions.proteinDomain.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="Protein"
                                  views="primaryIdentifier,organism.name,proteinDomainRegions.proteinDomain.primaryIdentifier,
                                        proteinDomainRegions.proteinDomain.name"
->>>>>>> intermine-1.6
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
 
@@ -770,11 +628,7 @@
         columnTitle="Orthologues"/>-->
 
      <bagtabledisplayer id="interactions" title="Interactions"
-<<<<<<< HEAD
-                        pathStrings="Gene.interactions.gene2"
-=======
                         pathStrings="Gene.interactions.participant2"
->>>>>>> intermine-1.6
                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
                         displayFields="primaryIdentifier, name"
                         exportField="primaryIdentifier"
@@ -783,13 +637,8 @@
                         views="secondaryIdentifier, symbol, organism.shortName,
                                   interactions.details.name, interactions.details.type,
                                   interactions.details.role1, interactions.details.role2,
-<<<<<<< HEAD
-                                  interactions.gene2.primaryIdentifier,
-                                  interactions.gene2.symbol,
-=======
                                   interactions.participant2.primaryIdentifier,
                                   interactions.participant2.symbol,
->>>>>>> intermine-1.6
                                   interactions.details.experiment.name"/>
 
 </widgets>
