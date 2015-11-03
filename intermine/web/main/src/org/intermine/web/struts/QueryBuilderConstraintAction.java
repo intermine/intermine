@@ -12,8 +12,10 @@ package org.intermine.web.struts;
 
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +35,7 @@ import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
@@ -93,6 +96,7 @@ public class QueryBuilderConstraintAction extends InterMineAction
         boolean constrainToASubclass = request.getParameter("subclass") != null;
         boolean constrainToNull = request.getParameter("nullnotnull") != null;
         boolean editingTemplateConstraintParams = request.getParameter("template") != null;
+        boolean constrainToARange = request.getParameter("range") != null;
 
         // Select the join style for the path in the query
         // If we set an outer join, then we need to take care of the consequences, like order by
@@ -173,6 +177,14 @@ public class QueryBuilderConstraintAction extends InterMineAction
         } else if (constrainToASubclass) {
             newConstraint = new PathConstraintSubclass(constraintForm.getPath(),
                   constraintForm.getSubclassValue());
+        } else if (constrainToARange) {
+            Set<String> ranges = new HashSet<String>();
+            String rangeString = constraintForm.getRangeConstraint();
+            String[] bits = rangeString.split("[, ]+");
+            ranges.addAll(Arrays.asList(bits));
+            ConstraintOp constraintOp
+                = ConstraintOp.getOpForIndex(Integer.valueOf(constraintForm.getRangeOp()));
+            newConstraint = new PathConstraintRange(constraintForm.getPath(), constraintOp, ranges);
         } else if (constrainToNull) {
             if ("NotNULL".equals(constraintForm.getNullConstraint())) {
                 newConstraint = Constraints.isNotNull(constraintForm.getPath());

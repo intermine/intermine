@@ -23,7 +23,6 @@ import org.intermine.model.testmodel.Contractor;
 import org.intermine.objectstore.ObjectStoreAbstractImplTestCase;
 import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.proxy.Lazy;
 import org.intermine.objectstore.proxy.ProxyCollection;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;

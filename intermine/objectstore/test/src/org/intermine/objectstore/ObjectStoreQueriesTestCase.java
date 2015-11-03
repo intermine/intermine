@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +28,7 @@ import junit.framework.AssertionFailedError;
 
 import org.intermine.SummaryAssertionFailedError;
 import org.intermine.SummaryException;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Bank;
@@ -48,7 +48,6 @@ import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Constraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.MultipleInBagConstraint;
@@ -90,8 +89,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     public static final Object NO_RESULT = new Object() {
         public String toString() { return "NO RESULT"; } };
 
-    protected static Map queries = new HashMap();
-    protected static Map results = new LinkedHashMap();
+    protected static Map<String, Query> queries = new HashMap<String, Query>();
+    protected static Map<String, Object> results = new LinkedHashMap<String, Object>();
     protected boolean strictTestQueries = true;
 
     /**
@@ -140,10 +139,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         PrintWriter writer = new PrintWriter(errorMessage);
         int failureCount = 0;
         int errorCount = 0;
-        Iterator i = results.keySet().iterator();
-        while (i.hasNext()) {
-            String type = (String) i.next();
-            // Does this appear in the queries map;
+        for (String type: results.keySet()) {
+                        // Does this appear in the queries map;
             if (!(queries.containsKey(type))) {
                 writer.println("\n" + type + " does not appear in the queries map");
                 failureCount++;
@@ -167,9 +164,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
                 }
             }
         }
-        i = queries.keySet().iterator();
-        while (i.hasNext()) {
-            String type = (String) i.next();
+        for (String type: queries.keySet()) {
             Object result = results.get(type);
             if (result == null) {
                 if (strictTestQueries) {
