@@ -286,8 +286,7 @@
                       modelName="${target.model}"
                       ontologyName="${obo.ontology.name}"
                       url="${obo.ontology.url}"
-                      termClass="${obo.term.class}"
-                      converter="${converter.class}"/>
+                      termClass="${obo.term.class}"/>
   </target>
 
 
