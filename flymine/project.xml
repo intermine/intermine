@@ -520,6 +520,7 @@
       <property name="reactome.datasetname" value="Reactome data set"/>
       <property name="reactome.curated" value="false"/>
     </source>
+
     <source name="bdgp-insitu" type="bdgp-insitu">
       <property name="src.data.dir" location="/micklem/data/flymine/bdgp-insitu/current"/>
     </source>
