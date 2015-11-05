@@ -26,6 +26,10 @@
     <source name="human-gene" type="human-gene">
       <property name="src.data.dir" location="/micklem/data/human/identifiers/current" />
     </source>
+<source name="ncbi-gene" type="ncbi-gene">
+     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
+     <property name="organisms" value="9606"/>
+</source>
     <source name="ncbi-summaries" type="ncbi-summaries" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
