@@ -153,7 +153,8 @@
     </source>
     <source name="panther" type="panther">
         <property name="src.data.dir" location="/micklem/data/panther/current"/>
-        <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 4932"/>
+        <property name="panther.organisms" value="9606"/>
+        <property name="panther.homologues" value="7227 10090 6239 10116 7955 4932"/>
     </source>
     <source name="huge-gwas" type="huge-gwas">
       <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
