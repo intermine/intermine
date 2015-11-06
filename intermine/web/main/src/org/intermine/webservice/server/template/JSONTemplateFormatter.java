@@ -51,10 +51,14 @@ public class JSONTemplateFormatter
      **/
     Map<String, Object> templateToMap(ApiTemplate template) {
         Map<String, Object> templateMap = new HashMap<String, Object>();
-        templateMap.put("name", template.getName());
+        templateMap.put("model", template.getModel().getName());
         templateMap.put("title", template.getTitle());
         templateMap.put("description", template.getDescription());
-        templateMap.put("query", template.getJson());
+        templateMap.put("select", template.getView());
+        templateMap.put("name", template.getName());
+        templateMap.put("comment", template.getComment());
+        templateMap.put("orderBy", template.toJsonSortOrder());
+        templateMap.put("where", template.toJsonConstraints(true));
 
         TemplateManager manager = im.getTemplateManager();
         List<Tag> tags = manager.getTags(template, profile);
@@ -78,9 +82,9 @@ public class JSONTemplateFormatter
         JSONObject listObj = new JSONObject(templateToMap(template));
         String ret = listObj.toString();
         if (rowsLeft > 0) {
-            return Arrays.asList(ret, "");
+            return Arrays.asList("\"" + template.getName() + "\"", ret, "");
         } else {
-            return Arrays.asList(ret);
+            return Arrays.asList("\"" + template.getName() + "\"", ret);
         }
     }
 

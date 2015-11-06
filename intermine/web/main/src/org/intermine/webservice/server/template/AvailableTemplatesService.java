@@ -73,7 +73,7 @@ public class AvailableTemplatesService extends WebService
 
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, ApiTemplate> templates;
-        TagManager tagManager = im.getTagManager();
+
         boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
             Profile profile = getPermission().getProfile();
@@ -124,8 +124,8 @@ public class AvailableTemplatesService extends WebService
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
         } else if (getFormat() == Format.HTML) {
-            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
-                Arrays.asList("Name", "Title", "Description", "Query"));
+            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS, Arrays.asList("Name", "Title",
+                    "Description", "select", "Name", "Comment", "orderBy", "where"));
         }
         return attributes;
     }

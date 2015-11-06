@@ -2354,42 +2354,26 @@ public class PathQuery implements Cloneable
             addJsonProperty(sb, attr.getKey(), attr.getValue());
         }
 
+        StringBuffer joins = toJsonJoins();
+        sb.append(joins);
 
-        // SORT ORDER
-        List<OrderElement> order = getOrderBy();
-        if (!order.isEmpty()) {
-            sb.append(",\"orderBy\":[");
-            for (Iterator<OrderElement> it = order.iterator(); it.hasNext();) {
-                OrderElement oe = it.next();
-                sb.append(String.format("{\"%s\":\"%s\"}", oe.getOrderPath(), oe.getDirection()));
-                if (it.hasNext()) {
-                    sb.append(",");
-                }
-            }
-            sb.append("]");
-        }
+        StringBuffer where = toJsonConstraints(onlyRelevant);
+        sb.append(where);
 
+        StringBuffer sortOrder = toJsonSortOrder();
+        sb.append(sortOrder);
 
-        // JOINS
-        Map<String, OuterJoinStatus> ojs = getOuterJoinStatus();
-        if (!ojs.isEmpty()) {
-            StringBuilder sb2 = new StringBuilder();
-            for (Iterator<Entry<String, OuterJoinStatus>> it = ojs.entrySet().iterator();
-                it.hasNext();) {
-                Entry<String, OuterJoinStatus> pair = it.next();
-                if (pair.getValue() == OuterJoinStatus.OUTER) {
-                    if (sb2.length() > 0) {
-                        sb2.append(",");
-                    }
-                    sb2.append("\"" + pair.getKey() + "\"");
-                }
-            }
-            if (sb2.length() != 0) {
-                sb.append(",\"joins\":[" + sb2.toString() + "]");
-            }
-        }
+        sb.append("}");
 
-        // CONSTRAINTS
+        return sb.toString();
+    }
+
+    public List<String> toJsonSelect() {
+        return getView();
+    }
+
+    public StringBuffer toJsonConstraints(boolean onlyRelevant) {
+        StringBuffer sb = new StringBuffer();
         Map<PathConstraint, String> cons =
                 onlyRelevant ? getRelevantConstraints() : getConstraints();
         if (!cons.isEmpty()) {
@@ -2405,9 +2389,46 @@ public class PathQuery implements Cloneable
             }
             sb.append("]");
         }
-        sb.append("}");
+        return sb;
+    }
 
-        return sb.toString();
+    public StringBuffer toJsonJoins() {
+        StringBuffer sb = new StringBuffer();
+        Map<String, OuterJoinStatus> ojs = getOuterJoinStatus();
+        if (!ojs.isEmpty()) {
+            StringBuilder sb2 = new StringBuilder();
+            for (Iterator<Entry<String, OuterJoinStatus>> it = ojs.entrySet().iterator();
+                    it.hasNext();) {
+                Entry<String, OuterJoinStatus> pair = it.next();
+                if (pair.getValue() == OuterJoinStatus.OUTER) {
+                    if (sb2.length() > 0) {
+                        sb2.append(",");
+                    }
+                    sb2.append("\"" + pair.getKey() + "\"");
+                }
+            }
+            if (sb2.length() != 0) {
+                sb.append(",\"joins\":[" + sb2.toString() + "]");
+            }
+        }
+        return sb;
+    }
+
+    public StringBuffer toJsonSortOrder() {
+        StringBuffer sb = new StringBuffer();
+        List<OrderElement> order = getOrderBy();
+        if (!order.isEmpty()) {
+            sb.append(",\"orderBy\":[");
+            for (Iterator<OrderElement> it = order.iterator(); it.hasNext();) {
+                OrderElement oe = it.next();
+                sb.append(String.format("{\"%s\":\"%s\"}", oe.getOrderPath(), oe.getDirection()));
+                if (it.hasNext()) {
+                    sb.append(",");
+                }
+            }
+            sb.append("]");
+        }
+        return sb;
     }
 
     /**
