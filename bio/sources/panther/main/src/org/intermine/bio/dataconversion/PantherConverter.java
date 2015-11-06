@@ -273,7 +273,7 @@ public class PantherConverter extends BioFileConverter
             // no config so process everything
             return true;
         }
-        if (allTaxonIds.contains(organism1) && allTaxonIds.contains(organism2)) {
+        if (taxonIds.contains(organism1) && taxonIds.contains(organism2)) {
             // both are organisms of interest
             return true;
         }
