@@ -17,6 +17,7 @@
             aligned to reference genomes, and gene- and transcript-level expression values are determined using Cufflinks.
             The currently available set covers:
             <ul>
+              <li><em>Amaranthus hypochondriacus</em> (8 experiments from the lab of P. Jeff Maughan, BYU)</li>
               <li><em>Chlamydomonas reinhardtii</em> (133 experiments)</li>
               <li><em>Eucalyptus grandis</em> (6 experiments performed on a <em>E.grandis</em> X <em>E.urophylla</em> hybrid.)</li>
               <li><em>Glycine max</em> (9 experiments)</li>
