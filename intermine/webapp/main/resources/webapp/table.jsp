@@ -16,7 +16,7 @@
 <tiles:get name="objectTrail.tile"/> <%--<im:vspacer height="1"/>--%>
 
 
-<div class="results collection-table nowrap nomargin">
+<div class="results collection-table nomargin">
   <tiles:insert name="resultsTable.tile">
   </tiles:insert>
 </div>

@@ -211,7 +211,7 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
      *
      * @return dataTracker
      */
-    protected DataTracker getDataTracker() {
+    public DataTracker getDataTracker() {
         return dataTracker;
     }
 
@@ -339,42 +339,12 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
                         sortedEquivalentObjects.add(o);
                     }
                     for (InterMineObject obj : equivObjects) {
-                        Source fieldSource = dataTracker.getSource(obj.getId(), fieldName);
-                        if ((equivObjects.size() == 1) && (fieldSource != null)
-                            && (fieldSource.equals(source)
-                            || (fieldSource.equals(skelSource) && (type != SOURCE)))) {
-                            if (type == SOURCE) {
-                                if (obj instanceof ProxyReference) {
-                                    obj = ((ProxyReference) obj).getObject();
-                                }
-                                String errMessage;
-                                if (dbIdsStored.contains(obj.getId())) {
-                                    errMessage = "There is already an equivalent "
-                                        + "in the database from this source (" + source
-                                        + ") from *this* run; new object from source: \"" + o
-                                        + "\", object from database (earlier in this run): \""
-                                        + obj + "\"; noticed problem while merging field \""
-                                        + field.getName() + "\" originally read from source: "
-                                        + fieldSource;
-                                } else {
-                                    errMessage = "There is already an equivalent "
-                                        + "in the database from this source (" + source
-                                        + ") from a *previous* run; "
-                                        + "object from source in this run: \""
-                                        + o + "\", object from database: \"" + obj
-                                        + "\"; noticed problem while merging field \""
-                                        + field.getName() + "\" originally read from source: "
-                                        + fieldSource;
-                                }
 
-                                if (!ignoreDuplicates) {
-                                    LOG.error(errMessage);
-                                    throw new IllegalArgumentException(errMessage);
-                                }
-                            }
-                            //LOG.debug("store() finished simply for object " + oText);
+                        if (isDuplicateObject(
+                                o, obj, fieldName, source, skelSource, type, equivObjects)) {
                             return obj;
                         }
+
                         // materialise proxies before searching for this field
                         if (obj instanceof ProxyReference) {
                             obj = ((ProxyReference) obj).getObject();
@@ -455,6 +425,61 @@ public class IntegrationWriterDataTrackingImpl extends IntegrationWriterAbstract
         }
     }
 
+    /**
+     * Checks whether the new object is a duplicate of an existing object.
+     *
+     * @param newObj
+     * @param objToCheck
+     * @param fieldName
+     * @param source
+     * @param skelSource the data Source to which to attribute skeleton data
+     * @param type the type of action required, from SOURCE, SKELETON, or FROM_DB
+     * @return true if the new object is a duplicate of the given object, false otherwise.
+     * @throws IllegalArgumentException If the objectstore is not set to ignore duplicates.
+     */
+    private boolean isDuplicateObject(InterMineObject newObj, InterMineObject objToCheck,
+            String fieldName, Source source, Source skelSource, int type,
+            Set<InterMineObject> equivObjects) {
+        Source fieldSource = dataTracker.getSource(objToCheck.getId(), fieldName);
+        if ((equivObjects.size() == 1) && (fieldSource != null)
+            && (fieldSource.equals(source)
+            || (fieldSource.equals(skelSource) && (type != SOURCE)))) {
+            if (type == SOURCE) {
+                if (objToCheck instanceof ProxyReference) {
+                    objToCheck = ((ProxyReference) objToCheck).getObject();
+                }
+                String errMessage;
+                if (dbIdsStored.contains(objToCheck.getId())) {
+                    errMessage = "There is already an equivalent "
+                        + "in the database from this source (" + source
+                        + ") from *this* run; new object from source: \"" + newObj
+                        + "\", object from database (earlier in this run): \""
+                        + objToCheck + "\"; noticed problem while merging field \""
+                        + fieldName + "\" originally read from source: "
+                        + fieldSource;
+                } else {
+                    errMessage = "There is already an equivalent "
+                        + "in the database from this source (" + source
+                        + ") from a *previous* run; "
+                        + "object from source in this run: \""
+                        + newObj + "\", object from database: \"" + objToCheck
+                        + "\"; noticed problem while merging field \""
+                        + fieldName + "\" originally read from source: "
+                        + fieldSource;
+                }
+
+                if (!ignoreDuplicates) {
+                    LOG.error(errMessage);
+                    throw new IllegalArgumentException(errMessage);
+                }
+            }
+
+            //LOG.debug("store() finished simply for object " + oText);
+            return true;
+        }
+
+        return false;
+    }
 
     private void writeTrackerData(InterMineObject newObj, Integer newId,
             Map<String, Source> trackingMap) {

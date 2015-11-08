@@ -1365,7 +1365,8 @@ public class ProfileManager
             profile = createNewProfile(username, null);
         }
 
-        if (!profile.prefers(UserPreferences.EMAIL)) {
+        if (!profile.prefers(UserPreferences.EMAIL)
+                && identity.contains("@")) {
             profile.getPreferences().put(UserPreferences.EMAIL, identity);
         }
 

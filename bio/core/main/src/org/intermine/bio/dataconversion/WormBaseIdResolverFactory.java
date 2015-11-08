@@ -99,7 +99,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("To process WormId file");
-                String wormIdFileName =  resolverFileRoot.trim() + resolverFileSymboWormId;
+                String wormIdFileName = resolverFileRoot.trim() + "/" + resolverFileSymboWormId;
                 File wormIdDataFile = new File(wormIdFileName);
 
                 if (wormIdDataFile.exists()) {
@@ -107,21 +107,22 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
-                    String wb2NcbiFileName = resolverFileRoot.trim() + resolverFileSymboWb2Ncbi;
+                    String wb2NcbiFileName = resolverFileRoot.trim() + "/" + resolverFileSymboWb2Ncbi;
                     File wb2NcbiDataFile = new File(wb2NcbiFileName);
 
                     if (wb2NcbiDataFile.exists()) {
                         createFromWb2NcbiFile(wb2NcbiDataFile);
                     } else {
-                        LOG.warn("Resolver file not exists: " + wb2NcbiFileName);
+                        LOG.warn("Resolver file does not exist: " + wb2NcbiFileName);
                     }
                     // END OF HACK
 
                     resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
-                    LOG.warn("Resolver file not exists: " + wormIdFileName);
+                    LOG.warn("Resolver file does not exist: " + wormIdFileName);
                 }
-
+            } else {
+                LOG.info("Using previously cached id resolver file: " + idResolverCachedFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

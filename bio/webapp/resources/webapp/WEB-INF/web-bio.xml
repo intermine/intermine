@@ -25,7 +25,7 @@
 This service provides full access to arbitrary database queries.
 Queries are accepted in a serialised XML format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine wiki for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML
 syntax.
 
 This endpoint specialises in dealing with queries for sequence
@@ -71,7 +71,7 @@ will be selected.
 This service provides full access to arbitrary database queries.
 Queries are accepted in a serialised XML format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine wiki for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML
 syntax.
 
 This endpoint specialises in dealing with queries for sequence
@@ -180,7 +180,7 @@ of `SequenceFeature`s or `Protein`s as
 This service provides full access to arbitrary database queries.
 Queries are accepted in a serialised XML format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine wiki for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML
 syntax.
 
 This endpoint specialises in dealing with queries for sequence,
@@ -226,7 +226,7 @@ will be selected.
 This service provides full access to arbitrary database queries.
 Queries are accepted in a serialised XML format, executed and returned
 in a streaming manner. The query format is a custom subset of the capabilities
-of SQL; see the InterMine wiki for a full description of the query XML
+of SQL; see the InterMine documentation for a full description of the query XML
 syntax.
 
 This endpoint specialises in dealing with queries for genomic locations,

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+
+<classes>
+
+    <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
+
+    <class name="Interaction" is-interface="true">
+        <reference name="participant1" referenced-type="BioEntity" reverse-reference="interactions" />
+        <reference name="participant2" referenced-type="BioEntity" />
+        <reference name="complex" referenced-type="Complex" />
+        <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
+    </class>
+
+    <class name="BioEntity" is-interface="true">
+        <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
+    </class>
+
+    <class name="SmallMolecule" extends="BioEntity" is-interface="true"/>
+    <class name="RNA" extends="BioEntity" is-interface="true"/>
+
+    <class name="Complex" is-interface="true">
+        <attribute name="identifier" type="java.lang.String"/>
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="systematicName" type="java.lang.String"/>
+        <attribute name="function" type="java.lang.String"/>
+        <attribute name="properties" type="java.lang.String"/>
+        <collection name="dataSets" referenced-type="DataSet"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
+        <collection name="goAnnotation" referenced-type="GOAnnotation"/>
+        <collection name="publications" referenced-type="Publication"/>
+    </class>
+
+    <class name="Interactor" is-interface="true">
+        <attribute name="annotations" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="biologicalRole" type="java.lang.String"/>
+        <attribute name="stoichiometry" type="java.lang.Integer"/>
+        <reference name="participant" referenced-type="BioEntity" />
+        <collection name="interactions" referenced-type="Interaction"/>
+    </class>
+
+    <class name="CausalRelationship" is-interface="true">
+      <reference name="type" referenced-type="OntologyTerm"/>
+      <reference name="feature" referenced-type="BioEntity"/>
+    </class>
+
+    <class name="InteractionDetail" is-interface="true">
+        <attribute name="role1" type="java.lang.String"/>
+        <attribute name="role2" type="java.lang.String"/>
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <attribute name="relationshipType" type="java.lang.String"/>
+        <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
+        <collection name="dataSets" referenced-type="DataSet"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
+        <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
+    </class>
+
+    <class name="InteractionRegion" is-interface="true">
+      <attribute name="startStatus" type="java.lang.String"/>
+      <attribute name="endStatus" type="java.lang.String"/>
+      <reference name="gene" referenced-type="Gene" />
+      <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
+      <reference name="location" referenced-type="Location"/>
+      <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
+    </class>
+
+</classes>

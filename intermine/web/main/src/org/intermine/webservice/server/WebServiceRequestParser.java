@@ -54,6 +54,9 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants tab separated output to be returned. **/
     public static final String FORMAT_PARAMETER_TAB = "tab";
 
+    /** Value of parameter when user wants tab separated output to be returned. (alternate) **/
+    public static final String FORMAT_PARAMETER_TSV = "tsv";
+
     /** Value of parameter when user wants plain text to be returned. **/
     public static final String FORMAT_PARAMETER_TEXT = "text";
 
@@ -147,6 +150,9 @@ public class WebServiceRequestParser
     /** The parameter for accepting any format **/
     public static final String FORMAT_PARAMETER_ANY = "*/*";
 
+    /** The parameter for setting the filename **/
+    public static final String FILENAME_PARAMETER = "filename";
+
     /**
      * Parses common parameters for all web services. Must be called from parseRequest
      * method in subclass else the parameters won't be set.
@@ -194,6 +200,7 @@ public class WebServiceRequestParser
             put(FORMAT_PARAMETER_XML, Format.XML);
             put(FORMAT_PARAMETER_HTML, Format.HTML);
             put(FORMAT_PARAMETER_TAB, Format.TSV);
+            put(FORMAT_PARAMETER_TSV, Format.TSV);
             put(FORMAT_PARAMETER_CSV, Format.CSV);
             put(FORMAT_PARAMETER_TEXT, Format.TEXT);
             put(FORMAT_PARAMETER_COUNT, Format.TEXT);

@@ -44,7 +44,6 @@ import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.bio.web.model.ChromosomeInfo;
 import org.intermine.bio.web.model.GenomicRegion;
@@ -84,10 +83,9 @@ public class GenomicRegionSearchService
     private Model model = null;
     private ObjectStore objectStore = null;
     private Properties webProperties = null;
-    private Profile profile = null;
     private WebConfig webConfig = null;
     private Map<String, String> classDescrs = null;
-    private static String orgFeatureJSONString = "";
+    private static String orgFeatureJSONString = null;
     private static final String GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT =
         "genomic_region_search_options_default";
     private static final String GENOMIC_REGION_SEARCH_RESULTS_DEFAULT =
@@ -100,9 +98,17 @@ public class GenomicRegionSearchService
     private List<String> selectionInfo = new ArrayList<String>();
 
     private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
+    /**
+     * Default batch size to be used for region search initialisation queries.
+     */
+    public static final int DEFAULT_REGION_INIT_BATCH_SIZE = 10000;
+    private int initBatchSize = DEFAULT_REGION_INIT_BATCH_SIZE;
 
     private static final String CHROMOSOME_LOCATION_MISSING =
         "Chromosome location information is missing";
+
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
+
 
     /**
      * Constructor
@@ -119,11 +125,11 @@ public class GenomicRegionSearchService
                 request.getSession().getServletContext());
         this.webConfig = SessionMethods.getWebConfig(request);
         this.interMineAPI = SessionMethods.getInterMineAPI(request.getSession());
-        this.profile = SessionMethods.getProfile(request.getSession());
         this.model = this.interMineAPI.getModel();
         this.objectStore = this.interMineAPI.getObjectStore();
         this.classDescrs = (Map<String, String>) request.getSession()
                 .getServletContext().getAttribute("classDescriptions");
+        this.initBatchSize = getInitBatchSize();
     }
 
     /**
@@ -134,6 +140,7 @@ public class GenomicRegionSearchService
      * @throws Exception e
      */
     public String setupWebData() throws Exception {
+        long startTime = System.currentTimeMillis();
         // By default, query all organisms in the database
         // pre defined organism short names can be read out from web.properties
         String presetOrganisms = webProperties.getProperty(
@@ -141,7 +148,9 @@ public class GenomicRegionSearchService
 
         List<String> orgList = new ArrayList<String>();
 
+        long stepTime = System.currentTimeMillis();
         Set<String> chrOrgSet = getChromosomeInfomationMap().keySet();
+        long chrInfoMapTime = System.currentTimeMillis() - stepTime;
 
         if (chrOrgSet == null || chrOrgSet.size() == 0) {
             return CHROMOSOME_LOCATION_MISSING;
@@ -182,23 +191,48 @@ public class GenomicRegionSearchService
             }
         }
 
-        // Exclude preset feature types (global) to display
-        // Data should be comma separated class names
-        String excludedFeatureTypes = webProperties.getProperty(
-            "genomicRegionSearch.featureTypesExcluded.global");
+        long orgFeatureTypesTime = 0;
+        long featureTypeSoTermTime = 0;
+        long orgToTaxonTime = 0;
+        if (orgFeatureJSONString == null) {
+            List<String> excludedFeatureTypes = getExcludedFeatureTypes();
 
-        List<String> excludedFeatureTypeList = new ArrayList<String>();
-        if (excludedFeatureTypes == null || "".equals(excludedFeatureTypes)) {
-            excludedFeatureTypeList = null;
-        } else {
-            excludedFeatureTypeList = Arrays.asList(excludedFeatureTypes.split("[, ]+"));
-        }
+            stepTime = System.currentTimeMillis();
+            Map<String, Set<String>> orgFeatureTypes = getFeatureTypesForOrgs(orgList,
+                    excludedFeatureTypes);
+            orgFeatureTypesTime = System.currentTimeMillis() - stepTime;
 
-        if ("".equals(orgFeatureJSONString)) {
-            return prepareWebData(orgList, excludedFeatureTypeList);
-        } else {
-            return orgFeatureJSONString;
+            stepTime = System.currentTimeMillis();
+            getFeatureTypeToSOTermMap();
+            featureTypeSoTermTime = System.currentTimeMillis() - stepTime;
+
+            stepTime = System.currentTimeMillis();
+            getOrganismToTaxonMap();
+            orgToTaxonTime = System.currentTimeMillis() - stepTime;
+
+            orgFeatureJSONString = buildJSONString(orgList, orgFeatureTypes);
         }
+        LOG.info("REGION SEARCH INIT total time: " + (System.currentTimeMillis() - startTime)
+                + "ms - "
+                + "getChromosomeInfomationMap: " + chrInfoMapTime + "ms, "
+                + "getFeatureTypesForOrgs: " + orgFeatureTypesTime + "ms, "
+                + "getFeatureTypeToSOTermMap: " + featureTypeSoTermTime + "ms, "
+                + "getOrganismToTaxonMap: " + orgToTaxonTime + "ms.");
+        return orgFeatureJSONString;
+    }
+
+    // get a list of feature types excluded from region search based on a web property setting
+    private List<String> getExcludedFeatureTypes() {
+        String excludedFeatureTypesProp = webProperties.getProperty(
+                "genomicRegionSearch.featureTypesExcluded.global");
+
+        List<String> excludedFeatureTypes = new ArrayList<String>();
+        if (excludedFeatureTypesProp == null || "".equals(excludedFeatureTypesProp)) {
+            excludedFeatureTypes = null;
+        } else {
+            excludedFeatureTypes = Arrays.asList(excludedFeatureTypesProp.split("[, ]+"));
+        }
+        return excludedFeatureTypes;
     }
 
     @SuppressWarnings("unchecked")
@@ -265,7 +299,7 @@ public class GenomicRegionSearchService
         // constraints.addConstraint(new BagConstraint(qfOrgName,
         // ConstraintOp.IN, orgList));
 
-        Results results = objectStore.execute(q);
+        Results results = objectStore.execute(q, initBatchSize, true, true, true);
 
         // TODO this will be very slow when query too many features
         if (results == null || results.size() < 0) {
@@ -304,18 +338,21 @@ public class GenomicRegionSearchService
         }
       }
 
-        // Get all feature types
-        for (Set<String> ftSet : resultsMap.values()) {
-            // Exclude some feature types
-            if (excludedFeatureTypeList != null) {
-                ftSet.removeAll(excludedFeatureTypeList);
-            }
+            // Get all feature types
+            for (Set<String> ftSet : orgFeatureMap.values()) {
+                // Exclude some feature types
+                if (excludedFeatureTypes != null) {
+                    ftSet.removeAll(excludedFeatureTypes);
+                }
 
-            if (featureTypesInOrgs == null) {
-                featureTypesInOrgs = new HashSet<String>();
+                if (featureTypesInOrgs == null) {
+                    featureTypesInOrgs = new HashSet<String>();
+                }
                 featureTypesInOrgs.addAll(ftSet);
             }
         }
+        return orgFeatureMap;
+    }
 
         long elapsed = (new Date()).getTime() - start;
         LOG.info("Created featureTypeInOrgMap in "+elapsed+" milliseconds.");
@@ -323,6 +360,8 @@ public class GenomicRegionSearchService
         getFeatureTypeToSOTermMap();
         getOrganismToTaxonMap();
 
+    // build JSON string to display region search options
+    private String buildJSONString(List<String> orgList, Map<String, Set<String>> resultsMap) {
         // Parse data to JSON string
         List<Object> ft = new ArrayList<Object>();
         List<Object> gb = new ArrayList<Object>();
@@ -388,6 +427,8 @@ public class GenomicRegionSearchService
 //        preDataStr = preDataStr.replaceAll("'", "\\\\'");
 
         return preDataStr;
+
+
     }
 
     /**
@@ -453,6 +494,21 @@ public class GenomicRegionSearchService
         }
 
         return resultsCssName;
+    }
+
+    private int getInitBatchSize() {
+        String initBatchSizeStr = webProperties.getProperty(
+                "genomicRegionSearch.initBatchSize");
+
+        if (initBatchSizeStr != null && !"".equals(initBatchSizeStr)) {
+            try {
+                return Integer.parseInt(initBatchSizeStr);
+            } catch (NumberFormatException e) {
+                LOG.warn("Couldn't read integer value from 'genomicsRegionSearch.initBatchSize'"
+                        + " property:" + initBatchSizeStr);
+            }
+        }
+        return DEFAULT_REGION_INIT_BATCH_SIZE;
     }
 
     /**
@@ -752,7 +808,7 @@ public class GenomicRegionSearchService
      * @return chrInfoMap
      */
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
-        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI);
+        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI, initBatchSize);
     }
 
     /**
@@ -760,7 +816,6 @@ public class GenomicRegionSearchService
      * @return featureTypeToSOTermMap
      */
     public Map<String, List<String>> getFeatureTypeToSOTermMap() {
-
         if (featureTypeToSOTermMap == null) {
           
           //TODO: figure out how to configure this path more better.
@@ -825,7 +880,7 @@ public class GenomicRegionSearchService
     public Map<String, Integer> getOrganismToTaxonMap() {
         if (orgTaxonIdMap == null) {
             orgTaxonIdMap = GenomicRegionSearchQueryRunner.getTaxonInfo(interMineAPI,
-                    profile);
+                    initBatchSize);
         }
         return orgTaxonIdMap;
     }

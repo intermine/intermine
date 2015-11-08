@@ -16,14 +16,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.lucene.KeywordSearch;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
@@ -36,6 +32,7 @@ import org.intermine.task.DynamicAttributeTask;
 import org.intermine.task.PrecomputeTask;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.task.CreateSearchIndexTask;
 
 /**
  * Run operations on genomic model database after DataLoading
@@ -147,26 +144,6 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                 configureDynamicAttributes(iu);
                 LOGGER.info("Starting IntronUtil.createIntronFeatures()");
                 iu.createIntronFeatures();
-            } else if ("create-overlap-relations-flymine".equals(operation)) {
-                LOGGER.info("Starting CalculateLocations.createOverlapRelations()");
-                List<String> classNamesToIgnoreList = new ArrayList<String>();
-                String ignoreFileName = "overlap.config";
-                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
-                InputStream classesToIgnoreStream =
-                    classLoader.getResourceAsStream(ignoreFileName);
-                if (classesToIgnoreStream == null) {
-                    throw new RuntimeException("can't find resource: " + ignoreFileName);
-                }
-                BufferedReader classesToIgnoreReader =
-                    new BufferedReader(new InputStreamReader(classesToIgnoreStream));
-                String line = classesToIgnoreReader.readLine();
-                while (line != null) {
-                    classNamesToIgnoreList.add(line);
-                    line = classesToIgnoreReader.readLine();
-                }
-
-                CalculateLocations cl = new CalculateLocations(getObjectStoreWriter());
-                cl.createOverlapRelations(classNamesToIgnoreList, false);
             } else if ("create-attribute-indexes".equals(operation)) {
                 CreateIndexesTask cit = new CreateIndexesTask();
                 cit.setAttributeIndexes(true);
@@ -222,36 +199,11 @@ public class PostProcessOperationsTask extends DynamicAttributeTask
                                         ac.getBinaryIndexMap());
                 }
             } else if ("create-search-index".equals(operation)) {
-                System .out.println("Creating lucene index for keyword search...");
-
-                ObjectStore os = getObjectStoreWriter().getObjectStore();
-                if (!(os instanceof ObjectStoreInterMineImpl)) {
-                    throw new RuntimeException("Got invalid ObjectStore - must be an "
-                            + "instance of ObjectStoreInterMineImpl!");
-                }
-
-                ClassLoader classLoader = PostProcessOperationsTask.class.getClassLoader();
-
-                /*
-                String configFileName = "objectstoresummary.config.properties";
-                InputStream configStream = classLoader.getResourceAsStream(configFileName);
-                if (configStream == null) {
-                    throw new RuntimeException("can't find resource: " + configFileName);
-                }
-
-                Properties properties = new Properties();
-                properties.load(configStream);*/
-
-                //read class keys to figure out what are keyFields during indexing
-                InputStream is = classLoader.getResourceAsStream("class_keys.properties");
-                Properties classKeyProperties = new Properties();
-                classKeyProperties.load(is);
-                Map<String, List<FieldDescriptor>> classKeys =
-                    ClassKeyHelper.readKeys(os.getModel(), classKeyProperties);
-
-                //index and save
-                KeywordSearch.saveIndexToDatabase(os, classKeys);
-                KeywordSearch.deleteIndexDirectory();
+                // Delegate to a sub-task.
+                CreateSearchIndexTask subtask = new CreateSearchIndexTask();
+                subtask.setClassLoader(PostProcessOperationsTask.class.getClassLoader());
+                subtask.setObjectStore(getObjectStoreWriter().getObjectStore());
+                subtask.execute();
             } else if ("create-overlap-view".equals(operation)) {
                 OverlapViewTask ovt = new OverlapViewTask(getObjectStoreWriter());
                 ovt.createView();

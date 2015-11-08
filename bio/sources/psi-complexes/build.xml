@@ -1,0 +1,5 @@
+<project name="psi-complexes" default="default" basedir=".">
+  <description>build, test, package psi-complexes</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
