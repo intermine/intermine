@@ -273,13 +273,9 @@ public class PantherConverter extends BioFileConverter
             // no config so process everything
             return true;
         }
-        if (allTaxonIds.contains(organism1) && allTaxonIds.contains(organism2)) {
+        if (taxonIds.contains(organism1) && taxonIds.contains(organism2)) {
             // both are organisms of interest
             return true;
-        }
-        if (homologues.isEmpty()) {
-            // only interested in homologues of interest, so at least one of this pair isn't valid
-            return false;
         }
         // one gene is from an organism of interest
         // one homologue is from an organism we want
