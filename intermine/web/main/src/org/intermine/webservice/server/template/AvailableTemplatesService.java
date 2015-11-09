@@ -96,7 +96,7 @@ public class AvailableTemplatesService extends WebService
                 }
                 attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
                 output.setHeaderAttributes(attributes);
-                output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(templates)));
+                output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(im, templates)));
                 break;
             case TEXT:
                 Set<String> templateNames = new TreeSet<String>(templates.keySet());
