@@ -8,6 +8,12 @@
  *
  */
 
+InterMine 1.6.1
+
+#1205 - Cytoscape fix for protein report page
+#1209 - Fix Panther for Drosophila
+#1216 - Make region.start and end integers instead of strings
+
 InterMine 1.6 (Halloween 2015)
 
 #1187 - GO enrichment widget -- gene length normalisation error
