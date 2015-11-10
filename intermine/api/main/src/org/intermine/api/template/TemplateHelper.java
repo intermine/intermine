@@ -147,13 +147,14 @@ public final class TemplateHelper
      * @param im intermine API
      * @return A JSON string.
      */
-    public static String templateMapToJson(InterMineAPI im, Map<String, ApiTemplate> templates) {
+    private static String templateMapToJson(InterMineAPI im, Map<String, ApiTemplate> templates) {
         StringBuilder sb = new StringBuilder("{");
         Iterator<String> keys = templates.keySet().iterator();
         while (keys.hasNext()) {
             String name = keys.next();
-
-            sb.append("\"" + name + "\":" + templates.get(name).toJson());
+            ApiTemplate template = templates.get(name);
+            template.setAPI(im);
+            sb.append("\"" + name + "\":" + template.toJson());
             if (keys.hasNext()) {
                 sb.append(",");
             }

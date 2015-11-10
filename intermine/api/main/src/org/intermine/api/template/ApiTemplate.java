@@ -63,17 +63,6 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         super(template);
     }
 
-    /** Construct a new API template that has all the same properties as the TemplateQuery
-     * passed into the constructor.
-     *
-     * @param template The prototypical template to be like.
-     * @param im InterMine API
-     */
-    public ApiTemplate(InterMineAPI im, TemplateQuery template) {
-        super(template);
-        this.im = im;
-    }
-
     /**
      * Clone this ApiQuery
      * @return template
@@ -165,6 +154,15 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
     public synchronized void setDescription(String description) {
         super.setDescription(description);
         fireEvent(new PropertyChangeEvent(this));
+    }
+
+    /**
+     * Only used on export so we can get the tags related to this template.
+     *
+     * @param im InterMine API
+     */
+    public void setAPI(InterMineAPI im) {
+        this.im = im;
     }
 
     @Override
