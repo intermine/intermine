@@ -1,2 +1,5 @@
 #!/bin/bash
-../bio/scripts/project_build -l -v -V 10.3 localhost /global/scratch2/sd/jcarlson/phytomine-build
+../bio/scripts/project_build -l -v -V 11.0 -a phytozome-chado-A.trichopoda--phytozome-chado-A.comosus-early-release localhost ${BSCRATCH}/phytomine-build
+
+
+  
