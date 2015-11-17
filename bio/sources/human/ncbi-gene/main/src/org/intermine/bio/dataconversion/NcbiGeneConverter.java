@@ -45,6 +45,7 @@ public class NcbiGeneConverter extends BioFileConverter
     private Properties props = new Properties();
     private Map<String, String> configXref = new HashMap<String, String>();
     private Map<String, String> configPrefix = new HashMap<String, String>();
+    private Map<String, String> genes = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -104,81 +105,91 @@ public class NcbiGeneConverter extends BioFileConverter
 
     private void createGeneByTaxonId(String taxonId, GeneInfoRecord record,
             NcbiGeneInfoParser parser) throws ObjectStoreException {
-        Item gene = createItem("Gene");
-        gene.setReference("organism", getOrganism(taxonId));
-        createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
+
+        String primaryIdentifier = null;
 
         // primaryIdentifier
         if (record.xrefs.get(configXref.get(taxonId)) != null) {
-            gene.setAttribute(
-                    "primaryIdentifier",
-                    (configPrefix.get(taxonId) != null ? configPrefix
-                            .get(taxonId) : "")
-                            + record.xrefs.get(configXref.get(taxonId))
-                                    .iterator().next());
+            primaryIdentifier = (configPrefix.get(taxonId) != null ? configPrefix.get(taxonId) : ""
+                            + record.xrefs.get(configXref.get(taxonId)).iterator().next());
         } else {
-            gene.setAttribute("primaryIdentifier", record.entrez);
+            primaryIdentifier = record.entrez;
         }
 
-        // symbol
-        if (record.officialSymbol != null) {
-            gene.setAttribute("symbol", record.officialSymbol);
-            // if NCBI symbol is different add it as a synonym
-            if (record.defaultSymbol != null
-                    && !record.officialSymbol.equals(record.defaultSymbol)) {
-                createSynonym(gene, record.defaultSymbol, true);
-                LOG.info("GENE official symbol " + record.officialSymbol
-                        + " does not match " + record.defaultSymbol);
-            }
-        } else {
-            if (parser.isUniqueSymbol(taxonId, record.defaultSymbol)) {
-                gene.setAttribute("symbol", record.defaultSymbol);
+        LOG.error(" && " + primaryIdentifier);
+
+        String refId = genes.get(primaryIdentifier);
+
+        if (refId == null) {
+
+            Item gene = createItem("Gene");
+            gene.setReference("organism", getOrganism(taxonId));
+            createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
+
+            // symbol
+            if (record.officialSymbol != null) {
+                gene.setAttribute("symbol", record.officialSymbol);
+                // if NCBI symbol is different add it as a synonym
+                if (record.defaultSymbol != null
+                        && !record.officialSymbol.equals(record.defaultSymbol)) {
+                    createSynonym(gene, record.defaultSymbol, true);
+                    LOG.info("GENE official symbol " + record.officialSymbol
+                            + " does not match " + record.defaultSymbol);
+                }
             } else {
-                createSynonym(gene, record.defaultSymbol, true);
+                if (parser.isUniqueSymbol(taxonId, record.defaultSymbol)) {
+                    gene.setAttribute("symbol", record.defaultSymbol);
+                } else {
+                    createSynonym(gene, record.defaultSymbol, true);
+                }
             }
-        }
-        if (StringUtils.isBlank(record.officialSymbol)) {
-            LOG.info("GENE has no official symbol: " + record.entrez + " "
-                    + record.defaultSymbol);
-        }
-
-        // ncbiGeneNumber - removed from model addition
-//        gene.setAttribute("ncbiGeneNumber", record.entrez);
-
-        // name
-        if (record.officialName != null) {
-            gene.setAttribute("name", record.officialName);
-            if (record.defaultName != null
-                    && !record.officialName.equals(record.defaultName)) {
-                createSynonym(gene, record.defaultName, true);
+            if (StringUtils.isBlank(record.officialSymbol)) {
+                LOG.info("GENE has no official symbol: " + record.entrez + " "
+                        + record.defaultSymbol);
             }
-        } else if (record.defaultName != null) {
-            gene.setAttribute("name", record.defaultName);
-        }
 
-        // xref
-        for (String key : record.xrefs.keySet()) {
-            for (String id : record.xrefs.get(key)) {
-                createCrossReference(gene.getIdentifier(), id, key, true);
+            // ncbiGeneNumber - removed from model addition
+            //        gene.setAttribute("ncbiGeneNumber", record.entrez);
+
+            // name
+            if (record.officialName != null) {
+                gene.setAttribute("name", record.officialName);
+                if (record.defaultName != null
+                        && !record.officialName.equals(record.defaultName)) {
+                    createSynonym(gene, record.defaultName, true);
+                }
+            } else if (record.defaultName != null) {
+                gene.setAttribute("name", record.defaultName);
             }
-        }
 
-        for (String ensemblId : record.ensemblIds) {
-            createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl",
-                    true);
-        }
-
-        if (record.mapLocation != null) {
-            // cytoLocation attribute is set in chado-db_additions.xml
-            if (gene.hasAttribute("cytoLocation")) {
-                gene.setAttribute("cytoLocation", record.mapLocation);
+            // xref
+            for (String key : record.xrefs.keySet()) {
+                for (String id : record.xrefs.get(key)) {
+                    createCrossReference(gene.getIdentifier(), id, key, true);
+                }
             }
+
+            for (String ensemblId : record.ensemblIds) {
+                createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl",
+                        true);
+            }
+
+            if (record.mapLocation != null) {
+                // cytoLocation attribute is set in chado-db_additions.xml
+                if (gene.hasAttribute("cytoLocation")) {
+                    gene.setAttribute("cytoLocation", record.mapLocation);
+                }
+            }
+
+            store(gene);
+            refId = gene.getIdentifier();
+            genes.put(primaryIdentifier, refId);
+        } else {
+            LOG.error("Duplicate gene found with identifier " + primaryIdentifier);
         }
-
-        store(gene);
-
         for (String synonym : record.synonyms) {
-            createSynonym(gene, synonym, true);
+            createSynonym(refId, synonym, true);
         }
     }
 
