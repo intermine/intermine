@@ -63,6 +63,7 @@ public class PsiComplexesConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "EBI IntAct";
     private static final String COMPLEX_PROPERTIES = "complex-properties";
     private static final String INTERACTION_TYPE = "physical";
+    private static final String DEFAULT_INTERACTOR_TYPE = "BioEntity";
     // TODO put this in config file instead
     private static final String PROTEIN = "MI:0326";
     private static final String SMALL_MOLECULE = "MI:0328";
@@ -346,8 +347,9 @@ public class PsiComplexesConverter extends BioFileConverter
             String typeTermIdentifier = participant.getInteractorType().getMIIdentifier();
             String interactorType = INTERACTOR_TYPES.get(typeTermIdentifier);
             if (interactorType == null) {
-                // see #1168 - this needs to be automatic
-                throw new BuildException("Unknown interactor type: " + typeTermIdentifier);
+                // see #1168
+                LOG.error("Unknown interactor type: " + typeTermIdentifier);
+                interactorType = DEFAULT_INTERACTOR_TYPE;
             }
             Item protein = createItem(interactorType);
             protein.setAttribute("primaryIdentifier", primaryIdentifier);
