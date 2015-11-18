@@ -504,6 +504,8 @@ public class PhytozomeDbProcessor {
       // override db value of sequence length if residues is set.
       if (residues != null && !residues.isEmpty()) {
         seqlen = residues.length();
+        // subtract 1 for stop codons on proteins
+        if (residues.endsWith("*") ) seqlen--;
         // and store
         Item seq = converter.createItem("Sequence");
         seq.setAttribute("residues", residues);

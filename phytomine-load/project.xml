@@ -140,12 +140,6 @@
       <property name="dataSourceName" value="rnaseq-A.hypochondriacus" />
       <property name="dataSetTitle" value="A.hypochondriacus RNA-seq" />
     </source>
-    <source name="cufflinks-A.hypochondriacus-redo" type="cufflinks">
-      <property name="proteomeId" value="315" />
-      <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ahypochondriacus/" />
-      <property name="dataSourceName" value="rnaseq-A.hypochondriacus" />
-      <property name="dataSetTitle" value="A.hypochondriacus RNA-seq" />
-    </source>
     <source name="coexpression-A.hypochondriacus" type="coexpression">
       <property name="proteomeId" value="315" />
       <property name="src.data.dir" location="/projectb/sandbox/plant/phytomine/rna-seq/Ahypochondriacus/" />
