@@ -27,9 +27,6 @@
       <property name="fasta.includes" value="MAL*.fasta"/>
       <property name="src.data.dir" location="DATA_DIR/malaria/genome/fasta"/>
     </source>
-    <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="DATA_DIR/malaria/interpro"/>
-    </source>
     <source name="go" type="go">
       <property name="src.data.file" location="DATA_DIR/malaria/go/gene_ontology.obo"/>
       <property name="createrelations" value="false"/>
