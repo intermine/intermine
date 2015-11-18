@@ -8,11 +8,18 @@
  *
  */
 
+InterMine 1.6.2
+
+#1228 - Fix tutorial, remove interpro
+#1184 - Keyword search: first search takes you to home page
+#1168 - PSI-Complexes -- allow for more data types
+#1154 - Web services: tags for templates
+
 InterMine 1.6.1
 
-#1205 - Cytoscape fix for protein report page
-#1209 - Fix Panther for Drosophila
 #1216 - Make region.start and end integers instead of strings
+#1209 - Fix Panther for Drosophila
+#1205 - Cytoscape fix for protein report page
 
 InterMine 1.6 (Halloween 2015)
 
