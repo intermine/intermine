@@ -13,14 +13,18 @@ package org.intermine.api.template;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.search.OriginatingEvent;
 import org.intermine.api.search.PropertyChangeEvent;
 import org.intermine.api.search.WebSearchWatcher;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.SavedTemplateQuery;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 
@@ -35,6 +39,9 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
 
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
+
+    // so we can include tags
+    private InterMineAPI im;
 
     /**
      * @param name name of template
@@ -149,4 +156,29 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable
         fireEvent(new PropertyChangeEvent(this));
     }
 
+    /**
+     * Only used on export so we can get the tags related to this template.
+     *
+     * @param im InterMine API
+     */
+    public void setAPI(InterMineAPI im) {
+        this.im = im;
+    }
+
+    @Override
+    protected Map<String, Object> getHeadAttributes() {
+        Map<String, Object> retVal = super.getHeadAttributes();
+
+        if (im != null) {
+            TemplateManager manager = im.getTemplateManager();
+            List<Tag> tags = manager.getTags(this, im.getProfileManager().getSuperuserProfile());
+            List<String> tagNames = new ArrayList<String>();
+            for (Tag t: tags) {
+                tagNames.add(t.getTagName());
+            }
+            retVal.put("tags", tagNames);
+        }
+
+        return retVal;
+    }
 }
