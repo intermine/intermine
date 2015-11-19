@@ -71,6 +71,9 @@
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
+    <source name="atlas-express" type="atlas-express">
+      <property name="src.data.dir" location="/micklem/data/atlas-express/" />
+    </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090" />
       <property name="src.data.dir" location="/micklem/data/uniprot/current/" />
