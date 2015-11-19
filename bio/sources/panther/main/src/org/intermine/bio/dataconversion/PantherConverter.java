@@ -182,7 +182,7 @@ public class PantherConverter extends BioFileConverter
             LOG.warn("panther.organisms property not set in project XML file");
         }
         if (homologues.isEmpty()) {
-            LOG.warn("panther.homologues property not set in project XML file");
+            LOG.info("panther.homologues property not set in project XML file");
         }
 
         //Create id resolver

@@ -34,8 +34,6 @@ public class HumanIdResolverFactory extends IdResolverFactory
     private final String propKey = "resolver.file.rootpath";
     private final String resolverFileSymbo = "humangene";
     private final String taxonId = "9606";
-
-    private static final String HGNC_PREFIX = "HGNC:";
     private static final String OMIM_PREFIX = "OMIM:";
 
     /**
@@ -110,7 +108,7 @@ public class HumanIdResolverFactory extends IdResolverFactory
             String omim = line[4];
 
             resolver.addMainIds(taxonId, symbol, Collections.singleton(symbol));
-            resolver.addMainIds(taxonId, symbol, Collections.singleton(HGNC_PREFIX + hgnc));
+            resolver.addMainIds(taxonId, symbol, Collections.singleton(hgnc));
             if (!StringUtils.isEmpty(entrez)) {
                 resolver.addMainIds(taxonId, symbol, Collections.singleton(entrez));
             }
