@@ -70,6 +70,17 @@ public class KeywordSearchResultsController extends TilesAction
             ActionForm form,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+
+        // term
+        String searchTerm = request.getParameter("searchTerm");
+        LOG.debug("SEARCH TERM: '" + searchTerm + "'");
+
+        // show overview by default
+        if (StringUtils.isBlank(searchTerm)) {
+            return null;
+            // searchTerm = QUERY_TERM_ALL;
+        }
+
         long time = System.currentTimeMillis();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ServletContext servletContext = request.getSession().getServletContext();
@@ -82,10 +93,6 @@ public class KeywordSearchResultsController extends TilesAction
         KeywordSearch.initKeywordSearch(im, contextPath);
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         int totalHits = 0;
-
-        // term
-        String searchTerm = request.getParameter("searchTerm");
-        LOG.debug("SEARCH TERM: '" + searchTerm + "'");
 
         //track the keyword search
         Profile profile = SessionMethods.getProfile(request.getSession());
@@ -103,10 +110,6 @@ public class KeywordSearchResultsController extends TilesAction
         Map<String, String> facetValues = getFacetValues(request, facets);
         LOG.debug("Initializing took " + (System.currentTimeMillis() - time) + " ms");
 
-        // show overview by default
-        if (StringUtils.isBlank(searchTerm)) {
-            searchTerm = QUERY_TERM_ALL;
-        }
 
         long searchTime = System.currentTimeMillis();
 
