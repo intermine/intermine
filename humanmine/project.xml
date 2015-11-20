@@ -71,6 +71,9 @@
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
+    <source name="atlas-express" type="atlas-express">
+      <property name="src.data.dir" location="/micklem/data/atlas-express/" />
+    </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090" />
       <property name="src.data.dir" location="/micklem/data/uniprot/current/" />
@@ -127,6 +130,12 @@
     <source name="hpo-annotation" type="hpo-annotation" dump="true">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />
     </source>
+
+    <source name="pdb" type="pdb">
+      <property name="src.data.dir" location="/micklem/data/pdb/current"/>
+      <property name="pdb.organisms" value="9606"/>
+    </source>
+
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606 10090" />

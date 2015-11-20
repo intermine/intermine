@@ -8,6 +8,12 @@
  *
  */
 
+InterMine 1.6.3
+
+#1236 - Keyword Search: don't show entire index if no keyword provided. 
+#1179 - PDB failing 
+#1190 - Atlas express source 
+
 InterMine 1.6.2
 
 #1228 - Fix tutorial, remove interpro

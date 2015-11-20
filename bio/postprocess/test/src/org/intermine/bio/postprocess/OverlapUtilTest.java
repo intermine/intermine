@@ -13,15 +13,14 @@ package org.intermine.bio.postprocess;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import org.biojava.bio.structure.Author;
+import junit.framework.TestCase;
+
+import org.intermine.model.bio.Author;
 import org.intermine.model.bio.Exon;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MeshTerm;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for the OverlapUtil class.
