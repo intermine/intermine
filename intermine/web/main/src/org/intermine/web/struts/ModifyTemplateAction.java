@@ -128,8 +128,7 @@ public class ModifyTemplateAction extends InterMineAction
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
 //        ServletContext servletContext = session.getServletContext();
 
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
+        response.setContentType("text/plain; charset=utf-8");
 
         PrintStream out = new PrintStream(response.getOutputStream());
 
