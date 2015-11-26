@@ -20,4 +20,18 @@
     </path>
   </target>
 
+  <target name="-pre-test" depends="build-db.bio-fulldata-test"/>
+
+  <target name="-init-build-db" depends="init, -init-deps, -init-task-xml"/>
+
+  <target name="build-db.bio-fulldata-test" depends="-init-build-db">
+    <imdbproj:build-db osname="os.bio-fulldata-test"
+                       model="fulldata"/>
+  </target>
+
+  <!-- index the fulldata test database -->
+  <target name="create-indexes-genomic-fulldata-test" depends="-init-build-db">
+    <create-indexes alias="os.bio-fulldata-test" attributeIndexes="false"/>
+  </target>
+
 </project>
