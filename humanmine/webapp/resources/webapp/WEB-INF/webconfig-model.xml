@@ -1,48 +1,5 @@
 <webconfig>
 
-  <class className="org.intermine.model.bio.Disease">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-  <class className="org.intermine.model.bio.Pathway">
-    <headerconfig>
-      <titles>
-        <title mainTitles="name" />
-      </titles>
-    </headerconfig>
-    <fields>
-      <fieldconfig fieldExpr="identifier" />
-      <fieldconfig fieldExpr="name" />
-    </fields>
-  </class>
-  <class className="org.intermine.model.bio.Consequence">
-    <fields>
-      <fieldconfig fieldExpr="description"/>
-    </fields>
-  </class>
-  <class className="org.intermine.model.bio.ValidationState">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-  <class className="org.intermine.model.bio.Ontology">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-  <class className="org.intermine.model.bio.Component">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-    </fields>
-  </class>
-  <class className="org.intermine.model.bio.CrossReference">
-    <fields>
-      <fieldconfig fieldExpr="identifier"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.Author">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -76,22 +33,15 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.UniProtFeature">
+  <class className="org.intermine.model.bio.Component">
     <fields>
-      <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="description"/>
-      <fieldconfig fieldExpr="begin"/>
-      <fieldconfig fieldExpr="end"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.ProteinAtlasExpression">
+  <class className="org.intermine.model.bio.CrossReference">
     <fields>
-      <fieldconfig fieldExpr="tissue.name"/>
-      <fieldconfig fieldExpr="level"/>
-      <fieldconfig fieldExpr="reliability"/>
-      <fieldconfig fieldExpr="expressionType"/>
-      <fieldconfig fieldExpr="cellType"/>
+      <fieldconfig fieldExpr="identifier"/>
     </fields>
   </class>
 
@@ -109,6 +59,13 @@
       <fieldconfig fieldExpr="url" doNotTruncate="true"/>
     </fields>
     <tabledisplayer src="/model/dataSourceShort.jsp"/>
+  </class>
+
+  <class className="org.intermine.model.bio.Disease">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
   </class>
 
   <class className="org.intermine.model.bio.Gene">
@@ -226,6 +183,12 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Ontology">
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.OntologyTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -256,6 +219,29 @@
       <fieldconfig fieldExpr="taxonId" />
     </fields>
   </class>
+
+  <class className="org.intermine.model.bio.Pathway">
+    <headerconfig>
+      <titles>
+        <title mainTitles="name" />
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="identifier" />
+      <fieldconfig fieldExpr="name" />
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.ProteinAtlasExpression">
+    <fields>
+      <fieldconfig fieldExpr="tissue.name"/>
+      <fieldconfig fieldExpr="level"/>
+      <fieldconfig fieldExpr="reliability"/>
+      <fieldconfig fieldExpr="expressionType"/>
+      <fieldconfig fieldExpr="cellType"/>
+    </fields>
+  </class>
+
 
   <class className="org.intermine.model.bio.ProteinDomain">
     <fields>
@@ -327,6 +313,15 @@
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.end" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="organism.name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.UniProtFeature">
+    <fields>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="begin"/>
+      <fieldconfig fieldExpr="end"/>
     </fields>
   </class>
 
