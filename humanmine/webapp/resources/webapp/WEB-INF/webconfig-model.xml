@@ -33,6 +33,16 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Complex">
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="function"/>
+      <fieldconfig fieldExpr="properties"/>
+      <fieldconfig fieldExpr="systematicName"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Component">
     <fields>
       <fieldconfig fieldExpr="name"/>
