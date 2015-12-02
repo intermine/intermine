@@ -12,30 +12,14 @@ use constant {
     DESCRIPTION => 'Human Gene identifiers from HGNC biomart',
     SOURCE_LINK => 'http://www.genenames.org/',
     SOURCE_DIR  => 'human/identifiers',
-    BIOMART_SERVER => 'http://www.genenames.org/biomart/martservice',
+    BIOMART_SERVER => 'http://biomart.genenames.org/martform/#!/default/HGNC?datasets=hgnc_gene_mart',
     COMPARE     => 1,
 };
 
 use constant BIOMART_QUERY => q{<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Query>
-<Query  virtualSchemaName = "default" formatter = "TSV" header = "0" uniqueRows = "0" count = "" datasetConfigVersion = "0.7" >
-            
-    <Dataset name = "hgnc" interface = "default" >
-        <Filter name = "gd_record" value = "primary"/>
-        <Filter name = "gd_status" value = "Approved"/>
-        <Attribute name = "gd_app_sym" />
-        <Attribute name = "gd_hgnc_id_key" />
-        <Attribute name = "md_eg_id" />
-        <Attribute name = "md_ensembl_id" />
-        <Attribute name = "md_mim_id" />
-        <Attribute name = "gd_app_name" />
-        <Attribute name = "gd_prev_sym" />
-        <Attribute name = "gd_prev_name" />
-        <Attribute name = "gd_name_aliases" />
-        <Attribute name = "gd_aliases" />
-        <Attribute name = "gd_pub_chrom_map" />
-    </Dataset>
-</Query>
+<Query client="biomartclient" processor="TSV" limit="-1" header="1"><Dataset name="hgnc_gene_mart" config="hgnc_gene_config"><Filter name="hgnc_gene__status_1010" value="Approved" filter_list=""/><Attribute name="hgnc_gene__approved_symbol_1010"/><Attribute name="hgnc_gene__hgnc_gene_id_1010"/><Attribute name="hgnc_gene__ncbi_gene__gene_id_1026"/><Attribute name="hgnc_gene__ensembl_gene__ensembl_gene_id_104"/><Attribute name="hgnc_gene__omim__omim_id_1027"/><Attribute name="hgnc_gene__approved_name_1010"/><Attribute name="hgnc_gene__hgnc_previous_symbol__previous_symbol_1012"/><Attribute name="hgnc_gene__hgnc_previous_name__previous_name_1011"/><Attribute name="hgnc_gene__hgnc_alias_name__alias_name_107"/><Attribute name="hgnc_gene__hgnc_alias_symbol__alias_symbol_108"/><Attribute name="hgnc_gene__chromosome_location_1010"/></Dataset></Query>
+
 };
 
 sub BUILD {
