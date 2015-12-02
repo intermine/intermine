@@ -99,6 +99,7 @@ public class HgncConverter extends BioFileConverter
     }
 
     private void createSynonym(String geneRefId, String value) throws ObjectStoreException {
+        value = value.replace("\"", "");
         String[] bits = value.split("\\|");
         for (String syn : bits) {
             createSynonym(geneRefId, syn, true);
