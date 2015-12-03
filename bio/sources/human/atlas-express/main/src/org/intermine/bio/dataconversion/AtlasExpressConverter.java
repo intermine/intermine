@@ -75,6 +75,10 @@ public class AtlasExpressConverter extends BioFileConverter
 
             String geneId = getGeneId(line[0]);
 
+            if (StringUtils.isEmpty(geneId)) {
+                continue;
+            }
+
             // each column represents a tissue
             // skip first two columns, gene name
             for (int i = 2; i < header.length; i++) {
