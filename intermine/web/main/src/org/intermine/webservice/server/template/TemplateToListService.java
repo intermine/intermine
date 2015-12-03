@@ -117,9 +117,6 @@ public class TemplateToListService extends QueryToListService
         oldView.remove(newViewString);
         pq.clearView();
         pq.addView(newViewString);
-        // Make sure these are added back to keep the query structure the same
-        pq.addViews(oldView);
-
         return pq;
     }
 }
