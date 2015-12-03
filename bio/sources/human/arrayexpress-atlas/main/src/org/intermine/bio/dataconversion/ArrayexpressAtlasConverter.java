@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -44,8 +45,8 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     private boolean isDatasetTitleAssigned = false;
     private String datasetTitle;
     private List<String> datasets = new ArrayList<String>();
-
-    private String taxonId = "9606";
+    protected IdResolver rslv;
+    private static final String HUMAN_TAXON = "9606";
     private static final Logger LOG = Logger.getLogger(ArrayexpressAtlasConverter.class);
 
     //String[] types = new String[] {"organism_part", "disease_state", "cell_type", "cell_line"};
@@ -59,6 +60,10 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
      */
     public ArrayexpressAtlasConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, null);
+
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByTaxonId(HUMAN_TAXON, false);
+        }
     }
 
     @Override
@@ -119,8 +124,12 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
                 for (int i = 0; i < expressionResults.length(); i++) {
                     JSONObject expressionResult = expressionResults.getJSONObject(i);
                     try {
+                        String geneRefId = getGeneId(ensemblId);
+                        if (StringUtils.isEmpty(geneRefId)) {
+                            continue;
+                        }
                         Item expressionItem = createItem("AtlasExpression");
-                        expressionItem.setReference("gene", getGeneId(ensemblId));
+                        expressionItem.setReference("gene", geneRefId);
                         String type = expressionResult.get("ef").toString();
                         if (!EXPRESSION_TYPES.contains(type)) {
                             continue;
@@ -157,16 +166,42 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     }
 
     private String getGeneId(String primaryIdentifier) throws ObjectStoreException {
-        String geneId = genes.get(primaryIdentifier);
+        String resolvedIdentifier = resolveGene(primaryIdentifier);
+        if (StringUtils.isEmpty(resolvedIdentifier)) {
+            return null;
+        }
+        String geneId = genes.get(resolvedIdentifier);
         if (geneId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute("primaryIdentifier", primaryIdentifier);
-            gene.setReference("organism", getOrganism(taxonId));
+            gene.setAttribute("primaryIdentifier", resolvedIdentifier);
+            gene.setReference("organism", getOrganism(HUMAN_TAXON));
             store(gene);
             geneId = gene.getIdentifier();
             genes.put(primaryIdentifier, geneId);
         }
         return geneId;
+    }
+
+    /**
+     * resolve old human symbol
+     * @param taxonId id of organism for this gene
+     * @param ih interactor holder
+     * @throws ObjectStoreException
+     */
+    private String resolveGene(String identifier) {
+        String id = identifier;
+
+        if (rslv != null && rslv.hasTaxon(HUMAN_TAXON)) {
+            int resCount = rslv.countResolutions(HUMAN_TAXON, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " Human identifier: "
+                         + rslv.resolveId(HUMAN_TAXON, identifier));
+                return null;
+            }
+            id = rslv.resolveId(HUMAN_TAXON, identifier).iterator().next();
+        }
+        return id;
     }
 
     private static double round(double value, int places) {
