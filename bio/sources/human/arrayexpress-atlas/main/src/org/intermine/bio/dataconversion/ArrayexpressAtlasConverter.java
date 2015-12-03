@@ -177,17 +177,11 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
             gene.setReference("organism", getOrganism(HUMAN_TAXON));
             store(gene);
             geneId = gene.getIdentifier();
-            genes.put(primaryIdentifier, geneId);
+            genes.put(resolvedIdentifier, geneId);
         }
         return geneId;
     }
 
-    /**
-     * resolve old human symbol
-     * @param taxonId id of organism for this gene
-     * @param ih interactor holder
-     * @throws ObjectStoreException
-     */
     private String resolveGene(String identifier) {
         String id = identifier;
 
