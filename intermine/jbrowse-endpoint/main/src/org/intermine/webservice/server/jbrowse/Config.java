@@ -64,7 +64,6 @@ import org.intermine.webservice.server.output.StreamedOutput;
  */
 public class Config extends JSONService
 {
-
     /**
      * The domain we are operating within.
      * This will generally refer to an organism, but this can
@@ -106,6 +105,9 @@ public class Config extends JSONService
     /** The category that feature tracks go in. **/
     private String featureCat;
 
+    /** The tracks that we will serve **/
+    private List<Map<String, Object>> tracks;
+
     /** The base-url of this service **/
     private String baseurl = null;
 
@@ -134,6 +136,7 @@ public class Config extends JSONService
     @Override
     protected void initState() {
         super.initState();
+
         config = InterMineContext.getWebConfig();
         String prefix = getPropertyPrefix();
         Properties namespaced = new NameSpacedProperties(prefix, webProperties);
@@ -151,12 +154,29 @@ public class Config extends JSONService
                                      .trim()
                                      .substring(1);
         String[] parts = pathInfo.split("/", 2);
+
         if (parts.length != 2) {
             throw new ResourceNotFoundException("NOT FOUND");
         }
+
         domain = parts[0];
         fileName = parts[1];
         dataset = webProperties.getProperty("project.title") + "-" + domain;
+
+        initTracks();
+    }
+
+    private void initTracks() {
+        Model m = im.getModel();
+        tracks = new ArrayList<Map<String, Object>>();
+        ClassDescriptor fcd = m.getClassDescriptorByName(featType);
+        tracks.add(featureTrack(fcd));
+
+        for (ClassDescriptor cd: m.getAllSubs(fcd)) {
+            tracks.add(featureTrack(cd));
+        }
+
+        tracks.add(referenceTrack());
     }
 
     /** Get the URL we can give to others to tell them where our resources are. **/
@@ -201,14 +221,6 @@ public class Config extends JSONService
      * </ul>
      */
     private void serveTrackList() {
-        Model m = im.getModel();
-        List<Map<String, Object>> tracks = new ArrayList<Map<String, Object>>();
-        ClassDescriptor fcd = m.getClassDescriptorByName(featType);
-        tracks.add(featureTrack(fcd));
-        for (ClassDescriptor cd: m.getAllSubs(fcd)) {
-            tracks.add(featureTrack(cd));
-        }
-        tracks.add(referenceTrack());
         addResultEntry("tracks", tracks, true);
         Map<String, Object> nameConf = new HashMap<String, Object>();
         nameConf.put("url", getBaseUrl() + "names/" + domain);
