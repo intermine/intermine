@@ -6,22 +6,6 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
-    <source name="ensembl-human" type="ensembl-core">
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current" />
-      <property name="src.data.dir.includes" value="9606.xml" />
-    </source>
-    <source name="ensembl-human-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="9606" />
-      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence" />
-      <property name="fasta.dataSourceName" value="Ensembl" />
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
-      <property name="fasta.classAttribute" value="primaryIdentifier" />
-      <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/core/current/fasta" />
-    </source>
-    <source name="hgnc" type="hgnc">
-      <property name="src.data.dir" location="/micklem/data/human/hgnc/current" />
-    </source>
     <source name="ncbi-gene" type="ncbi-gene">
       <property name="src.data.dir" location="/micklem/data/ncbi/current" />
       <property name="organisms" value="9606" />
@@ -36,21 +20,6 @@
     </source>
     <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
-    </source>
-<!--
-    <source name="ensembl-mouse" type="ensembl-core">
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current" />
-      <property name="src.data.dir.includes" value="10090_mgi_pid.xml" />
-    </source>
--->
-    <source name="ensembl-mouse-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="10090" />
-      <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence" />
-      <property name="fasta.dataSourceName" value="Ensembl" />
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
-      <property name="fasta.classAttribute" value="primaryIdentifier" />
-      <property name="fasta.includes" value="*.fa" />
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current/fasta" />
     </source>
     <source name="mgi-alleles" type="mgi-alleles" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
