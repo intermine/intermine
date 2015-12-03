@@ -30,9 +30,9 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
- <source name="arrayexpress-atlas" type="arrayexpress-atlas">
-   <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62-wrong-p-value/" />
- </source>
+    <source name="arrayexpress-atlas" type="arrayexpress-atlas">
+      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62-wrong-p-value/" />
+    </source>
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
@@ -95,23 +95,18 @@
     <source name="hpo-annotation" type="hpo-annotation" dump="true">
       <property name="src.data.dir" location="/micklem/data/hpo/current" />
     </source>
-
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="9606"/>
     </source>
-
     <source name="psi-intact" type="psi">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
       <property name="intact.organisms" value="9606 10090" />
     </source>
-
     <source name="psi-complexes" type="psi-complexes">
       <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/human"/>
       <property name="complexes.source" value="uniprotkb"/>
     </source>
-
-
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current" />
       <property name="src.data.dir.includes" value="*psi25.xml" />

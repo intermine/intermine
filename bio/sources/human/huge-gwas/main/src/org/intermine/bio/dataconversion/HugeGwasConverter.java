@@ -68,7 +68,7 @@ public class HugeGwasConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
 
         if (rslv == null) {
-            rslv = IdResolverService.getHumanIdResolver();
+            rslv = IdResolverService.getIdResolverByTaxonId(HUMAN_TAXON, false);
         }
 
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
