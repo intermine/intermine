@@ -128,6 +128,13 @@
     <source name="huge-gwas" type="huge-gwas">
       <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
+
+    <source name="ncbi-gff" type="ncbi-gff">
+      <property name="gff3.taxonId" value="9606"/>
+      <property name="gff3.seqClsName" value="Chromosome"/>
+      <property name="src.data.dir" location="/micklem/data/human/gff/current"/>
+    </source>
+
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml" />
       <property name="loadFullRecord" value="true"/>
