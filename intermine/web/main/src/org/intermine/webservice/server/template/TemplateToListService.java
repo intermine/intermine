@@ -112,9 +112,6 @@ public class TemplateToListService extends QueryToListService
         }
 
         PathQuery pq = populatedTemplate.getQueryToExecute();
-
-        List<String> oldView = new ArrayList(pq.getView());
-        oldView.remove(newViewString);
         pq.clearView();
         pq.addView(newViewString);
         return pq;
