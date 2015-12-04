@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -31,6 +33,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.webservice.server.core.JSONService;
@@ -163,17 +166,53 @@ public class Config extends JSONService
         fileName = parts[1];
         dataset = webProperties.getProperty("project.title") + "-" + domain;
 
-        initTracks();
+        // Parse any track configuration found.
+        final List<String> userConfiguredFeatures = new ArrayList<String>();
+        final String tracksRegex = prefix + ".track\\.([^.]+)\\.feature";
+        final Pattern p = Pattern.compile(tracksRegex);
+
+        // FIXME: namespaced is broken for iterating through properties
+        for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
+            String key = (String)entry.getKey();
+            String value = (String)entry.getValue();
+            Matcher matcher = p.matcher(key);
+
+            if (matcher.matches()) {
+                userConfiguredFeatures.add(value);
+            }
+        }
+
+        initTracks(userConfiguredFeatures);
     }
 
-    private void initTracks() {
-        Model m = im.getModel();
+    /**
+     * Initialise track information.
+     *
+     * @param userConfiguredFeatureTracks - If given then only these tracks will be displayed.
+     * If empty then all InterMine classes that are descendants of SequenceFeature (including SequenceFeature) will have a jbrowse track.
+     */
+    private void initTracks(List<String> userConfiguredFeatures) {
         tracks = new ArrayList<Map<String, Object>>();
-        ClassDescriptor fcd = m.getClassDescriptorByName(featType);
-        tracks.add(featureTrack(fcd));
+        Model m = im.getModel();
 
-        for (ClassDescriptor cd: m.getAllSubs(fcd)) {
-            tracks.add(featureTrack(cd));
+        if (userConfiguredFeatures.size() > 0) {
+            for (String feature : userConfiguredFeatures) {
+                ClassDescriptor fcd = m.getClassDescriptorByName(feature);
+
+                if (fcd == null) {
+                    throw new ResourceNotFoundException("No class found for user configured feature " + feature);
+                }
+
+                tracks.add(featureTrack(fcd));
+            }
+        }
+        else {
+            ClassDescriptor fcd = m.getClassDescriptorByName(featType);
+            tracks.add(featureTrack(fcd));
+
+            for (ClassDescriptor cd: m.getAllSubs(fcd)) {
+                tracks.add(featureTrack(cd));
+            }
         }
 
         tracks.add(referenceTrack());
