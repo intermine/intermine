@@ -70,15 +70,8 @@ public final class IdResolverService
      * @return array of taxon IDs for MODs
      */
     public static IdResolver getIdResolverForMOD() {
-        // String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
-        // String[] modTaxonIdsWithoutWorm = {"9606", "7227", "7955", "10090","10116", "4932"};
-        // HACK - In entrezIdResolver_config.properties, 6239 (worm) is disabled.
-
-        String[] modTaxonIdsWithoutHuman = {"7227", "7955", "10090", "10116", "4932", "6239"};
-        // HACK - resolve human ids to HGNC symbols
-        IdResolverService.getHumanIdResolver();
-        return new EntrezGeneIdResolverFactory()
-                .getIdResolver(new HashSet<String>(Arrays.asList(modTaxonIdsWithoutHuman)));
+        return new EntrezGeneIdResolverFactory().getIdResolver(new HashSet<String>(
+                Arrays.asList("7227", "7955", "10090", "10116", "4932", "6239", "9606")));
     }
 
     /**
