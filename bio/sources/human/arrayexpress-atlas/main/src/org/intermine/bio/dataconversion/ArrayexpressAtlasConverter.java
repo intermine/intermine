@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     private String datasetTitle;
     private List<String> datasets = new ArrayList<String>();
     protected IdResolver rslv;
-    private static final String HUMAN_TAXON = "9606";
+    private static final String TAXON_ID = "9606";
     private static final Logger LOG = Logger.getLogger(ArrayexpressAtlasConverter.class);
 
     //String[] types = new String[] {"organism_part", "disease_state", "cell_type", "cell_line"};
@@ -62,7 +63,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         super(writer, model, DATA_SOURCE_NAME, null);
 
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByTaxonId(HUMAN_TAXON, false);
+            rslv = IdResolverService.getIdResolverByOrganism(Collections.singleton(TAXON_ID));
         }
     }
 
@@ -174,7 +175,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         if (geneId == null) {
             Item gene = createItem("Gene");
             gene.setAttribute("primaryIdentifier", resolvedIdentifier);
-            gene.setReference("organism", getOrganism(HUMAN_TAXON));
+            gene.setReference("organism", getOrganism(TAXON_ID));
             store(gene);
             geneId = gene.getIdentifier();
             genes.put(resolvedIdentifier, geneId);
@@ -185,15 +186,15 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     private String resolveGene(String identifier) {
         String id = identifier;
 
-        if (rslv != null && rslv.hasTaxon(HUMAN_TAXON)) {
-            int resCount = rslv.countResolutions(HUMAN_TAXON, identifier);
+        if (rslv != null && rslv.hasTaxon(TAXON_ID)) {
+            int resCount = rslv.countResolutions(TAXON_ID, identifier);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                          + identifier + " count: " + resCount + " Human identifier: "
-                         + rslv.resolveId(HUMAN_TAXON, identifier));
+                         + rslv.resolveId(TAXON_ID, identifier));
                 return null;
             }
-            id = rslv.resolveId(HUMAN_TAXON, identifier).iterator().next();
+            id = rslv.resolveId(TAXON_ID, identifier).iterator().next();
         }
         return id;
     }

@@ -13,7 +13,9 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -64,7 +66,7 @@ public class ProteinAtlasConverter extends BioFileConverter
     public ProteinAtlasConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByTaxonId(TAXON_ID, false);
+            rslv = IdResolverService.getIdResolverByOrganism(Collections.singleton(TAXON_ID));
         }
     }
 
@@ -274,7 +276,6 @@ public class ProteinAtlasConverter extends BioFileConverter
 
     private String resolveGene(String identifier) {
         String id = identifier;
-
         if (rslv != null && rslv.hasTaxon(TAXON_ID)) {
             int resCount = rslv.countResolutions(TAXON_ID, identifier);
             if (resCount != 1) {
