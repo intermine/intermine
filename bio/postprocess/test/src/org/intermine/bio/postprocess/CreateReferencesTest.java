@@ -39,7 +39,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.DynamicUtil;
-
 /**
  * Tests for the CreateReferences class.
  */
@@ -140,27 +139,27 @@ public class CreateReferencesTest extends TestCase {
     }
 
 
-//    public void testCreateUtrRefs() throws Exception {
-//        CreateReferences cr = new CreateReferences(osw);
-//        cr.createUtrRefs();
-//
-//        Query q = new Query();
-//        QueryClass qcMRNA = new QueryClass(MRNA.class);
-//        q.addFrom(qcMRNA);
-//        q.addToSelect(qcMRNA);
-//        QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
-//        SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("transcript1"));
-//        q.setConstraint(sc);
-//
-//        ObjectStore os = osw.getObjectStore();
-//        Results res = os.execute(q);
-//        ResultsRow row = (ResultsRow) res.iterator().next();
-//
-//        MRNA resMRNA = (MRNA) row.get(0);
-//
-//        assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
-//        assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
-//    }
+    public void testCreateUtrRefs() throws Exception {
+        CreateReferences cr = new CreateReferences(osw);
+        cr.createUtrRefs();
+
+        Query q = new Query();
+        QueryClass qcMRNA = new QueryClass(osw.getModel().getClassDescriptorByName("MRNA").getType());
+        q.addFrom(qcMRNA);
+        q.addToSelect(qcMRNA);
+        QueryField qfPrimaryIdentifier = new QueryField(qcMRNA, "primaryIdentifier");
+        SimpleConstraint sc = new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.EQUALS, new QueryValue("transcript1"));
+        q.setConstraint(sc);
+
+        ObjectStore os = osw.getObjectStore();
+        Results res = os.execute(q);
+        ResultsRow row = (ResultsRow) res.iterator().next();
+
+        MRNA resMRNA = (MRNA) row.get(0);
+
+        assertEquals(storedThreePrimeUTR.getId(), resMRNA.getThreePrimeUTR().getId());
+        assertEquals(storedFivePrimeUTR.getId(), resMRNA.getFivePrimeUTR().getId());
+    }
 
 
     private void createData() throws Exception {

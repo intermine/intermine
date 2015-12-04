@@ -11,5 +11,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="output" path="bin"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/><classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-test"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
+	<classpathentry kind="lib" path="main/lib/biojava-structure-4.1.0.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

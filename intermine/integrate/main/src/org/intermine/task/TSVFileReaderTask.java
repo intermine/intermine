@@ -130,6 +130,12 @@ public class TSVFileReaderTask extends FileDirectDataLoaderTask
                 getDirectDataLoader().store(o);
             } catch (ObjectStoreException e) {
                 throw new BuildException("exception while storing: " + o, e);
+            } finally {
+                try {
+                    getDirectDataLoader().close();
+                } catch (ObjectStoreException e) {
+                    throw new IllegalArgumentException(e);
+                }
             }
         }
     }

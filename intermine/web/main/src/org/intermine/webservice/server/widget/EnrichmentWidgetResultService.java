@@ -91,7 +91,7 @@ public class EnrichmentWidgetResultService extends WidgetService
     }
 
     private static final String BAD_POPULATION_MSG =
-            "One or more of the %$1ss in this list are missing from your background population."
+            "One or more of the %1$ss in this list are missing from your background population."
             + " The background population should include all %1$ss that were tested as part of"
             + " your experiment.";
 

@@ -7,7 +7,7 @@
 
   <tiles:importAttribute name="name" ignore="false"/>
   <tiles:importAttribute name="type" ignore="false"/>
-  <c:set var="name" value="${fn:replace(name,'\\'','#039;')}"/>
+  <c:set var="name" value="${fn:replace(name,'\\\'','#039;')}"/>
 
   <c:choose>
     <c:when test="${isFavourite == 'true'}">

@@ -1,183 +1,168 @@
 <items>
-<item id="20_2" class="Synonym">
-<attribute name="value" value="shortname"/>
-<reference name="subject" ref_id="8_1"/>
+<item id="19_3" class="Synonym">
+<attribute name="value" value="alternativeName - full"/>
+<reference name="subject" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_2" class="Publication">
 <attribute name="pubMedId" value="1111111"/>
 </item>
-<item id="20_5" class="Synonym">
-<attribute name="value" value="Q1234-1"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="18_1" class="GOTerm">
+<item id="17_1" class="GOTerm">
 <attribute name="identifier" value="GO:0000001"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="13_1" class="CrossReference">
-<attribute name="identifier" value="NP_523670.2"/>
-<reference name="source" ref_id="1_2"/>
-<reference name="subject" ref_id="8_1"/>
+<item id="19_7" class="Synonym">
+<attribute name="value" value="shortname"/>
+<reference name="subject" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="5_5" class="OntologyTerm">
 <attribute name="name" value="don't load this feature"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="14_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000002"/>
-<reference name="organism" ref_id="11_1"/>
-<reference name="sequenceOntologyTerm" ref_id="19_1"/>
+<item id="16_3" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="17_3"/>
+<reference name="subject" ref_id="13_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="goAnnotation"><reference ref_id="17_1"/><reference ref_id="17_2"/><reference ref_id="17_3"/></collection>
+<collection name="evidence"><reference ref_id="15_3"/></collection>
 </item>
-<item id="20_3" class="Synonym">
-<attribute name="value" value="alternativeName - full"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="17_5" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="18_2"/>
-<reference name="subject" ref_id="14_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="16_5"/></collection>
-</item>
-<item id="7_4" class="UniProtFeature">
-<attribute name="begin" value="111"/>
-<attribute name="end" value="127"/>
-<attribute name="type" value="signal peptide"/>
-<reference name="feature" ref_id="5_6"/>
-<reference name="protein" ref_id="8_1"/>
-</item>
-<item id="19_1" class="SOTerm">
+<item id="18_1" class="SOTerm">
 <attribute name="name" value="gene"/>
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="7_2" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="false"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="Q1234-2"/>
+<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
+<attribute name="secondaryIdentifier" value="Q1234-2"/>
+<attribute name="uniprotAccession" value="Q1234"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="canonicalProtein" ref_id="7_1"/>
+<reference name="organism" ref_id="10_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
 </item>
-<item id="15_2" class="GOEvidenceCode">
+<item id="16_5" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="17_2"/>
+<reference name="subject" ref_id="13_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="15_5"/></collection>
+</item>
+<item id="6_4" class="UniProtFeature">
+<attribute name="begin" value="111"/>
+<attribute name="end" value="127"/>
+<attribute name="type" value="signal peptide"/>
+<reference name="feature" ref_id="5_6"/>
+<reference name="protein" ref_id="7_1"/>
+</item>
+<item id="14_2" class="GOEvidenceCode">
 <attribute name="code" value="IMP"/>
 </item>
-<item id="20_4" class="Synonym">
-<attribute name="value" value="alternativeName - short"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="15_5" class="GOEvidence">
+<reference name="code" ref_id="14_2"/>
 </item>
-<item id="9_2" class="ECNumber">
-<attribute name="identifier" value="1.1.1.1"/>
+<item id="15_2" class="GOEvidence">
+<reference name="code" ref_id="14_2"/>
 </item>
-<item id="8_1" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="true"/>
-<attribute name="length" value="376"/>
-<attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
-<attribute name="molecularWeight" value="39970"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="Q1234"/>
-<attribute name="primaryIdentifier" value="EVE_DROME"/>
-<attribute name="uniprotAccession" value="Q1234"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="organism" ref_id="11_1"/>
-<reference name="sequence" ref_id="10_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="ecNumbers"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/></collection>
-<collection name="genes"><reference ref_id="14_1"/><reference ref_id="14_2"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+<item id="15_6" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
 </item>
-<item id="20_6" class="Synonym">
-<attribute name="value" value="EVE_DROME-2"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="10_1" class="Sequence">
+<item id="9_1" class="Sequence">
 <attribute name="length" value="376"/>
 <attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
 </item>
-<item id="9_1" class="ECNumber">
-<attribute name="identifier" value="1.1.1.284"/>
+<item id="15_4" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
 </item>
-<item id="17_4" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="18_1"/>
-<reference name="subject" ref_id="14_2"/>
+<item id="15_3" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
+</item>
+<item id="8_2" class="ECNumber">
+<attribute name="identifier" value="1.1.1.1"/>
+</item>
+<item id="13_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000002"/>
+<reference name="organism" ref_id="10_1"/>
+<reference name="sequenceOntologyTerm" ref_id="18_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="16_4"/></collection>
+<collection name="goAnnotation"><reference ref_id="16_1"/><reference ref_id="16_2"/><reference ref_id="16_3"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
-<item id="15_1" class="GOEvidenceCode">
-<attribute name="code" value="NAS"/>
+<item id="12_1" class="CrossReference">
+<attribute name="identifier" value="NP_523670.2"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="7_1"/>
 </item>
 <item id="0_2" class="Ontology">
 <attribute name="name" value="UniProtKeyword"/>
 </item>
-<item id="4_4" class="Comment">
+<item id="4_5" class="Comment">
 <attribute name="description" value="Some isoforms may be generated by alternative trans-splicing of exons sequentially encoded by the same DNA strand."/>
 <attribute name="type" value="alternative products"/>
+</item>
+<item id="19_5" class="Synonym">
+<attribute name="value" value="Q1234-1"/>
+<reference name="subject" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="16_6" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="17_3"/>
+<reference name="subject" ref_id="13_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="15_6"/></collection>
 </item>
 <item id="5_3" class="OntologyTerm">
 <attribute name="name" value="DNA-binding"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="20_7" class="Synonym">
-<attribute name="value" value="shortname"/>
-<reference name="subject" ref_id="8_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="8_1" class="ECNumber">
+<attribute name="identifier" value="1.1.1.284"/>
 </item>
 <item id="1_2" class="DataSource">
 <attribute name="name" value="RefSeq"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="17_2" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="18_2"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="16_2"/></collection>
-</item>
-<item id="16_1" class="GOEvidence">
-<reference name="code" ref_id="15_1"/>
-</item>
-<item id="20_8" class="Synonym">
-<attribute name="value" value="alternativeName - full"/>
-<reference name="subject" ref_id="8_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_2" class="Comment">
 <attribute name="description" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
 </item>
-<item id="16_4" class="GOEvidence">
-<reference name="code" ref_id="15_1"/>
+<item id="4_4" class="Comment">
+<attribute name="description" value="Disease susceptibility may be associated with variations affecting the gene represented in this entry. MIM:601665"/>
+<attribute name="type" value="disease"/>
 </item>
-<item id="16_3" class="GOEvidence">
-<reference name="code" ref_id="15_1"/>
+<item id="16_4" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="17_1"/>
+<reference name="subject" ref_id="13_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="15_4"/></collection>
 </item>
-<item id="16_6" class="GOEvidence">
-<reference name="code" ref_id="15_1"/>
+<item id="14_1" class="GOEvidenceCode">
+<attribute name="code" value="NAS"/>
 </item>
 <item id="5_6" class="OntologyTerm">
 <attribute name="name" value="signal peptide"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_1" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR001356"/>
-<attribute name="shortName" value="Homeobox"/>
+<item id="19_9" class="Synonym">
+<attribute name="value" value="alternativeName - short"/>
+<reference name="subject" ref_id="7_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="12_1" class="Component">
-<attribute name="name" value="full component name"/>
-<reference name="protein" ref_id="8_1"/>
-</item>
-<item id="18_2" class="GOTerm">
-<attribute name="identifier" value="GO:0000003"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="15_1" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
 </item>
 <item id="4_1" class="Comment">
 <attribute name="description" value="Nucleus."/>
@@ -189,42 +174,37 @@
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="14_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000001"/>
-<reference name="organism" ref_id="11_1"/>
-<reference name="sequenceOntologyTerm" ref_id="19_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="goAnnotation"><reference ref_id="17_4"/><reference ref_id="17_5"/><reference ref_id="17_6"/></collection>
-</item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="16_1" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="17_1"/>
+<reference name="subject" ref_id="13_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="15_1"/></collection>
 </item>
 <item id="4_3" class="Comment">
 <attribute name="description" value="Contains 1 homeobox DNA-binding domain."/>
 <attribute name="type" value="similarity"/>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
-<item id="8_2" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="false"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="Q1234-2"/>
-<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
-<attribute name="uniprotAccession" value="Q1234"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="organism" ref_id="11_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
+<item id="17_2" class="GOTerm">
+<attribute name="identifier" value="GO:0000003"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="14_1"/><reference ref_id="14_2"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
-<item id="20_1" class="Synonym">
-<attribute name="value" value="Q1234-1"/>
-<reference name="subject" ref_id="8_1"/>
+<item id="19_8" class="Synonym">
+<attribute name="value" value="alternativeName - full"/>
+<reference name="subject" ref_id="7_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="13_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000001"/>
+<reference name="organism" ref_id="10_1"/>
+<reference name="sequenceOntologyTerm" ref_id="18_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="goAnnotation"><reference ref_id="16_4"/><reference ref_id="16_5"/><reference ref_id="16_6"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="Swiss-Prot data set"/>
@@ -235,75 +215,92 @@
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="7_1" class="UniProtFeature">
+<item id="7_1" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="true"/>
+<attribute name="length" value="376"/>
+<attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
+<attribute name="molecularWeight" value="39970"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="Q1234"/>
+<attribute name="primaryIdentifier" value="EVE_DROME"/>
+<attribute name="secondaryIdentifier" value="Q1234"/>
+<attribute name="uniprotAccession" value="Q1234"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="organism" ref_id="10_1"/>
+<reference name="sequence" ref_id="9_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/><reference ref_id="4_5"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="ecNumbers"><reference ref_id="8_1"/><reference ref_id="8_2"/><reference ref_id="8_3"/></collection>
+<collection name="genes"><reference ref_id="13_1"/><reference ref_id="13_2"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
+<item id="6_1" class="UniProtFeature">
 <attribute name="begin" value="79"/>
 <attribute name="end" value="91"/>
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
-<reference name="protein" ref_id="8_1"/>
+<reference name="protein" ref_id="7_1"/>
 </item>
-<item id="17_1" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="18_1"/>
-<reference name="subject" ref_id="14_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="16_1"/></collection>
+<item id="6_3" class="UniProtFeature">
+<attribute name="begin" value="111"/>
+<attribute name="end" value="127"/>
+<attribute name="type" value="helix"/>
+<reference name="feature" ref_id="5_4"/>
+<reference name="protein" ref_id="7_1"/>
 </item>
-<item id="13_2" class="CrossReference">
-<attribute name="identifier" value="NP_523670.2"/>
-<reference name="source" ref_id="1_2"/>
-<reference name="subject" ref_id="8_2"/>
-</item>
-<item id="20_9" class="Synonym">
+<item id="19_4" class="Synonym">
 <attribute name="value" value="alternativeName - short"/>
-<reference name="subject" ref_id="8_2"/>
+<reference name="subject" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_2" class="ProteinDomain">
-<attribute name="primaryIdentifier" value="IPR017970"/>
-<attribute name="shortName" value="Homeobox_CS"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="10_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
-<item id="16_2" class="GOEvidence">
-<reference name="code" ref_id="15_2"/>
+<item id="16_2" class="GOAnnotation">
+<reference name="ontologyTerm" ref_id="17_2"/>
+<reference name="subject" ref_id="13_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="15_2"/></collection>
 </item>
 <item id="5_2" class="OntologyTerm">
 <attribute name="name" value="Complete proteome"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="18_3" class="GOTerm">
-<attribute name="identifier" value="GO:0000002"/>
+<item id="19_2" class="Synonym">
+<attribute name="value" value="shortname"/>
+<reference name="subject" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="17_6" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="18_3"/>
-<reference name="subject" ref_id="14_2"/>
+<item id="19_1" class="Synonym">
+<attribute name="value" value="Q1234-1"/>
+<reference name="subject" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="16_6"/></collection>
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="UniProt"/>
 </item>
-<item id="17_3" class="GOAnnotation">
-<reference name="ontologyTerm" ref_id="18_3"/>
-<reference name="subject" ref_id="14_1"/>
+<item id="19_6" class="Synonym">
+<attribute name="value" value="EVE_DROME-2"/>
+<reference name="subject" ref_id="7_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="16_3"/></collection>
 </item>
-<item id="16_5" class="GOEvidence">
-<reference name="code" ref_id="15_2"/>
+<item id="12_2" class="CrossReference">
+<attribute name="identifier" value="NP_523670.2"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="7_2"/>
 </item>
-<item id="9_3" class="ECNumber">
+<item id="8_3" class="ECNumber">
 <attribute name="identifier" value="1.1.1.-"/>
 </item>
-<item id="11_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
+<item id="17_3" class="GOTerm">
+<attribute name="identifier" value="GO:0000002"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="7_3" class="UniProtFeature">
-<attribute name="begin" value="111"/>
-<attribute name="end" value="127"/>
-<attribute name="type" value="helix"/>
-<reference name="feature" ref_id="5_4"/>
-<reference name="protein" ref_id="8_1"/>
+<item id="11_1" class="Component">
+<attribute name="name" value="full component name"/>
+<reference name="protein" ref_id="7_1"/>
 </item>
 </items>

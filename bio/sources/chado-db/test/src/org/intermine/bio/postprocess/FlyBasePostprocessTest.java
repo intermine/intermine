@@ -77,15 +77,15 @@ public class FlyBasePostprocessTest extends XMLTestCase{
 
    // Store a gene with two protein, each protein has a GO term
    private void setUpData() throws Exception {
-       Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-       Transcript transcript1 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+       Gene gene = (Gene) DynamicUtil.createObject(Gene.class);
+       Transcript transcript1 = (Transcript) DynamicUtil.createObject(Transcript.class);
        transcript1.setGene(gene);
-       Transcript transcript2 = (Transcript) DynamicUtil.createObject(Collections.singleton(Transcript.class));
+       Transcript transcript2 = (Transcript) DynamicUtil.createObject(Transcript.class);
        transcript2.setGene(gene);
 
-       Intron intron1 = (Intron) DynamicUtil.createObject(Collections.singleton(Intron.class));
+       Intron intron1 = (Intron) DynamicUtil.createObject(Intron.class);
        intron1.setTranscripts(Collections.singleton(transcript1));
-       Intron intron2 = (Intron) DynamicUtil.createObject(Collections.singleton(Intron.class));
+       Intron intron2 = (Intron) DynamicUtil.createObject(Intron.class);
        intron2.setTranscripts(Collections.singleton(transcript2));
 
        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, transcript1, transcript2, intron1, intron2}));

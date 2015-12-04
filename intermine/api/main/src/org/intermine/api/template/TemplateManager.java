@@ -290,6 +290,25 @@ public class TemplateManager
     }
 
     /**
+     * For a (public or private) template, return all the tags.
+     *
+     * Used in stepZ to put the template in the right data category. If profile is NULL, uses the
+     * superuser profile.
+     *
+     * @param template template with tags
+     * @param profile profile of owner of template
+     * @return the list of tags for the template of interest
+     */
+    public List<Tag> getTags(ApiTemplate template, Profile profile) {
+        // user template
+        if (getUserTemplate(profile, template.getName()) != null) {
+            return tagManager.getObjectTags(template, profile);
+        }
+        // global template
+        return tagManager.getObjectTags(template, superProfile);
+    }
+
+    /**
      * Return a map from template name to template query containing superuser templates that are
      * tagged as public and are valid for the current data model.
      * @return a map from template name to template query

@@ -57,7 +57,7 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
 
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -114,7 +114,6 @@ public class OmimConverter extends BioDirectoryConverter
         final BufferedReader br = new BufferedReader(reader);
 
         String line = null;
-
         StringBuilder sb = new StringBuilder();
         boolean readingTitle = false;
         while ((line = br.readLine()) != null) {
@@ -141,7 +140,6 @@ public class OmimConverter extends BioDirectoryConverter
                 if (!Character.isDigit(s.charAt(0))) {
                     s = s.substring(1);
                 }
-
                 // MIM number is now first thing on line
                 String[] parts = s.split(" ", 2);
                 String mimNumber = parts[0];
@@ -161,7 +159,7 @@ public class OmimConverter extends BioDirectoryConverter
                     String title = text.substring(0, terminateAt);
 
                     Item disease = getDisease(mimNumber);
-                    disease.setAttribute("name", title.replace("@", ""));
+                    disease.setAttribute("name", title.replace("@", "").trim());
                 }
 
                 sb = new StringBuilder();
@@ -189,7 +187,7 @@ public class OmimConverter extends BioDirectoryConverter
         int noMapType = 0;
         int diseaseMatches = 0;
 
-        File f = new File("build/omim_not_loaded.txt");
+        File f = new File("/tmp/omim_not_loaded.txt");
         FileWriter fw = new FileWriter(f);
 
         // extract e.g. (3)
@@ -236,6 +234,7 @@ public class OmimConverter extends BioDirectoryConverter
                     counts.get(geneMapType).resolved++;
                 }
             }
+
             String geneItemId = getGeneItemId(geneSymbol);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;

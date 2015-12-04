@@ -12,25 +12,28 @@ package org.intermine.web.logic.query;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.ConstraintOp;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.metadata.StringUtil;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.query.BagConstraint;
-import org.intermine.metadata.ConstraintOp;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.Path;
@@ -41,11 +44,11 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
-import org.intermine.metadata.StringUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.querybuilder.DisplayPath;
 
@@ -63,6 +66,7 @@ import org.intermine.web.logic.querybuilder.DisplayPath;
  */
 public class DisplayConstraint
 {
+    private static final Logger LOG = Logger.getLogger(DisplayConstraint.class);
     private Path path;
     private List<DisplayConstraintOption> validOps;
     private AutoCompleter ac;
@@ -149,6 +153,8 @@ public class DisplayConstraint
     private String constraintStringValue(PathConstraint con) {
         if (con instanceof PathConstraintAttribute) {
             return ((PathConstraintAttribute) con).getValue();
+        } else if (con instanceof PathConstraintRange) {
+            return getMultiValuesAsString();
         } else if (con instanceof PathConstraintBag) {
             return ((PathConstraintBag) con).getBag();
         } else if (con instanceof PathConstraintLookup) {
@@ -222,7 +228,7 @@ public class DisplayConstraint
      * @return a Collection of Strings
      */
     public Collection<String> getMultiValues() {
-        if (isMultiValueSelected()) {
+        if (isMultiValueSelected() || isRangeSelected()) {
             return ((PathConstraintMultiValue) con).getValues();
         }
         return null;
@@ -292,7 +298,7 @@ public class DisplayConstraint
      */
     public boolean isValueSelected() {
         if (con != null) {
-            return !(isBagSelected() || isNullSelected() || isLoopSelected());
+            return !(isBagSelected() || isNullSelected() || isLoopSelected() || isRangeSelected());
         }
         return false;
     }
@@ -304,6 +310,15 @@ public class DisplayConstraint
      */
     public boolean isLoopSelected() {
         return (con != null && con instanceof PathConstraintLoop);
+    }
+
+    /**
+     * Return true if editing an existing constraint and a range has been entered.
+     *
+     * @return true if a range constraint was selected
+     */
+    public boolean isRangeSelected() {
+        return (con != null && con instanceof PathConstraintRange);
     }
 
     /**
@@ -416,6 +431,8 @@ public class DisplayConstraint
             for  (DisplayConstraintOption dco : loopQueryOps) {
                 validOps.add(dco);
             }
+        } else if (con instanceof PathConstraintRange) {
+            validOps.addAll(getRangeQueryOps());
         } else if (path.endIsAttribute()) {
             List<ConstraintOp> allOps = SimpleConstraint.validOps(path.getEndType());
             // TODO This was in the constraint jsp:
@@ -442,8 +459,8 @@ public class DisplayConstraint
             // this must be a LOOKUP constraint
             ConstraintOp lookup = ConstraintOp.LOOKUP;
             validOps.add(new DisplayConstraintOption(lookup.toString(), lookup.getIndex()));
-        }
 
+        }
         return validOps;
     }
 
@@ -457,6 +474,19 @@ public class DisplayConstraint
                     ConstraintOp.EQUALS.getIndex()),
                 new DisplayConstraintOption(ConstraintOp.NOT_EQUALS.toString(),
                     ConstraintOp.NOT_EQUALS.getIndex()));
+    }
+
+    /**
+     * Returns the set of operators valid for range constraints.
+     *
+     * @return a List of DisplayConstraintOption objects
+     */
+    public List<DisplayConstraintOption> getRangeQueryOps() {
+        List<DisplayConstraintOption> rangeQueryOps = new ArrayList<DisplayConstraintOption>();
+        for (ConstraintOp op : PathConstraintRange.VALID_OPS) {
+            rangeQueryOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+        }
+        return rangeQueryOps;
     }
 
     /**
@@ -641,7 +671,7 @@ public class DisplayConstraint
         if (ClassKeyHelper.hasKeyFields(classKeys, endCls)
             /*&& !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)*/) {
             Map<String, InterMineBag> bags =
-                bagManager.getCurrentBagsOfType(profile, endCls);
+                bagManager.getCompatibleCurrentBags(profile, endCls);
             if (!bags.isEmpty()) {
                 List<String> bagList = new ArrayList<String>(bags.keySet());
                 Collections.sort(bagList);
@@ -689,6 +719,8 @@ public class DisplayConstraint
             return "empty";
         } else if (isLoopSelected()) {
             return "loopQuery";
+        } else if (isRangeSelected()) {
+            return "range";
         }
         return "attribute";
     }
@@ -714,6 +746,13 @@ public class DisplayConstraint
                 return query.getCandidateLoops(path.getNoConstraintsString());
             }
         }
+    }
+
+    /**
+     * @return true if this path can legally be used with a range constraint.
+     */
+    public boolean isValidRange() {
+        return MainHelper.getValidRangeTargets().contains(path.getEndType());
     }
 
     /**

@@ -3,7 +3,6 @@ data_dir: "/micklem/data"
 
 default_sources:
   - "BioGRID"
-  - "EnsemblCompara"
   - "FlyAnatomyOntology"
   - "FlyBaseFasta"
   - "FlyBaseOrthologues"
@@ -66,10 +65,11 @@ UniProt:
         - 63221
         - 116058
         - 180454
-	      - 377270
+        - 377270
         - 377271
         - 377586
         - 377587
+        - 741158
         - 943925
         - 943926
 

@@ -107,7 +107,6 @@
     <attribute name="qualifier" type="java.lang.String"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="ontologyAnnotations"/>
     <collection name="dataSets" referenced-type="DataSet" />
-    <collection name="publications" referenced-type="Publication" />
     <reference name="ontologyTerm" referenced-type="OntologyTerm" reverse-reference="ontologyAnnotations"/>
   </class>
 

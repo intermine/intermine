@@ -35,10 +35,6 @@
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
-<source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
-     <property name="organisms" value="9606"/>
-</source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
@@ -51,7 +47,6 @@
       <!--<property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>-->
       <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238 559292"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
-      <property name="createinterpro" value="true"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
@@ -70,9 +65,6 @@
      <source name="drosophila-homology" type="drosophila-homology">
       <property name="src.data.dir" location="/micklem/data/flybase/homology/current"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
-    </source>
-    <source name="anopheles-identifiers" type="anopheles-identifiers">
-      <property name="src.data.dir" location="/micklem/data/anopheles-identifiers/current"/>
     </source>
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
@@ -94,13 +86,15 @@
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
-    <source name="ensembl-core" type="ensembl-core">
-     <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
-     <property name="src.data.dir.includes" value="7165.xml"/>
-    </source>
-
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
+    </source>
+
+<!-- has to be after UniProt because only loads protein domains for loaded proteins -->
+    <source name="protein2ipr" type="protein2ipr">
+     <property name="src.data.dir" location="/micklem/data/interpro/match_complete"/>
+     <property name="src.data.dir.includes" value="protein2ipr.dat"/>
+     <property name="protein2ipr.organisms" value="7227"/>
     </source>
 
     <source name="omim" type="omim">
@@ -125,10 +119,12 @@
       <property name="source.db.name" value="anoest"/>
     </source>
 -->
+<!--
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
     </source>
+-->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>
@@ -143,7 +139,6 @@
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
       <property name="ontologyPrefix" value="GO"/>
     </source>
@@ -514,20 +509,12 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
-    <source name="reactome" type="biopax">
+    <source name="reactome" type="reactome">
       <property name="src.data.dir" location="/micklem/data/reactome/current"/>
-      <property name="biopax.organisms" value="7227"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="false"/>
-    </source>
-
-    <source name="reactome-curated" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
-      <property name="biopax.organisms" value="7227"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="FlyReactome data set"/>
-      <property name="biopax.curated" value="true"/>
+      <property name="reactome.organisms" value="7227"/>
+      <property name="reactome.datasourcename" value="Reactome"/>
+      <property name="reactome.datasetname" value="Reactome data set"/>
+      <property name="reactome.curated" value="false"/>
     </source>
 
     <source name="bdgp-insitu" type="bdgp-insitu">
@@ -535,6 +522,7 @@
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fbbt.obo"/>
+      <property name="ontologyPrefix" value="FBbt"/>
     </source>
     <source name="fly-development-ontology" type="fly-development-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-development/current/fly_development.obo"/>
@@ -542,14 +530,12 @@
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
-
     <source name="drosdel-gff" type="drosdel-gff">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir"
                 location="/micklem/data/flymine/drosdel/2008-03-19/chromosome_structure_variations/"/>
     </source>
-
     <source name="miranda" type="miranda">
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="gff3.taxonId" value="7227"/>
@@ -560,6 +546,12 @@
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
     </source>
+<!--
+    <source name="psi-complexes" type="psi-complexes">
+      <property name="src.data.dir" location="/micklem/data/psi/intact/complexes/current"/>
+      <property name="complexes.source" value="sgd"/>
+    </source>
+-->
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
@@ -579,7 +571,7 @@
 
    <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
-      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 4932"/>
     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
@@ -599,14 +591,14 @@
     <source name="flymine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
     </source>
-<!--
     <source name="update-data-sources" type="update-data-sources">
       <property name="src.data.file" location="build/datasources.xml"/>
       <property name="dataSourceFile" value="/micklem/data/uniprot/xrefs/current/dbxref.txt"/>
     </source>
---> 
+
    <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml"/>
+      <property name="loadFullRecord" value="true"/>
     </source>
   </sources>
 
@@ -616,18 +608,12 @@
     <post-process name="populate-located-features"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
-
     <post-process name="create-chromosome-locations-and-lengths"/>
     <post-process name="create-intergenic-region-features"/>
     <post-process name="transfer-sequences"/>
     <post-process name="populate-child-features"/>
-    <post-process name="create-overlap-relations-flymine" dump="true"/>
-    <post-process name="do-sources" />
-    <post-process name="create-intron-features">
-      <property name="organisms" value="7165"/>
-    </post-process>
-    <post-process name="create-bioseg-location-index"/>
-    <post-process name="create-location-range"/>
+    <post-process name="do-sources" dump="true"/>
+    <post-process name="create-location-overlap-index"/>
     <post-process name="create-overlap-view" />
     <post-process name="create-attribute-indexes"/>
     <post-process name="summarise-objectstore"/>

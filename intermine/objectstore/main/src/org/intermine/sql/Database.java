@@ -157,9 +157,10 @@ public class Database implements Shutdownable
      * Gets a Connection to this Database
      *
      * @return a Connection to this Database
-     * @throws SQLException if there is a problem in the underlying database
+     * @throws DatabaseConnectionException if it wasn't possible to get a connection to the
+     * underlying database.
      */
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() throws DatabaseConnectionException {
         Connection retval;
         if (datasource == null) {
             throw new NullPointerException("Datasource is null. Properties are: " + settings);
@@ -167,7 +168,11 @@ public class Database implements Shutdownable
         try {
             retval = datasource.getConnection();
         } catch (PSQLException e) {
-            throw new RuntimeException("can't open datasource for " + this, e);
+            throw new DatabaseConnectionException("Unable to open database connection (there"
+                    + " may not be enough available connections): " + this, e);
+        } catch (SQLException e) {
+            throw new DatabaseConnectionException("Unable to open database connection (there"
+                    + " may not be enough available connections): " + this, e);
         }
         /*
         Exception e = new Exception();
@@ -295,8 +300,8 @@ public class Database implements Shutdownable
         StringBuffer urlBuffer = new StringBuffer();
         urlBuffer.append("jdbc:" + platform.toLowerCase() + "://");
         urlBuffer.append((String) settings.get("datasource.serverName"));
-        if (settings.get("datasource.portNumber") != null) {
-            urlBuffer.append(":" + (String) settings.get("datasource.portNumber"));
+        if (settings.get("datasource.port") != null) {
+            urlBuffer.append(":" + (String) settings.get("datasource.port"));
         }
         urlBuffer.append("/" + (String) settings.get("datasource.databaseName"));
         String url = urlBuffer.toString();

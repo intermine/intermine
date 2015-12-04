@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="Protein" is-interface="true">
+    <collection name="proteinDomainRegions" referenced-type="ProteinDomainRegion" reverse-reference="protein" />
+  </class>
+  <class name="ProteinDomainRegion" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <attribute name="database" type="java.lang.String"/>
+    <attribute name="start" type="java.lang.Integer"/>
+    <attribute name="end" type="java.lang.Integer"/>
+    <reference name="proteinDomain" referenced-type="ProteinDomain"/>
+    <reference name="protein" referenced-type="Protein" reverse-reference="proteinDomainRegions"/>
+  </class>
+  <class name="ProteinDomain" extends="BioEntity" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <collection name="proteinDomainRegions" referenced-type="ProteinDomainRegion" reverse-reference="proteinDomain" />
+  </class>
+</classes>

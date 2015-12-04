@@ -79,18 +79,18 @@ public class ReactomePostprocessTest extends XMLTestCase {
     // Store a gene with two proteins, each protein has a pathway
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setUpData() throws Exception {
-        DataSet dataset = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
+        DataSet dataset = (DataSet) DynamicUtil.createObject(DataSet.class);
         dataset.setName("Reactome pathways data set");
-        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
-        Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        Gene gene = (Gene) DynamicUtil.createObject(Gene.class);
+        Protein protein1 = (Protein) DynamicUtil.createObject(Protein.class);
         protein1.addGenes(gene);
-        Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
+        Protein protein2 = (Protein) DynamicUtil.createObject(Protein.class);
         protein2.addGenes(gene);
 
-        Pathway pathway1 = (Pathway) DynamicUtil.createObject(Collections.singleton(Pathway.class));
+        Pathway pathway1 = (Pathway) DynamicUtil.createObject(Pathway.class);
         protein1.addPathways(pathway1);
         pathway1.addDataSets(dataset);
-        Pathway pathway2 = (Pathway) DynamicUtil.createObject(Collections.singleton(Pathway.class));
+        Pathway pathway2 = (Pathway) DynamicUtil.createObject(Pathway.class);
         protein2.addPathways(pathway2);
         pathway2.addDataSets(dataset);
 

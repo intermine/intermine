@@ -40,7 +40,7 @@
   <c:set var="section" value="pathways-displayer"/>
 
   <c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">
-    
+
       paths["${res.type}"]["${res.key}".split(".").pop()] = "${res.url}";
   </c:forEach>
 
@@ -92,8 +92,8 @@
 
         require('PathwaysDisplayer')(
       {
-             
-              friendlyMines: friendlyMines,                        
+
+              friendlyMines: friendlyMines,
               gene: "${gene.primaryIdentifier}",
               target: "#pathwaysappcontainer",
               themeColor: "${localMine.bgcolor}"
@@ -107,8 +107,9 @@
     imload();
 
   } catch (error) {
+    console.error(error);
     $('#pathwaysappcontainer').html(
-      $('<div/>', {'text': 'This app requires jQuery 2.x.x', 'style': 'padding-left: 14px; font-weight: bold'})
+      $('<div/>', {'text': 'Error loading pathways.', 'style': 'padding-left: 14px; font-weight: bold'})
     );
 
     $('#mine-pathway-displayer').addClass("warning");
@@ -121,7 +122,7 @@
 
 </script>
 
-    
+
 
 
 

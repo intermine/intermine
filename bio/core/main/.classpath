@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/bbop.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/bbop/src"/>
 	<classpathentry kind="lib" path="lib/obo.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/obo/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
-	<classpathentry exported="true" kind="lib" path="lib/biojava-1.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/biojava-1.7.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jena.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-model-main"/>
 	<classpathentry kind="output" path="bin"/>

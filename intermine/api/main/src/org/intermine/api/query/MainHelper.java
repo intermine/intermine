@@ -37,8 +37,6 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.query.range.IntHelper;
-import org.intermine.api.query.range.StringHelper;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.ConstraintOp;
@@ -1565,9 +1563,9 @@ public final class MainHelper
         private static void init() {
             rangeHelpers = new HashMap<Class<?>, RangeHelper>();
             // Default basic helpers.
-            rangeHelpers.put(int.class, new IntHelper());
-            rangeHelpers.put(Integer.class, new IntHelper());
-            rangeHelpers.put(String.class, new StringHelper());
+//            rangeHelpers.put(int.class, new IntHelper());
+//            rangeHelpers.put(Integer.class, new IntHelper());
+//            rangeHelpers.put(String.class, new StringHelper());
             loadHelpers(PropertiesUtil.getProperties());
         }
 
@@ -1633,6 +1631,13 @@ public final class MainHelper
         public static RangeHelper getHelper(Class<?> type) {
             return rangeHelpers.get(type);
         }
+    }
+
+    /**
+     * @return set of classes that are legal to use with range constraints
+     */
+    public static Set<Class<?>> getValidRangeTargets() {
+        return RangeConfig.rangeHelpers.keySet();
     }
 
     /**

@@ -5,20 +5,20 @@
 
 <!-- esynDisplayer.jsp -->
 
-<c:if test="${!empty reportObject.object.symbol && !empty reportObject.object.organism.taxonId && !empty reportObject.object.interactions}">
+<c:if test="${!empty reportObject.object.primaryIdentifier && !empty reportObject.object.organism.taxonId && !empty reportObject.object.interactions}">
 
 <div id="cwhead">
     <h3 class="goog">esyN Network Diagram</h3>
 </div>
 
-    <c:set var="symbol" value="${reportObject.object.symbol}"/>
+    <c:set var="primaryIdentifier" value="${reportObject.object.primaryIdentifier}"/>
     <c:set var="taxon" value="${reportObject.object.organism.taxonId}"/>
 
 <iframe name="esyn" class="seamless" scrolling="no" id="iframe"
-src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${symbol}&organism=${taxon}&interactionType=any&includeInteractors=true&source=intermine"
+src="http://www.esyn.org/app.php?embedded=true&type=Graph&query=${primaryIdentifier}&organism=${taxon}&interactionType=any&includeInteractors=true&source=intermine"
 width="500" height="500"></iframe>
 
-    <p>These are physical (yellow lines) and genetic (green lines) interactions from BioGRID. See <a href="http://esyn.org/">esyn</a> for details.
+    <p>Physical (Orange) and Genetic (Green) interactions. Visit <a href="http://esyn.org/">esyN</a> for more details or click the Edit in esyN button if you wish to extend or modify the network.</p>
 
 
 </c:if>
