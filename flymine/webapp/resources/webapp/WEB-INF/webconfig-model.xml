@@ -35,6 +35,8 @@
     </fields>
   </class>
 
+
+
   <class className="org.intermine.model.bio.Component">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -78,6 +80,18 @@
     <fields>
       <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Complex">
+     <headerconfig>
+      <titles>
+        <title mainTitles="identifier|name"/>
+      </titles>
+    </headerconfig>
+    <fields>
+      <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
@@ -134,7 +148,7 @@
       <customlinks>
         <customlink
           url="http://flybase.org/reports/{primaryIdentifier}.html"
-          image="flybase_logo_link.png"
+          image="flybase_logo.jpeg"
         />
       </customlinks>
     </headerconfig>
@@ -200,15 +214,16 @@
 
   <class className="org.intermine.model.bio.Interaction">
     <fields>
-      <fieldconfig fieldExpr="gene1.symbol" />
-      <fieldconfig fieldExpr="gene2.symbol" />
+      <fieldconfig fieldExpr="participant1.primaryIdentifier" />
+      <fieldconfig fieldExpr="participant2.primaryIdentifier" />
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.InteractionExperiment">
+
+  <class className="org.intermine.model.bio.InteractionDetail">
     <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="relationshipType"/>
     </fields>
   </class>
 
@@ -216,6 +231,14 @@
     <fields>
       <fieldconfig fieldExpr="identifier"/>
       <fieldconfig fieldExpr="name"/>
+    </fields>
+  </class>
+
+  <class className="org.intermine.model.bio.Interactor">
+    <fields>
+      <fieldconfig fieldExpr="participant.primaryIdentifier" />
+      <fieldconfig fieldExpr="stoichiometry" />
+      <fieldconfig fieldExpr="biologicalRole" />
     </fields>
   </class>
 
@@ -683,13 +706,14 @@
                      replacesFields="publications"
                      placement="Genes"
                      types="BioEntity"/>
-<!--
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
                      jspName="model/minePathwaysDisplayer.jsp"
                      replacesFields="pathways"
                      placement="summary"
                      types="Gene"/>
--->
+
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.DiseaseDisplayer"
                      jspName="model/diseaseDisplayer.jsp"
                      replacesFields=""
@@ -894,12 +918,12 @@
                                  label="Protein Domain"
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
-                                 enrich="proteins.proteinDomains.name"
-                                 enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
+                                 enrich="proteins.proteinDomainRegions.proteinDomain.name"
+                                 enrichIdentifier="proteins.proteinDomainRegions.proteinDomain.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
-                                       proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
+                                       proteins.proteinDomainRegions.proteinDomain.primaryIdentifier,proteins.proteinDomainRegions.proteinDomain.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
@@ -908,12 +932,12 @@
                                  label="Protein Domain"
                                  startClass="Protein"
                                  startClassDisplay="primaryIdentifier"
-                                 enrich="proteinDomains.name"
-                                 enrichIdentifier="proteinDomains.primaryIdentifier"
+                                 enrich="proteinDomainRegions.proteinDomain.name"
+                                 enrichIdentifier="proteinDomainRegions.proteinDomain.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="Protein"
-                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
-                                       proteinDomains.name"
+                                 views="primaryIdentifier,organism.name,proteinDomainRegions.proteinDomain.primaryIdentifier,
+                                       proteinDomainRegions.proteinDomain.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/entry/"/>
 
 

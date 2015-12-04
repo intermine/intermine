@@ -300,8 +300,8 @@ public class Database implements Shutdownable
         StringBuffer urlBuffer = new StringBuffer();
         urlBuffer.append("jdbc:" + platform.toLowerCase() + "://");
         urlBuffer.append((String) settings.get("datasource.serverName"));
-        if (settings.get("datasource.portNumber") != null) {
-            urlBuffer.append(":" + (String) settings.get("datasource.portNumber"));
+        if (settings.get("datasource.port") != null) {
+            urlBuffer.append(":" + (String) settings.get("datasource.port"));
         }
         urlBuffer.append("/" + (String) settings.get("datasource.databaseName"));
         String url = urlBuffer.toString();

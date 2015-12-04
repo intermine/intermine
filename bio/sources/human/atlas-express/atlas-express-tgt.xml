@@ -1,0 +1,139 @@
+<items>
+<item id="6_12" class="AtlasExpression">
+<attribute name="condition" value="ovary"/>
+<attribute name="expression" value="21"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_8" class="AtlasExpression">
+<attribute name="condition" value="leukocyte"/>
+<attribute name="expression" value="0.1"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_13" class="AtlasExpression">
+<attribute name="condition" value="prostate"/>
+<attribute name="expression" value="13"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_4" class="AtlasExpression">
+<attribute name="condition" value="breast"/>
+<attribute name="expression" value="16"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="6_9" class="AtlasExpression">
+<attribute name="condition" value="liver"/>
+<attribute name="expression" value="31"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="AtlasExpression">
+<attribute name="condition" value="adipose"/>
+<attribute name="expression" value="21"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="ENSG00000000003"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_6" class="AtlasExpression">
+<attribute name="condition" value="heart"/>
+<attribute name="expression" value="2"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="AtlasExpression">
+<attribute name="condition" value="adrenal"/>
+<attribute name="expression" value="5"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_15" class="AtlasExpression">
+<attribute name="condition" value="testis"/>
+<attribute name="expression" value="18"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_11" class="AtlasExpression">
+<attribute name="condition" value="lymph node"/>
+<attribute name="expression" value="5"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_14" class="AtlasExpression">
+<attribute name="condition" value="skeletal muscle"/>
+<attribute name="expression" value="0.4"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="ArrayExpress"/>
+</item>
+<item id="6_3" class="AtlasExpression">
+<attribute name="condition" value="brain"/>
+<attribute name="expression" value="5"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_16" class="AtlasExpression">
+<attribute name="condition" value="thyroid"/>
+<attribute name="expression" value="15"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_5" class="AtlasExpression">
+<attribute name="condition" value="colon"/>
+<attribute name="expression" value="12"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="E-MTAB-513 illumina body map"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="6_7" class="AtlasExpression">
+<attribute name="condition" value="kidney"/>
+<attribute name="expression" value="13"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_10" class="AtlasExpression">
+<attribute name="condition" value="lung"/>
+<attribute name="expression" value="11"/>
+<attribute name="type" value="FPKM value"/>
+<reference name="gene" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

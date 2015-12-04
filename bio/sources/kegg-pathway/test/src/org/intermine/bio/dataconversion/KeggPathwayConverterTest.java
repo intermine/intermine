@@ -38,9 +38,8 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.setKeggOrganisms("7227 10090 9606");
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
         converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1004"));
-        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG10045"));
-        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("CG1007"));
         converter.rslv.addResolverEntry("10090", "MGI:007", Collections.singleton("100037258"));
+        converter.rslv.addResolverEntry("9606", "PPARG", Collections.singleton("10"));
     }
 
     public void testProcess() throws Exception {
@@ -63,7 +62,7 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        // writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("KeggConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());

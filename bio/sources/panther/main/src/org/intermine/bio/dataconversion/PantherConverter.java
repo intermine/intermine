@@ -148,10 +148,10 @@ public class PantherConverter extends BioFileConverter
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-
             if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                gene.setAttribute(identifierType, geneId);
+                gene.setAttribute(identifierType, resolvedGenePid);
+            } else {
+                gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
             }
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
@@ -273,13 +273,9 @@ public class PantherConverter extends BioFileConverter
             // no config so process everything
             return true;
         }
-        if (allTaxonIds.contains(organism1) && allTaxonIds.contains(organism2)) {
+        if (taxonIds.contains(organism1) && taxonIds.contains(organism2)) {
             // both are organisms of interest
             return true;
-        }
-        if (homologues.isEmpty()) {
-            // only interested in homologues of interest, so at least one of this pair isn't valid
-            return false;
         }
         // one gene is from an organism of interest
         // one homologue is from an organism we want
@@ -329,6 +325,7 @@ public class PantherConverter extends BioFileConverter
 
     private String resolveGene(String taxonId, String identifier) {
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
+            LOG.error("no resolver available for " + taxonId);
             // no id resolver available, so return the original identifier
             return identifier;
         }

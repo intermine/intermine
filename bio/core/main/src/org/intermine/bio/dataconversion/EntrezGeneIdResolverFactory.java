@@ -179,14 +179,16 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                String resolverFileName = resolverFileRoot.trim() + "/" + resolverFileSymbo;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(f, taxonIds);
                     resolver.writeToFile(new File(idResolverCachedFileName));
                 } else {
-                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                    LOG.warn("Resolver file does not exist: " + resolverFileName);
                 }
+            } else {
+                LOG.info("Using previously cached id resolver file: " + idResolverCachedFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

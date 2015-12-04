@@ -77,7 +77,7 @@ public class CreateLocationOverlapIndex
                 long startTime = System.currentTimeMillis();
                 String indexSql = "CREATE INDEX location__int4range "
                         + "ON location USING " + indexType + " (" + RANGE_TYPE
-                        + "(intermine_start, intermine_end))";
+                        + "(intermine_start, intermine_end + 1))";
                 LOG.info(indexSql);
                 Statement statement = con.createStatement();
                 statement.executeUpdate(indexSql);

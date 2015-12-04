@@ -236,9 +236,7 @@ public class WebserviceCodeGenAction extends InterMineAction
      */
     private void sendCode(String sourceCodeString, String extension, String filename,
             HttpServletResponse response) {
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename="
-                + filename + "." + extension);
+        response.setContentType("text/plain; charset=utf-8");
 
         PrintStream out;
         try {

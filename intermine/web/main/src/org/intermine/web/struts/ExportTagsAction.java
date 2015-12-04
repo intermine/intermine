@@ -71,8 +71,7 @@ public class ExportTagsAction extends InterMineAction
         writer.writeEndElement();
         writer.close();
 
-        response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=tags.xml");
+        response.setContentType("text/plain; charset=utf-8");
         response.getWriter().print(XmlUtil.indentXmlSimple(sw.getBuffer().toString()));
         return null;
     }

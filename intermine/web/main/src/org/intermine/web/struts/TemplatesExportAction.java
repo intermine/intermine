@@ -10,8 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.PrintStream;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,9 +22,9 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.TemplateHelper;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -86,11 +84,8 @@ public class TemplatesExportAction extends TemplateAction
         xml = XmlUtil.indentXmlSimple(xml);
 
         response.setContentType("text/plain; charset=utf-8");
-        response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
+        response.getWriter().write(xml);
 
-        PrintStream out = new PrintStream(response.getOutputStream());
-        out.print(xml);
-        out.flush();
         return null;
     }
 }

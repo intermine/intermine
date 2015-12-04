@@ -14,8 +14,8 @@
     <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
 
     <class name="Interaction" is-interface="true">
-        <reference name="gene1" referenced-type="Gene" reverse-reference="interactions" />
-        <reference name="gene2" referenced-type="Gene" />
+        <reference name="participant1" referenced-type="BioEntity" reverse-reference="interactions" />
+        <reference name="participant2" referenced-type="BioEntity" />
         <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
     </class>
 
@@ -26,25 +26,27 @@
         <attribute name="confidence" type="java.lang.Double"/>
         <attribute name="confidenceText" type="java.lang.String"/>
         <attribute name="type" type="java.lang.String"/>
-        <reference name="relationshipType" referenced-type="InteractionTerm"/>
+        <attribute name="relationshipType" type="java.lang.String"/>
         <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
-        <collection name="allInteractors" referenced-type="Gene"/>
+        <collection name="allInteractors" referenced-type="Interactor"/>
     </class>
 
-    <class name="Gene" is-interface="true">
-        <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>
+    <class name="BioEntity" is-interface="true">
+        <collection name="interactions" referenced-type="Interaction" reverse-reference="participant1"/>
     </class>
 
-    <class name="InteractionRegion" is-interface="true">
+    <class name="InteractionRegion" extends="BioEntity"  is-interface="true">
       <attribute name="startStatus" type="java.lang.String"/>
       <attribute name="endStatus" type="java.lang.String"/>
       <reference name="gene" referenced-type="Gene" />
       <reference name="ontologyTerm" referenced-type="OntologyTerm"/>
-      <reference name="location" referenced-type="Location"/>
       <reference name="interaction" referenced-type="InteractionDetail" reverse-reference="interactingRegions"/>
+      <collection name="locations" referenced-type="Location" reverse-reference="feature"/>
     </class>
+
+    <class name="Interactor" is-interface="true"/>
 </classes>
 
